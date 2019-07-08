@@ -1,5 +1,7 @@
 const uuid = require('uuid/v4')
 
+const osrm = require('../services/osrm')
+
 const persons = []
 
 module.exports = app => {
@@ -15,40 +17,59 @@ module.exports = app => {
       },
       res
     ) => {
-      const person = {
+      persons.push({
         id: uuid(),
         passengers,
         startDate,
         startPosition,
         endDate,
         endPosition,
-      }
-
-      console.log(person)
-
-      persons.push(person)
+      })
 
       res.sendStatus(200)
     }
   )
 
-  app.post('/car', (
-    {
-      body: {
-        emptySeats = 4,
-        start: { date: startDate, position: startPosition },
-        end: { date: endDate, position: endPosition },
+  app.post(
+    '/car',
+    async (
+      {
+        body: {
+          emptySeats = 4,
+          start: { date: startDate, position: startPosition },
+          end: { date: endDate, position: endPosition },
+        },
       },
-    },
-    res
-  ) => {
-    console.log({
-      emptySeats,
-      startDate,
-      startPosition,
-      endDate,
-      endPosition,
-    })
-    res.sendStatus(200)
-  })
+      res
+    ) => {
+      console.log('hello?')
+      const defaultRoute = await osrm.route({
+        startPosition,
+        endPosition,
+      })
+
+      const bestMatch =
+        (await osrm.bestMatch({
+          startPosition,
+          endPosition,
+          extras: persons,
+        })) || {}
+
+      console.log({
+        defaultRoute,
+        bestMatch,
+        emptySeats,
+        startDate,
+        startPosition,
+        endDate,
+        endPosition,
+      })
+
+      res.send({
+        distance: bestMatch.distance,
+        stops: bestMatch.stops,
+        duration: bestMatch.duration,
+      })
+    }
+  )
 }

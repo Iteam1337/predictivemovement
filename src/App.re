@@ -11,7 +11,6 @@ type action('a) =
 
 [@react.component]
 let make = () => {
-  let (initialLongitude, initialLatitude) = Location.make(`Umea);
   let ({latitude, longitude, zoom}, dispatch) =
     React.useReducer(
       (_state, action) =>
@@ -22,7 +21,7 @@ let make = () => {
             zoom: viewport##zoom,
           }
         },
-      {zoom: 5, longitude: initialLongitude, latitude: initialLatitude},
+      {zoom: 18, longitude: 18.4260733, latitude: 59.2827382},
     );
 
   <ReactMap.Map
@@ -34,10 +33,7 @@ let make = () => {
     latitude
     onViewportChange={viewport => dispatch(UpdateMap(viewport))}
     mapboxApiAccessToken=Config.mapboxToken>
-    <Car location=`Boden />
-    <Car location=`Umea />
-    <Car location=`Tarnaby />
-    <Car location=`Storuman />
-    <Car location=`Stockholm />
+    <Car longitude=18.4260733 latitude=59.2827382 />
+    <Car longitude=18.4245319 latitude=59.2822026 />
   </ReactMap.Map>;
 };

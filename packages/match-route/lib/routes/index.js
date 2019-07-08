@@ -42,7 +42,6 @@ module.exports = app => {
       },
       res
     ) => {
-      console.log('hello?')
       const defaultRoute = await osrm.route({
         startPosition,
         endPosition,

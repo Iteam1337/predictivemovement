@@ -90,16 +90,8 @@ let make = () => {
     setFormData(fd => {...fd, traveller: value ? Car : Person});
 
   <div
-    style={ReactDOMRe.Style.make(
-      ~zIndex="1",
-      ~position="absolute",
-      ~left="12px",
-      ~top="12px",
-      ~padding="12px",
-      ~borderRadius="5px",
-      ~background="white",
-      (),
-    )}>
+    className="bg-white absolute p-4 rounded z-10"
+    style={ReactDOMRe.Style.make(~left="12px", ~top="12px", ())}>
     <Form handleFormInput handleCheckboxInput handleSubmit=handleFormSubmit />
   </div>;
 };

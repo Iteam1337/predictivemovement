@@ -31,7 +31,6 @@ module GeoJsonLayer = {
   [@bs.deriving abstract]
   type layer('a) = {
     getLineColor: array(int),
-    lineWidthScale: int,
     lineWidthMinPixels: int,
     data: array(Js.t('a)),
   };
@@ -40,16 +39,8 @@ module GeoJsonLayer = {
   external createLayer: layer('a) => t = "GeoJsonLayer";
 
   let make =
-      (
-        ~data,
-        ~getLineColor=[|74, 85, 104, 175|],
-        ~lineWidthMinPixels=2,
-        ~lineWidthScale=5,
-        (),
-      ) =>
-    createLayer(
-      layer(~getLineColor, ~lineWidthScale, ~lineWidthMinPixels, ~data),
-    );
+      (~data, ~getLineColor=[|74, 85, 104, 175|], ~lineWidthMinPixels=2, ()) =>
+    createLayer(layer(~getLineColor, ~lineWidthMinPixels, ~data));
 };
 
 module DeckGL = {
@@ -79,48 +70,40 @@ module Waypoint = {
 };
 
 module GeoCenter = {
-  let average = coords => {
-    let x = 0.0;
-    let y = 0.0;
-    let z = 0.0;
-    ();
+  module Math = Js.Math;
+
+  let degreeToRadian = value => value *. Math._PI /. 180.0;
+  let radianToDegree = value => value *. 180.0 /. Math._PI;
+
+  let median = ((x, y, z), total) => (x /. total, y /. total, z /. total);
+
+  let make = coords => {
+    switch (coords->Belt.Array.length) {
+    | 0
+    | 1 => (0.0, 0.0)
+    | total =>
+      let (x, y, z) =
+        coords
+        ->Belt.Array.reduce(
+            (0.0, 0.0, 0.0),
+            ((x, y, z), (longitude, latitude)) => {
+              let lat = degreeToRadian(latitude);
+              let long = degreeToRadian(longitude);
+
+              (
+                x +. Math.cos(lat) *. Math.cos(long),
+                y +. Math.cos(lat) *. Math.sin(long),
+                z +. Math.sin(lat),
+              );
+            },
+          )
+        ->median(total->float_of_int);
+
+      let centralLongitude = Math.atan2(~y, ~x, ());
+      let centralSquareRoot = Math.sqrt(x *. x +. y *. y);
+      let centralLatitude = Math.atan2(~y=z, ~x=centralSquareRoot, ());
+
+      (radianToDegree(centralLongitude), radianToDegree(centralLatitude));
+    };
   };
 };
-
-/*function averageGeolocation(coords) {*/
-/*if (coords.length === 1) {*/
-/*return coords[0];*/
-
-/*}*/
-
-/*let x = 0.0;*/
-/*let y = 0.0;*/
-/*let z = 0.0;*/
-
-/*for (let coord of coords) {*/
-/*let latitude = coord.latitude * Math.PI / 180;*/
-/*let longitude = coord.longitude * Math.PI / 180;*/
-
-/*x += Math.cos(latitude) * Math.cos(longitude);*/
-/*y += Math.cos(latitude) * Math.sin(longitude);*/
-/*z += Math.sin(latitude);*/
-
-/*}*/
-
-/*let total = coords.length;*/
-
-/*x = x / total;*/
-/*y = y / total;*/
-/*z = z / total;*/
-
-/*let centralLongitude = Math.atan2(y, x);*/
-/*let centralSquareRoot = Math.sqrt(x * x + y * y);*/
-/*let centralLatitude = Math.atan2(z, centralSquareRoot);*/
-
-/*return {*/
-/*latitude: centralLatitude * 180 / Math.PI,*/
-/*longitude: centralLongitude * 180 / Math.PI*/
-
-/*};*/
-
-/*}*/

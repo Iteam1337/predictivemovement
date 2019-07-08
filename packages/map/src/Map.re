@@ -62,7 +62,6 @@ module StaticMap = {
       ~children: React.element,
       ~reuseMaps: bool,
       ~preventStyleDiffing: bool,
-      ~mapStyle: string,
       ~mapboxApiAccessToken: string
     ) =>
     React.element =
@@ -145,7 +144,7 @@ module DeckGL = {
       ~effects: option(array(Light.LightingEffect.t)),
       ~controller: bool,
       ~initialViewState: initialViewState,
-      ~layers: array(TripsLayer.t),
+      ~layers: array(GeoJsonLayer.t),
       ~children: React.element
     ) =>
     React.element =
@@ -204,3 +203,30 @@ module GeoCenter = {
     };
   };
 };
+
+/* ANIMATED TRIPS - keep for now */
+/*let (time, setTime) = React.useState(() => 0.0);*/
+
+/*let animate = () => {*/
+/*let loopLength = 1800.0;*/
+/*let speed = 30.0;*/
+/*let timestamp = Js.Date.now() /. 1000.0;*/
+/*let time = loopLength /. speed;*/
+
+/*setTime(_ => mod_float(timestamp, time) /. time *. loopLength);*/
+/*};*/
+
+/*React.useEffect1(*/
+/*() => {*/
+/*let id = requestAnimationFrame(animate);*/
+/*Some(() => cancelAnimationFrame(id));*/
+/*},*/
+/*[|time|],*/
+/*);*/
+
+/*TripsLayer.make(*/
+/*~currentTime=time,*/
+/*~id="trips",*/
+/*~data=*/
+/*"https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json",*/
+/*),*/

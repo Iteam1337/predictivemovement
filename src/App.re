@@ -12,26 +12,34 @@ let make = () => {
     GeoCenter.make(Belt.Array.concat(hasselbyWaypoints, ingaroWaypoints));
 
   let initialViewState =
-    DeckGL.initialViewState(~zoom=10, ~longitude, ~latitude);
+    DeckGL.initialViewState(
+      ~zoom=10,
+      ~longitude,
+      ~latitude,
+      ~transitionInterpolator=None,
+      ~transitionDuration=None,
+    );
 
-  <DeckGL
-    controller=true
-    initialViewState
-    layers=[|
-      GeoJsonLayer.make(~data=ingaro##routes, ()),
-      GeoJsonLayer.make(~data=hasselby##routes, ()),
-    |]>
-    <StaticMap mapStyle=None mapboxApiAccessToken=Config.mapboxToken>
-      {hasselbyWaypoints
-       ->Belt.Array.mapWithIndex((i, coordinates) =>
-           <Car coordinates key={i->string_of_int} />
-         )
-       ->React.array}
-      {ingaroWaypoints
-       ->Belt.Array.mapWithIndex((i, coordinates) =>
-           <Car coordinates key={i->string_of_int} />
-         )
-       ->React.array}
-    </StaticMap>
-  </DeckGL>;
+  <>
+    <Travel />
+    <DeckGL
+      controller=true
+      initialViewState
+      onViewStateChange={_d => ()}
+      layers=[|
+        GeoJsonLayer.make(~data=ingaro##routes, ()),
+        GeoJsonLayer.make(~data=hasselby##routes, ()),
+      |]>
+      <StaticMap mapStyle=None mapboxApiAccessToken=Config.mapboxToken>
+        {hasselby##waypoints
+         ->Belt.Array.map(Waypoint.make)
+         ->Belt.Array.map(coordinates => <Car coordinates />)
+         ->React.array}
+        {ingaro##waypoints
+         ->Belt.Array.map(Waypoint.make)
+         ->Belt.Array.map(coordinates => <Car coordinates />)
+         ->React.array}
+      </StaticMap>
+    </DeckGL>
+  </>;
 };

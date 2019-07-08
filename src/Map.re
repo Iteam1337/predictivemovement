@@ -43,12 +43,21 @@ module GeoJsonLayer = {
     createLayer(layer(~getLineColor, ~lineWidthMinPixels, ~data));
 };
 
+module FlyToInterpolator = {
+  type t;
+
+  [@bs.module "deck.gl"] [@bs.new]
+  external make: unit => t = "FlyToInterpolator";
+};
+
 module DeckGL = {
   [@bs.deriving abstract]
   type initialViewState = {
     longitude: float,
     latitude: float,
     zoom: int,
+    transitionDuration: option(int),
+    transitionInterpolator: option(FlyToInterpolator.t),
   };
 
   [@bs.module "deck.gl"] [@react.component]
@@ -57,7 +66,8 @@ module DeckGL = {
       ~controller: bool,
       ~initialViewState: initialViewState,
       ~layers: array(GeoJsonLayer.t),
-      ~children: React.element
+      ~children: React.element,
+      ~onViewStateChange: initialViewState => unit
     ) =>
     React.element =
     "default";

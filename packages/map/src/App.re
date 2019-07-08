@@ -1,39 +1,73 @@
-let mapStyle = [%bs.raw {|require("../../../src/mapStyle")|}];
+type animationFrameID;
 
-type viewport = {
-  latitude: float,
-  longitude: float,
-  zoom: int,
-};
+[@bs.val]
+external requestAnimationFrame: (unit => unit) => animationFrameID = "";
 
-type action('a) =
-  | UpdateMap(Js.t('a));
+[@bs.val] external cancelAnimationFrame: animationFrameID => unit = "";
+
+open Map;
+
+let ingaro = [%bs.raw {|require("../../../src/routes/ingaro")|}];
+let hasselby = [%bs.raw {|require("../../../src/routes/hasselby")|}];
 
 [@react.component]
 let make = () => {
-  let ({latitude, longitude, zoom}, dispatch) =
-    React.useReducer(
-      (_state, action) =>
-        switch (action) {
-        | UpdateMap(viewport) => {
-            longitude: viewport##longitude,
-            latitude: viewport##latitude,
-            zoom: viewport##zoom,
-          }
-        },
-      {zoom: 18, longitude: 18.4260733, latitude: 59.2827382},
+  let (time, setTime) = React.useState(() => 0.0);
+  let hasselbyWaypoints = Waypoints.make(hasselby##waypoints);
+  let ingaroWaypoints = Waypoints.make(ingaro##waypoints);
+  let allWaypoints = Belt.Array.concat(hasselbyWaypoints, ingaroWaypoints);
+  /*let (longitude, latitude) = GeoCenter.make(allWaypoints);*/
+
+  let animate = () => {
+    let loopLength = 1800.0;
+    let speed = 30.0;
+    let timestamp = Js.Date.now() /. 1000.0;
+    let time = loopLength /. speed;
+
+    setTime(_ => mod_float(timestamp, time) /. time *. loopLength);
+  };
+
+  React.useEffect1(
+    () => {
+      let id = requestAnimationFrame(animate);
+      Some(() => cancelAnimationFrame(id));
+    },
+    [|time|],
+  );
+
+  let initialViewState =
+    DeckGL.initialViewState(
+      ~zoom=10,
+      ~longitude=-74.0,
+      ~latitude=40.72,
+      ~pitch=Some(45),
     );
 
-  <ReactMap.Map
-    mapStyle
-    width="100vw"
-    height="100vh"
-    zoom
-    longitude
-    latitude
-    onViewportChange={viewport => dispatch(UpdateMap(viewport))}
-    mapboxApiAccessToken=Config.mapboxToken>
-    <Car longitude=18.4260733 latitude=59.2827382 />
-    <Car longitude=18.4245319 latitude=59.2822026 />
-  </ReactMap.Map>;
+  <>
+    <Travel />
+    <DeckGL
+      controller=true
+      effects=None
+      initialViewState
+      layers=[|
+        TripsLayer.make(
+          ~currentTime=time,
+          ~id="trips",
+          ~data=
+            "https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json",
+        ),
+      |]>
+      <StaticMap
+        reuseMaps=true
+        preventStyleDiffing=true
+        mapStyle="mapbox://styles/mapbox/dark-v10"
+        mapboxApiAccessToken=Config.mapboxToken>
+        {allWaypoints
+         ->Belt.Array.mapWithIndex((i, coordinates) =>
+             <Car coordinates key={i->string_of_int} />
+           )
+         ->React.array}
+      </StaticMap>
+    </DeckGL>
+  </>;
 };

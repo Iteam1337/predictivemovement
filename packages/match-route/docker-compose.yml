@@ -1,0 +1,11 @@
+osrm-data:
+  image: irony/osrm5
+  volumes:
+    - /data
+osrm:
+  image: irony/osrm5
+  volumes_from:
+    - osrm-data
+  ports:
+    - 5000:5000
+  command: ./start.sh Sweden http://download.geofabrik.de/europe/sweden-latest.osm.pbf

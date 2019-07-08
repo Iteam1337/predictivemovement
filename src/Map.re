@@ -1,3 +1,53 @@
+module Light = {
+  module Ambient = {
+    type t;
+
+    [@bs.deriving abstract]
+    type options = {
+      color: array(int),
+      intensity: float,
+    };
+
+    [@bs.new] [@bs.module "@deck.gl/core"]
+    external create: options => t = "AmbientLight";
+
+    let make = (~color, ~intensity) => create(options(~color, ~intensity));
+  };
+
+  module Point = {
+    type t;
+
+    [@bs.deriving abstract]
+    type options = {
+      color: array(int),
+      intensity: float,
+      position: array(float),
+    };
+
+    [@bs.new] [@bs.module "@deck.gl/core"]
+    external create: options => t = "PointLight";
+
+    let make = (~color, ~intensity, ~position) =>
+      create(options(~color, ~intensity, ~position));
+  };
+
+  module LightingEffect = {
+    type t;
+
+    [@bs.deriving abstract]
+    type options = {
+      ambientLight: Ambient.t,
+      pointLight: Point.t,
+    };
+
+    [@bs.new] [@bs.module "@deck.gl/core"]
+    external create: options => t = "LightingEffect";
+
+    let make = (~ambientLight, ~pointLight) =>
+      create(options(~ambientLight, ~pointLight));
+  };
+};
+
 module Map = {
   [@bs.module "react-map-gl"] [@react.component]
   external make:
@@ -10,7 +60,9 @@ module StaticMap = {
   external make:
     (
       ~children: React.element,
-      ~mapStyle: option(Js.t('b)),
+      ~reuseMaps: bool,
+      ~preventStyleDiffing: bool,
+      ~mapStyle: string,
       ~mapboxApiAccessToken: string
     ) =>
     React.element =
@@ -43,11 +95,39 @@ module GeoJsonLayer = {
     createLayer(layer(~getLineColor, ~lineWidthMinPixels, ~data));
 };
 
-module FlyToInterpolator = {
+module TripsLayer = {
   type t;
 
-  [@bs.module "deck.gl"] [@bs.new]
-  external make: unit => t = "FlyToInterpolator";
+  [@bs.deriving abstract]
+  type layer('a) = {
+    id: string,
+    trailLength: int,
+    getColor: array(int),
+    widthMinPixels: int,
+    opacity: float,
+    rounded: bool,
+    data: string,
+    getPath: Js.t('a) => array('a),
+    currentTime: float,
+  };
+
+  [@bs.new] [@bs.module "@deck.gl/geo-layers"]
+  external createLayer: layer('a) => t = "TripsLayer";
+
+  let make = (~id, ~data, ~currentTime) =>
+    createLayer(
+      layer(
+        ~id,
+        ~getColor=[|253, 128, 93|],
+        ~getPath=d => d##segments,
+        ~trailLength=50,
+        ~widthMinPixels=2,
+        ~data,
+        ~rounded=true,
+        ~currentTime,
+        ~opacity=0.3,
+      ),
+    );
 };
 
 module DeckGL = {
@@ -56,18 +136,17 @@ module DeckGL = {
     longitude: float,
     latitude: float,
     zoom: int,
-    transitionDuration: option(int),
-    transitionInterpolator: option(FlyToInterpolator.t),
+    pitch: option(int),
   };
 
   [@bs.module "deck.gl"] [@react.component]
   external make:
     (
+      ~effects: option(array(Light.LightingEffect.t)),
       ~controller: bool,
       ~initialViewState: initialViewState,
-      ~layers: array(GeoJsonLayer.t),
-      ~children: React.element,
-      ~onViewStateChange: initialViewState => unit
+      ~layers: array(TripsLayer.t),
+      ~children: React.element
     ) =>
     React.element =
     "default";
@@ -76,7 +155,15 @@ module DeckGL = {
 module Waypoint = {
   type t = (float, float);
 
-  let make = waypoint => (waypoint##location[0], waypoint##location[1]);
+  let make: Js.t('a) => t =
+    waypoint => (waypoint##location[0], waypoint##location[1]);
+};
+
+module Waypoints = {
+  type t = array(Waypoint.t);
+
+  let make: array(Js.t('a)) => t =
+    waypoints => waypoints->Belt.Array.map(Waypoint.make);
 };
 
 module GeoCenter = {

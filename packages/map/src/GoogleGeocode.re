@@ -9,6 +9,14 @@ let fromJson = json =>
     lng: json |> at(["geometry", "location", "lng"], Json.Decode.float),
   };
 
+let toJson = t =>
+  Json.Encode.(
+    object_([
+      ("lat", Json.Encode.float(t.lat)),
+      ("lon", Json.Encode.float(t.lng)),
+    ])
+  );
+
 let fromArray = json =>
   json |> Json.Decode.(field("results", array(fromJson)));
 

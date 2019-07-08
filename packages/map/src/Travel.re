@@ -28,18 +28,24 @@ module Form = {
         }
       />
       <input
+        className="m-2"
         onChange={event =>
           handleFormInput(`Destination, ReactEvent.Form.target(event)##value)
         }
         placeholder="Ange destination"
       />
       <div>
-        <label>
+        <label className="my-2">
           "Jag har bil"->React.string
-          <input onChange=handleCheckbox checked type_="checkbox" />
+          <input
+            className="ml-2"
+            onChange=handleCheckbox
+            checked
+            type_="checkbox"
+          />
         </label>
       </div>
-      <div style={ReactDOMRe.Style.make(~marginTop="6px", ())}>
+      <div className="my-2">
         <button type_="submit"> {React.string("Skicka")} </button>
       </div>
     </form>;
@@ -52,23 +58,54 @@ let make = () => {
 
   let (formData, setFormData) = React.useState(_ => initialState);
 
-  let getDirections = data => {
+  let postDirections = data => {
     switch (formData.traveller) {
-    | Person => Js.log2("Person", data)
-    | Car => Js.log2("Car", data)
+    | Person =>
+      Js.Promise.(
+        API.Travel.make(
+          ~route=`Person,
+          ~method_=Post,
+          ~body=
+            Json.Encode.(
+              object_([
+                ("from", GoogleGeocode.toJson(data[0])),
+                ("to", GoogleGeocode.toJson(data[1])),
+              ])
+            ),
+        )
+        |> then_(data => Js.log(data) |> resolve)
+        |> ignore
+      )
+    | Car =>
+      Js.Promise.(
+        API.Travel.make(
+          ~route=`Car,
+          ~method_=Post,
+          ~body=
+            Json.Encode.(
+              object_([
+                ("from", GoogleGeocode.toJson(data[0])),
+                ("to", GoogleGeocode.toJson(data[1])),
+              ])
+            ),
+        )
+        |> then_(data => Js.log(data) |> resolve)
+        |> ignore
+      )
     };
   };
 
   let getCoordinates = callback => {
     Js.Promise.(
-      all([|
-        Fetch.fetch(GoogleGeocode.getCoordinates(formData.from))
-        |> then_(Fetch.Response.json)
-        |> then_(data => data |> GoogleGeocode.fromArray |> resolve),
-        Fetch.fetch(GoogleGeocode.getCoordinates(formData.destination))
-        |> then_(Fetch.Response.json)
-        |> then_(data => data |> GoogleGeocode.fromArray |> resolve),
-      |])
+      [|formData.from, formData.destination|]
+      |> Array.map(address =>
+           Fetch.fetch(GoogleGeocode.getCoordinates(address))
+           |> then_(Fetch.Response.json)
+           |> then_(data =>
+                resolve(data |> GoogleGeocode.fromArray |> (d => d[0]))
+              )
+         )
+      |> all
       |> then_(data => callback(data) |> resolve)
       |> ignore
     );
@@ -76,7 +113,8 @@ let make = () => {
 
   let handleFormSubmit = event => {
     ReactEvent.Synthetic.preventDefault(event);
-    getCoordinates(getDirections);
+
+    getCoordinates(postDirections);
   };
 
   let handleFormInput = (identifier, value) => {

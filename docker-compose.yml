@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  osrm-backend:
+    image: osrm/osrm-backend:v5.22.0
+    environment:
+      FILE_NAME: data
+      OSRM_VERSION: v5.22.0
+      TAR_FOLDER: data.tar.gz
+      DOWNLOAD_URL: https://s3.eu-north-1.amazonaws.com/pm-mapbox-test.iteam.se
+    volumes:
+      - ./data:/data
+    ports:
+      - 5000:5000
+    command:
+    - sh
+    - -c
+    - |
+      test ! -f "/data/$${FILE_NAME}.osrm" && \
+        apt-get update && apt-get install -y --no-install-recommends wget tar && \
+        wget --no-check-certificate --debug "$${DOWNLOAD_URL}/$${OSRM_VERSION}/$${TAR_FOLDER}" -O "/data/$${TAR_FOLDER}" && \
+        tar -C / -xvf "/data/$${TAR_FOLDER}" && \
+        rm -rf /var/lib/apt/lists/* && \
+        rm -f "/data/$${TAR_FOLDER}"
+      osrm-routed --algorithm mld "/data/$${FILE_NAME}.osrm"

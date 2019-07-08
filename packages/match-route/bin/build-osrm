@@ -1,0 +1,22 @@
+#!/bin/env bash
+
+dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
+
+out_dir=${out_dir:-"$(pwd)/data"}
+out_file_name=${out_file_name:-"data"}
+out_file=${out_file:-"${out_file_name}.osm.pbf"}
+out_location="${out_dir}/${out_file}"
+
+pbf_file=${pbf_file:-"europe/sweden-latest.osm.pbf"}
+downlad_url="http://download.geofabrik.de/${pbf_file}"
+osrm_version=${osrm_version:-"v5.22.0"}
+
+if [[ ! -f "${out_location}" ]]; then
+    mkdir -p ${out_dir}
+    wget ${downlad_url} -O ${out_location}
+    docker run -t -v ${out_dir}:/data osrm/osrm-backend:${osrm_version} osrm-extract -p /opt/car.lua /data/${out_file}
+    docker run -t -v ${out_dir}:/data osrm/osrm-backend:${osrm_version} osrm-partition /data/${out_file_name}.osrm
+    docker run -t -v ${out_dir}:/data osrm/osrm-backend:${osrm_version} osrm-customize /data/${out_file_name}.osrm
+else
+    echo "osrm already extracted"
+fi

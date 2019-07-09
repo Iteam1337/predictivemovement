@@ -8,7 +8,7 @@ module Travel = {
     let make = t => Config.apiHost ++ fromType(t);
   };
 
-  let make = (~route, ~method_, ~body) =>
+  let make = (~route, ~body, ~method_=Fetch.Post, ()) =>
     Repromise.(
       Belt.Result.(
         Fetch.fetchWithInit(

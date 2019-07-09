@@ -1,3 +1,12 @@
+module Interpolator = {
+  type t;
+
+  module FlyTo = {
+    [@bs.new] [@bs.module "react-map-gl"]
+    external make: unit => t = "FlyToInterpolator";
+  };
+};
+
 module Light = {
   module Ambient = {
     type t;
@@ -48,10 +57,10 @@ module Light = {
   };
 };
 
-module Map = {
+module InteractiveMap = {
   [@bs.module "react-map-gl"] [@react.component]
   external make:
-    (~mapStyle: Js.t('b), ~mapboxApiAccessToken: string) => React.element =
+    (~children: React.element, ~mapboxApiAccessToken: string) => React.element =
     "default";
 };
 
@@ -131,11 +140,16 @@ module TripsLayer = {
 
 module DeckGL = {
   [@bs.deriving abstract]
-  type initialViewState = {
+  type viewState = {
     longitude: float,
     latitude: float,
     zoom: int,
-    pitch: option(int),
+    [@bs.optional]
+    pitch: int,
+    [@bs.optional]
+    transitionDuration: int,
+    [@bs.optional]
+    transitionInterpolator: Interpolator.t,
   };
 
   [@bs.module "deck.gl"] [@react.component]
@@ -143,9 +157,10 @@ module DeckGL = {
     (
       ~effects: option(array(Light.LightingEffect.t)),
       ~controller: bool,
-      ~initialViewState: initialViewState,
       ~layers: array(GeoJsonLayer.t),
-      ~children: React.element
+      ~children: React.element,
+      ~viewState: viewState,
+      ~onViewStateChange: Js.t('a) => unit
     ) =>
     React.element =
     "default";

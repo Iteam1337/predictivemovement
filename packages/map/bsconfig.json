@@ -20,7 +20,8 @@
     "bs-decode",
     "bs-fetch",
     "re-classnames",
-    "reason-react"
+    "reason-react",
+    "re-formality"
   ],
   "refmt": 3
 }

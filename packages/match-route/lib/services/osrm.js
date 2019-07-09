@@ -90,6 +90,37 @@ module.exports = {
       .pop()
   },
 
+  isStartCoordinate (coordinate) {
+    return coordinate.endsWith("1")
+  },
+
+  correspondingStartCoordIsInPermutation (element, list) {
+    const identifier = element[0]
+    return list.includes(identifier + "1")
+  },
+
+  getPermutations (input) {
+      const result = []
+
+      const permute = (arr, permutation = []) => {
+        if (arr.length === 0) {
+          result.push(permutation)
+        } else {
+          for (let i = 0; i < arr.length; i++) {
+            const arrayCopy = arr.slice()
+            const next = arrayCopy.splice(i, 1).pop()
+            if (this.isStartCoordinate(next) || this.correspondingStartCoordIsInPermutation(next, permutation)) {
+              permute(arrayCopy, permutation.concat([next]))
+            }
+          }
+        }
+      }
+
+      permute(input)
+
+      return result
+  },
+
   async route ({ startPosition, endPosition, extras = [] }) {
     const destinations = [
       startPosition,

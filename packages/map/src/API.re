@@ -2,8 +2,8 @@ module Travel = {
   module Route = {
     let fromType =
       fun
-      | `Person => "/person"
-      | `Car => "/car";
+      | `Person => "/pickup"
+      | `Car => "/route";
 
     let make = t => Config.apiHost ++ fromType(t);
   };

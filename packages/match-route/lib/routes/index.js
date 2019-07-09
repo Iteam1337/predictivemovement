@@ -8,17 +8,12 @@ const routes = {}
 module.exports = app => {
   app.post(
     '/pickup',
-    ({
+    (
+      {
         body: {
           passengers = 1,
-          start: {
-            date: startDate,
-            position: startPosition
-          },
-          end: {
-            date: endDate,
-            position: endPosition
-          },
+          start: { date: startDate, position: startPosition },
+          end: { date: endDate, position: endPosition },
         },
       },
       res
@@ -32,35 +27,29 @@ module.exports = app => {
         endPosition,
       })
 
-      console.log(JSON.stringify(persons, null, 2))
-
       res.sendStatus(200)
     }
   )
 
   app.post(
     '/route',
-    async ({
+    async (
+      {
         body: {
           emptySeats = 4,
-          start: {
-            date: startDate,
-            position: startPosition
-          },
-          end: {
-            date: endDate,
-            position: endPosition
-          },
+          start: { date: startDate, position: startPosition },
+          end: { date: endDate, position: endPosition },
         },
       },
       res
     ) => {
       try {
-        const defaultRoute = await osrm.route({
-          startPosition,
-          endPosition,
-          extras: [],
-        }) || {}
+        const defaultRoute =
+          (await osrm.route({
+            startPosition,
+            endPosition,
+            extras: [],
+          })) || {}
 
         const bestMatch =
           (await osrm.bestMatch({
@@ -83,7 +72,7 @@ module.exports = app => {
         const id = uuid()
 
         const result = {
-          route: defaultRoute,
+          route: bestMatch.defaultRoute,
           distance: bestMatch.distance,
           stops: bestMatch.stops,
           duration: bestMatch.duration,
@@ -93,7 +82,7 @@ module.exports = app => {
 
         res.send({
           id,
-          ...result
+          ...result,
         })
       } catch (error) {
         console.error(error)
@@ -102,11 +91,7 @@ module.exports = app => {
     }
   )
 
-  app.get('/route/:id', ({
-    params: {
-      id
-    }
-  }, res) => {
+  app.get('/route/:id', ({ params: { id } }, res) => {
     const route = routes[id]
 
     if (!route) {
@@ -116,3 +101,4 @@ module.exports = app => {
     res.send(route)
   })
 }
+

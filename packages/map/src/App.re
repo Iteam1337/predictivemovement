@@ -30,33 +30,20 @@ let make = () => {
 
     setRoutes(_ => [t.route.routes]);
 
-    let first = waypoints->Belt.Array.get(0);
-    let last = waypoints->Belt.Array.get(Belt.Array.length(waypoints) - 1);
-
-    let arrayToLatLon = arr => {
-      switch (arr->Belt.Array.get(0), arr->Belt.Array.get(1)) {
-      | (Some(lat), Some(lon)) => (lat, lon)
-      | (_, _) => (0.0, 0.0)
-      };
-    };
-
-    let (longitude, latitude) =
-      switch (first, last) {
-      | (Some(f), Some(l)) =>
-        GeoCenter.make([|
-          f.location->arrayToLatLon,
-          l.location->arrayToLatLon,
-        |])
-      | (Some(f), None) => f.location->arrayToLatLon
-      | (None, Some(l)) => l.location->arrayToLatLon
-      | (None, None) => (0.0, 0.0)
-      };
+    let viewport =
+      Belt.Array.(
+        switch (waypoints->get(0), waypoints->get(length(waypoints) - 1)) {
+        | (Some(f), Some(l)) => [|f.location, l.location|]
+        | (_, _) => [||]
+        }
+      )
+      |> Viewport.make;
 
     setViewState(_ =>
       DeckGL.viewState(
-        ~longitude,
-        ~latitude,
-        ~zoom=16,
+        ~longitude=viewport.longitude,
+        ~latitude=viewport.latitude,
+        ~zoom=viewport.zoom,
         ~transitionDuration=2000,
         ~transitionInterpolator=Interpolator.FlyTo.make(),
         (),

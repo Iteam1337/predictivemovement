@@ -103,8 +103,8 @@ let make = (~onCar) => {
             )
             |> wait(
                  fun
-                 | Ok(data) => Js.log2("Success", data)
-                 | Error(e) => Js.log2("Error", e),
+                 | Ok(_) => ()
+                 | Error(_) => (),
                )
           )
         | Car =>

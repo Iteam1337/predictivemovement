@@ -238,37 +238,38 @@ module GeoCenter = {
   };
 };
 
-/* ANIMATED TRIPS - keep for now */
+module Viewport = {
+  type t;
 
-/*type animationFrameID;*/
+  [@bs.deriving {jsConverter: newType}]
+  type viewport = {
+    latitude: float,
+    longitude: float,
+    zoom: int,
+  };
 
-/*[@bs.val]*/
-/*external requestAnimationFrame: (unit => unit) => animationFrameID = "";*/
+  [@bs.deriving abstract]
+  type createOptions = {
+    height: int,
+    width: int,
+  };
 
-/*[@bs.val] external cancelAnimationFrame: animationFrameID => unit = "";*/
+  [@bs.deriving abstract]
+  type fitOptions = {padding: int};
 
-/*let (time, setTime) = React.useState(() => 0.0);*/
+  [@bs.new] [@bs.module "viewport-mercator-project"]
+  external create: createOptions => t = "default";
 
-/*let animate = () => {*/
-/*let loopLength = 1800.0;*/
-/*let speed = 30.0;*/
-/*let timestamp = Js.Date.now() /. 1000.0;*/
-/*let time = loopLength /. speed;*/
+  [@bs.send]
+  external fit: (t, array(array(float)), fitOptions) => abs_viewport =
+    "fitBounds";
 
-/*setTime(_ => mod_float(timestamp, time) /. time *. loopLength);*/
-/*};*/
+  [@bs.val] [@bs.scope "window"] external innerWidth: int = "innerWidth";
+  [@bs.val] [@bs.scope "window"] external innerHeight: int = "innerHeight";
 
-/*React.useEffect1(*/
-/*() => {*/
-/*let id = requestAnimationFrame(animate);*/
-/*Some(() => cancelAnimationFrame(id));*/
-/*},*/
-/*[|time|],*/
-/*);*/
-
-/*TripsLayer.make(*/
-/*~currentTime=time,*/
-/*~id="trips",*/
-/*~data=*/
-/*"https://raw.githubusercontent.com/uber-common/deck.gl-data/master/examples/trips/trips.json",*/
-/*),*/
+  let make = coords => {
+    create(createOptions(~height=innerHeight, ~width=innerWidth))
+    ->fit(coords, fitOptions(~padding=100))
+    ->viewportFromJs;
+  };
+};

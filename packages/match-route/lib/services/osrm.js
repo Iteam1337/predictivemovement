@@ -78,7 +78,7 @@ module.exports = {
   },
 
   convertPairsIntoIdentifiedPoints (pairs) {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
     const translations = pairs.reduce((res, {
       id
     }, i) => ({
@@ -90,6 +90,7 @@ module.exports = {
       endPosition
     }, i) => {
       const identifier = alphabet[i]
+
       res.push({
         [identifier + '1']: startPosition,
       }, {

@@ -5,8 +5,7 @@ describe('osrm', () => {
   let startPosition
   let endPosition
   beforeEach(() => {
-    extras = [
-      {
+    extras = [{
         id: 'B',
         note: 'VÄSTERÅS - FÖRA',
         passenger: 1,
@@ -98,7 +97,9 @@ describe('osrm', () => {
       )
 
       // const extra = extras.find(({ note }) => note === 'NYKÖPING - MÖNSTERÅS')
-      const extra = extras.find(({ id }) => id === 'C')
+      const extra = extras.find(({
+        id
+      }) => id === 'C')
 
       expect(result).toEqual(
         expect.objectContaining({
@@ -116,21 +117,48 @@ describe('osrm', () => {
   })
   describe('findPermutations', () => {
     it('returns a list of all possible permutations', () => {
-      const result = osrm.getPermutations([[10, 20], [5, 15]])
+      const result = osrm.getPermutations([{
+          id: 1,
+          startPosition: 10,
+          endPosition: 20
+        },
+        {
+          id: 2,
+          startPosition: 5,
+          endPosition: 15
+        }
+      ]).map(({
+        coords
+      }) => coords)
       expect(result).toHaveLength(6)
       expect(result).toEqual(
-        expect.arrayContaining([[10, 20, 5, 15], [10, 5, 20, 15], [10, 5, 15, 20], [5, 10, 20, 15], [5, 10, 15, 20], [5, 15, 10, 20]])
+        expect.arrayContaining([
+          [10, 20, 5, 15],
+          [10, 5, 20, 15],
+          [10, 5, 15, 20],
+          [5, 10, 20, 15],
+          [5, 10, 15, 20],
+          [5, 15, 10, 20]
+        ])
       )
     })
   })
   describe('convertPairsIntoIdentifiers', () => {
     it('converts a list', () => {
-      const result = osrm.convertPairsIntoIdentifiedPoints([
-        [10, 20],
-        [30, 40],
-        [5, 15]
+      const [listOfPoints] = osrm.convertPairsIntoIdentifiedPoints([{
+          startPosition: 10,
+          endPosition: 20
+        },
+        {
+          startPosition: 30,
+          endPosition: 40
+        },
+        {
+          startPosition: 5,
+          endPosition: 15
+        }
       ])
-      expect(result).toEqual([{
+      expect(listOfPoints).toEqual([{
         a1: 10
       }, {
         a2: 20

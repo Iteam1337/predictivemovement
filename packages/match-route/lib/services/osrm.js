@@ -12,10 +12,8 @@ module.exports = {
   },
 
   async bestMatch ({ startPosition, endPosition, extras = [] }) {
-    const defaultRoute = await this.route({
-      startPosition,
-      endPosition,
-    })
+    const defaultRoute = await this.route({ startPosition, endPosition })
+
     const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
 
     return (await Promise.all(
@@ -126,4 +124,3 @@ module.exports = {
     return data
   },
 }
-

@@ -42,33 +42,38 @@ module.exports = app => {
       },
       res
     ) => {
-      const defaultRoute = await osrm.route({
-        startPosition,
-        endPosition,
-      })
-
-      const bestMatch =
-        (await osrm.bestMatch({
+      try {
+        const defaultRoute = await osrm.route({
           startPosition,
           endPosition,
-          extras: persons,
-        })) || {}
+        })
 
-      console.log({
-        defaultRoute,
-        bestMatch,
-        emptySeats,
-        startDate,
-        startPosition,
-        endDate,
-        endPosition,
-      })
+        const bestMatch =
+          (await osrm.bestMatch({
+            startPosition,
+            endPosition,
+            extras: persons,
+          })) || {}
 
-      res.send({
-        distance: bestMatch.distance,
-        stops: bestMatch.stops,
-        duration: bestMatch.duration,
-      })
+        console.log({
+          defaultRoute,
+          bestMatch,
+          emptySeats,
+          startDate,
+          startPosition,
+          endDate,
+          endPosition,
+        })
+
+        res.send({
+          route: defaultRoute,
+          distance: bestMatch.distance,
+          stops: bestMatch.stops,
+          duration: bestMatch.duration,
+        })
+      } catch (e) {
+        console.log(e)
+      }
     }
   )
 }

@@ -1,19 +1,17 @@
 open Map;
 
-let ingaro = [%bs.raw {|require("../../../src/routes/ingaro")|}];
-let hasselby = [%bs.raw {|require("../../../src/routes/hasselby")|}];
-
 [@react.component]
 let make = () => {
-  let hasselbyWaypoints = Waypoints.make(hasselby##waypoints);
-  let ingaroWaypoints = Waypoints.make(ingaro##waypoints);
-  let allWaypoints = Belt.Array.concat(hasselbyWaypoints, ingaroWaypoints);
-  let (longitude, latitude) = GeoCenter.make(allWaypoints);
   let (markers, setMarkers) = React.useState(() => []);
 
   let (viewState, setViewState) =
     React.useState(() =>
-      DeckGL.viewState(~longitude, ~latitude, ~zoom=10, ())
+      DeckGL.viewState(
+        ~longitude=18.068581,
+        ~latitude=59.329323,
+        ~zoom=10,
+        (),
+      )
     );
 
   let handleMove = (coords: Geolocation.Navigator.coords) => {
@@ -43,19 +41,11 @@ let make = () => {
       effects=None
       onViewStateChange={vp => setViewState(_ => vp##viewState)}
       viewState
-      layers=[|
-        GeoJsonLayer.make(~data=hasselby##routes, ()),
-        GeoJsonLayer.make(~data=ingaro##routes, ()),
-      |]>
+      layers=[||]>
       <StaticMap
         reuseMaps=true
         preventStyleDiffing=true
         mapboxApiAccessToken=Config.mapboxToken>
-        {allWaypoints
-         ->Belt.Array.mapWithIndex((i, coordinates) =>
-             <Car coordinates key={i->string_of_int} />
-           )
-         ->React.array}
         {markers
          ->Belt.List.mapWithIndex((i, marker) =>
              <Marker

@@ -6,8 +6,7 @@
   "scripts": {
     "test": "jest",
     "dev": "nodemon",
-    "lint": "eslint 'lib/**/*.js'",
-    "build": "bin/build-osrm"
+    "lint": "eslint 'lib/**/*.js'"
   },
   "keywords": [],
   "author": "",

@@ -7,12 +7,7 @@ let make = () => {
 
   let (viewState, setViewState) =
     React.useState(() =>
-      DeckGL.viewState(
-        ~longitude=18.068581,
-        ~latitude=59.329323,
-        ~zoom=10,
-        (),
-      )
+      DeckGL.viewState(~longitude=18.068581, ~latitude=59.329323, ~zoom=8, ())
     );
 
   let handleMove = (coords: Geolocation.Navigator.coords) => {
@@ -31,8 +26,42 @@ let make = () => {
   };
 
   let handleCar = (t: API.Car.response) => {
-    Js.log(t.route.routes);
+    let {waypoints}: API.Car.routeRoot = t.route;
+
     setRoutes(_ => [t.route.routes]);
+
+    let first = waypoints->Belt.Array.get(0);
+    let last = waypoints->Belt.Array.get(Belt.Array.length(waypoints) - 1);
+
+    let arrayToLatLon = arr => {
+      switch (arr->Belt.Array.get(0), arr->Belt.Array.get(1)) {
+      | (Some(lat), Some(lon)) => (lat, lon)
+      | (_, _) => (0.0, 0.0)
+      };
+    };
+
+    let (longitude, latitude) =
+      switch (first, last) {
+      | (Some(f), Some(l)) =>
+        GeoCenter.make([|
+          f.location->arrayToLatLon,
+          l.location->arrayToLatLon,
+        |])
+      | (Some(f), None) => f.location->arrayToLatLon
+      | (None, Some(l)) => l.location->arrayToLatLon
+      | (None, None) => (0.0, 0.0)
+      };
+
+    setViewState(_ =>
+      DeckGL.viewState(
+        ~longitude,
+        ~latitude,
+        ~zoom=16,
+        ~transitionDuration=2000,
+        ~transitionInterpolator=Interpolator.FlyTo.make(),
+        (),
+      )
+    );
   };
 
   <>

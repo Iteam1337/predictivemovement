@@ -12,7 +12,7 @@ module Travel = {
     Repromise.(
       Belt.Result.(
         Fetch.fetchWithInit(
-          Route.fromType(route),
+          Route.make(route),
           Fetch.RequestInit.make(
             ~method_,
             ~body=Fetch.BodyInit.make(Js.Json.stringify(body)),
@@ -32,22 +32,38 @@ module Travel = {
 module Car = {
   open Json.Decode;
 
-  type geometry = {coordinates: array(array(float))};
+  type geometry = {
+    coordinates: array(array(float)),
+    _type: string,
+  };
 
   type route = {geometry};
 
-  type routeRoot = {routes: array(route)};
+  type waypoint = {location: array(float)};
+
+  type routeRoot = {
+    routes: array(route),
+    waypoints: array(waypoint),
+  };
 
   type response = {route: routeRoot};
 
   let geometry = json => {
     coordinates:
       json |> field("coordinates", array(array(Json.Decode.float))),
+    _type: json |> field("type", string),
   };
 
   let route = json => {geometry: json |> field("geometry", geometry)};
 
-  let routeRoot = json => {routes: json |> field("routes", array(route))};
+  let waypoint = json => {
+    location: json |> field("location", array(Json.Decode.float)),
+  };
+
+  let routeRoot = json => {
+    routes: json |> field("routes", array(route)),
+    waypoints: json |> field("waypoints", array(waypoint)),
+  };
 
   let fromJson = json => {route: json |> field("route", routeRoot)};
 };

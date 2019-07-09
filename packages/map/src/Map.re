@@ -99,8 +99,27 @@ module GeoJsonLayer = {
   external createLayer: layer('a) => t = "GeoJsonLayer";
 
   let make =
-      (~data, ~getLineColor=[|74, 85, 104, 175|], ~lineWidthMinPixels=2, ()) =>
-    createLayer(layer(~getLineColor, ~lineWidthMinPixels, ~data));
+      (
+        ~data: array(API.Car.route),
+        ~getLineColor=[|74, 85, 104, 175|],
+        ~lineWidthMinPixels=2,
+        (),
+      ) =>
+    createLayer(
+      layer(
+        ~getLineColor,
+        ~lineWidthMinPixels,
+        ~data=
+          data->Belt.Array.map(d =>
+            {
+              "geometry": {
+                "coordinates": d.geometry.coordinates,
+                "type": d.geometry._type,
+              },
+            }
+          ),
+      ),
+    );
 };
 
 module TripsLayer = {

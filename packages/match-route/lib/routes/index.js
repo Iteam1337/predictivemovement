@@ -73,8 +73,9 @@ module.exports = app => {
           stops: bestMatch.stops,
           duration: bestMatch.duration,
         })
-      } catch (e) {
-        console.log(e)
+      } catch (error) {
+        console.error(error)
+        res.sendStatus(500)
       }
     }
   )

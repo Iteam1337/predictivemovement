@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "dev": "nodemon",
-    "lint": "eslint 'lib/**/*.js'"
+    "lint": "eslint 'lib/**/*.js'",
+    "style": "prettier --check 'lib/**/*.js'",
+    "styling": "npm run lint -- --fix && npm run style -- --write"
   },
   "keywords": [],
   "author": "",

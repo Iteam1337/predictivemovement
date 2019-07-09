@@ -70,7 +70,7 @@ module.exports = app => {
       res
     ) => {
       try {
-        const defaultRoute = await this.route({
+        const defaultRoute = await osrm.route({
           startPosition,
           endPosition,
         })

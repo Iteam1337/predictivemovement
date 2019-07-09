@@ -7,63 +7,6 @@ module Interpolator = {
   };
 };
 
-module Light = {
-  module Ambient = {
-    type t;
-
-    [@bs.deriving abstract]
-    type options = {
-      color: array(int),
-      intensity: float,
-    };
-
-    [@bs.new] [@bs.module "@deck.gl/core"]
-    external create: options => t = "AmbientLight";
-
-    let make = (~color, ~intensity) => create(options(~color, ~intensity));
-  };
-
-  module Point = {
-    type t;
-
-    [@bs.deriving abstract]
-    type options = {
-      color: array(int),
-      intensity: float,
-      position: array(float),
-    };
-
-    [@bs.new] [@bs.module "@deck.gl/core"]
-    external create: options => t = "PointLight";
-
-    let make = (~color, ~intensity, ~position) =>
-      create(options(~color, ~intensity, ~position));
-  };
-
-  module LightingEffect = {
-    type t;
-
-    [@bs.deriving abstract]
-    type options = {
-      ambientLight: Ambient.t,
-      pointLight: Point.t,
-    };
-
-    [@bs.new] [@bs.module "@deck.gl/core"]
-    external create: options => t = "LightingEffect";
-
-    let make = (~ambientLight, ~pointLight) =>
-      create(options(~ambientLight, ~pointLight));
-  };
-};
-
-module InteractiveMap = {
-  [@bs.module "react-map-gl"] [@react.component]
-  external make:
-    (~children: React.element, ~mapboxApiAccessToken: string) => React.element =
-    "default";
-};
-
 module StaticMap = {
   [@bs.module "react-map-gl"] [@react.component]
   external make:
@@ -91,7 +34,7 @@ module GeoJsonLayer = {
   [@bs.deriving abstract]
   type layer('a) = {
     getLineColor: array(int),
-    lineWidthMinPixels: int,
+    lineWidthMinPixels: float,
     data: array(Js.t('a)),
   };
 
@@ -101,8 +44,8 @@ module GeoJsonLayer = {
   let make =
       (
         ~data: array(API.Car.route),
-        ~getLineColor=[|74, 85, 104, 175|],
-        ~lineWidthMinPixels=2,
+        ~getLineColor=[|49, 130, 206, 255|],
+        ~lineWidthMinPixels=2.5,
         (),
       ) =>
     createLayer(
@@ -118,41 +61,6 @@ module GeoJsonLayer = {
               },
             }
           ),
-      ),
-    );
-};
-
-module TripsLayer = {
-  type t;
-
-  [@bs.deriving abstract]
-  type layer('a) = {
-    id: string,
-    trailLength: int,
-    getColor: array(int),
-    widthMinPixels: int,
-    opacity: float,
-    rounded: bool,
-    data: string,
-    getPath: Js.t('a) => array('a),
-    currentTime: float,
-  };
-
-  [@bs.new] [@bs.module "@deck.gl/geo-layers"]
-  external createLayer: layer('a) => t = "TripsLayer";
-
-  let make = (~id, ~data, ~currentTime) =>
-    createLayer(
-      layer(
-        ~id,
-        ~getColor=[|253, 128, 93|],
-        ~getPath=d => d##segments,
-        ~trailLength=50,
-        ~widthMinPixels=2,
-        ~data,
-        ~rounded=true,
-        ~currentTime,
-        ~opacity=0.3,
       ),
     );
 };
@@ -174,7 +82,6 @@ module DeckGL = {
   [@bs.module "deck.gl"] [@react.component]
   external make:
     (
-      ~effects: option(array(Light.LightingEffect.t)),
       ~controller: bool,
       ~layers: array(GeoJsonLayer.t),
       ~children: React.element,

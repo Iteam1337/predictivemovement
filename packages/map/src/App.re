@@ -60,7 +60,6 @@ let make = () => {
     <Geolocation handleMove />
     <DeckGL
       controller=true
-      effects=None
       onViewStateChange={vp => setViewState(_ => vp##viewState)}
       viewState
       layers={

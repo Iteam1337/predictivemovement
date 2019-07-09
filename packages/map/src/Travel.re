@@ -53,62 +53,66 @@ let make = () => {
   let (formData, setFormData) = React.useState(_ => initialState);
 
   let postDirections = data => {
-    switch (formData.traveller) {
-    | Person =>
-      Js.Promise.(
-        API.Travel.make(
-          ~route=`Person,
-          ~method_=Post,
-          ~body=
-            Json.Encode.(
-              object_([
-                (
-                  "position",
+    Belt.Result.(
+      switch (data[0], data[1]) {
+      | (Ok(start), Ok(destination)) =>
+        switch (formData.traveller) {
+        | Person =>
+          Js.Promise.(
+            API.Travel.make(
+              ~route=`Person,
+              ~method_=Post,
+              ~body=
+                Json.Encode.(
                   object_([
-                    ("start", GoogleGeocode.toJson(data[0])),
-                    ("end", GoogleGeocode.toJson(data[1])),
-                  ]),
+                    (
+                      "position",
+                      object_([
+                        ("start", GoogleGeocode.toJson(start)),
+                        ("end", GoogleGeocode.toJson(destination)),
+                      ]),
+                    ),
+                  ])
                 ),
-              ])
-            ),
-        )
-        |> then_(data => Js.log(data) |> resolve)
-        |> ignore
-      )
-    | Car =>
-      Js.Promise.(
-        API.Travel.make(
-          ~route=`Car,
-          ~method_=Post,
-          ~body=
-            Json.Encode.(
-              object_([
-                (
-                  "position",
+            )
+            |> then_(data => Js.log(data) |> resolve)
+            |> ignore
+          )
+        | Car =>
+          Js.Promise.(
+            API.Travel.make(
+              ~route=`Car,
+              ~method_=Post,
+              ~body=
+                Json.Encode.(
                   object_([
-                    ("start", GoogleGeocode.toJson(data[0])),
-                    ("end", GoogleGeocode.toJson(data[1])),
-                  ]),
+                    (
+                      "position",
+                      object_([
+                        ("start", GoogleGeocode.toJson(start)),
+                        ("end", GoogleGeocode.toJson(destination)),
+                      ]),
+                    ),
+                  ])
                 ),
-              ])
-            ),
-        )
-        |> then_(data => Js.log(data) |> resolve)
-        |> ignore
-      )
-    };
+            )
+            |> then_(data => Js.log(data) |> resolve)
+            |> ignore
+          )
+        }
+      | _ => Js.log("Error while getting coordinates")
+      }
+    );
   };
 
   let getCoordinates = callback => {
     Js.Promise.(
       [|formData.from, formData.destination|]
-      |> Array.map(address =>
-           Fetch.fetch(GoogleGeocode.getCoordinates(address))
-           |> then_(Fetch.Response.json)
-           |> then_(data =>
-                resolve(data |> GoogleGeocode.fromArray |> (d => d[0]))
-              )
-         )
+      ->Belt.Array.map(address =>
+          Fetch.fetch(GoogleGeocode.getCoordinates(address))
+          |> then_(Fetch.Response.json)
+          |> then_(data => GoogleGeocode.fromArray(data) |> resolve)
+        )
       |> all
       |> then_(data => callback(data) |> resolve)
       |> ignore

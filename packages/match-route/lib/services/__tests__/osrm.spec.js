@@ -123,5 +123,26 @@ describe('osrm', () => {
       )
     })
   })
-
+  describe('convertPairsIntoIdentifiers', () => {
+    it('converts a list', () => {
+      const result = osrm.convertPairsIntoIdentifiedPoints([
+        [10, 20],
+        [30, 40],
+        [5, 15]
+      ])
+      expect(result).toEqual([{
+        a1: 10
+      }, {
+        a2: 20
+      }, {
+        b1: 30
+      }, {
+        b2: 40
+      }, {
+        c1: 5
+      }, {
+        c2: 15
+      }])
+    })
+  })
 })

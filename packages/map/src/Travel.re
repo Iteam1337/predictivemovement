@@ -62,8 +62,13 @@ let make = () => {
           ~body=
             Json.Encode.(
               object_([
-                ("from", GoogleGeocode.toJson(data[0])),
-                ("to", GoogleGeocode.toJson(data[1])),
+                (
+                  "position",
+                  object_([
+                    ("start", GoogleGeocode.toJson(data[0])),
+                    ("end", GoogleGeocode.toJson(data[1])),
+                  ]),
+                ),
               ])
             ),
         )
@@ -78,8 +83,13 @@ let make = () => {
           ~body=
             Json.Encode.(
               object_([
-                ("from", GoogleGeocode.toJson(data[0])),
-                ("to", GoogleGeocode.toJson(data[1])),
+                (
+                  "position",
+                  object_([
+                    ("start", GoogleGeocode.toJson(data[0])),
+                    ("end", GoogleGeocode.toJson(data[1])),
+                  ]),
+                ),
               ])
             ),
         )

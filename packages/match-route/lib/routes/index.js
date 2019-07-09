@@ -3,10 +3,11 @@ const uuid = require('uuid/v4')
 const osrm = require('../services/osrm')
 
 const persons = []
+const routes = {}
 
 module.exports = app => {
   app.post(
-    '/person',
+    '/pickup',
     ({
         body: {
           passengers = 1,
@@ -38,7 +39,7 @@ module.exports = app => {
   )
 
   app.post(
-    '/car',
+    '/route',
     async ({
         body: {
           emptySeats = 4,
@@ -66,7 +67,7 @@ module.exports = app => {
             startPosition,
             endPosition,
             extras: persons,
-            emptySeats
+            emptySeats,
           })) || {}
 
         console.log({
@@ -79,11 +80,20 @@ module.exports = app => {
           endPosition,
         })
 
-        res.send({
+        const id = uuid()
+
+        const result = {
           route: defaultRoute,
           distance: bestMatch.distance,
           stops: bestMatch.stops,
           duration: bestMatch.duration,
+        }
+
+        routes[id] = result
+
+        res.send({
+          id,
+          ...result
         })
       } catch (error) {
         console.error(error)
@@ -91,4 +101,18 @@ module.exports = app => {
       }
     }
   )
+
+  app.get('/route/:id', ({
+    params: {
+      id
+    }
+  }, res) => {
+    const route = routes[id]
+
+    if (!route) {
+      return res.sendStatus(400)
+    }
+
+    res.send(route)
+  })
 }

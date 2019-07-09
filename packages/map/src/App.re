@@ -2,6 +2,7 @@ open Map;
 
 [@react.component]
 let make = () => {
+  let (routes, setRoutes) = React.useState(() => []);
   let (markers, setMarkers) = React.useState(() => []);
 
   let (viewState, setViewState) =
@@ -29,11 +30,16 @@ let make = () => {
     );
   };
 
+  let handleCar = (t: API.Car.response) => {
+    Js.log(t.route.routes);
+    setRoutes(_ => [t.route.routes]);
+  };
+
   <>
     <div
       className="bg-white shadow-md absolute p-4 rounded z-10 w-96"
       style={ReactDOMRe.Style.make(~left="16px", ~top="16px", ())}>
-      <Travel />
+      <Travel onCar=handleCar />
     </div>
     <Geolocation handleMove />
     <DeckGL
@@ -41,7 +47,11 @@ let make = () => {
       effects=None
       onViewStateChange={vp => setViewState(_ => vp##viewState)}
       viewState
-      layers=[||]>
+      layers={
+        routes
+        ->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()))
+        ->Belt.List.toArray
+      }>
       <StaticMap
         reuseMaps=true
         preventStyleDiffing=true

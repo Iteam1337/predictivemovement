@@ -1,6 +1,6 @@
 module Text = {
   [@react.component]
-  let make = (~className=?, ~placeholder, ~onChange) => {
+  let make = (~value, ~className=?, ~placeholder, ~onChange) => {
     <input
       className={Cn.make([
         "block rounded border py-2 px-3 w-full text-gray-700
@@ -10,6 +10,7 @@ module Text = {
       type_="text"
       placeholder
       onChange
+      value
     />;
   };
 };

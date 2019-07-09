@@ -3,6 +3,7 @@ type traveller =
   | Person;
 
 type t = {
+  date: string,
   from: string,
   destination: string,
   traveller,
@@ -10,7 +11,7 @@ type t = {
 
 module Form = {
   [@react.component]
-  let make = (~handleFormInput, ~handleCheckboxInput, ~handleSubmit) => {
+  let make = (~state, ~handleFormInput, ~handleCheckboxInput, ~handleSubmit) => {
     let (checked, setChecked) = React.useState(_ => false);
 
     let handleCheckbox = _ => {
@@ -22,10 +23,19 @@ module Form = {
 
     <form onSubmit=handleSubmit>
       <Input.Text
+        placeholder="Datum"
+        onChange={event =>
+          handleFormInput(`Date, ReactEvent.Form.target(event)##value)
+        }
+        value={state.date}
+      />
+      <Input.Text
+        className="mt-2"
         placeholder="Startpunkt"
         onChange={event =>
           handleFormInput(`From, ReactEvent.Form.target(event)##value)
         }
+        value={state.from}
       />
       <Input.Text
         className="mt-2"
@@ -33,6 +43,7 @@ module Form = {
           handleFormInput(`Destination, ReactEvent.Form.target(event)##value)
         }
         placeholder="Destination"
+        value={state.destination}
       />
       <div className="mt-2">
         <Input.Checkbox checked label="Jag har bil" onChange=handleCheckbox />
@@ -47,10 +58,36 @@ module Form = {
 };
 
 [@react.component]
-let make = () => {
-  let initialState = {from: "", destination: "", traveller: Person};
+let make = (~onCar) => {
+  let initialState = {
+    date: Js.Date.make() |> Js.Date.toISOString,
+    from: "",
+    destination: "",
+    traveller: Person,
+  };
 
   let (formData, setFormData) = React.useState(_ => initialState);
+
+  let makeBody = (start, destination) => {
+    Json.Encode.(
+      object_([
+        (
+          "start",
+          object_([
+            ("date", string(formData.date)),
+            ("position", GoogleGeocode.toJson(start)),
+          ]),
+        ),
+        (
+          "end",
+          object_([
+            ("date", string(formData.date)),
+            ("position", GoogleGeocode.toJson(destination)),
+          ]),
+        ),
+      ])
+    );
+  };
 
   let postDirections = data => {
     Belt.Result.(
@@ -62,18 +99,7 @@ let make = () => {
             API.Travel.make(
               ~route=`Person,
               ~method_=Post,
-              ~body=
-                Json.Encode.(
-                  object_([
-                    (
-                      "position",
-                      object_([
-                        ("start", GoogleGeocode.toJson(start)),
-                        ("end", GoogleGeocode.toJson(destination)),
-                      ]),
-                    ),
-                  ])
-                ),
+              ~body=makeBody(start, destination),
             )
             |> then_(data => Js.log(data) |> resolve)
             |> ignore
@@ -83,20 +109,12 @@ let make = () => {
             API.Travel.make(
               ~route=`Car,
               ~method_=Post,
-              ~body=
-                Json.Encode.(
-                  object_([
-                    (
-                      "position",
-                      object_([
-                        ("start", GoogleGeocode.toJson(start)),
-                        ("end", GoogleGeocode.toJson(destination)),
-                      ]),
-                    ),
-                  ])
-                ),
+              ~body=makeBody(start, destination),
             )
-            |> then_(data => Js.log(data) |> resolve)
+            |> then_(data => {
+                 onCar(data |> API.Car.fromJson);
+                 resolve();
+               })
             |> ignore
           )
         }
@@ -127,6 +145,7 @@ let make = () => {
 
   let handleFormInput = (identifier, value) => {
     switch (identifier) {
+    | `Date => setFormData(fd => {...fd, date: value})
     | `From => setFormData(fd => {...fd, from: value})
     | `Destination => setFormData(fd => {...fd, destination: value})
     };
@@ -136,6 +155,11 @@ let make = () => {
     setFormData(fd => {...fd, traveller: value ? Car : Person});
 
   <div>
-    <Form handleFormInput handleCheckboxInput handleSubmit=handleFormSubmit />
+    <Form
+      handleFormInput
+      handleCheckboxInput
+      handleSubmit=handleFormSubmit
+      state=formData
+    />
   </div>;
 };

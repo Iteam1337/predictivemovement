@@ -26,6 +26,8 @@ module.exports = app => {
         endPosition,
       })
 
+      console.log(JSON.stringify(persons, null, 2))
+
       res.sendStatus(200)
     }
   )

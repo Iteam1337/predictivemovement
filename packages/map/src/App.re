@@ -19,7 +19,12 @@ let make = () => {
     );
 
   <>
-    <Travel />
+    <div
+      className="bg-white shadow-md absolute p-4 rounded z-10 w-96"
+      style={ReactDOMRe.Style.make(~left="12px", ~top="12px", ())}>
+      <Geolocation />
+      <Travel />
+    </div>
     <DeckGL
       controller=true
       effects=None

@@ -8,16 +8,36 @@ const routes = {}
 module.exports = app => {
   app.post(
     '/pickup',
-    (
-      {
+    ({
         body: {
           passengers = 1,
-          start: { date: startDate, position: startPosition },
-          end: { date: endDate, position: endPosition },
+          start: {
+            date: startDate,
+            position: startPosition
+          },
+          end: {
+            date: endDate,
+            position: endPosition
+          },
         },
       },
       res
     ) => {
+      // Object.entries(routes).map(([id, value]) => {
+      //   const stopsCopy = value.stops.slice()
+      //   const startPosition = stopsCopy.splice(0, 1)
+      //   const endPosition = stopsCopy.splice(value.stops.length - 1, 1)
+      //   stopsCopy.push()
+      //   // extras = [{id, startPosition, endPosition}]
+      //   const permutations = osrm.getPermutationsWithoutIds(stopsCopy)
+      //   osrm.bestMatch({
+      //     startPosition,
+      //     endPosition,
+      //     permutations,
+      //     maxTime: value.maxTime
+      //   })
+      //   console.log(value.stops)
+      // })
       persons.push({
         id: uuid(),
         passengers,
@@ -33,34 +53,42 @@ module.exports = app => {
 
   app.post(
     '/route',
-    async (
-      {
+    async ({
         body: {
+          maximumAddedTimePercent = 50,
           emptySeats = 4,
-          start: { date: startDate, position: startPosition },
-          end: { date: endDate, position: endPosition },
+          start: {
+            date: startDate,
+            position: startPosition
+          },
+          end: {
+            date: endDate,
+            position: endPosition
+          },
         },
       },
       res
     ) => {
       try {
-        const defaultRoute =
-          (await osrm.route({
-            startPosition,
-            endPosition,
-            extras: [],
-          })) || {}
+        const defaultRoute = await this.route({
+          startPosition,
+          endPosition,
+        })
+        const toHours = duration => duration / 60 / 60
+
+        const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
+        const maxTime = defaultRouteDuration + defaultRouteDuration * (maximumAddedTimePercent / 100)
+        const permutations = osrm.getPermutations(persons, emptySeats)
 
         const bestMatch =
           (await osrm.bestMatch({
             startPosition,
             endPosition,
-            extras: persons,
-            emptySeats,
+            permutations,
+            maxTime
           })) || {}
 
         console.log({
-          defaultRoute,
           bestMatch,
           emptySeats,
           startDate,
@@ -72,6 +100,7 @@ module.exports = app => {
         const id = uuid()
 
         const result = {
+          maxTime,
           route: bestMatch.defaultRoute,
           distance: bestMatch.distance,
           stops: bestMatch.stops,
@@ -91,7 +120,11 @@ module.exports = app => {
     }
   )
 
-  app.get('/route/:id', ({ params: { id } }, res) => {
+  app.get('/route/:id', ({
+    params: {
+      id
+    }
+  }, res) => {
     const route = routes[id]
 
     if (!route) {
@@ -101,4 +134,3 @@ module.exports = app => {
     res.send(route)
   })
 }
-

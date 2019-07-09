@@ -1,12 +1,17 @@
 const osrm = require('../adapters/osrm')
 
-const latLon = ({ lat, lon }) => `${lon},${lat}`
+const latLon = ({
+  lat,
+  lon
+}) => `${lon},${lat}`
 
 const toHours = duration => duration / 60 / 60
 
 module.exports = {
   async nearest (position) {
-    const { data } = await osrm.get(`/nearest/v1/driving/${latLon(position)}`)
+    const {
+      data
+    } = await osrm.get(`/nearest/v1/driving/${latLon(position)}`)
 
     return data
   },
@@ -14,45 +19,42 @@ module.exports = {
   async bestMatch ({
     startPosition,
     endPosition,
-    extras = [],
-    maximumAddedTimePercent = 100,
-    emptySeats,
+    permutations = [],
+    maxTime,
   }) {
-    const defaultRoute = await this.route({
-      startPosition,
-      endPosition,
-    })
-    const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
-    const maxExtraTime = defaultRouteDuration * (maximumAddedTimePercent / 100)
-
-    const permutations = this.getPermutations(extras, emptySeats)
-
     return (await Promise.all(
-      permutations.map(async ({ coords }) => {
-        const data = await this.route({
-          startPosition,
-          endPosition,
-          extras: coords,
+        permutations.map(async ({
+          coords
+        }) => {
+          const data = await this.route({
+            startPosition,
+            endPosition,
+            extras: coords,
+          })
+
+          const {
+            routes: [{
+              duration: routeDuration,
+              distance,
+              geometry
+            }],
+          } = data
+
+          const duration = toHours(routeDuration)
+          return {
+            defaultRoute: data,
+            geometry,
+            duration,
+            stops: [startPosition, ...coords, endPosition],
+            distance,
+            coords,
+          }
         })
-
-        const {
-          routes: [{ duration: routeDuration, distance, geometry }],
-        } = data
-
-        const duration = toHours(routeDuration)
-        return {
-          defaultRoute: data,
-          geometry,
-          duration,
-          diff: duration - defaultRouteDuration,
-          stops: [startPosition, ...coords, endPosition],
-          distance,
-          coords,
-        }
-      })
-    ))
+      ))
       .sort((a, b) => (a.diff < b.diff ? 1 : b.diff < a.diff ? -1 : 0))
-      .filter(({ diff }) => diff < maxExtraTime)
+      .filter(({
+        duration
+      }) => duration < maxTime)
       .pop()
   },
 
@@ -69,29 +71,45 @@ module.exports = {
   convertPairsIntoIdentifiedPoints (pairs) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
     const translations = pairs.reduce(
-      (res, { id }, i) => ({
+      (res, {
+        id
+      }, i) => ({
         ...res,
         [alphabet[i]]: id,
-      }),
-      {}
+      }), {}
     )
     return [
-      pairs.reduce((res, { startPosition, endPosition }, i) => {
+      pairs.reduce((res, {
+        startPosition,
+        endPosition
+      }, i) => {
         const identifier = alphabet[i]
 
-        res.push(
-          {
-            [identifier + '1']: startPosition,
-          },
-          {
-            [identifier + '2']: endPosition,
-          }
-        )
+        res.push({
+          [identifier + '1']: startPosition,
+        }, {
+          [identifier + '2']: endPosition,
+        })
 
         return res
       }, []),
       translations,
     ]
+  },
+
+
+  getPermutationsWithoutIds (input, start, stop) {
+    const result = []
+    for (let i = 0; i <= input.length; i++) {
+      for (let j = i + 1; j <= input.length + 1; j++) {
+        const copy = input.slice()
+        copy.splice(i, 0, start)
+        copy.splice(j, 0, stop)
+        result.push(copy)
+      }
+    }
+
+    return result
   },
 
   getPermutations (input, _permutationLength) {
@@ -130,7 +148,11 @@ module.exports = {
     }, [])
   },
 
-  async route ({ startPosition, endPosition, extras = [] }) {
+  async route ({
+    startPosition,
+    endPosition,
+    extras = []
+  }) {
     const destinations = [startPosition, ...extras, endPosition]
       .filter(x => x)
       .map(latLon)
@@ -138,7 +160,9 @@ module.exports = {
 
     const url = `/route/v1/driving/${destinations}?geometries=geojson&overview=full`
 
-    const { data } = await osrm.get(url)
+    const {
+      data
+    } = await osrm.get(url)
 
     return data
   },

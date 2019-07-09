@@ -91,31 +91,34 @@ let make = (~onCar) => {
 
   let postDirections = data => {
     Belt.Result.(
-      switch (data[0], data[1]) {
+      switch (Belt.List.getExn(data, 0), Belt.List.getExn(data, 1)) {
       | (Ok(start), Ok(destination)) =>
         switch (formData.traveller) {
         | Person =>
-          Js.Promise.(
+          Repromise.(
             API.Travel.make(
               ~route=`Person,
               ~method_=Post,
               ~body=makeBody(start, destination),
             )
-            |> then_(data => Js.log(data) |> resolve)
-            |> ignore
+            |> wait(
+                 fun
+                 | Ok(data) => Js.log2("Success", data)
+                 | Error(e) => Js.log2("Error", e),
+               )
           )
         | Car =>
-          Js.Promise.(
+          Repromise.(
             API.Travel.make(
               ~route=`Car,
               ~method_=Post,
               ~body=makeBody(start, destination),
             )
-            |> then_(data => {
-                 onCar(data |> API.Car.fromJson);
-                 resolve();
-               })
-            |> ignore
+            |> wait(
+                 fun
+                 | Ok(data) => onCar(data |> API.Car.fromJson)
+                 | Error(e) => Js.log2("Error", e),
+               )
           )
         }
       | _ => Js.log("Error while getting coordinates")
@@ -124,17 +127,14 @@ let make = (~onCar) => {
   };
 
   let getCoordinates = callback => {
-    Js.Promise.(
-      [|formData.from, formData.destination|]
-      ->Belt.Array.map(address =>
-          Fetch.fetch(GoogleGeocode.getCoordinates(address))
-          |> then_(Fetch.Response.json)
-          |> then_(data => GoogleGeocode.fromArray(data) |> resolve)
-        )
-      |> all
-      |> then_(data => callback(data) |> resolve)
-      |> ignore
-    );
+    [formData.from, formData.destination]
+    ->Belt.List.map(address =>
+        Refetch.fetch(GoogleGeocode.getCoordinates(address))
+        |> Repromise.andThen(Refetch.json)
+        |> Repromise.map(GoogleGeocode.fromArray)
+      )
+    |> Repromise.all
+    |> Repromise.wait(callback);
   };
 
   let handleFormSubmit = event => {

@@ -9,18 +9,23 @@ module Travel = {
   };
 
   let make = (~route, ~method_, ~body) =>
-    Js.Promise.(
-      Fetch.fetchWithInit(
-        Route.make(route),
-        Fetch.RequestInit.make(
-          ~method_,
-          ~body=Fetch.BodyInit.make(Js.Json.stringify(body)),
-          ~headers=
-            Fetch.HeadersInit.make({"Content-Type": "application/json"}),
-          (),
-        ),
+    Repromise.(
+      Belt.Result.(
+        Fetch.fetchWithInit(
+          Route.fromType(route),
+          Fetch.RequestInit.make(
+            ~method_,
+            ~body=Fetch.BodyInit.make(Js.Json.stringify(body)),
+            ~headers=
+              Fetch.HeadersInit.make({"Content-Type": "application/json"}),
+            (),
+          ),
+        )
+        |> Js.Promise.then_(Fetch.Response.json)
+        |> Rejectable.fromJsPromise
+        |> Rejectable.map(value => Ok(value))
+        |> Rejectable.catch(error => Error(error)->resolved)
       )
-      |> then_(Fetch.Response.json)
     );
 };
 

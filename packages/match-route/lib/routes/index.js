@@ -7,12 +7,17 @@ const persons = []
 module.exports = app => {
   app.post(
     '/person',
-    (
-      {
+    ({
         body: {
           passengers = 1,
-          start: { date: startDate, position: startPosition },
-          end: { date: endDate, position: endPosition },
+          start: {
+            date: startDate,
+            position: startPosition
+          },
+          end: {
+            date: endDate,
+            position: endPosition
+          },
         },
       },
       res
@@ -32,12 +37,17 @@ module.exports = app => {
 
   app.post(
     '/car',
-    async (
-      {
+    async ({
         body: {
           emptySeats = 4,
-          start: { date: startDate, position: startPosition },
-          end: { date: endDate, position: endPosition },
+          start: {
+            date: startDate,
+            position: startPosition
+          },
+          end: {
+            date: endDate,
+            position: endPosition
+          },
         },
       },
       res

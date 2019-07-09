@@ -19,13 +19,15 @@ module.exports = {
   async bestMatch ({
     startPosition,
     endPosition,
-    extras = []
+    extras = [],
+    maximumAddedTimePercent = 0
   }) {
     const defaultRoute = await this.route({
       startPosition,
       endPosition
     })
     const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
+    const maxExtraTime = defaultRouteDuration * (maximumAddedTimePercent / 100)
 
     return (await Promise.all(
         extras.map(async extra => {
@@ -43,7 +45,6 @@ module.exports = {
           } = data
 
           const duration = toHours(routeDuration)
-
           return {
             duration,
             diff: duration - defaultRouteDuration,
@@ -61,7 +62,7 @@ module.exports = {
       .sort((a, b) => (a.diff < b.diff ? 1 : b.diff < a.diff ? -1 : 0))
       .filter(({
         diff
-      }) => diff < defaultRouteDuration / 5)
+      }) => diff < maxExtraTime)
       .pop()
   },
 

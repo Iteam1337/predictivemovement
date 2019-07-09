@@ -91,16 +91,32 @@ module.exports = {
   },
 
   isStartCoordinate (coordinate) {
-    return coordinate.endsWith("1")
+    const [key] = Object.keys(coordinate)
+    return key.endsWith("1")
   },
 
   correspondingStartCoordIsInPermutation (element, list) {
-    const identifier = element[0]
-    return list.includes(identifier + "1")
+    const [key] = Object.keys(element)
+    return list.some(e => Object.keys(e)[0] === key[0] + "1")
+  },
+
+  convertPairsIntoIdentifiedPoints (pairs) {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
+    return pairs.reduce((res, [startPosition, endPosition], i) => {
+      const identifier = alphabet[i]
+      res.push({
+        [identifier + "1"]: startPosition
+      }, {
+        [identifier + "2"]: endPosition
+      })
+
+      return res
+    }, [])
   },
 
   getPermutations (input) {
       const result = []
+      const listOfPoints = this.convertPairsIntoIdentifiedPoints(input)
 
       const permute = (arr, permutation = []) => {
         if (arr.length === 0) {
@@ -115,10 +131,9 @@ module.exports = {
           }
         }
       }
+      permute(listOfPoints)
 
-      permute(input)
-
-      return result
+      return result.map(permutation => permutation.map(coord => Object.values(coord)[0]))
   },
 
   async route ({ startPosition, endPosition, extras = [] }) {

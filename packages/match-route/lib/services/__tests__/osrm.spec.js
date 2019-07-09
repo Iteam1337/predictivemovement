@@ -116,11 +116,12 @@ describe('osrm', () => {
   })
   describe('findPermutations', () => {
     it('returns a list of all possible permutations', () => {
-      const result = osrm.getPermutations(["b1", "b2", "c1", "c2"])
+      const result = osrm.getPermutations([[10, 20], [5, 15]])
       expect(result).toHaveLength(6)
       expect(result).toEqual(
-        expect.arrayContaining([["b1", "b2", "c1", "c2"], ["b1", "c1", "b2", "c2"], ["b1", "c1", "c2", "b2"], ["c1", "b1", "b2", "c2"], ["c1", "b1", "c2", "b2"], ["c1", "c2", "b1", "b2"]])
+        expect.arrayContaining([[10, 20, 5, 15], [10, 5, 20, 15], [10, 5, 15, 20], [5, 10, 20, 15], [5, 10, 15, 20], [5, 15, 10, 20]])
       )
     })
   })
+
 })

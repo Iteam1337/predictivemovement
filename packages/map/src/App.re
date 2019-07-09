@@ -1,10 +1,3 @@
-type animationFrameID;
-
-[@bs.val]
-external requestAnimationFrame: (unit => unit) => animationFrameID = "";
-
-[@bs.val] external cancelAnimationFrame: animationFrameID => unit = "";
-
 open Map;
 
 let ingaro = [%bs.raw {|require("../../../src/routes/ingaro")|}];

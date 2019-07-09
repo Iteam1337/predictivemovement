@@ -21,32 +21,26 @@ module Form = {
     };
 
     <form onSubmit=handleSubmit>
-      <input
-        placeholder="Ange startpunkt"
+      <Input.Text
+        placeholder="Startpunkt"
         onChange={event =>
           handleFormInput(`From, ReactEvent.Form.target(event)##value)
         }
       />
-      <input
-        className="m-2"
+      <Input.Text
+        className="mt-2"
         onChange={event =>
           handleFormInput(`Destination, ReactEvent.Form.target(event)##value)
         }
-        placeholder="Ange destination"
+        placeholder="Destination"
       />
-      <div>
-        <label className="my-2">
-          "Jag har bil"->React.string
-          <input
-            className="ml-2"
-            onChange=handleCheckbox
-            checked
-            type_="checkbox"
-          />
-        </label>
+      <div className="mt-2">
+        <Input.Checkbox checked label="Jag har bil" onChange=handleCheckbox />
       </div>
-      <div className="my-2">
-        <button type_="submit"> {React.string("Skicka")} </button>
+      <div className="mt-2">
+        <Button.Primary type_="submit">
+          {React.string("Skicka")}
+        </Button.Primary>
       </div>
     </form>;
   };
@@ -128,7 +122,7 @@ let make = () => {
     setFormData(fd => {...fd, traveller: value ? Car : Person});
 
   <div
-    className="bg-white absolute p-4 rounded z-10"
+    className="bg-white shadow-md absolute p-4 rounded z-10 w-96"
     style={ReactDOMRe.Style.make(~left="12px", ~top="12px", ())}>
     <Form handleFormInput handleCheckboxInput handleSubmit=handleFormSubmit />
   </div>;

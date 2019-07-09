@@ -4,5 +4,5 @@
 
 html,
 body {
-  @apply font-normal m-0 p-0;
+  @apply font-normal m-0 p-0 text-gray-700;
 }

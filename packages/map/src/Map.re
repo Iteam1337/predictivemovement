@@ -205,6 +205,14 @@ module GeoCenter = {
 };
 
 /* ANIMATED TRIPS - keep for now */
+
+/*type animationFrameID;*/
+
+/*[@bs.val]*/
+/*external requestAnimationFrame: (unit => unit) => animationFrameID = "";*/
+
+/*[@bs.val] external cancelAnimationFrame: animationFrameID => unit = "";*/
+
 /*let (time, setTime) = React.useState(() => 0.0);*/
 
 /*let animate = () => {*/

@@ -20,7 +20,8 @@ module.exports = {
     startPosition,
     endPosition,
     extras = [],
-    maximumAddedTimePercent = 0
+    maximumAddedTimePercent = 100,
+    emptySeats
   }) {
     const defaultRoute = await this.route({
       startPosition,
@@ -29,12 +30,15 @@ module.exports = {
     const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
     const maxExtraTime = defaultRouteDuration * (maximumAddedTimePercent / 100)
 
+    const permutations = this.getPermutations(extras, emptySeats)
     return (await Promise.all(
-        extras.map(async extra => {
+        permutations.map(async ({
+          coords
+        }) => {
           const data = await this.route({
             startPosition,
             endPosition,
-            extras: [extra],
+            extras: coords,
           })
 
           const {
@@ -48,14 +52,9 @@ module.exports = {
           return {
             duration,
             diff: duration - defaultRouteDuration,
-            stops: [
-              startPosition,
-              extra.startPosition,
-              extra.endPosition,
-              endPosition,
-            ],
+            stops: [startPosition, ...coords, endPosition],
             distance,
-            extra,
+            coords,
           }
         })
       ))
@@ -68,31 +67,39 @@ module.exports = {
 
   isStartCoordinate (coordinate) {
     const [key] = Object.keys(coordinate)
-    return key.endsWith("1")
+    return key.endsWith('1')
   },
 
   correspondingStartCoordIsInPermutation (element, list) {
     const [key] = Object.keys(element)
-    return list.some(e => Object.keys(e)[0] === key[0] + "1")
+    return list.some(e => Object.keys(e)[0] === key[0] + '1')
   },
 
   convertPairsIntoIdentifiedPoints (pairs) {
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
-    return pairs.reduce((res, [startPosition, endPosition], i) => {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    const translations = pairs.map(({
+      id
+    }, i) => ({
+      [alphabet[i]]: id
+    }))
+    return [pairs.reduce((res, {
+      startPosition,
+      endPosition
+    }, i) => {
       const identifier = alphabet[i]
       res.push({
-        [identifier + "1"]: startPosition
+        [identifier + '1']: startPosition
       }, {
-        [identifier + "2"]: endPosition
+        [identifier + '2']: endPosition
       })
 
       return res
-    }, [])
+    }, []), translations]
   },
 
-  getPermutations (input) {
+  getPermutations (input, _permutationLength) {
     const result = []
-    const listOfPoints = this.convertPairsIntoIdentifiedPoints(input)
+    const [listOfPoints, translations] = this.convertPairsIntoIdentifiedPoints(input)
 
     const permute = (arr, permutation = []) => {
       if (arr.length === 0) {
@@ -109,7 +116,13 @@ module.exports = {
     }
     permute(listOfPoints)
 
-    return result.map(permutation => permutation.map(coord => Object.values(coord)[0]))
+    return result.reduce((res, permutation) => {
+      res.push({
+        ids: permutation.map(point => Object.keys(point)[0]).filter(identifier => identifier.endsWith("1")).map(identifier => translations[identifier]),
+        coords: permutation.map(point => Object.values(point)[0])
+      })
+      return res
+    }, [])
   },
 
   async route ({
@@ -119,14 +132,7 @@ module.exports = {
   }) {
     const destinations = [
         startPosition,
-        ...extras.reduce(
-          (array, {
-            startPosition,
-            endPosition
-          }) =>
-          array.concat(startPosition, endPosition),
-          []
-        ),
+        ...extras,
         endPosition,
       ]
       .filter(x => x)

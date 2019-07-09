@@ -62,6 +62,7 @@ module.exports = app => {
           startPosition,
           endPosition,
           extras: persons,
+          emptySeats
         })) || {}
 
       console.log({

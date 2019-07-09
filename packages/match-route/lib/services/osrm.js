@@ -25,12 +25,14 @@ module.exports = {
   }) {
     const defaultRoute = await this.route({
       startPosition,
-      endPosition
+      endPosition,
     })
     const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
     const maxExtraTime = defaultRouteDuration * (maximumAddedTimePercent / 100)
 
     const permutations = this.getPermutations(extras, emptySeats)
+
+
     return (await Promise.all(
         permutations.map(async ({
           coords
@@ -77,20 +79,21 @@ module.exports = {
 
   convertPairsIntoIdentifiedPoints (pairs) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'
-    const translations = pairs.map(({
+    const translations = pairs.reduce((res, {
       id
     }, i) => ({
+      ...res,
       [alphabet[i]]: id
-    }))
+    }), {})
     return [pairs.reduce((res, {
       startPosition,
       endPosition
     }, i) => {
       const identifier = alphabet[i]
       res.push({
-        [identifier + '1']: startPosition
+        [identifier + '1']: startPosition,
       }, {
-        [identifier + '2']: endPosition
+        [identifier + '2']: endPosition,
       })
 
       return res
@@ -108,7 +111,10 @@ module.exports = {
         for (let i = 0; i < arr.length; i++) {
           const arrayCopy = arr.slice()
           const next = arrayCopy.splice(i, 1).pop()
-          if (this.isStartCoordinate(next) || this.correspondingStartCoordIsInPermutation(next, permutation)) {
+          if (
+            this.isStartCoordinate(next) ||
+            this.correspondingStartCoordIsInPermutation(next, permutation)
+          ) {
             permute(arrayCopy, permutation.concat([next]))
           }
         }
@@ -118,7 +124,7 @@ module.exports = {
 
     return result.reduce((res, permutation) => {
       res.push({
-        ids: permutation.map(point => Object.keys(point)[0]).filter(identifier => identifier.endsWith("1")).map(identifier => translations[identifier]),
+        ids: permutation.map(point => Object.keys(point)[0]).filter(identifier => identifier.endsWith("1")).map(identifier => translations[identifier[0]]),
         coords: permutation.map(point => Object.values(point)[0])
       })
       return res
@@ -139,7 +145,7 @@ module.exports = {
       .map(latLon)
       .join(';')
 
-    const url = `/route/v1/driving/${destinations}`
+    const url = `/route/v1/driving/${destinations}?geometries=geojson`
 
     const {
       data

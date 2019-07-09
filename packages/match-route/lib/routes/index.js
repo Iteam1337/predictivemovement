@@ -31,6 +31,8 @@ module.exports = app => {
         endPosition,
       })
 
+      console.log(JSON.stringify(persons, null, 2))
+
       res.sendStatus(200)
     }
   )
@@ -52,34 +54,41 @@ module.exports = app => {
       },
       res
     ) => {
-      const defaultRoute = await osrm.route({
-        startPosition,
-        endPosition,
-      })
-
-      const bestMatch =
-        (await osrm.bestMatch({
+      try {
+        const defaultRoute = await osrm.route({
           startPosition,
           endPosition,
-          extras: persons,
-          emptySeats
-        })) || {}
+          extras: [],
+        }) || {}
 
-      console.log({
-        defaultRoute,
-        bestMatch,
-        emptySeats,
-        startDate,
-        startPosition,
-        endDate,
-        endPosition,
-      })
+        const bestMatch =
+          (await osrm.bestMatch({
+            startPosition,
+            endPosition,
+            extras: persons,
+            emptySeats
+          })) || {}
 
-      res.send({
-        distance: bestMatch.distance,
-        stops: bestMatch.stops,
-        duration: bestMatch.duration,
-      })
+        console.log({
+          defaultRoute,
+          bestMatch,
+          emptySeats,
+          startDate,
+          startPosition,
+          endDate,
+          endPosition,
+        })
+
+        res.send({
+          route: defaultRoute,
+          distance: bestMatch.distance,
+          stops: bestMatch.stops,
+          duration: bestMatch.duration,
+        })
+      } catch (error) {
+        console.error(error)
+        res.sendStatus(500)
+      }
     }
   )
 }

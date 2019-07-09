@@ -15,6 +15,7 @@
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": [
+    "@aantron/repromise",
     "@glennsl/bs-json",
     "bs-decode",
     "bs-fetch",

@@ -54,14 +54,10 @@ let make = () => {
   };
 
   let geoJsonLayers =
-    routes
-    ->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()))
-    ->Belt.List.toArray;
+    routes->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()));
 
   let iconLayers =
-    stops
-    ->Belt.List.map(stop => IconLayer.make(~data=stop, ()))
-    ->Belt.List.toArray;
+    stops->Belt.List.map(stop => IconLayer.make(~data=stop, ()));
 
   <>
     <div
@@ -73,7 +69,9 @@ let make = () => {
       controller=true
       onViewStateChange={vp => setViewState(_ => vp##viewState)}
       viewState
-      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
+      layers={
+        [|geoJsonLayers, iconLayers|]->Belt.List.concatMany->Belt.List.toArray
+      }>
       <StaticMap
         reuseMaps=true
         preventStyleDiffing=true

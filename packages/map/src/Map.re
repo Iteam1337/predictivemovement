@@ -98,7 +98,7 @@ module GeoJsonLayer = {
       (
         ~data: array(API.Car.route),
         ~filled=true,
-        ~getLineColor=[|49, 130, 206, 255|],
+        ~getLineColor=[|99, 179, 237, 255|],
         ~getFillColor=[|160, 160, 180, 200|],
         ~getRadius=100,
         ~lineWidthMinPixels=2.5,

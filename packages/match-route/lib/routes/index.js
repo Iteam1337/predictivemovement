@@ -8,46 +8,63 @@ const routes = {}
 module.exports = app => {
   app.post(
     '/pickup',
-    ({
+    async ({
         body: {
           passengers = 1,
           start: {
             date: startDate,
-            position: startPosition
+            position: passengerStartPosition
           },
           end: {
             date: endDate,
-            position: endPosition
+            position: passengerEndPosition
           },
         },
       },
       res
     ) => {
-      // Object.entries(routes).map(([id, value]) => {
-      //   const stopsCopy = value.stops.slice()
-      //   const startPosition = stopsCopy.splice(0, 1)
-      //   const endPosition = stopsCopy.splice(value.stops.length - 1, 1)
-      //   stopsCopy.push()
-      //   // extras = [{id, startPosition, endPosition}]
-      //   const permutations = osrm.getPermutationsWithoutIds(stopsCopy)
-      //   osrm.bestMatch({
-      //     startPosition,
-      //     endPosition,
-      //     permutations,
-      //     maxTime: value.maxTime
-      //   })
-      //   console.log(value.stops)
-      // })
-      persons.push({
-        id: uuid(),
-        passengers,
-        startDate,
-        startPosition,
-        endDate,
-        endPosition,
-      })
-
-      res.sendStatus(200)
+      const bestMatches = await Promise.all(Object.entries(routes).map(async ([id, value]) => {
+        const stopsCopy = value.stops.slice()
+        const [driverStartPosition] = stopsCopy.splice(0, 1)
+        const [driverEndPosition] = stopsCopy.splice(stopsCopy.length - 1, 1)
+        const permutations = osrm.getPermutationsWithoutIds(stopsCopy, passengerStartPosition, passengerEndPosition)
+        const p = permutations.map(p => ({
+          coords: p
+        }))
+        const match = await osrm.bestMatch({
+          startPosition: driverStartPosition,
+          endPosition: driverEndPosition,
+          permutations: p,
+          maxTime: value.maxTime
+        })
+        return {
+          id,
+          match
+        }
+      })).catch(console.log)
+      if (bestMatches.length) {
+        const {
+          match
+        } = bestMatches.pop()
+        const result = {
+          route: match.defaultRoute,
+          distance: match.distance,
+          stops: match.stops,
+          duration: match.duration,
+        }
+        console.log(routes)
+        res.send(result)
+      } else {
+        persons.push({
+          id: uuid(),
+          passengers,
+          startDate,
+          endDate,
+          startPosition: passengerStartPosition,
+          endPosition: passengerEndPosition,
+        })
+        res.sendStatus(200)
+      }
     }
   )
 
@@ -108,6 +125,7 @@ module.exports = app => {
         }
 
         routes[id] = result
+        console.log(routes)
 
         res.send({
           id,

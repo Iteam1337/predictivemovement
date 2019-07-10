@@ -175,7 +175,7 @@ describe('osrm', () => {
   })
   describe('getPermutationsWithoutIds', () => {
     it('gives permutations', () => {
-      result = osrm.getPermutationsWithoutIds(['B1', 'B2'], 'C1', 'C2')
+      const result = osrm.getPermutationsWithoutIds(['B1', 'B2'], 'C1', 'C2')
       expect(result).toHaveLength(6)
       expect(result).toEqual(expect.arrayContaining([
         ['C1', 'C2', 'B1', 'B2'],

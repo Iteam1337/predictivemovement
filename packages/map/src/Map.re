@@ -48,12 +48,7 @@ module IconLayer = {
   [@bs.new] [@bs.module "deck.gl"]
   external createLayer: layer('a) => Layer.t = "IconLayer";
 
-  let make =
-      (
-        ~data: array(API.Car.Stops.t),
-        ~iconAtlas="https://deck.gl/images/icon-atlas.png",
-        (),
-      ) => {
+  let make = (~data: array(API.Car.Stops.t), ~iconAtlas="icon-atlas.png", ()) => {
     createLayer(
       layer(
         ~iconAtlas,

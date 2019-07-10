@@ -174,6 +174,13 @@ let make = (~onCar) => {
     );
   };
 
+  let handleCalendar = (field, fieldUpdater, value) => {
+    form.change(
+      field,
+      fieldUpdater(form.state, Intl.Date.make(~date=value, ())),
+    );
+  };
+
   let handleCheckbox = (field, fieldUpdater, event) => {
     form.change(
       field,
@@ -182,13 +189,12 @@ let make = (~onCar) => {
   };
 
   <form className="mt-12" onSubmit={form.submit->Formality.Dom.preventDefault}>
-    <Input.Text
+    <Input.Calendar
       error={StartDate->(form.result)}
       id="travel-date-start"
       label="Resans startdatum"
       placeholder="Startdatum"
-      onChange={handleChange(StartDate, TravelForm.StartDateField.update)}
-      value={form.state.startDate}
+      onChange={handleCalendar(StartDate, TravelForm.StartDateField.update)}
     />
     <Input.Text
       className="mt-4"
@@ -201,13 +207,12 @@ let make = (~onCar) => {
       value={form.state.origin}
     />
     <div className="mt-8">
-      <Input.Text
+      <Input.Calendar
         error={EndDate->(form.result)}
         id="travel-date-end"
         label="Resans slutdatum"
         placeholder="Slutdatum"
-        onChange={handleChange(EndDate, TravelForm.EndDateField.update)}
-        value={form.state.endDate}
+        onChange={handleCalendar(EndDate, TravelForm.EndDateField.update)}
       />
       <Input.Text
         className="mt-4"

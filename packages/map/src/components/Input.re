@@ -9,17 +9,25 @@ module Style = {
 };
 
 module Text = {
+  let invokeIfSet = (~callback, data) =>
+    switch (callback) {
+    | Some(cb) => cb(data)
+    | None => ()
+    };
+
   [@react.component]
   let make =
       (
-        ~error: option(Belt.Result.t(Formality.ok, string)),
-        ~value,
         ~className=?,
-        ~placeholder,
-        ~onChange,
+        ~error: option(Belt.Result.t(Formality.ok, string)),
+        ~icon=`Calendar,
         ~id,
         ~label,
-        ~icon=`Calendar,
+        ~onChange=?,
+        ~onFocus=?,
+        ~placeholder,
+        ~readOnly=false,
+        ~value,
       ) => {
     <div className={className->Cn.unpack}>
       <label className="font-bold text-sm mb-2 block" htmlFor=id>
@@ -34,9 +42,11 @@ module Text = {
         <input
           className=Style.input
           id
-          type_="text"
+          onChange={invokeIfSet(~callback=onChange)}
+          onFocus={invokeIfSet(~callback=onFocus)}
           placeholder
-          onChange
+          readOnly
+          type_="text"
           value
         />
       </div>
@@ -60,5 +70,74 @@ module Checkbox = {
       <input className="mr-2" onChange checked type_="checkbox" />
       label->React.string
     </label>;
+  };
+};
+
+module Calendar = {
+  type calendarState = [ | `CalendarOpen | `CalendarClosed];
+
+  type state = {
+    date: string,
+    calendarState,
+  };
+
+  type action =
+    | DisplayCalendar(calendarState)
+    | SetDate(Js.Date.t);
+
+  module ReactCalendar = {
+    [@bs.module "react-calendar"] [@react.component]
+    external make:
+      (~onChange: Js.Date.t => unit, ~value: Js.Date.t) => React.element =
+      "default";
+  };
+
+  [@react.component]
+  let make = (~onChange, ~error, ~id, ~label, ~placeholder) => {
+    let (state, dispatch) =
+      React.useReducer(
+        (state, action) =>
+          switch (action) {
+          | DisplayCalendar(calendarState) => {...state, calendarState}
+          | SetDate(date) => {
+              calendarState: `CalendarClosed,
+              date: Intl.Date.make(~date, ()),
+            }
+          },
+        {date: Intl.Date.make(), calendarState: `CalendarClosed},
+      );
+
+    <div className="relative">
+      <Text
+        id
+        placeholder
+        value={state.date}
+        icon=`Calendar
+        readOnly=true
+        error
+        label
+        onFocus={_ => dispatch(DisplayCalendar(`CalendarOpen))}
+      />
+      {switch (state.calendarState) {
+       | `CalendarClosed => React.null
+       | `CalendarOpen =>
+         <>
+           <div
+             className="fixed inset-0 z-10"
+             onClick={_ => dispatch(DisplayCalendar(`CalendarClosed))}
+           />
+           <div
+             className="absolute bottom-10 border-transparent left-0 right-0 mb-4 rounded shadow z-20">
+             <ReactCalendar
+               onChange={date => {
+                 onChange(date);
+                 dispatch(SetDate(date));
+               }}
+               value={state.date |> Js.Date.fromString}
+             />
+           </div>
+         </>
+       }}
+    </div>;
   };
 };

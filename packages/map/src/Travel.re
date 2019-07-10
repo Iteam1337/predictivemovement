@@ -281,10 +281,13 @@ let make = (~onCar) => {
        </Alert.Error>
      | _ => React.null
      }}
-    <div className="mt-8">
+    <div className="mt-8 mb-4">
       <Button.Primary type_="submit">
         {React.string("Skicka")}
       </Button.Primary>
     </div>
+    <Button.Secondary onClick={_ => form.reset()}>
+      {j|Återställ formulär|j}->React.string
+    </Button.Secondary>
   </form>;
 };

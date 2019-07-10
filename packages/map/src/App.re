@@ -5,6 +5,8 @@ let make = () => {
   let (routes, setRoutes) = React.useState(() => []);
   let (stops, setStops) = React.useState(() => []);
   let (myLocation, setMyLocation) = React.useState(() => None);
+  let (tooltip, setTooltip) =
+    React.useState(_ => Map.IconLayer.{x: 0, y: 0, _object: None});
 
   let (viewState, setViewState) =
     React.useState(() =>
@@ -57,7 +59,13 @@ let make = () => {
     routes->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()));
 
   let iconLayers =
-    stops->Belt.List.map(stop => IconLayer.make(~data=stop, ()));
+    stops->Belt.List.map(stop =>
+      IconLayer.make(
+        ~data=stop,
+        ~onHover=d => setTooltip(_ => Map.IconLayer.hoverInfoFromJs(d)),
+        (),
+      )
+    );
 
   <Geolocation.Provider value={myLocation: myLocation}>
     <Navigation handleCar />
@@ -73,11 +81,14 @@ let make = () => {
         reuseMaps=true
         preventStyleDiffing=true
         mapboxApiAccessToken=Config.mapboxToken>
-        {switch (myLocation) {
-         | None => React.null
-         | Some({longitude, latitude}) =>
-           <Geolocation.Marker longitude latitude />
-         }}
+        <>
+          {switch (myLocation) {
+           | None => React.null
+           | Some({longitude, latitude}) =>
+             <Geolocation.Marker longitude latitude />
+           }}
+          <Tooltip tooltip />
+        </>
       </StaticMap>
     </DeckGL>
   </Geolocation.Provider>;

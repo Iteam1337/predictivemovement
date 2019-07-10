@@ -32,9 +32,9 @@ let fromArray = json => {
       | Ok(d) =>
         switch (d->Belt.Array.get(0)) {
         | Some(position) => Ok(position)
-        | None => Error("No results from GoogleGeocode")
+        | None => Error(`ZeroResults)
         }
-      | Error(_e) => Error("Could not decode Google Geocode-array")
+      | Error(_e) => Error(`GoogleError)
     )
   );
 };

@@ -4,7 +4,7 @@ open Map;
 let make = () => {
   let (routes, setRoutes) = React.useState(() => []);
   let (stops, setStops) = React.useState(() => []);
-  let (markers, setMarkers) = React.useState(() => []);
+  let (myLocation, setMyLocation) = React.useState(() => None);
 
   let (viewState, setViewState) =
     React.useState(() =>
@@ -12,7 +12,7 @@ let make = () => {
     );
 
   let handleMove = (coords: Geolocation.Navigator.coords) => {
-    setMarkers(_ => [coords]);
+    setMyLocation(_ => Some(coords));
 
     setViewState(_ =>
       DeckGL.viewState(
@@ -59,7 +59,7 @@ let make = () => {
   let iconLayers =
     stops->Belt.List.map(stop => IconLayer.make(~data=stop, ()));
 
-  <>
+  <Geolocation.Provider value={myLocation: myLocation}>
     <Navigation handleCar />
     <Geolocation handleMove />
     <DeckGL
@@ -73,17 +73,12 @@ let make = () => {
         reuseMaps=true
         preventStyleDiffing=true
         mapboxApiAccessToken=Config.mapboxToken>
-        {markers
-         ->Belt.List.mapWithIndex((i, marker) =>
-             <Geolocation.Marker
-               longitude={marker.longitude}
-               latitude={marker.latitude}
-               key={i->string_of_int}
-             />
-           )
-         ->Belt.List.toArray
-         ->React.array}
+        {switch (myLocation) {
+         | None => React.null
+         | Some({longitude, latitude}) =>
+           <Geolocation.Marker longitude latitude />
+         }}
       </StaticMap>
     </DeckGL>
-  </>;
+  </Geolocation.Provider>;
 };

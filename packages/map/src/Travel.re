@@ -84,6 +84,8 @@ module TravelFormHook = Formality.Make(TravelForm);
 
 [@react.component]
 let make = (~onCar) => {
+  let geolocation = React.useContext(Geolocation.context);
+
   let form =
     TravelFormHook.useForm(
       ~initialState={
@@ -138,9 +140,26 @@ let make = (~onCar) => {
 
         let callback = data => {
           Belt.Result.(
-            switch (Belt.List.getExn(data, 0), Belt.List.getExn(data, 1)) {
-            | (Ok(start), Ok(destination)) =>
+            switch (
+              geolocation.myLocation,
+              Belt.List.getExn(data, 0),
+              Belt.List.getExn(data, 1),
+            ) {
+            | (Some(_), Ok(start), Ok(destination))
+            | (None, Ok(start), Ok(destination)) =>
               makeBody(start, destination)
+              |> (
+                switch (state.traveller) {
+                | Person => postPerson
+                | Car => postCar
+                }
+              )
+            | (
+                Some({latitude, longitude}),
+                Error(`ZeroResults),
+                Ok(destination),
+              ) =>
+              makeBody(GoogleGeocode.make(latitude, longitude), destination)
               |> (
                 switch (state.traveller) {
                 | Person => postPerson
@@ -166,6 +185,22 @@ let make = (~onCar) => {
         form.notifyOnSuccess(None);
       },
     );
+
+  React.useEffect1(
+    () => {
+      switch (geolocation.myLocation) {
+      | None => ()
+      | Some(_) =>
+        form.change(
+          Origin,
+          TravelForm.OriginField.update(form.state, "Min position"),
+        )
+      };
+
+      None;
+    },
+    [|geolocation.myLocation|],
+  );
 
   let handleChange = (field, fieldUpdater, event) => {
     form.change(

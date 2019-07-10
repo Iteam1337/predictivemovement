@@ -42,6 +42,7 @@ module IconLayer = {
 
   [@bs.deriving abstract]
   type layer('a, 'b) = {
+    id: string,
     data: array(API.Car.Stops.t),
     iconAtlas: string,
     iconMapping: Js.t('a),
@@ -65,10 +66,12 @@ module IconLayer = {
         ~sizeScale=8,
         ~pickable=true,
         ~onHover,
+        ~id,
         (),
       ) => {
     createLayer(
       layer(
+        ~id,
         ~iconAtlas="icon-atlas.png",
         ~iconMapping={
           "marker": {

@@ -95,12 +95,20 @@ let make = () => {
 
   let iconLayers =
     carResponse.stops
-    ->Belt.Array.map(stop =>
+    ->Belt.Array.mapWithIndex((i, stop) =>
         IconLayer.make(
           ~data=[|stop|],
           ~onHover=
             hoverInfo =>
               dispatch(Tooltip(Map.IconLayer.hoverInfoFromJs(hoverInfo))),
+          ~id={
+            Js.Float.(
+              String.concat(
+                "-",
+                [toString(stop.lat), toString(stop.lon), string_of_int(i)],
+              )
+            );
+          },
           (),
         )
       );

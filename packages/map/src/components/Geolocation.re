@@ -40,15 +40,57 @@ module Navigator = {
 
 [@react.component]
 let make = (~handleMove) => {
+  let (isActive, setIsActive) = React.useState(() => false);
+
   let handleClick = _ => {
     Navigator.getCurrentPosition(((_, coords)) => handleMove(coords));
+    setIsActive(_ => true);
   };
 
   <button
-    className="absolute shadow bg-white w-12 h-12 p-3 z-10 rounded"
+    className={Cn.make([
+      "absolute shadow bg-white w-12 h-12 p-3 z-10 rounded",
+      "text-blue-400"->Cn.ifTrue(isActive),
+    ])}
     onClick=handleClick
     type_="button"
     style={ReactDOMRe.Style.make(~right="16px", ~bottom="16px", ())}>
     <Icon name=`LocationCurrent />
   </button>;
+};
+
+module Marker = {
+  [@react.component]
+  let make = (~longitude, ~latitude) => {
+    let shadow = `rgba((43, 108, 176, 100.0));
+    let x = `zero;
+    let y = `zero;
+
+    let initialShadow = Css.(boxShadow(~x, ~y, ~blur=`px(8), shadow));
+
+    let pulse =
+      Css.(
+        keyframes([
+          (0, [initialShadow]),
+          (50, [boxShadow(~x, ~y, ~blur=`px(16), shadow)]),
+          (100, [initialShadow]),
+        ])
+      );
+
+    let className =
+      Css.(
+        merge([
+          "rounded-full bg-blue-400 w-5 h-5 border-white",
+          style([
+            animationName(pulse),
+            animationDuration(2000),
+            animationIterationCount(`infinite),
+            borderWidth(`px(3)),
+            initialShadow,
+          ]),
+        ])
+      );
+
+    <Map.Marker longitude latitude> <div className /> </Map.Marker>;
+  };
 };

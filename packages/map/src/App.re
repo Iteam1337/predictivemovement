@@ -78,15 +78,11 @@ let make = () => {
         mapboxApiAccessToken=Config.mapboxToken>
         {markers
          ->Belt.List.mapWithIndex((i, marker) =>
-             <Marker
+             <Geolocation.Marker
                longitude={marker.longitude}
                latitude={marker.latitude}
-               key={i->string_of_int}>
-               <div
-                 className="rounded-full bg-blue-600 w-3 h-3 border-2
-               border-white"
-               />
-             </Marker>
+               key={i->string_of_int}
+             />
            )
          ->Belt.List.toArray
          ->React.array}

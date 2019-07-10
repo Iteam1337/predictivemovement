@@ -270,6 +270,17 @@ let make = (~onCar) => {
         onChange={handleCheckbox(Traveller, TravelForm.TravellerField.update)}
       />
     </div>
+    {switch (form.status, form.state.traveller) {
+     | (Submitted, Person) =>
+       <Alert.Success className="mt-8" title="Resa registrerad">
+         {j|Din resa är registrerad|j}->React.string
+       </Alert.Success>
+     | (SubmissionFailed(_), _) =>
+       <Alert.Error className="mt-8" title="Registrering misslyckades">
+         {j|Någonting gick fel vid registrering|j}->React.string
+       </Alert.Error>
+     | _ => React.null
+     }}
     <div className="mt-8">
       <Button.Primary type_="submit">
         {React.string("Skicka")}

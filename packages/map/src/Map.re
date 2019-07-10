@@ -33,8 +33,16 @@ module Layer = {
 };
 
 module IconLayer = {
+  [@bs.deriving jsConverter]
+  type hoverInfo = {
+    x: int,
+    y: int,
+    _object: option(API.Car.Stops.t),
+  };
+
   [@bs.deriving abstract]
-  type layer('a) = {
+  type layer('a, 'b) = {
+    id: string,
     data: array(API.Car.Stops.t),
     iconAtlas: string,
     iconMapping: Js.t('a),
@@ -42,21 +50,29 @@ module IconLayer = {
     getPosition: API.Car.Stops.t => array(float),
     getSize: API.Car.Stops.t => int,
     getColor: API.Car.Stops.t => array(int),
+    onHover: Js.t('b) => unit,
+    pickable: bool,
     sizeScale: int,
   };
 
   [@bs.new] [@bs.module "deck.gl"]
-  external createLayer: layer('a) => Layer.t = "IconLayer";
+  external createLayer: layer('a, 'b) => Layer.t = "IconLayer";
 
   let make =
       (
         ~data: array(API.Car.Stops.t),
-        ~iconAtlas="https://deck.gl/images/icon-atlas.png",
+        ~getSize=_d => 5,
+        ~getColor=_d => [|236, 137, 54, 255|],
+        ~sizeScale=8,
+        ~pickable=true,
+        ~onHover,
+        ~id,
         (),
       ) => {
     createLayer(
       layer(
-        ~iconAtlas,
+        ~id,
+        ~iconAtlas="icon-atlas.png",
         ~iconMapping={
           "marker": {
             "x": 0,
@@ -68,9 +84,11 @@ module IconLayer = {
         },
         ~getIcon=_d => "marker",
         ~getPosition=d => [|d.lon, d.lat|],
-        ~getSize=_d => 5,
-        ~getColor=_d => [|236, 137, 54, 255|],
-        ~sizeScale=8,
+        ~getSize,
+        ~getColor,
+        ~pickable,
+        ~sizeScale,
+        ~onHover,
         ~data,
       ),
     );
@@ -229,6 +247,7 @@ module Viewport = {
   [@bs.deriving abstract]
   type fitOptions = {
     padding: int,
+    [@bs.optional]
     offset: array(int),
   };
 
@@ -244,7 +263,7 @@ module Viewport = {
 
   let make = coords => {
     create(createOptions(~height=innerHeight, ~width=innerWidth - 384))
-    ->fit(coords, fitOptions(~padding=100, ~offset=[|200, 0|]))
+    ->fit(coords, fitOptions(~padding=100, ()))
     ->viewportFromJs;
   };
 };

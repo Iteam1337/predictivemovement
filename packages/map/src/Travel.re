@@ -84,6 +84,8 @@ module TravelFormHook = Formality.Make(TravelForm);
 
 [@react.component]
 let make = (~onCar) => {
+  let geolocation = React.useContext(Geolocation.context);
+
   let form =
     TravelFormHook.useForm(
       ~initialState={
@@ -138,9 +140,26 @@ let make = (~onCar) => {
 
         let callback = data => {
           Belt.Result.(
-            switch (Belt.List.getExn(data, 0), Belt.List.getExn(data, 1)) {
-            | (Ok(start), Ok(destination)) =>
+            switch (
+              geolocation.myLocation,
+              Belt.List.getExn(data, 0),
+              Belt.List.getExn(data, 1),
+            ) {
+            | (Some(_), Ok(start), Ok(destination))
+            | (None, Ok(start), Ok(destination)) =>
               makeBody(start, destination)
+              |> (
+                switch (state.traveller) {
+                | Person => postPerson
+                | Car => postCar
+                }
+              )
+            | (
+                Some({latitude, longitude}),
+                Error(`ZeroResults),
+                Ok(destination),
+              ) =>
+              makeBody(GoogleGeocode.make(latitude, longitude), destination)
               |> (
                 switch (state.traveller) {
                 | Person => postPerson
@@ -167,6 +186,22 @@ let make = (~onCar) => {
       },
     );
 
+  React.useEffect1(
+    () => {
+      switch (geolocation.myLocation) {
+      | None => ()
+      | Some(_) =>
+        form.change(
+          Origin,
+          TravelForm.OriginField.update(form.state, "Min position"),
+        )
+      };
+
+      None;
+    },
+    [|geolocation.myLocation|],
+  );
+
   let handleChange = (field, fieldUpdater, event) => {
     form.change(
       field,
@@ -188,7 +223,7 @@ let make = (~onCar) => {
     );
   };
 
-  <form className="mt-12" onSubmit={form.submit->Formality.Dom.preventDefault}>
+  <form onSubmit={form.submit->Formality.Dom.preventDefault}>
     <Input.Calendar
       error={StartDate->(form.result)}
       id="travel-date-start"
@@ -235,10 +270,24 @@ let make = (~onCar) => {
         onChange={handleCheckbox(Traveller, TravelForm.TravellerField.update)}
       />
     </div>
-    <div className="mt-8">
+    {switch (form.status, form.state.traveller) {
+     | (Submitted, Person) =>
+       <Alert.Success className="mt-8" title="Resa registrerad">
+         {j|Din resa är registrerad|j}->React.string
+       </Alert.Success>
+     | (SubmissionFailed(_), _) =>
+       <Alert.Error className="mt-8" title="Registrering misslyckades">
+         {j|Någonting gick fel vid registrering|j}->React.string
+       </Alert.Error>
+     | _ => React.null
+     }}
+    <div className="mt-8 mb-4">
       <Button.Primary type_="submit">
         {React.string("Skicka")}
       </Button.Primary>
     </div>
+    <Button.Secondary onClick={_ => form.reset()}>
+      {j|Återställ formulär|j}->React.string
+    </Button.Secondary>
   </form>;
 };

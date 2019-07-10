@@ -54,14 +54,10 @@ let make = () => {
   };
 
   let geoJsonLayers =
-    routes
-    ->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()))
-    ->Belt.List.toArray;
+    routes->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()));
 
   let iconLayers =
-    stops
-    ->Belt.List.map(stop => IconLayer.make(~data=stop, ()))
-    ->Belt.List.toArray;
+    stops->Belt.List.map(stop => IconLayer.make(~data=stop, ()));
 
   <>
     <div
@@ -73,22 +69,20 @@ let make = () => {
       controller=true
       onViewStateChange={vp => setViewState(_ => vp##viewState)}
       viewState
-      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
+      layers={
+        [|geoJsonLayers, iconLayers|]->Belt.List.concatMany->Belt.List.toArray
+      }>
       <StaticMap
         reuseMaps=true
         preventStyleDiffing=true
         mapboxApiAccessToken=Config.mapboxToken>
         {markers
          ->Belt.List.mapWithIndex((i, marker) =>
-             <Marker
+             <Geolocation.Marker
                longitude={marker.longitude}
                latitude={marker.latitude}
-               key={i->string_of_int}>
-               <div
-                 className="rounded-full bg-blue-600 w-3 h-3 border-2
-               border-white"
-               />
-             </Marker>
+               key={i->string_of_int}
+             />
            )
          ->Belt.List.toArray
          ->React.array}

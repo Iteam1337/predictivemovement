@@ -1,38 +1,70 @@
 open Map;
 
+type state = {
+  carResponse: API.Car.response,
+  myLocation: option(Geolocation.Navigator.coords),
+  tooltip: Map.IconLayer.hoverInfo,
+  viewState: Map.DeckGL.viewState,
+};
+
+type action =
+  | CarResponse(API.Car.response)
+  | Location(Geolocation.Navigator.coords)
+  | Tooltip(Map.IconLayer.hoverInfo)
+  | ViewState(Map.DeckGL.viewState);
+
+let initialState: state = {
+  carResponse: {
+    route: {
+      waypoints: [||],
+      routes: [||],
+    },
+    stops: [||],
+  },
+  myLocation: None,
+  tooltip: {
+    x: 0,
+    y: 0,
+    _object: None,
+  },
+  viewState:
+    DeckGL.viewState(~longitude=18.068581, ~latitude=59.329323, ~zoom=8, ()),
+};
+
 [@react.component]
 let make = () => {
-  let (routes, setRoutes) = React.useState(() => []);
-  let (stops, setStops) = React.useState(() => []);
-  let (myLocation, setMyLocation) = React.useState(() => None);
-  let (tooltip, setTooltip) =
-    React.useState(_ => Map.IconLayer.{x: 0, y: 0, _object: None});
-
-  let (viewState, setViewState) =
-    React.useState(() =>
-      DeckGL.viewState(~longitude=18.068581, ~latitude=59.329323, ~zoom=8, ())
+  let ({carResponse, myLocation, viewState, tooltip}, dispatch) =
+    React.useReducer(
+      (state, action) =>
+        switch (action) {
+        | CarResponse(carResponse) => {...state, carResponse}
+        | Location(location) => {...state, myLocation: Some(location)}
+        | Tooltip(tooltip) => {...state, tooltip}
+        | ViewState(viewState) => {...state, viewState}
+        },
+      initialState,
     );
 
   let handleMove = (coords: Geolocation.Navigator.coords) => {
-    setMyLocation(_ => Some(coords));
-
-    setViewState(_ =>
-      DeckGL.viewState(
-        ~longitude=coords.longitude,
-        ~latitude=coords.latitude,
-        ~zoom=16,
-        ~transitionDuration=2000,
-        ~transitionInterpolator=Interpolator.FlyTo.make(),
-        (),
-      )
+    dispatch(Location(coords));
+    dispatch(
+      ViewState(
+        DeckGL.viewState(
+          ~longitude=coords.longitude,
+          ~latitude=coords.latitude,
+          ~zoom=16,
+          ~transitionDuration=2000,
+          ~transitionInterpolator=Interpolator.FlyTo.make(),
+          (),
+        ),
+      ),
     );
   };
 
   let handleCar = (t: API.Car.response) => {
-    let {API.Car.route: {waypoints}, stops} = t;
+    let {API.Car.route: {waypoints}} = t;
 
-    setRoutes(_ => [t.route.routes]);
-    setStops(_ => [stops]);
+    dispatch(CarResponse(t));
 
     let viewport =
       Belt.Array.(
@@ -43,40 +75,44 @@ let make = () => {
       )
       |> Viewport.make;
 
-    setViewState(_ =>
-      DeckGL.viewState(
-        ~longitude=viewport.longitude,
-        ~latitude=viewport.latitude,
-        ~zoom=viewport.zoom,
-        ~transitionDuration=2000,
-        ~transitionInterpolator=Interpolator.FlyTo.make(),
-        (),
-      )
+    dispatch(
+      ViewState(
+        DeckGL.viewState(
+          ~longitude=viewport.longitude,
+          ~latitude=viewport.latitude,
+          ~zoom=viewport.zoom,
+          ~transitionDuration=2000,
+          ~transitionInterpolator=Interpolator.FlyTo.make(),
+          (),
+        ),
+      ),
     );
   };
 
   let geoJsonLayers =
-    routes->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()));
+    carResponse.route.routes
+    ->Belt.Array.map(route => GeoJsonLayer.make(~data=[|route|], ()));
 
   let iconLayers =
-    stops->Belt.List.map(stop =>
-      IconLayer.make(
-        ~data=stop,
-        ~onHover=d => setTooltip(_ => Map.IconLayer.hoverInfoFromJs(d)),
-        (),
-      )
-    );
+    carResponse.stops
+    ->Belt.Array.map(stop =>
+        IconLayer.make(
+          ~data=[|stop|],
+          ~onHover=
+            hoverInfo =>
+              dispatch(Tooltip(Map.IconLayer.hoverInfoFromJs(hoverInfo))),
+          (),
+        )
+      );
 
   <Geolocation.Provider value={myLocation: myLocation}>
     <Navigation handleCar />
     <Geolocation handleMove />
     <DeckGL
       controller=true
-      onViewStateChange={vp => setViewState(_ => vp##viewState)}
+      onViewStateChange={vp => dispatch(ViewState(vp##viewState))}
       viewState
-      layers={
-        [|geoJsonLayers, iconLayers|]->Belt.List.concatMany->Belt.List.toArray
-      }>
+      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
       <StaticMap
         reuseMaps=true
         preventStyleDiffing=true

@@ -24,7 +24,8 @@ module.exports = {
   }) {
     return (await Promise.all(
         permutations.map(async ({
-          coords
+          coords,
+          ids
         }) => {
           const data = await this.route({
             startPosition,
@@ -48,6 +49,7 @@ module.exports = {
             stops: [startPosition, ...coords, endPosition],
             distance,
             coords,
+            ids
           }
         })
       ))

@@ -3,6 +3,7 @@ open Map;
 [@react.component]
 let make = () => {
   let (routes, setRoutes) = React.useState(() => []);
+  let (stops, setStops) = React.useState(() => []);
   let (markers, setMarkers) = React.useState(() => []);
 
   let (viewState, setViewState) =
@@ -26,9 +27,10 @@ let make = () => {
   };
 
   let handleCar = (t: API.Car.response) => {
-    let {waypoints}: API.Car.routeRoot = t.route;
+    let {API.Car.route: {waypoints}, stops} = t;
 
     setRoutes(_ => [t.route.routes]);
+    setStops(_ => [stops]);
 
     let viewport =
       Belt.Array.(
@@ -51,6 +53,16 @@ let make = () => {
     );
   };
 
+  let geoJsonLayers =
+    routes
+    ->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()))
+    ->Belt.List.toArray;
+
+  let iconLayers =
+    stops
+    ->Belt.List.map(stop => IconLayer.make(~data=stop, ()))
+    ->Belt.List.toArray;
+
   <>
     <div
       className="bg-white shadow-md absolute p-4 rounded z-10 w-96"
@@ -62,11 +74,7 @@ let make = () => {
       controller=true
       onViewStateChange={vp => setViewState(_ => vp##viewState)}
       viewState
-      layers={
-        routes
-        ->Belt.List.map(route => GeoJsonLayer.make(~data=route, ()))
-        ->Belt.List.toArray
-      }>
+      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
       <StaticMap
         reuseMaps=true
         preventStyleDiffing=true

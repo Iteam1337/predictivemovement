@@ -28,30 +28,95 @@ module Marker = {
     "Marker";
 };
 
-module GeoJsonLayer = {
+module Layer = {
   type t;
+};
 
+module IconLayer = {
   [@bs.deriving abstract]
   type layer('a) = {
-    getLineColor: array(int),
-    lineWidthMinPixels: float,
-    data: array(Js.t('a)),
+    data: array(API.Car.Stops.t),
+    iconAtlas: string,
+    iconMapping: Js.t('a),
+    getIcon: API.Car.Stops.t => string,
+    getPosition: API.Car.Stops.t => array(float),
+    getSize: API.Car.Stops.t => int,
+    getColor: API.Car.Stops.t => array(int),
+    sizeScale: int,
   };
 
   [@bs.new] [@bs.module "deck.gl"]
-  external createLayer: layer('a) => t = "GeoJsonLayer";
+  external createLayer: layer('a) => Layer.t = "IconLayer";
+
+  let make =
+      (
+        ~data: array(API.Car.Stops.t),
+        ~iconAtlas="https://deck.gl/images/icon-atlas.png",
+        (),
+      ) => {
+    createLayer(
+      layer(
+        ~iconAtlas,
+        ~iconMapping={
+          "marker": {
+            "x": 0,
+            "y": 0,
+            "width": 128,
+            "height": 128,
+            "mask": true,
+          },
+        },
+        ~getIcon=_d => "marker",
+        ~getPosition=d => [|d.lon, d.lat|],
+        ~getSize=_d => 5,
+        ~getColor=_d => [|236, 137, 54, 255|],
+        ~sizeScale=8,
+        ~data,
+      ),
+    );
+  };
+};
+
+module GeoJsonLayer = {
+  [@bs.deriving abstract]
+  type layer('a) = {
+    data: array(Js.t('a)),
+    filled: bool,
+    getLineColor: array(int),
+    getFillColor: array(int),
+    getRadius: int,
+    lineWidthMinPixels: float,
+    lineJointRounded: bool,
+    pointRadiusScale: int,
+    pointRadiusMaxPixelspointRadiusMaxPixels: int,
+  };
+
+  [@bs.new] [@bs.module "deck.gl"]
+  external createLayer: layer('a) => Layer.t = "GeoJsonLayer";
 
   let make =
       (
         ~data: array(API.Car.route),
+        ~filled=true,
         ~getLineColor=[|49, 130, 206, 255|],
+        ~getFillColor=[|160, 160, 180, 200|],
+        ~getRadius=100,
         ~lineWidthMinPixels=2.5,
+        ~lineJointRounded=true,
+        ~pointRadiusScale=1,
+        ~pointRadiusMaxPixelspointRadiusMaxPixels=48,
         (),
       ) =>
     createLayer(
       layer(
+        ~filled,
         ~getLineColor,
+        ~getFillColor,
+        ~getRadius,
         ~lineWidthMinPixels,
+        ~lineJointRounded,
+        ~pointRadiusScale,
+        ~pointRadiusMaxPixelspointRadiusMaxPixels,
         ~data=
           data->Belt.Array.map(d =>
             {
@@ -83,7 +148,7 @@ module DeckGL = {
   external make:
     (
       ~controller: bool,
-      ~layers: array(GeoJsonLayer.t),
+      ~layers: array(Layer.t),
       ~children: React.element,
       ~viewState: viewState,
       ~onViewStateChange: Js.t('a) => unit

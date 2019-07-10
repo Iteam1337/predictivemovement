@@ -32,6 +32,20 @@ module Travel = {
 module Car = {
   open Json.Decode;
 
+  module Stops = {
+    type t = {
+      lat: float,
+      lon: float,
+    };
+
+    let make = (lat, lon) => {lat, lon};
+
+    let fromJson = json => {
+      lat: json |> field("lat", Json.Decode.float),
+      lon: json |> field("lon", Json.Decode.float),
+    };
+  };
+
   type geometry = {
     coordinates: array(array(float)),
     _type: string,
@@ -46,7 +60,10 @@ module Car = {
     waypoints: array(waypoint),
   };
 
-  type response = {route: routeRoot};
+  type response = {
+    route: routeRoot,
+    stops: array(Stops.t),
+  };
 
   let geometry = json => {
     coordinates:
@@ -65,5 +82,8 @@ module Car = {
     waypoints: json |> field("waypoints", array(waypoint)),
   };
 
-  let fromJson = json => {route: json |> field("route", routeRoot)};
+  let fromJson = json => {
+    route: json |> field("route", routeRoot),
+    stops: json |> field("stops", array(Stops.fromJson)),
+  };
 };

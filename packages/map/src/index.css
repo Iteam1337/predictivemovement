@@ -4,5 +4,12 @@
 
 html,
 body {
-  @apply font-normal m-0 p-0 text-gray-700;
+  @apply font-sans font-normal m-0 p-0 text-gray-700;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Transform */
+
+.translate-y--1\/2 {
+  transform: translateY(-50%);
 }

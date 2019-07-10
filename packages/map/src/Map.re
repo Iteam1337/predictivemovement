@@ -227,7 +227,10 @@ module Viewport = {
   };
 
   [@bs.deriving abstract]
-  type fitOptions = {padding: int};
+  type fitOptions = {
+    padding: int,
+    offset: array(int),
+  };
 
   [@bs.new] [@bs.module "viewport-mercator-project"]
   external create: createOptions => t = "default";
@@ -240,8 +243,8 @@ module Viewport = {
   [@bs.val] [@bs.scope "window"] external innerHeight: int = "innerHeight";
 
   let make = coords => {
-    create(createOptions(~height=innerHeight, ~width=innerWidth))
-    ->fit(coords, fitOptions(~padding=100))
+    create(createOptions(~height=innerHeight, ~width=innerWidth - 384))
+    ->fit(coords, fitOptions(~padding=100, ~offset=[|200, 0|]))
     ->viewportFromJs;
   };
 };

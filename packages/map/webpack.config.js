@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const outputDir = path.join(__dirname, "build/");
 const Dotenv = require("dotenv-webpack");
 
@@ -13,6 +14,13 @@ module.exports = {
   },
   plugins: [
     new Dotenv(),
+    new CopyWebpackPlugin([
+      {
+        from: path.join(__dirname, "./public/icons/*"),
+        to: "",
+        flatten: true
+      }
+    ]),
     new HtmlWebpackPlugin({
       template: "public/index.html"
     })

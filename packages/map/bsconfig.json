@@ -21,7 +21,8 @@
     "bs-fetch",
     "re-classnames",
     "reason-react",
-    "re-formality"
+    "re-formality",
+    "bs-css"
   ],
   "refmt": 3
 }

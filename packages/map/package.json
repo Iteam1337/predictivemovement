@@ -22,6 +22,7 @@
     "@deck.gl/layers": "^7.1.7",
     "@glennsl/bs-json": "^4.0.0",
     "bs-abstract": "^0.17.0",
+    "bs-css": "^9.0.1",
     "bs-decode": "^0.8.0",
     "bs-fetch": "^0.5.0",
     "deck.gl": "^7.1.7",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "autoprefixer": "9.6.0",
     "bs-platform": "5.0.4",
+    "copy-webpack-plugin": "5.0.3",
     "css-loader": "3.0.0",
     "dotenv-webpack": "1.7.0",
     "html-webpack-plugin": "3.2.0",

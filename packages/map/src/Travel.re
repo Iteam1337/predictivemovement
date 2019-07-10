@@ -181,42 +181,56 @@ let make = (~onCar) => {
     );
   };
 
-  <form onSubmit={form.submit->Formality.Dom.preventDefault}>
+  <form className="mt-12" onSubmit={form.submit->Formality.Dom.preventDefault}>
     <Input.Text
       error={StartDate->(form.result)}
+      id="travel-date-start"
+      label="Resans startdatum"
       placeholder="Startdatum"
       onChange={handleChange(StartDate, TravelForm.StartDateField.update)}
       value={form.state.startDate}
     />
     <Input.Text
+      className="mt-4"
       error={Origin->(form.result)}
-      className="mt-2"
+      icon=`Location
+      id="travel-origin"
+      label="Startpunkt"
       placeholder="Startadress"
       onChange={handleChange(Origin, TravelForm.OriginField.update)}
       value={form.state.origin}
     />
-    <Input.Text
-      error={EndDate->(form.result)}
-      className="mt-2"
-      placeholder="Slutdatum"
-      onChange={handleChange(EndDate, TravelForm.EndDateField.update)}
-      value={form.state.endDate}
-    />
-    <Input.Text
-      error={Destination->(form.result)}
-      className="mt-2"
-      placeholder="Slutadress"
-      onChange={handleChange(Destination, TravelForm.DestinationField.update)}
-      value={form.state.destination}
-    />
-    <div className="mt-2">
+    <div className="mt-8">
+      <Input.Text
+        error={EndDate->(form.result)}
+        id="travel-date-end"
+        label="Resans slutdatum"
+        placeholder="Slutdatum"
+        onChange={handleChange(EndDate, TravelForm.EndDateField.update)}
+        value={form.state.endDate}
+      />
+      <Input.Text
+        className="mt-4"
+        error={Destination->(form.result)}
+        icon=`Location
+        id="travel-destination"
+        label="Destination"
+        placeholder="Slutadress"
+        onChange={handleChange(
+          Destination,
+          TravelForm.DestinationField.update,
+        )}
+        value={form.state.destination}
+      />
+    </div>
+    <div className="mt-8">
       <Input.Checkbox
         checked={form.state.traveller === Car}
         label="Jag har bil"
         onChange={handleCheckbox(Traveller, TravelForm.TravellerField.update)}
       />
     </div>
-    <div className="mt-4">
+    <div className="mt-8">
       <Button.Primary type_="submit">
         {React.string("Skicka")}
       </Button.Primary>

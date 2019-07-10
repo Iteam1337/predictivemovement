@@ -65,8 +65,7 @@ let make = () => {
 
   <>
     <div
-      className="bg-white shadow-md absolute p-4 rounded z-10 w-96"
-      style={ReactDOMRe.Style.make(~left="16px", ~top="16px", ())}>
+      className="border-l-8 border-blue-400 bg-white shadow-md min-h-screen absolute p-8 z-10 w-96">
       <Travel onCar=handleCar />
     </div>
     <Geolocation handleMove />

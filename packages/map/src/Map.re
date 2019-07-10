@@ -229,6 +229,7 @@ module Viewport = {
   [@bs.deriving abstract]
   type fitOptions = {
     padding: int,
+    [@bs.optional]
     offset: array(int),
   };
 
@@ -244,7 +245,7 @@ module Viewport = {
 
   let make = coords => {
     create(createOptions(~height=innerHeight, ~width=innerWidth - 384))
-    ->fit(coords, fitOptions(~padding=100, ~offset=[|200, 0|]))
+    ->fit(coords, fitOptions(~padding=100, ()))
     ->viewportFromJs;
   };
 };

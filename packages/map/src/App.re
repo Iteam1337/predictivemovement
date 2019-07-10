@@ -60,10 +60,7 @@ let make = () => {
     stops->Belt.List.map(stop => IconLayer.make(~data=stop, ()));
 
   <>
-    <div
-      className="border-l-8 border-blue-400 bg-white shadow-md min-h-screen absolute p-8 z-10 w-96">
-      <Travel onCar=handleCar />
-    </div>
+    <Navigation handleCar />
     <Geolocation handleMove />
     <DeckGL
       controller=true

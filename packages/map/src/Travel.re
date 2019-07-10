@@ -188,7 +188,7 @@ let make = (~onCar) => {
     );
   };
 
-  <form className="mt-12" onSubmit={form.submit->Formality.Dom.preventDefault}>
+  <form onSubmit={form.submit->Formality.Dom.preventDefault}>
     <Input.Calendar
       error={StartDate->(form.result)}
       id="travel-date-start"

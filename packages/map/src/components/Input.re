@@ -64,10 +64,41 @@ module Text = {
 };
 
 module Checkbox = {
+  open Css;
+
+  let input =
+    style([
+      height(`px(1)),
+      left(`px(-10000)),
+      overflow(`hidden),
+      position(`absolute),
+      top(`zero),
+      width(`px(1)),
+      selector(
+        "&:checked ~ span",
+        [
+          borderColor(`rgb((99, 179, 237))),
+          backgroundColor(`rgb((99, 179, 237))),
+          backgroundSize(`size((`percent(75.0), `percent(75.0)))),
+          backgroundImage(
+            `url(
+              "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cG9seWxpbmUgcG9pbnRzPSIyMCA2IDkgMTcgNCAxMiI+PC9wb2x5bGluZT48L3N2Zz4=",
+            ),
+          ),
+          backgroundRepeat(`noRepeat),
+          backgroundPosition(`percent(50.0), `percent(50.0)),
+        ],
+      ),
+    ]);
+
   [@react.component]
   let make = (~checked, ~label, ~onChange) => {
-    <label className="text-sm">
-      <input className="mr-2" onChange checked type_="checkbox" />
+    <label className="text-sm inline-flex items-center">
+      <input className=input onChange checked type_="checkbox" />
+      <span
+        className="w-6 h-6 border border-gray-200 rounded relative inline-block cursor-pointer
+      bg-gray-100 mr-4"
+      />
       label->React.string
     </label>;
   };

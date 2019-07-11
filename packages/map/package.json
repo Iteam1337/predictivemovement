@@ -5,7 +5,9 @@
     "build": "bsb -make-world",
     "start": "BS_WATCH_CLEAR=true bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "is-ci \"test:ci\" \"test:watch\"",
+    "test:ci": "jest",
+    "test:watch": "jest --watch",
     "webpack": "webpack -w",
     "webpack:production": "NODE_ENV=production webpack",
     "server": "webpack-dev-server"
@@ -23,6 +25,7 @@
     "@glennsl/bs-json": "^4.0.0",
     "bs-abstract": "^0.17.0",
     "bs-css": "^9.0.1",
+    "bs-date-fns": "^0.1.6",
     "bs-decode": "^0.8.0",
     "bs-fetch": "^0.5.0",
     "deck.gl": "^7.1.7",
@@ -39,12 +42,14 @@
     "viewport-mercator-project": "^6.1.1"
   },
   "devDependencies": {
+    "@glennsl/bs-jest": "0.4.8",
     "autoprefixer": "9.6.0",
     "bs-platform": "5.0.4",
     "copy-webpack-plugin": "5.0.3",
     "css-loader": "3.0.0",
     "dotenv-webpack": "1.7.0",
     "html-webpack-plugin": "3.2.0",
+    "is-ci-cli": "1.1.1",
     "postcss-loader": "3.0.0",
     "style-loader": "0.23.1",
     "tailwindcss": "1.0.4",

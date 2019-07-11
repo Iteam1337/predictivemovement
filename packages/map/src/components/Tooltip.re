@@ -8,9 +8,16 @@ let make = (~tooltip: Map.IconLayer.hoverInfo) =>
         ~top=string_of_int(tooltip.y) ++ "px",
         (),
       )}
-      className="absolute bg-gray-800 flex flex-col rounded text-sm text-white pointer-events-none p-2 z-10">
-      <p> {("Longitude: " ++ Js.Float.toString(stop.lon))->React.string} </p>
-      <p> {("Latitude: " ++ Js.Float.toString(stop.lat))->React.string} </p>
+      className="absolute bg-gray-700 rounded text-sm text-white
+        pointer-events-none px-4 py-3 z-10">
+      <div>
+        <strong> "Longitude: "->React.string </strong>
+        {Js.Float.toFixedWithPrecision(stop.lon, ~digits=2)->React.string}
+      </div>
+      <div>
+        <strong> "Latitude: "->React.string </strong>
+        {Js.Float.toFixedWithPrecision(stop.lat, ~digits=2)->React.string}
+      </div>
     </div>
   | None => React.null
   };

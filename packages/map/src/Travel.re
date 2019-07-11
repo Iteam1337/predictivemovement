@@ -283,7 +283,7 @@ let make = (~onCar) => {
      }}
     <div className="mt-8 mb-4">
       <Button.Primary type_="submit">
-        {React.string("Skicka")}
+        {React.string("Registrera resa")}
       </Button.Primary>
     </div>
     <Button.Secondary onClick={_ => form.reset()}>

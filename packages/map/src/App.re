@@ -15,6 +15,10 @@ type action =
 
 let initialState: state = {
   carResponse: {
+    id: "",
+    duration: 0.0,
+    distance: 0.0,
+    maxTime: 0.0,
     route: {
       waypoints: [||],
       routes: [||],
@@ -61,11 +65,7 @@ let make = () => {
     );
   };
 
-  let handleCar = (t: API.Car.response) => {
-    let {API.Car.route: {waypoints}} = t;
-
-    dispatch(CarResponse(t));
-
+  let flyToRoute = (waypoints: array(API.Car.waypoint)) => {
     let viewport =
       Belt.Array.(
         switch (waypoints->get(0), waypoints->get(length(waypoints) - 1)) {
@@ -87,6 +87,14 @@ let make = () => {
         ),
       ),
     );
+  };
+
+  let handleCar = (t: API.Car.response) => {
+    let {API.Car.route: {waypoints}} = t;
+
+    dispatch(CarResponse(t));
+
+    flyToRoute(waypoints);
   };
 
   let geoJsonLayers =
@@ -116,6 +124,13 @@ let make = () => {
   <Geolocation.Provider value={myLocation: myLocation}>
     <Navigation handleCar />
     <Geolocation handleMove />
+    <TripDetails
+      duration={carResponse.duration}
+      distance={carResponse.distance}
+      flyToRoute
+      stops={carResponse.stops}
+      waypoints={carResponse.route.waypoints}
+    />
     <DeckGL
       controller=true
       onViewStateChange={vp => dispatch(ViewState(vp##viewState))}

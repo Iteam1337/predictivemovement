@@ -61,6 +61,10 @@ module Car = {
   };
 
   type response = {
+    id: string,
+    maxTime: float,
+    distance: float,
+    duration: float,
     route: routeRoot,
     stops: array(Stops.t),
   };
@@ -83,6 +87,10 @@ module Car = {
   };
 
   let fromJson = json => {
+    id: json |> field("id", string),
+    maxTime: json |> field("maxTime", Json.Decode.float),
+    distance: json |> field("distance", Json.Decode.float),
+    duration: json |> field("duration", Json.Decode.float),
     route: json |> field("route", routeRoot),
     stops: json |> field("stops", array(Stops.fromJson)),
   };

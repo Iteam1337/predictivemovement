@@ -20,13 +20,13 @@ spec:
         args:
         - -c
         - |
-          test ! -f "/data/$${FILE_NAME}.osrm" && \
+          test ! -f "/data/${FILE_NAME}.osrm" && \
             apt-get update && apt-get install -y --no-install-recommends wget tar && \
-            wget --no-check-certificate --debug "$${DOWNLOAD_URL}/$${OSRM_VERSION}/$${TAR_FOLDER}" -O "/data/$${TAR_FOLDER}" && \
-            tar -C / -xvf "/data/$${TAR_FOLDER}" && \
+            wget --no-check-certificate --debug "${DOWNLOAD_URL}/${OSRM_VERSION}/${TAR_FOLDER}" -O "/data/${TAR_FOLDER}" && \
+            tar -C / -xvf "/data/${TAR_FOLDER}" && \
             rm -rf /var/lib/apt/lists/* && \
-            rm -f "/data/$${TAR_FOLDER}"
-          osrm-routed --algorithm mld "/data/$${FILE_NAME}.osrm"
+            rm -f "/data/${TAR_FOLDER}"
+          osrm-routed --algorithm mld "/data/${FILE_NAME}.osrm"
         env:
         - name: FILE_NAME
           value: data

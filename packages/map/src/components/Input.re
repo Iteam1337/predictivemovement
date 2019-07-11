@@ -115,7 +115,6 @@ module Calendar = {
   type action =
     | DisplayCalendar(calendarState)
     | SetDate(Js.Date.t);
-
   module ReactCalendar = {
     [@bs.module "react-calendar"] [@react.component]
     external make:
@@ -138,6 +137,11 @@ module Calendar = {
         {date: Intl.Date.make(), calendarState: `CalendarClosed},
       );
 
+    let handleClickOutside = _ => dispatch(DisplayCalendar(`CalendarClosed));
+
+    let calendarContainerRef =
+      ClickOutside.useClickOutside(handleClickOutside);
+
     <div className="relative">
       <Text
         id
@@ -158,6 +162,7 @@ module Calendar = {
              onClick={_ => dispatch(DisplayCalendar(`CalendarClosed))}
            />
            <div
+             ref={ReactDOMRe.Ref.domRef(calendarContainerRef)}
              className="absolute bottom-10 border-transparent left-0 right-0 mb-4 rounded shadow z-20">
              <ReactCalendar
                onChange={date => {

@@ -23,12 +23,15 @@ module.exports = (app, io) => {
         redis.subscribe(routeId)
         addPendingTrip(routeId, route)
       } else if (event.type === 'passenger') {
+        const passengerId = uuid()
         const bestMatch = await getMatchForPassenger(event.payload)
         if (bestMatch) {
           const {
             match,
             id
           } = bestMatch
+          console.log('bestMatch', bestMatch)
+          match.ids = [passengerId]
           addPendingTrip(id, match)
           console.log('pendingRoutes', pendingRoutes)
 
@@ -46,9 +49,14 @@ module.exports = (app, io) => {
         } = event.payload
         const route = pendingRoutes[id]
         console.log('Driver accepted', route)
-
-        await Promise.all(route.ids.map(passengerId => pub.publish(passengerId, `routeCreated:${id}`)))
-
+        try {
+          await Promise.all(route.ids.map(passengerId => pub.publish(passengerId, `routeCreated:${id}`)))
+        } catch (e) {
+          console.log('error sending to clients', e)
+        }
+        delete pendingRoutes[id]
+        routes[id] = route
+        pub.publish(id, `routeCreated:${id}`)
       }
     })
 
@@ -58,10 +66,15 @@ module.exports = (app, io) => {
 
         const newId = type.replace('routeCreated:', '')
         console.log('new', newId)
+        redis.subscribe(newId)
         client.emit('congrats', newId)
+      } else if (type === 'changeRequested') {
+        client.emit('changeRequested', id)
+      } else if (type === 'tripUpdated') {
+        client.emit('tripUpdated', id)
+      } else {
+        console.log('Unhandled redis message ', type)
       }
-      console.log('redis updated', type)
-      client.emit(type)
     })
   })
 

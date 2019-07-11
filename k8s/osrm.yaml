@@ -1,0 +1,69 @@
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: osrm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: osrm
+  serviceName: osrm
+  template:
+    metadata:
+      labels:
+        app: osrm
+    spec:
+      containers:
+      - image: osrm/osrm-backend:v5.22.0
+        name:  osrm
+        command: ["/bin/sh"]
+        args:
+        - -c
+        - |
+          test ! -f "/data/$${FILE_NAME}.osrm" && \
+            apt-get update && apt-get install -y --no-install-recommends wget tar && \
+            wget --no-check-certificate --debug "$${DOWNLOAD_URL}/$${OSRM_VERSION}/$${TAR_FOLDER}" -O "/data/$${TAR_FOLDER}" && \
+            tar -C / -xvf "/data/$${TAR_FOLDER}" && \
+            rm -rf /var/lib/apt/lists/* && \
+            rm -f "/data/$${TAR_FOLDER}"
+            osrm-routed --algorithm mld "/data/$${FILE_NAME}.osrm"
+        env:
+        - name: FILE_NAME
+          value: data
+        - name: OSRM_VERSION
+          value: v5.22.0
+        - name: TAR_FOLDER
+          value: data.tar.gz
+        - name: DOWNLOAD_URL
+          value: https://s3.eu-north-1.amazonaws.com/pm-mapbox-test.iteam.se
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        volumeMounts:
+        - name:  osrm-data
+          mountPath:  "/data"
+  volumeClaimTemplates:
+    - metadata:
+        name: osrm-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: io1
+        resources:
+          requests:
+            storage: "10Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: osrm
+  labels:
+    app: osrm
+spec:
+  ports:
+    - name: "80"
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+  selector:
+    app: osrm

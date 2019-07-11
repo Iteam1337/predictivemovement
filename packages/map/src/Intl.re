@@ -92,6 +92,12 @@ module Date = {
     day: abs_yearDay,
     [@bs.optional]
     month: abs_month,
+    [@bs.optional]
+    hour: abs_yearDay,
+    [@bs.optional]
+    minute: abs_yearDay,
+    [@bs.optional]
+    hour12: bool,
   };
 
   /*

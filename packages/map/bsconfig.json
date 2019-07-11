@@ -22,7 +22,8 @@
     "re-classnames",
     "reason-react",
     "re-formality",
-    "bs-css"
+    "bs-css",
+    "bs-date-fns"
   ],
   "refmt": 3
 }

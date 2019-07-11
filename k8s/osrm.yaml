@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: osrm
@@ -26,7 +26,7 @@ spec:
             tar -C / -xvf "/data/$${TAR_FOLDER}" && \
             rm -rf /var/lib/apt/lists/* && \
             rm -f "/data/$${TAR_FOLDER}"
-            osrm-routed --algorithm mld "/data/$${FILE_NAME}.osrm"
+          osrm-routed --algorithm mld "/data/$${FILE_NAME}.osrm"
         env:
         - name: FILE_NAME
           value: data

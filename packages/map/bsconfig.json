@@ -3,10 +3,16 @@
   "reason": {
     "react-jsx": 3
   },
-  "sources": {
-    "dir": "src",
-    "subdirs": true
-  },
+  "sources": [
+    {
+      "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "__tests__",
+      "type": "dev"
+    }
+  ],
   "package-specs": [
     {
       "module": "commonjs"
@@ -25,5 +31,6 @@
     "bs-css",
     "bs-date-fns"
   ],
+  "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3
 }

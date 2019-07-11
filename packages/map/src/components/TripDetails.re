@@ -8,26 +8,61 @@ type action =
   | HoverState(hoverState);
 
 module Distance = {
-  let distanceUnit = distance =>
+  let fromDistance = distance =>
     switch (distance) {
-    | d when d >= 1000.0 => "km"
-    | _ => "m"
+    | d when d >= 10000.0 => `ScandinavianMile
+    | d when d >= 1000.0 => `Kilometers
+    | _ => `Meters
     };
 
-  let make = distance =>
-    (
-      switch (distance) {
-      | d when d >= 1000.0 => d /. 1000.0
-      | d => d
-      }
-    )
+  let distanceUnit = (distance, value) =>
+    switch (distance) {
+    | `ScandinavianMile => {j|$value mil|j}
+    | `Kilometers => {j|$value km|j}
+    | `Meters => {j|$value m|j}
+    };
+
+  let toPrecision = (unitType, value) =>
+    value
     |> Js.Float.toFixedWithPrecision(~digits=2)
-    |> (d => d ++ " " ++ distanceUnit(distance));
+    |> distanceUnit(unitType);
+
+  let make = distance =>
+    switch (fromDistance(distance)) {
+    | `ScandinavianMile as t => distance /. 10000.0 |> toPrecision(t)
+    | `Kilometers as t => distance /. 1000.0 |> toPrecision(t)
+    | `Meters as t =>
+      distance |> Js.Math.round |> Js.Float.toString |> distanceUnit(t)
+    };
 };
 
 module Duration = {
+  let fromDuration = duration =>
+    switch (duration) {
+    | d when d >= 1.0 => `Hours
+    | _ => `Minutes
+    };
+
+  let durationUnit = (duration, value) =>
+    switch (duration) {
+    | `Hours => {j|$value h|j}
+    | `Minutes => {j|$value min|j}
+    };
+
   let make = duration =>
-    duration *. 60.0 |> Js.Math.round |> Js.Float.toString;
+    switch (fromDuration(duration)) {
+    | `Hours as t =>
+      let hours = duration |> Js.Math.floor;
+      let minutes = mod_float(duration, 1.0) *. 60.0 |> Js.Math.round;
+
+      durationUnit(t, hours) ++ " " ++ durationUnit(`Minutes, minutes);
+    | `Minutes as t =>
+      duration
+      *. 60.0
+      |> Js.Math.round
+      |> Js.Float.toString
+      |> durationUnit(t)
+    };
 };
 
 module Date = {
@@ -47,15 +82,15 @@ module Date = {
 
   let originTime = Intl.Date.make(~date=now, ~options, ());
 
-  let destinationTime = minutes => {
+  let destinationTime = hours => {
     Intl.Date.make(
-      ~date=now |> DateFns.addMinutes(minutes->Js.Float.fromString),
+      ~date=now |> DateFns.addMinutes(hours *. 60.0 |> Js.Math.round),
       ~options,
       (),
     );
   };
 
-  let make = minutes => (originTime, destinationTime(minutes));
+  let make = hours => (originTime, destinationTime(hours));
 };
 
 [@react.component]
@@ -71,9 +106,9 @@ let make = (~duration, ~distance, ~stops, ~flyToRoute, ~waypoints) => {
 
   switch (duration, distance) {
   | (0.0, 0.0) => React.null
-  | (duration, distance) =>
-    let minutes = Duration.make(duration);
-    let (originTime, destinationTime) = Date.make(minutes);
+  | (hours, distance) =>
+    let (originTime, destinationTime) = Date.make(hours);
+    let duration = Duration.make(hours);
 
     <div
       className="w-64 translate-x--1/2 border-t-4 border-blue-400 bg-white
@@ -106,7 +141,7 @@ let make = (~duration, ~distance, ~stops, ~flyToRoute, ~waypoints) => {
            <div
              className="flex items-center justify-between mt-2 text-gray-600 text-center
       text-sm">
-             <div> {minutes ++ " min" |> React.string} </div>
+             <div> {duration |> React.string} </div>
              <div> {Distance.make(distance) |> React.string} </div>
              <div>
                {stops->Belt.Array.length->string_of_int

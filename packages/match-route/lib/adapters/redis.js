@@ -1,15 +1,18 @@
 const Redis = require('ioredis')
+const {
+  redis: { host, port },
+} = require('../config')
 
 const redis = new Redis({
-    port: 6379,
-    host: '127.0.0.1'
+  port,
+  host,
 })
 const pub = new Redis({
-    port: 6379,
-    host: '127.0.0.1'
+  port,
+  host,
 })
 
 module.exports = {
-    redis,
-    pub
+  redis,
+  pub,
 }

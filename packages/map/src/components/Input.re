@@ -106,16 +106,12 @@ module Checkbox = {
 };
 
 module Calendar = {
-  type calendarState = [ | `CalendarOpen | `CalendarClosed];
+  type calendarState = [ | `Open | `Closed];
 
-  type state = {
-    date: string,
-    calendarState,
-  };
+  type state = {calendarState};
 
   type action =
-    | DisplayCalendar(calendarState)
-    | SetDate(Js.Date.t);
+    | DisplayCalendar(calendarState);
 
   module ReactCalendar = {
     [@bs.module "react-calendar"] [@react.component]
@@ -125,47 +121,43 @@ module Calendar = {
   };
 
   [@react.component]
-  let make = (~onChange, ~error, ~id, ~label, ~placeholder) => {
+  let make = (~onChange, ~error, ~id, ~label, ~placeholder, ~value) => {
     let (state, dispatch) =
       React.useReducer(
-        (state, action) =>
+        (_state, action) =>
           switch (action) {
-          | DisplayCalendar(calendarState) => {...state, calendarState}
-          | SetDate(date) => {
-              calendarState: `CalendarClosed,
-              date: Intl.Date.make(~date, ()),
-            }
+          | DisplayCalendar(calendarState) => {calendarState: calendarState}
           },
-        {date: Intl.Date.make(), calendarState: `CalendarClosed},
+        {calendarState: `Closed},
       );
 
     <div className="relative">
       <Text
         id
         placeholder
-        value={state.date}
+        value
         icon=`Calendar
         readOnly=true
         error
         label
-        onFocus={_ => dispatch(DisplayCalendar(`CalendarOpen))}
+        onFocus={_ => dispatch(DisplayCalendar(`Open))}
       />
       {switch (state.calendarState) {
-       | `CalendarClosed => React.null
-       | `CalendarOpen =>
+       | `Closed => React.null
+       | `Open =>
          <>
            <div
              className="fixed inset-0 z-10"
-             onClick={_ => dispatch(DisplayCalendar(`CalendarClosed))}
+             onClick={_ => dispatch(DisplayCalendar(`Closed))}
            />
            <div
              className="absolute bottom-10 border-transparent left-0 right-0 mb-4 rounded shadow z-20">
              <ReactCalendar
                onChange={date => {
                  onChange(date);
-                 dispatch(SetDate(date));
+                 dispatch(DisplayCalendar(`Closed));
                }}
-               value={state.date |> Js.Date.fromString}
+               value={value |> Js.Date.fromString}
              />
            </div>
          </>

@@ -227,6 +227,7 @@ let make = () => {
       label="Resans startdatum"
       placeholder="Startdatum"
       onChange={handleCalendar(StartDate, TravelForm.StartDateField.update)}
+      value={form.state.startDate}
     />
     <Input.Text
       className="mt-4"
@@ -245,6 +246,7 @@ let make = () => {
         label="Resans slutdatum"
         placeholder="Slutdatum"
         onChange={handleCalendar(EndDate, TravelForm.EndDateField.update)}
+        value={form.state.endDate}
       />
       <Input.Text
         className="mt-4"

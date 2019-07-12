@@ -10,7 +10,11 @@ const routes = {}
 const pendingRoutes = {}
 
 module.exports = (app, io) => {
+  redis.psubscribe('changeRequested:*', (err, count) => console.log(count))
+  redis.psubscribe('routeCreated:*', (err, count) => console.log(count))
   io.on('connection', client => {
+    console.log('socket connected', client.id)
+    const socketId = client.id
     client.on('event', async e => {
       console.log('event received:', e)
       const event = JSON.parse(e)
@@ -18,9 +22,8 @@ module.exports = (app, io) => {
         const routeId = uuid()
         const route = await getBestRoute(event.payload)
         console.log('Driver found passengers', route)
-        client.emit('changeRequested', routeId)
-
-        redis.subscribe(routeId)
+        io.to(socketId).emit('changeRequested', routeId)
+        await pub.set(routeId, JSON.stringify([socketId]))
         addPendingTrip(routeId, route)
       } else if (event.type === 'passenger') {
         const passengerId = uuid()
@@ -30,18 +33,14 @@ module.exports = (app, io) => {
             match,
             id
           } = bestMatch
-          console.log('bestMatch', bestMatch)
           match.ids = [passengerId]
           addPendingTrip(id, match)
-          console.log('pendingRoutes', pendingRoutes)
-
-          pub.publish(id, 'changeRequested')
-          redis.subscribe(id)
+          await pub.publish(id, 'changeRequested')
+          await pub.set(id, JSON.stringify([socketId]))
         } else {
           const passengerId = addPersonToList(event.payload)
           console.log('no match found, subscribing to id:', passengerId)
-
-          redis.subscribe(passengerId)
+          await pub.set(passengerId, JSON.stringify([socketId]))
         }
       } else if (event.type === "acceptChange") {
         const {
@@ -50,32 +49,33 @@ module.exports = (app, io) => {
         const route = pendingRoutes[id]
         console.log('Driver accepted', route)
         try {
-          await Promise.all(route.ids.map(passengerId => pub.publish(passengerId, `routeCreated:${id}`)))
+          await Promise.all(route.ids.map(passengerId => pub.publish(`routeCreated:${passengerId}`, id)))
         } catch (e) {
           console.log('error sending to clients', e)
         }
         delete pendingRoutes[id]
         routes[id] = route
-        pub.publish(id, `routeCreated:${id}`)
+        client.emit('congrats', id)
       }
     })
+  })
+  redis.on('pmessage', async (pattern, channel, msg) => {
+    console.log('message recevied', pattern, channel, msg)
+    const id = channel.replace(pattern.replace('*', ''), '')
 
-    redis.on('message', (id, type) => {
-      if (type.startsWith('routeCreated:')) {
-        console.log('Driver paired with passengers')
+    const socketIds = await pub.get(id).then(JSON.parse)
+    console.log(socketIds)
 
-        const newId = type.replace('routeCreated:', '')
-        console.log('new', newId)
-        redis.subscribe(newId)
-        client.emit('congrats', newId)
-      } else if (type === 'changeRequested') {
-        client.emit('changeRequested', id)
-      } else if (type === 'tripUpdated') {
-        client.emit('tripUpdated', id)
-      } else {
-        console.log('Unhandled redis message ', type)
-      }
-    })
+    if (pattern === 'routeCreated:*') {
+      console.log('congrats to', socketIds[0])
+      io.to(socketIds[0]).emit('congrats', msg)
+    } else if (pattern === 'changeRequested') {
+      io.to(socketIds[0]).emit('changeRequested', id)
+    } else if (pattern === 'tripUpdated') {
+      io.to(socketIds[0]).emit('tripUpdated', id)
+    } else {
+      console.log('Unhandled redis message ', pattern)
+    }
   })
 
   function addPendingTrip (id, trip) {
@@ -197,8 +197,6 @@ module.exports = (app, io) => {
     return result
   }
   app.post('/route', async (req, res) => {
-    console.log('passengers', persons)
-
     try {
       const id = uuid()
       const result = await getBestRoute(req.body)

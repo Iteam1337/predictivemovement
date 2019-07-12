@@ -1,5 +1,5 @@
 [@react.component]
-let make = (~handleCar) => {
+let make = () => {
   let url = ReasonReactRouter.useUrl();
 
   let travelRoute =
@@ -31,7 +31,7 @@ let make = (~handleCar) => {
     {switch (url.path) {
      | ["resa"] =>
        <div className={sideBar(~show=true)}>
-         <div className="mt-12"> <Travel onCar=handleCar /> </div>
+         <div className="mt-12"> <Travel /> </div>
        </div>
      | _ => <div className={sideBar(~show=false)} />
      }}

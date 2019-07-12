@@ -83,7 +83,7 @@ module TravelForm = {
 module TravelFormHook = Formality.Make(TravelForm);
 
 [@react.component]
-let make = (~onCar) => {
+let make = () => {
   let geolocation = React.useContext(Geolocation.context);
 
   let form =
@@ -118,24 +118,11 @@ let make = (~onCar) => {
         };
 
         let postPerson = body => {
-          API.Travel.make(~route=`Person, ~body, ())
-          |> Repromise.wait(
-               fun
-               | Belt.Result.Ok(_) => form.notifyOnSuccess(None)
-               | Belt.Result.Error(_) => (),
-             );
+          API.Travel.Socket.make(~route=`Person, ~body);
         };
 
         let postCar = body => {
-          API.Travel.make(~route=`Car, ~body, ())
-          |> Repromise.wait(
-               fun
-               | Belt.Result.Ok(data) => {
-                   onCar(data |> API.Car.fromJson);
-                   form.notifyOnSuccess(None);
-                 }
-               | Belt.Result.Error(e) => Js.log2("Error", e),
-             );
+          API.Travel.Socket.make(~route=`Driver, ~body);
         };
 
         let callback = data => {

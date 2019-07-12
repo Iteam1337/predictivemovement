@@ -39,6 +39,7 @@
     "react-map-gl": "5.0.4",
     "reason-react": "0.7.0",
     "relude": "^0.18.0",
+    "socket.io-client": "^2.2.0",
     "viewport-mercator-project": "^6.1.1"
   },
   "devDependencies": {

@@ -15,7 +15,6 @@ type action =
 
 let initialState: state = {
   carResponse: {
-    id: "",
     duration: 0.0,
     distance: 0.0,
     maxTime: 0.0,
@@ -49,22 +48,6 @@ let make = () => {
       initialState,
     );
 
-  let handleMove = (coords: Geolocation.Navigator.coords) => {
-    dispatch(Location(coords));
-    dispatch(
-      ViewState(
-        DeckGL.viewState(
-          ~longitude=coords.longitude,
-          ~latitude=coords.latitude,
-          ~zoom=16,
-          ~transitionDuration=2000,
-          ~transitionInterpolator=Interpolator.FlyTo.make(),
-          (),
-        ),
-      ),
-    );
-  };
-
   let flyToRoute = (waypoints: array(API.Car.waypoint)) => {
     let viewport =
       Belt.Array.(
@@ -97,6 +80,29 @@ let make = () => {
     flyToRoute(waypoints);
   };
 
+  React.useEffect0(() => {
+    Socket.on(`RouteMatched, API.Travel.route(~callback=handleCar));
+    Socket.on(`RouteChangeRequested, API.Travel.Socket.Events.acceptChange);
+
+    None;
+  });
+
+  let handleMove = (coords: Geolocation.Navigator.coords) => {
+    dispatch(Location(coords));
+    dispatch(
+      ViewState(
+        DeckGL.viewState(
+          ~longitude=coords.longitude,
+          ~latitude=coords.latitude,
+          ~zoom=16,
+          ~transitionDuration=2000,
+          ~transitionInterpolator=Interpolator.FlyTo.make(),
+          (),
+        ),
+      ),
+    );
+  };
+
   let geoJsonLayers =
     carResponse.route.routes
     ->Belt.Array.map(route => GeoJsonLayer.make(~data=[|route|], ()));
@@ -122,7 +128,7 @@ let make = () => {
       );
 
   <Geolocation.Provider value={myLocation: myLocation}>
-    <Navigation handleCar />
+    <Navigation />
     <Geolocation handleMove />
     <TripDetails
       duration={carResponse.duration}

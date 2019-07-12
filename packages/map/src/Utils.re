@@ -9,3 +9,9 @@ module UUID: {
 
   let toString = id => id;
 };
+
+let invokeIfSet = (~callback, data) =>
+  switch (callback) {
+  | Some(cb) => cb(data)
+  | None => ()
+  };

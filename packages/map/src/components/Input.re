@@ -9,12 +9,6 @@ module Style = {
 };
 
 module Text = {
-  let invokeIfSet = (~callback, data) =>
-    switch (callback) {
-    | Some(cb) => cb(data)
-    | None => ()
-    };
-
   [@react.component]
   let make =
       (
@@ -42,8 +36,8 @@ module Text = {
         <input
           className=Style.input
           id
-          onChange={invokeIfSet(~callback=onChange)}
-          onFocus={invokeIfSet(~callback=onFocus)}
+          onChange={Utils.invokeIfSet(~callback=onChange)}
+          onFocus={Utils.invokeIfSet(~callback=onFocus)}
           placeholder
           readOnly
           type_="text"

@@ -1,10 +1,11 @@
 module Primary = {
   [@react.component]
-  let make = (~children, ~type_="button") => {
+  let make = (~children, ~onClick=?, ~type_="button") => {
     <button
       className="w-full bg-blue-400 hover:bg-blue-600 text-white font-semibold
-      py-3 px-4 rounded tracking-wide"
-      type_>
+      py-3 px-4 rounded tracking-wide border border-blue-400 hover:border-blue-600"
+      type_
+      onClick={Utils.invokeIfSet(~callback=onClick)}>
       children
     </button>;
   };

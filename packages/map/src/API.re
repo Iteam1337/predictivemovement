@@ -37,6 +37,11 @@ module Car = {
     stops: array(Stops.t),
   };
 
+  type routeWithId = {
+    id: string,
+    response,
+  };
+
   let geometry = json => {
     coordinates:
       json |> field("coordinates", array(array(Json.Decode.float))),

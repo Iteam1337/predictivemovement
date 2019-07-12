@@ -1,5 +1,5 @@
 [@react.component]
-let make = (~onRouteSelect, ~pendingRoutes) => {
+let make = (~onRouteSelect, ~onRouteAnswer, ~acceptedRoutes, ~pendingRoutes) => {
   let url = ReasonReactRouter.useUrl();
 
   let travelRoute =
@@ -35,7 +35,7 @@ let make = (~onRouteSelect, ~pendingRoutes) => {
       </div>
       <div className="mt-12">
         <Router.Link href=tripsRoute>
-          <Icon className="h-6 w-6" name=`Search />
+          <Icon className="h-6 w-6" name=`Dashboard />
         </Router.Link>
       </div>
     </nav>
@@ -46,7 +46,9 @@ let make = (~onRouteSelect, ~pendingRoutes) => {
        </div>
      | ["resor"] =>
        <div className={sideBar(~show=true)}>
-         <div className="mt-12"> <Trips onRouteSelect pendingRoutes /> </div>
+         <div className="mt-12">
+           <Trips onRouteSelect onRouteAnswer acceptedRoutes pendingRoutes />
+         </div>
        </div>
      | _ => <div className={sideBar(~show=false)} />
      }}

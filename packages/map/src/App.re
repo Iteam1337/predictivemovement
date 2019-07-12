@@ -1,11 +1,14 @@
 open Map;
 
+type viewOrigin = [ | `Default | `Pending];
+
 type state = {
   carResponse: API.Car.response,
   myLocation: option(Geolocation.Navigator.coords),
   tooltip: Map.IconLayer.hoverInfo,
   viewState: Map.DeckGL.viewState,
-  pendingRoutes: list(API.Car.response),
+  acceptedRoutes: list(API.Car.routeWithId),
+  pendingRoutes: list(API.Car.routeWithId),
 };
 
 type action =
@@ -13,7 +16,8 @@ type action =
   | Location(Geolocation.Navigator.coords)
   | Tooltip(Map.IconLayer.hoverInfo)
   | ViewState(Map.DeckGL.viewState)
-  | PendingRoute(API.Car.response);
+  | AcceptedRoute(API.Car.routeWithId)
+  | PendingRoute(API.Car.routeWithId);
 
 let initialState: state = {
   carResponse: {
@@ -34,6 +38,7 @@ let initialState: state = {
   },
   viewState:
     DeckGL.viewState(~longitude=18.068581, ~latitude=59.329323, ~zoom=8, ()),
+  acceptedRoutes: [],
   pendingRoutes: [],
 };
 
@@ -42,7 +47,14 @@ let make = () => {
   let notifications = React.useContext(Notifications.Context.t);
 
   let (
-    {carResponse, myLocation, viewState, tooltip, pendingRoutes},
+    {
+      carResponse,
+      myLocation,
+      viewState,
+      tooltip,
+      acceptedRoutes,
+      pendingRoutes,
+    },
     dispatch,
   ) =
     React.useReducer(
@@ -52,6 +64,14 @@ let make = () => {
         | Location(location) => {...state, myLocation: Some(location)}
         | Tooltip(tooltip) => {...state, tooltip}
         | ViewState(viewState) => {...state, viewState}
+
+        | AcceptedRoute(acceptedRoute) => {
+            ...state,
+            acceptedRoutes: [acceptedRoute, ...state.acceptedRoutes],
+            pendingRoutes:
+              state.pendingRoutes
+              ->Belt.List.keep(({id}) => id !== acceptedRoute.id),
+          }
         | PendingRoute(pendingRoute) => {
             ...state,
             pendingRoutes: [pendingRoute, ...state.pendingRoutes],
@@ -92,23 +112,33 @@ let make = () => {
     flyToRoute(waypoints);
   };
 
+  let onRouteAnswer = (r: API.Car.routeWithId) => {
+    API.Travel.Socket.Events.acceptChange(r.id);
+
+    dispatch(AcceptedRoute(r));
+  };
+
   React.useEffect0(() => {
     Socket.on(`RouteMatched, API.Travel.route(~callback=handleCar));
     /* TODO: show new route and get explicit approval or denial from user */
-    Socket.on(
-      `RouteChangeRequested,
-      API.Travel.pendingRoute(~callback=route => {
-        dispatch(PendingRoute(route));
+    Socket.on(`RouteChangeRequested, id =>
+      API.Travel.pendingRoute(
+        ~callback=
+          response => {
+            dispatch(PendingRoute({id, response}));
 
-        notifications.updateNotifications(
-          Notifications.Notification.make(
-            ~title={j|Din resa har en matchning|j},
-            ~notificationType=`Success,
-            ~onClick=Some(_ => ReasonReactRouter.push("/resor")),
-            (),
-          ),
-        );
-      }),
+            notifications.updateNotifications(
+              Notifications.Notification.make(
+                ~title={j|Din resa har en matchning|j},
+                ~notificationType=`Success,
+                ~onClick=Some(_ => ReasonReactRouter.push("/resor")),
+                ~timeout=Some(5000),
+                (),
+              ),
+            );
+          },
+        id,
+      )
     );
 
     None;
@@ -156,7 +186,12 @@ let make = () => {
 
   <Geolocation.Context.Provider value={myLocation: myLocation}>
     <Notifications />
-    <Navigation onRouteSelect=handleCar pendingRoutes />
+    <Navigation
+      onRouteSelect=handleCar
+      onRouteAnswer
+      acceptedRoutes
+      pendingRoutes
+    />
     <Geolocation handleMove />
     <TripDetails car=carResponse flyToRoute />
     <DeckGL

@@ -1,3 +1,6 @@
+let statisticsContainer = "flex justify-center items-center";
+let icon = "w-4 h-4
+          pointer-events-none mr-4";
 [@react.component]
 let make = (~pendingRoutes: list(API.Car.response), ~onRouteSelect) =>
   <div>
@@ -18,13 +21,18 @@ let make = (~pendingRoutes: list(API.Car.response), ~onRouteSelect) =>
              <div
                key={string_of_int(i)}
                className="flex items-center justify-between mt-2 text-gray-600 text-center
-      text-sm"
+      text-xs"
                onClick={_ => onRouteSelect(route)}>
-               <div> {duration |> React.string} </div>
-               <div>
+               <div className=statisticsContainer>
+                 <Icon className=icon name=`Time />
+                 {duration |> React.string}
+               </div>
+               <div className=statisticsContainer>
+                 <Icon className=icon name=`Travel />
                  {TripDetails.Distance.make(distance) |> React.string}
                </div>
-               <div>
+               <div className=statisticsContainer>
+                 <Icon className=icon name=`Shuffle />
                  {route.stops->Belt.Array.length->string_of_int
                   ++ " stopp"
                   |> React.string}

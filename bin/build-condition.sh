@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/sh
 
 if [[ -z $1 ]]; then
     echo "Commit range cannot be empty"

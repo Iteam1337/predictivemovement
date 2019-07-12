@@ -61,6 +61,10 @@ kubectl apply -f map.yaml
 kubectl apply -f match-route.yaml
 ```
 
+## Route53 setup
+
+Create record sets for the hosts that you defined in the `Ingress` resources for `map` and `match-route` and point them to the worker node(s) IP (already configured for map.iteamdev.se and match-route.iteamdev.se)
+
 ## I don't wanna read just give me TL;DR version
 
 - create a cluster with Containership using AWS as the provider

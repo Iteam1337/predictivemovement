@@ -272,7 +272,7 @@ let make = () => {
         {React.string("Registrera resa")}
       </Button.Primary>
     </div>
-    <Button.Secondary onClick={_ => form.reset()}>
+    <Button.Secondary disabled={!form.dirty()} onClick={_ => form.reset()}>
       {j|Återställ formulär|j}->React.string
     </Button.Secondary>
   </form>;

@@ -22,5 +22,7 @@ jobs:
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
 
 stages:
-  - build
-  - deploy
+  - name: build
+    if: branch = master AND type != pull_request
+  - name: deploy
+    if: branch = master AND type != pull_request

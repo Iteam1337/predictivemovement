@@ -4,6 +4,8 @@ metadata:
   name: map
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: map
@@ -19,7 +21,7 @@ spec:
         ports:
         - containerPort: 80
           protocol: TCP
-      restartPolicy: Always 
+      restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
@@ -44,7 +46,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: map.iteamdev.se 
+    - host: map.iteamdev.se
       http:
         paths:
           - backend:

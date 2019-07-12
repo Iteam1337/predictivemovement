@@ -4,6 +4,8 @@ metadata:
   name: match-route
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: match-route
@@ -26,7 +28,7 @@ spec:
           value: redis
         - name: REDIS__PORT
           value: "6379"
-      restartPolicy: Always 
+      restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
@@ -51,7 +53,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: match-route.iteamdev.se 
+    - host: match-route.iteamdev.se
       http:
         paths:
           - backend:

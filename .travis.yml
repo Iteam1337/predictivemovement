@@ -4,12 +4,26 @@ services:
 # Require docker to be running in the build context
 - docker
 
+matrix:
+  include:
+    - env: PROJECT=packages/map
+    - env: PROJECT=packages/match-route
+
 jobs:
   include:
     - stage: build
-      script: echo "build"
+      env: PROJECT=packages/map
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
+    - stage: build
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
+
     - stage: deploy
-      script: echo "deploy"
+      env: PROJECT=packages/map
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/deploy.sh $PROJECT; fi
+    - stage: deploy
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/deploy.sh $PROJECT; fi
 stages:
   - build
   - deploy

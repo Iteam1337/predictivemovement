@@ -82,15 +82,15 @@ let make = () => {
     );
   };
 
+  let handleCar = (t: API.Car.response) => {
+    let {API.Car.route: {waypoints}} = t;
+
+    dispatch(CarResponse(t));
+
+    flyToRoute(waypoints);
+  };
+
   React.useEffect0(() => {
-    let handleCar = (t: API.Car.response) => {
-      let {API.Car.route: {waypoints}} = t;
-
-      dispatch(CarResponse(t));
-
-      flyToRoute(waypoints);
-    };
-
     Socket.on(`RouteMatched, API.Travel.route(~callback=handleCar));
     /* TODO: show new route and get explicit approval or denial from user */
     Socket.on(
@@ -144,7 +144,7 @@ let make = () => {
       );
 
   <Geolocation.Provider value={myLocation: myLocation}>
-    <Navigation pendingRoutes />
+    <Navigation onRouteSelect=handleCar pendingRoutes />
     <Geolocation handleMove />
     <TripDetails
       duration={carResponse.duration}

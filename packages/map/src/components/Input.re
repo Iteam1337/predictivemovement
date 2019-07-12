@@ -116,12 +116,18 @@ module Calendar = {
   module ReactCalendar = {
     [@bs.module "react-calendar"] [@react.component]
     external make:
-      (~onChange: Js.Date.t => unit, ~value: Js.Date.t) => React.element =
+      (
+        ~minDate: option(Js.Date.t),
+        ~onChange: Js.Date.t => unit,
+        ~value: Js.Date.t
+      ) =>
+      React.element =
       "default";
   };
 
   [@react.component]
-  let make = (~onChange, ~error, ~id, ~label, ~placeholder, ~value) => {
+  let make =
+      (~minDate=None, ~onChange, ~error, ~id, ~label, ~placeholder, ~value) => {
     let (state, dispatch) =
       React.useReducer(
         (_state, action) =>
@@ -153,12 +159,22 @@ module Calendar = {
            <div
              className="absolute bottom-10 border-transparent left-0 right-0 mb-4 rounded shadow z-20">
              <ReactCalendar
+               minDate
                onChange={date => {
                  onChange(date);
                  dispatch(DisplayCalendar(`Closed));
                }}
                value={value |> Js.Date.fromString}
              />
+             {switch (error) {
+              | Some(Error(message)) =>
+                <div className="text-red-500 mt-2 text-xs">
+                  message->React.string
+                </div>
+              | Some(Ok(Valid))
+              | Some(Ok(NoValue))
+              | None => React.null
+              }}
            </div>
          </>
        }}

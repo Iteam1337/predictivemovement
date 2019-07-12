@@ -36,6 +36,20 @@ module TravelForm = {
 
   module EndDateField = {
     let update = (state, endDate) => {...state, endDate};
+
+    let validator = {
+      field: EndDate,
+      strategy: Strategy.OnFirstSuccessOrFirstBlur,
+      dependents: None,
+      validate: ({endDate, startDate}) => {
+        DateFns.isBefore(
+          startDate |> Js.Date.fromString,
+          endDate |> Js.Date.fromString,
+        )
+          ? Error({j|Slutdatum får inte vara innan startdatum|j})
+          : Ok(Valid);
+      },
+    };
   };
 
   module TravellerField = {
@@ -77,7 +91,11 @@ module TravelForm = {
     };
   };
 
-  let validators = [OriginField.validator, DestinationField.validator];
+  let validators = [
+    OriginField.validator,
+    DestinationField.validator,
+    EndDateField.validator,
+  ];
 };
 
 module TravelFormHook = Formality.Make(TravelForm);
@@ -244,6 +262,7 @@ let make = () => {
         error={EndDate->(form.result)}
         id="travel-date-end"
         label="Resans slutdatum"
+        minDate={Some(form.state.startDate |> Js.Date.fromString)}
         placeholder="Slutdatum"
         onChange={handleCalendar(EndDate, TravelForm.EndDateField.update)}
         value={form.state.endDate}

@@ -127,34 +127,31 @@ let make = () => {
         )
       );
 
-  <Geolocation.Provider value={myLocation: myLocation}>
-    <Navigation />
-    <Geolocation handleMove />
-    <TripDetails
-      duration={carResponse.duration}
-      distance={carResponse.distance}
-      flyToRoute
-      stops={carResponse.stops}
-      waypoints={carResponse.route.waypoints}
-    />
-    <DeckGL
-      controller=true
-      onViewStateChange={vp => dispatch(ViewState(vp##viewState))}
-      viewState
-      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
-      <StaticMap
-        reuseMaps=true
-        preventStyleDiffing=true
-        mapboxApiAccessToken=Config.mapboxToken>
-        <>
-          {switch (myLocation) {
-           | None => React.null
-           | Some({longitude, latitude}) =>
-             <Geolocation.Marker longitude latitude />
-           }}
-          <Tooltip tooltip />
-        </>
-      </StaticMap>
-    </DeckGL>
-  </Geolocation.Provider>;
+  <Notifications.Provider>
+    <Geolocation.Context.Provider value={myLocation: myLocation}>
+      <Notifications />
+      <Navigation />
+      <Geolocation handleMove />
+      <TripDetails car=carResponse flyToRoute />
+      <DeckGL
+        controller=true
+        onViewStateChange={vp => dispatch(ViewState(vp##viewState))}
+        viewState
+        layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
+        <StaticMap
+          reuseMaps=true
+          preventStyleDiffing=true
+          mapboxApiAccessToken=Config.mapboxToken>
+          <>
+            {switch (myLocation) {
+             | None => React.null
+             | Some({longitude, latitude}) =>
+               <Geolocation.Marker longitude latitude />
+             }}
+            <Tooltip tooltip />
+          </>
+        </StaticMap>
+      </DeckGL>
+    </Geolocation.Context.Provider>
+  </Notifications.Provider>;
 };

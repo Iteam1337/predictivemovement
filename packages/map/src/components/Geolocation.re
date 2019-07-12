@@ -95,20 +95,11 @@ module Marker = {
   };
 };
 
-type t = {myLocation: option(Navigator.coords)};
+module Context = {
+  type t = {myLocation: option(Navigator.coords)};
 
-let context = React.createContext({myLocation: None});
-
-module Provider = {
-  let make = context->React.Context.provider;
-
-  [@bs.obj]
-  external makeProps:
-    (~value: t, ~children: React.element, ~key: string=?, unit) =>
-    {
-      .
-      "value": t,
-      "children": React.element,
-    } =
-    "";
+  include ReactContext.Make({
+    type context = t;
+    let defaultValue = {myLocation: None};
+  });
 };

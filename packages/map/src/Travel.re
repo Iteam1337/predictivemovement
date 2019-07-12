@@ -84,7 +84,8 @@ module TravelFormHook = Formality.Make(TravelForm);
 
 [@react.component]
 let make = () => {
-  let geolocation = React.useContext(Geolocation.context);
+  let geolocation = React.useContext(Geolocation.Context.t);
+  let notifications = React.useContext(Notifications.Context.t);
 
   let form =
     TravelFormHook.useForm(
@@ -119,6 +120,15 @@ let make = () => {
 
         let postPerson = body => {
           API.Travel.Socket.make(~route=`Person, ~body);
+
+          notifications.updateNotifications(
+            Notifications.Notification.make(
+              ~title={j|Din resa är registrerad|j},
+              ~notificationType=`Success,
+              ~timeout=Some(3000),
+              (),
+            ),
+          );
         };
 
         let postCar = body => {
@@ -257,17 +267,6 @@ let make = () => {
         onChange={handleCheckbox(Traveller, TravelForm.TravellerField.update)}
       />
     </div>
-    {switch (form.status, form.state.traveller) {
-     | (Submitted, Person) =>
-       <Alert.Success className="mt-8" title="Resa registrerad">
-         {j|Din resa är registrerad|j}->React.string
-       </Alert.Success>
-     | (SubmissionFailed(_), _) =>
-       <Alert.Error className="mt-8" title="Registrering misslyckades">
-         {j|Någonting gick fel vid registrering|j}->React.string
-       </Alert.Error>
-     | _ => React.null
-     }}
     <div className="mt-8 mb-4">
       <Button.Primary type_="submit">
         {React.string("Registrera resa")}

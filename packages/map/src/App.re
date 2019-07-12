@@ -39,6 +39,8 @@ let initialState: state = {
 
 [@react.component]
 let make = () => {
+  let notifications = React.useContext(Notifications.Context.t);
+
   let (
     {carResponse, myLocation, viewState, tooltip, pendingRoutes},
     dispatch,
@@ -95,9 +97,18 @@ let make = () => {
     /* TODO: show new route and get explicit approval or denial from user */
     Socket.on(
       `RouteChangeRequested,
-      API.Travel.pendingRoute(~callback=route =>
-        dispatch(PendingRoute(route))
-      ),
+      API.Travel.pendingRoute(~callback=route => {
+        dispatch(PendingRoute(route));
+
+        notifications.updateNotifications(
+          Notifications.Notification.make(
+            ~title={j|Din resa har en matchning|j},
+            ~notificationType=`Success,
+            ~onClick=Some(_ => ReasonReactRouter.push("/resor")),
+            (),
+          ),
+        );
+      }),
     );
 
     None;
@@ -143,31 +154,29 @@ let make = () => {
         )
       );
 
-  <Notifications.Provider>
-    <Geolocation.Context.Provider value={myLocation: myLocation}>
-      <Notifications />
-      <Navigation onRouteSelect=handleCar pendingRoutes />
-      <Geolocation handleMove />
-      <TripDetails car=carResponse flyToRoute />
-      <DeckGL
-        controller=true
-        onViewStateChange={vp => dispatch(ViewState(vp##viewState))}
-        viewState
-        layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
-        <StaticMap
-          reuseMaps=true
-          preventStyleDiffing=true
-          mapboxApiAccessToken=Config.mapboxToken>
-          <>
-            {switch (myLocation) {
-             | None => React.null
-             | Some({longitude, latitude}) =>
-               <Geolocation.Marker longitude latitude />
-             }}
-            <Tooltip tooltip />
-          </>
-        </StaticMap>
-      </DeckGL>
-    </Geolocation.Context.Provider>
-  </Notifications.Provider>;
+  <Geolocation.Context.Provider value={myLocation: myLocation}>
+    <Notifications />
+    <Navigation onRouteSelect=handleCar pendingRoutes />
+    <Geolocation handleMove />
+    <TripDetails car=carResponse flyToRoute />
+    <DeckGL
+      controller=true
+      onViewStateChange={vp => dispatch(ViewState(vp##viewState))}
+      viewState
+      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
+      <StaticMap
+        reuseMaps=true
+        preventStyleDiffing=true
+        mapboxApiAccessToken=Config.mapboxToken>
+        <>
+          {switch (myLocation) {
+           | None => React.null
+           | Some({longitude, latitude}) =>
+             <Geolocation.Marker longitude latitude />
+           }}
+          <Tooltip tooltip />
+        </>
+      </StaticMap>
+    </DeckGL>
+  </Geolocation.Context.Provider>;
 };

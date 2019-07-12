@@ -1,8 +1,8 @@
 language: bash
 
-services:
-# Require docker to be running in the build context
-- docker
+# services:
+# # Require docker to be running in the build context
+# - docker
 
 matrix:
   include:
@@ -24,6 +24,7 @@ jobs:
     - stage: deploy
       env: PROJECT=packages/match-route
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/deploy.sh $PROJECT; fi
+
 stages:
   - build
   - deploy

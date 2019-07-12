@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 DOCKER_REPO="iteam1337/predictive-movement-${1/packages\//}";

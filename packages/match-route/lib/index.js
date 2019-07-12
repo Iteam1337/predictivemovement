@@ -5,7 +5,7 @@ const {
 const routes = require('./routes')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-console.log('random changes')
+console.log('random changess')
 const app = express()
   .use(cors())
   .use(bodyParser.json())

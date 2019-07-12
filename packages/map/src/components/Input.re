@@ -74,6 +74,7 @@ module Checkbox = {
       position(`absolute),
       top(`zero),
       width(`px(1)),
+      selector("&:focus ~ span", [borderColor(`rgb((99, 179, 237)))]),
       selector(
         "&:checked ~ span",
         [

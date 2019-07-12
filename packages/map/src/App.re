@@ -5,13 +5,15 @@ type state = {
   myLocation: option(Geolocation.Navigator.coords),
   tooltip: Map.IconLayer.hoverInfo,
   viewState: Map.DeckGL.viewState,
+  pendingRoutes: list(API.Car.response),
 };
 
 type action =
   | CarResponse(API.Car.response)
   | Location(Geolocation.Navigator.coords)
   | Tooltip(Map.IconLayer.hoverInfo)
-  | ViewState(Map.DeckGL.viewState);
+  | ViewState(Map.DeckGL.viewState)
+  | PendingRoute(API.Car.response);
 
 let initialState: state = {
   carResponse: {
@@ -32,11 +34,15 @@ let initialState: state = {
   },
   viewState:
     DeckGL.viewState(~longitude=18.068581, ~latitude=59.329323, ~zoom=8, ()),
+  pendingRoutes: [],
 };
 
 [@react.component]
 let make = () => {
-  let ({carResponse, myLocation, viewState, tooltip}, dispatch) =
+  let (
+    {carResponse, myLocation, viewState, tooltip, pendingRoutes},
+    dispatch,
+  ) =
     React.useReducer(
       (state, action) =>
         switch (action) {
@@ -44,6 +50,10 @@ let make = () => {
         | Location(location) => {...state, myLocation: Some(location)}
         | Tooltip(tooltip) => {...state, tooltip}
         | ViewState(viewState) => {...state, viewState}
+        | PendingRoute(pendingRoute) => {
+            ...state,
+            pendingRoutes: [pendingRoute, ...state.pendingRoutes],
+          }
         },
       initialState,
     );
@@ -72,17 +82,23 @@ let make = () => {
     );
   };
 
-  let handleCar = (t: API.Car.response) => {
-    let {API.Car.route: {waypoints}} = t;
-
-    dispatch(CarResponse(t));
-
-    flyToRoute(waypoints);
-  };
-
   React.useEffect0(() => {
+    let handleCar = (t: API.Car.response) => {
+      let {API.Car.route: {waypoints}} = t;
+
+      dispatch(CarResponse(t));
+
+      flyToRoute(waypoints);
+    };
+
     Socket.on(`RouteMatched, API.Travel.route(~callback=handleCar));
-    Socket.on(`RouteChangeRequested, API.Travel.Socket.Events.acceptChange);
+    /* TODO: show new route and get explicit approval or denial from user */
+    Socket.on(
+      `RouteChangeRequested,
+      API.Travel.pendingRoute(~callback=route =>
+        dispatch(PendingRoute(route))
+      ),
+    );
 
     None;
   });
@@ -128,7 +144,7 @@ let make = () => {
       );
 
   <Geolocation.Provider value={myLocation: myLocation}>
-    <Navigation />
+    <Navigation pendingRoutes />
     <Geolocation handleMove />
     <TripDetails
       duration={carResponse.duration}

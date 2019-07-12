@@ -94,7 +94,8 @@ module Date = {
 };
 
 [@react.component]
-let make = (~duration, ~distance, ~stops, ~flyToRoute, ~waypoints) => {
+let make = (~car, ~flyToRoute) => {
+  let {duration, distance, stops, route: {waypoints}}: API.Car.response = car;
   let (state, dispatch) =
     React.useReducer(
       (_state, action) =>

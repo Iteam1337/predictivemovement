@@ -29,7 +29,8 @@
     "reason-react",
     "re-formality",
     "bs-css",
-    "bs-date-fns"
+    "bs-date-fns",
+    "reason-transition-group"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3

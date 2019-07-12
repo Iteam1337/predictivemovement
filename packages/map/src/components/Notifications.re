@@ -1,19 +1,17 @@
 open ReasonTransitionGroup;
 
 module Notification = {
-  [@bs.module] external uuid: unit => string = "uuid/v4";
-
   type notificationType = [ | `Success | `Error];
 
   type t = {
-    id: string,
+    id: Utils.UUID.t,
     title: string,
     timeout: option(int),
     notificationType,
   };
 
   let make = (~title, ~notificationType, ~timeout=None, ()) => {
-    id: uuid(),
+    id: Utils.UUID.make(),
     title,
     timeout,
     notificationType,
@@ -23,7 +21,7 @@ module Notification = {
 module Context = {
   type t = {
     notifications: list(Notification.t),
-    removeNotification: string => unit,
+    removeNotification: Utils.UUID.t => unit,
     updateNotifications: Notification.t => unit,
   };
 
@@ -41,7 +39,7 @@ module Provider = {
   type state = list(Notification.t);
 
   type action =
-    | RemoveNotification(string)
+    | RemoveNotification(Utils.UUID.t)
     | UpdateNotifications(Notification.t);
 
   [@react.component]
@@ -128,7 +126,7 @@ let make = () => {
                 | `Success =>
                   <Alert.Success
                     className={Some("notification mb-4")}
-                    key=id
+                    key={id->Utils.UUID.toString}
                     onRemove={Some(_ => ctx.removeNotification(id))}
                     title
                     timeout
@@ -136,7 +134,7 @@ let make = () => {
                 | `Error =>
                   <Alert.Error
                     className={Some("notification mb-4")}
-                    key=id
+                    key={id->Utils.UUID.toString}
                     onRemove={Some(_ => ctx.removeNotification(id))}
                     title
                     timeout

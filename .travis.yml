@@ -1,0 +1,7 @@
+language: bash
+
+services:
+# Require docker to be running in the build context
+- docker
+
+script: echo "Hello World!!!"

@@ -21,7 +21,7 @@
     "@aantron/repromise": "0.6.1",
     "@deck.gl/core": "7.1.9",
     "@deck.gl/geo-layers": "7.1.9",
-    "@deck.gl/layers": "7.1.9",
+    "@deck.gl/layers": "7.1.10",
     "@glennsl/bs-json": "^4.0.0",
     "bs-abstract": "^0.17.0",
     "bs-css": "^9.0.1",

@@ -5,13 +5,15 @@ module Notification = {
 
   type t = {
     id: Utils.UUID.t,
+    onClick: option(unit => unit),
     title: string,
     timeout: option(int),
     notificationType,
   };
 
-  let make = (~title, ~notificationType, ~timeout=None, ()) => {
+  let make = (~title, ~notificationType, ~timeout=None, ~onClick=None, ()) => {
     id: Utils.UUID.make(),
+    onClick,
     title,
     timeout,
     notificationType,
@@ -116,7 +118,7 @@ let make = () => {
   <div className="absolute z-10 top-4 right-4">
     <TransitionGroup>
       {ctx.notifications
-       ->Belt.List.map(({title, notificationType, id, timeout}) =>
+       ->Belt.List.map(({onClick, title, notificationType, id, timeout}) =>
            <CSSTransition
              timeout={`int(300)}
              unmountOnExit=true
@@ -127,6 +129,7 @@ let make = () => {
                   <Alert.Success
                     className={Some("notification mb-4")}
                     key={id->Utils.UUID.toString}
+                    onClick
                     onRemove={Some(_ => ctx.removeNotification(id))}
                     title
                     timeout
@@ -135,6 +138,7 @@ let make = () => {
                   <Alert.Error
                     className={Some("notification mb-4")}
                     key={id->Utils.UUID.toString}
+                    onClick
                     onRemove={Some(_ => ctx.removeNotification(id))}
                     title
                     timeout

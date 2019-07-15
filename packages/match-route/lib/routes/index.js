@@ -23,7 +23,7 @@ module.exports = (app, io) => {
         const route = await getBestRoute(event.payload)
         console.log('Driver found passengers', route)
         io.to(socketId).emit('changeRequested', routeId)
-        await pub.set(routeId, JSON.stringify([socketId]))
+        await pub.lpush(routeId, JSON.stringify(socketId))
         addPendingTrip(routeId, route)
       } else if (event.type === 'passenger') {
         const passengerId = uuid()
@@ -35,12 +35,13 @@ module.exports = (app, io) => {
           } = bestMatch
           match.ids = [passengerId]
           addPendingTrip(id, match)
-          await pub.publish(id, 'changeRequested')
-          await pub.set(id, JSON.stringify([socketId]))
+          await pub.publish(`changeRequested:${id}`, passengerId)
+          // const sockets = await pub.get(passengerId)
+          await pub.lpush(passengerId, JSON.stringify(socketId))
         } else {
           const passengerId = addPersonToList(event.payload)
           console.log('no match found, subscribing to id:', passengerId)
-          await pub.set(passengerId, JSON.stringify([socketId]))
+          await pub.lpush(passengerId, JSON.stringify(socketId))
         }
       } else if (event.type === "acceptChange") {
         const {
@@ -55,24 +56,28 @@ module.exports = (app, io) => {
         }
         delete pendingRoutes[id]
         routes[id] = route
+
         client.emit('congrats', id)
+        // remove passenger from list
       }
     })
   })
+
   redis.on('pmessage', async (pattern, channel, msg) => {
     console.log('message recevied', pattern, channel, msg)
     const id = channel.replace(pattern.replace('*', ''), '')
 
-    const socketIds = await pub.get(id).then(JSON.parse)
+    const socketIds = await pub.lrange(id, 0, -1).then(JSON.parse)
     console.log(socketIds)
 
     if (pattern === 'routeCreated:*') {
-      console.log('congrats to', socketIds[0])
-      io.to(socketIds[0]).emit('congrats', msg)
-    } else if (pattern === 'changeRequested') {
-      io.to(socketIds[0]).emit('changeRequested', id)
+      console.log(`congrats to ${socketIds}, routeId: ${msg}`, )
+
+      io.to(socketIds).emit('congrats', msg)
+    } else if (pattern === 'changeRequested:*') {
+      io.to(socketIds).emit('changeRequested', id)
     } else if (pattern === 'tripUpdated') {
-      io.to(socketIds[0]).emit('tripUpdated', id)
+      io.to(socketIds).emit('tripUpdated', id)
     } else {
       console.log('Unhandled redis message ', pattern)
     }
@@ -122,7 +127,13 @@ module.exports = (app, io) => {
         })
         return {
           id,
-          match
+          match: {
+            route: match.defaultRoute,
+            distance: match.distance,
+            stops: match.stops,
+            duration: match.duration,
+            ids: match.ids
+          }
         }
       }))
       .then(matches => matches.pop())
@@ -217,6 +228,8 @@ module.exports = (app, io) => {
       id
     }
   }, res) => {
+    console.log('received msg', id)
+
     const route = routes[id]
 
     if (!route) {
@@ -236,6 +249,7 @@ module.exports = (app, io) => {
     if (!route) {
       return res.sendStatus(400)
     }
+    console.log('returning ')
 
     res.send(route)
   })

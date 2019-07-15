@@ -37,6 +37,11 @@ module Car = {
     stops: array(Stops.t),
   };
 
+  type routeWithId = {
+    id: string,
+    response,
+  };
+
   let geometry = json => {
     coordinates:
       json |> field("coordinates", array(array(Json.Decode.float))),
@@ -110,9 +115,12 @@ module Travel = {
     };
   };
 
-  let route = (~callback, id) =>
-    Refetch.fetch(Config.apiHost ++ "/route/" ++ id)
+  let route = (~url="/route/", ~callback, id) =>
+    Refetch.fetch(Config.apiHost ++ url ++ id)
     |> Repromise.andThen(Refetch.json)
     |> Repromise.map(Car.fromJson)
     |> Repromise.wait(callback);
+
+  let pendingRoute = (~callback, id) =>
+    route(~url="/pending-route/", ~callback, id);
 };

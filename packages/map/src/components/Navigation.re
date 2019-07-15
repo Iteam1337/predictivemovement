@@ -1,11 +1,17 @@
 [@react.component]
-let make = () => {
+let make = (~onRouteSelect, ~onRouteAnswer, ~acceptedRoutes, ~pendingRoutes) => {
   let url = ReasonReactRouter.useUrl();
 
   let travelRoute =
     switch (url.path) {
     | ["resa"] => "/"
     | _ => "/resa"
+    };
+
+  let tripsRoute =
+    switch (url.path) {
+    | ["resor"] => "/"
+    | _ => "/resor"
     };
 
   let sideBar = (~show) => {
@@ -27,11 +33,22 @@ let make = () => {
           <Icon className="h-6 w-6" name=`Search />
         </Router.Link>
       </div>
+      <div className="mt-12">
+        <Router.Link href=tripsRoute>
+          <Icon className="h-6 w-6" name=`Dashboard />
+        </Router.Link>
+      </div>
     </nav>
     {switch (url.path) {
      | ["resa"] =>
        <div className={sideBar(~show=true)}>
          <div className="mt-12"> <Travel /> </div>
+       </div>
+     | ["resor"] =>
+       <div className={sideBar(~show=true)}>
+         <div className="mt-12">
+           <Trips onRouteSelect onRouteAnswer acceptedRoutes pendingRoutes />
+         </div>
        </div>
      | _ => <div className={sideBar(~show=false)} />
      }}

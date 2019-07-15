@@ -137,6 +137,7 @@ module.exports = {
       }
     }
     permute(listOfPoints)
+    console.log(listOfPoints)
 
     return result.reduce((res, permutation) => {
       res.push({

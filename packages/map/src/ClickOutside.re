@@ -1,6 +1,6 @@
 open Webapi.Dom;
 
-let handleClickOutside = (domElement: Dom.element, e: Dom.mouseEvent, fn) => {
+let handleClickOutside = (domElement, e, fn) => {
   let targetElement = MouseEvent.target(e) |> EventTarget.unsafeAsElement;
   !(domElement |> Element.contains(targetElement)) ? fn(e) : ();
 };
@@ -17,6 +17,7 @@ let useClickOutside = (onClickOutside: Dom.mouseEvent => unit) => {
       )
     ->ignore;
   };
+  Js.log(elementRef);
 
   React.useEffect0(() => {
     Document.addMouseDownEventListener(handleMouseDown, document);

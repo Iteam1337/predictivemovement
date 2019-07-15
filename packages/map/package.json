@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@aantron/repromise": "0.6.1",
-    "@deck.gl/core": "7.1.9",
+    "@deck.gl/core": "7.1.10",
     "@deck.gl/geo-layers": "7.1.9",
     "@deck.gl/layers": "7.1.9",
     "@glennsl/bs-json": "^4.0.0",

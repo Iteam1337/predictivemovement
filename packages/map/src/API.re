@@ -1,34 +1,3 @@
-module Travel = {
-  module Route = {
-    let fromType =
-      fun
-      | `Person => "/pickup"
-      | `Car => "/route";
-
-    let make = t => Config.apiHost ++ fromType(t);
-  };
-
-  let make = (~route, ~body, ~method_=Fetch.Post, ()) =>
-    Repromise.(
-      Belt.Result.(
-        Fetch.fetchWithInit(
-          Route.make(route),
-          Fetch.RequestInit.make(
-            ~method_,
-            ~body=Fetch.BodyInit.make(Js.Json.stringify(body)),
-            ~headers=
-              Fetch.HeadersInit.make({"Content-Type": "application/json"}),
-            (),
-          ),
-        )
-        |> Js.Promise.then_(Fetch.Response.json)
-        |> Rejectable.fromJsPromise
-        |> Rejectable.map(value => Ok(value))
-        |> Rejectable.catch(error => Error(error)->resolved)
-      )
-    );
-};
-
 module Car = {
   open Json.Decode;
 
@@ -61,12 +30,16 @@ module Car = {
   };
 
   type response = {
-    id: string,
     maxTime: float,
     distance: float,
     duration: float,
     route: routeRoot,
     stops: array(Stops.t),
+  };
+
+  type routeWithId = {
+    id: string,
+    response,
   };
 
   let geometry = json => {
@@ -87,11 +60,67 @@ module Car = {
   };
 
   let fromJson = json => {
-    id: json |> field("id", string),
     maxTime: json |> field("maxTime", Json.Decode.float),
     distance: json |> field("distance", Json.Decode.float),
     duration: json |> field("duration", Json.Decode.float),
     route: json |> field("route", routeRoot),
     stops: json |> field("stops", array(Stops.fromJson)),
   };
+};
+
+module Travel = {
+  module Route = {
+    let fromType =
+      fun
+      | `Person => "/pickup"
+      | `PendingRoute(id) => "/pending-route/" ++ id
+      | `Driver => "/route"
+      | `RouteId(id) => "/route/" ++ id;
+
+    let fromSocketType =
+      fun
+      | `Person => "passenger"
+      | `Driver => "driver";
+
+    let make = t => Config.apiHost ++ fromType(t);
+  };
+
+  module Socket = {
+    let make = (~route, ~body) => {
+      let payload =
+        Js.Json.stringify(
+          Json.Encode.(
+            object_([
+              ("type", string(Route.fromSocketType(route))),
+              ("payload", body),
+            ])
+          ),
+        );
+      Socket.emit("event", payload);
+    };
+
+    module Events = {
+      let acceptChange = id =>
+        Socket.emit(
+          "event",
+          Js.Json.stringify(
+            Json.Encode.(
+              object_([
+                ("type", string("acceptChange")),
+                ("payload", object_([("id", string(id))])),
+              ])
+            ),
+          ),
+        );
+    };
+  };
+
+  let route = (~url="/route/", ~callback, id) =>
+    Refetch.fetch(Config.apiHost ++ url ++ id)
+    |> Repromise.andThen(Refetch.json)
+    |> Repromise.map(Car.fromJson)
+    |> Repromise.wait(callback);
+
+  let pendingRoute = (~callback, id) =>
+    route(~url="/pending-route/", ~callback, id);
 };

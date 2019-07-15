@@ -137,6 +137,7 @@ module.exports = {
       }
     }
     permute(listOfPoints)
+    console.log(listOfPoints)
 
     return result.reduce((res, permutation) => {
       res.push({
@@ -159,7 +160,6 @@ module.exports = {
       .filter(x => x)
       .map(latLon)
       .join(';')
-    console.log('destinations', destinations)
 
     const url = `/route/v1/driving/${destinations}?geometries=geojson&overview=full`
 

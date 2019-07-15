@@ -9,6 +9,7 @@ module.exports = {
       sans: ["Nunito Sans", "sans-serif"]
     },
     inset: {
+      "0": "0",
       "4": "1rem",
       "1/2": "50%"
     }

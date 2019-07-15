@@ -1,0 +1,28 @@
+language: bash
+
+matrix:
+  include:
+    - env: PROJECT=packages/map
+    - env: PROJECT=packages/match-route
+
+jobs:
+  include:
+    - stage: build
+      env: PROJECT=packages/map
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
+    - stage: build
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
+
+    - stage: deploy
+      env: PROJECT=packages/map
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
+    - stage: deploy
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
+
+stages:
+  - name: build
+    if: branch = master AND type != pull_request
+  - name: deploy
+    if: branch = master AND type != pull_request

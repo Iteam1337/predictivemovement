@@ -36,6 +36,20 @@ module TravelForm = {
 
   module EndDateField = {
     let update = (state, endDate) => {...state, endDate};
+
+    let validator = {
+      field: EndDate,
+      strategy: Strategy.OnFirstSuccessOrFirstBlur,
+      dependents: None,
+      validate: ({endDate, startDate}) => {
+        DateFns.isBefore(
+          startDate |> Js.Date.fromString,
+          endDate |> Js.Date.fromString,
+        )
+          ? Error({j|Slutdatum får inte vara innan startdatum|j})
+          : Ok(Valid);
+      },
+    };
   };
 
   module TravellerField = {
@@ -77,14 +91,19 @@ module TravelForm = {
     };
   };
 
-  let validators = [OriginField.validator, DestinationField.validator];
+  let validators = [
+    OriginField.validator,
+    DestinationField.validator,
+    EndDateField.validator,
+  ];
 };
 
 module TravelFormHook = Formality.Make(TravelForm);
 
 [@react.component]
-let make = (~onCar) => {
-  let geolocation = React.useContext(Geolocation.context);
+let make = () => {
+  let geolocation = React.useContext(Geolocation.Context.t);
+  let notifications = React.useContext(Notifications.Context.t);
 
   let form =
     TravelFormHook.useForm(
@@ -118,24 +137,20 @@ let make = (~onCar) => {
         };
 
         let postPerson = body => {
-          API.Travel.make(~route=`Person, ~body, ())
-          |> Repromise.wait(
-               fun
-               | Belt.Result.Ok(_) => form.notifyOnSuccess(None)
-               | Belt.Result.Error(_) => (),
-             );
+          API.Travel.Socket.make(~route=`Person, ~body);
+
+          notifications.updateNotifications(
+            Notifications.Notification.make(
+              ~title={j|Din resa är registrerad|j},
+              ~notificationType=`Success,
+              ~timeout=Some(3000),
+              (),
+            ),
+          );
         };
 
         let postCar = body => {
-          API.Travel.make(~route=`Car, ~body, ())
-          |> Repromise.wait(
-               fun
-               | Belt.Result.Ok(data) => {
-                   onCar(data |> API.Car.fromJson);
-                   form.notifyOnSuccess(None);
-                 }
-               | Belt.Result.Error(e) => Js.log2("Error", e),
-             );
+          API.Travel.Socket.make(~route=`Driver, ~body);
         };
 
         let callback = data => {
@@ -230,6 +245,7 @@ let make = (~onCar) => {
       label="Resans startdatum"
       placeholder="Startdatum"
       onChange={handleCalendar(StartDate, TravelForm.StartDateField.update)}
+      value={form.state.startDate}
     />
     <Input.Text
       className="mt-4"
@@ -246,8 +262,10 @@ let make = (~onCar) => {
         error={EndDate->(form.result)}
         id="travel-date-end"
         label="Resans slutdatum"
+        minDate={Some(form.state.startDate |> Js.Date.fromString)}
         placeholder="Slutdatum"
         onChange={handleCalendar(EndDate, TravelForm.EndDateField.update)}
+        value={form.state.endDate}
       />
       <Input.Text
         className="mt-4"
@@ -270,23 +288,12 @@ let make = (~onCar) => {
         onChange={handleCheckbox(Traveller, TravelForm.TravellerField.update)}
       />
     </div>
-    {switch (form.status, form.state.traveller) {
-     | (Submitted, Person) =>
-       <Alert.Success className="mt-8" title="Resa registrerad">
-         {j|Din resa är registrerad|j}->React.string
-       </Alert.Success>
-     | (SubmissionFailed(_), _) =>
-       <Alert.Error className="mt-8" title="Registrering misslyckades">
-         {j|Någonting gick fel vid registrering|j}->React.string
-       </Alert.Error>
-     | _ => React.null
-     }}
     <div className="mt-8 mb-4">
       <Button.Primary type_="submit">
         {React.string("Registrera resa")}
       </Button.Primary>
     </div>
-    <Button.Secondary onClick={_ => form.reset()}>
+    <Button.Secondary disabled={!form.dirty()} onClick={_ => form.reset()}>
       {j|Återställ formulär|j}->React.string
     </Button.Secondary>
   </form>;

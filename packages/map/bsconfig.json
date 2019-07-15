@@ -30,6 +30,7 @@
     "re-formality",
     "bs-css",
     "bs-date-fns",
+    "bs-webapi",
     "reason-transition-group"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],

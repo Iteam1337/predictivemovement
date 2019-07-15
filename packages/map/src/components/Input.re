@@ -131,6 +131,11 @@ module Calendar = {
         {calendarState: `Closed},
       );
 
+    let handleClickOutside = _ => dispatch(DisplayCalendar(`Closed));
+
+    let calendarContainerRef =
+      ClickOutside.useClickOutside(handleClickOutside);
+
     <div className="relative">
       <Text
         id
@@ -147,10 +152,7 @@ module Calendar = {
        | `Open =>
          <>
            <div
-             className="fixed inset-0 z-10"
-             onClick={_ => dispatch(DisplayCalendar(`Closed))}
-           />
-           <div
+             ref={ReactDOMRe.Ref.domRef(calendarContainerRef)}
              className="absolute bottom-10 border-transparent left-0 right-0 mb-4 rounded shadow z-20">
              <ReactCalendar
                minDate

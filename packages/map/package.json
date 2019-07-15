@@ -29,7 +29,7 @@
     "bs-decode": "^0.8.0",
     "bs-fetch": "^0.5.0",
     "bs-webapi": "^0.15.2",
-    "deck.gl": "7.1.9",
+    "deck.gl": "7.1.10",
     "esm": "3.2.25",
     "isomorphic-fetch": "^2.2.1",
     "re-classnames": "^4.0.0",

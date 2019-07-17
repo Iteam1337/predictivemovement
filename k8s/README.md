@@ -2,7 +2,7 @@
 
 - Have `kubectl` [installed](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
-- Have `helm` [installed](https://helm.sh/docs/using_helm/#install-helm) (We use helm charts for templates that we render and then deploy using kubectl)
+- Have `helm` [installed](https://helm.sh/docs/using_helm/#installing-helm) (We use helm charts for templates that we render and then deploy using kubectl)
 
 - Access to Iteam organization in [Containership](https://containership.io)
 

@@ -13,7 +13,7 @@ module.exports = {
     filename: "index.js"
   },
   plugins: [
-    new Dotenv(),
+    new Dotenv({ systemvars: true }),
     new CopyWebpackPlugin([
       {
         from: path.join(__dirname, "./public/icons/*"),

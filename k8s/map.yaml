@@ -18,9 +18,18 @@ spec:
       - image: iteam1337/predictive-movement-map
         name: web
         imagePullPolicy: Always
+        envFrom:
+        - secretRef:
+            name: google-token
+        - secretRef:
+            name: mapbox-token
+        env:
+        - name: API_HOST
+          value: https://match-route.iteamdev.se
         ports:
-        - containerPort: 80
+        - containerPort: 4000
           protocol: TCP
+        resources: {}
       restartPolicy: Always
 ---
 apiVersion: v1
@@ -34,7 +43,7 @@ spec:
     - name: "80"
       protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 4000
   selector:
     app: map
 ---

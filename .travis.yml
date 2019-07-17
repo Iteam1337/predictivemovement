@@ -23,6 +23,6 @@ jobs:
 
 stages:
   - name: build
-    if: branch = master AND type != pull_request
+    if: (branch = master OR branch = ci-cd) AND type != pull_request
   - name: deploy
-    if: branch = master AND type != pull_request
+    if: (branch = master OR branch = ci-cd) AND type != pull_request

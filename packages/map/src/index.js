@@ -1,3 +1,3 @@
 require("./index.css");
 require("../lib/js/src/Index.bs");
-console.log('it works')
+console.log('it works!')

@@ -10,25 +10,32 @@ chmod 700 get_helm.sh
 
 FEATURE=$(echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/\+/-/g; s/\//-/g; s/\=/-/g')
 DEPLOYMENT="${1/packages\//}"
+KUBECTL_ARGS=( --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true )
 
 echo "$DEPLOYMENT is being deployed"
 
 helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
   --set ingress.hosts[0].host=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
   --set image.tag=$FEATURE | \
-kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
+kubectl "${KUBECTL_ARGS[@]}" apply -f -
 
 ### Copy google and mapbox secrets from default namespace into the new namespace
-kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret google-token -n default -o yaml | \
-  sed "s/namespace: default/namespace: $FEATURE/" | \
-  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -n $FEATURE -f -
+if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get secret google-token)
+then
+  kubectl "${KUBECTL_ARGS[@]}" get secret google-token -n default -o yaml | \
+    sed "s/namespace: default/namespace: $FEATURE/" | \
+    kubectl "${KUBECTL_ARGS[@]}" apply -n $FEATURE -f -
+fi
 
-kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret mapbox-token -n default -o yaml | \
-  sed "s/namespace: default/namespace: $FEATURE/" | \
-  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -n $FEATURE -f -
+if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get secret mapbox-token)
+then
+  kubectl "${KUBECTL_ARGS[@]}" get secret mapbox-token -n default -o yaml | \
+    sed "s/namespace: default/namespace: $FEATURE/" | \
+    kubectl "${KUBECTL_ARGS[@]}" apply -n $FEATURE -f -
+fi
 
 ### Post a comment to Github PR when there isn't a pod yet for the new feature (prevents from posting on every commit)
-if ! (kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT -o jsonpath='{.items[0].metadata.name}');
+if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT -o jsonpath='{.items[0].metadata.name}');
 then
   curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
   -d "{\"body\": \"Deployment preview ready at: https://$DEPLOYMENT-$FEATURE.pm.iteamdev.se\"}" \

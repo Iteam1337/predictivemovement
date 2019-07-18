@@ -61,8 +61,10 @@ Notice we also use `helm`. That is because we have in plan to setup feature depl
 ```bash
 kubectl apply -f osrm.yaml
 kubectl apply -f redis.yaml
+
+## Generate helm template from the respective charts(directories) and pipe the output to kubectl apply.
 helm template map --name map | kubectl apply -f -
-kubectl apply -f match-route.yaml
+helm template match-route --name match-route | kubectl apply -f -
 ```
 
 ## Route53 setup

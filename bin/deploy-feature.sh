@@ -8,7 +8,7 @@ curl -LO https://git.io/get_helm.sh
 chmod 700 get_helm.sh
 ./get_helm.sh
 
-FEATURE=$(echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/\+/-/g; s/\//_/g; s/\=//g')
+FEATURE=$(echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/\+/-/g; s/\//-/g; s/\=/-/g')
 DEPLOYMENT="${1/packages\//}"
 
 echo "$DEPLOYMENT is being deployed"

@@ -2,7 +2,7 @@
 
 
 DOCKER_REPO="iteam1337/predictive-movement-${1/packages\//}";
-DOCKER_TAG=$(echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/\+/-/g; s/\//_/g; s/\=//g')
+DOCKER_TAG=$(echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/\+/-/g; s/\//-/g; s/\=/-/g')
 PROJECT=$1
 echo "building $DOCKER_REPO:$DOCKER_TAG"
 

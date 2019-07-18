@@ -19,9 +19,9 @@ helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
 kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
 
 kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret google-token -n default -o yaml | \
-  sed 's/namespace: default/namespace: $FEATURE/' | \
+  sed "s/namespace: default/namespace: $FEATURE/" | \
   kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
 
 kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret mapbox-token -n default -o yaml | \
-  sed 's/namespace: default/namespace: $FEATURE/' | \
+  sed "s/namespace: default/namespace: $FEATURE/" | \
   kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -

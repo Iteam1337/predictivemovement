@@ -17,5 +17,11 @@ helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
   --set ingress.hosts[0].host=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
   --set image.tag=$FEATURE | \
 kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
-kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret google-token -n default -o yaml | sed 's/namespace: default/namespace: $FEATURE/'  | kubectl apply -f -
-kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret mapbox-token -n default -o yaml | sed 's/namespace: default/namespace: $FEATURE/'  | kubectl apply -f -
+
+kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret google-token -n default -o yaml | \
+  sed 's/namespace: default/namespace: $FEATURE/' | \
+  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
+
+kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret mapbox-token -n default -o yaml | \
+  sed 's/namespace: default/namespace: $FEATURE/' | \
+  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -

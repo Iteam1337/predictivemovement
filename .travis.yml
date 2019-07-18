@@ -24,10 +24,7 @@ jobs:
     ### Feature deployment
     - stage: build-feature
       env: PROJECT=packages/map
-      script:
-        - echo $TRAVIS_COMMIT_RANGE
-        - echo $PROJECT
-        - if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
 
     - stage: deploy-feature
       env: PROJECT=packages/map

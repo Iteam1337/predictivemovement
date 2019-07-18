@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "map.fullname" . }}
-  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "map.labels" . | indent 4 }}
 spec:

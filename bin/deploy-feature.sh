@@ -35,7 +35,7 @@ then
 fi
 
 ### Post a comment to Github PR when there isn't a pod yet for the new feature (prevents from posting on every commit)
-if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT -o jsonpath='{.items[0].metadata.name}');
+if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}');
 then
   curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
   -d "{\"body\": \"Deployment preview ready at: https://$DEPLOYMENT-$FEATURE.pm.iteamdev.se\"}" \

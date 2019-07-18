@@ -8,10 +8,10 @@ curl -LO https://git.io/get_helm.sh
 chmod 700 get_helm.sh
 ./get_helm.sh
 
-helm
-
+FEATURE=$(echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/\+/-/g; s/\//_/g; s/\=//g')
 DEPLOYMENT="${1/packages\//}"
 
 echo "$DEPLOYMENT is being deployed"
 
-# kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true rollout restart deployment/$DEPLOYMENT
+helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE
+# | kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -

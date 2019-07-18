@@ -93,9 +93,8 @@ data:
       provider = "route53"
     # Change this to fit your needs
     [[acme.domains]]
-      main = "map.iteamdev.se"
-    [[acme.domains]]
-      main = "match-route.iteamdev.se"
+      # Change this to fit your needs
+      main = "*.pm.iteamdev.se"
 ---
 kind: DaemonSet
 apiVersion: apps/v1beta2

@@ -14,7 +14,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 env:
-  apiHost: https://match-route.iteamdev.se
+  apiHost: https://match-route.pm.iteamdev.se
 
 service:
   type: ClusterIP
@@ -25,7 +25,7 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: traefik
   hosts:
-    - host: map.iteamdev.se
+    - host: map.pm.iteamdev.se
       paths: []
 
 resources: {}

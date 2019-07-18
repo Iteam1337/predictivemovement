@@ -13,6 +13,9 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+env:
+  apiHost: https://match-route.iteamdev.se
+
 service:
   type: ClusterIP
   port: 80

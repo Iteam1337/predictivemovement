@@ -22,9 +22,9 @@ jobs:
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
 
     ### Feature deployment
-    # - stage: build-feature
-    #   env: PROJECT=packages/map
-    #   script: bash bin/build-feature.sh $PROJECT
+    - stage: build-feature
+      env: PROJECT=packages/map
+      script: bash bin/build-feature.sh $PROJECT
       # script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
 
     - stage: deploy-feature
@@ -37,7 +37,7 @@ stages:
     if: (branch = master OR branch = ci-cd) AND type != pull_request
   - name: deploy
     if: (branch = master OR branch = ci-cd) AND type != pull_request
-  # - name: build-feature
-  #   if: type = pull_request
+  - name: build-feature
+    if: type = pull_request
   - name: deploy-feature
     if: type = pull_request

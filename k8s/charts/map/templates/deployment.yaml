@@ -30,7 +30,7 @@ spec:
                 name: mapbox-token
           env:
             - name: API_HOST
-              value: https://match-route.iteamdev.se
+              value: {{ .Values.env.apiHost }}
           ports:
             - name: http
               containerPort: 4000

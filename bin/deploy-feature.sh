@@ -13,5 +13,7 @@ DEPLOYMENT="${1/packages\//}"
 
 echo "$DEPLOYMENT is being deployed"
 
-helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE
-# | kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
+helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
+  --set ingress.hosts[0].host=$FEATURE.iteamdev.se \
+  --set image.tag=$FEATURE | \
+kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -

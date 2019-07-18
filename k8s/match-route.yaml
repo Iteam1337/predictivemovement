@@ -53,7 +53,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: match-route.iteamdev.se
+    - host: match-route.pm.iteamdev.se
       http:
         paths:
           - backend:

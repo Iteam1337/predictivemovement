@@ -2,6 +2,8 @@
 
 - Have `kubectl` [installed](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 
+- Have `helm` [installed](https://helm.sh/docs/using_helm/#installing-helm) (We use helm charts for templates that we render and then deploy using kubectl)
+
 - Access to Iteam organization in [Containership](https://containership.io)
 
 - Acess to Iteam AWS if you create a cluster in AWS (as we did)
@@ -54,10 +56,12 @@ kubectl -n kube-system delete pod $(kubectl -n kube-system get pod -l app=traefi
 
 Apply the rest of the stack components (osrm, redis, map and match-route)
 
+Notice we also use `helm`. That is because we have in plan to setup feature deployments so we created charts for `map` and `match-route` that can easily be deployed with different values.
+
 ```bash
 kubectl apply -f osrm.yaml
 kubectl apply -f redis.yaml
-kubectl apply -f map.yaml
+helm template map --name map | kubectl apply -f -
 kubectl apply -f match-route.yaml
 ```
 

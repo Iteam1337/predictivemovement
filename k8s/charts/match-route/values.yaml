@@ -23,8 +23,7 @@ ingress:
     kubernetes.io/ingress.class: traefik
   hosts:
     - host: match-route.pm.iteamdev.se
-      paths: ["/"]
-
+      paths: ['/']
 
 env:
   redisHost: redis.default.svc.cluster.local

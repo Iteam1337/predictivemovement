@@ -17,7 +17,7 @@ echo "$DEPLOYMENT is being deployed"
 helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
   --set ingress.hosts[0].host=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
   --set image.tag=$FEATURE | \
-kubectl "${KUBECTL_ARGS[@]}" apply -f -
+kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE apply -f -
 
 ### Copy google and mapbox secrets from default namespace into the new namespace
 if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get secret google-token)

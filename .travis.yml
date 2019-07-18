@@ -24,13 +24,11 @@ jobs:
     ### Feature deployment
     - stage: build-feature
       env: PROJECT=packages/map
-      script: bash bin/build-feature.sh $PROJECT
-      # script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
 
     - stage: deploy-feature
       env: PROJECT=packages/map
-      script: sudo bash bin/deploy-feature.sh $PROJECT
-      # script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy-feature.sh $PROJECT; fi
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy-feature.sh $PROJECT; fi
 
 stages:
   - name: build

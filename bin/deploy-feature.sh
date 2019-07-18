@@ -20,11 +20,11 @@ kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tl
 
 kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret google-token -n default -o yaml | \
   sed "s/namespace: default/namespace: $FEATURE/" | \
-  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
+  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -n $FEATURE -f -
 
 kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true get secret mapbox-token -n default -o yaml | \
   sed "s/namespace: default/namespace: $FEATURE/" | \
-  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -f -
+  kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-skip-tls-verify=true apply -n $FEATURE -f -
 
 if ! (kubectl --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT -o jsonpath='{.items[0].metadata.name}'); \
   then \

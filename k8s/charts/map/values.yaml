@@ -26,7 +26,7 @@ ingress:
     kubernetes.io/ingress.class: traefik
   hosts:
     - host: map.pm.iteamdev.se
-      paths: []
+      paths: ['/']
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

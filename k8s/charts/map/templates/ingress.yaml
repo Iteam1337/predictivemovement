@@ -4,7 +4,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
-  namespace: {{ .Release.Namespace }}
   labels:
 {{ include "map.labels" . | indent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -27,9 +26,11 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          - path: /
+        {{- range .paths }}
+          - path: {{ . }}
             backend:
               serviceName: {{ $fullName }}
               servicePort: http
+        {{- end }}
   {{- end }}
 {{- end }}

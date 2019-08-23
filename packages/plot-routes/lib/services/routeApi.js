@@ -1,49 +1,39 @@
-const { destination, routeApi: socketURI } = require('../config')
-const io = require('socket.io-client')
-
+const genPayload = require('../util/genPayload')
+const sleep = require('../util/sleep')
 const routeApi = require('../adapters/routeApi')
-
-const sleep = (timeout = 1000) =>
-  new Promise(resolve => setTimeout(() => resolve(), timeout))
-
-const genPayload = startPosition => {
-  const date = new Date().toISOString().split('T')[0]
-  return {
-    start: {
-      date,
-      position: startPosition,
-    },
-    end: {
-      date,
-      position: destination,
-    },
-  }
-}
+const { newSocket } = require('../adapters/socket')
 
 const newPickup = async startPosition => {
   const payload = genPayload(startPosition)
-  const socket = io(socketURI)
+  const socket = newSocket()
 
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     socket.on('connect', async () => {
-      socket.emit(
-        'event',
-        JSON.stringify({
-          payload,
-          type: 'passenger',
-        })
-      )
+      try {
+        socket.emit(
+          'event',
+          JSON.stringify({
+            payload,
+            type: 'passenger',
+          })
+        )
 
-      await sleep()
+        await sleep()
 
-      resolve(socket)
+        resolve(socket)
+      } catch (_) {
+        reject(socket.close())
+      }
     })
+
+    socket.on('disconnect', () => reject(socket.close()))
   })
 }
 
 const newRoute = async startPosition => {
   const payload = genPayload(startPosition)
-  const socket = io(socketURI)
+  const socket = newSocket()
+
   return new Promise((resolve, reject) => {
     socket.on('connect', () =>
       socket.emit(
@@ -71,12 +61,12 @@ const newRoute = async startPosition => {
 
         resolve(socket)
       } catch (_) {
-        reject(socket)
+        reject(socket.close())
       }
     })
 
     socket.on('congrats', () => resolve(socket))
-    socket.on('disconnect', () => reject(socket))
+    socket.on('disconnect', () => reject(socket.close()))
   })
 }
 

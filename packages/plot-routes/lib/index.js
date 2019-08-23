@@ -5,16 +5,19 @@ const { newRoute } = require('./services/routeApi')
 const main = async () => {
   const points = []
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 10; i++) {
     let random
     try {
       random = await randomize()
       points.push(random)
-    } catch (_) {}
+    } catch (_) {
+      //
+    }
   }
 
-
-  const results = await Promise.allSettled(points.map(async point => await newRoute(point)))
+  const results = await Promise.allSettled(
+    points.map(async point => await newRoute(point))
+  )
 
   console.log(results)
 }

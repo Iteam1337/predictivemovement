@@ -2,7 +2,7 @@ const osrm = require('./osrm')
 const { destination } = require('../config')
 
 const genRandomPoint = () => {
-  const r = 100_000 / 111_300
+  const r = 100000 / 111300
   const y0 = destination.lat
   const x0 = destination.lon
   const u = Math.random()

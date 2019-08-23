@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 chmod +x ./kubectl
@@ -15,21 +17,21 @@ KUBECTL_ARGS=( --server=$KUBERNETES_SERVER --token=$KUBERNETES_TOKEN --insecure-
 echo "$DEPLOYMENT is being deployed"
 
 helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
-  --set ingress.hosts[0].host=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
-  --set image.tag=$FEATURE | \
+--set ingress.hosts[0].host=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
+--set image.tag=$FEATURE | \
 kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE apply -f -
 
 ### Copy google and mapbox secrets from default namespace into the new namespace
 if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get secret google-token)
 then
-  kubectl "${KUBECTL_ARGS[@]}" get secret google-token -n default -o yaml | \
+    kubectl "${KUBECTL_ARGS[@]}" get secret google-token -n default -o yaml | \
     sed "s/namespace: default/namespace: $FEATURE/" | \
     kubectl "${KUBECTL_ARGS[@]}" apply -n $FEATURE -f -
 fi
 
 if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get secret mapbox-token)
 then
-  kubectl "${KUBECTL_ARGS[@]}" get secret mapbox-token -n default -o yaml | \
+    kubectl "${KUBECTL_ARGS[@]}" get secret mapbox-token -n default -o yaml | \
     sed "s/namespace: default/namespace: $FEATURE/" | \
     kubectl "${KUBECTL_ARGS[@]}" apply -n $FEATURE -f -
 fi
@@ -37,13 +39,13 @@ fi
 ### Redeploy a new version of the feature
 if kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}';
 then
-  kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE rollout restart deployment/$DEPLOYMENT
+    kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE rollout restart deployment/$DEPLOYMENT
 fi
 
 ### Post a comment to Github PR when there isn't a pod yet for the new feature (prevents from posting on every commit)
 if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}');
 then
-  curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
-  -d "{\"body\": \"Deployment preview ready at: https://$DEPLOYMENT-$FEATURE.pm.iteamdev.se\"}" \
-  "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments";
+    curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
+    -d "{\"body\": \"Deployment preview ready at: https://$DEPLOYMENT-$FEATURE.pm.iteamdev.se\"}" \
+    "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments";
 fi

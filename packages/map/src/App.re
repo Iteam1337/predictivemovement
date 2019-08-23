@@ -3,7 +3,7 @@ open Map;
 type viewOrigin = [ | `Default | `Pending];
 
 type state = {
-  carResponse: API.Car.response,
+  carResponse: option(list(API.Car.response)),
   myLocation: option(Geolocation.Navigator.coords),
   tooltip: Map.IconLayer.hoverInfo,
   viewState: Map.DeckGL.viewState,
@@ -12,7 +12,7 @@ type state = {
 };
 
 type action =
-  | CarResponse(API.Car.response)
+  | CarResponse(list(API.Car.response))
   | Location(Geolocation.Navigator.coords)
   | Tooltip(Map.IconLayer.hoverInfo)
   | ViewState(Map.DeckGL.viewState)
@@ -20,16 +20,7 @@ type action =
   | PendingRoute(API.Car.routeWithId);
 
 let initialState: state = {
-  carResponse: {
-    duration: 0.0,
-    distance: 0.0,
-    maxTime: 0.0,
-    route: {
-      waypoints: [||],
-      routes: [||],
-    },
-    stops: [||],
-  },
+  carResponse: None,
   myLocation: None,
   tooltip: {
     x: 0,
@@ -60,7 +51,10 @@ let make = () => {
     React.useReducer(
       (state, action) =>
         switch (action) {
-        | CarResponse(carResponse) => {...state, carResponse}
+        | CarResponse(carResponse) => {
+            ...state,
+            carResponse: Some(carResponse),
+          }
         | Location(location) => {...state, myLocation: Some(location)}
         | Tooltip(tooltip) => {...state, tooltip}
         | ViewState(viewState) => {...state, viewState}
@@ -104,12 +98,13 @@ let make = () => {
     );
   };
 
-  let handleCar = (t: API.Car.response) => {
-    let {API.Car.route: {waypoints}} = t;
+  let handleCar = routes => {
+    dispatch(CarResponse(routes));
 
-    dispatch(CarResponse(t));
-
-    flyToRoute(waypoints);
+    switch (routes->Belt.List.get(Belt.List.length(routes) - 1)) {
+    | Some({route: {waypoints}}) => flyToRoute(waypoints)
+    | _ => ()
+    };
   };
 
   let onRouteAnswer = (r: API.Car.routeWithId) => {
@@ -119,27 +114,34 @@ let make = () => {
   };
 
   React.useEffect0(() => {
-    Socket.on(`RouteMatched, API.Travel.route(~callback=handleCar));
-    /* TODO: show new route and get explicit approval or denial from user */
-    Socket.on(`RouteChangeRequested, id =>
-      API.Travel.pendingRoute(
-        ~callback=
-          response => {
-            dispatch(PendingRoute({id, response}));
-
-            notifications.updateNotifications(
-              Notifications.Notification.make(
-                ~title={j|Din resa har en matchning|j},
-                ~notificationType=`Success,
-                ~onClick=Some(_ => ReasonReactRouter.push("/resor")),
-                ~timeout=Some(5000),
-                (),
-              ),
-            );
-          },
-        id,
-      )
+    Socket.on(`RouteMatched, _id =>
+      API.Travel.routes(~callback=handleCar, ())
     );
+    /* TODO: show new route and get explicit approval or denial from user */
+
+    Socket.on(`RouteChangeRequested, API.Travel.Socket.Events.acceptChange);
+
+    /* TODO(@all): Implement this again */
+    /* Socket.on(`RouteChangeRequested, id => */
+    /*   API.Travel.pendingRoute( */
+    /*     ~callback= */
+    /*       response => { */
+    /*         let firstResponse = Belt.List.headExn(response); */
+    /*         dispatch(PendingRoute({id, firstResponse})); */
+
+    /*         notifications.updateNotifications( */
+    /*           Notifications.Notification.make( */
+    /*             ~title={j|Din resa har en matchning|j}, */
+    /*             ~notificationType=`Success, */
+    /*             ~onClick=Some(_ => ReasonReactRouter.push("/resor")), */
+    /*             ~timeout=Some(5000), */
+    /*             (), */
+    /*           ), */
+    /*         ); */
+    /*       }, */
+    /*     id, */
+    /*   ) */
+    /* ); */
 
     None;
   });
@@ -161,28 +163,44 @@ let make = () => {
   };
 
   let geoJsonLayers =
-    carResponse.route.routes
-    ->Belt.Array.map(route => GeoJsonLayer.make(~data=[|route|], ()));
+    carResponse
+    ->Belt.Option.map(carResponse =>
+        Belt.Array.reduce(
+          carResponse->Belt.List.toArray, [||], (group, response) =>
+          Belt.Array.concat(group, response.route.routes)
+        )
+      )
+    ->Belt.Option.getWithDefault([||])
+    |> (data => GeoJsonLayer.make(~data, ()));
+
+  let iconArray =
+    carResponse
+    ->Belt.Option.map(carResponse =>
+        Belt.Array.reduce(
+          carResponse->Belt.List.toArray, [||], (group, response) =>
+          Belt.Array.concat(group, response.stops)
+        )
+      )
+    ->Belt.Option.getWithDefault([||]);
 
   let iconLayers =
-    carResponse.stops
-    ->Belt.Array.mapWithIndex((i, stop) =>
-        IconLayer.make(
-          ~data=[|stop|],
-          ~onHover=
-            hoverInfo =>
-              dispatch(Tooltip(Map.IconLayer.hoverInfoFromJs(hoverInfo))),
-          ~id={
-            Js.Float.(
-              String.concat(
-                "-",
-                [toString(stop.lat), toString(stop.lon), string_of_int(i)],
-              )
-            );
-          },
-          (),
-        )
-      );
+    iconArray->Belt.Array.mapWithIndex((i, stop) =>
+      IconLayer.make(
+        ~data=[|stop|],
+        ~onHover=
+          hoverInfo =>
+            dispatch(Tooltip(Map.IconLayer.hoverInfoFromJs(hoverInfo))),
+        ~id={
+          Js.Float.(
+            String.concat(
+              "-",
+              [toString(stop.lat), toString(stop.lon), string_of_int(i)],
+            )
+          );
+        },
+        (),
+      )
+    );
 
   <Geolocation.Context.Provider value={myLocation: myLocation}>
     <Notifications />
@@ -193,12 +211,24 @@ let make = () => {
       pendingRoutes
     />
     <Geolocation handleMove />
-    <TripDetails car=carResponse flyToRoute />
+    <TripDetails
+      car={
+        carResponse
+        ->Belt.Option.map(carResponse =>
+            switch (carResponse->Belt.List.get(0)) {
+            | Some(r) => Some(r)
+            | None => None
+            }
+          )
+        ->Belt.Option.getWithDefault(None)
+      }
+      flyToRoute
+    />
     <DeckGL
       controller=true
       onViewStateChange={vp => dispatch(ViewState(vp##viewState))}
       viewState
-      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}>
+      layers={[|geoJsonLayers|]->Belt.Array.concat(iconLayers)}>
       <StaticMap
         reuseMaps=true
         preventStyleDiffing=true

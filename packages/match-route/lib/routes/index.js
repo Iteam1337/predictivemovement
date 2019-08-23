@@ -1,9 +1,6 @@
 const uuid = require('uuid/v4')
 const osrm = require('../services/osrm')
-const {
-  pub,
-  redis
-} = require('../adapters/redis')
+const { pub, redis } = require('../adapters/redis')
 
 const persons = []
 const routes = {}
@@ -18,7 +15,7 @@ module.exports = (app, io) => {
     client.on('event', async e => {
       console.log('event received:', e)
       const event = JSON.parse(e)
-      if (event.type === "driver") {
+      if (event.type === 'driver') {
         const routeId = uuid()
         const route = await getBestRoute(event.payload)
         console.log('Driver found passengers', route)
@@ -29,10 +26,7 @@ module.exports = (app, io) => {
         const passengerId = uuid()
         const bestMatch = await getMatchForPassenger(event.payload)
         if (bestMatch) {
-          const {
-            match,
-            id
-          } = bestMatch
+          const { match, id } = bestMatch
           match.ids = [passengerId]
           addPendingTrip(id, match)
           await pub.publish(`changeRequested:${id}`, passengerId)
@@ -43,14 +37,16 @@ module.exports = (app, io) => {
           console.log('no match found, subscribing to id:', passengerId)
           await pub.lpush(passengerId, JSON.stringify(socketId))
         }
-      } else if (event.type === "acceptChange") {
-        const {
-          id
-        } = event.payload
+      } else if (event.type === 'acceptChange') {
+        const { id } = event.payload
         const route = pendingRoutes[id]
         console.log('Driver accepted', route)
         try {
-          await Promise.all(route.ids.map(passengerId => pub.publish(`routeCreated:${passengerId}`, id)))
+          await Promise.all(
+            route.ids.map(passengerId =>
+              pub.publish(`routeCreated:${passengerId}`, id)
+            )
+          )
         } catch (e) {
           console.log('error sending to clients', e)
         }
@@ -71,7 +67,7 @@ module.exports = (app, io) => {
     console.log(socketIds)
 
     if (pattern === 'routeCreated:*') {
-      console.log(`congrats to ${socketIds}, routeId: ${msg}`, )
+      console.log(`congrats to ${socketIds}, routeId: ${msg}`)
 
       io.to(socketIds).emit('congrats', msg)
     } else if (pattern === 'changeRequested:*') {
@@ -102,28 +98,27 @@ module.exports = (app, io) => {
 
   function getMatchForPassenger ({
     passengers = 1,
-    start: {
-      date: startDate,
-      position: passengerStartPosition
-    },
-    end: {
-      date: endDate,
-      position: passengerEndPosition
-    },
+    start: { date: startDate, position: passengerStartPosition },
+    end: { date: endDate, position: passengerEndPosition },
   }) {
-    return Promise.all(Object.entries(routes).map(async ([id, value]) => {
+    return Promise.all(
+      Object.entries(routes).map(async ([id, value]) => {
         const stopsCopy = value.stops.slice()
         const [driverStartPosition] = stopsCopy.splice(0, 1)
         const [driverEndPosition] = stopsCopy.splice(stopsCopy.length - 1, 1)
-        const permutations = osrm.getPermutationsWithoutIds(stopsCopy, passengerStartPosition, passengerEndPosition)
+        const permutations = osrm.getPermutationsWithoutIds(
+          stopsCopy,
+          passengerStartPosition,
+          passengerEndPosition
+        )
         const p = permutations.map(p => ({
-          coords: p
+          coords: p,
         }))
         const match = await osrm.bestMatch({
           startPosition: driverStartPosition,
           endPosition: driverEndPosition,
           permutations: p,
-          maxTime: value.maxTime
+          maxTime: value.maxTime,
         })
         return {
           id,
@@ -132,42 +127,34 @@ module.exports = (app, io) => {
             distance: match.distance,
             stops: match.stops,
             duration: match.duration,
-            ids: match.ids
-          }
+            ids: match.ids,
+          },
         }
-      }))
-      .then(matches => matches.pop())
+      })
+    ).then(matches => matches.pop())
   }
-  app.post(
-    '/pickup', async (req, res) => {
-      const bestMatch = await getMatchForPassenger(req.body)
-      if (bestMatch) {
-        const match = bestMatch.match
-        const result = {
-          route: match.defaultRoute,
-          distance: match.distance,
-          stops: match.stops,
-          duration: match.duration,
-        }
-        res.send(result)
-      } else {
-        addPersonToList(req.body)
-        res.sendStatus(200)
+  app.post('/pickup', async (req, res) => {
+    const bestMatch = await getMatchForPassenger(req.body)
+    if (bestMatch) {
+      const match = bestMatch.match
+      const result = {
+        route: match.defaultRoute,
+        distance: match.distance,
+        stops: match.stops,
+        duration: match.duration,
       }
+      res.send(result)
+    } else {
+      addPersonToList(req.body)
+      res.sendStatus(200)
     }
-  )
+  })
 
   async function getBestRoute ({
     maximumAddedTimePercent = 50,
     emptySeats = 4,
-    start: {
-      date: startDate,
-      position: startPosition
-    },
-    end: {
-      date: endDate,
-      position: endPosition
-    },
+    start: { date: startDate, position: startPosition },
+    end: { date: endDate, position: endPosition },
   }) {
     const defaultRoute = await osrm.route({
       startPosition,
@@ -176,7 +163,9 @@ module.exports = (app, io) => {
     const toHours = duration => duration / 60 / 60
 
     const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
-    const maxTime = defaultRouteDuration + defaultRouteDuration * (maximumAddedTimePercent / 100)
+    const maxTime =
+      defaultRouteDuration +
+      defaultRouteDuration * (maximumAddedTimePercent / 100)
     const permutations = osrm.getPermutations(persons, emptySeats)
 
     const bestMatch =
@@ -184,7 +173,7 @@ module.exports = (app, io) => {
         startPosition,
         endPosition,
         permutations,
-        maxTime
+        maxTime,
       })) || {}
 
     console.log({
@@ -202,11 +191,12 @@ module.exports = (app, io) => {
       distance: bestMatch.distance,
       stops: bestMatch.stops,
       duration: bestMatch.duration,
-      ids: bestMatch.ids
+      ids: bestMatch.ids,
     }
 
     return result
   }
+
   app.post('/route', async (req, res) => {
     try {
       const id = uuid()
@@ -220,14 +210,19 @@ module.exports = (app, io) => {
       console.error(error)
       res.sendStatus(500)
     }
-
   })
 
-  app.get('/route/:id', ({
-    params: {
-      id
+  app.get('/routes/', (req, res) => {
+    if (!routes) {
+      return res.sendStatus(400)
     }
-  }, res) => {
+
+    res.send({
+      data: Array.from(Object.values(routes).filter(Boolean)),
+    })
+  })
+
+  app.get('/route/:id', ({ params: { id } }, res) => {
     console.log('received msg', id)
 
     const route = routes[id]
@@ -236,14 +231,10 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    res.send(route)
+    res.send({ data: [route] })
   })
 
-  app.get('/pending-route/:id', ({
-    params: {
-      id
-    }
-  }, res) => {
+  app.get('/pending-route/:id', ({ params: { id } }, res) => {
     const route = pendingRoutes[id]
 
     if (!route) {

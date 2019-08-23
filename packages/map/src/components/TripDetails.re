@@ -95,7 +95,6 @@ module Date = {
 
 [@react.component]
 let make = (~car, ~flyToRoute) => {
-  let {duration, distance, stops, route: {waypoints}}: API.Car.response = car;
   let (state, dispatch) =
     React.useReducer(
       (_state, action) =>
@@ -105,53 +104,58 @@ let make = (~car, ~flyToRoute) => {
       {hoverState: NotHovering},
     );
 
-  switch (duration, distance) {
-  | (0.0, 0.0) => React.null
-  | (hours, distance) =>
-    let (originTime, destinationTime) = Date.make(hours);
-    let duration = Duration.make(hours);
+  switch (car) {
+  | Some(car) =>
+    let {duration, distance, stops, route: {waypoints}}: API.Car.response = car;
+    switch (duration, distance) {
+    | (0.0, 0.0) => React.null
+    | (hours, distance) =>
+      let (originTime, destinationTime) = Date.make(hours);
+      let duration = Duration.make(hours);
 
-    <div
-      className="w-64 translate-x--1/2 border-t-4 border-blue-400 bg-white
+      <div
+        className="w-64 translate-x--1/2 border-t-4 border-blue-400 bg-white
     absolute bottom-4 z-10 rounded left-1/2 shadow-md"
-      onMouseOver={_ => dispatch(HoverState(Hovering))}
-      onMouseLeave={_ => dispatch(HoverState(NotHovering))}
-      onClick={_ => flyToRoute(waypoints)}>
-      {switch (state.hoverState) {
-       | Hovering =>
-         <div
-           className="flex cursor-pointer items-center justify-center bg-blue-400 text-white
-         py-6 cursor-pointer">
-           "Tillbaka till rutten"->React.string
-         </div>
-       | NotHovering =>
-         <div className="p-4">
-           <div className="flex items-center justify-between">
-             <div className="text-lg font-bold">
-               originTime->React.string
-             </div>
-             <div className="flex items-center">
-               <div className="h-1 w-1 bg-gray-200 rounded-full" />
-               <div className="h-2 w-2 mx-2 bg-gray-200 rounded-full" />
-               <div className="h-1 w-1 bg-gray-200 rounded-full" />
-             </div>
-             <div className="text-lg font-bold">
-               destinationTime->React.string
-             </div>
-           </div>
+        onMouseOver={_ => dispatch(HoverState(Hovering))}
+        onMouseLeave={_ => dispatch(HoverState(NotHovering))}
+        onClick={_ => flyToRoute(waypoints)}>
+        {switch (state.hoverState) {
+         | Hovering =>
            <div
-             className="flex items-center justify-between mt-2 text-gray-600 text-center
+             className="flex cursor-pointer items-center justify-center bg-blue-400 text-white
+         py-6 cursor-pointer">
+             "Tillbaka till rutten"->React.string
+           </div>
+         | NotHovering =>
+           <div className="p-4">
+             <div className="flex items-center justify-between">
+               <div className="text-lg font-bold">
+                 originTime->React.string
+               </div>
+               <div className="flex items-center">
+                 <div className="h-1 w-1 bg-gray-200 rounded-full" />
+                 <div className="h-2 w-2 mx-2 bg-gray-200 rounded-full" />
+                 <div className="h-1 w-1 bg-gray-200 rounded-full" />
+               </div>
+               <div className="text-lg font-bold">
+                 destinationTime->React.string
+               </div>
+             </div>
+             <div
+               className="flex items-center justify-between mt-2 text-gray-600 text-center
       text-sm">
-             <div> {duration |> React.string} </div>
-             <div> {Distance.make(distance) |> React.string} </div>
-             <div>
-               {stops->Belt.Array.length->string_of_int
-                ++ " stopp"
-                |> React.string}
+               <div> {duration |> React.string} </div>
+               <div> {Distance.make(distance) |> React.string} </div>
+               <div>
+                 {stops->Belt.Array.length->string_of_int
+                  ++ " stopp"
+                  |> React.string}
+               </div>
              </div>
            </div>
-         </div>
-       }}
-    </div>;
+         }}
+      </div>;
+    };
+  | None => React.null
   };
 };

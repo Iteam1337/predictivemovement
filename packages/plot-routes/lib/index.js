@@ -1,11 +1,12 @@
 const { randomize } = require('./services/adress')
 
-const { newRoute } = require('./services/routeApi')
+const { newRoute, newPickup } = require('./services/routeApi')
 
 const main = async () => {
   const points = []
+  const sockets = []
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 3; i++) {
     let random
     try {
       random = await randomize()
@@ -15,11 +16,19 @@ const main = async () => {
     }
   }
 
-  const results = await Promise.allSettled(
-    points.map(async point => await newRoute(point))
-  )
+  for (const point of points.splice(0, Math.ceil(points.length / 2))) {
+    sockets.push(await newPickup(point))
+    console.log('added passenger')
+  }
 
-  console.log(results)
+  for (const point of points) {
+    sockets.push(await newRoute(point))
+    console.log('added driver')
+  }
+
+  console.log(sockets.map(({ io: { readyState } }) => console.log({ readyState })))
+
+  console.log(sockets)
 }
 
 main()

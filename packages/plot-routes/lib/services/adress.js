@@ -2,7 +2,7 @@ const osrm = require('./osrm')
 const { destination } = require('../config')
 
 const genRandomPoint = () => {
-  const r = 10000 / 111300
+  const r = 30000 / 111300 // 30KM
   const y0 = destination.lat
   const x0 = destination.lon
   const u = Math.random()
@@ -20,7 +20,7 @@ const genRandomPoint = () => {
 }
 
 const randomize = async (center = genRandomPoint(), count = 0) => {
-  if (count > 25) {
+  if (count > 250) {
     throw new Error(`Randomize in loop try nr ${count}`)
   }
 

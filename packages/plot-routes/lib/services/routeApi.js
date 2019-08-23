@@ -1,6 +1,8 @@
 const { destination, routeApi: socketURI } = require('../config')
 const io = require('socket.io-client')
 
+const routeApi = require('../adapters/routeApi')
+
 const sleep = (timeout = 1000) =>
   new Promise(resolve => setTimeout(() => resolve(), timeout))
 
@@ -42,8 +44,6 @@ const newPickup = async startPosition => {
 const newRoute = async startPosition => {
   const payload = genPayload(startPosition)
   const socket = io(socketURI)
-  let id
-
   return new Promise((resolve, reject) => {
     socket.on('connect', () =>
       socket.emit(
@@ -55,16 +55,24 @@ const newRoute = async startPosition => {
       )
     )
 
-    socket.on('changeRequested', changeRequestID => {
-      id = changeRequestID
+    socket.on('changeRequested', async id => {
+      try {
+        await routeApi.get(`/pending-route/${id}`) // check if route exists ...
 
-      socket.emit(
-        'event',
-        JSON.stringify({
-          payload: { id },
-          type: 'acceptChange',
-        })
-      )
+        socket.emit(
+          'event',
+          JSON.stringify({
+            payload: { id },
+            type: 'acceptChange',
+          })
+        )
+
+        await sleep(1000) // race condition!
+
+        resolve(socket)
+      } catch (_) {
+        reject(socket)
+      }
     })
 
     socket.on('congrats', () => resolve(socket))

@@ -8,6 +8,7 @@ const config = require('@iteam/config')({
       lon: 19.82016,
     },
     routeApi: 'http://localhost:3030',
+    count: 10,
   },
 })
 
@@ -16,4 +17,5 @@ module.exports = {
   osrm: config.get('osrm'),
   routeApi: config.get('routeApi'),
   destination: config.get('destination'),
+  count: config.get('count'),
 }

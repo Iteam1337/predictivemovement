@@ -1,5 +1,6 @@
-const osrm = require('../services/osrm')
-const { destination, radiusInKm } = require('../config')
+import { Position } from 'Position'
+import osrm from '../services/osrm'
+import { destination, radiusInKm } from '../config'
 
 const { lonMin, lonMax, latMin, latMax } = (() => {
   const radius = radiusInKm * 0.621371192
@@ -13,12 +14,12 @@ const { lonMin, lonMax, latMin, latMax } = (() => {
   return { lonMin, lonMax, latMin, latMax }
 })()
 
-const genRandomPoint = () => ({
+export const genRandomPoint = () => ({
   lat: Math.random() * (latMax - latMin + 1) + latMin,
   lon: Math.random() * (lonMax - lonMin + 1) + lonMin,
 })
 
-const randomize = async (count = 0) => {
+export const randomize = async (count = 0): Promise<Position> => {
   const center = genRandomPoint()
 
   if (count > 250) {
@@ -37,10 +38,7 @@ const randomize = async (count = 0) => {
     location: [lon, lat],
   } = nearest
 
-  return { ...center, lat, lon }
+  return { lat, lon }
 }
 
-module.exports = {
-  genRandomPoint,
-  randomize,
-}
+export default randomize

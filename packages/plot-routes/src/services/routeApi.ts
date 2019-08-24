@@ -1,9 +1,12 @@
-const genPayload = require('../util/genPayload')
-const sleep = require('../util/sleep')
-const routeApi = require('../adapters/routeApi')
-const { newSocket } = require('../adapters/socket')
+import { Position } from 'Position'
+import genPayload from '../util/genPayload'
+import sleep from '../util/sleep'
+import routeApi from '../adapters/routeApi'
+import { newSocket } from '../adapters/socket'
 
-const newPickup = async startPosition => {
+export const newPickup = async (
+  startPosition: Position
+): Promise<SocketIOClient.Socket> => {
   const payload = genPayload(startPosition)
   const socket = newSocket()
 
@@ -30,7 +33,9 @@ const newPickup = async startPosition => {
   })
 }
 
-const newRoute = async startPosition => {
+export const newRoute = async (
+  startPosition: Position
+): Promise<SocketIOClient.Socket> => {
   const payload = genPayload(startPosition)
   const socket = newSocket()
 
@@ -45,7 +50,7 @@ const newRoute = async startPosition => {
       )
     )
 
-    socket.on('changeRequested', async id => {
+    socket.on('changeRequested', async (id: string) => {
       try {
         await routeApi.get(`/pending-route/${id}`) // check if route exists ...
 
@@ -68,9 +73,4 @@ const newRoute = async startPosition => {
     socket.on('congrats', () => resolve(socket))
     socket.on('disconnect', () => reject(socket.close()))
   })
-}
-
-module.exports = {
-  newRoute,
-  newPickup,
 }

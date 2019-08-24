@@ -1,11 +1,12 @@
-const { count, destination, radiusInKm } = require('./config')
-const { randomize } = require('./util/randomAdress')
-const { newRoute, newPickup } = require('./services/routeApi')
-const socket = require('./adapters/socket')
+import Position from 'Position'
+import { count, destination, radiusInKm } from './config'
+import randomize from './util/randomAddress'
+import { newRoute, newPickup } from './services/routeApi'
+import * as socket from './adapters/socket'
 
 const main = async () => {
-  const points = []
-  const sockets = []
+  const points: Position[] = []
+  const sockets: SocketIOClient.Socket[] = []
 
   for (let i = 0; i < count; i++) {
     let random
@@ -32,10 +33,12 @@ const main = async () => {
     sockets.length === points.length ? '' : ` (${points.length} possible)`
 
   console.info(
-    `handled ${sockets.length} requests${missing}\n${socket.confirmed} congrats sent`
+    `handled ${
+      sockets.length
+    } requests${missing}\n${socket.confirmed()} congrats sent`
   )
 
-  await Promise.allSettled(
+  await Promise.all(
     sockets.map(socket => (socket && socket.close ? socket.close() : null))
   )
 }

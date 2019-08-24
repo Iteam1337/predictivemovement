@@ -1,7 +1,9 @@
-const { destination } = require('../config')
+import { Position } from 'Position'
+import { destination } from '../config'
 
-const genPayload = startPosition => {
+export const genPayload = (startPosition: Position) => {
   const date = new Date().toISOString().split('T')[0]
+
   return {
     start: {
       date,
@@ -14,5 +16,4 @@ const genPayload = startPosition => {
   }
 }
 
-
-module.exports = genPayload
+export default genPayload

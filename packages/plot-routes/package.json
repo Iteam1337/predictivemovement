@@ -9,7 +9,8 @@
     "start": "node_modules/.bin/ts-node src/index.ts",
     "start:compiled": "node -r source-map-support/register dist",
     "style": "prettier --check 'src/**/*.ts'",
-    "styling": "npm run lint -- --fix && npm run style -- --write"
+    "styling": "npm run lint -- --fix && npm run style -- --write",
+    "test": "node_modules/.bin/jest"
   },
   "keywords": [],
   "author": "",
@@ -22,10 +23,17 @@
   },
   "devDependencies": {
     "@iteam/eslint-config-iteam-node": "0.1.0",
+    "@types/jest": "24.0.17",
     "@types/node": "12.7.2",
     "@types/socket.io-client": "1.4.32",
+    "@typescript-eslint/eslint-plugin": "2.0.0",
+    "@typescript-eslint/parser": "2.0.0",
     "eslint": "6.2.1",
+    "jest": "24.9.0",
+    "jest-expect-message": "1.0.2",
+    "jest-watch-typeahead": "0.4.0",
     "prettier": "1.18.2",
+    "ts-jest": "24.0.2",
     "ts-node": "8.3.0",
     "ts-node-dev": "1.0.0-pre.42",
     "typescript": "3.5.3"

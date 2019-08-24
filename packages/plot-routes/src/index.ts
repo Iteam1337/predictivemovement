@@ -7,6 +7,7 @@ import { confirmed } from './adapters/socket'
 const main = async () => {
   const points: Position[] = []
   const sockets: SocketIOClient.Socket[] = []
+  const waypoints: Position[] = []
 
   for (let i = 0; i < count; i++) {
     let random
@@ -26,6 +27,7 @@ const main = async () => {
     try {
       sockets.push(await (isDriver ? newPickup(point) : newRoute(point)))
       console.log(`added ${label}`)
+      waypoints.push(point)
     } catch (_) {
       console.log(`failed to add ${label}`)
     }
@@ -37,11 +39,28 @@ handled requests = ${sockets.length}\ncongrats sent = ${confirmed()}`)
   await Promise.all(
     sockets.map(socket => (socket && socket.close ? socket.close() : null))
   )
+
+  generateGoogleURL(waypoints)
+}
+
+const generateGoogleURL = (waypoints: Position[]) => {
+  const origin = waypoints.shift()
+
+  if (!origin) {
+    return
+  }
+
+  waypoints.push(destination)
+
+  let url = `https://www.google.com/maps/dir/?api=1`
+  url += `&origin=${origin.lat},${origin.lon}&waypoints=`
+  url += waypoints.map(({ lat, lon }) => `${lat},${lon}`).join('|')
+
+  console.log(url)
 }
 
 console.info(`
 destination = ${JSON.stringify(destination, null, 2)}
-https://www.google.com/maps/place/${destination.lat},${destination.lon}
 radius in km = ${radiusInKm}
 maximum generated positions = ${count}`)
 

@@ -2,12 +2,12 @@ import { Position } from 'Position'
 import osrm from '../services/osrm'
 import { destination, radiusInKm } from '../config'
 
-const { lonMin, lonMax, latMin, latMax } = (() => {
+export const { lonMin, lonMax, latMin, latMax } = (() => {
   const radius = radiusInKm * 0.621371192
-  const space = Math.abs(Math.cos((destination.lat * Math.PI) / 180) * 69)
+  const world = Math.abs(Math.cos((destination.lat * Math.PI) / 180) * 69)
 
-  const lonMin = destination.lon - radius / space
-  const lonMax = destination.lon + radius / space
+  const lonMin = destination.lon - radius / world
+  const lonMax = destination.lon + radius / world
   const latMin = destination.lat - radius / 69
   const latMax = destination.lat + radius / 69
 
@@ -15,15 +15,15 @@ const { lonMin, lonMax, latMin, latMax } = (() => {
 })()
 
 export const genRandomPoint = () => ({
-  lat: Math.random() * (latMax - latMin + 1) + latMin,
-  lon: Math.random() * (lonMax - lonMin + 1) + lonMin,
+  lat: Math.random() * (latMax - latMin) + latMin,
+  lon: Math.random() * (lonMax - lonMin) + lonMin
 })
 
 export const randomize = async (count = 0): Promise<Position> => {
   const center = genRandomPoint()
 
   if (count > 250) {
-    throw new Error(`Randomize in loop try nr ${count}`)
+    throw new Error('limit reached')
   }
 
   const {

@@ -128,6 +128,7 @@ module.exports = (app, io) => {
         return {
           id,
           match: {
+            maxTime: value.maxTime,
             route: match.defaultRoute,
             distance: match.distance,
             stops: match.stops,
@@ -249,7 +250,7 @@ module.exports = (app, io) => {
     if (!route) {
       return res.sendStatus(400)
     }
-    console.log('returning ')
+    console.log('returning', route)
 
     res.send(route)
   })

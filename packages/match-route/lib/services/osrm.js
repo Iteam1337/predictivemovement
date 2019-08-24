@@ -114,20 +114,27 @@ module.exports = {
     return result
   },
 
-  getPermutations (input, _permutationLength) {
+  noOfStartingpointsLimitReached (array, permutationMaxLength) {
+    return array.filter(this.isStartCoordinate).length >= permutationMaxLength / 2
+  },
+
+  getPermutations (input, emptySeats) {
+    const permutationMaxLength = emptySeats * 2
     const result = []
     const [listOfPoints, translations] = this.convertPairsIntoIdentifiedPoints(
       input
     )
 
     const permute = (arr, permutation = []) => {
-      if (arr.length === 0) {
+      if (arr.length === 0 || permutation.length >= permutationMaxLength) {
         result.push(permutation)
       } else {
         for (let i = 0; i < arr.length; i++) {
           const arrayCopy = arr.slice()
-          const next = arrayCopy.splice(i, 1).pop()
-          if (
+          const [next] = arrayCopy.splice(i, 1)
+          if (this.isStartCoordinate(next) && this.noOfStartingpointsLimitReached(permutation, permutationMaxLength)) {
+            continue
+          } else if (
             this.isStartCoordinate(next) ||
             this.correspondingStartCoordIsInPermutation(next, permutation)
           ) {
@@ -137,7 +144,6 @@ module.exports = {
       }
     }
     permute(listOfPoints)
-    console.log(listOfPoints)
 
     return result.reduce((res, permutation) => {
       res.push({

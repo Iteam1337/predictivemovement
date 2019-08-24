@@ -8,10 +8,9 @@ RUN npm ci
 
 COPY . .
 
-RUN node_modules/typescript/bin/tsc
+RUN npm run build
 
-RUN ls -A | grep -v dist | xargs rm -rf
-RUN find dist -type d -name '__*' -exec rm -r {} +;
+RUN ls -A | grep -v dist | xargs rm -rf &&  find dist -type d -name '__*' -exec rm -r {} +;
 
 ##
 

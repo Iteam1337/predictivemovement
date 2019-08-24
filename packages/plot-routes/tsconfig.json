@@ -15,6 +15,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "sourceMap": true,
+    "inlineSources": true,
     "strict": true,
     "outDir": "dist",
     "target": "esnext"

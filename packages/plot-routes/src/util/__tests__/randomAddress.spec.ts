@@ -110,9 +110,9 @@ describe('#randomize', () => {
   it('throws an error if limit has been reached', async () => {
     try {
       await util.randomize(Infinity)
-      expect(1).toEqual(2)
-    } catch (err) {
-      expect(err).toEqual(expect.any(Error))
+      expect(1, 'previous call should throw error').toEqual(2)
+    } catch (error) {
+      expect(error).toEqual(expect.any(Error))
     }
   })
 })

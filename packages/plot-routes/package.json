@@ -7,6 +7,7 @@
     "dev": "node_modules/.bin/ts-node-dev --no-notify src/index.ts",
     "lint": "eslint 'src/**/*.ts'",
     "start": "node_modules/.bin/ts-node src/index.ts",
+    "start:compiled": "node -r source-map-support/register dist",
     "style": "prettier --check 'src/**/*.ts'",
     "styling": "npm run lint -- --fix && npm run style -- --write"
   },
@@ -16,7 +17,8 @@
   "dependencies": {
     "@iteam/config": "12.1.0",
     "axios": "0.19.0",
-    "socket.io-client": "2.2.0"
+    "socket.io-client": "2.2.0",
+    "source-map-support": "0.5.13"
   },
   "devDependencies": {
     "@iteam/eslint-config-iteam-node": "0.1.0",

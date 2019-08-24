@@ -27,4 +27,4 @@ ENV USER=normal-user
 RUN adduser --disabled-password --gecos "" $USER
 USER $USER
 
-CMD node dist/index.js
+CMD npm run start:compiled

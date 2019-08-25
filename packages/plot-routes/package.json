@@ -7,7 +7,7 @@
     "dev": "node_modules/.bin/ts-node-dev --no-notify src/index.ts",
     "lint": "eslint 'src/**/*.ts'",
     "start": "node_modules/.bin/ts-node src/index.ts",
-    "start:compiled": "node -r source-map-support/register dist",
+    "start:compiled": "node -r source-map-support/register src",
     "style": "prettier --check 'src/**/*.ts'",
     "styling": "npm run lint -- --fix && npm run style -- --write",
     "test": "node_modules/.bin/jest"

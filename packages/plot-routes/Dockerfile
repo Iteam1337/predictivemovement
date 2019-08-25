@@ -21,7 +21,7 @@ WORKDIR /app
 COPY package*json ./
 RUN npm ci --production
 
-COPY --from=builder /build/dist/src ./dist
+COPY --from=builder /build/dist/src ./src
 
 ENV USER=normal-user
 RUN adduser --disabled-password --gecos "" $USER

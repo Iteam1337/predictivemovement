@@ -16,6 +16,8 @@ export const errorHandler: ErrorRequestHandler = (error, _req, _res, next) => {
 
 app.use(errorHandler)
 
+app.use(express.static(config.publicPath))
+
 app.listen(config.express, () => {
   console.log(`listening on port ${config.express.port}`)
 })

@@ -1,11 +1,13 @@
-import supertest, { Test } from 'supertest'
+import path from 'path'
 import querystring from 'querystring'
+
+import supertest, { Test } from 'supertest'
 import genRequests from '../services/genRequests'
 import hasProp from '../util/hasProp'
 
 jest.mock('../config', () => ({
   express: {
-    port: 9993,
+    port: 0,
     host: '',
   },
   packageJSON: {
@@ -18,6 +20,7 @@ jest.mock('../config', () => ({
     lon: 13.013,
   },
   radiusInKm: 500,
+  publicPath: path.resolve(`${__dirname}/../../public`),
 }))
 
 jest.mock('../services/genRequests')
@@ -133,6 +136,24 @@ describe('app routes', () => {
       expect(genRequests).nthCalledWith(6, { destination: undefined })
       expect(genRequests).nthCalledWith(7, { destination: undefined })
     })
+  })
+})
+
+describe('html-routs', () => {
+  test('GET /gen', async () => {
+    const { text } = await supertest(app)
+      .get('/gen')
+      .expect(200)
+
+    expect(text).toEqual(expect.stringContaining('doctype html'))
+  })
+
+  test('GET /index.html', async () => {
+    const { text } = await supertest(app)
+      .get('/index.html')
+      .expect(200)
+
+    expect(text).toEqual(expect.stringContaining('doctype html'))
   })
 })
 

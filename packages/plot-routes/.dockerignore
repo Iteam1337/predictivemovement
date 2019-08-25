@@ -1,6 +1,7 @@
 *
 !src/
 !types/
+!public/
 !.eslint*
 !.prettierrc
 !package*

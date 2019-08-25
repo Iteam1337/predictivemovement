@@ -1,5 +1,6 @@
 import conf from '@iteam/config'
 import { name, version } from '../package.json'
+import path from 'path'
 
 const config = conf({
   file: `${__dirname}/../config.json`,
@@ -18,6 +19,7 @@ const config = conf({
       name,
       version,
     },
+    publicPath: path.resolve(`${__dirname}/../public`),
     radiusInKm: 100,
     routeApi: 'http://localhost:3030',
   },
@@ -33,6 +35,7 @@ export const packageJSON = config.get<{ name: string; version: string }>(
   'packageJSON'
 )
 export const port = config.get<number>('port')
+export const publicPath = config.get<string>('publicPath')
 export const radiusInKm = config.get<number>('radiusInKm')
 export const routeApi = config.get<string>('routeApi')
 
@@ -43,6 +46,7 @@ export default {
   osrm,
   packageJSON,
   port,
+  publicPath,
   radiusInKm,
   routeApi,
 }

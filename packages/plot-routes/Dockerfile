@@ -22,6 +22,7 @@ COPY package*json ./
 RUN npm ci --production
 
 COPY --from=builder /build/dist/src ./src
+COPY public public
 
 ENV USER=normal-user
 RUN adduser --disabled-password --gecos "" $USER

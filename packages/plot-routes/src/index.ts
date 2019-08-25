@@ -1,67 +1,23 @@
-import Position from 'Position'
-import { count, destination, radiusInKm } from './config'
-import randomize from './util/randomAddress'
-import { newRoute, newPickup } from './services/routeApi'
-import { confirmed } from './adapters/socket'
+import express, { ErrorRequestHandler } from 'express'
+import bodyParser from 'body-parser'
+import routes from './routes'
+import config from './config'
 
-const main = async () => {
-  const points: Position[] = []
-  const sockets: SocketIOClient.Socket[] = []
-  const waypoints: Position[] = []
+const app = express()
 
-  for (let i = 0; i < count; i++) {
-    let random
-    try {
-      random = await randomize()
-      points.push(random)
-    } catch (_) {
-      //
-    }
-  }
+app.use(bodyParser.json())
 
-  console.info(`generated positions = ${points.length}\n`)
+routes(app)
 
-  for (const point of points) {
-    const isDriver = Math.random() > 0.7
-    const label = isDriver ? 'driver' : 'passenger'
-    try {
-      sockets.push(await (isDriver ? newPickup(point) : newRoute(point)))
-      console.log(`added ${label}`)
-      waypoints.push(point)
-    } catch (_) {
-      console.log(`failed to add ${label}`)
-    }
-  }
-
-  console.info(`
-handled requests = ${sockets.length}\ncongrats sent = ${confirmed()}`)
-
-  await Promise.all(
-    sockets.map(socket => (socket && socket.close ? socket.close() : null))
-  )
-
-  generateGoogleURL(waypoints)
+export const errorHandler: ErrorRequestHandler = (error, _req, _res, next) => {
+  console.error(error.stack)
+  next(error)
 }
 
-const generateGoogleURL = (waypoints: Position[]) => {
-  const origin = waypoints.shift()
+app.use(errorHandler)
 
-  if (!origin) {
-    return
-  }
+app.listen(config.express, () => {
+  console.log(`listening on port ${config.express.port}`)
+})
 
-  waypoints.push(destination)
-
-  let url = `https://www.google.com/maps/dir/?api=1`
-  url += `&origin=${origin.lat},${origin.lon}&waypoints=`
-  url += waypoints.map(({ lat, lon }) => `${lat},${lon}`).join('|')
-
-  console.log(url)
-}
-
-console.info(`
-destination = ${JSON.stringify(destination, null, 2)}
-radius in km = ${radiusInKm}
-maximum generated positions = ${count}`)
-
-main()
+export default app

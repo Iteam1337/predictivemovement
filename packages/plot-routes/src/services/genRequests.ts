@@ -1,10 +1,24 @@
 import Position from 'Position'
-import { count, destination, radiusInKm } from '../config'
-import randomize from '../util/randomAddress'
+import {
+  count as defaultCount,
+  destination as defaultDestination,
+  radiusInKm,
+} from '../config'
+import randomize, { setDefaults } from '../util/randomAddress'
 import { newRoute, newPickup } from './routeApi'
 import { confirmed } from '../adapters/socket'
 
-export const genRequests = async (): Promise<Position[]> => {
+export const genRequests = async (
+  {
+    destination = defaultDestination,
+    count = defaultCount,
+  }: { destination?: Position; count?: number } = {
+    destination: defaultDestination,
+    count: defaultCount,
+  }
+): Promise<Position[]> => {
+  setDefaults(destination)
+
   const points: Position[] = []
   const sockets: SocketIOClient.Socket[] = []
   const waypoints: Position[] = []

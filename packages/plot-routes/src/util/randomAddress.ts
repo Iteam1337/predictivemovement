@@ -2,17 +2,20 @@ import { Position } from 'Position'
 import osrm from '../services/osrm'
 import { destination, radiusInKm } from '../config'
 
-export const { lonMin, lonMax, latMin, latMax } = (() => {
+export let lonMin: number
+export let lonMax: number
+export let latMin: number
+export let latMax: number
+
+export const setDefaults = (center = destination) => {
   const radius = radiusInKm * 0.621371192
-  const world = Math.abs(Math.cos((destination.lat * Math.PI) / 180) * 69)
+  const world = Math.abs(Math.cos((center.lat * Math.PI) / 180) * 69)
 
-  const lonMin = destination.lon - radius / world
-  const lonMax = destination.lon + radius / world
-  const latMin = destination.lat - radius / 69
-  const latMax = destination.lat + radius / 69
-
-  return { lonMin, lonMax, latMin, latMax }
-})()
+  lonMin = center.lon - radius / world
+  lonMax = center.lon + radius / world
+  latMin = center.lat - radius / 69
+  latMax = center.lat + radius / 69
+}
 
 export const genRandomPoint = () => ({
   lat: Math.random() * (latMax - latMin) + latMin,

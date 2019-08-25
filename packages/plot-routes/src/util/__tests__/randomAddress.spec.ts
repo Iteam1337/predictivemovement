@@ -14,9 +14,13 @@ import osrm from '../../services/osrm'
 import * as util from '../randomAddress'
 
 describe('#genRandomPoint', () => {
+  beforeAll(() => {
+    util.setDefaults()
+  })
+
   it('should generate a point in specified range', () => {
     const notSoRandom = jest.fn()
-    global.Math.random = notSoRandom
+    Math.random = notSoRandom
 
     notSoRandom.mockReturnValueOnce(0.0)
     notSoRandom.mockReturnValueOnce(0.0)
@@ -37,13 +41,17 @@ describe('#genRandomPoint', () => {
 })
 
 describe('#randomize', () => {
+  beforeAll(() => {
+    util.setDefaults()
+  })
+
   let notSoRandom: jest.Mock
   let nearest: jest.Mock
 
   let waypoint: Waypoint
   beforeEach(() => {
     notSoRandom = jest.fn()
-    global.Math.random = notSoRandom
+    Math.random = notSoRandom
 
     nearest = osrm.nearest as jest.Mock
 

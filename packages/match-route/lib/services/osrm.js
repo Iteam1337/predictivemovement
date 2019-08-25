@@ -53,7 +53,7 @@ module.exports = {
           }
         })
       ))
-      .sort((a, b) => (a.diff < b.diff ? 1 : b.diff < a.diff ? -1 : 0))
+      .sort((a, b) => (a.duration < b.duration ? 1 : b.duration < a.duration ? -1 : 0))
       .filter(({
         duration
       }) => duration < maxTime)

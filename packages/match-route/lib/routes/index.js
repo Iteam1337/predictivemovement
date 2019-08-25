@@ -19,12 +19,26 @@ module.exports = (app, io) => {
       console.log('event received:', e)
       const event = JSON.parse(e)
       if (event.type === "driver") {
-        const routeId = uuid()
-        const route = await getBestRoute(event.payload)
-        console.log('Driver found passengers', route)
-        io.to(socketId).emit('changeRequested', routeId)
-        await pub.lpush(routeId, JSON.stringify(socketId))
-        addPendingTrip(routeId, route)
+        const driverId = uuid()
+        const acceptsBeingPassenger = event.payload.acceptsBeingPassenger
+        const route = await getBestRouteAsDriver(event.payload)
+        addPendingTrip(driverId, route)
+        await pub.lpush(driverId, JSON.stringify(socketId))
+        io.to(socketId).emit('changeRequested', driverId)
+        if (acceptsBeingPassenger || acceptsBeingPassenger === undefined) {
+          console.log('subscribing to id:', driverId)
+          const bestMatch = await getMatchForPassenger(event.payload)
+          if (bestMatch) {
+            const {
+              match,
+              id
+            } = bestMatch
+            match.ids = [driverId]
+            addPendingTrip(id, match)
+            await pub.publish(`changeRequested:${id}`, driverId)
+          }
+          addPersonToList(event.payload, driverId)
+        }
       } else if (event.type === 'passenger') {
         const passengerId = uuid()
         const bestMatch = await getMatchForPassenger(event.payload)
@@ -36,21 +50,34 @@ module.exports = (app, io) => {
           match.ids = [passengerId]
           addPendingTrip(id, match)
           await pub.publish(`changeRequested:${id}`, passengerId)
-          // const sockets = await pub.get(passengerId)
-          await pub.lpush(passengerId, JSON.stringify(socketId))
-        } else {
-          const passengerId = addPersonToList(event.payload)
-          console.log('no match found, subscribing to id:', passengerId)
-          await pub.lpush(passengerId, JSON.stringify(socketId))
         }
+        await pub.lpush(passengerId, JSON.stringify(socketId))
+        console.log('subscribing to id:', passengerId)
+        addPersonToList(event.payload, passengerId)
       } else if (event.type === "acceptChange") {
         const {
           id
         } = event.payload
+        removeFromPersonsList(id)
         const route = pendingRoutes[id]
+        if (!route) {
+          let err = `The route with id ${id} is no longer available`
+          const key = Object.keys(routes).find(key => routes[key].ids.includes(id))
+          if (key) {
+            err += `, the driver for that route have joined route ${key}`
+            // TODO: if request is sent for removal of the entry in frontend when removing it from pendingRoutes list
+            // this specific error, where a driver is present in another route, should not happen.
+          }
+          throw Error(err)
+        }
         console.log('Driver accepted', route)
         try {
-          await Promise.all(route.ids.map(passengerId => pub.publish(`routeCreated:${passengerId}`, id)))
+          await Promise.all(
+            route.ids
+            .map(removeFromPendingRoutes)
+            .map(removeFromPersonsList)
+            .map(passengerId => pub.publish(`routeCreated:${passengerId}`, id))
+          )
         } catch (e) {
           console.log('error sending to clients', e)
         }
@@ -83,12 +110,22 @@ module.exports = (app, io) => {
     }
   })
 
+  function removeFromPendingRoutes (id) {
+    delete pendingRoutes[id]
+    return id
+  }
+
+  function removeFromPersonsList (id) {
+    const i = persons.findIndex(p => p.id === id)
+    persons.splice(i, 1)
+    return id
+  }
+
   function addPendingTrip (id, trip) {
     pendingRoutes[id] = trip
   }
 
-  function addPersonToList (person) {
-    const id = uuid()
+  function addPersonToList (person, id = uuid()) {
     persons.push({
       id,
       passengers: person.passengers,
@@ -125,19 +162,23 @@ module.exports = (app, io) => {
           permutations: p,
           maxTime: value.maxTime
         })
-        return {
-          id,
-          match: {
-            maxTime: value.maxTime,
-            route: match.defaultRoute,
-            distance: match.distance,
-            stops: match.stops,
-            duration: match.duration,
-            ids: match.ids
+        if (match) {
+          return {
+            id,
+            match: {
+              maxTime: value.maxTime,
+              route: match.defaultRoute,
+              distance: match.distance,
+              stops: match.stops,
+              duration: match.duration,
+              ids: match.ids
+            }
           }
+        } else {
+          return null
         }
       }))
-      .then(matches => matches.pop())
+      .then(matches => matches.filter(Boolean).pop())
   }
   app.post(
     '/pickup', async (req, res) => {
@@ -158,7 +199,7 @@ module.exports = (app, io) => {
     }
   )
 
-  async function getBestRoute ({
+  async function getBestRouteAsDriver ({
     maximumAddedTimePercent = 50,
     emptySeats = 3,
     start: {
@@ -196,14 +237,32 @@ module.exports = (app, io) => {
       endDate,
       endPosition,
     })
+    let result
+    if (Object.entries(bestMatch).length) {
+      result = {
+        maxTime,
+        route: bestMatch.defaultRoute,
+        distance: bestMatch.distance,
+        stops: bestMatch.stops,
+        duration: bestMatch.duration,
+        ids: bestMatch.ids
+      }
+    } else {
+      const {
+        routes: [{
+          duration: routeDuration,
+          distance,
+        }],
+      } = defaultRoute
 
-    const result = {
-      maxTime,
-      route: bestMatch.defaultRoute,
-      distance: bestMatch.distance,
-      stops: bestMatch.stops,
-      duration: bestMatch.duration,
-      ids: bestMatch.ids
+      result = {
+        maxTime,
+        route: defaultRoute,
+        distance,
+        stops: [startPosition, endPosition],
+        duration: toHours(routeDuration),
+        ids: []
+      }
     }
 
     return result
@@ -211,7 +270,7 @@ module.exports = (app, io) => {
   app.post('/route', async (req, res) => {
     try {
       const id = uuid()
-      const result = await getBestRoute(req.body)
+      const result = await getBestRouteAsDriver(req.body)
       routes[id] = result
       res.send({
         id,

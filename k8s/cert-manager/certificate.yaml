@@ -1,0 +1,18 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: letsencrypt-prod
+spec:
+  secretName: letsencrypt-prod
+  dnsNames:
+  - "*.pm.iteamdev.se"
+  acme:
+    config:
+    - dns01:
+        ingressClass: traefik
+        provider: route53
+      domains:
+      - "*.pm.iteamdev.se"
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer

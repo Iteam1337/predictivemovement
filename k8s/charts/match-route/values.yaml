@@ -19,6 +19,10 @@ service:
 
 ingress:
   enabled: true
+  tls:
+  - secretName: letsencrypt-prod
+    hosts:
+      - match-route.pm.iteamdev.se
   annotations:
     kubernetes.io/ingress.class: traefik
   hosts:

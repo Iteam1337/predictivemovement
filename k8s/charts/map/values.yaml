@@ -21,6 +21,10 @@ service:
   port: 80
 
 ingress:
+  tls:
+  - secretName: letsencrypt-prod
+    hosts:
+      - map.pm.iteamdev.se
   enabled: true
   annotations:
     kubernetes.io/ingress.class: traefik

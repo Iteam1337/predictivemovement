@@ -1,5 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+set -e
 
 DOCKER_REPO="iteam1337/predictive-movement-${1/packages\//}";
 DOCKER_TAG=$(echo $TRAVIS_PULL_REQUEST_BRANCH | sed 's/\+/-/g; s/\//-/g; s/\=/-/g')

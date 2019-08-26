@@ -152,7 +152,7 @@ module.exports = (app, io) => {
 
   async function getBestRoute({
     maximumAddedTimePercent = 50,
-    emptySeats = 4,
+    emptySeats = 3,
     start: { date: startDate, position: startPosition },
     end: { date: endDate, position: endPosition },
   }) {

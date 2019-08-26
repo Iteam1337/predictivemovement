@@ -1,0 +1,47 @@
+{
+  "name": "plot-routes",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "node_modules/typescript/bin/tsc",
+    "dev": "node_modules/.bin/ts-node-dev --no-notify src/index.ts",
+    "lint": "eslint 'src/**/*.ts'",
+    "start": "node_modules/.bin/ts-node src/index.ts",
+    "start:compiled": "node -r source-map-support/register src",
+    "style": "prettier --check 'src/**/*.ts'",
+    "styling": "npm run lint -- --fix && npm run style -- --write",
+    "test": "node_modules/.bin/jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@iteam/config": "12.1.0",
+    "axios": "0.19.0",
+    "body-parser": "1.19.0",
+    "express": "4.17.1",
+    "socket.io-client": "2.2.0",
+    "source-map-support": "0.5.13"
+  },
+  "devDependencies": {
+    "@iteam/eslint-config-iteam-node": "0.1.0",
+    "@types/express": "4.17.1",
+    "@types/jest": "24.0.17",
+    "@types/node": "12.7.2",
+    "@types/socket.io-client": "1.4.32",
+    "@types/supertest": "2.0.8",
+    "@typescript-eslint/eslint-plugin": "2.0.0",
+    "@typescript-eslint/parser": "2.0.0",
+    "eslint": "6.2.1",
+    "jest": "24.9.0",
+    "jest-expect-message": "1.0.2",
+    "jest-watch-typeahead": "0.4.0",
+    "mockdate": "2.0.5",
+    "prettier": "1.18.2",
+    "supertest": "4.0.2",
+    "ts-jest": "24.0.2",
+    "ts-node": "8.3.0",
+    "ts-node-dev": "1.0.0-pre.42",
+    "typescript": "3.5.3"
+  }
+}

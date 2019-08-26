@@ -14,7 +14,63 @@
 
 - [Launch cluster using AWS](https://docs.containership.io/en/articles/2241901-launch-cluster-using-amazon-web-services-aws)
 
-- Copy your `kubectl connection info` from the cluster's overview page
+## Connecting to the cluster
+
+#### Easy option but slow speed when running commands since it goes through a Containership proxy
+
+- Copy your `kubectl connection info` from the cluster's overview page in Containership
+
+#### More complicated option but faster speed since you are connecting directly to the cluster
+
+- [Add your ssh key with Containership](https://docs.containership.io/en/articles/1523970-managing-ssh-keys)
+
+- Inside AWS Instances find your master node or one of them if you have a pool of them and get your public IP
+
+- SSH into it using the user `containership`
+
+- Look for the `kube-admin` configuration (if it's not there you're probably on a worker node)
+
+```bash
+sudo su
+cat /etc/kubernetes/admin.conf
+```
+
+- Copy the `client-certificate-data` and `client-key-data` from the `user` under the `users` section (we will use them in the next step)
+
+- Now edit your local `kubectl configuration` usually located in `~/.kube/config` and add the following to the according sections
+
+`clusters:`
+
+```yaml
+- cluster:
+    insecure-skip-tls-verify: true
+    server: https://<public IP or dns name of master node>:6443
+  name: aws
+```
+
+`contexts:`
+
+```yaml
+- context:
+    cluster: aws
+    user: kubernetes-admin-aws
+  name: kubernetes-admin-aws@aws
+```
+
+`users:`
+
+```yaml
+- name: kubernetes-admin-aws
+  user:
+    client-certificate-data: <The one you copied from the server>
+    client-key-data: <The one you copied from the server>
+```
+
+- Change the context to the newly created one
+
+```bash
+kubectl config use-context kubernetes-admin-aws@aws
+```
 
 ### Containership and AWS specific configuration once you have a cluster
 
@@ -38,25 +94,28 @@ kubectl apply -f containership-aws/io1-storageclass.yaml
 
 We use Traefik as an [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
 
-All the resources needed and the configuration for it are in `traefik.yaml`.
+All the resources needed and the configuration for it are in `traefik` folder.
 
-#### Deploy it
+## cert-manager
+
+We use cert-manager for managing Let's Encrypt certificate retrieval.
+
+All the resources needed and the configuration for it are in `cert-manager` folder.
+
+## Create secrets for google and mapbox
+
+We need secrets for Google and Mapbox api
 
 ```bash
-kubectl apply -f traefik.yaml
+kubectl create secret generic google-token --from-literal=GOOGLE_API_TOKEN=<TOKEN GOES HERE>
+kubectl create secret generic mapbox-token --from-literal=MAPBOX_TOKEN=<TOKEN GOES HERE>
 ```
 
-You can check [Traefik docs](https://docs.traefik.io/) and make changes to the config based on your needs. When applying config changes (aka making changes to the `ConfigMap` object) you want to delete the current pod(s) so that the new one(s) created pick up the changes.
-
-```bash
-kubectl -n kube-system delete pod $(kubectl -n kube-system get pod -l app=traefik -o jsonpath='{.items[0].metadata.name}')
-```
-
-## Rest of the stack
+## Install Traefik and cert-manager and then the rest of the stack
 
 Apply the rest of the stack components (osrm, redis, map and match-route)
 
-Notice we also use `helm`. That is because we have in plan to setup feature deployments so we created charts for `map` and `match-route` that can easily be deployed with different values.
+Notice we also use `helm`. That is because setup feature deployments so we created charts for `map` and `match-route` that can easily be deployed with different values.
 
 ```bash
 kubectl apply -f osrm.yaml
@@ -67,11 +126,21 @@ helm template map --name map | kubectl apply -f -
 helm template match-route --name match-route | kubectl apply -f -
 ```
 
-## Route53 setup
+## Travis setup
 
-Create record sets for the hosts that you defined in the `Ingress` resources for `map` and `match-route` and point them to the worker node(s) IP (already configured for map.iteamdev.se and match-route.iteamdev.se)
+Create a different namespace and service account for Travis that we will use in Travis for deploying
 
-## I don't wanna read just give me TL;DR version
+```bash
+kubectl apply -f travis-rbac.yaml
+```
 
-- create a cluster with Containership using AWS as the provider
-- `kubectl apply -f k8s`
+Get the token that was created for it
+
+```bash
+kubectl get secrets -n serviceids
+kubectl get secret travis-token-<YOU GET THIS FROM ABOVE COMMAND> -n serviceids -o yaml
+```
+
+Take the `token` value from the secret, base64 decode it and head to Travis and store it as a secret environment variable as `KUBERNETES_TOKEN`
+
+Also set `KUBERNETES_SERVER` as `https://<PUBLIC IP OF THE AWS MASTER NODE>:6443`

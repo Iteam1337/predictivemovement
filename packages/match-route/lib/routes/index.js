@@ -217,9 +217,7 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    res.send({
-      data: Array.from(Object.values(routes).filter(Boolean)),
-    })
+    res.send(routes)
   })
 
   app.get('/route/:id', ({ params: { id } }, res) => {

@@ -91,7 +91,7 @@ module Marker = {
         ])
       );
 
-    <Map.Marker longitude latitude> <div className /> </Map.Marker>;
+    <ReactMap.Marker longitude latitude> <div className /> </ReactMap.Marker>;
   };
 };
 

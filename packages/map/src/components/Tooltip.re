@@ -1,5 +1,5 @@
 [@react.component]
-let make = (~tooltip: Map.IconLayer.hoverInfo) =>
+let make = (~tooltip: ReactMap.IconLayer.hoverInfo) =>
   switch (tooltip._object) {
   | Some(stop) =>
     <div

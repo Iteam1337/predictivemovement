@@ -1,16 +1,17 @@
 open ReactMap;
 
 type state = {
-  initialRoutes: option(list(API.Car.response)),
+  initialRoutes: list(API.Car.response),
   optimisedRoutes: option(list(API.Car.response)),
   tooltip: ReactMap.IconLayer.hoverInfo,
 };
 
 type action =
+  | Routes(list(API.Car.response))
   | Tooltip(ReactMap.IconLayer.hoverInfo);
 
 let initialState: state = {
-  initialRoutes: None,
+  initialRoutes: [],
   optimisedRoutes: None,
   tooltip: {
     x: 0,
@@ -28,37 +29,29 @@ let make = () => {
     React.useReducer(
       (state, action) =>
         switch (action) {
+        | Routes(initialRoutes) => {...state, initialRoutes}
         | Tooltip(tooltip) => {...state, tooltip}
         },
       initialState,
     );
 
   React.useEffect0(() => {
-    Socket.on(`RouteChangeRequested, API.Travel.Socket.Events.acceptChange);
+    API.Travel.routes(~callback=routes => dispatch(Routes(routes)), ());
 
     None;
   });
 
   let geoJsonLayers =
     initialRoutes
-    ->Belt.Option.map(carResponse =>
-        Belt.Array.reduce(
-          carResponse->Belt.List.toArray, [||], (group, response) =>
-          Belt.Array.concat(group, response.route.routes)
-        )
+    ->Belt.List.reduce([||], (group, response) =>
+        Belt.Array.concat(group, response.route.routes)
       )
-    ->Belt.Option.getWithDefault([||])
-    |> (data => GeoJsonLayer.make(~data, ()));
+    ->Belt.Array.map(r => GeoJsonLayer.make(~data=[|r|], ()));
 
   let iconArray =
-    initialRoutes
-    ->Belt.Option.map(carResponse =>
-        Belt.Array.reduce(
-          carResponse->Belt.List.toArray, [||], (group, response) =>
-          Belt.Array.concat(group, response.stops)
-        )
-      )
-    ->Belt.Option.getWithDefault([||]);
+    initialRoutes->Belt.List.reduce([||], (group, response) =>
+      Belt.Array.concat(group, response.stops)
+    );
 
   let iconLayers =
     iconArray->Belt.Array.mapWithIndex((i, stop) =>
@@ -84,7 +77,7 @@ let make = () => {
   <>
     <Map
       mapLocation=initialViewPosition
-      layers={[|geoJsonLayers|]->Belt.Array.concat(iconLayers)}
+      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}
       tooltip
     />
   </>;

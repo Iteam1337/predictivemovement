@@ -3,7 +3,7 @@ open ReactMap;
 type viewOrigin = [ | `Default | `Pending];
 
 type state = {
-  carResponse: option(list(API.Car.response)),
+  carResponse: option(API.Car.response),
   mapLocation: option(MapTest.ReactMap.DeckGL.viewState),
   myLocation: option(Geolocation.Navigator.coords),
   tooltip: ReactMap.IconLayer.hoverInfo,
@@ -12,7 +12,7 @@ type state = {
 };
 
 type action =
-  | CarResponse(list(API.Car.response))
+  | CarResponse(API.Car.response)
   | MapLocation(MapTest.ReactMap.DeckGL.viewState)
   | Location(Geolocation.Navigator.coords)
   | Tooltip(ReactMap.IconLayer.hoverInfo)
@@ -97,25 +97,19 @@ let make = () => {
     );
   };
 
-  let handleCar = routes => {
-    dispatch(CarResponse(routes));
+  let handleCar = (response: API.Car.response) => {
+    dispatch(CarResponse(response));
 
-    switch (routes->Belt.List.get(Belt.List.length(routes) - 1)) {
-    | Some({route: {waypoints}}) => flyToRoute(waypoints)
-    | _ => ()
-    };
+    flyToRoute(response.route.waypoints);
   };
 
   let onRouteAnswer = (r: API.Car.routeWithId) => {
     API.Travel.Socket.Events.acceptChange(r.id);
-
     dispatch(AcceptedRoute(r));
   };
 
   React.useEffect0(() => {
-    Socket.on(`RouteMatched, _id =>
-      API.Travel.routes(~callback=handleCar, ())
-    );
+    Socket.on(`RouteMatched, id => API.Travel.route(~callback=handleCar, id));
     /* TODO: show new route and get explicit approval or denial from user */
 
     Socket.on(`RouteChangeRequested, id =>
@@ -143,45 +137,33 @@ let make = () => {
 
   let geoJsonLayers =
     carResponse
-    ->Belt.Option.map(carResponse =>
-        Belt.Array.reduce(
-          carResponse->Belt.List.toArray, [||], (group, response) =>
-          Belt.Array.concat(group, response.route.routes)
-        )
-      )
+    ->Belt.Option.map(carResponse => carResponse.route.routes)
     ->Belt.Option.getWithDefault([||])
-    |> (data => GeoJsonLayer.make(~data, ()));
-
-  let iconArray =
-    carResponse
-    ->Belt.Option.map(carResponse =>
-        Belt.Array.reduce(
-          carResponse->Belt.List.toArray, [||], (group, response) =>
-          Belt.Array.concat(group, response.stops)
-        )
-      )
-    ->Belt.Option.getWithDefault([||]);
+    ->Belt.Array.map(route => GeoJsonLayer.make(~data=[|route|], ()));
 
   let iconLayers =
-    iconArray->Belt.Array.mapWithIndex((i, stop) =>
-      IconLayer.make(
-        ~data=[|stop|],
-        ~onHover=
-          hoverInfo =>
-            dispatch(
-              Tooltip(ReactMap.IconLayer.hoverInfoFromJs(hoverInfo)),
-            ),
-        ~id={
-          Js.Float.(
-            String.concat(
-              "-",
-              [toString(stop.lat), toString(stop.lon), string_of_int(i)],
-            )
-          );
-        },
-        (),
-      )
-    );
+    carResponse
+    ->Belt.Option.map(carResponse => carResponse.stops)
+    ->Belt.Option.getWithDefault([||])
+    ->Belt.Array.mapWithIndex((i, stop) =>
+        IconLayer.make(
+          ~data=[|stop|],
+          ~onHover=
+            hoverInfo =>
+              dispatch(
+                Tooltip(ReactMap.IconLayer.hoverInfoFromJs(hoverInfo)),
+              ),
+          ~id={
+            Js.Float.(
+              String.concat(
+                "-",
+                [toString(stop.lat), toString(stop.lon), string_of_int(i)],
+              )
+            );
+          },
+          (),
+        )
+      );
 
   <Geolocation.Context.Provider value={myLocation: myLocation}>
     <Navigation
@@ -190,21 +172,9 @@ let make = () => {
       acceptedRoutes
       pendingRoutes
     />
-    <TripDetails
-      car={
-        carResponse
-        ->Belt.Option.map(carResponse =>
-            switch (carResponse->Belt.List.get(0)) {
-            | Some(r) => Some(r)
-            | None => None
-            }
-          )
-        ->Belt.Option.getWithDefault(None)
-      }
-      flyToRoute
-    />
+    <TripDetails car=carResponse flyToRoute />
     <Map
-      layers={[|geoJsonLayers|]->Belt.Array.concat(iconLayers)}
+      layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}
       onMove={coords => dispatch(Location(coords))}
       ?myLocation
       ?mapLocation

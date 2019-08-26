@@ -79,11 +79,11 @@ module.exports = (app, io) => {
     }
   })
 
-  function addPendingTrip (id, trip) {
+  function addPendingTrip(id, trip) {
     pendingRoutes[id] = trip
   }
 
-  function addPersonToList (person) {
+  function addPersonToList(person) {
     const id = uuid()
     persons.push({
       id,
@@ -96,7 +96,7 @@ module.exports = (app, io) => {
     return id
   }
 
-  function getMatchForPassenger ({
+  function getMatchForPassenger({
     passengers = 1,
     start: { date: startDate, position: passengerStartPosition },
     end: { date: endDate, position: passengerEndPosition },
@@ -150,7 +150,7 @@ module.exports = (app, io) => {
     }
   })
 
-  async function getBestRoute ({
+  async function getBestRoute({
     maximumAddedTimePercent = 50,
     emptySeats = 4,
     start: { date: startDate, position: startPosition },
@@ -231,7 +231,7 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    res.send({ data: [route] })
+    res.send(route)
   })
 
   app.get('/pending-route/:id', ({ params: { id } }, res) => {

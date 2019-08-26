@@ -36,7 +36,7 @@ let make =
                    Css.(style([lastChild([borderWidth(`px(0))])])),
                  ])}>
                  <div
-                   onClick={_ => onRouteSelect([route])}
+                   onClick={_ => onRouteSelect(route)}
                    className="flex items-center justify-between mt-2">
                    <div className=statisticsContainer>
                      <Icon className=icon name=`Time />
@@ -84,7 +84,7 @@ let make =
                      Css.(style([lastChild([borderWidth(`px(0))])])),
                    ])}>
                    <div
-                     onClick={_ => onRouteSelect([route])}
+                     onClick={_ => onRouteSelect(route)}
                      className="flex items-center justify-between mt-2">
                      <div className=statisticsContainer>
                        <Icon className=icon name=`Time />

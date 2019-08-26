@@ -8,7 +8,7 @@ type action =
 [@react.component]
 let make =
     (
-      ~layers,
+      ~layers: array(MapTest.ReactMap.Layer.t),
       ~myLocation: option(Geolocation.Navigator.coords)=?,
       ~mapLocation: option(MapTest.ReactMap.DeckGL.viewState)=?,
       ~onMove=?,

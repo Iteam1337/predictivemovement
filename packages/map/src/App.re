@@ -8,5 +8,5 @@ let make = () => {
     | _ => <Consumer />
     };
 
-  <> <Notifications /> page </>;
+  <Notifications.Provider> <Notifications /> page </Notifications.Provider>;
 };

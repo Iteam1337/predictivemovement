@@ -77,7 +77,9 @@ module Car = {
     stops: json |> field("stops", array(Stops.fromJson)),
   };
 
-  let routesFromJson = json => field("data", list(routeFromJson), json);
+  let routesFromJson = json => {
+    field("data", list(routeFromJson), json);
+  };
 };
 
 module Travel = {
@@ -136,9 +138,7 @@ module Travel = {
   let route = (~url="/route/", ~callback, id) =>
     Refetch.fetch(Config.apiHost ++ url ++ id)
     |> Repromise.andThen(Refetch.json)
-    |> Repromise.map(json =>
-         Car.routesFromJson(Json.Encode.object_([("data", json)]))
-       )
+    |> Repromise.map(Car.routeFromJson)
     |> Repromise.wait(callback);
 
   let pendingRoute = (~callback, id) =>

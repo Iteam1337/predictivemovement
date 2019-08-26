@@ -34,7 +34,7 @@ let initialState: state = {
 
 [@react.component]
 let make = () => {
-  /* let notifications = React.useContext(Notifications.Context.t); */
+  let notifications = React.useContext(Notifications.Context.t);
 
   let (
     {
@@ -101,7 +101,7 @@ let make = () => {
     dispatch(CarResponse(routes));
 
     switch (routes->Belt.List.get(Belt.List.length(routes) - 1)) {
-    | Some({route: {waypoints}}) => () /* flyToRoute(waypoints) */
+    | Some({route: {waypoints}}) => flyToRoute(waypoints)
     | _ => ()
     };
   };
@@ -118,29 +118,25 @@ let make = () => {
     );
     /* TODO: show new route and get explicit approval or denial from user */
 
-    Socket.on(`RouteChangeRequested, API.Travel.Socket.Events.acceptChange);
+    Socket.on(`RouteChangeRequested, id =>
+      API.Travel.pendingRoute(
+        ~callback=
+          response => {
+            dispatch(PendingRoute({id, response}));
 
-    /* TODO(@all): Implement this again */
-    /* Socket.on(`RouteChangeRequested, id => */
-    /*   API.Travel.pendingRoute( */
-    /*     ~callback= */
-    /*       response => { */
-    /*         let firstResponse = Belt.List.headExn(response); */
-    /*         dispatch(PendingRoute({id, firstResponse})); */
-
-    /*         notifications.updateNotifications( */
-    /*           Notifications.Notification.make( */
-    /*             ~title={j|Din resa har en matchning|j}, */
-    /*             ~notificationType=`Success, */
-    /*             ~onClick=Some(_ => ReasonReactRouter.push("/resor")), */
-    /*             ~timeout=Some(5000), */
-    /*             (), */
-    /*           ), */
-    /*         ); */
-    /*       }, */
-    /*     id, */
-    /*   ) */
-    /* ); */
+            notifications.updateNotifications(
+              Notifications.Notification.make(
+                ~title={j|Din resa har en matchning|j},
+                ~notificationType=`Success,
+                ~onClick=Some(_ => ReasonReactRouter.push("/resor")),
+                ~timeout=Some(5000),
+                (),
+              ),
+            );
+          },
+        id,
+      )
+    );
 
     None;
   });
@@ -188,7 +184,6 @@ let make = () => {
     );
 
   <Geolocation.Context.Provider value={myLocation: myLocation}>
-    <Notifications />
     <Navigation
       onRouteSelect=handleCar
       onRouteAnswer

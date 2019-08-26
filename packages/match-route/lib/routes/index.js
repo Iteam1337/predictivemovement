@@ -152,7 +152,7 @@ module.exports = (app, io) => {
 
   async function getBestRoute({
     maximumAddedTimePercent = 50,
-    emptySeats = 3,
+    emptySeats = 4,
     start: { date: startDate, position: startPosition },
     end: { date: endDate, position: endPosition },
   }) {
@@ -217,7 +217,9 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    res.send(routes)
+    res.send({
+      data: Array.from(Object.values(routes).filter(Boolean)),
+    })
   })
 
   app.get('/route/:id', ({ params: { id } }, res) => {

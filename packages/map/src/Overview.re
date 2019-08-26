@@ -41,6 +41,12 @@ let make = () => {
     None;
   });
 
+  React.useEffect0(() => {
+    API.Travel.tempGenerate(~callback=data => Js.log(data));
+
+    None;
+  });
+
   let geoJsonLayers =
     initialRoutes
     ->Belt.List.reduce([||], (group, response) =>

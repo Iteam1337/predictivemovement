@@ -143,4 +143,9 @@ module Travel = {
 
   let pendingRoute = (~callback, id) =>
     route(~url="/pending-route/", ~callback, id);
+
+  let tempGenerate = (~callback) =>
+    Refetch.fetch(Config.generateRoutesHost)
+    |> Repromise.andThen(Refetch.json)
+    |> Repromise.wait(callback);
 };

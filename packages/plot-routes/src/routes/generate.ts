@@ -27,14 +27,26 @@ export const handler: RequestHandler = async ({ query }, res) => {
     hasProp(query, 'count') &&
     !isNaN(Number.parseFloat(query.count)) &&
     Number.parseInt(query.count, 10)
+    
+  const radiusInKm =
+    hasProp(query, 'radiusInKm') &&
+    !isNaN(Number.parseFloat(query.radiusInKm)) &&
+    Number.parseInt(query.radiusInKm, 10)
 
   const params = {
     destination,
+    radiusInKm:
+      typeof radiusInKm === 'number'
+        ? Math.max(10, Math.min(radiusInKm, 100))
+        : undefined,
     count:
       typeof count === 'number'
         ? Math.max(1, Math.min(count, 256))
         : undefined,
   }
+  
+  
+  console.log({ params })
 
   if (!wait) {
     res.status(200).send(null)

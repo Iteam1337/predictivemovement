@@ -1,10 +1,20 @@
 const routeStore = require('../services/routeStore')
+const hasProp = require('../utils/hasProp')
+
+const reasonCheckForNullSoThatThingsDontBreak = object =>
+  object
+    && hasProp(object, 'distance')
+    && hasProp(object, 'duration')
+    && hasProp(object, 'stops')
+    && hasProp(object, 'maxTime')
+    && Array.isArray(object.stops)
+    // && (object.stops.length ? (hasProp(object.stops[0], 'lat') && hasProp(object.stops[0], 'lng')) : true)
 
 module.exports = app => {
   app.get('/demo/pending', async (_, res) => {
     const dump = await routeStore.pending.dump()
     res.send({
-      data: Object.values(dump).filter(Boolean)
+      data: Object.values(dump).filter(Boolean).filter(reasonCheckForNullSoThatThingsDontBreak)
     })
   })
 
@@ -22,7 +32,7 @@ module.exports = app => {
     const dump = await routeStore.routes.dump()
 
     res.send({
-      data: Array.from(Object.values(dump).filter(Boolean)),
+      data: Object.values(dump).filter(Boolean).filter(reasonCheckForNullSoThatThingsDontBreak),
     })
   })
 

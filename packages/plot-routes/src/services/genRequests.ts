@@ -2,7 +2,7 @@ import Position from 'Position'
 import {
   count as defaultCount,
   destination as defaultDestination,
-  radiusInKm,
+  radiusInKm as defaultRadiusInKm,
 } from '../config'
 import randomize, { setDefaults } from '../util/randomAddress'
 import { newRoute, newPickup } from './routeApi'
@@ -12,12 +12,14 @@ export const genRequests = async (
   {
     destination = defaultDestination,
     count = defaultCount,
-  }: { destination?: Position; count?: number } = {
+    radiusInKm = defaultRadiusInKm,
+  }: { destination?: Position; count?: number; radiusInKm?: number } = {
     destination: defaultDestination,
     count: defaultCount,
+    radiusInKm: defaultRadiusInKm,
   }
 ): Promise<Position[]> => {
-  setDefaults(destination)
+  setDefaults(destination, radiusInKm)
 
   const points: Position[] = []
   const sockets: SocketIOClient.Socket[] = []
@@ -44,7 +46,11 @@ maximum generated positions = ${count}`)
     const isDriver = Math.random() > 0.7
     const label = isDriver ? 'driver' : 'passenger'
     try {
-      sockets.push(await (isDriver ? newPickup(point) : newRoute(point)))
+      sockets.push(
+        await (isDriver
+          ? newRoute(point, destination)
+          : newPickup(point, destination))
+      )
       console.log(`added ${label}`)
       waypoints.push(point)
     } catch (_) {

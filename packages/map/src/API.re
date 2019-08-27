@@ -134,6 +134,10 @@ module Travel = {
   let routes = (~url="/demo/routes", ~callback, ()) =>
     Refetch.fetch(Config.apiHost ++ url)
     |> Repromise.andThen(Refetch.json)
+    |> Repromise.map(json => {
+      Js.log(json);
+      json;
+    })
     |> Repromise.map(Car.routesFromJson(~color=[|0, 0, 255, 255|]))
     |> Repromise.wait(callback);
 
@@ -154,6 +158,10 @@ module Travel = {
   let pending = (~url="/demo/pending", ~callback, ()) =>
     Refetch.fetch(Config.apiHost ++ url)
     |> Repromise.andThen(Refetch.json)
+    |> Repromise.map(json => {
+      Js.log(json);
+      json;
+    })
     |> Repromise.map(Car.routesFromJson(~color=[|255, 0, 0, 255|]))
     |> Repromise.wait(callback);
 };

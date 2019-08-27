@@ -19,6 +19,24 @@ const dumpAll = async prefix => {
   )).filter(x => x)
 }
 
+const lock = async id => {
+  const response = await redis.get(id)
+  const json = response
+    ? {
+        ...safeParse(response),
+        locked: true,
+      }
+    : {}
+
+  if (!Object.keys(json)) {
+    return
+  }
+
+  await redis.set(id, JSON.stringify(json))
+
+  return json
+}
+
 module.exports = {
   demo: {
     async clear () {
@@ -28,6 +46,9 @@ module.exports = {
   persons: {
     async dump () {
       return await dumpAll('person_*')
+    },
+    async lock (id) {
+      return lock(id.startsWith('person_') ? id : `person_${id}`)
     },
     async add (
       id = '',
@@ -66,6 +87,8 @@ module.exports = {
           endPosition,
         })
       )
+
+      return personId
     },
     async getClosest (
       startPoint = { lat: 0, lon: 0 },
@@ -92,12 +115,14 @@ module.exports = {
 
       const matches = start.filter(id => end.includes(id))
 
-      return Promise.all(
+      const results = await Promise.all(
         matches.map(async id => {
           const match = await redis.get(id)
           return safeParse(match)
         })
       )
+
+      return results.filter(person => person && !person.locked)
     },
     async get (id = '') {
       const parsedId = id.startsWith('person_') ? id : `person_${id}`
@@ -111,12 +136,16 @@ module.exports = {
     },
     async add (id, route) {
       const parsedId = id.startsWith('pending_') ? id : `pending_${id}`
+
       await redis.set(parsedId, JSON.stringify({ ...route, id: parsedId }))
+
+      return parsedId
     },
     async get (id) {
       const response = await redis.get(
         id.startsWith('pending_') ? id : `pending_${id}`
       )
+
       const json = response ? safeParse(response) : {}
 
       if (json && !json.lock) {
@@ -126,19 +155,7 @@ module.exports = {
       return {}
     },
     async lock (id) {
-      const parsedId = id.startsWith('pending_') ? id : `pending_${id}`
-      const response = await redis.get(parsedId)
-      const json = response ? safeParse(response) : {}
-
-      console.log('lock', { id, json })
-
-      await redis.set(
-        parsedId,
-        JSON.stringify({
-          ...json,
-          locked: true,
-        })
-      )
+      return lock(id.startsWith('pending_') ? id : `pending_${id}`)
     },
   },
   routes: {
@@ -160,6 +177,8 @@ module.exports = {
       )
       await redis.geoadd('routes_end', endPoint.lon, endPoint.lat, parsedId)
       await redis.set(parsedId, JSON.stringify({ ...route, id: parsedId }))
+
+      return parsedId
     },
     async get (id) {
       const parsedId = id.startsWith('routes_') ? id : `routes_${id}`
@@ -179,6 +198,7 @@ module.exports = {
       const joined = {
         ...parsed,
         ...data,
+        id: parsedId,
       }
 
       const stopsCopy = joined.stops.slice()
@@ -192,7 +212,9 @@ module.exports = {
         parsedId
       )
       await redis.geoadd('routes_end', endPoint.lon, endPoint.lat, parsedId)
-      await redis.set(parsedId, JSON.stringify({ ...joined, id: parsedId }))
+      await redis.set(parsedId, JSON.stringify(joined))
+
+      return joined
     },
     async getClosest (
       startPoint = { lat: 0, lon: 0 },

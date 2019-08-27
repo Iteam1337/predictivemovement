@@ -3,45 +3,14 @@ const redisClient = require('../adapters/redis')
 const hasProp = require('../utils/hasProp')
 const safeParse = require('../utils/safeParse')
 
-const redis = redisClient()
 const pub = redisClient()
 
 const routeService = require('../services/route')
 const routeStore = require('../services/routeStore')
 
 module.exports = (app, io) => {
-  app.get('/demo/pending', async (_, res) => {
-    const dump = await routeStore.pending.dump()
-    res.send(dump)
-  })
-
-  app.get('/demo/pending/locked', async (_, res) => {
-    const dump = await routeStore.pending.dump()
-    res.send(dump.filter(pending => pending.locked))
-  })
-
-  app.get('/demo/pending/unlocked', async (_, res) => {
-    const dump = await routeStore.pending.dump()
-    res.send(dump.filter(pending => !pending.locked))
-  })
-
-  app.get('/demo/routes', async (_, res) => {
-    const dump = await routeStore.routes.dump()
-    res.send(dump)
-  })
-
-  app.get('/demo/persons', async (_, res) => {
-    const dump = await routeStore.persons.dump()
-    res.send(dump)
-  })
-
-  app.get('/demo/clear', async (_, res) => {
-    await routeStore.demo.clear()
-    res.send(null)
-  })
-
-  redis.psubscribe('changeRequested:*', (_, count) => console.log(count))
-  redis.psubscribe('routeCreated:*', (_, count) => console.log(count))
+  require('./demo')(app)
+  require('./pubsub')(io)
 
   io.on('connection', client => {
     const { id: socketId } = client
@@ -50,7 +19,6 @@ module.exports = (app, io) => {
     console.log('socket connected', socketId)
 
     client.on('event', async eventData => {
-      console.log('event received:', eventData)
       const event = safeParse(eventData)
 
       if (!hasProp(event, 'type') || !hasProp(event, 'payload')) {
@@ -59,18 +27,18 @@ module.exports = (app, io) => {
 
       const { type, payload } = event
 
-      console.log({ type, payload })
+      console.log({ type }, payload)
 
-      switch (type.toLowerCase()) {
+      switch (type) {
         case 'driver':
           {
-            const routeId = uuid()
+            const routeId = `routes_${uuid()}`
             const route = await routeService.getBestRoute(payload)
 
-            console.log('Driver found passengers', route)
+            // console.log('Driver found passengers', route)
 
             io.to(socketId).emit('changeRequested', routeId)
-            await pub.lpush(routeId, id)
+            await pub.lpush(`pub_${routeId}`, id)
 
             await routeService.addPendingTrip(routeId, route)
           }
@@ -84,40 +52,38 @@ module.exports = (app, io) => {
               hasProp(bestMatch, 'match') &&
               hasProp(bestMatch, 'id')
             ) {
-              const passengerId = uuid()
+              const passengerId = `person_${uuid()}`
               const { match, id } = bestMatch
               match.ids = [passengerId]
               await routeService.addPendingTrip(id, match)
 
-              await pub.publish(`changeRequested:${id}`, passengerId)
+              await pub.publish(`changeRequested:pub_${id}`, passengerId)
               // const sockets = await pub.get(passengerId)
-              await pub.lpush(passengerId, id)
+              await pub.lpush(`pub_${passengerId}`, id)
 
               break
             }
 
             const passengerId = await routeService.addPersonToList(payload)
             console.log('no match found, subscribing to id:', passengerId)
-            await pub.lpush(passengerId, id)
+            await pub.lpush(`pub_${passengerId}`, id)
           }
           break
-        case 'acceptchange':
+        case 'acceptChange':
           {
             const { id } = payload
             const route = await routeStore.pending.get(id)
-
-            console.log('\n\n\nacceptChange\n\n')
 
             if (!route || !hasProp(route, 'ids') || !Array.isArray(route.ids)) {
               break
             }
 
-            console.log('Driver accepted', route)
+            // console.log('Driver accepted', route)
 
             try {
               await Promise.all(
                 route.ids.map(passengerId =>
-                  pub.publish(`routeCreated:${passengerId}`, id)
+                  pub.publish(`routeCreated:pub_${passengerId}`, id)
                 )
               )
             } catch (error) {
@@ -133,29 +99,6 @@ module.exports = (app, io) => {
           break
       }
     })
-  })
-
-  redis.on('pmessage', async (pattern, channel, msg) => {
-    console.log('message recevied', pattern, channel, msg)
-    const id = channel.replace(pattern.replace('*', ''), '')
-
-    const socketIds = await pub.lrange(id, 0, -1).then(JSON.parse)
-    console.log({ socketIds })
-
-    switch (pattern.toLowerCase()) {
-      case 'routeCreated:*':
-        console.log(`congrats to ${socketIds}, routeId: ${msg}`)
-        io.to(socketIds).emit('congrats', msg)
-        break
-      case 'changeRequested:*':
-        io.to(socketIds).emit('changeRequested', id)
-        break
-      case 'tripUpdated':
-        io.to(socketIds).emit('tripUpdated', id)
-        break
-      default:
-        console.log('Unhandled redis message ', pattern)
-    }
   })
 
   app.post('/pickup', async (req, res) => {
@@ -211,7 +154,7 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    console.log('returning ', route)
+    // console.log('returning ', route)
 
     res.send(route)
   })

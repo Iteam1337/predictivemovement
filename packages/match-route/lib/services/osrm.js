@@ -12,7 +12,7 @@ module.exports = {
   },
 
   async bestMatch ({ startPosition, endPosition, permutations = [], maxTime }) {
-    return (await Promise.all(
+    const res = await Promise.all(
       permutations.map(async ({ coords, ids }) => {
         const data = await this.route({
           startPosition,
@@ -35,9 +35,13 @@ module.exports = {
           ids,
         }
       })
-    ))
-      .sort((a, b) => (a.diff < b.diff ? 1 : b.diff < a.diff ? -1 : 0))
-      .filter(({ duration }) => duration < maxTime)
+    )
+
+    return res
+      .sort((a, b) =>
+        a.duration < b.duration ? 1 : b.duration < a.duration ? -1 : 0
+      )
+      .filter(({ duration }) => duration < (maxTime * 2))
       .pop()
   },
 

@@ -7,15 +7,15 @@ const addPendingTrip = async (id, route) =>
   await routeStore.pending.add(id, route)
 
 const addPersonToList = async person => {
-  const id = uuid()
-
-  await routeStore.persons.add(id, {
+  const id = await routeStore.persons.add(uuid(), {
     passengers: person.passengers,
     startDate: person.start.date,
     endDate: person.end.date,
     startPosition: person.start.position,
     endPosition: person.end.position,
   })
+
+  console.log(`added user ${id}`)
 
   return id
 }
@@ -36,23 +36,24 @@ const getMatchForPassenger = async ({
     passengerEndPosition
   )
 
-  return Promise.all(
-    Object.entries(routes).map(async ([id, value]) => {
-      const stopsCopy = value.stops.slice()
-      const [driverStartPosition] = stopsCopy.splice(0, 1)
-      const [driverEndPosition] = stopsCopy.splice(stopsCopy.length - 1, 1)
+  const matches = await Promise.all(
+    routes.map(async ({ id, stops, maxTime }) => {
+      const stopsCopy = JSON.parse(JSON.stringify(stops))
+      const {
+        0: driverStartPosition,
+        [stopsCopy.length - 1]: driverEndPosition,
+      } = stopsCopy
       const permutations = osrm.getPermutationsWithoutIds(
         stopsCopy,
         passengerStartPosition,
         passengerEndPosition
       )
-      const p = permutations.filter(x => x).map(p => ({ coords: p }))
-      console.log({ permutations })
+
       const match = await osrm.bestMatch({
         startPosition: driverStartPosition,
         endPosition: driverEndPosition,
-        permutations: p,
-        maxTime: value.maxTime,
+        permutations: permutations.map(p => ({ coords: p })),
+        maxTime
       })
 
       if (!match) {
@@ -70,7 +71,9 @@ const getMatchForPassenger = async ({
         },
       }
     })
-  ).then(matches => matches.pop())
+  )
+
+  return matches && matches.length ? matches[0] : {}
 }
 
 const getBestRoute = async ({
@@ -95,7 +98,7 @@ const getBestRoute = async ({
     endPosition
   )
 
-  const permutations = osrm.getPermutations(persons, emptySeats)
+  const permutations = await osrm.getPermutations(persons, emptySeats)
 
   const bestMatch =
     (await osrm.bestMatch({
@@ -104,15 +107,6 @@ const getBestRoute = async ({
       permutations,
       maxTime,
     })) || {}
-
-  console.log({
-    bestMatch,
-    emptySeats,
-    startDate,
-    startPosition,
-    endDate,
-    endPosition,
-  })
 
   const result = {
     maxTime,

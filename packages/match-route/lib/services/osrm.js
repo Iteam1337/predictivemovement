@@ -1,62 +1,43 @@
 const osrm = require('../adapters/osrm')
 
-const latLon = ({
-  lat,
-  lon
-}) => `${lon},${lat}`
+const latLon = ({ lat, lon }) => `${lon},${lat}`
 
 const toHours = duration => duration / 60 / 60
 
 module.exports = {
   async nearest (position) {
-    const {
-      data
-    } = await osrm.get(`/nearest/v1/driving/${latLon(position)}`)
+    const { data } = await osrm.get(`/nearest/v1/driving/${latLon(position)}`)
 
     return data
   },
 
-  async bestMatch ({
-    startPosition,
-    endPosition,
-    permutations = [],
-    maxTime,
-  }) {
+  async bestMatch ({ startPosition, endPosition, permutations = [], maxTime }) {
     return (await Promise.all(
-        permutations.map(async ({
-          coords,
-          ids
-        }) => {
-          const data = await this.route({
-            startPosition,
-            endPosition,
-            extras: coords,
-          })
-
-          const {
-            routes: [{
-              duration: routeDuration,
-              distance,
-              geometry
-            }],
-          } = data
-
-          const duration = toHours(routeDuration)
-          return {
-            defaultRoute: data,
-            geometry,
-            duration,
-            stops: [startPosition, ...coords, endPosition],
-            distance,
-            coords,
-            ids
-          }
+      permutations.map(async ({ coords, ids }) => {
+        const data = await this.route({
+          startPosition,
+          endPosition,
+          extras: coords,
         })
-      ))
+
+        const {
+          routes: [{ duration: routeDuration, distance, geometry }],
+        } = data
+
+        const duration = toHours(routeDuration)
+        return {
+          defaultRoute: data,
+          geometry,
+          duration,
+          stops: [startPosition, ...coords, endPosition],
+          distance,
+          coords,
+          ids,
+        }
+      })
+    ))
       .sort((a, b) => (a.diff < b.diff ? 1 : b.diff < a.diff ? -1 : 0))
-      .filter(({
-        duration
-      }) => duration < maxTime)
+      .filter(({ duration }) => duration < maxTime)
       .pop()
   },
 
@@ -73,32 +54,30 @@ module.exports = {
   convertPairsIntoIdentifiedPoints (pairs) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
     const translations = pairs.reduce(
-      (res, {
-        id
-      }, i) => ({
+      (res, { id }, i) => ({
         ...res,
         [alphabet[i]]: id,
-      }), {}
+      }),
+      {}
     )
     return [
-      pairs.reduce((res, {
-        startPosition,
-        endPosition
-      }, i) => {
+      pairs.reduce((res, { startPosition, endPosition }, i) => {
         const identifier = alphabet[i]
 
-        res.push({
-          [identifier + '1']: startPosition,
-        }, {
-          [identifier + '2']: endPosition,
-        })
+        res.push(
+          {
+            [identifier + '1']: startPosition,
+          },
+          {
+            [identifier + '2']: endPosition,
+          }
+        )
 
         return res
       }, []),
       translations,
     ]
   },
-
 
   getPermutationsWithoutIds (input, start, stop) {
     const result = []
@@ -115,7 +94,9 @@ module.exports = {
   },
 
   noOfStartingpointsLimitReached (array, permutationMaxLength) {
-    return array.filter(this.isStartCoordinate).length >= permutationMaxLength / 2
+    return (
+      array.filter(this.isStartCoordinate).length >= permutationMaxLength / 2
+    )
   },
 
   getPermutations (input, emptySeats) {
@@ -132,7 +113,13 @@ module.exports = {
         for (let i = 0; i < arr.length; i++) {
           const arrayCopy = arr.slice()
           const [next] = arrayCopy.splice(i, 1)
-          if (this.isStartCoordinate(next) && this.noOfStartingpointsLimitReached(permutation, permutationMaxLength)) {
+          if (
+            this.isStartCoordinate(next) &&
+            this.noOfStartingpointsLimitReached(
+              permutation,
+              permutationMaxLength
+            )
+          ) {
             continue
           } else if (
             this.isStartCoordinate(next) ||
@@ -143,6 +130,7 @@ module.exports = {
         }
       }
     }
+
     permute(listOfPoints)
 
     return result.reduce((res, permutation) => {
@@ -157,11 +145,7 @@ module.exports = {
     }, [])
   },
 
-  async route ({
-    startPosition,
-    endPosition,
-    extras = []
-  }) {
+  async route ({ startPosition, endPosition, extras = [] }) {
     const destinations = [startPosition, ...extras, endPosition]
       .filter(x => x)
       .map(latLon)
@@ -169,9 +153,7 @@ module.exports = {
 
     const url = `/route/v1/driving/${destinations}?geometries=geojson&overview=full`
 
-    const {
-      data
-    } = await osrm.get(url)
+    const { data } = await osrm.get(url)
 
     return data
   },

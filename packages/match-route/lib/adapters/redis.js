@@ -3,16 +3,24 @@ const {
   redis: { host, port },
 } = require('../config')
 
-const redis = new Redis({
-  port,
-  host,
-})
-const pub = new Redis({
-  port,
-  host,
-})
+module.exports = () => {
+  let client
+  try {
+    client = new Redis({ port, host })
 
-module.exports = {
-  redis,
-  pub,
+    client.on('error', error => {
+      console.error(error)
+      if (!error || !error.code) {
+        return
+      }
+      if (error.code === 'ECONNREFUSED') {
+        process.exit(1)
+      }
+    })
+  } catch (error) {
+    console.error(error)
+    return process.exit(1)
+  }
+
+  return client
 }

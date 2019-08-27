@@ -1,64 +1,107 @@
 const uuid = require('uuid/v4')
-const osrm = require('../services/osrm')
-const {
-  pub,
-  redis
-} = require('../adapters/redis')
+const redisClient = require('../adapters/redis')
+const hasProp = require('../utils/hasProp')
+const safeParse = require('../utils/safeParse')
 
-const persons = []
-const routes = {}
-const pendingRoutes = {}
+const redis = redisClient()
+const pub = redisClient()
+
+const routeService = require('../services/route')
+
+const routeStore = require('../services/routeStore')
+
+// const persons = []
+// const routes = {}
+// const pendingRoutes = {}
 
 module.exports = (app, io) => {
   redis.psubscribe('changeRequested:*', (err, count) => console.log(count))
   redis.psubscribe('routeCreated:*', (err, count) => console.log(count))
-  io.on('connection', client => {
-    console.log('socket connected', client.id)
-    const socketId = client.id
-    client.on('event', async e => {
-      console.log('event received:', e)
-      const event = JSON.parse(e)
-      if (event.type === "driver") {
-        const routeId = uuid()
-        const route = await getBestRoute(event.payload)
-        console.log('Driver found passengers', route)
-        io.to(socketId).emit('changeRequested', routeId)
-        await pub.lpush(routeId, JSON.stringify(socketId))
-        addPendingTrip(routeId, route)
-      } else if (event.type === 'passenger') {
-        const passengerId = uuid()
-        const bestMatch = await getMatchForPassenger(event.payload)
-        if (bestMatch) {
-          const {
-            match,
-            id
-          } = bestMatch
-          match.ids = [passengerId]
-          addPendingTrip(id, match)
-          await pub.publish(`changeRequested:${id}`, passengerId)
-          // const sockets = await pub.get(passengerId)
-          await pub.lpush(passengerId, JSON.stringify(socketId))
-        } else {
-          const passengerId = addPersonToList(event.payload)
-          console.log('no match found, subscribing to id:', passengerId)
-          await pub.lpush(passengerId, JSON.stringify(socketId))
-        }
-      } else if (event.type === "acceptChange") {
-        const {
-          id
-        } = event.payload
-        const route = pendingRoutes[id]
-        console.log('Driver accepted', route)
-        try {
-          await Promise.all(route.ids.map(passengerId => pub.publish(`routeCreated:${passengerId}`, id)))
-        } catch (e) {
-          console.log('error sending to clients', e)
-        }
-        delete pendingRoutes[id]
-        routes[id] = route
 
-        client.emit('congrats', id)
-        // remove passenger from list
+  io.on('connection', client => {
+    const { id: socketId, emit } = client
+    const id = JSON.stringify(socketId)
+
+    console.log('socket connected', socketId)
+
+    client.on('event', async eventData => {
+      console.log('event received:', eventData)
+      const event = safeParse(eventData)
+
+      if (!hasProp(event, 'type') || !hasProp(event, 'payload')) {
+        return
+      }
+
+      const { type, payload } = event
+
+      switch (type.toLowerCase()) {
+        case 'driver':
+          {
+            const routeId = uuid()
+            const route = await routeService.getBestRoute(payload)
+
+            console.log('Driver found passengers', route)
+
+            io.to(socketId).emit('changeRequested', routeId)
+            await pub.lpush(routeId, id)
+
+            await routeService.addPendingTrip(routeId, route)
+          }
+          break
+        case 'passenger':
+          {
+            const bestMatch = await routeService.getMatchForPassenger(payload)
+
+            if (
+              bestMatch &&
+              hasProp(bestMatch, 'match') &&
+              hasProp(bestMatch, 'id')
+            ) {
+              const passengerId = uuid()
+              const { match, id } = bestMatch
+              match.ids = [passengerId]
+              await routeService.addPendingTrip(id, match)
+
+              await pub.publish(`changeRequested:${id}`, passengerId)
+              // const sockets = await pub.get(passengerId)
+              await pub.lpush(passengerId, id)
+
+              break
+            }
+
+            const passengerId = await routeService.addPersonToList(payload)
+            console.log('no match found, subscribing to id:', passengerId)
+            await pub.lpush(passengerId, id)
+          }
+          break
+        case 'acceptChange':
+          {
+            const { id } = payload
+            const route = await routeStore.pending.get(id)
+
+            if (!route || !hasProp(route, 'ids') || !Array.isArray(route.ids)) {
+              break
+            }
+
+            console.log('Driver accepted', route)
+
+            try {
+              await Promise.all(
+                route.ids.map(passengerId =>
+                  pub.publish(`routeCreated:${passengerId}`, id)
+                )
+              )
+            } catch (error) {
+              console.log('error sending to clients', error)
+            }
+
+            await routeStore.pending.lock(id)
+            await routeStore.routes.add(id, route)
+
+            emit('congrats', id)
+            // remove passenger from list
+          }
+          break
       }
     })
   })
@@ -68,169 +111,62 @@ module.exports = (app, io) => {
     const id = channel.replace(pattern.replace('*', ''), '')
 
     const socketIds = await pub.lrange(id, 0, -1).then(JSON.parse)
-    console.log(socketIds)
+    console.log({ socketIds })
 
-    if (pattern === 'routeCreated:*') {
-      console.log(`congrats to ${socketIds}, routeId: ${msg}`, )
-
-      io.to(socketIds).emit('congrats', msg)
-    } else if (pattern === 'changeRequested:*') {
-      io.to(socketIds).emit('changeRequested', id)
-    } else if (pattern === 'tripUpdated') {
-      io.to(socketIds).emit('tripUpdated', id)
-    } else {
-      console.log('Unhandled redis message ', pattern)
+    switch (pattern.toLowerCase()) {
+      case 'routeCreated:*':
+        console.log(`congrats to ${socketIds}, routeId: ${msg}`)
+        io.to(socketIds).emit('congrats', msg)
+        break
+      case 'changeRequested:*':
+        io.to(socketIds).emit('changeRequested', id)
+        break
+      case 'tripUpdated':
+        io.to(socketIds).emit('tripUpdated', id)
+        break
+      default:
+        console.log('Unhandled redis message ', pattern)
     }
   })
 
-  function addPendingTrip (id, trip) {
-    pendingRoutes[id] = trip
-  }
+  app.post('/pickup', async (req, res) => {
+    const bestMatch = await routeService.getMatchForPassenger(req.body)
 
-  function addPersonToList (person) {
-    const id = uuid()
-    persons.push({
-      id,
-      passengers: person.passengers,
-      startDate: person.start.date,
-      endDate: person.end.date,
-      startPosition: person.start.position,
-      endPosition: person.end.position,
-    })
-    return id
-  }
-
-  function getMatchForPassenger ({
-    passengers = 1,
-    start: {
-      date: startDate,
-      position: passengerStartPosition
-    },
-    end: {
-      date: endDate,
-      position: passengerEndPosition
-    },
-  }) {
-    return Promise.all(Object.entries(routes).map(async ([id, value]) => {
-        const stopsCopy = value.stops.slice()
-        const [driverStartPosition] = stopsCopy.splice(0, 1)
-        const [driverEndPosition] = stopsCopy.splice(stopsCopy.length - 1, 1)
-        const permutations = osrm.getPermutationsWithoutIds(stopsCopy, passengerStartPosition, passengerEndPosition)
-        const p = permutations.map(p => ({
-          coords: p
-        }))
-        const match = await osrm.bestMatch({
-          startPosition: driverStartPosition,
-          endPosition: driverEndPosition,
-          permutations: p,
-          maxTime: value.maxTime
-        })
-        return {
-          id,
-          match: {
-            route: match.defaultRoute,
-            distance: match.distance,
-            stops: match.stops,
-            duration: match.duration,
-            ids: match.ids
-          }
-        }
-      }))
-      .then(matches => matches.pop())
-  }
-  app.post(
-    '/pickup', async (req, res) => {
-      const bestMatch = await getMatchForPassenger(req.body)
-      if (bestMatch) {
-        const match = bestMatch.match
-        const result = {
-          route: match.defaultRoute,
-          distance: match.distance,
-          stops: match.stops,
-          duration: match.duration,
-        }
-        res.send(result)
-      } else {
-        addPersonToList(req.body)
-        res.sendStatus(200)
-      }
+    if (!bestMatch || !hasProp(bestMatch, 'match') || !bestMatch.match) {
+      routeService.addPersonToList(req.body)
+      res.sendStatus(200)
+      return
     }
-  )
 
-  async function getBestRoute ({
-    maximumAddedTimePercent = 50,
-    emptySeats = 3,
-    start: {
-      date: startDate,
-      position: startPosition
-    },
-    end: {
-      date: endDate,
-      position: endPosition
-    },
-  }) {
-    const defaultRoute = await osrm.route({
-      startPosition,
-      endPosition,
-    })
-    const toHours = duration => duration / 60 / 60
-
-    const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
-    const maxTime = defaultRouteDuration + defaultRouteDuration * (maximumAddedTimePercent / 100)
-    const permutations = osrm.getPermutations(persons, emptySeats)
-
-    const bestMatch =
-      (await osrm.bestMatch({
-        startPosition,
-        endPosition,
-        permutations,
-        maxTime
-      })) || {}
-
-    console.log({
-      bestMatch,
-      emptySeats,
-      startDate,
-      startPosition,
-      endDate,
-      endPosition,
-    })
-
+    const match = bestMatch.match
     const result = {
-      maxTime,
-      route: bestMatch.defaultRoute,
-      distance: bestMatch.distance,
-      stops: bestMatch.stops,
-      duration: bestMatch.duration,
-      ids: bestMatch.ids
+      route: match.defaultRoute,
+      distance: match.distance,
+      stops: match.stops,
+      duration: match.duration,
     }
 
-    return result
-  }
+    res.send(result)
+  })
+
   app.post('/route', async (req, res) => {
     try {
       const id = uuid()
-      const result = await getBestRoute(req.body)
-      routes[id] = result
-      res.send({
-        id,
-        ...result,
-      })
+      const result = await routeService.getBestRoute(req.body)
+
+      await routeStore.routes.add(id, result)
+
+      res.send({ id, ...result })
     } catch (error) {
       console.error(error)
       res.sendStatus(500)
     }
-
   })
 
-  app.get('/route/:id', ({
-    params: {
-      id
-    }
-  }, res) => {
+  app.get('/route/:id', async ({ params: { id } }, res) => {
     console.log('received msg', id)
 
-    const route = routes[id]
+    const route = await routeStore.routes.get(id)
 
     if (!route) {
       return res.sendStatus(400)
@@ -239,17 +175,14 @@ module.exports = (app, io) => {
     res.send(route)
   })
 
-  app.get('/pending-route/:id', ({
-    params: {
-      id
-    }
-  }, res) => {
-    const route = pendingRoutes[id]
+  app.get('/pending-route/:id', async ({ params: { id } }, res) => {
+    const route = await routeStore.pending.get(id)
 
     if (!route) {
       return res.sendStatus(400)
     }
-    console.log('returning ')
+
+    console.log('returning ', route)
 
     res.send(route)
   })

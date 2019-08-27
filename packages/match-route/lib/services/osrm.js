@@ -170,7 +170,23 @@ module.exports = {
     const extras = stops.slice(1, Math.max(stops.length - 1, stops.length - 2))
 
     const {
-      data: { routes = [] },
+      data: {
+        routes: [
+          {
+            geometry = {
+              coordinates: [],
+              type: '',
+            },
+          },
+        ] = [
+          {
+            geometry: {
+              coordinates: [],
+              type: '',
+            },
+          },
+        ],
+      },
     } = await osrm.get(
       `${genRoute({
         startPosition,
@@ -179,9 +195,7 @@ module.exports = {
       })}?geometries=geojson&overview=full`
     )
 
-    return {
-      routes: routes.map(({ geometry }) => ({ geometry })),
-    }
+    return geometry
   },
 
   async route ({ startPosition, endPosition, extras = [] }) {

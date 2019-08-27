@@ -146,19 +146,11 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    const response = await osrm.geoJSON({ stops: route.stops })
+    const geometry = await osrm.geoJSON({ stops: route.stops })
 
     res.send({
       ...route,
-      route: {
-        ...route.route,
-        routes: {
-          ...route.route.routes.map((route, index) => ({
-            ...route,
-            ...response.routes[index],
-          })),
-        },
-      },
+      geometry,
     })
   })
 
@@ -169,8 +161,11 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    // console.log('returning ', route)
+    const geometry = await osrm.geoJSON({ stops: route.stops })
 
-    res.send(route)
+    res.send({
+      ...route,
+      geometry,
+    })
   })
 }

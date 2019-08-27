@@ -4,6 +4,15 @@ const latLon = ({ lat, lon }) => `${lon},${lat}`
 
 const toHours = duration => duration / 60 / 60
 
+function genRoute ({ startPosition, endPosition, extras = [] }) {
+  const destinations = [startPosition, ...extras, endPosition]
+    .filter(x => x)
+    .map(latLon)
+    .join(';')
+
+  return `/route/v1/driving/${destinations}`
+}
+
 module.exports = {
   async nearest (position) {
     const { data } = await osrm.get(`/nearest/v1/driving/${latLon(position)}`)
@@ -21,13 +30,19 @@ module.exports = {
         })
 
         const {
-          routes: [{ duration: routeDuration, distance, geometry }],
+          routes: [
+            {
+              duration: routeDuration,
+              distance,
+              // geometry
+            },
+          ],
         } = data
 
         const duration = toHours(routeDuration)
         return {
           defaultRoute: data,
-          geometry,
+          // geometry,
           duration,
           stops: [startPosition, ...coords, endPosition],
           distance,
@@ -41,7 +56,7 @@ module.exports = {
       .sort((a, b) =>
         a.duration < b.duration ? 1 : b.duration < a.duration ? -1 : 0
       )
-      .filter(({ duration }) => duration < (maxTime * 2))
+      .filter(({ duration }) => duration < maxTime * 2)
       .pop()
   },
 
@@ -149,16 +164,42 @@ module.exports = {
     }, [])
   },
 
+  async geoJSON ({ stops }) {
+    const { 0: startPosition, [stops.length - 1]: endPosition } = stops
+
+    const extras = stops.slice(1, Math.max(stops.length - 1, stops.length - 2))
+
+    const {
+      data: { routes = [] },
+    } = await osrm.get(
+      `${genRoute({
+        startPosition,
+        endPosition,
+        extras,
+      })}?geometries=geojson&overview=full`
+    )
+
+    return {
+      routes: routes.map(({ geometry }) => ({ geometry })),
+    }
+  },
+
   async route ({ startPosition, endPosition, extras = [] }) {
-    const destinations = [startPosition, ...extras, endPosition]
-      .filter(x => x)
-      .map(latLon)
-      .join(';')
+    const {
+      data: { routes = [] },
+    } = await osrm.get(
+      `${genRoute({
+        startPosition,
+        endPosition,
+        extras,
+      })}?alternatives=false&steps=false&overview=false&annotations=false`
+    )
 
-    const url = `/route/v1/driving/${destinations}?geometries=geojson&overview=full`
-
-    const { data } = await osrm.get(url)
-
-    return data
+    return {
+      routes: routes.map(({ distance, duration }) => ({
+        distance,
+        duration,
+      })),
+    }
   },
 }

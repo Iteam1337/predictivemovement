@@ -3,6 +3,8 @@ const redisClient = require('../adapters/redis')
 const hasProp = require('../utils/hasProp')
 const safeParse = require('../utils/safeParse')
 
+const osrm = require('../services/osrm')
+
 const pub = redisClient()
 
 const routeService = require('../services/route')
@@ -144,7 +146,20 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    res.send(route)
+    const response = await osrm.geoJSON({ stops: route.stops })
+
+    res.send({
+      ...route,
+      route: {
+        ...route.route,
+        routes: {
+          ...route.route.routes.map((route, index) => ({
+            ...route,
+            ...response.routes[index],
+          })),
+        },
+      },
+    })
   })
 
   app.get('/pending-route/:id', async ({ params: { id } }, res) => {

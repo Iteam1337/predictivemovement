@@ -20,16 +20,18 @@ describe('actual usage', () => {
       endPosition: { lat: 0, lon: 0 },
     }
 
-    await routeStore.persons.add('person-1', person1)
-    await routeStore.persons.add('person-2', person2)
+    await routeStore.persons.add('p1', person1)
+    await routeStore.persons.add('p2', person2)
 
     const result = await routeStore.persons.getClosest(
       { lat: 67.317792, lon: 18.935346 },
       { lat: 66.6054, lon: 19.82016 },
+      now,
+      now,
     )
 
     expect(result).toEqual(expect.arrayContaining([{
-      id: 'person-1',
+      id: 'person_p1',
       ...person1,
     }]))
   })

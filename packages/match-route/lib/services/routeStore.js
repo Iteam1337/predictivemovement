@@ -92,7 +92,9 @@ module.exports = {
     },
     async getClosest (
       startPoint = { lat: 0, lon: 0 },
-      endPoint = { lat: 0, lon: 0 }
+      endPoint = { lat: 0, lon: 0 },
+      startDate,
+      endDate
     ) {
       const middle = calc.middlePoint(startPoint, endPoint)
       const distance = (calc.distance(startPoint, endPoint) / 2) * 1.1
@@ -122,7 +124,11 @@ module.exports = {
         })
       )
 
-      return results.filter(person => person && !person.locked)
+      return results
+        .filter(person => person && !person.locked)
+        .filter(
+          person => person.startDate === startDate && person.endDate === endDate
+        )
     },
     async get (id = '') {
       const parsedId = id.startsWith('person_') ? id : `person_${id}`
@@ -218,7 +224,9 @@ module.exports = {
     },
     async getClosest (
       startPoint = { lat: 0, lon: 0 },
-      endPoint = { lat: 0, lon: 0 }
+      endPoint = { lat: 0, lon: 0 },
+      startDate,
+      endDate
     ) {
       const middle = calc.middlePoint(startPoint, endPoint)
       const distance = (calc.distance(startPoint, endPoint) / 2) * 1.1
@@ -241,11 +249,15 @@ module.exports = {
 
       const matches = start.filter(id => end.includes(id))
 
-      return Promise.all(
+      const result = await Promise.all(
         matches.map(async id => {
           const match = await redis.get(id)
           return safeParse(match)
         })
+      )
+
+      return result.filter(
+        route => route.startDate === startDate && route.endDate === endDate
       )
     },
   },

@@ -4,24 +4,22 @@ matrix:
   include:
     - env: PROJECT=packages/map
     - env: PROJECT=packages/match-route
+    - env: PROJECT=packages/plot-routes
 
 jobs:
   include:
+    ################################
+    ### PROJECT=packages/map
+    ################################
     - stage: build
       env: PROJECT=packages/map
-      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
-    - stage: build
-      env: PROJECT=packages/match-route
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
 
     - stage: deploy
       env: PROJECT=packages/map
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
-    - stage: deploy
-      env: PROJECT=packages/match-route
-      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
 
-    ### Feature deployment
+    ### feature deployment
     - stage: build-feature
       env: PROJECT=packages/map
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
@@ -30,6 +28,38 @@ jobs:
       env: PROJECT=packages/map
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy-feature.sh $PROJECT; fi
 
+    ################################
+    ### PROJECT=packages/match-route
+    ################################
+    - stage: build
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
+
+    - stage: deploy
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
+
+    ### feature deployment
+    - stage: build-feature
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
+
+    - stage: deploy-feature
+      env: PROJECT=packages/match-route
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy-feature.sh $PROJECT; fi
+
+    ################################
+    ### PROJECT=packages/plot-routes
+    ################################
+    - stage: build
+      env: PROJECT=packages/plot-routes
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build.sh $PROJECT; fi
+
+    - stage: deploy
+      env: PROJECT=packages/plot-routes
+      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
+
+    ### feature deployment
     - stage: build-feature
       env: PROJECT=packages/match-route
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi

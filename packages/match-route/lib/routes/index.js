@@ -7,19 +7,44 @@ const redis = redisClient()
 const pub = redisClient()
 
 const routeService = require('../services/route')
-
 const routeStore = require('../services/routeStore')
 
-// const persons = []
-// const routes = {}
-// const pendingRoutes = {}
-
 module.exports = (app, io) => {
-  redis.psubscribe('changeRequested:*', (err, count) => console.log(count))
-  redis.psubscribe('routeCreated:*', (err, count) => console.log(count))
+  app.get('/demo/pending', async (_, res) => {
+    const dump = await routeStore.pending.dump()
+    res.send(dump)
+  })
+
+  app.get('/demo/pending/locked', async (_, res) => {
+    const dump = await routeStore.pending.dump()
+    res.send(dump.filter(pending => pending.locked))
+  })
+
+  app.get('/demo/pending/unlocked', async (_, res) => {
+    const dump = await routeStore.pending.dump()
+    res.send(dump.filter(pending => !pending.locked))
+  })
+
+  app.get('/demo/routes', async (_, res) => {
+    const dump = await routeStore.routes.dump()
+    res.send(dump)
+  })
+
+  app.get('/demo/persons', async (_, res) => {
+    const dump = await routeStore.persons.dump()
+    res.send(dump)
+  })
+
+  app.get('/demo/clear', async (_, res) => {
+    await routeStore.demo.clear()
+    res.send(null)
+  })
+
+  redis.psubscribe('changeRequested:*', (_, count) => console.log(count))
+  redis.psubscribe('routeCreated:*', (_, count) => console.log(count))
 
   io.on('connection', client => {
-    const { id: socketId, emit } = client
+    const { id: socketId } = client
     const id = JSON.stringify(socketId)
 
     console.log('socket connected', socketId)
@@ -33,6 +58,8 @@ module.exports = (app, io) => {
       }
 
       const { type, payload } = event
+
+      console.log({ type, payload })
 
       switch (type.toLowerCase()) {
         case 'driver':
@@ -74,10 +101,12 @@ module.exports = (app, io) => {
             await pub.lpush(passengerId, id)
           }
           break
-        case 'acceptChange':
+        case 'acceptchange':
           {
             const { id } = payload
             const route = await routeStore.pending.get(id)
+
+            console.log('\n\n\nacceptChange\n\n')
 
             if (!route || !hasProp(route, 'ids') || !Array.isArray(route.ids)) {
               break
@@ -98,7 +127,7 @@ module.exports = (app, io) => {
             await routeStore.pending.lock(id)
             await routeStore.routes.add(id, route)
 
-            emit('congrats', id)
+            client.emit('congrats', id)
             // remove passenger from list
           }
           break

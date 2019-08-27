@@ -4,7 +4,6 @@ const osrm = require('../services/osrm')
 const routeStore = require('./routeStore')
 
 const addPendingTrip = async (id, route) =>
-  // pendingRoutes[id] = trip
   await routeStore.pending.add(id, route)
 
 const addPersonToList = async person => {
@@ -17,15 +16,6 @@ const addPersonToList = async person => {
     startPosition: person.start.position,
     endPosition: person.end.position,
   })
-
-  // persons.push({
-  //   id,
-  //   passengers: person.passengers,
-  //   startDate: person.start.date,
-  //   endDate: person.end.date,
-  //   startPosition: person.start.position,
-  //   endPosition: person.end.position,
-  // })
 
   return id
 }
@@ -56,13 +46,19 @@ const getMatchForPassenger = async ({
         passengerStartPosition,
         passengerEndPosition
       )
-      const p = permutations.map(p => ({ coords: p }))
+      const p = permutations.filter(x => x).map(p => ({ coords: p }))
+      console.log({ permutations })
       const match = await osrm.bestMatch({
         startPosition: driverStartPosition,
         endPosition: driverEndPosition,
         permutations: p,
         maxTime: value.maxTime,
       })
+
+      if (!match) {
+        return
+      }
+
       return {
         id,
         match: {

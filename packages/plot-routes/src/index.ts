@@ -2,9 +2,10 @@ import express, { ErrorRequestHandler } from 'express'
 import bodyParser from 'body-parser'
 import routes from './routes'
 import config from './config'
+import cors from 'cors'
 
 const app = express()
-
+app.use(cors())
 app.use(bodyParser.json())
 
 routes(app)

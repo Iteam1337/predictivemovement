@@ -79,8 +79,14 @@ const getMatchForPassenger = async ({
 const getBestRoute = async ({
   maximumAddedTimePercent = 50,
   emptySeats = 3,
-  start: { date: startDate, position: startPosition },
-  end: { date: endDate, position: endPosition },
+  start: {
+    // date: startDate,
+    position: startPosition
+  },
+  end: {
+    // date: endDate,
+    position: endPosition
+  },
 }) => {
   const defaultRoute = await osrm.route({
     startPosition,

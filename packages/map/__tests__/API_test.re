@@ -61,6 +61,6 @@ describe("Car", () =>
   }
       |}
       |> Json.parseOrRaise;
-    expect(API.Car.fromJson(payload)) |> toMatchSnapshot;
+    expect(API.Car.routeFromJson(payload)) |> toMatchSnapshot;
   })
 );

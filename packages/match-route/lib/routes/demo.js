@@ -3,7 +3,9 @@ const routeStore = require('../services/routeStore')
 module.exports = app => {
   app.get('/demo/pending', async (_, res) => {
     const dump = await routeStore.pending.dump()
-    res.send(dump)
+    res.send({
+      data: Object.values(dump).filter(Boolean)
+    })
   })
 
   app.get('/demo/pending/locked', async (_, res) => {
@@ -13,12 +15,15 @@ module.exports = app => {
 
   app.get('/demo/pending/unlocked', async (_, res) => {
     const dump = await routeStore.pending.dump()
-    res.send(dump.filter(pending => !pending.locked))
+    res.send(Object.values(dump.filter(pending => !pending.locked)))
   })
 
   app.get('/demo/routes', async (_, res) => {
     const dump = await routeStore.routes.dump()
-    res.send(dump)
+
+    res.send({
+      data: Array.from(Object.values(dump).filter(Boolean)),
+    })
   })
 
   app.get('/demo/persons', async (_, res) => {

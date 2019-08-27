@@ -10,6 +10,10 @@ const routes = {}
 const pendingRoutes = {}
 
 module.exports = (app, io) => {
+  app.get('/demo/pending', (_, res) => res.send(pendingRoutes))
+  app.get('/demo/routes', (_, res) => res.send(routes))
+  app.get('/demo/persons', (_, res) => res.send(persons))
+
   redis.psubscribe('changeRequested:*', (err, count) => console.log(count))
   redis.psubscribe('routeCreated:*', (err, count) => console.log(count))
   io.on('connection', client => {
@@ -29,6 +33,9 @@ module.exports = (app, io) => {
         const passengerId = uuid()
         const bestMatch = await getMatchForPassenger(event.payload)
         if (bestMatch) {
+
+          console.log({ bestMatch })
+
           const {
             match,
             id
@@ -48,14 +55,23 @@ module.exports = (app, io) => {
           id
         } = event.payload
         const route = pendingRoutes[id]
+
+        if (route && Object.prototype.hasOwnProperty.call(route, 'locked')) {
+          return
+        }
+
         console.log('Driver accepted', route)
         try {
           await Promise.all(route.ids.map(passengerId => pub.publish(`routeCreated:${passengerId}`, id)))
         } catch (e) {
           console.log('error sending to clients', e)
         }
-        delete pendingRoutes[id]
-        routes[id] = route
+
+        // route.locked = true
+        // delete pendingRoutes[id]
+        routes[id] = JSON.parse(JSON.stringify(route))
+
+        route.locked = true
 
         client.emit('congrats', id)
         // remove passenger from list
@@ -89,14 +105,16 @@ module.exports = (app, io) => {
 
   function addPersonToList (person) {
     const id = uuid()
-    persons.push({
+
+    persons.push(JSON.parse(JSON.stringify({
       id,
       passengers: person.passengers,
       startDate: person.start.date,
       endDate: person.end.date,
       startPosition: person.start.position,
       endPosition: person.end.position,
-    })
+    })))
+
     return id
   }
 
@@ -177,7 +195,7 @@ module.exports = (app, io) => {
 
     const defaultRouteDuration = toHours(defaultRoute.routes[0].duration)
     const maxTime = defaultRouteDuration + defaultRouteDuration * (maximumAddedTimePercent / 100)
-    const permutations = osrm.getPermutations(persons, emptySeats)
+    const permutations = osrm.getPermutations(JSON.parse(JSON.stringify(persons)), emptySeats)
 
     const bestMatch =
       (await osrm.bestMatch({

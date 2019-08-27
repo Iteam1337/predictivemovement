@@ -32,7 +32,10 @@ beforeEach(() => {
 describe('#newPickup', () => {
   test('gets payload', () => {
     service.newPickup(startPosition)
-    expect(genPayload).toBeCalledWith(startPosition)
+    expect(genPayload).toBeCalledWith(startPosition, undefined)
+
+    service.newPickup(startPosition, startPosition)
+    expect(genPayload).nthCalledWith(2, startPosition, startPosition)
   })
 
   test('gets socket', () => {
@@ -114,7 +117,10 @@ describe('#newPickup', () => {
 describe('#newRoute', () => {
   test('gets payload', () => {
     service.newRoute(startPosition)
-    expect(genPayload).toBeCalledWith(startPosition)
+    expect(genPayload).toBeCalledWith(startPosition, undefined)
+
+    service.newRoute(startPosition, startPosition)
+    expect(genPayload).nthCalledWith(2, startPosition, startPosition)
   })
 
   test('gets socket', () => {

@@ -19,6 +19,7 @@ export const handler: RequestHandler = async ({ query }, res) => {
   } catch (_) {
     //
   }
+
   const wait = hasProp(query, 'wait') && query.wait === 'true'
 
   const count =
@@ -31,13 +32,14 @@ export const handler: RequestHandler = async ({ query }, res) => {
     Number.parseInt(query.radiusInKm, 10)
 
   const params = {
-    destination:  destinationJSON &&
-    hasProp(destinationJSON, 'lat') &&
-    hasProp(destinationJSON, 'lon') &&
-    typeof destinationJSON.lat === 'number' &&
-    typeof destinationJSON.lon === 'number'
-      ? destinationJSON
-      : undefined,
+    destination:
+      destinationJSON &&
+      hasProp(destinationJSON, 'lat') &&
+      hasProp(destinationJSON, 'lon') &&
+      typeof destinationJSON.lat === 'number' &&
+      typeof destinationJSON.lon === 'number'
+        ? destinationJSON
+        : undefined,
     radiusInKm:
       typeof radiusInKm === 'number'
         ? Math.max(1, Math.min(radiusInKm, 200))

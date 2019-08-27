@@ -1,3 +1,4 @@
+import Position from 'Position'
 import randomize, { setDefaults } from '../../util/randomAddress'
 import * as routeApi from '../routeApi'
 
@@ -22,6 +23,8 @@ describe('#genRequests', () => {
   let infoMock: jest.Mock
   let logMock: jest.Mock
   let routeApiMock: { newRoute: jest.Mock; newPickup: jest.Mock }
+
+  let destination: Position
   beforeEach(() => {
     randomMock = jest.fn()
     infoMock = jest.fn()
@@ -33,6 +36,8 @@ describe('#genRequests', () => {
     Math.random = randomMock
     console.log = logMock
     console.info = infoMock
+
+    destination = { lat: 1337.0147, lon: 13.013 }
   })
 
   test('calling "randomize"', async () => {
@@ -52,10 +57,18 @@ describe('#genRequests', () => {
 
     await service.genRequests()
 
-    expect(routeApiMock.newPickup, 'driver').toBeCalledTimes(2)
-    expect(routeApiMock.newRoute, 'passenger').toBeCalledTimes(3)
-    expect(routeApiMock.newPickup).nthCalledWith(1, { lat: 1.1, lon: 4.4 })
-    expect(routeApiMock.newRoute).nthCalledWith(1, { lat: 1.1, lon: 4.4 })
+    expect(routeApiMock.newRoute, 'driver').toBeCalledTimes(2)
+    expect(routeApiMock.newPickup, 'passenger').toBeCalledTimes(3)
+    expect(routeApiMock.newRoute).nthCalledWith(
+      1,
+      { lat: 1.1, lon: 4.4 },
+      destination
+    )
+    expect(routeApiMock.newPickup).nthCalledWith(
+      1,
+      { lat: 1.1, lon: 4.4 },
+      destination
+    )
   })
 
   test('closing sockets on end', async () => {
@@ -63,7 +76,7 @@ describe('#genRequests', () => {
 
     randomizeMock.mockResolvedValue({ lat: 1.1, lon: 4.4 })
     randomMock.mockReturnValue(0)
-    routeApiMock.newRoute.mockResolvedValue(socket)
+    routeApiMock.newPickup.mockResolvedValue(socket)
 
     await service.genRequests()
 
@@ -94,8 +107,8 @@ describe('#genRequests', () => {
 
       expect(setDefaults).toBeCalledTimes(2)
 
-      expect(setDefaults).nthCalledWith(1, { lat: 1337.0147, lon: 13.013 })
-      expect(setDefaults).nthCalledWith(2, { lat: 0, lon: 0 })
+      expect(setDefaults).nthCalledWith(1, { lat: 1337.0147, lon: 13.013 }, 500)
+      expect(setDefaults).nthCalledWith(2, { lat: 0, lon: 0 }, 500)
     })
 
     test('"count"', async () => {

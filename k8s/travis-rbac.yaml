@@ -14,12 +14,14 @@ kind: ClusterRole
 metadata:
   name: cicd-apps
 rules:
-- apiGroups:
-  - apps
-  - extensions
+- apiGroups: ["", "extensions", "apps"]
   resources:
   - deployments
   - deployments/scale
+  - namespaces
+  - pods
+  - services
+  - ingresses
   - replicasets
   verbs:
   - create
@@ -32,7 +34,7 @@ rules:
   - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: travis-apps
   namespace: default

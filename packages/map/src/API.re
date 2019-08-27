@@ -24,7 +24,7 @@ module Car = {
 
   type route = {
     geometry,
-    // properties,
+    properties,
   };
 
   type waypoint = {location: array(float)};
@@ -57,7 +57,9 @@ module Car = {
 
   let route = json => {
     geometry: json |> field("geometry", geometry),
-    // properties: json |> field("properties", properties),
+    properties: {
+      color: [|255, 0, 0, 255|],
+    },
   };
 
   let waypoint = json => {
@@ -69,7 +71,7 @@ module Car = {
     waypoints: json |> field("waypoints", array(waypoint)),
   };
 
-  let routeFromJson = json => {
+  let routeFromJson = (~color, json) => {
     maxTime: json |> field("maxTime", Json.Decode.float),
     distance: json |> field("distance", Json.Decode.float),
     duration: json |> field("duration", Json.Decode.float),
@@ -77,8 +79,8 @@ module Car = {
     stops: json |> field("stops", array(Stops.fromJson)),
   };
 
-  let routesFromJson = json => {
-    field("data", list(routeFromJson), json);
+  let routesFromJson = (~color, json) => {
+    field("data", list(routeFromJson(~color)), json);
   };
 };
 
@@ -132,20 +134,26 @@ module Travel = {
   let routes = (~url="/routes", ~callback, ()) =>
     Refetch.fetch(Config.apiHost ++ url)
     |> Repromise.andThen(Refetch.json)
-    |> Repromise.map(Car.routesFromJson)
+    |> Repromise.map(Car.routesFromJson(~color=[|0, 0, 255, 255|]))
     |> Repromise.wait(callback);
 
   let route = (~url="/route/", ~callback, id) =>
     Refetch.fetch(Config.apiHost ++ url ++ id)
     |> Repromise.andThen(Refetch.json)
-    |> Repromise.map(Car.routeFromJson)
+    |> Repromise.map(Car.routeFromJson(~color=[[|0, 255, 0, 255|]]))
     |> Repromise.wait(callback);
 
   let pendingRoute = (~callback, id) =>
     route(~url="/pending-route/", ~callback, id);
 
-  let tempGenerate = (~callback) =>
+  let generateRoutes = (~callback) =>
     Refetch.fetch(Config.generateRoutesHost)
     |> Repromise.andThen(Refetch.json)
+    |> Repromise.wait(callback);
+
+  let pending = (~url="/demo/pending/", ~callback, ()) =>
+    Refetch.fetch(Config.apiHost ++ url)
+    |> Repromise.andThen(Refetch.json)
+    |> Repromise.map(Car.routesFromJson(~color=[|255, 0, 0, 255|]))
     |> Repromise.wait(callback);
 };

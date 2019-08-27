@@ -20,7 +20,12 @@ module Car = {
     _type: string,
   };
 
-  type route = {geometry};
+  type properties = {color: array(int)};
+
+  type route = {
+    geometry,
+    // properties,
+  };
 
   type waypoint = {location: array(float)};
 
@@ -48,7 +53,12 @@ module Car = {
     _type: json |> field("type", string),
   };
 
-  let route = json => {geometry: json |> field("geometry", geometry)};
+  let properties = json => {color: json |> field("color", array(int))};
+
+  let route = json => {
+    geometry: json |> field("geometry", geometry),
+    // properties: json |> field("properties", properties),
+  };
 
   let waypoint = json => {
     location: json |> field("location", array(Json.Decode.float)),
@@ -59,12 +69,16 @@ module Car = {
     waypoints: json |> field("waypoints", array(waypoint)),
   };
 
-  let fromJson = json => {
+  let routeFromJson = json => {
     maxTime: json |> field("maxTime", Json.Decode.float),
     distance: json |> field("distance", Json.Decode.float),
     duration: json |> field("duration", Json.Decode.float),
     route: json |> field("route", routeRoot),
     stops: json |> field("stops", array(Stops.fromJson)),
+  };
+
+  let routesFromJson = json => {
+    field("data", list(routeFromJson), json);
   };
 };
 
@@ -115,12 +129,23 @@ module Travel = {
     };
   };
 
+  let routes = (~url="/routes", ~callback, ()) =>
+    Refetch.fetch(Config.apiHost ++ url)
+    |> Repromise.andThen(Refetch.json)
+    |> Repromise.map(Car.routesFromJson)
+    |> Repromise.wait(callback);
+
   let route = (~url="/route/", ~callback, id) =>
     Refetch.fetch(Config.apiHost ++ url ++ id)
     |> Repromise.andThen(Refetch.json)
-    |> Repromise.map(Car.fromJson)
+    |> Repromise.map(Car.routeFromJson)
     |> Repromise.wait(callback);
 
   let pendingRoute = (~callback, id) =>
     route(~url="/pending-route/", ~callback, id);
+
+  let tempGenerate = (~callback) =>
+    Refetch.fetch(Config.generateRoutesHost)
+    |> Repromise.andThen(Refetch.json)
+    |> Repromise.wait(callback);
 };

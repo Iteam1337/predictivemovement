@@ -100,8 +100,8 @@ module GeoJsonLayer = {
   type layer('a) = {
     data: array(Js.t('a)),
     filled: bool,
-    // getLineColor: Js.t('a) => array(int),
-    getLineColor: array(int),
+    getLineColor: Js.t('a) => array(int),
+    // getLineColor: array(int),
     getFillColor: array(int),
     getRadius: int,
     lineWidthMinPixels: float,
@@ -129,7 +129,7 @@ module GeoJsonLayer = {
     createLayer(
       layer(
         ~filled,
-        ~getLineColor, /*=d => d##properties##color*/
+        ~getLineColor=d => d##properties##color,
         ~getFillColor,
         ~getRadius,
         ~lineWidthMinPixels,
@@ -139,9 +139,9 @@ module GeoJsonLayer = {
         ~data=
           data->Belt.Array.map(d =>
             {
-              // "properties": {
-              //   "color": d.properties.color,
-              // },
+              "properties": {
+                "color": d.properties.color,
+              },
               "geometry": {
                 "coordinates": d.geometry.coordinates,
                 "type": d.geometry._type,

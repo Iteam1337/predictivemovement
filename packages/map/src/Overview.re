@@ -1,18 +1,23 @@
 open ReactMap;
 
+type viewState = [ | `Pending | `Optimised | `None];
 type state = {
-  initialRoutes: list(API.Car.response),
-  optimisedRoutes: option(list(API.Car.response)),
+  pendingRoutes: list(API.Car.response),
+  optimisedRoutes: list(API.Car.response),
   tooltip: ReactMap.IconLayer.hoverInfo,
+  currentViewState: viewState,
 };
 
 type action =
-  | Routes(list(API.Car.response))
+  | PendingRoutes(list(API.Car.response))
+  | OptimisedRoutes(list(API.Car.response))
+  | CurrentViewState(viewState)
   | Tooltip(ReactMap.IconLayer.hoverInfo);
 
 let initialState: state = {
-  initialRoutes: [],
-  optimisedRoutes: None,
+  pendingRoutes: [],
+  optimisedRoutes: [],
+  currentViewState: `Pending,
   tooltip: {
     x: 0,
     y: 0,
@@ -23,64 +28,118 @@ let initialState: state = {
 let initialViewPosition =
   DeckGL.viewState(~longitude=19.837932, ~latitude=66.605854, ~zoom=7, ());
 
+let colorize = (~routeType, ~currentViewState, routes) =>
+  routes->Belt.List.map((x: API.Car.response) =>
+    {
+      ...x,
+      route: {
+        ...x.route,
+        routes:
+          x.route.routes
+          ->Belt.Array.map(y =>
+              {
+                ...y,
+                properties: {
+                  color:
+                    switch (routeType, currentViewState) {
+                    | (`Pending, `Pending) => [|255, 0, 0, 100|]
+                    | (`Pending, _) => [|120, 120, 120, 120|]
+                    | (`Optimised, `Optimised) => [|0, 0, 255, 100|]
+                    | (`Optimised, _) => [|120, 120, 120, 120|]
+                    | _ => [|0, 255, 0, 255|]
+                    },
+                },
+              }
+            ),
+      },
+    }
+  );
+
 [@react.component]
 let make = () => {
-  let ({tooltip, initialRoutes}, dispatch) =
+  let ({tooltip, pendingRoutes, optimisedRoutes, currentViewState}, dispatch) =
     React.useReducer(
       (state, action) =>
         switch (action) {
-        | Routes(initialRoutes) => {...state, initialRoutes}
+        | PendingRoutes(pendingRoutes) => {...state, pendingRoutes}
+        | OptimisedRoutes(optimisedRoutes) => {...state, optimisedRoutes}
         | Tooltip(tooltip) => {...state, tooltip}
+        | CurrentViewState(currentViewState) => {...state, currentViewState}
         },
       initialState,
     );
 
   React.useEffect0(() => {
-    API.Travel.routes(~callback=routes => dispatch(Routes(routes)), ());
+    API.Travel.routes(
+      ~callback=routes => dispatch(OptimisedRoutes(routes)),
+      (),
+    );
+
+    API.Travel.pending(
+      ~callback=routes => dispatch(PendingRoutes(routes)),
+      (),
+    );
 
     None;
   });
 
-  React.useEffect0(() => {
-    API.Travel.tempGenerate(~callback=data => Js.log(data));
-
-    None;
-  });
+  let colorizedRoutes =
+    Belt.List.concat(
+      colorize(~routeType=`Pending, ~currentViewState, pendingRoutes),
+      colorize(~routeType=`Optimised, ~currentViewState, optimisedRoutes),
+    );
 
   let geoJsonLayers =
-    initialRoutes
+    colorizedRoutes
     ->Belt.List.reduce([||], (group, response) =>
         Belt.Array.concat(group, response.route.routes)
       )
     ->Belt.Array.map(r => GeoJsonLayer.make(~data=[|r|], ()));
 
-  let iconArray =
-    initialRoutes->Belt.List.reduce([||], (group, response) =>
+  let iconArray = (~currentViewState) => {
+    let icons =
+      switch (currentViewState) {
+      | `Pending => pendingRoutes
+      | `Optimised => optimisedRoutes
+      | _ => Belt.List.concat(pendingRoutes, optimisedRoutes)
+      };
+    icons->Belt.List.reduce([||], (group, response) =>
       Belt.Array.concat(group, response.stops)
     );
+  };
 
   let iconLayers =
-    iconArray->Belt.Array.mapWithIndex((i, stop) =>
-      IconLayer.make(
-        ~data=[|stop|],
-        ~onHover=
-          hoverInfo =>
-            dispatch(
-              Tooltip(ReactMap.IconLayer.hoverInfoFromJs(hoverInfo)),
-            ),
-        ~id={
-          Js.Float.(
-            String.concat(
-              "-",
-              [toString(stop.lat), toString(stop.lon), string_of_int(i)],
-            )
-          );
-        },
-        (),
-      )
-    );
+    iconArray(~currentViewState)
+    ->Belt.Array.mapWithIndex((i, stop) =>
+        IconLayer.make(
+          ~data=[|stop|],
+          ~onHover=
+            hoverInfo =>
+              dispatch(
+                Tooltip(ReactMap.IconLayer.hoverInfoFromJs(hoverInfo)),
+              ),
+          ~id={
+            Js.Float.(
+              String.concat(
+                "-",
+                [toString(stop.lat), toString(stop.lon), string_of_int(i)],
+              )
+            );
+          },
+          (),
+        )
+      );
 
   <>
+    <div className="absolute right-0 top-0 z-10 flex p-5">
+      <Button.Secondary
+        className="mr-5" onClick={_ => dispatch(CurrentViewState(`Pending))}>
+        "Pending"->React.string
+      </Button.Secondary>
+      <Button.Primary onClick={_ => dispatch(CurrentViewState(`Optimised))}>
+        "Optimised"->React.string
+      </Button.Primary>
+    </div>
     <Map
       mapLocation=initialViewPosition
       layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}

@@ -86,12 +86,29 @@ module Car = {
     route: json |> field("route", routeRoot),
     stops: json |> field("stops", array(Stops.fromJson)),
   };
-
-  let routesFromJson = json => {
-    let temp = field("data", list(routeFromJson), json);
-
-    temp;
+  type routeDetails = {
+    id: string,
+    stops: array(Stops.t),
+    geometry,
+    waypoints: array(waypoint),
   };
+
+  let routeDetailFromJson = json => {
+    id: json |> field("id", Json.Decode.string),
+    stops: json |> field("stops", array(Stops.fromJson)),
+    geometry:
+      json
+      |> withDefault(
+           {coordinates: [||], _type: "LineString"},
+           field("geometry", geometry),
+         ),
+    waypoints:
+      json |> withDefault([||], field("waypoints", array(waypoint))),
+  };
+
+  let routeDetailsFromJson = json => list(routeDetailFromJson, json);
+
+  let routesFromJson = json => field("data", list(routeFromJson), json);
 };
 
 module Travel = {
@@ -151,6 +168,12 @@ module Travel = {
     Refetch.fetch(Config.apiHost ++ url ++ id)
     |> Repromise.andThen(Refetch.json)
     |> Repromise.map(Car.routeFromJson)
+    |> Repromise.wait(callback);
+
+  let routeDetails = (~url="/demo/route/", ~callback, id) =>
+    Refetch.fetch(Config.apiHost ++ url ++ id)
+    |> Repromise.andThen(Refetch.json)
+    |> Repromise.map(Car.routeDetailsFromJson)
     |> Repromise.wait(callback);
 
   let pendingRoute = (~callback, id) =>

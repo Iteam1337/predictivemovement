@@ -1,15 +1,17 @@
 open ReactMap;
 
-type viewState = [ | `Pending | `Optimised | `None];
+type viewState = [ | `Pending | `Optimised | `None | `RouteDetails];
 type state = {
   pendingRoutes: list(API.Car.response),
   optimisedRoutes: list(API.Car.response),
   tooltip: ReactMap.IconLayer.hoverInfo,
   currentViewState: viewState,
+  currentRouteDetails: list(API.Car.routeDetails),
 };
 
 type action =
   | PendingRoutes(list(API.Car.response))
+  | CurrentRouteDetails(list(API.Car.routeDetails))
   | OptimisedRoutes(list(API.Car.response))
   | CurrentViewState(viewState)
   | Tooltip(ReactMap.IconLayer.hoverInfo);
@@ -18,6 +20,7 @@ let initialState: state = {
   pendingRoutes: [],
   optimisedRoutes: [],
   currentViewState: `Pending,
+  currentRouteDetails: [],
   tooltip: {
     x: 0,
     y: 0,
@@ -57,7 +60,16 @@ let colorize = (~routeType, ~currentViewState, routes) =>
 
 [@react.component]
 let make = () => {
-  let ({tooltip, pendingRoutes, optimisedRoutes, currentViewState}, dispatch) =
+  let (
+    {
+      tooltip,
+      pendingRoutes,
+      optimisedRoutes,
+      currentViewState,
+      currentRouteDetails,
+    },
+    dispatch,
+  ) =
     React.useReducer(
       (state, action) =>
         switch (action) {
@@ -126,6 +138,14 @@ let make = () => {
   pendingStops();
   optimisedStops();
 
+  let handleRouteClick = (~id) => {
+    API.Travel.routeDetails(
+      ~url="/demo/route/",
+      ~callback=data => dispatch(CurrentRouteDetails(data)),
+      id,
+    );
+  };
+
   let iconLayers =
     iconArray(~currentViewState)
     ->Belt.Array.mapWithIndex((i, stop) =>
@@ -162,6 +182,15 @@ let make = () => {
       <Button.Primary onClick={_ => dispatch(CurrentViewState(`Optimised))}>
         "Optimised"->React.string
       </Button.Primary>
+      {optimisedRoutes
+       ->Belt.List.mapWithIndex((i, x) =>
+           <Button.Primary
+             key={x.id} onClick={_ => handleRouteClick(~id=x.API.Car.id)}>
+             "Route"->React.string
+           </Button.Primary>
+         )
+       ->Belt.List.toArray
+       ->React.array}
     </div>
     <Map
       mapLocation=initialViewPosition

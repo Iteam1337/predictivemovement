@@ -99,8 +99,6 @@ let make = () => {
     None;
   });
 
-  /* let handleGenerate = () => {}; */
-
   let colorizedRoutes =
     Belt.List.concat(
       colorize(~routeType=`Pending, ~currentViewState, pendingRoutes),
@@ -109,19 +107,24 @@ let make = () => {
 
   let geoJsonLayers =
     currentRouteDetails
-    ->Belt.List.reduce(
-        [||],
-        (group, routeDetails) => {
-          Js.log2("RouteDetails", routeDetails);
-          Belt.Array.concat(group, [|routeDetails.geometry|]);
-        },
+    ->Belt.List.reduce([||], (group, routeDetails) =>
+        Belt.Array.concat(group, [|routeDetails.geometry|])
       )
-    ->Belt.Array.mapWithIndex((_index, geometry) =>
+    ->Belt.Array.mapWithIndex((index, geometry) =>
         GeoJsonLayer.make(
           ~data=[|
             API.Car.makeRoute(
               ~geometry,
-              ~properties={color: [|99, 179, 237, 255|]},
+              ~properties={
+                color:
+                  switch (index) {
+                  | 0 => [|229, 62, 62, 255|]
+                  | 1 => [|246, 224, 94, 255|]
+                  | 2 => [|72, 187, 120, 255|]
+                  | 3 => [|237, 100, 166, 255|]
+                  | _ => [|255, 179, 237, 255|]
+                  },
+              },
             ),
           |],
           (),
@@ -135,33 +138,10 @@ let make = () => {
   /*     ) */
   /*   ->Belt.Array.map(r => GeoJsonLayer.make(~data=[|r|], ())); */
 
-  let iconArray = (~currentViewState) => {
-    let icons =
-      switch (currentViewState) {
-      | `Pending => pendingRoutes
-      | `Optimised => optimisedRoutes
-      | _ => Belt.List.concat(pendingRoutes, optimisedRoutes)
-      };
-    icons->Belt.List.reduce([||], (group, response) =>
-      Belt.Array.concat(group, response.stops)
+  let iconArray = currentRouteDetails =>
+    currentRouteDetails->Belt.List.reduce([||], (group, route) =>
+      Belt.Array.concat(group, route.API.Car.stops)
     );
-  };
-
-  let pendingStops = () => {
-    let stops = pendingRoutes->Belt.List.map(x => x.stops);
-    Js.log2("pen", stops);
-    Js.log(pendingRoutes->List.length);
-  };
-
-  let optimisedStops = () => {
-    let stops = optimisedRoutes->Belt.List.map(x => x.stops);
-    Js.log(optimisedRoutes->List.length);
-    Js.log2("opt", stops);
-    ();
-  };
-
-  pendingStops();
-  optimisedStops();
 
   let handleRouteClick = (~id) => {
     API.Travel.routeDetails(
@@ -172,7 +152,7 @@ let make = () => {
   };
 
   let iconLayers =
-    iconArray(~currentViewState)
+    iconArray(currentRouteDetails)
     ->Belt.Array.mapWithIndex((i, stop) =>
         IconLayer.make(
           ~data=[|stop|],
@@ -194,24 +174,29 @@ let make = () => {
       );
 
   <>
-    <div className="absolute right-0 top-0 z-10 flex p-5">
-      <Button.Secondary
-        className="mr-5" onClick={_ => dispatch(CurrentViewState(`Pending))}>
-        "Pending"->React.string
-      </Button.Secondary>
-      <Button.Primary onClick={_ => dispatch(CurrentViewState(`Optimised))}>
-        "Optimised"->React.string
-      </Button.Primary>
-      {optimisedRoutes
-       ->Belt.List.mapWithIndex((i, x) =>
-           <Button.Primary
-             key={x.id} onClick={_ => handleRouteClick(~id=x.API.Car.id)}>
-             "Route"->React.string
-           </Button.Primary>
-         )
-       ->Belt.List.toArray
-       ->React.array}
-    </div>
+    <div className="absolute flex-col right-0 top-0 z-10 w-3/12 rounded  m-5">
+      // <Button.Secondary onClick={_ => dispatch(CurrentViewState(`Pending))}>
+      //   "Pending"->React.string
+      // </Button.Secondary>
+      // <Button.Primary onClick={_ => dispatch(CurrentViewState(`Optimised))}>
+      //   "Optimised"->React.string
+      // </Button.Primary>
+
+        <div className="flex-col p-5 pb-0 rounded bg-white">
+          {optimisedRoutes
+           ->Belt.List.mapWithIndex((i, x) =>
+               <Button.Primary
+                 className="mb-5"
+                 key={x.id}
+                 onClick={_ => handleRouteClick(~id=x.API.Car.id)}>
+                 {j| Rutt $i |j}->React.string
+               </Button.Primary>
+             )
+           ->Belt.List.toArray
+           ->React.array}
+        </div>
+        <RouteDetails details=currentRouteDetails />
+      </div>
     <Map
       mapLocation=initialViewPosition
       layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}

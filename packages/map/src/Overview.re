@@ -75,6 +75,10 @@ let make = () => {
         switch (action) {
         | PendingRoutes(pendingRoutes) => {...state, pendingRoutes}
         | OptimisedRoutes(optimisedRoutes) => {...state, optimisedRoutes}
+        | CurrentRouteDetails(currentRouteDetails) => {
+            ...state,
+            currentRouteDetails,
+          }
         | Tooltip(tooltip) => {...state, tooltip}
         | CurrentViewState(currentViewState) => {...state, currentViewState}
         },
@@ -104,11 +108,32 @@ let make = () => {
     );
 
   let geoJsonLayers =
-    colorizedRoutes
-    ->Belt.List.reduce([||], (group, response) =>
-        Belt.Array.concat(group, response.route.routes)
+    currentRouteDetails
+    ->Belt.List.reduce(
+        [||],
+        (group, routeDetails) => {
+          Js.log2("RouteDetails", routeDetails);
+          Belt.Array.concat(group, [|routeDetails.geometry|]);
+        },
       )
-    ->Belt.Array.map(r => GeoJsonLayer.make(~data=[|r|], ()));
+    ->Belt.Array.mapWithIndex((_index, geometry) =>
+        GeoJsonLayer.make(
+          ~data=[|
+            API.Car.makeRoute(
+              ~geometry,
+              ~properties={color: [|99, 179, 237, 255|]},
+            ),
+          |],
+          (),
+        )
+      );
+
+  /* let geoJsonLayers = */
+  /*   colorizedRoutes */
+  /*   ->Belt.List.reduce([||], (group, response) => */
+  /*       Belt.Array.concat(group, response.route.routes) */
+  /*     ) */
+  /*   ->Belt.Array.map(r => GeoJsonLayer.make(~data=[|r|], ())); */
 
   let iconArray = (~currentViewState) => {
     let icons =
@@ -174,11 +199,6 @@ let make = () => {
         className="mr-5" onClick={_ => dispatch(CurrentViewState(`Pending))}>
         "Pending"->React.string
       </Button.Secondary>
-      /* <Button.Secondary */
-      /*   className="mr-5" */
-      /*   onClick={_ => dispatch(CurrentViewState(`Optimised))}> */
-      /*   "Pending"->React.string */
-      /* </Button.Secondary> */
       <Button.Primary onClick={_ => dispatch(CurrentViewState(`Optimised))}>
         "Optimised"->React.string
       </Button.Primary>

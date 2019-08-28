@@ -27,6 +27,8 @@ module Car = {
     properties,
   };
 
+  let makeRoute = (~geometry, ~properties) => {geometry, properties};
+
   type waypoint = {location: array(float)};
 
   type routeRoot = {

@@ -1,4 +1,5 @@
 const routeStore = require('../services/routeStore')
+const osrm = require('../services/osrm')
 const hasProp = require('../utils/hasProp')
 
 const keepStructure = object => {
@@ -50,6 +51,39 @@ module.exports = app => {
     res.send({
       data: keepStructure(await routeStore.routes.dump()),
     })
+  })
+
+  app.get('/demo/route/:id', async ({ params: { id } }, res) => {
+    const route = await routeStore.routes.get(id)
+
+    if (!route) {
+      return res.sendStatus(400)
+    }
+
+    const { 0: driverStart, [route.stops.length - 1]: driverEnd } = route.stops
+    const result = await osrm.geoJSON({ stops: [driverStart, driverEnd] })
+
+    const json = [
+      {
+        id,
+        stops: [driverStart, driverEnd],
+        geometry: result.geometry,
+        waypoints: result.waypoints,
+      },
+    ]
+
+    for (const id of route.ids) {
+      const { startPosition, endPosition } = await routeStore.persons.get(id)
+      const result = await osrm.geoJSON({ stops: [startPosition, endPosition] })
+      json.push({
+        id,
+        stops: [startPosition, endPosition],
+        geometry: result.geometry,
+        waypoints: result.waypoints,
+      })
+    }
+
+    res.send(json)
   })
 
   app.get('/demo/persons', async (_, res) => {

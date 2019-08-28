@@ -171,6 +171,7 @@ module.exports = {
 
     const {
       data: {
+        waypoints,
         routes: [
           {
             geometry = {
@@ -195,7 +196,10 @@ module.exports = {
       })}?geometries=geojson&overview=full`
     )
 
-    return geometry
+    return {
+      geometry,
+      waypoints,
+    }
   },
 
   async route ({ startPosition, endPosition, extras = [] }) {

@@ -146,11 +146,12 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    const geometry = await osrm.geoJSON({ stops: route.stops })
+    const { geometry, waypoints } = await osrm.geoJSON({ stops: route.stops })
 
     res.send({
       ...route,
       geometry,
+      waypoints,
     })
   })
 
@@ -161,11 +162,12 @@ module.exports = (app, io) => {
       return res.sendStatus(400)
     }
 
-    const geometry = await osrm.geoJSON({ stops: route.stops })
+    const { geometry, waypoints } = await osrm.geoJSON({ stops: route.stops })
 
     res.send({
       ...route,
       geometry,
+      waypoints,
     })
   })
 }

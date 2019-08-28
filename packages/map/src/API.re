@@ -57,7 +57,12 @@ module Car = {
   let properties = json => {color: json |> field("color", array(int))};
 
   let route = json => {
-    geometry: json |> field("geometry", geometry),
+    geometry:
+      json
+      |> withDefault(
+           {coordinates: [||], _type: "LineString"},
+           field("geometry", geometry),
+         ),
     properties: {
       color: [|255, 0, 0, 255|],
     },
@@ -69,10 +74,11 @@ module Car = {
 
   let routeRoot = json => {
     routes: json |> field("routes", array(route)),
-    waypoints: json |> field("waypoints", array(waypoint)),
+    waypoints:
+      json |> withDefault([||], field("waypoints", array(waypoint))),
   };
 
-  let routeFromJson = (~color, json) => {
+  let routeFromJson = json => {
     id: json |> field("id", Json.Decode.string),
     distance: json |> field("distance", Json.Decode.float),
     maxTime: json |> field("maxTime", Json.Decode.float),
@@ -81,8 +87,8 @@ module Car = {
     stops: json |> field("stops", array(Stops.fromJson)),
   };
 
-  let routesFromJson = (~color, json) => {
-    let temp = field("data", list(routeFromJson(~color)), json);
+  let routesFromJson = json => {
+    let temp = field("data", list(routeFromJson), json);
 
     temp;
   };
@@ -138,17 +144,13 @@ module Travel = {
   let optimisedRoutes = (~url="/demo/routes", ~callback, ()) =>
     Refetch.fetch(Config.apiHost ++ url)
     |> Repromise.andThen(Refetch.json)
-    |> Repromise.map(json => {
-         Js.log(json);
-         json;
-       })
-    |> Repromise.map(Car.routesFromJson(~color=[|0, 0, 255, 255|]))
+    |> Repromise.map(Car.routesFromJson)
     |> Repromise.wait(callback);
 
   let route = (~url="/route/", ~callback, id) =>
     Refetch.fetch(Config.apiHost ++ url ++ id)
     |> Repromise.andThen(Refetch.json)
-    |> Repromise.map(Car.routeFromJson(~color=[[|0, 255, 0, 255|]]))
+    |> Repromise.map(Car.routeFromJson)
     |> Repromise.wait(callback);
 
   let pendingRoute = (~callback, id) =>
@@ -159,13 +161,29 @@ module Travel = {
     |> Repromise.andThen(Refetch.json)
     |> Repromise.wait(callback);
 
+  let decodeGeometry = d => {
+    Js.log(d);
+    d;
+  };
+
   let pendingRoutes = (~url="/demo/pending/", ~callback, ()) =>
     Refetch.fetch(Config.apiHost ++ url)
     |> Repromise.andThen(Refetch.json)
-    |> Repromise.map(json => {
-         Js.log(json);
-         json;
-       })
-    |> Repromise.map(Car.routesFromJson(~color=[|255, 0, 0, 255|]))
+    |> Repromise.map(Car.routesFromJson)
+    /* |> Repromise.map(routes => { */
+    /*      routes->Belt.List.map(r => { */
+    /*        route( */
+    /*          ~callback= */
+    /*            d => { */
+    /*              Js.log(d); */
+    /*              d; */
+    /*            }, */
+    /*          ~url="/route/", */
+    /*          r.id, */
+    /*        ); */
+    /*        r; */
+    /*      }); */
+    /*      routes; */
+    /*    }) */
     |> Repromise.wait(callback);
 };

@@ -83,7 +83,7 @@ let make = () => {
     None;
   });
 
-  let handleGenerate = () => {};
+  /* let handleGenerate = () => {}; */
 
   let colorizedRoutes =
     Belt.List.concat(
@@ -154,11 +154,11 @@ let make = () => {
         className="mr-5" onClick={_ => dispatch(CurrentViewState(`Pending))}>
         "Pending"->React.string
       </Button.Secondary>
-      <Button.Secondary
-        className="mr-5"
-        onClick={_ => dispatch(CurrentViewState(`Optimised))}>
-        "Pending"->React.string
-      </Button.Secondary>
+      /* <Button.Secondary */
+      /*   className="mr-5" */
+      /*   onClick={_ => dispatch(CurrentViewState(`Optimised))}> */
+      /*   "Pending"->React.string */
+      /* </Button.Secondary> */
       <Button.Primary onClick={_ => dispatch(CurrentViewState(`Optimised))}>
         "Optimised"->React.string
       </Button.Primary>

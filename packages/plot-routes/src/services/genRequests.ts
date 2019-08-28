@@ -42,19 +42,28 @@ maximum generated positions = ${count}`)
 
   console.info(`generated positions = ${points.length}\n`)
 
+  const drivers = points.splice(0, Math.abs(points.length / 3))
+
   for (const point of points) {
-    const isDriver = Math.random() > 0.7
-    const label = isDriver ? 'driver' : 'passenger'
     try {
       sockets.push(
-        await (isDriver
-          ? newRoute(point, destination)
-          : newPickup(point, destination))
-      )
-      console.log(`added ${label}`)
+        await newPickup(point, destination))
+      console.log('added passenger')
       waypoints.push(point)
     } catch (_) {
-      console.log(`failed to add ${label}`)
+      console.log('failed to add passenger}')
+    }
+  }
+
+  for (const point of drivers) {
+    try {
+      sockets.push(
+        await newRoute(point, destination)
+      )
+      console.log('added driver')
+      waypoints.push(point)
+    } catch (_) {
+      console.log('failed to add driver')
     }
   }
 

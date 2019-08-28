@@ -35,6 +35,7 @@ module Car = {
   };
 
   type response = {
+    id: string,
     maxTime: float,
     distance: float,
     duration: float,
@@ -72,15 +73,18 @@ module Car = {
   };
 
   let routeFromJson = (~color, json) => {
-    maxTime: json |> field("maxTime", Json.Decode.float),
+    id: json |> field("id", Json.Decode.string),
     distance: json |> field("distance", Json.Decode.float),
+    maxTime: json |> field("maxTime", Json.Decode.float),
     duration: json |> field("duration", Json.Decode.float),
     route: json |> field("route", routeRoot),
     stops: json |> field("stops", array(Stops.fromJson)),
   };
 
   let routesFromJson = (~color, json) => {
-    field("data", list(routeFromJson(~color)), json);
+    let temp = field("data", list(routeFromJson(~color)), json);
+
+    temp;
   };
 };
 
@@ -131,13 +135,13 @@ module Travel = {
     };
   };
 
-  let routes = (~url="/demo/routes", ~callback, ()) =>
+  let optimisedRoutes = (~url="/demo/routes", ~callback, ()) =>
     Refetch.fetch(Config.apiHost ++ url)
     |> Repromise.andThen(Refetch.json)
     |> Repromise.map(json => {
-      Js.log(json);
-      json;
-    })
+         Js.log(json);
+         json;
+       })
     |> Repromise.map(Car.routesFromJson(~color=[|0, 0, 255, 255|]))
     |> Repromise.wait(callback);
 
@@ -155,13 +159,13 @@ module Travel = {
     |> Repromise.andThen(Refetch.json)
     |> Repromise.wait(callback);
 
-  let pending = (~url="/demo/pending", ~callback, ()) =>
+  let pendingRoutes = (~url="/demo/pending/", ~callback, ()) =>
     Refetch.fetch(Config.apiHost ++ url)
     |> Repromise.andThen(Refetch.json)
     |> Repromise.map(json => {
-      Js.log(json);
-      json;
-    })
+         Js.log(json);
+         json;
+       })
     |> Repromise.map(Car.routesFromJson(~color=[|255, 0, 0, 255|]))
     |> Repromise.wait(callback);
 };

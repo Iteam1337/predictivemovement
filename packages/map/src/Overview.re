@@ -70,18 +70,20 @@ let make = () => {
     );
 
   React.useEffect0(() => {
-    API.Travel.routes(
+    API.Travel.optimisedRoutes(
       ~callback=routes => dispatch(OptimisedRoutes(routes)),
       (),
     );
 
-    API.Travel.pending(
+    API.Travel.pendingRoutes(
       ~callback=routes => dispatch(PendingRoutes(routes)),
       (),
     );
 
     None;
   });
+
+  let handleGenerate = () => {};
 
   let colorizedRoutes =
     Belt.List.concat(
@@ -107,6 +109,22 @@ let make = () => {
       Belt.Array.concat(group, response.stops)
     );
   };
+
+  let pendingStops = () => {
+    let stops = pendingRoutes->Belt.List.map(x => x.stops);
+    Js.log2("pen", stops);
+    Js.log(pendingRoutes->List.length);
+  };
+
+  let optimisedStops = () => {
+    let stops = optimisedRoutes->Belt.List.map(x => x.stops);
+    Js.log(optimisedRoutes->List.length);
+    Js.log2("opt", stops);
+    ();
+  };
+
+  pendingStops();
+  optimisedStops();
 
   let iconLayers =
     iconArray(~currentViewState)
@@ -134,6 +152,11 @@ let make = () => {
     <div className="absolute right-0 top-0 z-10 flex p-5">
       <Button.Secondary
         className="mr-5" onClick={_ => dispatch(CurrentViewState(`Pending))}>
+        "Pending"->React.string
+      </Button.Secondary>
+      <Button.Secondary
+        className="mr-5"
+        onClick={_ => dispatch(CurrentViewState(`Optimised))}>
         "Pending"->React.string
       </Button.Secondary>
       <Button.Primary onClick={_ => dispatch(CurrentViewState(`Optimised))}>

@@ -30,6 +30,7 @@ import { errorHandler } from '../index'
 
 let errorMock: jest.Mock
 let logMock: jest.Mock
+const cl = console.log
 beforeEach(() => {
   errorMock = jest.fn()
   logMock = jest.fn()
@@ -70,18 +71,24 @@ describe('app routes', () => {
         destination:
           hasProp(params, 'destination') && JSON.stringify(params.destination),
         count: hasProp(params, 'count') && params.count,
+        radiusInKm: hasProp(params, 'radiusInKm') && params.radiusInKm,
       }
       return `/generate?${querystring.stringify(json)}`
     }
-
     const req = (params: any): Test => supertest(app).get(genUrl(params))
+
+    beforeEach(() => {
+      const res = [{ lat: 0.01, lon: 0.01 }]
+      genRequestsMock.mockResolvedValue(res)
+    })
 
     it('calls the route and dont wait for response', async () => {
       const { text } = await req({ wait: false }).expect(200)
 
       expect(genRequestsMock).toBeCalledWith({
-        center: undefined,
+        destination: undefined,
         count: undefined,
+        radiusInKm: undefined,
       })
 
       expect(text).toEqual('')
@@ -116,6 +123,23 @@ describe('app routes', () => {
       expect(genRequests).nthCalledWith(6, { count: 256 })
     })
 
+    it('parses radiusInKm-param', async () => {
+      await req({ radiusInKm: 1.1 })
+      await req({ radiusInKm: '2' })
+      await req({ radiusInKm: '2,50' })
+      await req({ radiusInKm: '2.1337' })
+      await req({ radiusInKm: '-1' })
+      await req({ radiusInKm: '400' })
+
+      expect(genRequests).toBeCalledTimes(6)
+      expect(genRequests).nthCalledWith(1, { radiusInKm: 1 })
+      expect(genRequests).nthCalledWith(2, { radiusInKm: 2 })
+      expect(genRequests).nthCalledWith(3, { radiusInKm: 2 })
+      expect(genRequests).nthCalledWith(4, { radiusInKm: 2 })
+      expect(genRequests).nthCalledWith(5, { radiusInKm: 1 })
+      expect(genRequests).nthCalledWith(6, { radiusInKm: 200 })
+    })
+
     it('parses destination-param', async () => {
       await req({ destination: 1.1 })
       await req({ destination: { lat: 0, lon: 24.4 } })
@@ -135,6 +159,34 @@ describe('app routes', () => {
       expect(genRequests).nthCalledWith(5, { destination: undefined })
       expect(genRequests).nthCalledWith(6, { destination: undefined })
       expect(genRequests).nthCalledWith(7, { destination: undefined })
+    })
+  })
+
+  describe('GET /generate [limit]', () => {
+    it('only allows one request at a time', async () => {
+      type Callback = (arg?: {}) => void
+
+      const genRequestsMock = genRequests as jest.Mock
+      const callbacks: Callback[] = []
+      const url = `/generate?${querystring.stringify({ wait: false })}`
+
+      genRequestsMock.mockImplementation(
+        () => new Promise(resolve => callbacks.push(resolve))
+      )
+
+      await supertest(app)
+        .get(url)
+        .expect(200)
+      await supertest(app)
+        .get(url)
+        .expect(409)
+
+      const callback = callbacks.pop() as Callback
+      callback()
+
+      await supertest(app)
+        .get(url)
+        .expect(200)
     })
   })
 })

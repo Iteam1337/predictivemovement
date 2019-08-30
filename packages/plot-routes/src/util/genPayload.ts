@@ -1,7 +1,10 @@
 import { Position } from 'Position'
-import { destination } from '../config'
+import { destination as defaultDestination } from '../config'
 
-export const genPayload = (startPosition: Position) => {
+export const genPayload = (
+  startPosition: Position,
+  destination: Position = defaultDestination
+) => {
   const date = new Date().toISOString().split('T')[0]
 
   return {

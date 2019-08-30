@@ -5,9 +5,10 @@ import routeApi from '../adapters/routeApi'
 import { newSocket } from '../adapters/socket'
 
 export const newPickup = async (
-  startPosition: Position
+  startPosition: Position,
+  destination?: Position
 ): Promise<SocketIOClient.Socket> => {
-  const payload = genPayload(startPosition)
+  const payload = genPayload(startPosition, destination)
   const socket = newSocket()
 
   return new Promise((resolve, reject) => {
@@ -34,9 +35,10 @@ export const newPickup = async (
 }
 
 export const newRoute = async (
-  startPosition: Position
+  startPosition: Position,
+  destination?: Position
 ): Promise<SocketIOClient.Socket> => {
-  const payload = genPayload(startPosition)
+  const payload = genPayload(startPosition, destination)
   const socket = newSocket()
 
   return new Promise((resolve, reject) => {

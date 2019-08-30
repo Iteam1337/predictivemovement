@@ -22,7 +22,7 @@ export const newPickup = async (
           })
         )
 
-        await sleep()
+        await sleep(50)
 
         resolve(socket)
       } catch (_) {

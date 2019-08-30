@@ -165,6 +165,10 @@ module.exports = {
   },
 
   async geoJSON ({ stops }) {
+    if (!Array.isArray(stops) || !stops.length) {
+      return {}
+    }
+
     const { 0: startPosition, [stops.length - 1]: endPosition } = stops
 
     const extras = stops.slice(1, Math.max(stops.length - 1, stops.length - 2))

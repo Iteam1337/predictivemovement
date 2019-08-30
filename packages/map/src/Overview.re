@@ -7,6 +7,7 @@ type state = {
   tooltip: ReactMap.IconLayer.hoverInfo,
   currentViewState: viewState,
   currentRouteDetails: list(API.Car.routeDetails),
+  mapLocation: MapTest.ReactMap.DeckGL.viewState,
 };
 
 type action =
@@ -14,13 +15,16 @@ type action =
   | CurrentRouteDetails(list(API.Car.routeDetails))
   | OptimisedRoutes(list(API.Car.response))
   | CurrentViewState(viewState)
-  | Tooltip(ReactMap.IconLayer.hoverInfo);
+  | Tooltip(ReactMap.IconLayer.hoverInfo)
+  | MapLocation(MapTest.ReactMap.DeckGL.viewState);
 
 let initialState: state = {
   pendingRoutes: [],
   optimisedRoutes: [],
   currentViewState: `Pending,
   currentRouteDetails: [],
+  mapLocation:
+    DeckGL.viewState(~longitude=19.837932, ~latitude=66.605854, ~zoom=7, ()),
   tooltip: {
     x: 0,
     y: 0,
@@ -67,6 +71,7 @@ let make = () => {
       optimisedRoutes,
       currentViewState,
       currentRouteDetails,
+      mapLocation,
     },
     dispatch,
   ) =
@@ -75,6 +80,7 @@ let make = () => {
         switch (action) {
         | PendingRoutes(pendingRoutes) => {...state, pendingRoutes}
         | OptimisedRoutes(optimisedRoutes) => {...state, optimisedRoutes}
+        | MapLocation(location) => {...state, mapLocation: location}
         | CurrentRouteDetails(currentRouteDetails) => {
             ...state,
             currentRouteDetails,
@@ -84,6 +90,30 @@ let make = () => {
         },
       initialState,
     );
+
+  let flyToRoute = (waypoints: array(API.Car.waypoint)) => {
+    let viewport =
+      Belt.Array.(
+        switch (waypoints->get(0), waypoints->get(length(waypoints) - 1)) {
+        | (Some(f), Some(l)) => [|f.location, l.location|]
+        | (_, _) => [||]
+        }
+      )
+      |> Viewport.make;
+
+    dispatch(
+      MapLocation(
+        DeckGL.viewState(
+          ~longitude=viewport.longitude,
+          ~latitude=viewport.latitude,
+          ~zoom=viewport.zoom,
+          ~transitionDuration=1000,
+          ~transitionInterpolator=Interpolator.FlyTo.make(),
+          (),
+        ),
+      ),
+    );
+  };
 
   React.useEffect0(() => {
     API.Travel.optimisedRoutes(
@@ -99,11 +129,11 @@ let make = () => {
     None;
   });
 
-  let colorizedRoutes =
-    Belt.List.concat(
-      colorize(~routeType=`Pending, ~currentViewState, pendingRoutes),
-      colorize(~routeType=`Optimised, ~currentViewState, optimisedRoutes),
-    );
+  // let colorizedRoutes =
+  //   Belt.List.concat(
+  //     colorize(~routeType=`Pending, ~currentViewState, pendingRoutes),
+  //     colorize(~routeType=`Optimised, ~currentViewState, optimisedRoutes),
+  //   );
 
   let geoJsonLayers =
     currentRouteDetails
@@ -146,7 +176,13 @@ let make = () => {
   let handleRouteClick = (~id) => {
     API.Travel.routeDetails(
       ~url="/demo/route/",
-      ~callback=data => dispatch(CurrentRouteDetails(data)),
+      ~callback=
+        data => {
+          // flyToRoute(data);
+          let first = Belt.List.getExn(data, 0);
+          dispatch(CurrentRouteDetails(data));
+          flyToRoute(first.waypoints);
+        },
       id,
     );
   };
@@ -198,7 +234,7 @@ let make = () => {
         <RouteDetails details=currentRouteDetails />
       </div>
     <Map
-      mapLocation=initialViewPosition
+      mapLocation
       layers={[|geoJsonLayers, iconLayers|]->Belt.Array.concatMany}
       tooltip
     />

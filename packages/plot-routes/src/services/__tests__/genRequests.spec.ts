@@ -18,7 +18,6 @@ jest.mock('../../config', () => ({
 import * as service from '../genRequests'
 
 describe('#genRequests', () => {
-  let randomMock: jest.Mock
   let randomizeMock: jest.Mock
   let infoMock: jest.Mock
   let logMock: jest.Mock
@@ -26,14 +25,12 @@ describe('#genRequests', () => {
 
   let destination: Position
   beforeEach(() => {
-    randomMock = jest.fn()
     infoMock = jest.fn()
     logMock = jest.fn()
 
     randomizeMock = randomize as jest.Mock
     routeApiMock = routeApi as any
 
-    Math.random = randomMock
     console.log = logMock
     console.info = infoMock
 
@@ -49,16 +46,11 @@ describe('#genRequests', () => {
 
   test('calling "routeApi"', async () => {
     randomizeMock.mockResolvedValue({ lat: 1.1, lon: 4.4 })
-    randomMock.mockReturnValueOnce(0.15)
-    randomMock.mockReturnValueOnce(0.35)
-    randomMock.mockReturnValueOnce(0.55)
-    randomMock.mockReturnValueOnce(0.75)
-    randomMock.mockReturnValueOnce(0.95)
 
     await service.genRequests()
 
-    expect(routeApiMock.newRoute, 'driver').toBeCalledTimes(2)
-    expect(routeApiMock.newPickup, 'passenger').toBeCalledTimes(3)
+    expect(routeApiMock.newRoute, 'driver').toBeCalledTimes(1)
+    expect(routeApiMock.newPickup, 'passenger').toBeCalledTimes(4)
     expect(routeApiMock.newRoute).nthCalledWith(
       1,
       { lat: 1.1, lon: 4.4 },
@@ -75,7 +67,7 @@ describe('#genRequests', () => {
     const socket = { close: jest.fn() }
 
     randomizeMock.mockResolvedValue({ lat: 1.1, lon: 4.4 })
-    randomMock.mockReturnValue(0)
+    routeApiMock.newRoute.mockResolvedValue(socket)
     routeApiMock.newPickup.mockResolvedValue(socket)
 
     await service.genRequests()
@@ -85,7 +77,6 @@ describe('#genRequests', () => {
 
   test('returning all successful points', async () => {
     randomizeMock.mockResolvedValue({ lat: 1.1, lon: 4.4 })
-    randomMock.mockReturnValue(0)
 
     const points = await service.genRequests()
 
@@ -134,9 +125,9 @@ describe('#genRequests', () => {
 
       expect(points).toHaveLength(3)
       expect(points).toEqual([
-        { lat: 1.1, lon: 1.1 },
         { lat: 2.2, lon: 2.2 },
         { lat: 3.3, lon: 3.3 },
+        { lat: 1.1, lon: 1.1 }, // points where spliced at start for drivers
       ])
     })
 
@@ -146,11 +137,6 @@ describe('#genRequests', () => {
       values.forEach(n =>
         randomizeMock.mockResolvedValueOnce({ lat: n, lon: n })
       )
-      randomMock.mockReturnValueOnce(0.15)
-      randomMock.mockReturnValueOnce(0.35)
-      randomMock.mockReturnValueOnce(0.55)
-      randomMock.mockReturnValueOnce(0.75)
-      randomMock.mockReturnValueOnce(0.95)
       routeApiMock.newPickup.mockRejectedValueOnce('error')
       routeApiMock.newRoute.mockRejectedValueOnce('error')
 
@@ -158,10 +144,10 @@ describe('#genRequests', () => {
 
       expect(points).toHaveLength(3)
       expect(points).toEqual([
-        // call #0 should have failed
-        { lat: values[1], lon: values[1] },
         { lat: values[2], lon: values[2] },
-        // call #3 should have failed
+        { lat: values[3], lon: values[3] },
+        // call #0 should have failed
+        // call #1 should have failed
         { lat: values[4], lon: values[4] },
       ])
       expect(logMock).toBeCalledWith('failed to add driver')

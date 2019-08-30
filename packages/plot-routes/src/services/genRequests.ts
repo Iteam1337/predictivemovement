@@ -51,7 +51,7 @@ maximum generated positions = ${count}`)
       console.log('added passenger')
       waypoints.push(point)
     } catch (_) {
-      console.log('failed to add passenger}')
+      console.log('failed to add passenger')
     }
   }
 

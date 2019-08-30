@@ -30,7 +30,7 @@ import { errorHandler } from '../index'
 
 let errorMock: jest.Mock
 let logMock: jest.Mock
-const cl = console.log
+
 beforeEach(() => {
   errorMock = jest.fn()
   logMock = jest.fn()

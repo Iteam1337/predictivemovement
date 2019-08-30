@@ -81,13 +81,11 @@ module.exports = (app, io) => {
             }
 
             // console.log('Driver accepted', route)
-
             try {
-              await Promise.all(
-                route.ids.map(passengerId =>
-                  pub.publish(`routeCreated:pub_${passengerId}`, id)
-                )
-              )
+              for (const passengerId of route.ids) {
+                await routeStore.persons.lock(passengerId)
+                pub.publish(`routeCreated:pub_${passengerId}`, id)
+              }
             } catch (error) {
               console.log('error sending to clients', error)
             }

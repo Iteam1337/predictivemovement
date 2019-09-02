@@ -13,6 +13,7 @@
 - [Add Amazon Web Services as a provider](https://docs.containership.io/en/articles/504594-how-to-add-amazon-web-services-as-a-provider) (This has already been configured)
 
 - [Launch cluster using AWS](https://docs.containership.io/en/articles/2241901-launch-cluster-using-amazon-web-services-aws)
+  - Use minimum of t3.medium 4gb worker pool. We used one t3.small master pool with one instance and one t3.medium (4gb) worker pool with two instances. 2gb for worker pool was too small and gave problems.
 
 ## Connecting to the cluster
 

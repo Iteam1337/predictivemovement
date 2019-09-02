@@ -22,11 +22,11 @@ ingress:
   tls:
   - secretName: letsencrypt-prod
     hosts:
-      - match-route.pm.iteamdev.se
+      - match-route.devops.iteamdev.se
   annotations:
     kubernetes.io/ingress.class: traefik
   hosts:
-    - host: match-route.pm.iteamdev.se
+    - host: match-route.devops.iteamdev.se
       paths: ['/']
 
 env:

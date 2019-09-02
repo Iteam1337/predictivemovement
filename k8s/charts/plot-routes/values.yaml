@@ -21,14 +21,14 @@ ingress:
   enabled: true
   annotations: {}
   hosts:
-    - host: plot-routes.pm.iteamdev.se
+    - host: plot-routes.devops.iteamdev.se
       paths:
       - "/"
 
   tls:
   - secretName: letsencrypt-prod
     hosts:
-      - plot-routes.pm.iteamdev.se
+      - plot-routes.devops.iteamdev.se
 
 env:
   ROUTE_API: http://match-route.default.svc.cluster.local

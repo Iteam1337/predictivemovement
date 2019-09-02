@@ -5,14 +5,14 @@ metadata:
 spec:
   secretName: letsencrypt-prod
   dnsNames:
-  - "*.pm.iteamdev.se"
+    - "*.devops.iteamdev.se"
   acme:
     config:
-    - dns01:
-        ingressClass: traefik
-        provider: route53
-      domains:
-      - "*.pm.iteamdev.se"
+      - dns01:
+          ingressClass: traefik
+          provider: route53
+        domains:
+          - "*.devops.iteamdev.se"
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer

@@ -18,10 +18,13 @@ echo "$DEPLOYMENT is being deployed"
 
 helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
 --set ingress.hosts[0].host=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
---set image.tag=$FEATURE | \
-kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE apply -f -
+--set ingress.tls[0].hosts[0]=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
+--set image.tag=$FEATURE \
+--set ingress.tls[0].secretName=letsencrypt-prod \ # This shouldn't need to be set after this is fixed https://github.com/helm/helm/issues/5711
+--set ingress.hosts[0].paths={"/"} | \ # This shouldn't need to be set after this is fixed https://github.com/helm/helm/issues/5711
+| kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE apply -f -
 
-### Copy google and mapbox secrets from default namespace into the new namespace
+### Copy google secret from default namespace into the new namespace
 if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get secret google-token)
 then
     kubectl "${KUBECTL_ARGS[@]}" get secret google-token -n default -o yaml | \
@@ -29,12 +32,18 @@ then
     kubectl "${KUBECTL_ARGS[@]}" apply -n $FEATURE -f -
 fi
 
+### Copy mapbox secret from default namespace into the new namespace
 if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get secret mapbox-token)
 then
     kubectl "${KUBECTL_ARGS[@]}" get secret mapbox-token -n default -o yaml | \
     sed "s/namespace: default/namespace: $FEATURE/" | \
     kubectl "${KUBECTL_ARGS[@]}" apply -n $FEATURE -f -
 fi
+
+### Copy TLS certificate secret from default namespace into the new namespace
+kubectl "${KUBECTL_ARGS[@]}" get secret letsencrypt-prod -n default -o yaml | \
+sed "s/namespace: default/namespace: $FEATURE/" | \
+kubectl "${KUBECTL_ARGS[@]}" apply -n $FEATURE -f -
 
 ### Redeploy a new version of the feature
 if kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}';

@@ -19,9 +19,9 @@ echo "$DEPLOYMENT is being deployed"
 helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
 --set ingress.hosts[0].host=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
 --set ingress.tls[0].hosts[0]=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
---set image.tag=$FEATURE \
---set ingress.tls[0].secretName=letsencrypt-prod \ # This shouldn't need to be set after this is fixed https://github.com/helm/helm/issues/5711
---set ingress.hosts[0].paths={"/"} | \ # This shouldn't need to be set after this is fixed https://github.com/helm/helm/issues/5711
+--set ingress.tls[0].secretName=letsencrypt-prod \
+--set ingress.hosts[0].paths={"/"} \
+--set image.tag=$FEATURE | \
 kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE apply -f -
 
 ### Copy google secret from default namespace into the new namespace

@@ -60,13 +60,13 @@ jobs:
       script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy.sh $PROJECT; fi
 
     ### feature deployment
-    - stage: build-feature
-      env: PROJECT=packages/match-route
-      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
+    # - stage: build-feature
+    #   env: PROJECT=packages/match-route
+    #   script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then bash bin/build-feature.sh $PROJECT; fi
 
-    - stage: deploy-feature
-      env: PROJECT=packages/match-route
-      script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy-feature.sh $PROJECT; fi
+    # - stage: deploy-feature
+    #   env: PROJECT=packages/match-route
+    #   script: if bin/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then sudo bash bin/deploy-feature.sh $PROJECT; fi
 
 stages:
   - name: build

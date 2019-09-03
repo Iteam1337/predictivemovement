@@ -15,6 +15,6 @@ const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 routes(app, io)
-console.log('Api deployment preview :)')
+console.log('Api deployment preview')
 
 server.listen(port, console.log(`listening on ${port}`))

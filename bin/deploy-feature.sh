@@ -55,6 +55,6 @@ fi
 if ! (kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE get pod -l app.kubernetes.io/name=$DEPLOYMENT --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}');
 then
     curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
-    -d "{\"body\": \"Deployment preview ready at: https://$DEPLOYMENT-$FEATURE.pm.iteamdev.se\"}" \
+    -d "{\"body\": \"Deployment preview ready at: https://$DEPLOYMENT-$FEATURE.pm.iteamdev.se \nRemember to delete the feature when you close this pull request by running `kubectl delete namespace $FEATURE`\"}" \
     "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments";
 fi

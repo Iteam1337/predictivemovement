@@ -21,7 +21,7 @@ helm template k8s/charts/$DEPLOYMENT --name $DEPLOYMENT --namespace $FEATURE \
 --set ingress.tls[0].hosts[0]=$DEPLOYMENT-$FEATURE.pm.iteamdev.se \
 --set image.tag=$FEATURE \
 --set ingress.tls[0].secretName=letsencrypt-prod \ # This shouldn't need to be set after this is fixed https://github.com/helm/helm/issues/5711
---set ingress.hosts[0].paths={"/"} | \ # This shouldn't need to be set after this is fixed https://github.com/helm/helm/issues/5711
+--set ingress.hosts[0].paths={"/"} \ # This shouldn't need to be set after this is fixed https://github.com/helm/helm/issues/5711
 | kubectl "${KUBECTL_ARGS[@]}" -n $FEATURE apply -f -
 
 ### Copy google secret from default namespace into the new namespace

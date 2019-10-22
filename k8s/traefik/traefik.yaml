@@ -59,7 +59,7 @@ spec:
     spec:
       serviceAccountName: traefik
       containers:
-      - image: traefik
+      - image: traefik:v1.7.18
         name: traefik
         ports:
         - name: http
@@ -93,7 +93,7 @@ metadata:
   name: traefik
   namespace: kube-system
 spec:
-  type: LoadBalancer
+  # type: LoadBalancer
   selector:
     app: traefik
   ports:

@@ -48,7 +48,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: io1
+        storageClassName: do-block-storage
         resources:
           requests:
             storage: "10Gi"

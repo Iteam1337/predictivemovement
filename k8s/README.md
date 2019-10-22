@@ -4,92 +4,29 @@
 
 - Have `helm` [installed](https://helm.sh/docs/using_helm/#installing-helm) (We use helm charts for templates that we render and then deploy using kubectl)
 
-- Access to Iteam organization in [Containership](https://containership.io)
+- Have `doctl` [installed](https://github.com/digitalocean/doctl#installing-doctl) (Nice to have to be able to update your kube config to access the cluster)
 
-- Acess to Iteam AWS if you create a cluster in AWS (as we did)
+- Acess to Iteam AWS
 
-## Setup a Kubernetes cluster with Containership
+- Acess to Iteam Digital Ocean
 
-- [Add Amazon Web Services as a provider](https://docs.containership.io/en/articles/504594-how-to-add-amazon-web-services-as-a-provider) (This has already been configured)
+## Setup a Kubernetes cluster in Digital Ocean
 
-- [Launch cluster using AWS](https://docs.containership.io/en/articles/2241901-launch-cluster-using-amazon-web-services-aws)
-  - Use minimum of t3.medium 4gb worker pool. We used one t3.small master pool with one instance and one t3.medium (4gb) worker pool with two instances. 2gb for worker pool was too small and gave problems.
+- This has already been created and available [here](https://cloud.digitalocean.com/kubernetes/clusters/6cc375a8-8092-4ebb-968f-55d88a7f5e04)
+
+- Otherwise if you want to setup a cluster it's super [easy process](https://cloud.digitalocean.com/kubernetes/clusters/new)
+
+- [Create a firewall](https://cloud.digitalocean.com/networking/firewalls/new) and configure the rules you want (allow HTTPS for example) on this instead of the one that Digital Ocean created for you -> [see this issue](https://www.digitalocean.com/community/questions/why-do-my-inbound-rules-keep-resetting)
+
+- Created a Floating IP and then pointed in AWS Route53 the recordset `*.pm.iteamdev.se` to this IP
 
 ## Connecting to the cluster
 
-#### Easy option but slow speed when running commands since it goes through a Containership proxy
+- [Create a Personal access token](https://cloud.digitalocean.com/account/api/tokens)
 
-- Copy your `kubectl connection info` from the cluster's overview page in Containership
+- `doctl auth init` to initiate the login to Digital Ocean using your token created above
 
-#### More complicated option but faster speed since you are connecting directly to the cluster
-
-- [Add your ssh key with Containership](https://docs.containership.io/en/articles/1523970-managing-ssh-keys)
-
-- Inside AWS Instances find your master node or one of them if you have a pool of them and get your public IP
-
-- SSH into it using the user `containership`
-
-- Look for the `kube-admin` configuration (if it's not there you're probably on a worker node)
-
-```bash
-sudo su
-cat /etc/kubernetes/admin.conf
-```
-
-- Copy the `client-certificate-data` and `client-key-data` from the `user` under the `users` section (we will use them in the next step)
-
-- Now edit your local `kubectl configuration` usually located in `~/.kube/config` and add the following to the according sections
-
-`clusters:`
-
-```yaml
-- cluster:
-    insecure-skip-tls-verify: true
-    server: https://<public IP or dns name of master node>:6443
-  name: aws
-```
-
-`contexts:`
-
-```yaml
-- context:
-    cluster: aws
-    user: kubernetes-admin-aws
-  name: kubernetes-admin-aws@aws
-```
-
-`users:`
-
-```yaml
-- name: kubernetes-admin-aws
-  user:
-    client-certificate-data: <The one you copied from the server>
-    client-key-data: <The one you copied from the server>
-```
-
-- Change the context to the newly created one
-
-```bash
-kubectl config use-context kubernetes-admin-aws@aws
-```
-
-### Containership and AWS specific configuration once you have a cluster
-
-This only applies if you have used AWS. <br>
-At the time of writing this there seems to be an issue with volume creation with the [`aws-ebs-driver`](https://github.com/kubernetes-sigs/aws-ebs-csi-driver) that Containership uses. <br>
-
-So go ahead and apply a newer configuration that seems to work (either by following the above github instructions) or by simply running:
-
-```bash
-kubectl apply -f containership-aws/aws-ebs-driver.yaml
-```
-
-You need to also create [AWS specific StorageClasses](https://kubernetes.io/docs/concepts/storage/storage-classes/#aws-ebs) that are probably not included with your cluster and are being used in osrm.yaml, redis.yaml, traefik.yaml
-
-```bash
-kubectl apply -f containership-aws/gp2-storageclass.yaml
-kubectl apply -f containership-aws/io1-storageclass.yaml
-```
+- `doctl k cluster kubeconfig save predictive-movement` to save your cluster configuration in your local kube config
 
 ## Traefik
 
@@ -144,4 +81,4 @@ kubectl get secret travis-token-<YOU GET THIS FROM ABOVE COMMAND> -n serviceids 
 
 Take the `token` value from the secret, base64 decode it and head to Travis and store it as a secret environment variable as `KUBERNETES_TOKEN`
 
-Also set `KUBERNETES_SERVER` as `https://<PUBLIC IP OF THE AWS MASTER NODE>:6443`
+Also set `KUBERNETES_SERVER` variable from your kube config (`cat ~/.kube/config` and look for the `server:` value specific to this cluster)

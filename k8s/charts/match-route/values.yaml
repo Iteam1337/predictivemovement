@@ -20,7 +20,7 @@ service:
 ingress:
   enabled: true
   tls:
-  - secretName: letsencrypt-prod
+  - secretName: match-route-letsencrypt-prod
     hosts:
       - match-route.pm.iteamdev.se
   annotations:

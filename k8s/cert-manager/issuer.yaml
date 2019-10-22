@@ -1,4 +1,4 @@
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
@@ -8,12 +8,9 @@ spec:
     email: register@iteam.se
     privateKeySecretRef:
       name: letsencrypt-prod
-    dns01:
-      providers:
-      - name: route53
-        route53:
-          region: eu-north-1
-          accessKeyID: AKIAIOHQJ2X7UR5VVBNA
-          secretAccessKeySecretRef:
-            name: amazon-web-service-credentials
-            key: AWS_SECRET_ACCESS_KEY
+    solvers:
+    # An empty 'selector' means that this solver matches all domains
+    - selector: {}
+      http01:
+        ingress:
+          class: traefik

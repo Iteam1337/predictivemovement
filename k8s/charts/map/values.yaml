@@ -22,7 +22,7 @@ service:
 
 ingress:
   tls:
-  - secretName: letsencrypt-prod
+  - secretName: map-letsencrypt-prod
     hosts:
       - map.pm.iteamdev.se
   enabled: true

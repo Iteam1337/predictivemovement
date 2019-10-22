@@ -28,7 +28,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: gp2
+        storageClassName: do-block-storage
         resources:
           requests:
             storage: "2Gi"

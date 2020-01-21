@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import ReactMapGL from 'react-map-gl'
 
-const Map: React.FC = () => {
+interface MapProps {
+  socket: SocketIOClient.Socket
+}
+
+const Map: React.FC<MapProps> = ({ socket }) => {
   const [mapState, setMapState] = useState({
     viewport: {
       latitude: 61.8294925,

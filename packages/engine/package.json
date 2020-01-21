@@ -1,26 +1,33 @@
 {
-  "name": "engine",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "Radu Achim <radu.achim@iteam.se>",
-  "homepage": "https://github.com/Iteam1337/pm-mapbox-test#readme",
-  "license": "ISC",
-  "main": "lib/engine.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
+  "name": "@iteam1337/engine",
+  "version": "0.7.0",
+  "description": "Booking engine proof of concept ===============================",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec tests/**",
+    "watch": "mocha -w -R spec tests/**"
   },
-  "files": [
-    "lib"
-  ],
+  "author": "Christian Landgren @ Iteam",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "highland": "^2.10.1",
+    "moment": "^2.15.1",
+    "moment-timezone": "^0.5.7",
+    "node-fetch": "^1.5.3",
+    "point-in-polygon": "^1.0.1",
+    "polyline": "^0.2.0",
+    "socket.io-client": "^1.4.6"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Iteam1337/pm-mapbox-test.git"
-  },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "url": "git+https://github.com/Iteam1337/engine.git"
   },
   "bugs": {
-    "url": "https://github.com/Iteam1337/pm-mapbox-test/issues"
-  }
+    "url": "https://github.com/Iteam1337/engine/issues"
+  },
+  "homepage": "https://github.com/Iteam1337/engine#readme"
 }

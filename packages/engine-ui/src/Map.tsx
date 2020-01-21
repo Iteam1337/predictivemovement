@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import ReactMapGL from 'react-map-gl'
+import cars from '../store/cars'
 
 interface MapProps {
   socket: SocketIOClient.Socket

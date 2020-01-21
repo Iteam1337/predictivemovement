@@ -5,7 +5,7 @@
   "author": "momentiris <momentiris@gmail.com>",
   "homepage": "https://github.com/Iteam1337/pm-mapbox-test#readme",
   "license": "ISC",
-  "main": "lib/engine-server.js",
+  "main": "lib/index.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

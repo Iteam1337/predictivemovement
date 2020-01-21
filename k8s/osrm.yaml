@@ -61,9 +61,30 @@ metadata:
     app: osrm
 spec:
   ports:
-    - name: "80"
+    - name: http
       protocol: TCP
       port: 80
       targetPort: 5000
   selector:
     app: osrm
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: osrm
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+spec:
+  # tls:
+  #   - hosts:
+  #       - "map.pm.iteamdev.se"
+  #     secretName: map-letsencrypt-prod
+  rules:
+    - host: "osrm.pm.iteamdev.se"
+      http:
+        paths:
+          - path: "/"
+            backend:
+              serviceName: osrm
+              servicePort: http

@@ -1,5 +1,5 @@
 const distance = require('google-distance')
-const key = process.env.GOOGLE_API_KEY || 'AIzaSyBd1CBUTm4ZrfkfRzUmLMLkFS3sZChivyc'
+const key = process.env.GOOGLE_API_KEY
 distance.apiKey = key
 
 module.exports = {

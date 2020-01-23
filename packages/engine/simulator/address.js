@@ -6,7 +6,7 @@ const start = ljusdal
 
 function randomize (center, retry = 20) {
   if (retry < 0) throw new Error('Randomize in loop try nr' + retry)
-  const randomPoint = { lon: start.lon + (Math.random() - 0.5) / 10, lat: start.lat + (Math.random() - 0.5) / 10 }
+  const randomPoint = { lon: start.lon + (Math.random() - 0.5) / 2, lat: start.lat + (Math.random() - 0.5) / 5 }
   // get a correct street address
   return osrm.nearest(center || randomPoint)
     .then((data) => {

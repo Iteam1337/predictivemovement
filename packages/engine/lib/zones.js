@@ -1,5 +1,5 @@
 const inside = require('point-in-polygon')
-const zones = require('../data/zones.json')
+const zones = []
 
 const transformed = zones.map(zone => {
   const coords = zone.coordinates.map(coord => ([coord.longitude, coord.latitude]))

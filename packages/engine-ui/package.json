@@ -20,7 +20,8 @@
     "react-map-gl": "^5.2.1",
     "react-scripts": "3.3.0",
     "socket.io-client": "^2.3.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "use-socketio": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,13 +1,13 @@
 const _ = require('highland')
 const fetch = require('node-fetch')
 const moment = require('moment')
-var engine = require('@iteam1337/engine')
+const engine = require('@iteam1337/engine')
 
 const cache = {}
 
-function register(io) {
-  io.on('connection', function(socket) {
-    console.log('connection')
+function register (io) {
+  io.on('connection', function (socket) {
+    console.log('connection', cache)
     _.merge([_.values(cache), engine.cars.fork()])
       .doto(car => (cache[car.id] = car))
       .pick(['position', 'status', 'id', 'tail', 'zone', 'speed', 'bearing'])

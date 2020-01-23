@@ -1,13 +1,16 @@
 import React from 'react'
 import Map from './Map'
-import io from 'socket.io-client'
+import { SocketIOProvider } from 'use-socketio'
 
 const App: React.FC = () => {
-  const socket = io('http://localhost:4000')
+  const options = {
+
+  }
+
   return (
-    <div>
-      <Map socket={socket} />
-    </div>
+    <SocketIOProvider url="http://localhost:4000" opts={options}>
+      <Map />
+    </SocketIOProvider>
   )
 }
 

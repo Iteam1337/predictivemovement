@@ -25,7 +25,7 @@ class Car extends EventEmitter {
   }
 
   navigateTo (position) {
-    console.log('navigateFromTo', this.position, position)
+    // console.log('navigateFromTo', this.position, position)
     this.heading = position
     return osrm.route(this.position, this.heading)
       .then(route => {
@@ -70,22 +70,23 @@ class Car extends EventEmitter {
     })
   }
 
-  updatePosition (position, date) {
+  async updatePosition (position, date) {
     const moved = (distance.haversine(position, this.position) > 10) // meters
     const bearing = (distance.bearing(position, this.position))
     this.position = position
     this.bearing = bearing
     this.lastPositions.push({ position: position, date: date || Date.now() })
     this.matchZone()
-    if (moved && this.lastPositions.length > 0) {
-      return this.matchPositionsToMap()
-    } else {
-      return Promise.resolve(this)
+    if (moved) {
+      if (this.lastPositions.length > 1 && date) {
+        await this.matchPositionsToMap()
+      }
+      this.emit('moved', this)
+      return this
     }
   }
 
   matchZone () {
-    const before = Date.now()
     const newZone = findZone(this.position)
     if (newZone && this.zone !== newZone[0]) {
       this.zone = newZone[0]
@@ -95,7 +96,6 @@ class Car extends EventEmitter {
   }
 
   matchPositionsToMap () {
-    const before = Date.now()
     return osrm.match(this.lastPositions.filter(pos => pos.date > Date.now() - 4 * 60 * 1000))
       .then(match => {
         //console.log('matched route', ms, 'ms')
@@ -111,7 +111,6 @@ class Car extends EventEmitter {
         this.tail = points.map(point => ([...point.position, point.time, point.speed])).reverse() // reverse back
         this.speed = points.length ? points[0].speed : 0
         //this.tail = polyline.decode(matching.geometry)
-        this.emit('moved', this)
         return this
       })
       .catch(err => console.error('match', err))

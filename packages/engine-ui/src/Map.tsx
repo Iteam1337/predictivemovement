@@ -1,12 +1,8 @@
 import React, { useState } from 'react'
 import ReactMapGL from 'react-map-gl'
-import cars from '../store/cars'
+import { useSocket } from "use-socketio";
 
-interface MapProps {
-  socket: SocketIOClient.Socket
-}
-
-const Map: React.FC<MapProps> = ({ socket }) => {
+const Map: React.FC = () => {
   const [mapState, setMapState] = useState({
     viewport: {
       latitude: 61.8294925,
@@ -14,11 +10,19 @@ const Map: React.FC<MapProps> = ({ socket }) => {
       zoom: 8,
     },
   })
+  const [cars, setCars] = useState([]);
+
+  const { socket, subscribe, unsubscribe } = useSocket("cars", newCars => {
+    console.log('newCars', newCars)
+    setCars(newCars)
+  })
+
   return (
     <div>
       <ReactMapGL
         width="100%"
         height="100vh"
+
         {...mapState.viewport}
         onViewportChange={viewport => setMapState({ viewport })}
       />

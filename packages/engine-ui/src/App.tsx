@@ -1,5 +1,5 @@
 import React from 'react'
-import Map from './Map'
+import Map from './Map.js'
 import { SocketIOProvider } from 'use-socketio'
 
 const App: React.FC = () => {

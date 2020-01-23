@@ -17,7 +17,7 @@ function generateCar (nr) {
   .catch(err => console.error('simulation error', err)))
 }
 
-module.exports = _(range(10))
+module.exports = _(range(100))
   .flatMap(generateCar)
   .errors(err => console.error('initialize error', err))
   .map(car => _('moved', car))

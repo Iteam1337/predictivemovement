@@ -12,13 +12,17 @@ function generateCar (nr) {
     car.position = fromTo[0]
     car.navigateTo(fromTo[1])
     console.log('initiated car', car.id)
+    car.on('dropoff', () => {
+      address().then(position => car.navigateTo(position))
+    })
     return car
   })
   .catch(err => console.error('simulation error', err)))
 }
 
-module.exports = _(range(100))
+module.exports = _(range(400))
   .flatMap(generateCar)
+  .tap(car => console.log('tap', car))
   .errors(err => console.error('initialize error', err))
   .map(car => _('moved', car))
   .errors(err => console.error('move error', err))

@@ -1,5 +1,4 @@
 const _ = require('highland')
-const fetch = require('node-fetch')
 const moment = require('moment')
 const engine = require('@iteam1337/engine')
 
@@ -11,10 +10,6 @@ function register (io) {
     _.merge([_.values(cache), engine.cars.fork()])
       .doto(car => (cache[car.id] = car))
       .pick(['position', 'status', 'id', 'tail', 'zone', 'speed', 'bearing'])
-      .doto(car => (car.lastSeen = car.position.date))
-      .filter(car =>
-        moment(car.lastSeen).isAfter(moment().subtract(2, 'minutes'))
-      )
       .doto(
         car =>
           (car.position = [
@@ -22,13 +17,6 @@ function register (io) {
             car.position.lat,
             car.position.date,
           ])
-      )
-      .map(car =>
-        Object.assign({}, car, {
-          tail: car.tail
-            ? car.tail.filter(t => t[2] > Date.now() - 120000)
-            : [],
-        })
       )
       //.filter(car => car.position.speed > 90) // endast bilar över en viss hastighet
       //.ratelimit(100, 100)

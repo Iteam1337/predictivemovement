@@ -21,7 +21,7 @@ class Car extends EventEmitter {
     this._interval = setInterval(() => {
       const newPosition = interpolate.route(heading.route, new Date())
       if (newPosition) this.updatePosition(newPosition)
-    }, Math.random() * 30000)
+    }, Math.random() * 3000)
   }
 
   navigateTo (position) {
@@ -54,6 +54,7 @@ class Car extends EventEmitter {
       this.trip = null
     }
     this.simulate(false)
+    this.emit('dropoff', this)
   }
 
   offer (offer) {
@@ -71,7 +72,7 @@ class Car extends EventEmitter {
   }
 
   async updatePosition (position, date) {
-    const moved = (distance.haversine(position, this.position) > 10) // meters
+    const moved = (distance.haversine(position, this.position) > 2) // meters
     const bearing = (distance.bearing(position, this.position))
     this.position = position
     this.bearing = bearing
@@ -83,6 +84,11 @@ class Car extends EventEmitter {
       }
       this.emit('moved', this)
       return this
+    } else {
+      this.emit('stopped', this)
+      if ((distance.haversine(this.heading, this.position) < 50)) {
+        this.dropOff()
+      }
     }
   }
 

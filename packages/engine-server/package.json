@@ -18,6 +18,7 @@
     "url": "git+https://github.com/Iteam1337/pm-mapbox-test.git"
   },
   "scripts": {
+    "start": "node lib/index.js",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "bugs": {

@@ -2,13 +2,14 @@ const _ = require('highland')
 const moment = require('moment')
 const engine = require('@iteam1337/engine')
 
-const cache = {}
+const carsCache = {}
+const bookingsCache = {}
 
-function register (io) {
-  io.on('connection', function (socket) {
-    console.log('connection', cache)
-    _.merge([_.values(cache), engine.cars.fork()])
-      .doto(car => (cache[car.id] = car))
+function register(io) {
+  io.on('connection', function(socket) {
+    console.log('connection', carsCache)
+    _.merge([_.values(carsCache), engine.cars.fork()])
+      .doto(car => (carsCache[car.id] = car))
       .pick(['position', 'status', 'id', 'tail', 'zone', 'speed', 'bearing'])
       .doto(
         car =>
@@ -23,6 +24,12 @@ function register (io) {
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each(cars => socket.volatile.emit('cars', cars))
+
+    _.merge([_.values(bookingsCache), engine.bookings.fork()])
+      .doto(booking => (bookingsCache[booking.id] = booking))
+      .batchWithTimeOrCount(1000, 5)
+      .errors(console.error)
+      .each(bookings => socket.emit('bookings', bookings))
   })
 }
 

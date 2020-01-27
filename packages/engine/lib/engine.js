@@ -4,10 +4,10 @@ const newBookings = require('../simulator/bookings')
 //const carPositions = require('../streams/cars')
 const carPositions = require('../simulator/cars')
 // const newBookings = require('../streams/bookings')
-const price = require('./price')
+//const price = require('./price')
 const dispatch = require('./dispatch')
 const carFinder = require('./carFinder')
-
+/*
 const $finder = newBookings.fork()
   .take(3)
   .tap(booking => console.log(`#${booking.id} - new booking. Looking for cars...`))
@@ -39,9 +39,9 @@ $assignments.fork()
   .each(trip => console.log(`
                 Car #${trip.car.id} has accepted the booking and is on its way
                 ============`))
-
+*/
 module.exports = {
-  assignments: $assignments.fork(),
+  // assignments: $assignments.fork(),
   cars: carPositions.fork(),
-  bookings: newBookings.fork()
+  bookings: newBookings.fork(),
 }

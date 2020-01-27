@@ -1,5 +1,5 @@
 const carPositions = require('../simulator/cars')
-const cars = new Map()
+const carsCache = new Map()
 const distance = require('./distance')
 const osrm = require('./osrm')
 const _ = require('highland')
@@ -8,7 +8,7 @@ _(carPositions)
   .fork()
   .filter(car => car)
   .each(car => {
-    cars.set(car.id, car)
+    carsCache.set(car.id, car)
   })
 
 function estimateTimeToArrival(car, destination) {
@@ -51,12 +51,14 @@ const fastestCars = booking =>
   )
 
 const findCars = booking =>
-  _.merge(_(cars.values()), _(carPositions).fork())
+  _.merge(_(carsCache.values()), _(carPositions).fork())
+    .tap(car => console.log('evaluating', car.id))
     .pipe(closestCars(booking))
-    .take(50)
+    .tap(car => console.log('hej', car))
+    /*.take(50)
     .tap(car => console.log('closest', car.id, car.tta))
     .pipe(fastestCars(booking))
-    .tap(car => console.log('fastest', car.id, car.tta))
+    .tap(car => console.log('fastest', car.id, car.tta))*/
     .take(5)
     .errors(err => console.error('findCars', err))
 

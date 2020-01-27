@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ReactMapGL, { Layer, Source } from 'react-map-gl'
+import ReactMapGL, { Layer, Source, Popup } from 'react-map-gl'
 import { useSocket } from 'use-socketio'
 
 const Map = () => {
@@ -15,7 +15,7 @@ const Map = () => {
     features: [],
   })
 
-  const { socket, subscribe, unsubscribe } = useSocket('cars', newCars => {
+  useSocket('cars', newCars => {
     const features = [
       ...cars.features.filter(car => !newCars.some(nc => nc.id === car.id)),
       ...newCars.map(({ id, tail, position: coordinates }) => ({
@@ -34,20 +34,57 @@ const Map = () => {
     features: [],
   })
 
+  const [bookingLines, setBookingLines] = useState({
+    type: 'FeatureCollection',
+    features: [],
+  })
+
+  const [popupInfo, setPopupInfo] = useState(null)
+
   useSocket('bookings', newBookings => {
-    console.log('bookings', bookings)
-    const bookingFeatures = newBookings.map(
+    console.log('bookings', newBookings)
+    const bookingLinesFeature = newBookings.map(
       ({ id, departure, destination }) => ({
         type: 'Feature',
         id,
         geometry: {
-          type: 'Point',
-          coordinates: [departure.lon, departure.lat],
+          type: 'LineString',
+          coordinates: [
+            [destination.lon, destination.lat],
+            [departure.lon, departure.lat],
+          ],
         },
       })
     )
+    const bookingFeatures = newBookings.flatMap(
+      ({ id, departure, destination }) => [
+        {
+          type: 'Feature',
+          id: 'booking-departure-' + id,
+          properties: {
+            color: '#455DF7', // blue
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [departure.lon, departure.lat],
+          },
+        },
+        {
+          type: 'Feature',
+          id: 'booking-destination' + id,
+          properties: {
+            color: '#F7455D', // red
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [destination.lon, destination.lat],
+          },
+        },
+      ]
+    )
 
     setBookings({ ...bookings, features: bookingFeatures })
+    setBookingLines({ ...bookingLines, features: bookingLinesFeature })
   })
 
   return (
@@ -58,27 +95,49 @@ const Map = () => {
         mapStyle="mapbox://styles/mapbox/streets-v11"
         {...mapState.viewport}
         onViewportChange={viewport => setMapState({ viewport })}
+        onClick={event =>
+          event.features[0] &&
+          setPopupInfo({
+            coordinates: event.features[0].geometry.coordinates,
+          })
+        }
       >
-        {/* <Source id="cars-source" type="geojson" data={cars}>
+        {popupInfo && (
+          <Popup
+            longitude={popupInfo.coordinates[0]}
+            latitude={popupInfo.coordinates[1]}
+            onClose={() => setPopupInfo(null)}
+            closeOnClick={false}
+          >
+            Hi there! 👋 Coordinates:
+            {`${popupInfo.coordinates[0]} ${popupInfo.coordinates[1]}`}
+          </Popup>
+        )}
+        <Source id="cars-source" type="geojson" data={cars}>
           <Layer
-            id="point"
+            id="car-point"
             type="circle"
             paint={{
               'circle-radius': 10,
               'circle-color': '#007cbf',
             }}
+            onHover={event => console.log('booking')}
           />
-        </Source> */}
+        </Source>
 
         <Source id="bookings-source" type="geojson" data={bookings}>
           <Layer
-            id="point"
+            id="booking-point"
             type="circle"
             paint={{
+              'circle-color': ['get', 'color'],
               'circle-radius': 20,
-              'circle-color': '#ff0000',
             }}
           />
+        </Source>
+
+        <Source id="booking-lines-source" type="geojson" data={bookingLines}>
+          <Layer id="line" type="line" paint={{ 'line-color': '#dd0000' }} />
         </Source>
       </ReactMapGL>
     </div>

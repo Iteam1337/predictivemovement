@@ -40,8 +40,17 @@ $assignments.fork()
                 Car #${trip.car.id} has accepted the booking and is on its way
                 ============`))
 */
+
+const possibleRoutes = newBookings
+  .fork()
+  .tap(booking => {
+    console.log('new booking', booking)
+  })
+  .flatMap(booking => carFinder(booking))
+
 module.exports = {
   // assignments: $assignments.fork(),
+  possibleRoutes: possibleRoutes.fork(),
   cars: carPositions.fork(),
   bookings: newBookings.fork(),
 }

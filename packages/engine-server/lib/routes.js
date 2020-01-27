@@ -8,7 +8,7 @@ const bookings = engine.possibleRoutes
 
 const cars = engine.possibleRoutes
   .fork()
-  .flatMap(pr => pr.nearestCars)
+  .flatMap(pr => pr.closestCars)
   .errors(err => console.error(err))
 
 // engine.cars.fork().each(car => console.log('car', car.id))

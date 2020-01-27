@@ -41,16 +41,14 @@ $assignments.fork()
                 ============`))
 */
 
-const possibleRoutes = newBookings
-  .fork()
-  .tap(booking => {
-    console.log('new booking', booking)
-  })
-  .flatMap(booking => carFinder(booking))
+const possibleRoutes = newBookings.fork().map(booking => ({
+  booking,
+  closestCars: carFinder(booking, carPositions.fork())
+}))
 
 module.exports = {
   // assignments: $assignments.fork(),
-  possibleRoutes: possibleRoutes.fork(),
-  cars: carPositions.fork(),
-  bookings: newBookings.fork(),
+  possibleRoutes,
+  cars: carPositions,
+  bookings: newBookings
 }

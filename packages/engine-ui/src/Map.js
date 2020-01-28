@@ -10,6 +10,7 @@ const Map = () => {
       zoom: 8,
     },
   })
+
   const [cars, setCars] = useState({
     type: 'FeatureCollection',
     features: [],
@@ -20,6 +21,9 @@ const Map = () => {
       ...cars.features.filter(car => !newCars.some(nc => nc.id === car.id)),
       ...newCars.map(({ id, tail, position }) => ({
         type: 'Feature',
+        properties: {
+          color: '#007cbf',
+        },
         id,
         tail,
         geometry: { 
@@ -38,28 +42,9 @@ const Map = () => {
     features: [],
   })
 
-  const [bookingLines, setBookingLines] = useState({
-    type: 'FeatureCollection',
-    features: [],
-  })
-
   const [popupInfo, setPopupInfo] = useState(null)
 
   useSocket('bookings', newBookings => {
-    console.log('bookings', newBookings)
-    const bookingLinesFeature = newBookings.map(
-      ({ id, departure, destination }) => ({
-        type: 'Feature',
-        id,
-        geometry: {
-          type: 'LineString',
-          coordinates: [
-            [destination.lon, destination.lat],
-            [departure.lon, departure.lat],
-          ],
-        },
-      })
-    )
     const bookingFeatures = newBookings.flatMap(
       ({ id, departure, destination }) => [
         {
@@ -84,67 +69,82 @@ const Map = () => {
             coordinates: [destination.lon, destination.lat],
           },
         },
+        {
+          type: 'Feature',
+          id: 'booking-line-' + id,
+          properties: {
+            color: '#dd0000',
+          },
+          geometry: {
+            type: 'LineString',
+            coordinates: [
+              [destination.lon, destination.lat],
+              [departure.lon, departure.lat],
+            ],
+          },
+        },
       ]
     )
 
     setBookings({ ...bookings, features: bookingFeatures })
-    setBookingLines({ ...bookingLines, features: bookingLinesFeature })
   })
 
   return (
-    <div>
-      <ReactMapGL
-        width="100%"
-        height="100vh"
-        mapStyle="mapbox://styles/mapbox/streets-v11"
-        {...mapState.viewport}
-        onViewportChange={viewport => setMapState({ viewport })}
-        onClick={event =>
-          event.features[0] &&
-          setPopupInfo({
-            coordinates: event.features[0].geometry.coordinates,
-          })
-        }
-      >
-        {popupInfo && (
-          <Popup
-            longitude={popupInfo.coordinates[0]}
-            latitude={popupInfo.coordinates[1]}
-            onClose={() => setPopupInfo(null)}
-            closeOnClick={false}
-          >
-            Hi there! 👋 Coordinates:
-            {`${popupInfo.coordinates[0]} ${popupInfo.coordinates[1]}`}
-          </Popup>
-        )}
-        <Source id="cars-source" type="geojson" data={cars}>
-          <Layer
-            id="car-point"
-            type="circle"
-            paint={{
-              'circle-radius': 10,
-              'circle-color': '#007cbf',
-            }}
-            onHover={event => console.log('booking')}
-          />
-        </Source>
+    <ReactMapGL
+      width="100%"
+      height="100vh"
+      mapStyle="mapbox://styles/mapbox/streets-v11"
+      {...mapState.viewport}
+      onViewportChange={viewport => setMapState({ viewport })}
+      onClick={event =>
+        event.features[0] &&
+        !Array.isArray(event.features[0].geometry.coordinates[0])
+          ? setPopupInfo({
+              carId: event.features[0].id,
+              coordinates: event.features[0].geometry.coordinates,
+            })
+          : setPopupInfo(null)
+      }
+    >
+      {popupInfo && (
+        <Popup
+          longitude={popupInfo.coordinates[0]}
+          latitude={popupInfo.coordinates[1]}
+          onClose={() => setPopupInfo(null)}
+          closeOnClick={false}
+        >
+          {popupInfo.carId && `CarId: ${popupInfo.carId},`}
+          Coordinates:
+          {`${popupInfo.coordinates[0]} ${popupInfo.coordinates[1]}`}
+        </Popup>
+      )}
+      <Source id="cars-source" type="geojson" data={cars}>
+        <Layer
+          id="car-point"
+          type="circle"
+          paint={{
+            'circle-radius': 10,
+            'circle-color': ['get', 'color'],
+          }}
+        />
+      </Source>
 
-        <Source id="bookings-source" type="geojson" data={bookings}>
-          <Layer
-            id="booking-point"
-            type="circle"
-            paint={{
-              'circle-color': ['get', 'color'],
-              'circle-radius': 20,
-            }}
-          />
-        </Source>
-
-        <Source id="booking-lines-source" type="geojson" data={bookingLines}>
-          <Layer id="line" type="line" paint={{ 'line-color': '#dd0000' }} />
-        </Source>
-      </ReactMapGL>
-    </div>
+      <Source id="bookings-source" type="geojson" data={bookings}>
+        <Layer
+          id="booking-point"
+          type="circle"
+          paint={{
+            'circle-color': ['get', 'color'],
+            'circle-radius': 20,
+          }}
+        />
+        <Layer
+          id="line"
+          type="line"
+          paint={{ 'line-color': ['get', 'color'] }}
+        />
+      </Source>
+    </ReactMapGL>
   )
 }
 

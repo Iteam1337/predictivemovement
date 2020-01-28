@@ -17,8 +17,8 @@ const cars = engine.possibleRoutes
 // engine.cars.fork().each(car => console.log('car', car.id))
 // engine.bookings.fork().each(booking => console.log('booking', booking.id))
 
-function register (io) {
-  io.on('connection', function (socket) {
+function register(io) {
+  io.on('connection', function(socket) {
     _.merge([_(carsCache.values()), cars.fork()])
       .doto(car => carsCache.set(car.id, car))
       .pick(['position', 'status', 'id', 'tail', 'zone', 'speed', 'bearing'])

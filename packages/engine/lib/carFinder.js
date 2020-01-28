@@ -1,7 +1,7 @@
 const carPositions = require('../simulator/cars')
 const carsCache = new Map()
 const distance = require('./distance')
-const osrm = require('./osrm')
+const { route, trip } = require('./osrm')
 const _ = require('highland')
 
 _(carPositions)
@@ -12,8 +12,7 @@ _(carPositions)
   })
 
 function estimateTimeToArrival(car, destination) {
-  return osrm
-    .route(car.position, destination)
+  return route(car.position, destination)
     .then(route => {
       return {
         distance: route.distance,
@@ -55,12 +54,33 @@ const findCars = (booking, cars) =>
   cars
     // _.merge(_(carsCache.values()), _(carPositions).fork())
     .pipe(closestCars(booking))
-    .tap(car => console.log('found some cars', car))
+    .pipe(detourCars(booking))
+    .tap(car => {
+      console.log('found some cars', car.id, car.detour)
+    })
     /*.take(50)
     .tap(car => console.log('closest', car.id, car.tta))
     .pipe(fastestCars(booking))
     .tap(car => console.log('fastest', car.id, car.tta))*/
     .take(5)
+    .sortBy((a, b) => a.detour.distance - b.detour.distance)
     .errors(err => console.error('findCars', err))
+
+const detourCars = booking =>
+  _.pipeline(cars =>
+    cars.flatMap(car =>
+      _(
+        trip([
+          car.position,
+          booking.departure,
+          booking.destination,
+          car.heading
+        ]).then(detour => ({
+          car,
+          detour: detour.code === 'Ok' ? detour.trips.shift() : null
+        }))
+      )
+    )
+  )
 
 module.exports = findCars

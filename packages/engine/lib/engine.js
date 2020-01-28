@@ -40,8 +40,15 @@ $assignments.fork()
                 Car #${trip.car.id} has accepted the booking and is on its way
                 ============`))
 */
+
+const possibleRoutes = newBookings.fork().map(booking => ({
+  booking,
+  closestCars: carFinder(booking, carPositions.fork())
+}))
+
 module.exports = {
   // assignments: $assignments.fork(),
-  cars: carPositions.fork(),
-  bookings: newBookings.fork(),
+  possibleRoutes,
+  cars: carPositions,
+  bookings: newBookings
 }

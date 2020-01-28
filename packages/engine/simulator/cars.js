@@ -12,7 +12,6 @@ function generateCar(nr) {
         const car = new Car(nr, fromTo[0])
         car.position = fromTo[0]
         car.navigateTo(fromTo[1])
-        console.log('initiated car', car.id)
         car.on('dropoff', () => {
           randomize().then(position => car.navigateTo(position))
         })
@@ -24,7 +23,6 @@ function generateCar(nr) {
 
 module.exports = _(range(400))
   .flatMap(generateCar)
-  .tap(car => console.log('tap', car))
   .errors(err => console.error('initialize error', err))
   .map(car => _('moved', car))
   .errors(err => console.error('move error', err))

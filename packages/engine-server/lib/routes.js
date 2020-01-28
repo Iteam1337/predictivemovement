@@ -1,32 +1,47 @@
 const _ = require('highland')
-const moment = require('moment')
 const engine = require('@iteam1337/engine')
 
-const carsCache = {}
-const bookingsCache = {}
+const carsCache = new Map()
+const bookingsCache = new Map()
+
+const bookings = engine.possibleRoutes
+  .fork()
+  .map(pr => pr.booking)
+  .errors(err => console.error(err))
+
+const cars = engine.possibleRoutes
+  .fork()
+  .flatMap(pr => pr.closestCars)
+  .errors(err => console.error(err))
+
+// engine.cars.fork().each(car => console.log('car', car.id))
+// engine.bookings.fork().each(booking => console.log('booking', booking.id))
 
 function register(io) {
   io.on('connection', function(socket) {
-    console.log('connection', carsCache)
-    _.merge([_.values(carsCache), engine.cars.fork()])
-      .doto(car => (carsCache[car.id] = car))
-      .pick(['position', 'status', 'id', 'tail', 'zone', 'speed', 'bearing'])
-      .doto(
-        car =>
-          (car.position = [
-            car.position.lon,
-            car.position.lat,
-            car.position.date,
-          ])
-      )
-      //.filter(car => car.position.speed > 90) // endast bilar över en viss hastighet
-      //.ratelimit(100, 100)
+    _.merge([_(carsCache.values()), cars.fork()])
+      .filter(car => car.car.id)
+      .doto(car => {
+        carsCache.set(car.car.id, car)
+      })
+      .map(({ car, detour }) => ({ ...car, detour }))
+      .pick([
+        'position',
+        'status',
+        'id',
+        'tail',
+        'zone',
+        'speed',
+        'bearing',
+        'detour',
+        'heading',
+      ])
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each(cars => socket.volatile.emit('cars', cars))
 
-    _.merge([_.values(bookingsCache), engine.bookings.fork()])
-      .doto(booking => (bookingsCache[booking.id] = booking))
+    _.merge([_(bookingsCache.values()), bookings.fork()])
+      .doto(booking => bookingsCache.set(booking.id, booking))
       .batchWithTimeOrCount(1000, 5)
       .errors(console.error)
       .each(bookings => socket.emit('bookings', bookings))

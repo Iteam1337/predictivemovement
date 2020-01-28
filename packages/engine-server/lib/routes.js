@@ -20,8 +20,22 @@ const cars = engine.possibleRoutes
 function register(io) {
   io.on('connection', function(socket) {
     _.merge([_(carsCache.values()), cars.fork()])
-      .doto(car => carsCache.set(car.id, car))
-      .pick(['position', 'status', 'id', 'tail', 'zone', 'speed', 'bearing'])
+      .filter(car => car.car.id)
+      .doto(car => {
+        carsCache.set(car.car.id, car)
+      })
+      .map(({ car, detour }) => ({ ...car, detour }))
+      .pick([
+        'position',
+        'status',
+        'id',
+        'tail',
+        'zone',
+        'speed',
+        'bearing',
+        'detour',
+        'heading',
+      ])
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each(cars => socket.volatile.emit('cars', cars))

@@ -55,9 +55,6 @@ const findCars = (booking, cars) =>
     // _.merge(_(carsCache.values()), _(carPositions).fork())
     .pipe(closestCars(booking))
     .pipe(detourCars(booking))
-    .tap(car => {
-      console.log('found some cars', car.id, car.detour)
-    })
     /*.take(50)
     .tap(car => console.log('closest', car.id, car.tta))
     .pipe(fastestCars(booking))

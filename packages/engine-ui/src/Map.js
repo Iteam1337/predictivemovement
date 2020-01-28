@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import ReactMapGL, { Layer, Source, Popup } from 'react-map-gl'
 import { useSocket } from 'use-socketio'
+import palette from './palette'
 
 const Map = () => {
   const [mapState, setMapState] = useState({
@@ -16,25 +17,57 @@ const Map = () => {
     features: [],
   })
 
+  const [carLines, setCarLines] = useState({
+    type: 'FeatureCollection',
+    features: [],
+  })
+
   useSocket('cars', newCars => {
+    console.log('newCars', newCars)
     const features = [
       ...cars.features.filter(car => !newCars.some(nc => nc.id === car.id)),
-      ...newCars.map(({ id, tail, position }) => ({
+      ...newCars.flatMap(({ id, tail, position, heading }, i) => [
+        {
+          type: 'Feature',
+          properties: {
+            color: palette[i][0],
+          },
+          id,
+          tail,
+          geometry: {
+            type: 'Point',
+            coordinates: [position.lon, position.lat],
+          },
+        },
+        {
+          type: 'Feature',
+          properties: {
+            color: palette[i][3],
+          },
+          id,
+          tail,
+          geometry: {
+            type: 'Point',
+            coordinates: [heading.lon, heading.lat],
+          },
+        },
+      ]),
+    ]
+    const carLineFeatures = [
+      ...carLines.features.filter(
+        carLine => !newCars.some(nc => 'detour-line' + nc.id === carLine.id)
+      ),
+      ...newCars.flatMap(({ id, tail, position, detour }) => ({
+        id: 'detour-line' + id,
         type: 'Feature',
         properties: {
-          color: '#007cbf',
+          color: 'rgba(00, 255, 00, 55)',
         },
-        id,
-        tail,
-        geometry: { 
-          type: 'Point', 
-          coordinates: [position.lon, position.lat]
-        },
+        geometry: detour.geometry,
       })),
     ]
-
-    console.log('cars', cars)
     setCars({ ...cars, features })
+    setCarLines({ ...carLines, features: carLineFeatures })
   })
 
   const [bookings, setBookings] = useState({
@@ -93,7 +126,8 @@ const Map = () => {
     <ReactMapGL
       width="100%"
       height="100vh"
-      mapStyle="mapbox://styles/mapbox/streets-v11"
+      mapStyle="mapbox://styles/mapbox/dark-v10"
+      pitch={40}
       {...mapState.viewport}
       onViewportChange={viewport => setMapState({ viewport })}
       onClick={event =>
@@ -128,6 +162,13 @@ const Map = () => {
           }}
         />
       </Source>
+      <Source id="cars-line" type="geojson" data={carLines}>
+        <Layer
+          id="line-id"
+          type="line"
+          paint={{ 'line-color': ['get', 'color'] }}
+        />
+      </Source>
 
       <Source id="bookings-source" type="geojson" data={bookings}>
         <Layer
@@ -135,7 +176,7 @@ const Map = () => {
           type="circle"
           paint={{
             'circle-color': ['get', 'color'],
-            'circle-radius': 20,
+            'circle-radius': 10,
           }}
         />
         <Layer

@@ -22,14 +22,6 @@ function register (io) {
     _.merge([_(carsCache.values()), cars.fork()])
       .doto(car => carsCache.set(car.id, car))
       .pick(['position', 'status', 'id', 'tail', 'zone', 'speed', 'bearing'])
-      .doto(
-        car =>
-          (car.position = [
-            car.position.lon,
-            car.position.lat,
-            car.position.date,
-          ])
-      )
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each(cars => socket.volatile.emit('cars', cars))

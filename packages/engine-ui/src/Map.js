@@ -18,14 +18,18 @@ const Map = () => {
   useSocket('cars', newCars => {
     const features = [
       ...cars.features.filter(car => !newCars.some(nc => nc.id === car.id)),
-      ...newCars.map(({ id, tail, position: coordinates }) => ({
+      ...newCars.map(({ id, tail, position }) => ({
         type: 'Feature',
         id,
         tail,
-        geometry: { type: 'Point', coordinates },
+        geometry: { 
+          type: 'Point', 
+          coordinates: [position.lon, position.lat]
+        },
       })),
     ]
 
+    console.log('cars', cars)
     setCars({ ...cars, features })
   })
 

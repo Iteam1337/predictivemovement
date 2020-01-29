@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Layer, Source } from 'react-map-gl'
 import { useSocket } from 'use-socketio'
+import mapUtils from './utils/mapUtils'
 
 export const BookingsLayer = () => {
   const [bookings, setBookings] = useState({
@@ -11,42 +12,28 @@ export const BookingsLayer = () => {
   useSocket('bookings', newBookings => {
     const bookingFeatures = newBookings.flatMap(
       ({ id, departure, destination }) => [
-        {
-          type: 'Feature',
-          id: 'booking-departure-' + id,
+        mapUtils.point([departure.lon, departure.lat], {
+          id,
           properties: {
             color: '#455DF7', // blue
           },
-          geometry: {
-            type: 'Point',
-            coordinates: [departure.lon, departure.lat],
-          },
-        },
-        {
-          type: 'Feature',
-          id: 'booking-destination' + id,
-          properties: {
-            color: '#F7455D', // red
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: [destination.lon, destination.lat],
-          },
-        },
-        {
-          type: 'Feature',
-          id: 'booking-line-' + id,
-          properties: {
-            color: '#dd0000',
-          },
-          geometry: {
-            type: 'LineString',
-            coordinates: [
-              [destination.lon, destination.lat],
-              [departure.lon, departure.lat],
-            ],
-          },
-        },
+        }),
+        mapUtils.point([destination.lon, destination.lat], {
+          id,
+          properties: { color: '#F7455D' },
+        }),
+        mapUtils.line(
+          [
+            [destination.lon, destination.lat],
+            [departure.lon, departure.lat],
+          ],
+          {
+            id,
+            properties: {
+              color: '#dd0000',
+            },
+          }
+        ),
       ]
     )
 

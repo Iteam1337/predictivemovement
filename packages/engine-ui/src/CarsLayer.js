@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Layer, Source } from 'react-map-gl'
 import { useSocket } from 'use-socketio'
 import palette from './palette'
+import mapUtils from './utils/mapUtils'
 
 export const CarsLayer = () => {
   const [cars, setCars] = useState({
@@ -18,44 +19,29 @@ export const CarsLayer = () => {
     const features = [
       ...cars.features.filter(car => !newCars.some(nc => nc.id === car.id)),
       ...newCars.flatMap(({ id, tail, position, heading }, i) => [
-        {
-          type: 'Feature',
-          properties: {
-            color: palette[i][0],
-          },
+        mapUtils.point([position.lon, position.lat], {
+          properties: { color: palette[i][0] },
           id,
           tail,
-          geometry: {
-            type: 'Point',
-            coordinates: [position.lon, position.lat],
-          },
-        },
-        {
-          type: 'Feature',
-          properties: {
-            color: palette[i][3],
-          },
+        }),
+        mapUtils.point([heading.lon, heading.lat], {
+          properties: { color: palette[i][3] },
           id,
           tail,
-          geometry: {
-            type: 'Point',
-            coordinates: [heading.lon, heading.lat],
-          },
-        },
+        }),
       ]),
     ]
     const carLineFeatures = [
       ...carLines.features.filter(
-        carLine => !newCars.some(nc => 'detour-line' + nc.id === carLine.id)
+        carLine => !newCars.some(nc => nc.id === carLine.id)
       ),
-      ...newCars.flatMap(({ id, tail, position, detour }) => ({
-        id: 'detour-line' + id,
-        type: 'Feature',
-        properties: {
-          color: 'rgba(00, 255, 00, 55)',
-        },
-        geometry: detour.geometry,
-      })),
+
+      ...newCars.flatMap(({ id, detour }) =>
+        mapUtils.feature(detour.geometry, {
+          id,
+          properties: { color: 'rgba(00, 255, 00, 55)' },
+        })
+      ),
     ]
     setCars({ ...cars, features })
     setCarLines({ ...carLines, features: carLineFeatures })

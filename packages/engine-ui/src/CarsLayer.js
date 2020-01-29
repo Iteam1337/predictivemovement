@@ -25,21 +25,22 @@ export const CarsLayer = () => {
           tail,
         }),
         mapUtils.point([heading.lon, heading.lat], {
-          properties: { color: palette[i][3] },
+          properties: { color: palette[i][0] },
           id,
           tail,
         }),
       ]),
     ]
+
     const carLineFeatures = [
       ...carLines.features.filter(
         carLine => !newCars.some(nc => nc.id === carLine.id)
       ),
 
-      ...newCars.flatMap(({ id, detour }) =>
+      ...newCars.flatMap(({ id, detour }, i) =>
         mapUtils.feature(detour.geometry, {
           id,
-          properties: { color: 'rgba(00, 255, 00, 55)' },
+          properties: { color: palette[i][0], offset: i*2 },
         })
       ),
     ]
@@ -62,7 +63,7 @@ export const CarsLayer = () => {
         <Layer
           id="line-id"
           type="line"
-          paint={{ 'line-color': ['get', 'color'] }}
+          paint={{ 'line-color': ['get', 'color'], 'line-offset': ['get', 'offset'] }}
         />
       </Source>
     </>

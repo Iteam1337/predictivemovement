@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Layer, Source } from 'react-map-gl'
 import { useSocket } from 'use-socketio'
-import palette from './palette'
-import mapUtils from './utils/mapUtils'
+import palette from '../palette'
+import mapUtils from '../utils/mapUtils'
 
 export const CarsLayer = () => {
   const [cars, setCars] = useState({
@@ -40,7 +40,7 @@ export const CarsLayer = () => {
       ...newCars.flatMap(({ id, detour }, i) =>
         mapUtils.feature(detour.geometry, {
           id,
-          properties: { color: palette[i][0], offset: i*2 },
+          properties: { color: palette[i][0], offset: i * 2 },
         })
       ),
     ]
@@ -63,7 +63,10 @@ export const CarsLayer = () => {
         <Layer
           id="line-id"
           type="line"
-          paint={{ 'line-color': ['get', 'color'], 'line-offset': ['get', 'offset'] }}
+          paint={{
+            'line-color': ['get', 'color'],
+            'line-offset': ['get', 'offset'],
+          }}
         />
       </Source>
     </>

@@ -1,15 +1,18 @@
 import React from 'react'
-import Map from './Map.js'
+import Map from './components/Map'
 import { SocketIOProvider } from 'use-socketio'
+import Sidebar from './components/Sidebar'
+
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 const App: React.FC = () => {
-  const options = {
-
-  }
+  const [carInfo, setCarInfo] = React.useState(null)
 
   return (
-    <SocketIOProvider url="http://localhost:4000" opts={options}>
-      <Map />
+    <SocketIOProvider url="http://localhost:4000">
+      <Sidebar data={carInfo} />
+
+      <Map setCarInfo={setCarInfo} />
     </SocketIOProvider>
   )
 }

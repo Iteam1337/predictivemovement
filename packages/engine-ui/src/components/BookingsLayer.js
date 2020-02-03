@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Layer, Source } from 'react-map-gl'
 import { useSocket } from 'use-socketio'
-import mapUtils from './utils/mapUtils'
+import mapUtils from '../utils/mapUtils'
 
 export const BookingsLayer = () => {
   const [bookings, setBookings] = useState({

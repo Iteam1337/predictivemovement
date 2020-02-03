@@ -15,17 +15,31 @@ export const CarsLayer = () => {
     features: [],
   })
 
+  const diff = (
+    { route: { distance: headingDistance, duration: headingDuration } },
+    { distance: detourDistance, duration: detourDuration }
+  ) => ({
+    duration: detourDuration - headingDuration,
+    distance: detourDistance - headingDistance,
+  })
+
   useSocket('cars', newCars => {
     const features = [
       ...cars.features.filter(car => !newCars.some(nc => nc.id === car.id)),
-      ...newCars.flatMap(({ id, tail, position, heading }, i) => [
+      ...newCars.flatMap(({ id, tail, position, heading, detour }, i) => [
         mapUtils.point([position.lon, position.lat], {
-          properties: { color: palette[i][0] },
+          properties: {
+            color: palette[i][0],
+            diff: diff(heading, detour),
+          },
           id,
           tail,
         }),
         mapUtils.point([heading.lon, heading.lat], {
-          properties: { color: palette[i][0] },
+          properties: {
+            color: palette[i][0],
+            diff: diff(heading, detour),
+          },
           id,
           tail,
         }),

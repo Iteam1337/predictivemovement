@@ -26,6 +26,7 @@ const Map = ({ setCarInfo }) => {
         setCarInfo({
           carId: event.features[0].id,
           coordinates: event.features[0].geometry.coordinates,
+          diff: JSON.parse(event.features[0].properties.diff),
         })
       }
     >

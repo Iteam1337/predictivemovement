@@ -51,6 +51,8 @@ const Sidebar = ({ data }) => {
             <p>{data.carId}</p>
             <p>{data.coordinates[0]}</p>
             <p>{data.coordinates[1]}</p>
+            <p>{`Duration diff: ${data.diff.duration}`}</p>
+            <p>{`Distance diff: ${data.diff.distance}`}</p>
           </>
         )}
       </Container>

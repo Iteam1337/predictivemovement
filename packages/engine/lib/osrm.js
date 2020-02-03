@@ -36,7 +36,7 @@ module.exports = {
   trip (positions) {
     const coordinates = positions.map(pos => [pos.lon, pos.lat].join(',')).join(';')
 
-    return fetch(`${osrmUrl}/trip/v1/driving/${coordinates}?geometries=geojson&annotations=true&overview=full&steps=true`) // Add annotations and steps to get each node speed
+    return fetch(`${osrmUrl}/trip/v1/driving/${coordinates}?geometries=geojson&annotations=true&source=first&destination=last&overview=full&steps=true`) // Add annotations and steps to get each node speed
       .then(response => response.json())
       .then(route => {
         return route

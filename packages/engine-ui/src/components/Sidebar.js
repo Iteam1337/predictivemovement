@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import Icon from '../dashboard.svg'
+import Icon from '../assets/dashboard.svg'
 
 const Container = styled.div`
   position: absolute;

@@ -43,7 +43,7 @@ $assignments.fork()
 
 const possibleRoutes = newBookings.fork().map(booking => ({
   booking,
-  closestCars: carFinder(booking, carPositions.fork())
+  closestCars: carFinder(booking, carPositions.observe())
 }))
 
 module.exports = {

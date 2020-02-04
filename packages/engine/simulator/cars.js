@@ -21,7 +21,7 @@ function generateCar(nr) {
   )
 }
 
-module.exports = _(range(400))
+module.exports = _(range(50))
   .flatMap(generateCar)
   .errors(err => console.error('initialize error', err))
   .map(car => _('moved', car))

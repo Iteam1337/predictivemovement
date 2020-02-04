@@ -1,5 +1,7 @@
 import palette from '../palette'
-import { GeoJsonLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, IconLayer, PathLayer } from '@deck.gl/layers'
+import markerIcon from '../assets/car.svg'
+
 export const point = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
@@ -40,6 +42,15 @@ export const hexToRGBA = (hex, opacity) => {
   const b = parseInt(hex.substring(4, 6), 16)
 
   return [r, g, b, opacity]
+}
+
+export const hexToRGB = hex => {
+  hex = hex.replace('#', '')
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+
+  return [r, g, b]
 }
 
 export const carToFeature = (newCars, carCollection, carLineCollection) => {
@@ -166,6 +177,29 @@ export const toGeoJsonLayer = (id, data, callback) =>
     onHover: ({ object }) => object && callback(object),
   })
 
+export const toIconLayer = data => {
+  const ICON_MAPPING = {
+    marker: { x: 0, y: 0, width: 160, height: 160, mask: true },
+  }
+  const iconData = data.features.map(feature => ({
+    coordinates: feature.geometry.coordinates,
+  }))
+
+  return new IconLayer({
+    id: 'icon-layer',
+    data: iconData,
+    pickable: true,
+    iconAtlas: markerIcon,
+    iconMapping: ICON_MAPPING,
+    getIcon: d => 'marker',
+    sizeScale: 7,
+    getPosition: d => d.coordinates,
+    getSize: d => 5,
+    getColor: d => [Math.sqrt(d.exits), 140, 0],
+    onHover: ({ object, x, y }) => {},
+  })
+}
+
 export default {
   feature,
   multiPoint,
@@ -175,4 +209,6 @@ export default {
   movingCarToFeature,
   carToFeature,
   toGeoJsonLayer,
+  toIconLayer,
+  hexToRGB,
 }

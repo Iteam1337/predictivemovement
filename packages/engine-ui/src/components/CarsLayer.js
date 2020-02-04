@@ -3,67 +3,13 @@ import { Layer, Source } from 'react-map-gl'
 import { useSocket } from 'use-socketio'
 import palette from '../palette'
 import mapUtils from '../utils/mapUtils'
+import { GeoJsonLayer } from '@deck.gl/layers'
 
 export const CarsLayer = () => {
-  const [cars, setCars] = useState({
-    type: 'FeatureCollection',
-    features: [],
-  })
-
-  const [carLines, setCarLines] = useState({
-    type: 'FeatureCollection',
-    features: [],
-  })
-
-  const diff = (
-    { route: { distance: headingDistance, duration: headingDuration } },
-    { distance: detourDistance, duration: detourDuration }
-  ) => ({
-    duration: detourDuration - headingDuration,
-    distance: detourDistance - headingDistance,
-  })
-
-  useSocket('cars', newCars => {
-    const features = [
-      ...cars.features.filter(car => !newCars.some(nc => nc.id === car.id)),
-      ...newCars.flatMap(({ id, tail, position, heading, detour }, i) => [
-        mapUtils.point([position.lon, position.lat], {
-          properties: {
-            color: palette[i][0],
-            diff: diff(heading, detour),
-          },
-          id,
-          tail,
-        }),
-        mapUtils.point([heading.lon, heading.lat], {
-          properties: {
-            color: palette[i][0],
-            diff: diff(heading, detour),
-          },
-          id,
-          tail,
-        }),
-      ]),
-    ]
-
-    const carLineFeatures = [
-      ...carLines.features.filter(
-        carLine => !newCars.some(nc => nc.id === carLine.id)
-      ),
-
-      ...newCars.flatMap(({ id, detour }, i) =>
-        mapUtils.feature(detour.geometry, {
-          id,
-          properties: { color: palette[i][0], offset: i * 2 },
-        })
-      ),
-    ]
-    setCars({ ...cars, features })
-    setCarLines({ ...carLines, features: carLineFeatures })
-  })
   return (
     <>
-      <Source id="cars-source" type="geojson" data={cars}>
+      <GeoJsonLayer data={cars} />
+      {/* <Source id="cars-source" type="geojson" data={cars}>
         <Layer
           id="car-point"
           type="circle"
@@ -82,7 +28,7 @@ export const CarsLayer = () => {
             'line-offset': ['get', 'offset'],
           }}
         />
-      </Source>
+      </Source> */}
     </>
   )
 }

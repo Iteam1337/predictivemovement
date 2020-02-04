@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import Icon from '../dashboard.svg'
 
@@ -33,30 +33,42 @@ const NavStrip = styled.div`
   img {
     width: 30px;
     height: 30px;
+    :hover {
+      cursor: pointer;
+    }
   }
 `
 
-const Sidebar = ({ data }) => {
+const Sidebar = ({ data, x, y }) => {
   const [open, setOpen] = React.useState(false)
 
+  useEffect(() => {
+    if (!data.id) return
+    setOpen(true)
+  }, [data])
+
   return (
-    <div className="">
+    <>
       <NavStrip>
         <img onClick={() => setOpen(current => !current)} src={Icon} alt="" />
       </NavStrip>
 
       <Container open={open}>
-        {data && (
+        {data && data.id && (
           <>
-            <p>{data.carId}</p>
-            <p>{data.coordinates[0]}</p>
-            <p>{data.coordinates[1]}</p>
-            <p>{`Duration diff: ${data.diff.duration}`}</p>
-            <p>{`Distance diff: ${data.diff.distance}`}</p>
+            <p>{data.id}</p>
+            {/* <p>{data.geometry.coordinates[0]}</p>
+            <p>{data.geometry.coordinates[1]}</p> */}
+            {data.properties.diff && (
+              <p>{`Duration diff: ${data.properties.diff.duration}`}</p>
+            )}
+            {data.properties.diff && (
+              <p>{`Distance diff: ${data.properties.diff.distance}`}</p>
+            )}
           </>
         )}
       </Container>
-    </div>
+    </>
   )
 }
 

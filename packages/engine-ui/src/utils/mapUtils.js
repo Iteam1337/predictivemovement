@@ -1,3 +1,5 @@
+import palette from '../palette'
+import { GeoJsonLayer } from '@deck.gl/layers'
 export const point = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
@@ -40,9 +42,137 @@ export const hexToRGBA = (hex, opacity) => {
   return [r, g, b, opacity]
 }
 
+export const carToFeature = (newCars, carCollection, carLineCollection) => {
+  const carFeatures = [
+    ...carCollection.features.filter(
+      car => !newCars.some(nc => nc.id === car.id)
+    ),
+    ...newCars.flatMap(({ id, tail, position, heading, detour }, i) => [
+      multiPoint(
+        [
+          [position.lon, position.lat],
+          [heading.lon, heading.lat],
+        ],
+        {
+          properties: {
+            color: palette[i][0],
+            diff: diff(heading, detour),
+          },
+          id,
+          tail,
+        }
+      ),
+    ]),
+  ]
+
+  const carLineFeatures = [
+    ...carLineCollection.features.filter(
+      carLine => !newCars.some(nc => nc.id === carLine.id)
+    ),
+
+    ...newCars.flatMap(({ id, detour }, i) =>
+      feature(detour.geometry, {
+        id,
+        properties: {
+          color: palette[i][0],
+          offset: i * 2,
+        },
+      })
+    ),
+  ]
+
+  return { carFeatures, carLineFeatures }
+}
+
+export const movingCarToFeature = (newCars, movingCarsCollection) => {
+  let index = 0
+  try {
+    return [
+      ...movingCarsCollection.features.filter(
+        car => !newCars.some(nc => nc.id === car.id)
+      ),
+      ...newCars.flatMap(({ id, tail, position, heading }, i) => {
+        index = i
+        return [
+          point([position.lon, position.lat], {
+            properties: {
+              color: '#00ff00',
+              size: 80,
+            },
+            id,
+            tail,
+          }),
+        ]
+      }),
+    ]
+  } catch (error) {
+    console.log(index, error)
+  }
+}
+
+export const bookingToFeature = newBookings =>
+  newBookings.flatMap(({ id, departure, destination }) => [
+    multiPoint(
+      [
+        [departure.lon, departure.lat],
+        [destination.lon, destination.lat],
+      ],
+      {
+        id,
+        properties: {
+          color: '#455DF7', // blue
+        },
+      }
+    ),
+    line(
+      [
+        [destination.lon, destination.lat],
+        [departure.lon, departure.lat],
+      ],
+      {
+        id,
+        properties: {
+          color: '#dd0000',
+        },
+      }
+    ),
+  ])
+
+export const diff = (
+  { route: { distance: headingDistance, duration: headingDuration } },
+  { distance: detourDistance, duration: detourDuration }
+) => ({
+  duration: detourDuration - headingDuration,
+  distance: detourDistance - headingDistance,
+})
+
+export const toGeoJsonLayer = (id, data, callback) =>
+  new GeoJsonLayer({
+    id,
+    data,
+    pickable: true,
+    stroked: false,
+    filled: true,
+    extruded: true,
+    lineWidthScale: 1,
+    lineWidthMinPixels: 2,
+    getFillColor: d => hexToRGBA(d.properties.color, 255),
+    highlightColor: [104, 211, 245, 255],
+    autoHighlight: true,
+    getLineColor: d => hexToRGBA(d.properties.color, 100),
+    getRadius: d => d.properties.size || 300,
+    getLineWidth: 5,
+    getElevation: 30,
+    onHover: ({ object }) => object && callback(object),
+  })
+
 export default {
   feature,
   multiPoint,
   point,
   line,
+  bookingToFeature,
+  movingCarToFeature,
+  carToFeature,
+  toGeoJsonLayer,
 }

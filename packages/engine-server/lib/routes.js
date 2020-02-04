@@ -2,6 +2,7 @@ const _ = require('highland')
 const engine = require('@iteam1337/engine')
 
 const carsCache = new Map()
+const movingCarsCache = new Map()
 const bookingsCache = new Map()
 
 const bookings = engine.possibleRoutes
@@ -13,6 +14,8 @@ const cars = engine.possibleRoutes
   .fork()
   .flatMap(pr => pr.closestCars)
   .errors(err => console.error(err))
+
+// const movingCars = engine.cars.fork().errors(err => console.error(err))
 
 // engine.cars.fork().each(car => console.log('car', car.id))
 // engine.bookings.fork().each(booking => console.log('booking', booking.id))
@@ -45,6 +48,25 @@ function register(io) {
       .batchWithTimeOrCount(1000, 5)
       .errors(console.error)
       .each(bookings => socket.emit('bookings', bookings))
+
+    _.merge([_(movingCarsCache.values()), engine.cars.fork()])
+      .filter(car => car.id)
+      .doto(car => {
+        movingCarsCache.set(car.id, car)
+      })
+      .pick([
+        'position',
+        'status',
+        'id',
+        'tail',
+        'zone',
+        'speed',
+        'bearing',
+        'heading',
+      ])
+      .batchWithTimeOrCount(1000, 2000)
+      .errors(console.error)
+      .each(cars => socket.volatile.emit('moving-cars', cars))
   })
 }
 

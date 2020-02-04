@@ -39,7 +39,7 @@ const NavStrip = styled.div`
   }
 `
 
-const Sidebar = ({ data, x, y }) => {
+const Sidebar = data => {
   const [open, setOpen] = React.useState(false)
 
   useEffect(() => {
@@ -57,8 +57,6 @@ const Sidebar = ({ data, x, y }) => {
         {data && data.id && (
           <>
             <p>{data.id}</p>
-            {/* <p>{data.geometry.coordinates[0]}</p>
-            <p>{data.geometry.coordinates[1]}</p> */}
             {data.properties.diff && (
               <p>{`Duration diff: ${data.properties.diff.duration}`}</p>
             )}

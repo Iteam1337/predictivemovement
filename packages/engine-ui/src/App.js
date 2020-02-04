@@ -1,22 +1,54 @@
 import React from 'react'
 import Map from './components/Map'
-import { SocketIOProvider } from 'use-socketio'
+import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import mapUtils from './utils/mapUtils'
+import { reducer, initState } from './utils/reducer'
 
 const App = () => {
-  const [carInfo, setCarInfo] = React.useState({
-    data: {},
-    x: null,
-    y: null,
+  const [state, dispatch] = React.useReducer(reducer, initState)
+
+  useSocket('bookings', newBookings => {
+    const features = mapUtils.bookingToFeature(newBookings)
+    dispatch({
+      type: 'setBookings',
+      payload: features,
+    })
+  })
+
+  useSocket('cars', newCars => {
+    const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
+      newCars,
+      state.carCollection,
+      state.carLineCollection
+    )
+    dispatch({
+      type: 'setCars',
+      payload: carFeatures,
+    })
+    dispatch({
+      type: 'setCarsLines',
+      payload: carLineFeatures,
+    })
+  })
+
+  useSocket('moving-cars', newCars => {
+    const movingCarsFeatures = mapUtils.movingCarToFeature(
+      newCars,
+      state.movingCarsCollection
+    )
+    dispatch({
+      type: 'setMovingCars',
+      payload: { ...state.movingCarsCollection, features: movingCarsFeatures },
+    })
   })
 
   return (
-    <SocketIOProvider url="http://localhost:4000">
-      <Sidebar {...carInfo} />
-
-      <Map setCarInfo={setCarInfo} />
-    </SocketIOProvider>
+    <>
+      <Sidebar {...state.carInfo} />
+      <Map dispatch={dispatch} state={state} />
+    </>
   )
 }
 

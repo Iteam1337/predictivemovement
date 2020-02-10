@@ -13,14 +13,25 @@ const engine = new Engine({
     .merge(),
 })
 
-describe('engine-server', () => {
-  it('needs tests', done => {
-    engine.cars
-      .fork()
-      .take(5)
-      .apply((...bookings) => {
-        console.log(bookings)
-        done()
-      })
+describe('cars gets an offer', () => {
+  it('will make an offer to the closest car', done => {
+    engine.possibleRoutes.fork().apply(cars => {
+      console.log('cars', cars)
+      cars.closestCars
+        .fork()
+        .batchWithTimeOrCount(1000, 1)
+        .apply(closestCars => {
+          console.log('closestCars', closestCars)
+          done()
+        })
+    })
   })
+
+  // describe('first offered car declines', () => {
+  //   it('offers to the second closest car', () => {
+  //     const offeredCar = engine.possibleRoutes.booking.car[1]
+  //     timer.tick(5000)
+  //     expect(offeredCar.offer).toHaveBeenCalled()
+  //   })
+  // })
 })

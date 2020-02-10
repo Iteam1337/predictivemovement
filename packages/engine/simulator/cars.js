@@ -19,10 +19,6 @@ function generateCar({ positions, id }) {
 function generateRandomCar(id) {
   return _(
     Promise.all([randomize(), randomize()])
-      .then(positions => {
-        console.log(JSON.stringify(positions, null, 2));
-        return positions;
-      })
       .then(positions => generateCar({ positions, id }))
       .catch(err => console.error("simulation error", err))
   );

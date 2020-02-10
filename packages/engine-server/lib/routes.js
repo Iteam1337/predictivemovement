@@ -1,5 +1,11 @@
 const _ = require('highland')
-const engine = require('@iteam1337/engine')
+const Engine = require('@iteam1337/engine')
+const simulator = require('@iteam1337/engine/simulator')
+
+const engine = new Engine({
+  bookings: simulator.bookings,
+  cars: simulator.cars,
+})
 
 const carsCache = new Map()
 const movingCarsCache = new Map()

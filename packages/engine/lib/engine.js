@@ -1,12 +1,7 @@
-const _ = require('highland')
-const newBookings = require('../simulator/bookings')
-// var carPositions = require('../simulator/cars') // require('../streams/cars')
-//const carPositions = require('../streams/cars')
-const carPositions = require('../simulator/cars')
-// const newBookings = require('../streams/bookings')
+const _ = require("highland");
 //const price = require('./price')
-const dispatch = require('./dispatch')
-const carFinder = require('./carFinder')
+const dispatch = require("./dispatch");
+const carFinder = require("./carFinder");
 /*
 const $finder = newBookings.fork()
   .take(3)
@@ -41,14 +36,15 @@ $assignments.fork()
                 ============`))
 */
 
-const possibleRoutes = newBookings.fork().map(booking => ({
-  booking,
-  closestCars: carFinder(booking, carPositions.observe())
-}))
-
-module.exports = {
-  // assignments: $assignments.fork(),
-  possibleRoutes,
-  cars: carPositions,
-  bookings: newBookings
+class Engine {
+  constructor({ bookings, cars }) {
+    this.bookings = bookings;
+    this.cars = cars;
+    this.possibleRoutes = this.bookings.fork().map(booking => ({
+      booking,
+      closestCars: carFinder(booking, this.cars.observe())
+    }));
+  }
 }
+
+module.exports = Engine;

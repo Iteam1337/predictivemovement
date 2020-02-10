@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "nodemon lib/index.js",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "jest"
   },
   "bugs": {
     "url": "https://github.com/Iteam1337/pm-mapbox-test/issues"
@@ -32,6 +32,7 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "jest": "^25.1.0",
     "nodemon": "^2.0.2"
   }
 }

@@ -1,15 +1,6 @@
-const carPositions = require('../simulator/cars')
-const carsCache = new Map()
-const distance = require('./distance')
-const { route, trip } = require('./osrm')
-const _ = require('highland')
-
-_(carPositions)
-  .fork()
-  .filter(car => car)
-  .each(car => {
-    carsCache.set(car.id, car)
-  })
+const distance = require("./distance");
+const { route, trip } = require("./osrm");
+const _ = require("highland");
 
 function estimateTimeToArrival(car, destination) {
   return route(car.position, destination)
@@ -19,9 +10,9 @@ function estimateTimeToArrival(car, destination) {
         route: route,
         tta: route.duration || 9999,
         car: car
-      }
+      };
     })
-    .catch(err => console.error('estimated route', err))
+    .catch(err => console.error("estimated route", err));
 }
 
 const closestCars = (booking, within = 5000) =>
@@ -36,32 +27,19 @@ const closestCars = (booking, within = 5000) =>
       .sortBy((a, b) => a.distance - b.distance)
       .map(hit => hit.car)
       // .filter(car => !car.busy)
-      .errors(err => console.error('closestCars', err))
-  )
+      .errors(err => console.error("closestCars", err))
+  );
 
 const fastestCars = booking =>
   _.pipeline(cars =>
     cars
       .ratelimit(5, 500)
       .flatMap(car => _(estimateTimeToArrival(car, booking.departure)))
-      .errors(err => console.error('estimate err', err))
+      .errors(err => console.error("estimate err", err))
       .sortBy((a, b) => a.tta - b.tta)
       // .filter(hit => hit.tta < 15 * 60)
-      .errors(err => console.error('fastestCars', err))
-  )
-
-const findCars = (booking, cars) =>
-  cars
-    // _.merge(_(carsCache.values()), _(carPositions).fork())
-    .pipe(closestCars(booking))
-    .pipe(detourCars(booking))
-    /*.take(50)
-    .tap(car => console.log('closest', car.id, car.tta))
-    .pipe(fastestCars(booking))
-    .tap(car => console.log('fastest', car.id, car.tta))*/
-    .take(6)
-    .sortBy((a, b) => a.detour.distance - b.detour.distance)
-    .errors(err => console.error('findCars', err))
+      .errors(err => console.error("fastestCars", err))
+  );
 
 const detourCars = booking =>
   _.pipeline(cars =>
@@ -72,12 +50,44 @@ const detourCars = booking =>
           booking.departure,
           booking.destination,
           car.heading
-        ]).then(detour => ({
-          car,
-          detour: detour.code === 'Ok' ? detour.trips.shift() : null
-        })).then(({car, detour}) => ({car, detour: {...detour, diff: detour.distance - car.heading.route.distance }})) 
+        ])
+          .then(detour => ({
+            car,
+            detour: detour.code === "Ok" ? detour.trips.shift() : null
+          }))
+          .then(({ car, detour }) => ({
+            car,
+            detour: {
+              ...detour,
+              diff: detour.distance - car.heading.route.distance
+            }
+          }))
       )
     )
-  )
+  );
 
-module.exports = findCars
+const findCars = (booking, cars) => {
+  const carsCache = new Map();
+  cars
+    .observe()
+    .filter(car => car)
+    .each(car => {
+      carsCache.set(car.id, car);
+    });
+
+  return (
+    cars
+      // _.merge(_(carsCache.values()), _(carPositions).fork())
+      .pipe(closestCars(booking))
+      .pipe(detourCars(booking))
+      /*.take(50)
+    .tap(car => console.log('closest', car.id, car.tta))
+    .pipe(fastestCars(booking))
+    .tap(car => console.log('fastest', car.id, car.tta))*/
+      .take(6)
+      .sortBy((a, b) => a.detour.distance - b.detour.distance)
+      .errors(err => console.error("findCars", err))
+  );
+};
+
+module.exports = findCars;

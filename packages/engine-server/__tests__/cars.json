@@ -1,0 +1,177 @@
+[
+  {
+    "id": 4,
+    "position": {
+      "lat": 61.77189651904762,
+      "lon": 16.153700209523812,
+      "speed": 65,
+      "instruction": {
+        "position": {
+          "lat": 61.77183,
+          "lon": 16.15377
+        },
+        "meters": 75.713455,
+        "duration": 4.2,
+        "passed": 0
+      },
+      "next": {
+        "lat": 61.77244,
+        "lon": 16.15313,
+        "instruction": {
+          "position": {
+            "lat": 61.77244,
+            "lon": 16.15313
+          },
+          "meters": 105.776802,
+          "duration": 5.9,
+          "passed": 4.2
+        }
+      }
+    },
+    "heading": {
+      "lon": 16.225951,
+      "lat": 61.887315,
+      "address": ""
+    }
+  },
+  {
+    "id": 5,
+    "position": {
+      "lat": 61.75587222641509,
+      "lon": 16.28987843773585,
+      "speed": 25,
+      "instruction": {
+        "position": {
+          "lat": 61.75586,
+          "lon": 16.28997
+        },
+        "meters": 184.165944,
+        "duration": 26.5,
+        "passed": 0
+      },
+      "next": {
+        "lat": 61.75631,
+        "lon": 16.2866,
+        "instruction": {
+          "position": {
+            "lat": 61.75631,
+            "lon": 16.2866
+          },
+          "meters": 69.132022,
+          "duration": 10,
+          "passed": 26.5
+        }
+      }
+    },
+    "heading": {
+      "lon": 16.158911,
+      "lat": 61.833464,
+      "address": "Södra Sjöbovägen"
+    }
+  },
+  {
+    "id": 8,
+    "position": {
+      "lat": 61.84380214970761,
+      "lon": 15.831957796783625,
+      "speed": 25,
+      "instruction": {
+        "position": {
+          "lat": 61.84382,
+          "lon": 15.83189
+        },
+        "meters": 237.482411,
+        "duration": 34.2,
+        "passed": 0
+      },
+      "next": {
+        "lat": 61.84278,
+        "lon": 15.83584,
+        "instruction": {
+          "position": {
+            "lat": 61.84278,
+            "lon": 15.83584
+          },
+          "meters": 25.490229,
+          "duration": 3.7,
+          "passed": 34.2
+        }
+      }
+    },
+    "heading": {
+      "lon": 16.286103,
+      "lat": 61.810399,
+      "address": ""
+    }
+  },
+  {
+    "id": 11,
+    "position": {
+      "lat": 61.768415884210526,
+      "lon": 16.0222294,
+      "speed": 40,
+      "instruction": {
+        "position": {
+          "lat": 61.76843,
+          "lon": 16.02214
+        },
+        "meters": 21.113226,
+        "duration": 1.9,
+        "passed": 0
+      },
+      "next": {
+        "lat": 61.76837,
+        "lon": 16.02252,
+        "instruction": {
+          "position": {
+            "lat": 61.76837,
+            "lon": 16.02252
+          },
+          "meters": 72.68954,
+          "duration": 6.5,
+          "passed": 1.9
+        }
+      }
+    },
+    "heading": {
+      "lon": 15.97236,
+      "lat": 61.845709,
+      "address": ""
+    }
+  },
+  {
+    "id": 9,
+    "position": {
+      "lat": 61.81166318709678,
+      "lon": 16.129597647311826,
+      "speed": 25,
+      "instruction": {
+        "position": {
+          "lat": 61.81161,
+          "lon": 16.12964
+        },
+        "meters": 64.575567,
+        "duration": 9.3,
+        "passed": 0
+      },
+      "next": {
+        "lat": 61.81215,
+        "lon": 16.12921,
+        "instruction": {
+          "position": {
+            "lat": 61.81215,
+            "lon": 16.12921
+          },
+          "meters": 76.680548,
+          "duration": 11,
+          "passed": 9.3
+        }
+      }
+    },
+    "heading": {
+      "lon": 16.226116,
+      "lat": 61.915248,
+      "address": ""
+    }
+  }
+]

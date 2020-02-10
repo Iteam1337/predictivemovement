@@ -2,28 +2,45 @@ const Engine = require('@iteam1337/engine')
 const _ = require('highland')
 const { generate } = require('@iteam1337/engine/simulator/cars')
 
-const mockedCars = require('./cars').slice(0, 10)
+const mockedCars = require('./cars').slice(0, 50)
 const mockedBookings = require('./bookings')
 
-const engine = new Engine({
-  bookings: _(mockedBookings),
-  cars: _(mockedCars.map(generate))
-    .map(car => _('moved', car))
-    .errors(err => console.error('move error', err))
-    .merge(),
+let engine
+
+describe('engine ', () => {
+  beforeEach(() => {
+    engine = new Engine({
+      bookings: _(mockedBookings),
+      cars: _(mockedCars.map(generate)),
+    })
+  })
+
+  it('gets properly initialized', done => {
+    engine.cars.fork().toArray(cars => {
+      expect(cars).toHaveLength(50)
+      done()
+    })
+  })
 })
 
 describe('cars gets an offer', () => {
-  it('will make an offer to the closest car', done => {
-    engine.possibleRoutes.fork().apply(cars => {
-      console.log('cars', cars)
-      cars.closestCars
-        .fork()
-        .batchWithTimeOrCount(1000, 1)
-        .apply(closestCars => {
-          console.log('closestCars', closestCars)
-          done()
-        })
+  beforeEach(() => {
+    engine = new Engine({
+      bookings: _(mockedBookings),
+      cars: _(mockedCars.map(generate)),
+    })
+  })
+
+  it('returns a list of cars sorted by distance to target', done => {
+    engine.possibleRoutes.fork().toArray(bookings => {
+      console.log('bookings: ', bookings.length)
+      bookings[0].closestCars.toArray(closestCars => {
+        expect(closestCars).toHaveLength(2)
+        expect(closestCars[0].detour.diff).toBeLessThan(
+          closestCars[1].detour.diff
+        )
+        done()
+      })
     })
   })
 

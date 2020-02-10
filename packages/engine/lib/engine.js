@@ -1,7 +1,7 @@
-const _ = require("highland");
+const _ = require('highland')
 //const price = require('./price')
-const dispatch = require("./dispatch");
-const carFinder = require("./carFinder");
+const dispatch = require('./dispatch')
+const carFinder = require('./carFinder')
 /*
 const $finder = newBookings.fork()
   .take(3)
@@ -38,13 +38,13 @@ $assignments.fork()
 
 class Engine {
   constructor({ bookings, cars }) {
-    this.bookings = bookings;
-    this.cars = cars;
+    this.bookings = bookings
+    this.cars = cars
     this.possibleRoutes = this.bookings.fork().map(booking => ({
       booking,
-      closestCars: carFinder(booking, this.cars.observe())
-    }));
+      closestCars: carFinder(booking, this.cars.fork()),
+    }))
   }
 }
 
-module.exports = Engine;
+module.exports = Engine

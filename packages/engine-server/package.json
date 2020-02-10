@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "nodemon lib/index.js",
-    "test": "jest"
+    "test": "jest --watch"
   },
   "bugs": {
     "url": "https://github.com/Iteam1337/pm-mapbox-test/issues"

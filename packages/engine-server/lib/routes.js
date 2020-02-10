@@ -4,7 +4,7 @@ const simulator = require('@iteam1337/engine/simulator')
 
 const engine = new Engine({
   bookings: simulator.bookings,
-  cars: simulator.cars,
+  cars: simulator.cars.simulate(),
 })
 
 const carsCache = new Map()

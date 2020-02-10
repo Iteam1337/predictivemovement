@@ -84,7 +84,7 @@ const findCars = (booking, cars) => {
     .tap(car => console.log('closest', car.id, car.tta))
     .pipe(fastestCars(booking))
     .tap(car => console.log('fastest', car.id, car.tta))*/
-      .take(6)
+      .take(2)
       .sortBy((a, b) => a.detour.distance - b.detour.distance)
       .errors(err => console.error("findCars", err))
   );

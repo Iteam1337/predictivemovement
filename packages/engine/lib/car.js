@@ -5,7 +5,7 @@ const EventEmitter = require('events')
 const findZone = require('../lib/zones')
 
 class Car extends EventEmitter {
-  constructor (id, position, status) {
+  constructor(id, position, status) {
     super()
     this.id = id
     this.position = position
@@ -15,7 +15,7 @@ class Car extends EventEmitter {
     this.on('error', err => console.error('car error', err))
   }
 
-  simulate (heading) {
+  simulate(heading) {
     clearInterval(this._interval)
     if (!heading) return
     this._interval = setInterval(() => {
@@ -24,10 +24,11 @@ class Car extends EventEmitter {
     }, Math.random() * 3000)
   }
 
-  navigateTo (position) {
+  navigateTo(position) {
     // console.log('navigateFromTo', this.position, position)
     this.heading = position
-    return osrm.route(this.position, this.heading)
+    return osrm
+      .route(this.position, this.heading)
       .then(route => {
         route.started = new Date()
         this.heading.route = route
@@ -37,7 +38,7 @@ class Car extends EventEmitter {
       .catch(console.error)
   }
 
-  pickup (trip) {
+  pickup(trip) {
     this.busy = true
     this.history.push({ status: 'pickup', date: new Date(), trip })
     this.trip = trip
@@ -47,7 +48,7 @@ class Car extends EventEmitter {
     return trip
   }
 
-  dropOff () {
+  dropOff() {
     if (this.trip) {
       this.busy = false
       this.trip.dropOffDateTime = new Date()
@@ -57,23 +58,33 @@ class Car extends EventEmitter {
     this.emit('dropoff', this)
   }
 
-  offer (offer) {
+  offer(offer) {
     // Fake the approval offer
     return new Promise((resolve, reject) => {
       setTimeout(_ => {
         // TODO: send push notfication
         offer.car = this
-        offer.approved = Math.random() < 0.5 && new Date() || undefined
-        console.log(`Car #${this.id} ${offer.approved ? 'approved' : 'rejected'} the booking `)
-        this.history.push({ status: 'offered', date: new Date(), offer, approved: !!offer.approved })
+        offer.approved = (Math.random() < 0.5 && new Date()) || undefined
+        console.log(
+          `Car #${this.id} ${
+            offer.approved ? 'approved' : 'rejected'
+          } the booking `
+        )
+        this.history.push({
+          status: 'offered',
+          date: new Date(),
+          offer,
+          approved: !!offer.approved,
+        })
         resolve(offer)
-      }, Math.random() * 10000)
+        // }, Math.random() * 10000)
+      }, 100)
     })
   }
 
-  async updatePosition (position, date) {
-    const moved = (distance.haversine(position, this.position) > 2) // meters
-    const bearing = (distance.bearing(position, this.position))
+  async updatePosition(position, date) {
+    const moved = distance.haversine(position, this.position) > 2 // meters
+    const bearing = distance.bearing(position, this.position)
     this.position = position
     this.bearing = bearing
     this.lastPositions.push({ position: position, date: date || Date.now() })
@@ -86,13 +97,13 @@ class Car extends EventEmitter {
       return this
     } else {
       this.emit('stopped', this)
-      if ((distance.haversine(this.heading, this.position) < 50)) {
+      if (distance.haversine(this.heading, this.position) < 50) {
         this.dropOff()
       }
     }
   }
 
-  matchZone () {
+  matchZone() {
     const newZone = findZone(this.position)
     if (newZone && this.zone !== newZone[0]) {
       this.zone = newZone[0]
@@ -101,27 +112,34 @@ class Car extends EventEmitter {
     }
   }
 
-  matchPositionsToMap () {
-    return osrm.match(this.lastPositions.filter(pos => pos.date > Date.now() - 4 * 60 * 1000))
+  matchPositionsToMap() {
+    return osrm
+      .match(
+        this.lastPositions.filter(pos => pos.date > Date.now() - 4 * 60 * 1000)
+      )
       .then(match => {
         //console.log('matched route', ms, 'ms')
-        const matching = match.matchings && match.matchings.length && match.matchings[0]
+        const matching =
+          match.matchings && match.matchings.length && match.matchings[0]
         if (!matching) return this
         const points = interpolate.points(matching)
         points.reverse().reduce((time, point) => {
           point.time = time - (point.duration * 1000 || 0) // hack: find purer way later
-          point.speed = !point.meters ? 0 : Math.round(((point.meters) / 1000) / (point.duration / 60 / 60))
+          point.speed = !point.meters
+            ? 0
+            : Math.round(point.meters / 1000 / (point.duration / 60 / 60))
           return point.time
         }, new Date(this.lastPositions.slice(-1).pop().date).valueOf())
 
-        this.tail = points.map(point => ([...point.position, point.time, point.speed])).reverse() // reverse back
+        this.tail = points
+          .map(point => [...point.position, point.time, point.speed])
+          .reverse() // reverse back
         this.speed = points.length ? points[0].speed : 0
         //this.tail = polyline.decode(matching.geometry)
         return this
       })
       .catch(err => console.error('match', err))
   }
-
 }
 
 module.exports = Car

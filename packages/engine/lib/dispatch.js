@@ -2,7 +2,7 @@ const _ = require('highland')
 
 module.exports = {
   assignCars(route) {
-    return _(route.closestCars)
+    return _(route.closestCars.fork())
       .tap(_ => console.log('assigning cars to', route.booking.id))
       .flatMap(({ car, detour }) =>
         _(car.offer({ booking: route.booking, estimate: detour }))

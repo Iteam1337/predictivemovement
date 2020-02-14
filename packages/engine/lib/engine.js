@@ -45,7 +45,7 @@ class Engine {
       closestCars: carFinder(booking, this.cars.fork()),
     }))
     this.offers = this.possibleRoutes
-      .fork()
+      .observe()
       .flatMap(route => _(dispatch.assignCars(route)))
   }
 }

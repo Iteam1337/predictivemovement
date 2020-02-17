@@ -12,7 +12,13 @@ const cars = queue
   .map(m => m.json())
   .map(generate)
 
+const possibleRoutes = queue
+  .queue('possibleRoutes', { durable: false })
+  .subscribe()
+  .map(m => m.json())
+
 module.exports = {
   bookings,
+  possibleRoutes,
   cars,
 }

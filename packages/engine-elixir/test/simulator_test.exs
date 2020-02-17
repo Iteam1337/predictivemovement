@@ -56,15 +56,13 @@ defmodule SimulatorTest do
           booking: booking,
           cars:
             cars
-            |> Enum.take(4)
-            |> Enum.map(fn %{"id" => id, "positions" => [position | heading]} ->
-              %{"id" => id, "position" => position, "heading" => heading}
+            |> Enum.map(fn %{"id" => id, "positions" => [position | [heading | _rest]]} ->
+              Car.make(%{"id" => id, "position" => position, "heading" => heading})
             end)
         }
       end)
-      |> Enum.map(fn foo -> IO.inspect(foo, label: "return") end)
       |> Enum.map(fn %{booking: booking, cars: cars} -> CarFinder.find(booking, cars) end)
 
-    # assert cars == 1
+    assert length(cars) == 1
   end
 end

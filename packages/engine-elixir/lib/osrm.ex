@@ -23,7 +23,7 @@ defmodule Osrm do
   # },
   def route(from, to) do
     url =
-      "#{@osrmBase}route/v1/driving/#{from.lng},#{from.lat};#{to.lng},#{to.lat}?steps=true&alternatives=false&overview=full&annotations=true"
+      "#{@osrmBase}route/v1/driving/#{from["lng"]},#{from["lat"]};#{to["lng"]},#{to["lat"]}?steps=true&alternatives=false&overview=full&annotations=true"
 
     Fetch.json(url)
     |> Map.get("routes")
@@ -34,15 +34,14 @@ defmodule Osrm do
   end
 
   def trip(positions) do
-    IO.inspect(positions, label: "positions")
+    coordinates =
+      positions
+      |> Enum.map(fn %{"lat" => lat, "lng" => lng} -> Enum.join([lng, lat], ",") end)
+      |> Enum.join(";")
 
-    positions
-    |> Enum.map(fn %{"lat" => lat, "lng" => lng} -> %{"pos" => lat} end)
+    url =
+      "#{@osrmBase}trip/v1/driving/#{coordinates}?geometries=geojson&annotations=true&source=first&destination=last&overview=full&steps=true"
 
-    # const coordinates = positions.map(pos => [pos.lon, pos.lat].join(',')).join(';')
-
-    # return fetch(`${osrmUrl}/trip/v1/driving/${coordinates}?geometries=geojson&annotations=true&source=first&destination=last&overview=full&steps=true`) // Add annotations and steps to get each node speed
-    # url =
-    #   "#{@osrmBase}route/v1/driving/#{from.lng},#{from.lat};#{to.lng},#{to.lat}?steps=true&alternatives=false&overview=full&annotations=true"
+    Fetch.json(url)
   end
 end

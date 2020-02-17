@@ -22,7 +22,7 @@ defmodule CarFinder do
   end
 
   def distance(car, booking) do
-    distance = haversine(car["position"], booking["departure"])
+    distance = haversine(car.position, booking["departure"])
     %{car: car, distance: distance}
   end
 
@@ -36,12 +36,34 @@ defmodule CarFinder do
   def detourCars(cars, booking) do
     cars
     |> Enum.map(fn car ->
-      Osrm.trip([car["position"], booking["departure"], booking["destination"], car["heading"]])
+      Osrm.trip([
+        car.position,
+        booking["departure"],
+        booking["destination"],
+        car.heading
+      ])
+      |> (fn %{"code" => code, "trips" => [detour | _rest]} ->
+            %{
+              car: car,
+              detour: detour
+            }
+          end).()
     end)
+    |> Enum.map(fn %{car: car, detour: detour} ->
+      %{
+        car: car,
+        detour: %{
+          diff: detour["distance"] - car.route["distance"]
+        }
+      }
+    end)
+    |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)
+    |> Enum.map(fn %{car: car, detour: detour} -> IO.puts("#{car.id} diff: #{detour.diff}") end)
   end
 
   def find(booking, cars) do
     closestCars(booking, cars)
     |> detourCars(booking)
+    |> Enum.take(2)
   end
 end

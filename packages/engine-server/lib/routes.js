@@ -1,25 +1,26 @@
 const _ = require('highland')
 const Engine = require('@iteam1337/engine')
 const simulator = require('@iteam1337/engine/simulator')
+const { bookings, cars } = require('./engineConnector')
 
-const engine = new Engine({
-  bookings: simulator.bookings,
-  cars: simulator.cars.simulate(),
-})
+// const engine = new Engine({
+//   bookings: simulator.bookings,
+//   cars: simulator.cars.simulate(),
+// })
 
 const carsCache = new Map()
 const movingCarsCache = new Map()
 const bookingsCache = new Map()
 
-const bookings = engine.possibleRoutes
-  .fork()
-  .map(pr => pr.booking)
-  .errors(err => console.error(err))
+// const bookings = engine.possibleRoutes
+//   .fork()
+//   .map(pr => pr.booking)
+//   .errors(err => console.error(err))
 
-const cars = engine.possibleRoutes
-  .fork()
-  .flatMap(pr => pr.closestCars)
-  .errors(err => console.error(err))
+// const cars = engine.possibleRoutes
+//   .fork()
+//   .flatMap(pr => pr.closestCars)
+//   .errors(err => console.error(err))
 
 // const movingCars = engine.cars.fork().errors(err => console.error(err))
 
@@ -50,12 +51,13 @@ function register(io) {
       .each(cars => socket.volatile.emit('cars', cars))
 
     _.merge([_(bookingsCache.values()), bookings.fork()])
+    .tap(x => console.log('got a real booking: ', x))
       .doto(booking => bookingsCache.set(booking.id, booking))
       .batchWithTimeOrCount(1000, 5)
       .errors(console.error)
       .each(bookings => socket.emit('bookings', bookings))
 
-    _.merge([_(movingCarsCache.values()), engine.cars.fork()])
+    _.merge([_(movingCarsCache.values()), cars.fork()])
       .filter(car => car.id)
       .doto(car => {
         movingCarsCache.set(car.id, car)

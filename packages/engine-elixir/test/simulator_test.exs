@@ -19,19 +19,25 @@ defmodule SimulatorTest do
   #   assert Simulator.address(%{lng: 61.829182, lat: 16.0896213}) == []
   # end
 
-  test "navigateTo responds with a car and route" do
-    updated_heading =
-      Car.make(1337, %{lat: 61.829182, lng: 16.0896213}, false)
-      |> Car.navigateTo(%{lng: 62.829182, lat: 17.05948})
-      |> Map.take([:heading, :route])
+  # test "navigateTo responds with a car and route" do
+  #   updated_heading =
+  #     Car.make(1337, %{lat: 61.829182, lng: 16.0896213}, false)
+  #     |> Car.navigateTo(%{lng: 62.829182, lat: 17.05948})
+  #     |> Map.take([:heading, :route])
 
-    assert updated_heading.heading == %{lng: 62.829182, lat: 17.05948}
-    assert updated_heading.route["distance"] > 0
-  end
+  #   assert updated_heading.heading == %{lng: 62.829182, lat: 17.05948}
+  #   assert updated_heading.route["distance"] > 0
+  # end
 
-  test "generates cars" do
-    center = %{lat: 61.829182, lng: 16.0896213}
-    cars = Cars.simulate(center, 1337)
-    assert length(cars) == 4
+  # test "generates cars" do
+  #   center = %{lat: 61.829182, lng: 16.0896213}
+  #   cars = Cars.simulate(center, 1337)
+  #   assert length(cars) == 4
+  # end
+
+  test "sends to Rabbitmq" do
+    File.stream!("test/bookings.json")
+    |> Jaxon.Stream.query([:root, :all])
+    |> Enum.map(fn t -> Booking.publish(t) end)
   end
 end

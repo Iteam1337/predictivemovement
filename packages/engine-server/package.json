@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@iteam1337/engine": "file:../engine",
+    "fluent-amqp": "^0.4.1",
     "highland": "^2.13.5",
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",

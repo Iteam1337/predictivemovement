@@ -24,3 +24,5 @@ hellowordl-*.tar
 
 .elixir_ls
 
+# Who even cares about logs
+*.log

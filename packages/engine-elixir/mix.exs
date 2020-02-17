@@ -21,6 +21,7 @@ defmodule Hellowordl.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:math, "~> 0.4.0"},
       {:amqp, "~> 1.0"},
       {:flow, "~> 1.0.0"},
       {:jaxon, "~> 1.0"},

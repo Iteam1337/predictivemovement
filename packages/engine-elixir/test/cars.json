@@ -1,14 +1,12 @@
-[
-  {
+[{
     "id": 1,
-    "positions": [
-      {
-        "lon": 16.009129,
+    "positions": [{
+        "lng": 16.009129,
         "lat": 61.837659,
         "address": ""
       },
       {
-        "lon": 16.221989,
+        "lng": 16.221989,
         "lat": 61.909855,
         "address": ""
       }
@@ -16,14 +14,13 @@
   },
   {
     "id": 2,
-    "positions": [
-      {
-        "lon": 15.884015,
+    "positions": [{
+        "lng": 15.884015,
         "lat": 61.760493,
         "address": "Harmyrvägen"
       },
       {
-        "lon": 16.289969,
+        "lng": 16.289969,
         "lat": 61.755863,
         "address": ""
       }
@@ -31,14 +28,13 @@
   },
   {
     "id": 3,
-    "positions": [
-      {
-        "lon": 16.23987,
+    "positions": [{
+        "lng": 16.23987,
         "lat": 61.844809,
         "address": ""
       },
       {
-        "lon": 15.876371,
+        "lng": 15.876371,
         "lat": 61.781994,
         "address": ""
       }
@@ -46,14 +42,13 @@
   },
   {
     "id": 4,
-    "positions": [
-      {
-        "lon": 15.847348,
+    "positions": [{
+        "lng": 15.847348,
         "lat": 61.833722,
         "address": "Sönnasjövägen"
       },
       {
-        "lon": 16.217587,
+        "lng": 16.217587,
         "lat": 61.780322,
         "address": ""
       }
@@ -61,14 +56,13 @@
   },
   {
     "id": 5,
-    "positions": [
-      {
-        "lon": 15.919861,
+    "positions": [{
+        "lng": 15.919861,
         "lat": 61.868385,
         "address": "Näsvallsvägen"
       },
       {
-        "lon": 15.915993,
+        "lng": 15.915993,
         "lat": 61.784624,
         "address": "Knektvägen"
       }
@@ -76,14 +70,13 @@
   },
   {
     "id": 6,
-    "positions": [
-      {
-        "lon": 15.921697,
+    "positions": [{
+        "lng": 15.921697,
         "lat": 61.909383,
         "address": ""
       },
       {
-        "lon": 16.074973,
+        "lng": 16.074973,
         "lat": 61.854238,
         "address": "Kolsvedja backe"
       }
@@ -91,14 +84,13 @@
   },
   {
     "id": 7,
-    "positions": [
-      {
-        "lon": 15.847537,
+    "positions": [{
+        "lng": 15.847537,
         "lat": 61.904542,
         "address": "Hedsta Vinåsvägen"
       },
       {
-        "lon": 15.852212,
+        "lng": 15.852212,
         "lat": 61.739058,
         "address": ""
       }
@@ -106,14 +98,13 @@
   },
   {
     "id": 8,
-    "positions": [
-      {
-        "lon": 15.942346,
+    "positions": [{
+        "lng": 15.942346,
         "lat": 61.791119,
         "address": "Klintvägen"
       },
       {
-        "lon": 16.239815,
+        "lng": 16.239815,
         "lat": 61.891362,
         "address": ""
       }
@@ -121,14 +112,13 @@
   },
   {
     "id": 9,
-    "positions": [
-      {
-        "lon": 15.879514,
+    "positions": [{
+        "lng": 15.879514,
         "lat": 61.846461,
         "address": ""
       },
       {
-        "lon": 16.183006,
+        "lng": 16.183006,
         "lat": 61.739266,
         "address": ""
       }
@@ -136,14 +126,13 @@
   },
   {
     "id": 10,
-    "positions": [
-      {
-        "lon": 15.997743,
+    "positions": [{
+        "lng": 15.997743,
         "lat": 61.753694,
         "address": ""
       },
       {
-        "lon": 16.160229,
+        "lng": 16.160229,
         "lat": 61.813948,
         "address": ""
       }
@@ -151,14 +140,13 @@
   },
   {
     "id": 11,
-    "positions": [
-      {
-        "lon": 16.058763,
+    "positions": [{
+        "lng": 16.058763,
         "lat": 61.854899,
         "address": "Kolsvedja backe"
       },
       {
-        "lon": 15.911964,
+        "lng": 15.911964,
         "lat": 61.796194,
         "address": "Skästravägen"
       }
@@ -166,14 +154,13 @@
   },
   {
     "id": 12,
-    "positions": [
-      {
-        "lon": 15.853593,
+    "positions": [{
+        "lng": 15.853593,
         "lat": 61.903783,
         "address": "Hedsta Vinåsvägen"
       },
       {
-        "lon": 16.297304,
+        "lng": 16.297304,
         "lat": 61.847242,
         "address": ""
       }
@@ -181,14 +168,13 @@
   },
   {
     "id": 13,
-    "positions": [
-      {
-        "lon": 16.069053,
+    "positions": [{
+        "lng": 16.069053,
         "lat": 61.754306,
         "address": ""
       },
       {
-        "lon": 16.112281,
+        "lng": 16.112281,
         "lat": 61.806817,
         "address": ""
       }
@@ -196,14 +182,13 @@
   },
   {
     "id": 14,
-    "positions": [
-      {
-        "lon": 16.228086,
+    "positions": [{
+        "lng": 16.228086,
         "lat": 61.887243,
         "address": ""
       },
       {
-        "lon": 15.991107,
+        "lng": 15.991107,
         "lat": 61.908047,
         "address": "Gruvvägen"
       }
@@ -211,14 +196,13 @@
   },
   {
     "id": 15,
-    "positions": [
-      {
-        "lon": 16.303823,
+    "positions": [{
+        "lng": 16.303823,
         "lat": 61.847486,
         "address": ""
       },
       {
-        "lon": 16.334457,
+        "lng": 16.334457,
         "lat": 61.820814,
         "address": ""
       }
@@ -226,14 +210,13 @@
   },
   {
     "id": 16,
-    "positions": [
-      {
-        "lon": 16.31677,
+    "positions": [{
+        "lng": 16.31677,
         "lat": 61.729441,
         "address": "Kalvstigen"
       },
       {
-        "lon": 16.328536,
+        "lng": 16.328536,
         "lat": 61.819604,
         "address": ""
       }
@@ -241,14 +224,13 @@
   },
   {
     "id": 17,
-    "positions": [
-      {
-        "lon": 15.99925,
+    "positions": [{
+        "lng": 15.99925,
         "lat": 61.862732,
         "address": "Edevägen"
       },
       {
-        "lon": 15.969722,
+        "lng": 15.969722,
         "lat": 61.89036,
         "address": ""
       }
@@ -256,14 +238,13 @@
   },
   {
     "id": 18,
-    "positions": [
-      {
-        "lon": 15.953998,
+    "positions": [{
+        "lng": 15.953998,
         "lat": 61.810011,
         "address": "Färilavägen"
       },
       {
-        "lon": 16.067759,
+        "lng": 16.067759,
         "lat": 61.764553,
         "address": ""
       }
@@ -271,14 +252,13 @@
   },
   {
     "id": 19,
-    "positions": [
-      {
-        "lon": 16.158355,
+    "positions": [{
+        "lng": 16.158355,
         "lat": 61.813933,
         "address": ""
       },
       {
-        "lon": 16.31581,
+        "lng": 16.31581,
         "lat": 61.847923,
         "address": ""
       }
@@ -286,14 +266,13 @@
   },
   {
     "id": 20,
-    "positions": [
-      {
-        "lon": 16.021548,
+    "positions": [{
+        "lng": 16.021548,
         "lat": 61.862094,
         "address": "Råggärdevägen"
       },
       {
-        "lon": 16.228362,
+        "lng": 16.228362,
         "lat": 61.864686,
         "address": ""
       }
@@ -301,14 +280,13 @@
   },
   {
     "id": 21,
-    "positions": [
-      {
-        "lon": 16.00384,
+    "positions": [{
+        "lng": 16.00384,
         "lat": 61.829553,
         "address": "Ygsbovägen"
       },
       {
-        "lon": 16.271481,
+        "lng": 16.271481,
         "lat": 61.801768,
         "address": ""
       }
@@ -316,14 +294,13 @@
   },
   {
     "id": 22,
-    "positions": [
-      {
-        "lon": 16.169406,
+    "positions": [{
+        "lng": 16.169406,
         "lat": 61.811984,
         "address": ""
       },
       {
-        "lon": 15.98481,
+        "lng": 15.98481,
         "lat": 61.814842,
         "address": ""
       }
@@ -331,14 +308,13 @@
   },
   {
     "id": 23,
-    "positions": [
-      {
-        "lon": 15.919854,
+    "positions": [{
+        "lng": 15.919854,
         "lat": 61.889918,
         "address": ""
       },
       {
-        "lon": 16.205757,
+        "lng": 16.205757,
         "lat": 61.819417,
         "address": ""
       }
@@ -346,14 +322,13 @@
   },
   {
     "id": 24,
-    "positions": [
-      {
-        "lon": 16.01951,
+    "positions": [{
+        "lng": 16.01951,
         "lat": 61.765614,
         "address": ""
       },
       {
-        "lon": 15.86859,
+        "lng": 15.86859,
         "lat": 61.917889,
         "address": ""
       }
@@ -361,14 +336,13 @@
   },
   {
     "id": 25,
-    "positions": [
-      {
-        "lon": 16.09661,
+    "positions": [{
+        "lng": 16.09661,
         "lat": 61.826126,
         "address": "Södra Järnvägsgatan"
       },
       {
-        "lon": 15.921689,
+        "lng": 15.921689,
         "lat": 61.867067,
         "address": "Näsvallsvägen"
       }
@@ -376,14 +350,13 @@
   },
   {
     "id": 26,
-    "positions": [
-      {
-        "lon": 16.082421,
+    "positions": [{
+        "lng": 16.082421,
         "lat": 61.918472,
         "address": "Sandviksvägarna"
       },
       {
-        "lon": 15.992431,
+        "lng": 15.992431,
         "lat": 61.806354,
         "address": ""
       }
@@ -391,14 +364,13 @@
   },
   {
     "id": 27,
-    "positions": [
-      {
-        "lon": 15.995708,
+    "positions": [{
+        "lng": 15.995708,
         "lat": 61.79941,
         "address": ""
       },
       {
-        "lon": 16.169713,
+        "lng": 16.169713,
         "lat": 61.76211,
         "address": ""
       }
@@ -406,14 +378,13 @@
   },
   {
     "id": 28,
-    "positions": [
-      {
-        "lon": 16.212744,
+    "positions": [{
+        "lng": 16.212744,
         "lat": 61.921925,
         "address": ""
       },
       {
-        "lon": 16.266995,
+        "lng": 16.266995,
         "lat": 61.772896,
         "address": ""
       }
@@ -421,14 +392,13 @@
   },
   {
     "id": 29,
-    "positions": [
-      {
-        "lon": 15.985328,
+    "positions": [{
+        "lng": 15.985328,
         "lat": 61.901489,
         "address": "Tallåsen - Lestssjön"
       },
       {
-        "lon": 15.945073,
+        "lng": 15.945073,
         "lat": 61.824901,
         "address": "Basavägen"
       }
@@ -436,14 +406,13 @@
   },
   {
     "id": 30,
-    "positions": [
-      {
-        "lon": 16.140652,
+    "positions": [{
+        "lng": 16.140652,
         "lat": 61.920871,
         "address": ""
       },
       {
-        "lon": 15.929177,
+        "lng": 15.929177,
         "lat": 61.86359,
         "address": "Näsvallsvägen"
       }
@@ -451,14 +420,13 @@
   },
   {
     "id": 31,
-    "positions": [
-      {
-        "lon": 16.322766,
+    "positions": [{
+        "lng": 16.322766,
         "lat": 61.819639,
         "address": ""
       },
       {
-        "lon": 16.337336,
+        "lng": 16.337336,
         "lat": 61.73308,
         "address": "Kalvstigen"
       }
@@ -466,14 +434,13 @@
   },
   {
     "id": 32,
-    "positions": [
-      {
-        "lon": 16.156476,
+    "positions": [{
+        "lng": 16.156476,
         "lat": 61.849487,
         "address": ""
       },
       {
-        "lon": 16.050126,
+        "lng": 16.050126,
         "lat": 61.779915,
         "address": "Björnbäcken Sjövästavägen"
       }
@@ -481,14 +448,13 @@
   },
   {
     "id": 33,
-    "positions": [
-      {
-        "lon": 15.959709,
+    "positions": [{
+        "lng": 15.959709,
         "lat": 61.747053,
         "address": ""
       },
       {
-        "lon": 16.142676,
+        "lng": 16.142676,
         "lat": 61.752315,
         "address": "Skästravägen"
       }
@@ -496,14 +462,13 @@
   },
   {
     "id": 34,
-    "positions": [
-      {
-        "lon": 16.082287,
+    "positions": [{
+        "lng": 16.082287,
         "lat": 61.815007,
         "address": ""
       },
       {
-        "lon": 15.996285,
+        "lng": 15.996285,
         "lat": 61.80151,
         "address": ""
       }
@@ -511,14 +476,13 @@
   },
   {
     "id": 35,
-    "positions": [
-      {
-        "lon": 16.112878,
+    "positions": [{
+        "lng": 16.112878,
         "lat": 61.837584,
         "address": "Sjöbo Bjuråkersvägen"
       },
       {
-        "lon": 16.072534,
+        "lng": 16.072534,
         "lat": 61.823446,
         "address": "Grovastigen"
       }
@@ -526,14 +490,13 @@
   },
   {
     "id": 36,
-    "positions": [
-      {
-        "lon": 16.143195,
+    "positions": [{
+        "lng": 16.143195,
         "lat": 61.732272,
         "address": ""
       },
       {
-        "lon": 15.982834,
+        "lng": 15.982834,
         "lat": 61.764294,
         "address": "Södra Kallmyrsvägen"
       }
@@ -541,14 +504,13 @@
   },
   {
     "id": 37,
-    "positions": [
-      {
-        "lon": 16.015271,
+    "positions": [{
+        "lng": 16.015271,
         "lat": 61.875274,
         "address": "Sandviksvägarna"
       },
       {
-        "lon": 15.933698,
+        "lng": 15.933698,
         "lat": 61.75977,
         "address": ""
       }
@@ -556,14 +518,13 @@
   },
   {
     "id": 38,
-    "positions": [
-      {
-        "lon": 16.324642,
+    "positions": [{
+        "lng": 16.324642,
         "lat": 61.819481,
         "address": ""
       },
       {
-        "lon": 16.054189,
+        "lng": 16.054189,
         "lat": 61.789523,
         "address": "Björnbäcken Sjövästavägen"
       }
@@ -571,14 +532,13 @@
   },
   {
     "id": 39,
-    "positions": [
-      {
-        "lon": 16.125526,
+    "positions": [{
+        "lng": 16.125526,
         "lat": 61.835961,
         "address": "Södra Sjöbovägen"
       },
       {
-        "lon": 15.908732,
+        "lng": 15.908732,
         "lat": 61.799535,
         "address": "Hammarnvägen"
       }
@@ -586,14 +546,13 @@
   },
   {
     "id": 40,
-    "positions": [
-      {
-        "lon": 15.946672,
+    "positions": [{
+        "lng": 15.946672,
         "lat": 61.879658,
         "address": "Skogsta Ramsjövägen"
       },
       {
-        "lon": 15.939515,
+        "lng": 15.939515,
         "lat": 61.86214,
         "address": "Näsvallsvägen"
       }
@@ -601,14 +560,13 @@
   },
   {
     "id": 41,
-    "positions": [
-      {
-        "lon": 16.255272,
+    "positions": [{
+        "lng": 16.255272,
         "lat": 61.764341,
         "address": ""
       },
       {
-        "lon": 16.231751,
+        "lng": 16.231751,
         "lat": 61.733322,
         "address": ""
       }
@@ -616,14 +574,13 @@
   },
   {
     "id": 42,
-    "positions": [
-      {
-        "lon": 16.285172,
+    "positions": [{
+        "lng": 16.285172,
         "lat": 61.892792,
         "address": ""
       },
       {
-        "lon": 16.289458,
+        "lng": 16.289458,
         "lat": 61.892814,
         "address": ""
       }
@@ -631,14 +588,13 @@
   },
   {
     "id": 43,
-    "positions": [
-      {
-        "lon": 16.2726,
+    "positions": [{
+        "lng": 16.2726,
         "lat": 61.859198,
         "address": ""
       },
       {
-        "lon": 16.116327,
+        "lng": 16.116327,
         "lat": 61.773989,
         "address": ""
       }
@@ -646,14 +602,13 @@
   },
   {
     "id": 44,
-    "positions": [
-      {
-        "lon": 15.905411,
+    "positions": [{
+        "lng": 15.905411,
         "lat": 61.810779,
         "address": ""
       },
       {
-        "lon": 15.931648,
+        "lng": 15.931648,
         "lat": 61.738646,
         "address": ""
       }
@@ -661,14 +616,13 @@
   },
   {
     "id": 45,
-    "positions": [
-      {
-        "lon": 16.227548,
+    "positions": [{
+        "lng": 16.227548,
         "lat": 61.858687,
         "address": ""
       },
       {
-        "lon": 16.213506,
+        "lng": 16.213506,
         "lat": 61.771416,
         "address": ""
       }
@@ -676,14 +630,13 @@
   },
   {
     "id": 46,
-    "positions": [
-      {
-        "lon": 15.955316,
+    "positions": [{
+        "lng": 15.955316,
         "lat": 61.913989,
         "address": "Tallåsen - Lestssjön"
       },
       {
-        "lon": 15.853169,
+        "lng": 15.853169,
         "lat": 61.903753,
         "address": "Hedsta Vinåsvägen"
       }
@@ -691,14 +644,13 @@
   },
   {
     "id": 47,
-    "positions": [
-      {
-        "lon": 16.040098,
+    "positions": [{
+        "lng": 16.040098,
         "lat": 61.88373,
         "address": ""
       },
       {
-        "lon": 16.095844,
+        "lng": 16.095844,
         "lat": 61.84537,
         "address": "Kavenvägen"
       }
@@ -706,14 +658,13 @@
   },
   {
     "id": 48,
-    "positions": [
-      {
-        "lon": 16.223247,
+    "positions": [{
+        "lng": 16.223247,
         "lat": 61.742147,
         "address": ""
       },
       {
-        "lon": 16.314403,
+        "lng": 16.314403,
         "lat": 61.72834,
         "address": "Kalvstigen"
       }
@@ -721,14 +672,13 @@
   },
   {
     "id": 49,
-    "positions": [
-      {
-        "lon": 16.105863,
+    "positions": [{
+        "lng": 16.105863,
         "lat": 61.836364,
         "address": "Sjöbo Bjuråkersvägen"
       },
       {
-        "lon": 15.871299,
+        "lng": 15.871299,
         "lat": 61.780345,
         "address": "Kilbovägen"
       }
@@ -736,14 +686,13 @@
   },
   {
     "id": 50,
-    "positions": [
-      {
-        "lon": 15.885564,
+    "positions": [{
+        "lng": 15.885564,
         "lat": 61.757195,
         "address": "Harmyrvägen"
       },
       {
-        "lon": 16.231158,
+        "lng": 16.231158,
         "lat": 61.901843,
         "address": ""
       }

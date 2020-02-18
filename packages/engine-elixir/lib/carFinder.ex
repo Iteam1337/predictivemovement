@@ -58,7 +58,7 @@ defmodule CarFinder do
       }
     end)
     |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)
-    |> Enum.map(fn %{car: car, detour: detour} -> IO.puts("#{car.id} diff: #{detour.diff}") end)
+    # |> Enum.map(fn %{car: car, detour: detour} -> IO.puts("#{car.id} diff: #{detour.diff}") end)
   end
 
   def find(booking, cars) do

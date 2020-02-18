@@ -48,7 +48,7 @@ defmodule SimulatorTest do
 
   test "finds closest cars for new bookings" do
     #  candidates, pickupOffers, pickup
-    cars =
+    [%{booking: _booking, cars: cars} | _rest] =
       File.stream!("test/candidates.json")
       |> Jaxon.Stream.query([:root, :all])
       |> Enum.map(fn %{"booking" => booking, "cars" => cars} ->
@@ -61,8 +61,10 @@ defmodule SimulatorTest do
             end)
         }
       end)
-      |> Enum.map(fn %{booking: booking, cars: cars} -> CarFinder.find(booking, cars) end)
+      |> Enum.map(fn %{booking: booking, cars: cars} ->
+        %{booking: booking, cars: CarFinder.find(booking, cars)}
+      end)
 
-    assert length(cars) == 1
+    assert length(cars) == 2
   end
 end

@@ -21,7 +21,7 @@ class Car extends EventEmitter {
     this._interval = setInterval(() => {
       const newPosition = interpolate.route(heading.route, new Date())
       if (newPosition) this.updatePosition(newPosition)
-    }, Math.random() * 3000)
+    }, Math.random() * 300)
   }
 
   navigateTo(position) {

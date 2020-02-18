@@ -3,18 +3,20 @@ defmodule MQ do
     {:ok, connection} = AMQP.Connection.open()
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.declare(channel, queue)
-
     AMQP.Basic.publish(channel, "", queue, Poison.encode!(data), content_type: "application/json")
-
     AMQP.Connection.close(connection)
   end
 
+  # THIS DOES NOT WORK PROPERLY, USE AT OWN RISK
   def subscribe(queue) do
     {:ok, connection} = AMQP.Connection.open()
     {:ok, channel} = AMQP.Channel.open(connection)
-    {:ok, connection} = AMQP.Connection.open()
-    {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.declare(channel, queue)
-    AMQP.Basic.consume(channel, queue, nil, no_ack: true)
+
+    AMQP.Basic.consume(
+      channel,
+      queue,
+      nil
+    )
   end
 end

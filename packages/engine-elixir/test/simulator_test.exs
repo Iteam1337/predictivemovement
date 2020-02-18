@@ -73,4 +73,15 @@ defmodule SimulatorTest do
 
     assert length(cars) == 2
   end
+
+  # test "find candidates when a booking comes in" do
+  #   queue = "bookings"
+  #   {:ok, connection} = AMQP.Connection.open()
+  #   {:ok, channel} = AMQP.Channel.open(connection)
+  #   AMQP.Queue.declare(channel, queue)
+
+  #   AMQP.Queue.subscribe(channel, queue, fn booking, _meta ->
+  #     IO.puts("Received a booking: #{booking}")
+  #   end)
+  # end
 end

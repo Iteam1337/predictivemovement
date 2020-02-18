@@ -18,8 +18,13 @@ const possibleRoutes = queue
   .subscribe()
   .map(m => m.json())
 
+const updatePosition = car =>
+  queue.queue('car_positions', { durable: false }).publish(car)
+
 module.exports = {
   bookings,
   possibleRoutes,
   cars,
+
+  updatePosition,
 }

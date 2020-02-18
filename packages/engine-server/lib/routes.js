@@ -1,7 +1,7 @@
 const _ = require('highland')
 const Engine = require('@iteam1337/engine')
 const simulator = require('@iteam1337/engine/simulator')
-const { bookings, cars, possibleRoutes } = require('./engineConnector')
+const { bookings, cars, possibleRoutes, updatePosition } = require('./engineConnector')
 
 // const engine = new Engine({
 //   bookings: simulator.bookings,
@@ -78,6 +78,7 @@ function register(io) {
         'bearing',
         'heading',
       ])
+      // .tap(updatePosition)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each(cars => socket.emit('moving-cars', cars))

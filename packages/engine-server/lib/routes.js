@@ -1,7 +1,11 @@
 const _ = require('highland')
 const Engine = require('@iteam1337/engine')
 const simulator = require('@iteam1337/engine/simulator')
-const { bookings, cars } = require('./engineConnector')
+const {
+  bookings,
+  cars,
+  possibleRoutes,
+} = require('./engineConnector')
 
 // const engine = new Engine({
 //   bookings: simulator.bookings,
@@ -22,6 +26,11 @@ const bookingsCache = new Map()
 //   .flatMap(pr => pr.closestCars)
 //   .errors(err => console.error(err))
 
+const candidates = possibleRoutes
+  .fork()
+  .flatMap(pr => pr.cars)
+  .errors(err => console.error(err))
+
 // const movingCars = engine.cars.fork().errors(err => console.error(err))
 
 // engine.cars.fork().each(car => console.log('car', car.id))
@@ -29,30 +38,28 @@ const bookingsCache = new Map()
 
 function register(io) {
   io.on('connection', function(socket) {
-    // _.merge([_(carsCache.values()), cars.fork()])
-    //   .tap(x => console.log('what is x', x))
-    //   .filter(car => car.car.id)
-    //   .doto(car => {
-    //     carsCache.set(car.car.id, car)
-    //   })
-    //   .map(({ car, detour }) => ({ ...car, detour }))
-    //   .pick([
-    //     'position',
-    //     'status',
-    //     'id',
-    //     'tail',
-    //     'zone',
-    //     'speed',
-    //     'bearing',
-    //     'detour',
-    //     'heading',
-    //   ])
-    //   .batchWithTimeOrCount(1000, 2000)
-    //   .errors(console.error)
-    //   .each(cars => socket.volatile.emit('cars', cars))
+    _.merge([_(carsCache.values()), candidates.fork()])
+      .filter(car => car.car.id)
+      .doto(car => {
+        carsCache.set(car.car.id, car)
+      })
+      .map(({ car, detour }) => ({ ...car, detour }))
+      .pick([
+        'position',
+        'status',
+        'id',
+        'tail',
+        'zone',
+        'speed',
+        'bearing',
+        'detour',
+        'heading',
+      ])
+      .batchWithTimeOrCount(1000, 2000)
+      .errors(console.error)
+      .each(cars => socket.volatile.emit('cars', cars))
 
     _.merge([_(bookingsCache.values()), bookings.fork()])
-      .tap(x => console.log('got a real booking: ', x))
       .doto(booking => bookingsCache.set(booking.id, booking))
       .batchWithTimeOrCount(1000, 5)
       .errors(console.error)

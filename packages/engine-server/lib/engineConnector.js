@@ -9,11 +9,10 @@ const bookings = queue
 const cars = queue
   .queue('cars', { durable: false })
   .subscribe()
-  .map(m => m.json())
-  .map(generate)
+  .map(m => generate(m.json()))
 
 const possibleRoutes = queue
-  .queue('possibleRoutes', { durable: false })
+  .queue('candidates', { durable: false })
   .subscribe()
   .map(m => m.json())
 

@@ -35,17 +35,17 @@ defmodule SimulatorTest do
   #   assert length(cars) == 4
   # end
 
-  # test "send cars to Rabbitmq" do
-  #   File.stream!("test/cars.json")
-  #   |> Jaxon.Stream.query([:root, :all])
-  #   |> Enum.map(fn t -> MQ.publish("cars", t) end)
-  # end
+  test "send cars to Rabbitmq" do
+    File.stream!("test/cars.json")
+    |> Jaxon.Stream.query([:root, :all])
+    |> Enum.map(fn t -> MQ.publish("cars", t) end)
+  end
 
-  # test "sends booking to Rabbitmq" do
-  #   File.stream!("test/bookings.json")
-  #   |> Jaxon.Stream.query([:root, :all])
-  #   |> Enum.map(fn t -> MQ.publish("bookings", t) end)
-  # end
+  test "sends booking to Rabbitmq" do
+    File.stream!("test/bookings.json")
+    |> Jaxon.Stream.query([:root, :all])
+    |> Enum.map(fn t -> MQ.publish("bookings", t) end)
+  end
 
   test "finds closest cars for new bookings" do
     #  candidates, pickupOffers, pickup

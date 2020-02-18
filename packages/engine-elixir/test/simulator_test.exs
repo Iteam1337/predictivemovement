@@ -34,6 +34,7 @@ defmodule SimulatorTest do
   #   cars = Cars.simulate(center, 1337)
   #   assert length(cars) == 4
   # end
+
   # test "send cars to Rabbitmq" do
   #   File.stream!("test/cars.json")
   #   |> Jaxon.Stream.query([:root, :all])
@@ -48,7 +49,7 @@ defmodule SimulatorTest do
 
   test "finds closest cars for new bookings" do
     #  candidates, pickupOffers, pickup
-    [%{booking: _booking, cars: cars} | _rest] =
+    candidates =
       File.stream!("test/candidates.json")
       |> Jaxon.Stream.query([:root, :all])
       |> Enum.map(fn %{"booking" => booking, "cars" => cars} ->
@@ -64,6 +65,11 @@ defmodule SimulatorTest do
       |> Enum.map(fn %{booking: booking, cars: cars} ->
         %{booking: booking, cars: CarFinder.find(booking, cars)}
       end)
+
+    [%{booking: _booking, cars: cars} | _rest] = candidates
+
+    candidates
+    |> Enum.map(fn t -> MQ.publish("candidates", t) end)
 
     assert length(cars) == 2
   end

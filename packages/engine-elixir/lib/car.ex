@@ -6,8 +6,8 @@
 
 defmodule Car do
   defstruct id: 0,
-            position: %{lng: 53, lat: 14},
-            heading: %{lng: 54, lat: 14},
+            position: %{lon: 53, lat: 14},
+            heading: %{lon: 54, lat: 14},
             busy: false,
             route: %{}
 
@@ -22,6 +22,7 @@ defmodule Car do
 
   def navigateTo(car, heading) do
     route = Osrm.route(car.position, heading)
+    heading = Map.put(heading, :route, route)
 
     car
     |> Map.update!(:heading, fn _ -> heading end)

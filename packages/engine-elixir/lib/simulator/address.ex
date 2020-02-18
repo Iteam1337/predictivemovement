@@ -1,12 +1,12 @@
 defmodule Address do
-  def random(%{lng: lng, lat: lat}) do
-    lng = lng + (Enum.random(0..100) - 50) / 200
+  def random(%{lon: lon, lat: lat}) do
+    lon = lon + (Enum.random(0..100) - 50) / 200
     lat = lat + (Enum.random(0..100) - 50) / 500
 
-    Osrm.nearest(lng, lat)
+    Osrm.nearest(lon, lat)
     |> Map.get("waypoints")
     |> List.first()
     |> Map.get("location")
-    |> (fn [lng, lat] -> %{lng: lng, lat: lat} end).()
+    |> (fn [lon, lat] -> %{lon: lon, lat: lat} end).()
   end
 end

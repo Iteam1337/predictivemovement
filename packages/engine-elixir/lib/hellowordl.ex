@@ -45,10 +45,10 @@ defmodule Hellowordl do
     |> Enum.to_list()
   end
 
-  def osrm_address(%{"lng" => lng, "lat" => lat}) do
-    IO.inspect({lng, lat}, label: "Sending to OSRM")
+  def osrm_address(%{"lon" => lon, "lat" => lat}) do
+    IO.inspect({lon, lat}, label: "Sending to OSRM")
 
-    HTTPoison.get!("http://osrm.pm.iteamdev.se/nearest/v1/driving/#{lng},#{lat}")
+    HTTPoison.get!("http://osrm.pm.iteamdev.se/nearest/v1/driving/#{lon},#{lat}")
     |> IO.inspect(label: "OSRM response")
     |> Map.get(:body)
     |> Poison.decode!()
@@ -56,6 +56,6 @@ defmodule Hellowordl do
     |> List.first()
     |> Map.get("location")
     |> IO.inspect(label: "location")
-    |> (fn [lng, lat] -> {lng, lat} end).()
+    |> (fn [lon, lat] -> {lon, lat} end).()
   end
 end

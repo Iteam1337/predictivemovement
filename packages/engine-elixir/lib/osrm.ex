@@ -1,8 +1,8 @@
 defmodule Osrm do
   @osrmBase "http://osrm.pm.iteamdev.se/"
 
-  def nearest(lng, lat) do
-    Fetch.json("#{@osrmBase}nearest/v1/driving/#{lng},#{lat}")
+  def nearest(lon, lat) do
+    Fetch.json("#{@osrmBase}nearest/v1/driving/#{lon},#{lat}")
   end
 
   # route (from, to) {
@@ -23,7 +23,7 @@ defmodule Osrm do
   # },
   def route(from, to) do
     url =
-      "#{@osrmBase}route/v1/driving/#{from["lng"]},#{from["lat"]};#{to["lng"]},#{to["lat"]}?steps=true&alternatives=false&overview=full&annotations=true"
+      "#{@osrmBase}route/v1/driving/#{from["lon"]},#{from["lat"]};#{to["lon"]},#{to["lat"]}?steps=true&alternatives=false&overview=full&annotations=true"
 
     Fetch.json(url)
     |> Map.get("routes")
@@ -36,7 +36,7 @@ defmodule Osrm do
   def trip(positions) do
     coordinates =
       positions
-      |> Enum.map(fn %{"lat" => lat, "lng" => lng} -> Enum.join([lng, lat], ",") end)
+      |> Enum.map(fn %{"lat" => lat, "lon" => lon} -> Enum.join([lon, lat], ",") end)
       |> Enum.join(";")
 
     url =

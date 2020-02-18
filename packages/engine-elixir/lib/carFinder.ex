@@ -7,7 +7,7 @@ defmodule CarFinder do
     radius = 6_371_000
 
     dLat = rad(p2["lat"] - p1["lat"])
-    dLong = rad(p2["lng"] - p1["lng"])
+    dLong = rad(p2["lon"] - p1["lon"])
 
     a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -52,13 +52,10 @@ defmodule CarFinder do
     |> Enum.map(fn %{car: car, detour: detour} ->
       %{
         car: car,
-        detour: %{
-          diff: detour["distance"] - car.route["distance"]
-        }
+        detour: Map.put(detour, :diff, detour["distance"] - car.route["distance"])
       }
     end)
     |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)
-    # |> Enum.map(fn %{car: car, detour: detour} -> IO.puts("#{car.id} diff: #{detour.diff}") end)
   end
 
   def find(booking, cars) do

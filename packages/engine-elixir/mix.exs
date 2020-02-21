@@ -25,7 +25,8 @@ defmodule Hellowordl.MixProject do
       {:jaxon, "~> 1.0"},
       {:mix_test_watch, "~> 0.8", only: :dev, only: :test},
       {:httpoison, "~> 1.6"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:polyline, "~> 1.2"}
     ]
   end
 end

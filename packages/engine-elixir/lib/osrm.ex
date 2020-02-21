@@ -26,10 +26,16 @@ defmodule Osrm do
       "#{@osrmBase}route/v1/driving/#{from.lng},#{from.lat};#{to.lng},#{to.lat}?steps=true&alternatives=false&overview=full&annotations=true"
 
     Fetch.json(url)
-    |> Map.get("routes")
+    |> Map.get(:routes)
     |> Enum.sort(fn a, b -> a.duration < b.duration end)
     |> List.first()
+    |> Map.update!(:geometry, &decode_polyline/1)
+    |> IO.inspect(label: "coordinates")
+  end
 
-    # |> Map.get("geometry")
+  def decode_polyline(geometry) do
+    %{
+      coordinates: Polyline.decode(geometry) |> Enum.map(fn {lng, lat} -> %{lng: lng, lat: lat} end)
+    }
   end
 end

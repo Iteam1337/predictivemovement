@@ -1,5 +1,19 @@
 defmodule Interpolate do
 
+  @moduledoc """
+  Documentation for `Interpolate`.
+  """
+
+  @doc """
+  Get future segments from a route after a specific time. Traverses through the legs and annotations and returns a list of
+  road segments which is after the time specified. This is used for interpolating positions on the route.
+
+  ## Examples
+
+      iex> Interpolate.get_future_segments_from_route(route, NaiveDateTime.utc_now())
+      :[%{...}]
+
+  """
   def get_future_segments_from_route(route, time) do
     route.legs
     |> Enum.flat_map(fn leg -> leg.annotation.duration end)
@@ -10,6 +24,15 @@ defmodule Interpolate do
 
   end
 
+  @doc """
+  Get position for a certain time on a certain route. Very useful for simulating movement or
+  reenact a certain point in time for a route.
+
+  ## Examples
+
+      iex> Interpolate.get_position_from_route(route, NaiveDateTime.utc_now() + 20)
+      : %{lon: x, lat: y}
+  """
   def get_position_from_route(route, time) do
     [current, next] = get_future_segments_from_route(route, time) |> Enum.slice(0..1)
     progress = (current.passed - time) / current.duration

@@ -62,12 +62,10 @@ defmodule SimulatorTest do
       |> Car.navigateTo(%{lng: 17.05948, lat: 62.829182})
       |> Map.take([:heading, :route])
 
-    position = Car.position(car, DateTime.add(car.route.started, 120, :second))
+    position = Car.position(car, NaiveDateTime.add(car.route.started, 120, :second))
     assert position.lat > 61.0896213
     assert position.lat < 62.829182
     assert position.lng > 16.0896213
     assert position.lng < 17.05948
-
-    assert position != %{lat: 62.829182, lat: 17.05948}
   end
 end

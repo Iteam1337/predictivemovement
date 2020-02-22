@@ -18,17 +18,17 @@ defmodule Car do
   end
 
   def navigateTo(car, heading) do
-    route = Osrm.route(car.position, heading) |> Map.put(:started, DateTime.now!("Etc/UTC"))
+    route = Osrm.route(car.position, heading) |> Map.put(:started, NaiveDateTime.utc_now())
 
     car
     |> Map.update!(:heading, fn _ -> heading end)
     |> Map.update!(:route, fn _ -> route end)
   end
 
-  def position(car), do: position(car, DateTime.now!("Etc/UTC"))
+  def position(car), do: position(car, NaiveDateTime.utc_now())
 
   def position(car, time) do
-    relative_time = DateTime.diff(time, car.route.started)
+    relative_time = NaiveDateTime.diff(time, car.route.started)
     Interpolate.get_position_from_route(car.route, relative_time)
   end
 end

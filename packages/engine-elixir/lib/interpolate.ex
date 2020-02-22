@@ -2,7 +2,6 @@ defmodule Interpolate do
 
   def get_future_segments_from_route(route, time) do
     route.legs
-    |> IO.inspect(label: "route")
     |> Enum.flat_map(fn leg -> leg.annotation.duration end)
     |> Enum.scan(%{passed: 0}, fn a, b -> %{duration: a, passed: b.passed + a} end) # add time passed for each step
     |> Enum.zip(route.geometry.coordinates)

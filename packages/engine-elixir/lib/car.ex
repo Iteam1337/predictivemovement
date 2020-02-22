@@ -21,12 +21,19 @@ defmodule Car do
   end
 
   def navigateTo(car, heading) do
-    route = Osrm.route(car.position, heading)
+    route = Osrm.route(car.position, heading) |> Map.put(:started, NaiveDateTime.utc_now())
     heading = Map.put(heading, :route, route)
 
     car
-    |> Map.update!(:heading, fn _ -> heading end)
-    |> Map.update!(:route, fn _ -> route end)
+    |> Map.put(heading, :heading)
+    |> Map.put(route, :route)
+  end
+
+  def position(car), do: position(car, NaiveDateTime.utc_now())
+
+  def position(car, time) do
+    relative_time = NaiveDateTime.diff(time, car.route.started)
+    Interpolate.get_position_from_route(car.route, relative_time)
   end
 end
 

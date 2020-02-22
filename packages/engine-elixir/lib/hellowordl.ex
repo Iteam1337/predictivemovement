@@ -49,7 +49,6 @@ defmodule Hellowordl do
     IO.inspect({lon, lat}, label: "Sending to OSRM")
 
     HTTPoison.get!("http://osrm.pm.iteamdev.se/nearest/v1/driving/#{lon},#{lat}")
-    |> IO.inspect(label: "OSRM response")
     |> Map.get(:body)
     |> Poison.decode!()
     |> Map.get("waypoints")

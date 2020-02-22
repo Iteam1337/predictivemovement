@@ -21,8 +21,9 @@ defmodule SimulatorTest do
       |> Car.navigateTo(%{lon: 62.829182, lat: 17.05948})
       |> Map.take([:heading, :route])
 
-    assert updated_heading.heading == %{lon: 62.829182, lat: 17.05948}
-    assert updated_heading.route["distance"] > 0
+    assert updated_heading.heading.lon == 62.829182
+    assert updated_heading.heading.lat == 17.05948
+    assert updated_heading.route.distance > 0
   end
 
   # test "generates cars" do
@@ -31,17 +32,20 @@ defmodule SimulatorTest do
   #   assert length(cars) == 4
   # end
 
+@tag :skip
 test "send cars to Rabbitmq" do
-    File.stream!("test/cars.json")
-    |> Jaxon.Stream.query([:root, :all])
-    |> Enum.map(fn t -> MQ.publish("cars", t) end)
-  end
+  File.stream!("test/cars.json")
+  |> Jaxon.Stream.query([:root, :all])
+  |> Enum.map(fn t -> MQ.publish("cars", t) end)
+end
 
+@tag :skip
 test "sends booking to Rabbitmq" do
-    File.stream!("test/bookings.json")
-    |> Jaxon.Stream.query([:root, :all])
-    |> Enum.map(fn t -> MQ.publish("bookings", t) end)
-  end
+  File.stream!("test/bookings.json")
+  |> Jaxon.Stream.query([:root, :all])
+  |> Enum.to_list() |> Poison.encode!() |> Poison.decode!(%{keys: :atoms}) ## hack to convert strings to atom from jaxon
+  |> Enum.map(fn t -> MQ.publish("bookings", t) end)
+end
 
 
 test "finds closest cars for new bookings" do
@@ -49,13 +53,14 @@ test "finds closest cars for new bookings" do
     candidates =
       File.stream!("test/candidates.json")
       |> Jaxon.Stream.query([:root, :all])
-      |> Enum.map(fn %{"booking" => booking, "cars" => cars} ->
+      |> Enum.to_list() |> Poison.encode!() |> Poison.decode!(%{keys: :atoms}) ## hack to convert strings to atom from jaxon
+      |> Enum.map(fn %{booking: booking, cars: cars} ->
         %{
           booking: booking,
           cars:
             cars
-            |> Enum.map(fn %{"id" => id, "positions" => [position | [heading | _rest]]} ->
-              Car.make(%{"id" => id, "position" => position, "heading" => heading})
+            |> Enum.map(fn %{id: id, positions: [position | [heading | _rest]]} ->
+              Car.make(%{id: id, position: position, heading: heading})
             end)
         }
       end)

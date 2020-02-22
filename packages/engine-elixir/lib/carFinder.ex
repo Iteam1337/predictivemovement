@@ -6,12 +6,12 @@ defmodule CarFinder do
   def haversine(p1, p2) do
     radius = 6_371_000
 
-    dLat = rad(p2["lat"] - p1["lat"])
-    dLong = rad(p2["lon"] - p1["lon"])
+    dLat = rad(p2.lat - p1.lat)
+    dLong = rad(p2.lon - p1.lon)
 
     a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(rad(p1["lat"])) * Math.cos(rad(p2["lat"])) * Math.sin(dLong / 2) *
+        Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) * Math.sin(dLong / 2) *
           Math.sin(dLong / 2)
 
     c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
@@ -22,7 +22,7 @@ defmodule CarFinder do
   end
 
   def distance(car, booking) do
-    distance = haversine(car.position, booking["departure"])
+    distance = haversine(car.position, booking.departure)
     %{car: car, distance: distance}
   end
 
@@ -38,11 +38,11 @@ defmodule CarFinder do
     |> Enum.map(fn car ->
       Osrm.trip([
         car.position,
-        booking["departure"],
-        booking["destination"],
+        booking.departure,
+        booking.destination,
         car.heading
       ])
-      |> (fn %{"code" => code, "trips" => [detour | _rest]} ->
+      |> (fn %{code: code, trips: [detour | _rest]} ->
             %{
               car: car,
               detour: detour
@@ -52,7 +52,7 @@ defmodule CarFinder do
     |> Enum.map(fn %{car: car, detour: detour} ->
       %{
         car: car,
-        detour: Map.put(detour, :diff, detour["distance"] - car.route["distance"])
+        detour: Map.put(detour, :diff, detour.distance - car.route.distance)
       }
     end)
     |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)

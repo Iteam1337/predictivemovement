@@ -11,7 +11,6 @@ defmodule Car do
             busy: false,
             route: %{}
 
-  #   heading: %{lng, lat}
   def make(%{"id" => id, "position" => position, "heading" => heading}) do
     make(id, position, false) |> navigateTo(heading)
   end

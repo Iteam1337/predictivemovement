@@ -1,6 +1,6 @@
 defmodule SimulatorTest do
   use ExUnit.Case
-  doctest Cars
+  doctest CarsSimulator
 
   # test "greets the world" do
   #   assert Simulator.hello() == :world
@@ -18,6 +18,7 @@ defmodule SimulatorTest do
   test "navigateTo responds with a car and route" do
     updated_heading =
       Car.make(1337, %{lat: 61.829182, lon: 16.0896213}, false)
+      |> IO.inspect(label: "car")
       |> Car.navigateTo(%{lon: 62.829182, lat: 17.05948})
       |> Map.take([:heading, :route])
 
@@ -28,7 +29,7 @@ defmodule SimulatorTest do
 
   # test "generates cars" do
   #   center = %{lat: 61.829182, lon: 16.0896213}
-  #   cars = Cars.simulate(center, 1337)
+  #   cars = CarsSimulator.simulate(center, 1337)
   #   assert length(cars) == 4
   # end
 

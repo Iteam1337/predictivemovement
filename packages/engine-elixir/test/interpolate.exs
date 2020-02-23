@@ -34,4 +34,13 @@ defmodule InterpolateTest do
     assert position.lon > 16.0896213
     assert position.lon < 17.05948
   end
+
+  test "position returns current position when no route is present" do
+    car =
+      Car.make(1337, %{lon: 16.0896213, lat: 61.829182}, false)
+
+    position = Car.position(car)
+    assert position.lon == 16.0896213
+    assert position.lat == 62.829182
+  end
 end

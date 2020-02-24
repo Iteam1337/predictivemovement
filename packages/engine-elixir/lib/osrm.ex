@@ -25,6 +25,8 @@ defmodule Osrm do
     url =
       "#{@osrmBase}route/v1/driving/#{from.lon},#{from.lat};#{to.lon},#{to.lat}?steps=true&alternatives=false&overview=full&annotations=true"
 
+    IO.inspect(url, label: "this is the url")
+
     Fetch.json(url)
     |> Map.get(:routes)
     |> Enum.sort(fn a, b -> a.duration < b.duration end)
@@ -34,7 +36,8 @@ defmodule Osrm do
 
   def decode_polyline(geometry) do
     %{
-      coordinates: Polyline.decode(geometry) |> Enum.map(fn {lon, lat} -> %{lon: lon, lat: lat} end)
+      coordinates:
+        Polyline.decode(geometry) |> Enum.map(fn {lon, lat} -> %{lon: lon, lat: lat} end)
     }
   end
 

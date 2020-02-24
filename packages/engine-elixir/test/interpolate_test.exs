@@ -1,7 +1,6 @@
 defmodule InterpolateTest do
   use ExUnit.Case
-  doctest Cars
-
+  doctest CarsSimulator
   @route %{
     started: 0,
     geometry: %{
@@ -13,23 +12,32 @@ defmodule InterpolateTest do
       }
     ]
   }
-  @tag :skip
+
   test "get coming segments" do
     [current | future] = Interpolate.get_future_segments_from_route(@route, 2)
     assert current == %{duration: 2, passed: 3, coordinates: %{lon: 60, lat: 19}}
     assert future == [%{duration: 1, passed: 4, coordinates: %{lon: 61, lat: 20}}]
   end
 
-  @tag :skip
   test "get progress" do
-    position = Interpolate.get_position_from_route(@route, 2)
-    assert position == %{lon: 60.5, lat: 19.5}
+    position = Interpolate.get_position_from_route(@route, 1.5)
+    assert position == %{lon: 60.25, lat: 19.25}
   end
 
-@tag :skip
+
+  test "moves in correct direction" do
+    position1 = Interpolate.get_position_from_route(@route, 2)
+    position2 = Interpolate.get_position_from_route(@route, 2.5)
+
+    assert position1.lat < position2.lat
+    assert position1.lon < position2.lon
+  end
+
+  @tag :skip
   test "position returns current position in the future" do
     car =
       Car.make(1337, %{lon: 16.0896213, lat: 61.829182}, false)
+      |> IO.inspect(label: "car")
       |> Car.navigateTo(%{lon: 17.05948, lat: 62.829182})
       |> Map.take([:heading, :route])
 
@@ -48,4 +56,5 @@ defmodule InterpolateTest do
     assert position.lon == 16.0896213
     assert position.lat == 62.829182
   end
+
 end

@@ -5,10 +5,10 @@ const Car = require('../lib/car')
 //const positions = require('./positions')
 const range = length => Array.from({ length }).map((value, i) => i)
 
-function generateCar({ positions, id }) {
-  const car = new Car(id, positions[0])
-  car.position = positions[0]
-  car.navigateTo(positions[1])
+function generateCar({ position, heading, id }) {
+  const car = new Car(id, position)
+  car.position = position
+  car.navigateTo(position, heading)
   car.on('dropoff', () => {
     randomize().then(position => car.navigateTo(position))
   })

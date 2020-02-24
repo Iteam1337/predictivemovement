@@ -1,7 +1,12 @@
 const _ = require('highland')
 const Engine = require('@iteam1337/engine')
 const simulator = require('@iteam1337/engine/simulator')
-const { bookings, cars, possibleRoutes, updatePosition } = require('./engineConnector')
+const {
+  bookings,
+  cars,
+  possibleRoutes,
+  updatePosition,
+} = require('./engineConnector')
 
 // const engine = new Engine({
 //   bookings: simulator.bookings,
@@ -63,8 +68,8 @@ function register(io) {
 
     _.merge([_(movingCarsCache.values()), cars.fork()])
       .filter(car => car.id)
-      .map(car => _('moved', car))
-      .merge()
+      // .map(car => _('moved', car))
+      // .merge()
       .doto(car => {
         movingCarsCache.set(car.id, car)
       })

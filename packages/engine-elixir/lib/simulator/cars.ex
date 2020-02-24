@@ -35,7 +35,7 @@
 #   generate: generateCar,
 # }
 
-defmodule Cars do
+defmodule CarsSimulator do
   def generateRandomCar(id, center) do
     departure = Address.random(center)
     destination = Address.random(center)

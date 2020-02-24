@@ -1,5 +1,6 @@
 defmodule MQ do
   def publish(queue, data) do
+    # {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
     {:ok, connection} = AMQP.Connection.open()
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.declare(channel, queue)

@@ -1,6 +1,6 @@
 defmodule SimulatorTest do
   use ExUnit.Case
-  doctest Cars
+  doctest CarsSimulator
 
   # test "greets the world" do
   #   assert Simulator.hello() == :world
@@ -11,87 +11,57 @@ defmodule SimulatorTest do
   # end
 
   # test "returns a positions as a stream" do
-  #   # assert Simulator.positions() == [%{"lat" => 59, "lng" => 18}]
+  #   # assert Simulator.positions() == [%{"lat" => 59, "lon" => 18}]
   #   Simulator.positions() |> List.first() |> is_tuple() |> assert
   # end
+  @tag :skip
+  test "navigateTo responds with a car and route" do
+    updated_heading =
+      Car.make(1337, %{lat: 61.829182, lon: 16.0896213}, false)
+      |> IO.inspect(label: "car")
+      |> Car.navigateTo(%{lon: 62.829182, lat: 17.05948})
+      |> Map.take([:heading, :route])
 
-  # test "generates an address" do
-  #   assert Simulator.address(%{lng: 61.829182, lat: 16.0896213}) == []
-  # end
-
-  # test "navigateTo responds with a car and route" do
-  #   updated_heading =
-  #     Car.make(1337, %{lat: 61.829182, lng: 16.0896213}, false)
-  #     |> Car.navigateTo(%{lng: 62.829182, lat: 17.05948})
-  #     |> Map.take([:heading, :route])
-
-  #   assert updated_heading.heading == %{lng: 62.829182, lat: 17.05948}
-  #   assert updated_heading.route["distance"] > 0
-  # end
+    assert updated_heading.heading.lon == 62.829182
+    assert updated_heading.heading.lat == 17.05948
+    assert updated_heading.route.distance > 0
+  end
 
   # test "generates cars" do
-  #   center = %{lat: 61.829182, lng: 16.0896213}
-  #   cars = Cars.simulate(center, 1337)
+  #   center = %{lat: 61.829182, lon: 16.0896213}
+  #   cars = CarsSimulator.simulate(center, 1337)
   #   assert length(cars) == 4
   # end
 
-  test "send cars to Rabbitmq" do
-    File.stream!("test/cars.json")
-    |> Jaxon.Stream.query([:root, :all])
-    |> Enum.map(fn t -> MQ.publish("cars", t) end)
-  end
+@tag :skip
+test "send cars to Rabbitmq" do
+  File.stream!("test/cars.json")
+  |> Jaxon.Stream.query([:root, :all])
+  |> Enum.map(fn t -> MQ.publish("cars", t) end)
+end
 
-  test "sends booking to Rabbitmq" do
-    File.stream!("test/bookings.json")
-    |> Jaxon.Stream.query([:root, :all])
-    |> Enum.map(fn t -> MQ.publish("bookings", t) end)
+@tag :skip
+test "sends booking to Rabbitmq" do
+  File.stream!("test/bookings.json")
+  |> Jaxon.Stream.query([:root, :all])
+  |> Enum.to_list() |> Poison.encode!() |> Poison.decode!(%{keys: :atoms}) ## hack to convert strings to atom from jaxon
+  |> Enum.map(fn t -> MQ.publish("bookings", t) end)
+end
 
-    @route %{
-    started: 0,
-    geometry: %{
-      coordinates: [%{lng: 59, lat: 18}, %{lng: 60, lat: 19}, %{lng: 61, lat: 20}]
-    },
-    legs: [%{
-      annotation: %{duration: [1, 2, 1], distance: [1, 2, 3]}
-    }]
-  }
-
-  test "get coming segments" do
-    [current | future] = Interpolate.get_future_segments_from_route(@route, 2)
-    assert current == %{duration: 2, passed: 3, coordinates: %{lng: 60, lat: 19}}
-    assert future == [%{duration: 1, passed: 4, coordinates: %{lng: 61, lat: 20}}]
-  end
-
-  test "get progress" do
-    position = Interpolate.get_position_from_route(@route, 2)
-    assert position == %{lng: 60.5, lat: 19.5}
-  end
-
-  test "position returns current position in the future" do
-    car =
-      Car.make(1337, %{lng: 16.0896213, lat: 61.829182}, false)
-      |> Car.navigateTo(%{lng: 17.05948, lat: 62.829182})
-      |> Map.take([:heading, :route])
-
-    position = Car.position(car, NaiveDateTime.add(car.route.started, 120, :second))
-    assert position.lat > 61.0896213
-    assert position.lat < 62.829182
-    assert position.lng > 16.0896213
-    assert position.lng < 17.05948
-  end
-
-  test "finds closest cars for new bookings" do
+@tag :skip
+test "finds closest cars for new bookings" do
     #  candidates, pickupOffers, pickup
     candidates =
       File.stream!("test/candidates.json")
       |> Jaxon.Stream.query([:root, :all])
-      |> Enum.map(fn %{"booking" => booking, "cars" => cars} ->
+      |> Enum.to_list() |> Poison.encode!() |> Poison.decode!(%{keys: :atoms}) ## hack to convert strings to atom from jaxon
+      |> Enum.map(fn %{booking: booking, cars: cars} ->
         %{
           booking: booking,
           cars:
             cars
-            |> Enum.map(fn %{"id" => id, "positions" => [position | [heading | _rest]]} ->
-              Car.make(%{"id" => id, "position" => position, "heading" => heading})
+            |> Enum.map(fn %{id: id, positions: [position | [heading | _rest]]} ->
+              Car.make(%{id: id, position: position, heading: heading})
             end)
         }
       end)
@@ -107,14 +77,15 @@ defmodule SimulatorTest do
     assert length(cars) == 2
   end
 
-  # test "find candidates when a booking comes in" do
-  #   queue = "bookings"
-  #   {:ok, connection} = AMQP.Connection.open()
-  #   {:ok, channel} = AMQP.Channel.open(connection)
-  #   AMQP.Queue.declare(channel, queue)
+  @tag :skip
+  test "find candidates when a booking comes in" do
+    queue = "bookings"
+    {:ok, connection} = AMQP.Connection.open()
+    {:ok, channel} = AMQP.Channel.open(connection)
+    AMQP.Queue.declare(channel, queue)
 
-  #   AMQP.Queue.subscribe(channel, queue, fn booking, _meta ->
-  #     IO.puts("Received a booking: #{booking}")
-  #   end)
-  # end
+    AMQP.Queue.subscribe(channel, queue, fn booking, _meta ->
+      IO.puts("Received a booking: #{booking}")
+    end)
+  end
 end

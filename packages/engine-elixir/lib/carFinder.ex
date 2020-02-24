@@ -25,6 +25,7 @@ defmodule CarFinder do
   end
 
   @doc """
+
   Calculate birds distance (haversine) from a cars current position to a booking
   """
   def distance(car, booking) do
@@ -54,6 +55,7 @@ defmodule CarFinder do
         booking.destination,
         car.heading
       ])
+
       |> (fn %{code: "Ok", trips: [detour | _rest]} ->
             %{
               car: car,

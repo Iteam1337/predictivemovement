@@ -22,6 +22,11 @@ defmodule Address do
   """
   def parse(nil, position) do
     random(position)
+    Osrm.nearest(%{lon: lon, lat: lat})
+    |> Map.get("waypoints")
+    |> List.first()
+    |> Map.get("location")
+    |> (fn [lon, lat] -> %{lon: lon, lat: lat} end).()
   end
 
 end

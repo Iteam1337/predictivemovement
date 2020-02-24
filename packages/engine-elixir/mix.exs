@@ -1,20 +1,23 @@
-defmodule Hellowordl.MixProject do
+defmodule Engine.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :hellowordl,
+      app: :engine,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      env: [amqp_host: "localhost"],
+      extra_applications: [:logger],
+      mod: {Engine, []}
     ]
   end
 
@@ -25,10 +28,17 @@ defmodule Hellowordl.MixProject do
       {:amqp, "~> 1.0"},
       {:flow, "~> 1.0.0"},
       {:jaxon, "~> 1.0"},
-      {:mix_test_watch, "~> 0.8", only: :dev, only: :test},
+      {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
       {:httpoison, "~> 1.6"},
       {:poison, "~> 3.1"},
       {:polyline, "~> 1.2"}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: "test --no-start",
+      "test.watch": "test.watch --no-start",
     ]
   end
 end

@@ -38,7 +38,7 @@ defmodule Interpolate do
     progress = (current.passed - time) / current.duration
 
     %{
-      lng: current.coordinates.lng + (next.coordinates.lng - current.coordinates.lng) * progress,
+      lon: current.coordinates.lon + (next.coordinates.lon - current.coordinates.lon) * progress,
       lat: current.coordinates.lat + (next.coordinates.lat - current.coordinates.lat) * progress
     }
   end

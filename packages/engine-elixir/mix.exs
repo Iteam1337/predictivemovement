@@ -37,8 +37,9 @@ defmodule Engine.MixProject do
 
   defp aliases do
     [
-      test: "test --no-start"
-      # "test.watch": "test.watch --no-start",
+      start: "run --no-halt",
+      test: "test --no-start",
+      "test.watch": "test.watch --no-start"
     ]
   end
 end

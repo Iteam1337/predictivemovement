@@ -2,6 +2,6 @@ defmodule Fetch do
   def json(url) do
     HTTPoison.get!(url)
     |> Map.get(:body)
-    |> Poison.decode!()
+    |> Poison.decode!(%{keys: :atoms})
   end
 end

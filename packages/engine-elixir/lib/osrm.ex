@@ -1,7 +1,7 @@
 defmodule Osrm do
   @osrmBase "http://osrm.pm.iteamdev.se/"
 
-  def nearest(lon, lat) do
+  def nearest(%{lon: lon, lat: lat}) do
     Fetch.json("#{@osrmBase}nearest/v1/driving/#{lon},#{lat}")
   end
 
@@ -23,20 +23,25 @@ defmodule Osrm do
   # },
   def route(from, to) do
     url =
-      "#{@osrmBase}route/v1/driving/#{from["lon"]},#{from["lat"]};#{to["lon"]},#{to["lat"]}?steps=true&alternatives=false&overview=full&annotations=true"
+      "#{@osrmBase}route/v1/driving/#{from.lon},#{from.lat};#{to.lon},#{to.lat}?steps=true&alternatives=false&overview=full&annotations=true"
 
     Fetch.json(url)
-    |> Map.get("routes")
+    |> Map.get(:routes)
     |> Enum.sort(fn a, b -> a.duration < b.duration end)
     |> List.first()
+    |> Map.update!(:geometry, &decode_polyline/1)
+  end
 
-    # |> Map.get("geometry")
+  def decode_polyline(geometry) do
+    %{
+      coordinates: Polyline.decode(geometry) |> Enum.map(fn {lon, lat} -> %{lon: lon, lat: lat} end)
+    }
   end
 
   def trip(positions) do
     coordinates =
       positions
-      |> Enum.map(fn %{"lat" => lat, "lon" => lon} -> Enum.join([lon, lat], ",") end)
+      |> Enum.map(fn %{lat: lat, lon: lon} -> Enum.join([lon, lat], ",") end)
       |> Enum.join(";")
 
     url =

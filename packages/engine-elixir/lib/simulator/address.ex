@@ -3,7 +3,7 @@ defmodule Address do
     lon = lon + (Enum.random(0..100) - 50) / 200
     lat = lat + (Enum.random(0..100) - 50) / 500
 
-    Osrm.nearest(lon, lat)
+    Osrm.nearest(%{lon: lon, lat: lat})
     |> Map.get("waypoints")
     |> List.first()
     |> Map.get("location")

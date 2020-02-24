@@ -13,14 +13,6 @@ defmodule Hellowordl do
 
   """
 
-  def hello do
-    :world
-  end
-
-  def array do
-    []
-  end
-
   # const randomPoint = {
   #   lon: start.lon + (Math.random() - 0.5) / 2,
   #   lat: start.lat + (Math.random() - 0.5) / 5,
@@ -37,19 +29,10 @@ defmodule Hellowordl do
   #   return randomPoint
   # })
 
-  def positions do
-    File.stream!("data/positions.json")
-    |> Jaxon.Stream.query([:root, :all])
-    # |> Enum.filter(fn x -> x["lat"] > 52 end)
-    |> Stream.map(&osrm_address/1)
-    |> Enum.to_list()
-  end
-
   def osrm_address(%{"lon" => lon, "lat" => lat}) do
     IO.inspect({lon, lat}, label: "Sending to OSRM")
 
     HTTPoison.get!("http://osrm.pm.iteamdev.se/nearest/v1/driving/#{lon},#{lat}")
-    |> IO.inspect(label: "OSRM response")
     |> Map.get(:body)
     |> Poison.decode!()
     |> Map.get("waypoints")

@@ -16,7 +16,7 @@ defmodule Engine.MixProject do
   def application do
     [
       env: [amqp_host: "localhost"],
-      extra_applications: [:logger],
+      extra_applications: [:lager, :logger],
       mod: {Engine, []}
     ]
   end
@@ -37,8 +37,8 @@ defmodule Engine.MixProject do
 
   defp aliases do
     [
-      test: "test --no-start",
-      "test.watch": "test.watch --no-start",
+      test: "test --no-start"
+      # "test.watch": "test.watch --no-start",
     ]
   end
 end

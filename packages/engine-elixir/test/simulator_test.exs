@@ -14,7 +14,7 @@ defmodule SimulatorTest do
   #   # assert Simulator.positions() == [%{"lat" => 59, "lon" => 18}]
   #   Simulator.positions() |> List.first() |> is_tuple() |> assert
   # end
-
+  @tag :skip
   test "navigateTo responds with a car and route" do
     updated_heading =
       Car.make(1337, %{lat: 61.829182, lon: 16.0896213}, false)
@@ -48,7 +48,7 @@ test "sends booking to Rabbitmq" do
   |> Enum.map(fn t -> MQ.publish("bookings", t) end)
 end
 
-
+@tag :skip
 test "finds closest cars for new bookings" do
     #  candidates, pickupOffers, pickup
     candidates =

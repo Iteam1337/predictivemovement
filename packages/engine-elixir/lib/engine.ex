@@ -3,16 +3,18 @@ defmodule Engine do
   @center %{lat: 61.829182, lon: 16.0896213}
 
   def start(_type, _args) do
-    # cars = CarsSimulator.simulate(@center, 5)
+    cars = CarsSimulator.simulate(@center, 10)
+
     bookings = BookingSimulator.simulate(@center, 1)
 
     # candidates =
     #   bookings
     #   |> Enum.map(fn booking -> %{booking: booking, cars: CarFinder.find(booking, cars)} end)
 
-    # cars
-    # |> IO.inspect(label: "Found new car")
-    # |> Enum.map(fn car -> MQ.publish("cars", car) end)
+    cars
+    |> IO.inspect(label: "Found new car")
+    |> Stream.map(fn car -> MQ.publish("cars", car) end)
+    |> Enum.to_list()
 
     bookings
     |> IO.inspect(label: "Found new booking")

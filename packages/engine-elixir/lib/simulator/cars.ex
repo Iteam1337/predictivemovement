@@ -57,10 +57,16 @@ defmodule CarsSimulator do
   #   |> Enum.to_list()
 
   def simulate(center, size) do
-    1..size
-    |> Flow.from_enumerable()
-    |> Flow.partition()
-    |> Flow.map(fn x -> generateRandomCar(x, center) end)
-    |> Enum.to_list()
+    cars =
+      1..size
+      |> Flow.from_enumerable()
+      |> Flow.partition()
+      |> Flow.map(fn x -> generateRandomCar(x, center) end)
+      |> Enum.to_list()
+
+    Stream.interval(1000)
+    |> Stream.flat_map(fn _ -> cars end)
+    |> Stream.map(fn car -> Map.put(car, :position, Car.position(car)) end)
+    |> Stream.map(fn car -> Map.take(car, [:position, :id]) end)
   end
 end

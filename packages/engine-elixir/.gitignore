@@ -26,3 +26,4 @@ hellowordl-*.tar
 
 # Who even cares about logs
 *.log
+log

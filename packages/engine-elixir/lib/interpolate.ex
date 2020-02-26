@@ -35,7 +35,7 @@ defmodule Interpolate do
   """
   def get_position_from_route(route, time) do
     [current, next] = get_future_segments_from_route(route, time) |> Enum.slice(0..1)
-    progress = (current.passed - time) / current.duration
+    progress = (time - current.passed + current.duration ) / current.duration
 
     %{
       lon: current.coordinates.lon + (next.coordinates.lon - current.coordinates.lon) * progress,

@@ -35,6 +35,5 @@ defmodule BookingSimulator do
     Stream.interval(5000)
     |> Stream.map(fn x -> generate_random_booking(x, center) end)
 
-    # :timer.apply_interval(1000, IO, :puts, ["weeeee"])
   end
 end

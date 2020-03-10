@@ -1,25 +1,22 @@
 defmodule Engine do
   use Application
-  @center %{lat: 61.829182, lon: 16.0896213}
+
+  defp score(booking, car, detour) do
+    %{booking: booking, car: car, score: detour.diff}
+  end
 
   def start(_type, _args) do
-    cars = CarsSimulator.simulate(@center, 10)
+    cars = Routes.init() |> Enum.take(5)
 
-    bookings = BookingSimulator.simulate(@center, 1)
-
-    # candidates =
-    #   bookings
-    #   |> Enum.map(fn booking -> %{booking: booking, cars: CarFinder.find(booking, cars)} end)
-
-    cars
-    |> IO.inspect(label: "Found new car")
-    |> Stream.map(fn car -> MQ.publish("cars", car) end)
-    |> Enum.to_list()
-
-    bookings
-    |> IO.inspect(label: "Found new booking")
-    |> Stream.map(fn booking -> MQ.publish("bookings", booking) end)
-    |> Enum.to_list()
+    BookingRequests.init()
+    |> Stream.flat_map(fn booking ->
+      CarFinder.find(booking, cars)
+    end)
+    |> Stream.map(fn %{booking: booking, car: car, detour: detour} ->
+      score(booking, car, detour)
+    end)
+    |> Stream.map(fn candidates -> MQ.publish("candidates", candidates) end)
+    |> Stream.run()
 
     # candidates
     # |> IO.inspect(label: "Found new candidateç")

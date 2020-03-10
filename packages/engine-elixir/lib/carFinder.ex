@@ -66,6 +66,7 @@ defmodule CarFinder do
     |> Enum.map(fn %{car: car, detour: detour} ->
       %{
         car: car,
+        booking: booking,
         detour: Map.put(detour, :diff, detour.distance - car.route.distance)
       }
     end)

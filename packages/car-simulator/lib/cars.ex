@@ -21,6 +21,6 @@ defmodule Cars do
     Stream.interval(1000)
     |> Stream.flat_map(fn _ -> cars end)
     |> Stream.map(fn car -> Map.put(car, :position, Car.position(car)) end)
-    |> Stream.map(fn car -> Map.take(car, [:position, :id]) end)
+    |> Stream.map(fn car -> Map.take(car, [:position, :id, :heading]) end)
   end
 end

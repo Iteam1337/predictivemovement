@@ -1,0 +1,119 @@
+2020-03-10 14:49:18 =CRASH REPORT====
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.1449.0>
+    registered_name: []
+    exception exit: {{bad_return,{{'Elixir.BookingSimulator',start,[normal,[]]},{'EXIT',{undef,[{'Elixir.Bookings',simulate,[#{lat => 61.829182,lon => 16.0896213},1],[]},{'Elixir.BookingSimulator',start,2,[{file,"lib/booking_simulator.ex"},{line,8}]},{application_master,start_it_old,4,[{file,"application_master.erl"},{line,277}]}]}}}},[{application_master,init,4,[{file,"application_master.erl"},{line,138}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,249}]}]}
+    ancestors: [<0.1448.0>]
+    message_queue_len: 1
+    messages: [{'EXIT',<0.1450.0>,normal}]
+    links: [<0.1448.0>,<0.43.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 610
+    stack_size: 27
+    reductions: 224
+  neighbours:
+2020-03-10 14:49:50 =CRASH REPORT====
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.336.0>
+    registered_name: []
+    exception exit: {{bad_return,{{'Elixir.BookingSimulator',start,[normal,[]]},{'EXIT',{{badmatch,{error,econnrefused}},[{'Elixir.MQ',publish,2,[{file,"lib/mq.ex"},{line,3}]},{'Elixir.Stream','-map/2-fun-0-',4,[{file,"lib/stream.ex"},{line,572}]},{'Elixir.Stream',do_unfold,4,[{file,"lib/stream.ex"},{line,1540}]},{'Elixir.Enumerable.Stream',do_each,4,[{file,"lib/stream.ex"},{line,1609}]},{'Elixir.Stream',run,1,[{file,"lib/stream.ex"},{line,649}]},{'Elixir.BookingSimulator',start,2,[{file,"lib/booking_simulator.ex"},{line,10}]},{application_master,start_it_old,4,[{file,"application_master.erl"},{line,277}]}]}}}},[{application_master,init,4,[{file,"application_master.erl"},{line,138}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,249}]}]}
+    ancestors: [<0.335.0>]
+    message_queue_len: 1
+    messages: [{'EXIT',<0.337.0>,normal}]
+    links: [<0.335.0>,<0.43.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 987
+    stack_size: 27
+    reductions: 277
+  neighbours:
+2020-03-10 14:50:23 =CRASH REPORT====
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.381.0>
+    registered_name: []
+    exception exit: {{bad_return,{{'Elixir.BookingSimulator',start,[normal,[]]},{'EXIT',{{badmatch,{error,econnrefused}},[{'Elixir.MQ',publish,2,[{file,"lib/mq.ex"},{line,3}]},{'Elixir.Stream','-map/2-fun-0-',4,[{file,"lib/stream.ex"},{line,572}]},{'Elixir.Stream',do_unfold,4,[{file,"lib/stream.ex"},{line,1540}]},{'Elixir.Enumerable.Stream',do_each,4,[{file,"lib/stream.ex"},{line,1609}]},{'Elixir.Stream',run,1,[{file,"lib/stream.ex"},{line,649}]},{'Elixir.BookingSimulator',start,2,[{file,"lib/booking_simulator.ex"},{line,10}]},{application_master,start_it_old,4,[{file,"application_master.erl"},{line,277}]}]}}}},[{application_master,init,4,[{file,"application_master.erl"},{line,138}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,249}]}]}
+    ancestors: [<0.380.0>]
+    message_queue_len: 1
+    messages: [{'EXIT',<0.382.0>,normal}]
+    links: [<0.380.0>,<0.43.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 987
+    stack_size: 27
+    reductions: 277
+  neighbours:
+2020-03-10 14:50:40 =CRASH REPORT====
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.324.0>
+    registered_name: []
+    exception exit: {{bad_return,{{'Elixir.BookingSimulator',start,[normal,[]]},{'EXIT',{{badmatch,{error,econnrefused}},[{'Elixir.MQ',publish,2,[{file,"lib/mq.ex"},{line,3}]},{'Elixir.Stream','-map/2-fun-0-',4,[{file,"lib/stream.ex"},{line,572}]},{'Elixir.Stream',do_unfold,4,[{file,"lib/stream.ex"},{line,1540}]},{'Elixir.Enumerable.Stream',do_each,4,[{file,"lib/stream.ex"},{line,1609}]},{'Elixir.Stream',run,1,[{file,"lib/stream.ex"},{line,649}]},{'Elixir.BookingSimulator',start,2,[{file,"lib/booking_simulator.ex"},{line,10}]},{application_master,start_it_old,4,[{file,"application_master.erl"},{line,277}]}]}}}},[{application_master,init,4,[{file,"application_master.erl"},{line,138}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,249}]}]}
+    ancestors: [<0.323.0>]
+    message_queue_len: 1
+    messages: [{'EXIT',<0.325.0>,normal}]
+    links: [<0.323.0>,<0.43.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 987
+    stack_size: 27
+    reductions: 277
+  neighbours:
+2020-03-10 14:52:20 =CRASH REPORT====
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.324.0>
+    registered_name: []
+    exception exit: {{bad_return,{{'Elixir.BookingSimulator',start,[normal,[]]},{'EXIT',{{badmatch,{error,{socket_closed_unexpectedly,'connection.start'}}},[{'Elixir.MQ',publish,2,[{file,"lib/mq.ex"},{line,3}]},{'Elixir.Stream','-map/2-fun-0-',4,[{file,"lib/stream.ex"},{line,572}]},{'Elixir.Stream',do_unfold,4,[{file,"lib/stream.ex"},{line,1540}]},{'Elixir.Enumerable.Stream',do_each,4,[{file,"lib/stream.ex"},{line,1609}]},{'Elixir.Stream',run,1,[{file,"lib/stream.ex"},{line,649}]},{'Elixir.BookingSimulator',start,2,[{file,"lib/booking_simulator.ex"},{line,10}]},{application_master,start_it_old,4,[{file,"application_master.erl"},{line,277}]}]}}}},[{application_master,init,4,[{file,"application_master.erl"},{line,138}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,249}]}]}
+    ancestors: [<0.323.0>]
+    message_queue_len: 1
+    messages: [{'EXIT',<0.325.0>,normal}]
+    links: [<0.323.0>,<0.43.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 987
+    stack_size: 27
+    reductions: 277
+  neighbours:
+2020-03-10 15:03:56 =CRASH REPORT====
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.381.0>
+    registered_name: []
+    exception exit: {{bad_return,{{'Elixir.BookingSimulator',start,[normal,[]]},{'EXIT',{{badmatch,{error,econnrefused}},[{'Elixir.MQ',publish,2,[{file,"lib/mq.ex"},{line,3}]},{'Elixir.Stream','-map/2-fun-0-',4,[{file,"lib/stream.ex"},{line,572}]},{'Elixir.Stream',do_unfold,4,[{file,"lib/stream.ex"},{line,1540}]},{'Elixir.Enumerable.Stream',do_each,4,[{file,"lib/stream.ex"},{line,1609}]},{'Elixir.Stream',run,1,[{file,"lib/stream.ex"},{line,649}]},{'Elixir.BookingSimulator',start,2,[{file,"lib/booking_simulator.ex"},{line,10}]},{application_master,start_it_old,4,[{file,"application_master.erl"},{line,277}]}]}}}},[{application_master,init,4,[{file,"application_master.erl"},{line,138}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,249}]}]}
+    ancestors: [<0.380.0>]
+    message_queue_len: 1
+    messages: [{'EXIT',<0.382.0>,normal}]
+    links: [<0.380.0>,<0.43.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 987
+    stack_size: 27
+    reductions: 277
+  neighbours:
+2020-03-10 15:04:35 =CRASH REPORT====
+  crasher:
+    initial call: application_master:init/4
+    pid: <0.324.0>
+    registered_name: []
+    exception exit: {{bad_return,{{'Elixir.BookingSimulator',start,[normal,[]]},{'EXIT',{{badmatch,{error,{socket_closed_unexpectedly,'connection.start'}}},[{'Elixir.MQ',publish,2,[{file,"lib/mq.ex"},{line,3}]},{'Elixir.Stream','-map/2-fun-0-',4,[{file,"lib/stream.ex"},{line,572}]},{'Elixir.Stream',do_unfold,4,[{file,"lib/stream.ex"},{line,1540}]},{'Elixir.Enumerable.Stream',do_each,4,[{file,"lib/stream.ex"},{line,1609}]},{'Elixir.Stream',run,1,[{file,"lib/stream.ex"},{line,649}]},{'Elixir.BookingSimulator',start,2,[{file,"lib/booking_simulator.ex"},{line,10}]},{application_master,start_it_old,4,[{file,"application_master.erl"},{line,277}]}]}}}},[{application_master,init,4,[{file,"application_master.erl"},{line,138}]},{proc_lib,init_p_do_apply,3,[{file,"proc_lib.erl"},{line,249}]}]}
+    ancestors: [<0.323.0>]
+    message_queue_len: 1
+    messages: [{'EXIT',<0.325.0>,normal}]
+    links: [<0.323.0>,<0.43.0>]
+    dictionary: []
+    trap_exit: true
+    status: running
+    heap_size: 987
+    stack_size: 27
+    reductions: 277
+  neighbours:

@@ -59,10 +59,10 @@
 - can you easily just build and deploy like we do for a Node app
     ex. for Node app:
       - Docker image
-      a: yes. There is an official docker image FROM elixir:latest. Also there is a mix package called mix-docker which creates and handles the build and publish process if we want to. 
+      a: yes. There is an official docker image FROM elixir:latest. Also there is a mix package called mix-docker which creates and handles the build and publish process if we want to.
 
       - Travis CI/Github actions builds the image and deploy it in some kubernetes cluster
-      a: we should explore this more. 
+      a: we should explore this more.
 
 - do you have to download extensions or are they compiled artifact?
   a: all dependencies are compiled and placed under _build dir when you run `mix release` - the end result is a cli  which has these options available from start:
@@ -98,3 +98,11 @@
 
 - how to we handle the car position in Elixir since things are immutable and you can't update the position on a timer
   a: instead of pushing positions we should pull the positions whenever someone connects. this is how lazy streams work anyway so it makes more sence to do it that way.
+
+---
+
+### Moving forward towards Candidates
+- Move bookings and cars simulator into their own Elixir apps
+- Implement simple Booking Request and Routes interfaces as Streams
+- Connect simulators the easiest way to the Booking Request and Routes streams
+- Combine results from streams into car finder

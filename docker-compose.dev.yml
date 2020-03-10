@@ -7,9 +7,17 @@ services:
       - 5672:5672
       - 15672:15672
 
-  engine-elixir:
-    build: ./packages/engine-elixir
+  car-simulator:
+    build: ./packages/car-simulator
     environment:
       AMQP_HOST: amqp://rabbitmq
     depends_on:
       - rabbitmq
+
+  booking-simulator:
+    build: ./packages/booking-simulator
+    environment:
+      AMQP_HOST: amqp://rabbitmq
+    depends_on:
+      - rabbitmq
+

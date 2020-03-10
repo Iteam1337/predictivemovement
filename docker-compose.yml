@@ -6,17 +6,3 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-
-  car-simulator:
-    build: ./packages/car-simulator
-    environment:
-      AMQP_HOST: amqp://rabbitmq
-    depends_on:
-      - rabbitmq
-
-  # engine-elixir:
-  #   build: ./packages/engine-elixir
-  #   environment:
-  #     AMQP_HOST: amqp://rabbitmq
-  #   depends_on:
-  #     - rabbitmq

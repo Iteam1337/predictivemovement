@@ -1,9 +1,9 @@
-defmodule CarSimulator.MixProject do
+defmodule BookingSimulator.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :car_simulator,
+      app: :booking_simulator,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
@@ -15,9 +15,9 @@ defmodule CarSimulator.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      env: [amqp_host: "amqp://localhost", queue: "simulated_cars"],
+      env: [amqp_host: "amqp://localhost", queue: "simulated_bookings"],
       extra_applications: [:lager, :logger],
-      mod: {CarSimulator, []}
+      mod: {BookingSimulator, []}
     ]
   end
 

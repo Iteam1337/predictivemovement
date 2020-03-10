@@ -6,7 +6,9 @@ defmodule BookingSimulator do
     children = []
 
     Bookings.simulate(@center, 1)
-    |> Stream.map(fn booking -> MQ.publish("simulated_bookings", booking) end)
+    |> Stream.map(fn booking ->
+      MQ.publish(Application.fetch_env!(:booking_simulator, :queue), booking)
+    end)
     |> Stream.run()
 
     Supervisor.start_link(children, strategy: :one_for_one)

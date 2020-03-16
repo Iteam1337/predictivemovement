@@ -16,7 +16,10 @@ defmodule BookingSimulator do
   def generate_random_booking(id, center) do
     departure = Address.random(center)
     destination = Address.random(center)
+    generate_booking(id, departure, destination)
+  end
 
+  def generate_booking(id, departure, destination) do
     %{
       id: id,
       bookingDate: DateTime.utc_now(),
@@ -26,14 +29,13 @@ defmodule BookingSimulator do
   end
 
   def simulate(center, size) do
-    # 1..size
-    # |> Flow.from_enumerable()
-    # |> Flow.partition()
-    # |> Flow.map(fn x -> generate_random_booking(x, center) end)
-    # |> Enum.to_list()
+    1..size
+    |> Flow.from_enumerable()
+    |> Flow.partition()
+    |> Flow.map(fn x -> generate_random_booking(x, center) end)
+    |> Enum.to_list()
 
-    Stream.interval(5000)
-    |> Stream.map(fn x -> generate_random_booking(x, center) end)
-
+    # Stream.interval(5000)
+    # |> Stream.map(fn x -> generate_random_booking(x, center) end)
   end
 end

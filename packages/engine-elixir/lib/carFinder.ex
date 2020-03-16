@@ -28,8 +28,8 @@ defmodule CarFinder do
 
   Calculate birds distance (haversine) from a cars current position to a booking
   """
-  def distance(car, booking) do
-    distance = haversine(Car.position(car), booking.departure)
+  def distance(car, %{departure: departure}) do
+    distance = haversine(Car.position(car), departure)
     %{car: car, distance: distance}
   end
 
@@ -53,9 +53,8 @@ defmodule CarFinder do
         car.position,
         booking.departure,
         booking.destination,
-        car.heading
+        car.heading || car.position
       ])
-
       |> (fn %{code: "Ok", trips: [detour | _rest]} ->
             %{
               car: car,
@@ -67,7 +66,7 @@ defmodule CarFinder do
       %{
         car: car,
         booking: booking,
-        detour: Map.put(detour, :diff, detour.distance - car.route.distance)
+        detour: Score.calculate(booking, car, detour)
       }
     end)
     |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)

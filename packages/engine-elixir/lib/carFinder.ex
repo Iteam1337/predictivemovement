@@ -66,10 +66,13 @@ defmodule CarFinder do
       %{
         car: car,
         booking: booking,
+        # detour: Map.put(detour, :diff, Score.calculate(booking, car, detour))
         detour: Score.calculate(booking, car, detour)
       }
     end)
-    |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)
+    |> Enum.sort(fn a, b -> a.detour < b.detour end)
+
+    # |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)
   end
 
   @doc """

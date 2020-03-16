@@ -100,25 +100,78 @@ defmodule SimulatorTest do
     address = Address.random(hub)
 
     hub_bookings =
-      0..4
+      1..5
       |> Enum.map(fn id -> BookingSimulator.generate_booking(id, hub, Address.random(hub)) end)
 
     return_bookings =
-      5..10
+      6..10
       |> Enum.map(fn id -> BookingSimulator.generate_booking(id, Address.random(hub), hub) end)
 
     bookings = Enum.concat(hub_bookings, return_bookings)
 
+    bookings
+    |> Enum.map(fn t -> MQ.publish("bookings", t) end)
+
     cars =
-      0..5
+      1..5
       |> Enum.map(&Car.make(&1, hub, false))
-      |> Enum.take(2)
+
+    cars |> Enum.map(fn t -> MQ.publish("cars", t) end)
 
     # {car: 1, booking: 1}, {car: 2, booking: 2}..]
+    # 5 cars at the hub
+    # 5 packages at the hub going to random directions
+    # 5 packages from random direction coming back to the hub
+    # if every car should deliver 1 package from the hub and then pickup 1 package back to the hub
 
-    assignments =
-      bookings
-      |> Enum.take(1)
-      |> Enum.map(fn booking -> CarFinder.find(booking, cars) end)
+    # for every car calculate score of picking up any package of 0..4 and deliver it to the random address
+    # and then go and pickup any package of 5..10 and return it to the hub
+
+    # or find the best booking pairs where booking 1 comes from 0..4 and booking 2 comes from 5..10
+    # so for every booking from 0..4 calculate distance to every booking from 5..10
+
+    bookings = [1, 2, 3, 4, 5] |> Enum.map(&%{id: &1})
+    cars = [6, 7, 8, 9, 10] |> Enum.map(&%{id: &1})
+
+    bookings
+    |> Enum.reduce(%{cars: cars, assignments: []}, fn booking, result ->
+      # IO.inspect(result, label: "result")
+      candidates = CarFinder.find(booking, result.cars)
+      bestCar = Car.assign(candidates[0].car, booking)
+      newCars = cars |> Enum.map(fn car -> car.id == bestCar.id ? bestCar : car)
+
+      %{cars: newCars, assignments: result.assignments ++ [%{booking: booking, car: bestCar, score: candidates[0].score}]}
+    end)
+    |> Enum.map(Score.calculateTotalScore)
+    |> Enum.map(&IO.inspect(&1, label: "assignment"))
+
+    #     assignments =
+    #       bookings
+    #       |> Enum.reduce(fn booking ->
+    #         CarFinder.find(booking, cars)
+
+    # bookings: bookings-booking, #[booking | remainder]
+    # cars: cars + (car + busy + booking + return),
+    # assignments: {bookingId: booking.id, car: car.id}
+
+    # %{
+    #   booking: %{
+    #     bookingDate: ~U[2020-03-16 15:28:41.803026Z],
+    #     departure: %{lat: 61.757418, lon: 15.818581},
+    #     destination: %{lat: 61.820701, lon: 16.057731},
+    #     id: 10
+    #   },
+    #   car: %Car{
+    #     busy: false,
+    #     heading: nil,
+    #     id: 2,
+    #     position: %{lat: 61.820701, lon: 16.057731},
+    #     route: nil
+    #   },
+    #   detour: 35108.2
+    # }
+
+    # end)
+    # |> Enum.map(&IO.inspect(&1, label: "assignment"))
   end
 end

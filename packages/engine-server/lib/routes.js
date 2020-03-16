@@ -62,7 +62,7 @@ function register(io) {
 
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto(booking => bookingsCache.set(booking.id, booking))
-      .batchWithTimeOrCount(1000, 5)
+      .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each(bookings => socket.emit('bookings', bookings))
 

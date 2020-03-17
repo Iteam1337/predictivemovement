@@ -95,6 +95,7 @@ defmodule SimulatorTest do
     end)
   end
 
+  # @tag :skip
   test "generates bookings at SNX hub" do
     hub = %{lat: 61.820701, lon: 16.057731}
     address = Address.random(hub)
@@ -113,20 +114,40 @@ defmodule SimulatorTest do
       1..5
       |> Enum.map(&Car.make(&1, hub, false))
 
-    bookings
-    |> Enum.reduce(%{cars: cars, assignments: []}, fn booking, result ->
-      candidates = CarFinder.find(booking, result.cars)
-      bestCar = Car.assign(candidates[0].car, booking)
-      newCars = cars |> Enum.map(fn car -> car.id == bestCar.id ? bestCar : car)
+    # bookings
+    # |> Enum.reduce(%{cars: cars, assignments: []}, fn booking, result ->
+    #   candidates = CarFinder.find(booking, result.cars)
+    #   bestCar = Car.assign(candidates[0].car, booking)
+    #   newCars = cars |> Enum.map(fn car -> car.id == bestCar.id ? bestCar : car)
 
-      %{cars: newCars, assignments: result.assignments ++ [%{booking: booking, car: bestCar, score: candidates[0].score}]}
+    #   %{cars: newCars, assignments: result.assignments ++ [%{booking: booking, car: bestCar, score: candidates[0].score}]}
+    # end)
+    # |> Enum.map(Score.calculateTotalScore)
+    # |> Enum.map(&IO.inspect(&1, label: "assignment"))
+
+    bookings
+    |> Enum.take(2)
+    |> Enum.reduce(%{cars: cars, assignments: []}, fn booking, result ->
+      [candidate | _rest] = CarFinder.find(booking, result.cars)
+      bestCar = Car.assign(candidate)
+
+      newCars =
+        cars
+        |> Enum.map(fn car ->
+          if car.id == bestCar.id, do: bestCar, else: car
+        end)
+
+      %{
+        cars: newCars,
+        assignments:
+          result.assignments ++ [%{booking: booking, car: bestCar, score: candidate.score}]
+      }
     end)
-    |> Enum.map(Score.calculateTotalScore)
+    # |> Enum.map(Score.calculateTotalScore())
     |> Enum.map(&IO.inspect(&1, label: "assignment"))
 
-
-    bookings |> Enum.map(fn t -> MQ.publish("bookings", t) end)
-    cars |> Enum.map(fn t -> MQ.publish("cars", t) end)
+    # bookings |> Enum.map(fn t -> MQ.publish("bookings", t) end)
+    # cars |> Enum.map(fn t -> MQ.publish("cars", t) end)
 
     # assignments =
     # bookings

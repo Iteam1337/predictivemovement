@@ -19,27 +19,7 @@ bot.start(ctx => {
   const user = ctx.update.message.from
 
   ctx.reply(
-    `Welcome ${user.first_name} ${user.last_name}. Press the "share" button to the left of the message input field to share your location! :)`,
-    {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Development',
-              callback_data: 'development',
-            },
-            {
-              text: 'Music',
-              callback_data: 'music',
-            },
-            {
-              text: 'Cute monkeys',
-              callback_data: 'cute-monkeys',
-            },
-          ],
-        ],
-      },
-    }
+    `Welcome ${user.first_name} ${user.last_name}. Press the "share" button to the left of the message input field to share your location! :)`
   )
 })
 
@@ -79,7 +59,7 @@ bot.on('edited_message', ctx => {
   const message = {
     username,
     id: msg.from.id,
-    chatId: ctx.message.chat.id,
+    chatId: msg.chat.id,
     location,
     date: Date(msg.edit_date),
   }
@@ -109,29 +89,31 @@ open
   .then(ch =>
     ch.assertQueue(SUGGESTED_BOOKING_QUEUE).then(ok =>
       ch.consume(SUGGESTED_BOOKING_QUEUE, msg => {
-        console.log(msg.content.toString())
         if (msg !== null) {
           const parsedMessage = JSON.parse(msg.content.toString())
 
-          bot.telegram.sendMessage(parsedMessage.chatId, 'hej', {
-            one_time_keyboard: true,
-            reply_markup: {
-              keyboard: [
-                [
-                  {
-                    text: 'Accept',
-                    callback_data: 'accept',
-                  },
+          bot.telegram.sendMessage(
+            parsedMessage.chatId,
+            'Du har fått ett bokningsförslag',
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: 'Godkänn',
+                      callback_data: 'accept',
+                    },
+                  ],
+                  [
+                    {
+                      text: 'Avvisa',
+                      callback_data: 'denial',
+                    },
+                  ],
                 ],
-                [
-                  {
-                    text: 'Denial',
-                    callback_data: 'denial',
-                  },
-                ],
-              ],
-            },
-          })
+              },
+            }
+          )
 
           ch.ack(msg)
         }
@@ -140,12 +122,13 @@ open
   )
   .catch(console.warn)
 
-bot.hears('accept', ctx => {
-  console.log('hears accept')
+bot.action('accept', (ctx, next) => {
+  console.log('ctx from accept', ctx)
+  return ctx.reply('bokningen är din!').then(() => next())
 })
 
-bot.action('accept', ctx => {
-  console.log('acdept action')
+bot.action('denial', (ctx, next) => {
+  return ctx.reply('Okej! Vi letar vidare :)').then(() => next())
 })
 
 bot.launch()

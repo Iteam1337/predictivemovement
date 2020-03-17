@@ -41,6 +41,7 @@ defmodule Car do
     relative_time = NaiveDateTime.diff(time, route.started)
     Interpolate.get_position_from_route(route, relative_time)
   end
+#offer_booking -> assign_booking -> assign_booking()
 
   def assign(%{car: car, booking: booking}) do
     navigateTo(car, booking.departure)

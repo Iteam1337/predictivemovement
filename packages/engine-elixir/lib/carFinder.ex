@@ -70,9 +70,8 @@ defmodule CarFinder do
         score: Score.calculate(booking, car, detour)
       }
     end)
-    |> Enum.sort(fn a, b -> a.score < b.score end)
-
     # |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)
+    |> Enum.sort(fn a, b -> a.score < b.score end)
   end
 
   @doc """

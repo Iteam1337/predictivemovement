@@ -77,8 +77,8 @@ defmodule SimulatorTest do
 
     [%{booking: _booking, cars: cars} | _rest] = candidates
 
-    candidates
-    |> Enum.map(fn t -> MQ.publish("candidates", t) end)
+    # candidates
+    # |> Enum.map(fn t -> MQ.publish("candidates", t) end)
 
     assert length(cars) == 2
   end
@@ -95,7 +95,6 @@ defmodule SimulatorTest do
     end)
   end
 
-  # @tag :skip
   test "generates bookings at SNX hub" do
     hub = %{lat: 61.820701, lon: 16.057731}
     address = Address.random(hub)
@@ -114,37 +113,18 @@ defmodule SimulatorTest do
       1..5
       |> Enum.map(&Car.make(&1, hub, false))
 
-    # bookings
-    # |> Enum.reduce(%{cars: cars, assignments: []}, fn booking, result ->
-    #   candidates = CarFinder.find(booking, result.cars)
-    #   bestCar = Car.assign(candidates[0].car, booking)
-    #   newCars = cars |> Enum.map(fn car -> car.id == bestCar.id ? bestCar : car)
-
-    #   %{cars: newCars, assignments: result.assignments ++ [%{booking: booking, car: bestCar, score: candidates[0].score}]}
-    # end)
-    # |> Enum.map(Score.calculateTotalScore)
-    # |> Enum.map(&IO.inspect(&1, label: "assignment"))
-
-    bookings
-    |> Enum.take(2)
-    |> Enum.reduce(%{cars: cars, assignments: []}, fn booking, result ->
-      [candidate | _rest] = CarFinder.find(booking, result.cars)
-      bestCar = Car.assign(candidate)
-
-      newCars =
-        cars
-        |> Enum.map(fn car ->
-          if car.id == bestCar.id, do: bestCar, else: car
-        end)
-
-      %{
-        cars: newCars,
-        assignments:
-          result.assignments ++ [%{booking: booking, car: bestCar, score: candidate.score}]
-      }
-    end)
-    # |> Enum.map(Score.calculateTotalScore())
-    |> Enum.map(&IO.inspect(&1, label: "assignment"))
+    Dispatch.evaluate(bookings, cars)
+    |> (fn %{cars: cars, assignments: assignments, score: score} ->
+          %{
+            assignments:
+              assignments
+              |> Enum.map(fn %{car: car, booking: booking, score: score} ->
+                %{carId: car.id, bookingId: booking.id, score: score}
+              end),
+            score: score
+          }
+        end).()
+    |> IO.inspect(label: "assignment")
 
     # bookings |> Enum.map(fn t -> MQ.publish("bookings", t) end)
     # cars |> Enum.map(fn t -> MQ.publish("cars", t) end)

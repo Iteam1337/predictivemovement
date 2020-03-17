@@ -19,7 +19,9 @@ defmodule Car do
     %Car{id: id, position: position, busy: busy}
   end
 
-  def navigateTo(car, heading) do
+  def navigateTo(car, heading), do: navigateTo(car, heading, [])
+
+  def navigateTo(car, heading, next) do
     route =
       Osrm.route(car.position, heading)
       |> Map.put(:started, NaiveDateTime.utc_now())
@@ -29,6 +31,9 @@ defmodule Car do
     car
     |> Map.put(:heading, heading)
     |> Map.put(:route, route)
+    |> Map.put(:next, next)
+
+    # |> Map.put(:routes, car.routes ++ [route])
   end
 
   def position(car), do: position(car, NaiveDateTime.utc_now())
@@ -41,10 +46,41 @@ defmodule Car do
     relative_time = NaiveDateTime.diff(time, route.started)
     Interpolate.get_position_from_route(route, relative_time)
   end
-#offer_booking -> assign_booking -> assign_booking()
+
+  # offer_booking -> assign_booking -> assign_booking()
 
   def assign(%{car: car, booking: booking}) do
     navigateTo(car, booking.departure)
     |> Map.put(:busy, true)
+  end
+
+  def calculateDetours(car, booking) do
+    detours =
+      ([car.position, car.heading] ++ car.next)
+
+      #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.820701, lon: 16.057731}]
+      #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.755934, lon: 15.972861}]
+      #  [%{lat: 61.755934, lon: 15.972861}, %{lat: 61.820701, lon: 16.057731}]
+
+
+      # car.bookings= [current, next | rest]
+
+      # returns pairs
+      |> Enum.chunk_every(2, 1, :discard)
+      |> Enum.map(fn x -> x |> Enum.map(fn y -> Map.take(y, [:lat, :lon]) end) |> IO.inspect() end)
+      |> Enum.map(fn [a | [b | _rest]] ->
+        Osrm.trip([
+          a,
+          booking.departure,
+          booking.destination,
+          b
+        ])
+        |> (fn %{code: "Ok", trips: [detour | _rest]} ->
+              %{
+                segment: [a, b] |> Enum.map(fn x -> Map.take(x, [:lat, :lon]) end),
+                score: Score.calculate(booking, car, detour)
+              }
+            end).()
+      end)
   end
 end

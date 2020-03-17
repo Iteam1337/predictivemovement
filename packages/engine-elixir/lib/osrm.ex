@@ -25,8 +25,6 @@ defmodule Osrm do
     url =
       "#{@osrmBase}route/v1/driving/#{from.lon},#{from.lat};#{to.lon},#{to.lat}?steps=true&alternatives=false&overview=full&annotations=true"
 
-    IO.inspect(url, label: "this is the url")
-
     Fetch.json(url)
     |> Map.get(:routes)
     |> Enum.sort(fn a, b -> a.duration < b.duration end)

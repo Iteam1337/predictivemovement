@@ -15,7 +15,7 @@ defmodule Engine.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      env: [amqp_host: "amqp://localhost"],
+      env: [amqp_host: "amqp://localhost", bookings_exchange: "bookings", cars_exchange: "cars"],
       extra_applications: [:lager, :logger],
       mod: {Engine, []}
     ]

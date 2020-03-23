@@ -7,7 +7,7 @@ defmodule BookingSimulator do
 
     Bookings.simulate(@center, 1)
     |> Stream.map(fn booking ->
-      MQ.publish(Application.fetch_env!(:booking_simulator, :queue), booking)
+      MQ.publish(Application.fetch_env!(:booking_simulator, :exchange), booking)
     end)
     |> Stream.run()
 

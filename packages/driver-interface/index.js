@@ -4,7 +4,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 var open = require('amqplib').connect('amqp://localhost')
-const CLIENT_LOCATION_QUEUE = 'client_location'
 const SUGGESTED_BOOKING_QUEUE = 'suggested_booking'
 
 // replace the value below with the Telegram token you receive from @BotFather
@@ -26,31 +25,19 @@ bot.start(ctx => {
 bot.help(ctx => ctx.reply('Send me a sticker'))
 
 bot.on('message', ctx => {
-  if (!ctx.message.location) return
-
-  const location = {
-    lon: ctx.message.location.longitude,
-    lat: ctx.message.location.latitude,
-  }
-
-  const username = ctx.message.from.username
-  const msg = {
-    username,
-    id: ctx.message.from.id,
-    chatId: ctx.message.chat.id,
-    location,
-    date: Date(ctx.message.date),
-  }
-
-  updateLocation(msg)
+  const msg = ctx.message
+  onMessage(msg)
 })
 
 bot.on('edited_message', ctx => {
   const msg = ctx.update.edited_message
+  onMessage(msg)
+})
 
+const onMessage = msg => {
   if (!msg.location) return
 
-  const location = {
+  const position = {
     lon: msg.location.longitude,
     lat: msg.location.latitude,
   }
@@ -60,12 +47,12 @@ bot.on('edited_message', ctx => {
     username,
     id: msg.from.id,
     chatId: msg.chat.id,
-    location,
+    position,
     date: Date(msg.edit_date),
   }
 
   updateLocation(message)
-})
+}
 
 const updateLocation = msg => {
   // Publisher
@@ -73,13 +60,8 @@ const updateLocation = msg => {
     .then(conn => conn.createChannel())
     .then(ch =>
       ch
-        .assertQueue(CLIENT_LOCATION_QUEUE)
-        .then(() =>
-          ch.sendToQueue(
-            CLIENT_LOCATION_QUEUE,
-            Buffer.from(JSON.stringify(msg))
-          )
-        )
+        .assertExchange('cars', 'fanout', { durable: false })
+        .then(() => ch.publish('cars', '', Buffer.from(JSON.stringify(msg))))
     )
     .catch(console.warn)
 }
@@ -106,52 +88,70 @@ open
   .then(ch =>
     ch.assertQueue(SUGGESTED_BOOKING_QUEUE).then(ok =>
       ch.consume(SUGGESTED_BOOKING_QUEUE, msg => {
-        if (msg !== null) {
-          const parsedMessage = JSON.parse(Buffer.from(msg.content))
-          // const depart
-          bot.telegram.sendMessage(
-            parsedMessage.chatId,
-            `*Du har fått ett bokningsförslag*
+        if (msg === null) return
+
+        const parsedMessage = JSON.parse(Buffer.from(msg.content))
+        // const depart
+        bot.telegram.sendMessage(
+          parsedMessage.chatId,
+          `*Du har fått ett bokningsförslag*
 
 *Från*: ${parsedMessage.departure.address}
 *Till*: ${parsedMessage.destination.address}
 
 [Öppna med Google Maps](https://www.google.com/maps/dir/?api=1&origin=${parsedMessage.departure.lat},${parsedMessage.departure.lon}&destination=${parsedMessage.destination.lat},${parsedMessage.destination.lon})`,
-            {
-              parse_mode: 'markdown',
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    {
-                      text: 'Godkänn',
-                      callback_data: 'accept',
-                    },
-                  ],
-                  [
-                    {
-                      text: 'Avvisa',
-                      callback_data: 'denial',
-                    },
-                  ],
+          {
+            parse_mode: 'markdown',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: 'Godkänn',
+                    callback_data: 'accept',
+                  },
                 ],
-              },
-            }
-          )
+                [
+                  {
+                    text: 'Avvisa',
+                    callback_data: 'denial',
+                  },
+                ],
+              ],
+            },
+          }
+        )
 
-          ch.ack(msg)
-        }
+        ch.ack(msg)
       })
     )
   )
   .catch(console.warn)
 
+const bookingsRequest = (msg, isAccepted) => {
+  const exchange = 'bookings'
+  return open
+    .then(conn => conn.createChannel())
+    .then(ch =>
+      ch.assertExchange(exchange, 'headers', { durable: false }).then(() =>
+        ch.publish(exchange, '', Buffer.from(JSON.stringify(msg)), {
+          headers: { isAccepted },
+        })
+      )
+    )
+    .catch(console.warn)
+}
+
 bot.action('accept', (ctx, next) => {
   console.log('ctx from accept', ctx)
-  return ctx.reply('bokningen är din!').then(() => next())
+  return bookingsRequest(ctx, true).then(() =>
+    ctx.reply('bokningen är din!').then(() => next())
+  )
 })
 
 bot.action('denial', (ctx, next) => {
-  return ctx.reply('Okej! Vi letar vidare :)').then(() => next())
+  return bookingsRequest(ctx, false).then(() =>
+    ctx.reply('Okej! Vi letar vidare :)').then(() => next())
+  )
 })
 
 bot.launch()

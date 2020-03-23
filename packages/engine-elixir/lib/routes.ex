@@ -13,10 +13,13 @@ defmodule Routes do
 
   defp subscribe(parent) do
     spawn(fn ->
-      queue = "simulated_cars"
+      exchange = "cars"
+      queue = "routes"
       {:ok, connection} = AMQP.Connection.open()
       {:ok, channel} = AMQP.Channel.open(connection)
+      AMQP.Exchange.declare(channel, exchange, :fanout)
       AMQP.Queue.declare(channel, queue)
+      AMQP.Queue.bind(channel, queue, exchange)
 
       AMQP.Queue.subscribe(channel, queue, fn car, _meta ->
         send(parent, {:msg, car: Car.make(decode(car))})

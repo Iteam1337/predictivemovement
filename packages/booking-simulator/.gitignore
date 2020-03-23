@@ -22,3 +22,8 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 booking_simulator-*.tar
 
+.elixir_ls
+
+# Who even cares about logs
+*.log
+log

@@ -1,30 +1,30 @@
-const amqp = require('fluent-amqp')
-const queue = amqp('amqp://localhost')
-const { generate } = require('@iteam1337/engine/simulator/cars')
+const amqp = require('fluent-amqp')('amqp://localhost')
+// const { generate } = require('@iteam1337/engine/simulator/cars')
 
-const bookings = queue
-  .queue('bookings', { durable: false })
+const bookings = amqp
+  .exchange('bookings', 'headers', { durable: false })
+  .queue()
   .subscribe()
-  .map(m => m.json())
+  .map(bookings => bookings.json())
 
-const cars = queue
-  .queue('cars', { durable: false })
+const cars = amqp
+  .exchange('cars', 'fanout', { durable: false })
+  .queue('client_location', { durable: true })
   .subscribe()
-  .map(m => m.json())
-  .map(generate)
+  .map(cars => cars.json())
+// .map(generate)
 
-const possibleRoutes = queue
+const possibleRoutes = amqp
   .queue('candidates', { durable: false })
   .subscribe()
-  .map(m => m.json())
+  .map(possibleRoutes => possibleRoutes.json())
 
-const updatePosition = car =>
-  queue.queue('car_positions', { durable: false }).publish(car)
+// const updatePosition = car =>
+//   queue.queue('car_positions', { durable: false }).publish(car)
 
 module.exports = {
   bookings,
   possibleRoutes,
   cars,
-
-  updatePosition,
+  // updatePosition,
 }

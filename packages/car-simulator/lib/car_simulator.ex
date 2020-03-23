@@ -7,7 +7,8 @@ defmodule CarSimulator do
 
     Cars.simulate(@center, 5)
     |> Stream.map(fn car ->
-      MQ.publish("simulated_cars", car)
+      MQ.publishExchange("cars", car)
+      # MQ.publish("simulated_cars", car)
     end)
     |> Stream.run()
 

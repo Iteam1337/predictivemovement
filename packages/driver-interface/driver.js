@@ -1,6 +1,7 @@
+const { open } = require('./amqp')
+
 const init = bot => {
   bot.on('message', ctx => {
-    console.log('msg inside driver module')
     const msg = ctx.message
     onMessage(msg)
   })
@@ -32,7 +33,6 @@ const init = bot => {
 
   const updateLocation = msg => {
     // Publisher
-    console.log({ msg })
     open
       .then(conn => conn.createChannel())
       .then(ch =>

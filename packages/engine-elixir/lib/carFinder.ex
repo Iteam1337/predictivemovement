@@ -71,7 +71,9 @@ defmodule CarFinder do
       }
     end)
     # |> Enum.sort(fn a, b -> a.detour.diff < b.detour.diff end)
-    |> Enum.sort(fn a, b -> a.score < b.score end)
+    |> Enum.sort_by(fn a -> a.score end, :desc)
+    |> Enum.sort_by(fn a -> a.car.busy end, :asc)
+    # |> Enum.sort(fn a, b -> a.score < b.score end)
   end
 
   @doc """

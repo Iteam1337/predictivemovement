@@ -49,8 +49,16 @@ defmodule Car do
 
   # offer_booking -> assign_booking -> assign_booking()
 
+  defp differentAddress(%{lat: latA, lon: lonA}, %{lat: latB, lon: lonB}) do
+    latA != latB || lonA != lonB
+  end
+
   def assign(%{car: car, booking: booking}) do
-    navigateTo(car, booking.departure)
+    # next = calculatDetours(car, booking)
+    # reroute(car, next)
+    next = [booking.destination, car.position]
+
+    navigateTo(car, booking.departure, next)
     |> Map.put(:busy, true)
   end
 
@@ -58,29 +66,37 @@ defmodule Car do
     detours =
       ([car.position, car.heading] ++ car.next)
 
-      #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.820701, lon: 16.057731}]
-      #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.755934, lon: 15.972861}]
-      #  [%{lat: 61.755934, lon: 15.972861}, %{lat: 61.820701, lon: 16.057731}]
-
+      #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.820701, lon: 16.057731}] [car.position, booking.departure]
+      #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.755934, lon: 15.972861}] [booking.departure, booking.destination]
+      #  [%{lat: 61.755934, lon: 15.972861}, %{lat: 61.820701, lon: 16.057731}] [booking.destination, hub]
 
       # car.bookings= [current, next | rest]
 
       # returns pairs
       |> Enum.chunk_every(2, 1, :discard)
+      # Inspect the segments
       |> Enum.map(fn x -> x |> Enum.map(fn y -> Map.take(y, [:lat, :lon]) end) |> IO.inspect() end)
+      |> Enum.filter(fn [a | [b | _rest]] ->
+        differentAddress(a, b)
+      end)
       |> Enum.map(fn [a | [b | _rest]] ->
-        Osrm.trip([
+        Osrm.route([
           a,
           booking.departure,
           booking.destination,
           b
         ])
-        |> (fn %{code: "Ok", trips: [detour | _rest]} ->
+        |> (fn detour ->
+              # |> (fn %{code: "Ok", trips: [detour | _rest]} ->
               %{
                 segment: [a, b] |> Enum.map(fn x -> Map.take(x, [:lat, :lon]) end),
                 score: Score.calculate(booking, car, detour)
               }
             end).()
       end)
+      |> Enum.sort_by(fn a -> a.score end, :desc)
+
+    # squeeze in the booking in the correct position
+    # |> ([car.position, ... suggestion of new segments)
   end
 end

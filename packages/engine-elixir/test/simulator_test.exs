@@ -95,6 +95,7 @@ defmodule SimulatorTest do
     end)
   end
 
+  @tag :only
   test "generates bookings at SNX hub" do
     hub = %{lat: 61.820701, lon: 16.057731}
     address = Address.random(hub)
@@ -113,6 +114,114 @@ defmodule SimulatorTest do
       1..5
       |> Enum.map(&Car.make(&1, hub, false))
 
+    # Bookings input
+    #
+    # [
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.179442Z],
+    #     departure: %{lat: 61.820701, lon: 16.057731},
+    #     destination: %{lat: 61.77255, lon: 15.830661},
+    #     id: 1
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.209653Z],
+    #     departure: %{lat: 61.820701, lon: 16.057731},
+    #     destination: %{lat: 61.824813, lon: 16.141744},
+    #     id: 2
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.239793Z],
+    #     departure: %{lat: 61.820701, lon: 16.057731},
+    #     destination: %{lat: 61.804667, lon: 15.997163},
+    #     id: 3
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.267344Z],
+    #     departure: %{lat: 61.820701, lon: 16.057731},
+    #     destination: %{lat: 61.833353, lon: 15.991674},
+    #     id: 4
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.294843Z],
+    #     departure: %{lat: 61.820701, lon: 16.057731},
+    #     destination: %{lat: 61.8505, lon: 15.896769},
+    #     id: 5
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.354083Z],
+    #     departure: %{lat: 61.816209, lon: 15.997938},
+    #     destination: %{lat: 61.820701, lon: 16.057731},
+    #     id: 6
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.389368Z],
+    #     departure: %{lat: 61.807592, lon: 15.949106},
+    #     destination: %{lat: 61.820701, lon: 16.057731},
+    #     id: 7
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.416461Z],
+    #     departure: %{lat: 61.738137, lon: 15.820339},
+    #     destination: %{lat: 61.820701, lon: 16.057731},
+    #     id: 8
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.491575Z],
+    #     departure: %{lat: 61.735243, lon: 16.280783},
+    #     destination: %{lat: 61.820701, lon: 16.057731},
+    #     id: 9
+    #   },
+    #   %{
+    #     bookingDate: ~U[2020-03-24 12:23:35.517770Z],
+    #     departure: %{lat: 61.89081, lon: 15.971181},
+    #     destination: %{lat: 61.820701, lon: 16.057731},
+    #     id: 10
+    #   }
+    # ]
+
+    # Cars input
+    #
+    # [
+    #   %Car{
+    #     busy: false,
+    #     heading: nil,
+    #     id: 1,
+    #     position: %{lat: 61.820701, lon: 16.057731},
+    #     route: nil
+    #   },
+    #   %Car{
+    #     busy: false,
+    #     heading: nil,
+    #     id: 2,
+    #     position: %{lat: 61.820701, lon: 16.057731},
+    #     route: nil
+    #   },
+    #   %Car{
+    #     busy: false,
+    #     heading: nil,
+    #     id: 3,
+    #     position: %{lat: 61.820701, lon: 16.057731},
+    #     route: nil
+    #   },
+    #   %Car{
+    #     busy: false,
+    #     heading: nil,
+    #     id: 4,
+    #     position: %{lat: 61.820701, lon: 16.057731},
+    #     route: nil
+    #   },
+    #   %Car{
+    #     busy: false,
+    #     heading: nil,
+    #     id: 5,
+    #     position: %{lat: 61.820701, lon: 16.057731},
+    #     route: nil
+    #   }
+    # ]
+
+    # Assign the hub cars to every car (probably based on busy)
+    # Rest of the bookings, calculateDetours and sort on that to assign a car
+    
     Dispatch.evaluate(bookings, cars)
     |> (fn %{cars: cars, assignments: assignments, score: score} ->
           %{
@@ -125,6 +234,24 @@ defmodule SimulatorTest do
           }
         end).()
     |> IO.inspect(label: "assignment")
+
+    # Output
+    #
+    # assignment: %{
+    #   assignments: [
+    #     %{bookingId: 1, carId: 1, score: -26593.2},
+    #     %{bookingId: 2, carId: 1, score: -26021.1},
+    #     %{bookingId: 3, carId: 1, score: -30888.1},
+    #     %{bookingId: 4, carId: 1, score: -37256.5},
+    #     %{bookingId: 5, carId: 1, score: -10244.1},
+    #     %{bookingId: 6, carId: 2, score: -23727.7},
+    #     %{bookingId: 7, carId: 2, score: -27436.699999999997},
+    #     %{bookingId: 8, carId: 1, score: -37686.6},
+    #     %{bookingId: 9, carId: 2, score: -31508.7},
+    #     %{bookingId: 10, carId: 1, score: -42005.4}
+    #   ],
+    #   score: -293368.10000000003
+    # }
 
     # bookings |> Enum.map(fn t -> MQ.publish("bookings", t) end)
     # cars |> Enum.map(fn t -> MQ.publish("cars", t) end)

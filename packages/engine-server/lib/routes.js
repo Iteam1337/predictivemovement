@@ -27,10 +27,10 @@ const bookingsCache = new Map()
 //   .flatMap(pr => pr.closestCars)
 //   .errors(err => console.error(err))
 
-const candidates = possibleRoutes
-  .fork()
-  .flatMap(pr => pr.cars)
-  .errors(err => console.error(err))
+// const candidates = possibleRoutes
+//   .fork()
+//   .flatMap(pr => pr.cars)
+//   .errors(err => console.error(err))
 
 // const movingCars = engine.cars.fork().errors(err => console.error(err))
 
@@ -39,26 +39,26 @@ const candidates = possibleRoutes
 
 function register(io) {
   io.on('connection', function(socket) {
-    _.merge([_(carsCache.values()), candidates.fork()])
-      .filter(car => car.car.id)
-      .doto(car => {
-        carsCache.set(car.car.id, car)
-      })
-      .map(({ car, detour }) => ({ ...car, detour }))
-      .pick([
-        'position',
-        'status',
-        'id',
-        'tail',
-        'zone',
-        'speed',
-        'bearing',
-        'detour',
-        'heading',
-      ])
-      .batchWithTimeOrCount(1000, 2000)
-      .errors(console.error)
-      .each(cars => socket.volatile.emit('cars', cars))
+    // _.merge([_(carsCache.values()), candidates.fork()])
+    //   .filter(car => car.car.id)
+    //   .doto(car => {
+    //     carsCache.set(car.car.id, car)
+    //   })
+    //   .map(({ car, detour }) => ({ ...car, detour }))
+    //   .pick([
+    //     'position',
+    //     'status',
+    //     'id',
+    //     'tail',
+    //     'zone',
+    //     'speed',
+    //     'bearing',
+    //     'detour',
+    //     'heading',
+    //   ])
+    //   .batchWithTimeOrCount(1000, 2000)
+    //   .errors(console.error)
+    //   .each(cars => socket.volatile.emit('cars', cars))
 
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto(booking => bookingsCache.set(booking.id, booking))
@@ -68,6 +68,7 @@ function register(io) {
 
     _.merge([_(movingCarsCache.values()), cars.fork()])
       .filter(car => car.id)
+      .tap(car => console.log(car))
       // .map(car => _('moved', car))
       // .merge()
       .doto(car => {

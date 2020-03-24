@@ -95,7 +95,7 @@ defmodule SimulatorTest do
     end)
   end
 
-  @tag :only
+  @tag :skip
   test "generates bookings at SNX hub" do
     hub = %{lat: 61.820701, lon: 16.057731}
     address = Address.random(hub)
@@ -221,7 +221,7 @@ defmodule SimulatorTest do
 
     # Assign the hub cars to every car (probably based on busy)
     # Rest of the bookings, calculateDetours and sort on that to assign a car
-    
+
     Dispatch.evaluate(bookings, cars)
     |> (fn %{cars: cars, assignments: assignments, score: score} ->
           %{

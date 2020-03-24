@@ -72,5 +72,5 @@ const init = bot => {
 }
 
 module.exports = {
-  init: bot => init(bot),
+  init,
 }

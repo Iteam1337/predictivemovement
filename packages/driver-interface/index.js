@@ -14,6 +14,10 @@ bot.start(ctx => {
 })
 
 bookingWizard.init(bot)
+bot.command('newbooking', ctx => {
+  ctx.scene.enter('booking-wizard')
+})
+
 driver.init(bot)
 
 bot.launch()

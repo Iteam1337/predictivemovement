@@ -82,4 +82,4 @@ const init = bot => {
   bot.use(stage.middleware())
 }
 
-module.exports = { init: bot => init(bot) }
+module.exports = { init } //{ init: bot => init(bot) }

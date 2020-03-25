@@ -1,4 +1,3 @@
-
 # iex> defmodule User do
 #   ...>   defstruct name: "John", age: 27
 #   ...> end
@@ -19,6 +18,12 @@ defmodule Car do
 
   def make(id, position, busy) do
     %Car{id: id, position: position, busy: busy}
+  end
+
+  def navigate(car) do
+    car
+    |> Map.put(:route, Osrm.route(Enum.map(car.instructions, fn x -> x.position end)))
+    |> Map.put(:heading, List.first(car.instructions))
   end
 
   def navigateTo(car, heading), do: navigateTo(car, heading, [])
@@ -55,28 +60,54 @@ defmodule Car do
     latA != latB || lonA != lonB
   end
 
-  def assign(car, booking) do
-    car |> Map.put(:instructions, car.instructions ++ [
-      %{ action: :pickup, position: booking.departure, booking: booking},
-      %{ action: :dropoff, position: booking.destination, booking: booking},
-    ])
+  def assign(car, booking, :auto) do
+    car
+    |> calculateDetours(booking)
+    |> List.first()
+    |> case do
+      %{at: :start} ->
+        assign(car, booking, 0)
+
+      %{at: :end} ->
+        assign(car, booking)
+
+      %{at: nil, before: before, after: _after} ->
+        before_index =
+          Enum.find_index(car.instructions, fn i ->
+            i.position == before
+          end)
+
+        assign(car, booking, before_index)
+    end
+
+    # before_index = Enum.find_index(car.instructions, fn i ->
+    #   i.position == best_instruction.before.position
+    # end)
+
+    # assign(car, booking, before_index)
   end
 
+  def assign(car, booking), do: assign(car, booking, length(car.instructions))
   def assign(car, booking, index), do: assign(car, booking, index, index + 1)
+
   def assign(car, booking, pickup_index, dropoff_index) do
     car
-    |> Map.update!(:instructions, fn instructions -> List.insert_at(instructions, pickup_index, %{ action: :pickup, position: booking.departure, booking: booking}) end)
-    |> Map.update!(:instructions, fn instructions -> List.insert_at(instructions, dropoff_index, %{ action: :dropoff, position: booking.destination, booking: booking}) end)
-
+    |> Map.update!(:instructions, fn instructions ->
+      List.insert_at(instructions, pickup_index, %{
+        action: :pickup,
+        position: booking.departure,
+        booking: booking
+      })
+    end)
+    |> Map.update!(:instructions, fn instructions ->
+      List.insert_at(instructions, dropoff_index, %{
+        action: :dropoff,
+        position: booking.destination,
+        booking: booking
+      })
+    end)
+    |> navigate()
   end
-
-  def assign(car, booking, :auto) do
-    best_instruction = car
-      |> calculateDetours(booking)
-      |> Enum.first()
-  end
-
-
 
   def assign(%{car: car, booking: booking}) do
     # next = calculatDetours(car, booking)
@@ -89,126 +120,43 @@ defmodule Car do
 
   # def calculateDetours(%{position: position, heading: heading, route: route})
 
-  def calculateDetours(%{ instructions: instructions, route: route }, booking) do
-    detours =
-      # ([car.position, car.heading] ++ car.next)
-
-      instructions
-      # returns pairs
-      |> Enum.chunk_every(2, 1, :discard)
-      # Inspect the segments
-      # |> Enum.map(fn x -> x |> Enum.map(fn y -> Map.take(y, [:lat, :lon]) end) |> IO.inspect() end)
-
-      # [
-      #   %{
-      #     action: :pickup,
-      #     booking: %{
-      #       bookingDate: ~U[2020-03-17 08:45:42.045239Z],
-      #       departure: %{lat: 61.820701, lon: 16.057731},
-      #       destination: %{lat: 61.928261, lon: 15.870959},
-      #       id: 10
-      #     },
-      #     position: %{lat: 61.820701, lon: 16.057731}
-      #   },
-      #   %{
-      #     action: :dropoff,
-      #     booking: %{
-      #       bookingDate: ~U[2020-03-17 08:45:42.045239Z],
-      #       departure: %{lat: 61.820701, lon: 16.057731},
-      #       destination: %{lat: 61.928261, lon: 15.870959},
-      #       id: 10
-      #     },
-      #     position: %{lat: 61.928261, lon: 15.870959}
-      #   }
-      # ]
-      |> Enum.map(fn [a | [b | _rest]] ->
-        Osrm.route([
-          a.position,
-          booking.departure,
-          booking.destination,
-          b.position
-        ])
-        |> (fn route ->
-            IO.inspect(route.distance, label: "distance")
-              # |> (fn %{code: "Ok", trips: [route | _rest]} ->
-              %{
-                after: a,
-                before: b,
-                # ] |> Enum.map(fn x -> Map.take(x, [:lat, :lon]) end),
-                score: Score.calculate(booking, %{ route: route }, route)
-              }
-            end).()
+  def calculateDetours(%{instructions: instructions, route: route}, booking) do
+    instructions
+    # returns pairs, i.e [a, b, c, d] -> [[a, b], [b, c], [c, d]]
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.flat_map(fn [%{position: a} | [%{position: b} | _rest]] ->
+      [
+        %{
+          positions: [a, b, booking.departure, booking.destination],
+          at: :end,
+          before: nil,
+          after: b
+        },
+        %{
+          positions: [booking.departure, booking.destination, a, b],
+          at: :start,
+          before: a,
+          after: nil
+        },
+        %{
+          positions: [a, booking.departure, booking.destination, b],
+          at: nil,
+          before: b,
+          after: a
+        }
+      ]
+      |> Enum.map(fn modifier ->
+        %{
+          score:
+            Score.calculate(booking, %{route: route}, Distance.haversine(modifier.positions)),
+          # route: Osrm.route(modifier.positions),
+          before: modifier.before,
+          after: modifier.after,
+          at: modifier.at
+        }
       end)
-      # |> Enum.sort_by(fn a -> a.score end, :desc)
 
-    # squeeze in the booking in the correct position
-    # |> ([car.position, ... suggestion of new segments)
-  end
-
-  # @spec calculatDetor(%{heading: any, position: any, route: any}, any) :: nil
-  # def calculatDetor(
-  #       %{position: position, heading: heading, route: route},
-  #       booking
-  #     ) do
-  # end
-
-  def calculateDetoursForIdleCarWillBeRefactoredToOverloadOtherFunction(
-        %{position: position, heading: heading, route: route},
-        booking
-      ) do
-    routes =
-      [position, heading]
-      |> Enum.chunk_every(2, 1, :discard)
-      |> IO.inspect(label: "segments")
-      |> Enum.map(fn x -> x |> Enum.map(fn y -> Map.take(y, [:lat, :lon]) end) |> IO.inspect() end)
-
-    #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.820701, lon: 16.057731}] [car.position, booking.departure]
-    #  [%{lat: 61.820701, lon: 16.057731}, %{lat: 61.755934, lon: 15.972861}] [booking.departure, booking.destination]
-    #  [%{lat: 61.755934, lon: 15.972861}, %{lat: 61.820701, lon: 16.057731}] [booking.destination, hub]
-
-    # car.bookings= [current, next | rest]
-
-    # returns pairs
-    # |> Enum.chunk_every(2, 1, :discard)
-    # |> IO.inspect(label: "segments")
-    # |> Enum.map(fn x -> x |> Enum.map(fn y -> Map.take(y, [:lat, :lon]) end) |> IO.inspect() end)
-    # |> Enum.filter(fn [a | [b | _rest]] ->
-    #   differentAddress(a, b)
-    # end)
-    # |> Enum.map(fn [a | [b | _rest]] ->
-    #   Osrm.route([
-    #     a,
-    #     booking.departure,
-    #     booking.destination,
-    #     b
-    #   ])
-    #   |> (fn detour ->
-    #         # |> (fn %{code: "Ok", trips: [detour | _rest]} ->
-    #         %{
-    #           segment: [a, b] |> Enum.map(fn x -> Map.take(x, [:lat, :lon]) end),
-    #           score: Score.calculate(booking, %{route: route}, detour)
-    #         }
-    #       end).()
-    # end)
-    # |> Enum.sort_by(fn a -> a.score end, :desc)
-  end
-
-  def niceCalculateDetours(%{routes: routes, route: route}, booking) do
-    routes
-    |> IO.inspect(label: "routes")
-    |> Enum.map(fn [a | [b | _rest]] ->
-      Osrm.route([
-        a,
-        booking.departure,
-        booking.destination,
-        b
-      ])
-      |> (fn detour ->
-            %{
-              segment: [a, b] |> Enum.map(fn x -> Map.take(x, [:lat, :lon]) end),
-              score: Score.calculate(booking, %{route: route}, detour)
-            }
-          end).()
+      # |> Enum.map(fn modifier -> Map.put(modifier, :score, Score.calculate(booking,  %{ route: route }, modifier.route)) end)
     end)
     |> Enum.sort_by(fn a -> a.score end, :desc)
   end

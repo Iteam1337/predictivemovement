@@ -22,8 +22,11 @@ defmodule CarFinderTest do
     id: 11
   }
 
+  # Given @hub as 0 the furthest away is @letsbo
+  #
+  # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
+
   @tag :only
-  # @tag :skip
   test "assign adds new instructions to an empty car" do
     car =
       %{
@@ -42,9 +45,13 @@ defmodule CarFinderTest do
              %{action: :pickup, position: @firstBooking.departure, booking: @firstBooking},
              %{action: :dropoff, position: @firstBooking.destination, booking: @firstBooking}
            ]
-           assert car.route != nil ## <<<--- continue here..
+
+    assert car.route
+    assert car.route.distance > 0
+    assert car.heading
   end
 
+  @tag :only
   test "assign adds new instructions to car with existing instructions" do
     car =
       %{
@@ -66,10 +73,13 @@ defmodule CarFinderTest do
              %{action: :pickup, position: @secondBooking.departure, booking: @secondBooking},
              %{action: :dropoff, position: @secondBooking.destination, booking: @secondBooking}
            ]
-           assert car.route != nil ## <<<--- continue here..
+
+    assert car.route
+    assert car.route.distance > 0
+    assert car.heading
   end
 
-  # @tag :only
+  @tag :only
   test "assign with index inserts new instructions at given index" do
     car =
       %{
@@ -91,9 +101,13 @@ defmodule CarFinderTest do
              %{action: :dropoff, position: @secondBooking.destination, booking: @secondBooking},
              %{action: :dropoff, position: @firstBooking.destination, booking: @firstBooking}
            ]
-           assert car.route != nil ## <<<--- continue here..
+
+    assert car.route
+    assert car.route.distance > 0
+    assert car.heading
   end
 
+  @tag :only
   test "assign instructions independent at given indexes" do
     car =
       %{
@@ -115,11 +129,88 @@ defmodule CarFinderTest do
              %{action: :dropoff, position: @firstBooking.destination, booking: @firstBooking},
              %{action: :dropoff, position: @secondBooking.destination, booking: @secondBooking}
            ]
-           assert car.route != nil ## <<<--- continue here..
+
+    assert car.route
+    assert car.route.distance > 0
+    assert car.heading
   end
 
-  @tag :skip
-  test "assign with :auto adds the instructions at best indexes" do
+  @tag :only
+  test "assign with :auto adds the instructions at the start" do
+    # Given @hub as 0 the furthest away is @letsbo
+    #
+    # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
+    firstBooking =
+      @firstBooking
+      |> Map.put(:departure, @sillerbo)
+      |> Map.put(:destination, @letsbo)
+
+    secondBooking =
+      @secondBooking
+      |> Map.put(:departure, @hub)
+      |> Map.put(:destination, @somewhereInNore)
+
+    car =
+      %{
+        busy: false,
+        heading: nil,
+        id: 1,
+        position: @hub,
+        route: nil,
+        instructions: []
+      }
+      |> Car.assign(firstBooking)
+      |> Car.assign(secondBooking, :auto)
+
+    assert length(car.instructions) == 4
+
+    assert car.instructions == [
+             %{action: :pickup, position: secondBooking.departure, booking: secondBooking},
+             %{action: :dropoff, position: secondBooking.destination, booking: secondBooking},
+             %{action: :pickup, position: firstBooking.departure, booking: firstBooking},
+             %{action: :dropoff, position: firstBooking.destination, booking: firstBooking}
+           ]
+  end
+
+  @tag :only
+  test "assign with :auto adds the instructions at the end" do
+    # Given @hub as 0 the furthest away is @letsbo
+    #
+    # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
+    firstBooking =
+      @firstBooking
+      |> Map.put(:departure, @hub)
+      |> Map.put(:destination, @somewhereInNore)
+
+    secondBooking =
+      @secondBooking
+      |> Map.put(:departure, @sillerbo)
+      |> Map.put(:destination, @letsbo)
+
+    car =
+      %{
+        busy: false,
+        heading: nil,
+        id: 1,
+        position: @hub,
+        route: nil,
+        instructions: []
+      }
+      |> Car.assign(firstBooking)
+      |> Car.assign(secondBooking, :auto)
+
+    assert length(car.instructions) == 4
+
+    assert car.instructions == [
+             %{action: :pickup, position: firstBooking.departure, booking: firstBooking},
+             %{action: :dropoff, position: firstBooking.destination, booking: firstBooking},
+             %{action: :pickup, position: secondBooking.departure, booking: secondBooking},
+             %{action: :dropoff, position: secondBooking.destination, booking: secondBooking}
+           ]
+  end
+
+  @tag :only
+  test "assign with :auto adds new booking between existing instructions if that is the case" do
     car =
       %{
         busy: false,
@@ -135,29 +226,68 @@ defmodule CarFinderTest do
     assert length(car.instructions) == 4
 
     assert car.instructions == [
+             %{action: :pickup, position: @firstBooking.departure, booking: @firstBooking},
              %{action: :pickup, position: @secondBooking.departure, booking: @secondBooking},
              %{action: :dropoff, position: @secondBooking.destination, booking: @secondBooking},
-             %{action: :pickup, position: @firstBooking.departure, booking: @firstBooking},
              %{action: :dropoff, position: @firstBooking.destination, booking: @firstBooking}
            ]
   end
 
+  @tag :skip
+  test "assign with :auto can assign pickup and dropoff independent in the instructions list" do
+    # Given @hub as 0 the furthest away is @letsbo
+    #
+    # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
+    firstBooking =
+      @firstBooking
+      |> Map.put(:departure, @hub)
+      |> Map.put(:destination, @sillerbo)
+
+    secondBooking =
+      @secondBooking
+      |> Map.put(:departure, @somewhereInNore)
+      |> Map.put(:destination, @letsbo)
+
+    car =
+      %{
+        busy: false,
+        heading: nil,
+        id: 1,
+        position: @hub,
+        route: nil,
+        instructions: []
+      }
+      |> Car.assign(firstBooking)
+      |> Car.assign(secondBooking, :auto)
+
+    assert length(car.instructions) == 4
+
+    assert car.instructions == [
+             %{action: :pickup, position: firstBooking.departure, booking: firstBooking},
+             %{action: :pickup, position: secondBooking.departure, booking: secondBooking},
+             %{action: :dropoff, position: firstBooking.destination, booking: firstBooking},
+             %{action: :dropoff, position: secondBooking.destination, booking: secondBooking}
+           ]
+  end
+
+  @tag :only
   test "calculate detour between a previous booking " do
+    car =
+      %{
+        busy: false,
+        heading: nil,
+        id: 1,
+        position: @hub,
+        route: nil,
+        instructions: []
+      }
+      |> Car.assign(@firstBooking)
 
-    car = %{
-      busy: false,
-      heading: nil,
-      id: 1,
-      position: @hub,
-      route: nil,
-      instructions: []
-    } |> Car.assign(@firstBooking)
-
-    [first] = Car.calculateDetours(car, @secondBooking)
+    [first | _rest] = Car.calculateDetours(car, @secondBooking)
 
     [firstInstruction, secondInstruction] = car.instructions
-    assert first.after == firstInstruction
-    assert first.before == secondInstruction
+    assert first.after == firstInstruction.position
+    assert first.before == secondInstruction.position
     assert first.score != 0
   end
 end

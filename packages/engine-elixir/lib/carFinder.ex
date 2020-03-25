@@ -4,32 +4,11 @@ defmodule CarFinder do
   end
 
   @doc """
-  Calculate birds distance between two coordinates
-  """
-  def haversine(p1, p2) do
-    radius = 6_371_000
-
-    dLat = rad(p2.lat - p1.lat)
-    dLong = rad(p2.lon - p1.lon)
-
-    a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) * Math.sin(dLong / 2) *
-          Math.sin(dLong / 2)
-
-    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-
-    d = radius * c
-
-    Kernel.round(d)
-  end
-
-  @doc """
 
   Calculate birds distance (haversine) from a cars current position to a booking
   """
   def distance(car, %{departure: departure}) do
-    distance = haversine(Car.position(car), departure)
+    distance = Distance.haversine(Car.position(car), departure)
     %{car: car, distance: distance}
   end
 

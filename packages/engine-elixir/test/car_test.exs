@@ -22,6 +22,24 @@ defmodule CarTest do
     id: 11
   }
 
+  @firstCar %{
+    busy: false,
+    heading: nil,
+    id: 1,
+    instructions: [],
+    position: @hub,
+    route: nil
+  }
+
+  @secondCar %{
+    busy: false,
+    heading: nil,
+    id: 2,
+    instructions: [],
+    position: @hub,
+    route: nil
+  }
+
   # Given @hub as 0 the furthest away is @letsbo
   #
   # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
@@ -101,7 +119,7 @@ defmodule CarTest do
 
   ##### </tests-for-old-assign>
 
-  @tag :only
+  # @tag :only
   test "assign adds new instructions to an empty car" do
     car =
       %{
@@ -126,7 +144,7 @@ defmodule CarTest do
     assert car.heading
   end
 
-  @tag :only
+  # @tag :only
   test "assign adds new instructions to car with existing instructions" do
     car =
       %{
@@ -154,7 +172,7 @@ defmodule CarTest do
     assert car.heading
   end
 
-  @tag :only
+  # @tag :only
   test "assign with index inserts new instructions at given index" do
     car =
       %{
@@ -182,7 +200,7 @@ defmodule CarTest do
     assert car.heading
   end
 
-  @tag :only
+  # @tag :only
   test "assign instructions independent at given indexes" do
     car =
       %{
@@ -210,7 +228,7 @@ defmodule CarTest do
     assert car.heading
   end
 
-  @tag :only
+  # @tag :only
   test "assign with :auto adds the instructions at the start" do
     # Given @hub as 0 the furthest away is @letsbo
     #
@@ -247,7 +265,7 @@ defmodule CarTest do
            ]
   end
 
-  @tag :only
+  # @tag :only
   test "assign with :auto adds the instructions at the end" do
     # Given @hub as 0 the furthest away is @letsbo
     #
@@ -284,7 +302,7 @@ defmodule CarTest do
            ]
   end
 
-  @tag :only
+  # @tag :only
   test "assign with :auto adds new booking between existing instructions if that is the case" do
     car =
       %{
@@ -345,7 +363,7 @@ defmodule CarTest do
            ]
   end
 
-  @tag :only
+  # @tag :only
   test "calculate detour between a previous booking " do
     car =
       %{
@@ -364,5 +382,50 @@ defmodule CarTest do
     assert first.after == firstInstruction.position
     assert first.before == secondInstruction.position
     assert first.score != 0
+  end
+
+  @tag :only
+  test "2 bookings from hub to different points" do
+    # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
+
+    firstBooking =
+      @firstBooking
+      |> Map.put(:departure, @hub)
+      |> Map.put(:destination, @somewhereInNore)
+
+    secondBooking =
+      @secondBooking
+      |> Map.put(:departure, @hub)
+      |> Map.put(:destination, @letsbo)
+
+    firstCar = Car.assign(@firstCar, firstBooking)
+
+    [first | _rest] = Car.calculateDetours(firstCar, secondBooking)
+    [second | _rest] = Car.calculateDetours(@secondCar, secondBooking)
+
+    assert first.score > second.score
+  end
+
+  # @tag :only
+  test "first booking from hub to Nore and second booking from Letsbo back to hub" do
+    # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
+
+    firstBooking =
+      @firstBooking
+      |> Map.put(:departure, @hub)
+      |> Map.put(:destination, @somewhereInNore)
+
+    secondBooking =
+      @secondBooking
+      |> Map.put(:departure, @letsbo)
+      |> Map.put(:destination, @hub)
+
+    firstCar = Car.assign(@firstCar, firstBooking)
+
+    [first | _rest] = Car.calculateDetours(firstCar, secondBooking)
+    [second | _rest] = Car.calculateDetours(@secondCar, secondBooking)
+
+    IO.inspect(first, label: "first")
+    IO.inspect(second, label: "second")
   end
 end

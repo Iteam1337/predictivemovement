@@ -1,14 +1,14 @@
 defmodule Score do
   def calculate(booking, %{route: nil}, newRoute) do
-    -newRoute.distance
+    newRoute.distance
   end
 
   def calculate(booking, %{route: route}, distance) do
-    -(distance - route.distance)
+    (distance - route.distance)
   end
 
   def calculate(booking, %{route: route}, %{ distance: distance }) do
-    -(distance - route.distance)
+    (distance - route.distance)
   end
 
   def calculateTotalScore(%{cars: cars, assignments: assignments}) do

@@ -72,6 +72,6 @@ defmodule CarFinder do
       Car.calculateDetours(car, booking)
       |> (fn [first | _rest] -> %{car: car, booking: booking, score: first.score} end).()
     end)
-    |> Enum.sort_by(fn a -> a.score end, :desc)
+    |> Enum.sort_by(fn a -> a.score end, :asc)
   end
 end

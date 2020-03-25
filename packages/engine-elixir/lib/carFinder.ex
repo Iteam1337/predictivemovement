@@ -59,30 +59,19 @@ defmodule CarFinder do
   @doc """
   find the best suitable cars for a booking
   """
-
-  # def find(booking, cars) do
-  #   closestCars(booking, cars)
-  #   |> detourCars(booking)
-  #   |> Enum.take(2)
-  # end
-
   def find(booking, cars) do
-    cars
-    |> Enum.map(fn car -> distance(car, booking) end)
-    |> Enum.sort_by(fn a -> a.distance end, :asc)
-    |> Enum.sort_by(fn a -> a.car.busy end, :asc)
-    |> (fn cars ->
-          # IO.inspect(cars, label: "cars")
-
-          cars
-          |> Enum.map(fn %{car: car} ->
-            detour = Car.calculateDetours(car, booking)
-          end)
-
-          cars
-        end).()
-    |> Enum.map(fn car -> %{car: car.car, booking: booking, score: car.distance} end)
+    closestCars(booking, cars)
     # |> detourCars(booking)
+    |> detourCarsNew(booking)
     |> Enum.take(2)
+  end
+
+  def detourCarsNew(cars, booking) do
+    cars
+    |> Enum.map(fn car ->
+      Car.calculateDetours(car, booking)
+      |> (fn [first | _rest] -> %{car: car, booking: booking, score: first.score} end).()
+    end)
+    |> Enum.sort_by(fn a -> a.score end, :desc)
   end
 end

@@ -95,7 +95,7 @@ defmodule SimulatorTest do
     end)
   end
 
-  @tag :skip
+  @tag :only
   test "generates bookings at SNX hub" do
     hub = %{lat: 61.820701, lon: 16.057731}
     address = Address.random(hub)
@@ -228,7 +228,11 @@ defmodule SimulatorTest do
             assignments:
               assignments
               |> Enum.map(fn %{car: car, booking: booking, score: score} ->
-                %{carId: car.id, bookingId: booking.id, score: score}
+                %{
+                  carId: car.id,
+                  bookingId: booking.id,
+                  score: score
+                }
               end),
             score: score
           }
@@ -252,14 +256,5 @@ defmodule SimulatorTest do
     #   ],
     #   score: -293368.10000000003
     # }
-
-    # bookings |> Enum.map(fn t -> MQ.publish("bookings", t) end)
-    # cars |> Enum.map(fn t -> MQ.publish("cars", t) end)
-
-    # assignments =
-    # bookings
-    # |> Enum.reduce(fn booking ->
-    #   CarFinder.find(booking, cars)
-    # end)
   end
 end

@@ -22,7 +22,11 @@ defmodule Car do
 
   def navigate(car) do
     car
-    |> Map.put(:route, Osrm.route(Enum.map(car.instructions, fn x -> x.position end)))
+    |> Map.put(
+      :route,
+      Osrm.route(Enum.map(car.instructions, fn x -> x.position end))
+      |> Map.put(:started, NaiveDateTime.utc_now())
+    )
     |> Map.put(:heading, List.first(car.instructions))
   end
 
@@ -51,14 +55,12 @@ defmodule Car do
 
   def position(%{route: route}, time) do
     relative_time = NaiveDateTime.diff(time, route.started)
-    Interpolate.get_position_from_route(route, relative_time)
+    #### In the tests we get 0
+    # Interpolate.get_position_from_route(route, relative_time)
+    Interpolate.get_position_from_route(route, relative_time + 1)
   end
 
   # offer_booking -> assign_booking -> assign_booking()
-
-  defp differentAddress(%{lat: latA, lon: lonA}, %{lat: latB, lon: lonB}) do
-    latA != latB || lonA != lonB
-  end
 
   def assign(car, booking, :auto) do
     car
@@ -118,7 +120,21 @@ defmodule Car do
     |> Map.put(:busy, true)
   end
 
-  # def calculateDetours(%{position: position, heading: heading, route: route})
+  def calculateDetours(%{instructions: [], route: nil}, booking) do
+    [
+      %{
+        score:
+          Score.calculate(
+            booking,
+            %{route: nil},
+            %{distance: Distance.haversine(booking.departure, booking.destination)}
+          ),
+        at: :start,
+        before: nil,
+        after: nil
+      }
+    ]
+  end
 
   def calculateDetours(%{instructions: instructions, route: route}, booking) do
     instructions

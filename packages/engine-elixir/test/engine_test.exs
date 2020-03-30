@@ -225,4 +225,24 @@ defmodule EngineTest do
     assert route ==
              "(volvo) iteamToRadu -> (tesla) iteamToChristian -> (volvo) raduToKungstradgarden"
   end
+
+  test "handle two batches of bookings" do
+    cars = [@tesla, @volvo]
+    bookingsBatch1 = [@iteamToRadu, @raduToRalis, @ralisToIteam]
+
+    bookingsBatch2 = [@iteamToRadu, @iteamToChristian, @raduToKungstradgarden]
+
+    %{cars: updated_cars} =
+      bookingsBatch1
+      |> Engine.find_candidates(cars)
+
+    route =
+      bookingsBatch2
+      |> Engine.find_candidates(updated_cars)
+      |> pretty()
+      |> Enum.join(" -> ")
+
+    assert route ==
+             "(volvo) iteamToRadu -> (volvo) iteamToChristian -> (volvo) raduToKungstradgarden"
+  end
 end

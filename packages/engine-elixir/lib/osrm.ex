@@ -22,8 +22,8 @@ defmodule Osrm do
   #     })
   # },
   def route(from, to), do: route([from, to])
-  def route(positions) do
 
+  def route(positions) do
     coordinates =
       positions
       |> Enum.map(fn %{lat: lat, lon: lon} -> Enum.join([lon, lat], ",") end)

@@ -32,6 +32,42 @@ defmodule EngineTest do
     id: "iteamToRadu"
   }
 
+  @iteamToChristian %{
+    departure: @iteam,
+    destination: @christian,
+    id: "iteamToChristian"
+  }
+
+  @iteamToKungstradgarden %{
+    departure: @iteam,
+    destination: @kungstradgarden,
+    id: "iteamToKungstradgarden"
+  }
+
+  @iteamToRalis %{
+    departure: @iteam,
+    destination: @ralis,
+    id: "iteamToRalis"
+  }
+
+  @ralisToIteam %{
+    departure: @ralis,
+    destination: @iteam,
+    id: "ralisToIteam"
+  }
+
+  @raduToRalis %{
+    departure: @radu,
+    destination: @ralis,
+    id: "raduToRalis"
+  }
+
+  @ralisToChristian %{
+    departure: @ralis,
+    destination: @christian,
+    id: "ralisToChristian"
+  }
+
   @tesla %{
     busy: false,
     heading: nil,
@@ -50,9 +86,9 @@ defmodule EngineTest do
     route: nil
   }
 
-  def pretty(%{cars: cars, assignments: assignments, score: score}) do
+  def pretty(%{cars: cars, assignments: assignments}) do
     assignments
-    |> Enum.map(fn %{car: car, booking: booking, score: score} ->
+    |> Enum.map(fn %{car: car, booking: booking} ->
       "(#{car.id}) #{booking.id}"
     end)
   end
@@ -61,7 +97,6 @@ defmodule EngineTest do
     "(#{action}) #{booking.id}"
   end
 
-  @tag :skip
   test "happy path" do
     cars = [@tesla]
 
@@ -97,5 +132,97 @@ defmodule EngineTest do
     assert instructions1 == instructions2
 
     assert candidates1.score == candidates2.score
+  end
+
+  test "bookings with two cars" do
+    cars = [@tesla, @volvo]
+
+    route =
+      [@iteamToRadu, @iteamToChristian]
+      |> Engine.find_candidates(cars)
+      |> pretty()
+      |> Enum.join(" -> ")
+
+    assert route == "(volvo) iteamToRadu -> (tesla) iteamToChristian"
+  end
+
+  test "three bookings with two cars" do
+    cars = [@tesla, @volvo]
+
+    route =
+      [@iteamToRadu, @iteamToChristian, @raduToKungstradgarden]
+      |> Engine.find_candidates(cars)
+      |> pretty()
+      |> Enum.join(" -> ")
+
+    assert route ==
+             "(volvo) iteamToRadu -> (tesla) iteamToChristian -> (volvo) raduToKungstradgarden"
+  end
+
+  test "many bookings from the same pickup and same destination" do
+    cars = [@tesla, @volvo]
+
+    route =
+      [@iteamToRadu, @iteamToRadu, @iteamToRadu, @iteamToRadu, @iteamToRadu]
+      |> Engine.find_candidates(cars)
+      |> pretty()
+      |> Enum.join(" -> ")
+
+    assert route ==
+             "(volvo) iteamToRadu -> (volvo) iteamToRadu -> (volvo) iteamToRadu -> (volvo) iteamToRadu -> (volvo) iteamToRadu"
+  end
+
+  test "many bookings from the same pickup with different destinations" do
+    cars = [@tesla, @volvo]
+
+    route =
+      [@iteamToRadu, @iteamToChristian, @iteamToKungstradgarden, @iteamToRalis, @iteamToRadu]
+      |> Engine.find_candidates(cars)
+      |> pretty()
+      |> Enum.join(" -> ")
+
+    assert route ==
+             "(volvo) iteamToRadu -> (tesla) iteamToChristian -> (volvo) iteamToKungstradgarden -> (tesla) iteamToRalis -> (volvo) iteamToRadu"
+  end
+
+  @tag :skip
+  test "two optimal routes with two cars" do
+    cars = [@tesla, @volvo]
+
+    route1 = [@iteamToRadu, @raduToRalis, @ralisToIteam]
+    route2 = [@iteamToChristian, @ralisToChristian]
+
+    route =
+      (route1 ++ route2)
+      |> Engine.find_candidates(cars)
+      |> pretty()
+      |> Enum.join(" -> ")
+
+    assert route ==
+             "(volvo) iteamToRadu -> (volvo) raduToRalis -> (volvo) ralisToIteam -> (tesla) iteamToChristian -> (tesla) ralisToChristian"
+  end
+
+  @tag :skip
+  test "thousands of bookings with two cars" do
+    cars = [@tesla, @volvo]
+
+    route =
+      0..10
+      |> Enum.reduce([], fn i, result ->
+        result ++
+          [
+            @iteamToRadu,
+            @iteamToChristian,
+            @raduToKungstradgarden,
+            @kungstradgardenToRalis,
+            @christianToRadu
+          ]
+      end)
+      |> Engine.find_candidates(cars)
+      |> pretty()
+      |> Enum.join(" -> ")
+
+    assert route ==
+             "(volvo) iteamToRadu -> (tesla) iteamToChristian -> (volvo) raduToKungstradgarden"
   end
 end

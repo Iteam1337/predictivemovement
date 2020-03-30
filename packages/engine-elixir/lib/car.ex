@@ -123,7 +123,8 @@ defmodule Car do
   def calculateDetours(%{instructions: [], route: nil}, booking) do
     [
       %{
-        detourDiff: 0,
+        # rather assign a car with same pickup and destination before assigning it to an empty car
+        detourDiff: 1,
         at: :start,
         before: nil,
         after: nil

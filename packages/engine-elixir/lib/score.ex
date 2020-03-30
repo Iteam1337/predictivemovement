@@ -1,20 +1,15 @@
 defmodule Score do
-  def calculate(booking, %{route: nil}, newRoute) do
-    newRoute.distance
-  end
+  def calculate(%{route: nil}, booking), do: 0
 
-  def calculate(booking, %{route: route}, distance) do
-    distance - route.distance
+  def calculate(car, booking) do
+    car.route.distance
   end
-
-  def calculate(booking, %{route: route}, %{distance: distance}),
-    do: calculate(booking, %{route: route}, distance)
 
   def calculateTotalScore(%{cars: cars, assignments: assignments}) do
     %{
       assignments: assignments,
       cars: cars,
-      score: assignments |> Enum.reduce(0, fn %{score: score}, sum -> sum + score end)
+      score: cars |> Enum.reduce(0, fn %{score: score}, sum -> sum + score end)
     }
   end
 end

@@ -1,6 +1,6 @@
-defmodule CarFinderTest do
+defmodule EngineTest do
   use ExUnit.Case
-  doctest CarFinder
+  doctest Engine
 
   @christian %{lat: 59.338791, lon: 17.897773}
   @radu %{lat: 59.318672, lon: 18.072149}
@@ -61,12 +61,13 @@ defmodule CarFinderTest do
     "(#{action}) #{booking.id}"
   end
 
+  @tag :skip
   test "happy path" do
     cars = [@tesla]
 
     route =
       [@iteamToRadu, @raduToKungstradgarden, @kungstradgardenToRalis]
-      |> Dispatch.evaluate(cars)
+      |> Engine.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -74,22 +75,27 @@ defmodule CarFinderTest do
              "(tesla) iteamToRadu -> (tesla) raduToKungstradgarden -> (tesla) kungstradgardenToRalis"
   end
 
-  @tag :only
   test "bookings assigned in wrong order" do
     cars = [@tesla]
 
-    route1 =
-      [@iteamToRadu, @raduToKungstradgarden, @kungstradgardenToRalis] |> Dispatch.evaluate(cars)
+    candidates1 =
+      [@iteamToRadu, @raduToKungstradgarden, @kungstradgardenToRalis]
+      |> Engine.find_candidates(cars)
 
-    route2 =
-      [@raduToKungstradgarden, @iteamToRadu, @kungstradgardenToRalis] |> Dispatch.evaluate(cars)
+    candidates2 =
+      [@raduToKungstradgarden, @iteamToRadu, @kungstradgardenToRalis]
+      |> Engine.find_candidates(cars)
 
-    route1.cars
-    |> Enum.map(fn car -> IO.inspect(Enum.map(car.instructions, &pretty(&1)), label: "route1") end)
+    instructions1 =
+      candidates1.cars
+      |> Enum.map(fn car -> Enum.map(car.instructions, &pretty(&1)) end)
 
-    route2.cars
-    |> Enum.map(fn car -> IO.inspect(Enum.map(car.instructions, &pretty(&1)), label: "route2") end)
+    instructions2 =
+      candidates2.cars
+      |> Enum.map(fn car -> Enum.map(car.instructions, &pretty(&1)) end)
 
-    assert route1.score < route2.score
+    assert instructions1 == instructions2
+
+    assert candidates1.score == candidates2.score
   end
 end

@@ -95,7 +95,7 @@ defmodule SimulatorTest do
     end)
   end
 
-  @tag :only
+  @tag :skip
   test "generates bookings at SNX hub" do
     hub = %{lat: 61.820701, lon: 16.057731}
     address = Address.random(hub)

@@ -123,12 +123,7 @@ defmodule Car do
   def calculateDetours(%{instructions: [], route: nil}, booking) do
     [
       %{
-        score:
-          Score.calculate(
-            booking,
-            %{route: nil},
-            %{distance: Distance.haversine(booking.departure, booking.destination)}
-          ),
+        detourDiff: 0,
         at: :start,
         before: nil,
         after: nil
@@ -163,8 +158,7 @@ defmodule Car do
       ]
       |> Enum.map(fn modifier ->
         %{
-          score:
-            Score.calculate(booking, %{route: route}, Distance.haversine(modifier.positions)),
+          detourDiff: Distance.haversine(modifier.positions) - Distance.haversine(a, b),
           # route: Osrm.route(modifier.positions),
           before: modifier.before,
           after: modifier.after,
@@ -174,6 +168,6 @@ defmodule Car do
 
       # |> Enum.map(fn modifier -> Map.put(modifier, :score, Score.calculate(booking,  %{ route: route }, modifier.route)) end)
     end)
-    |> Enum.sort_by(fn a -> a.score end, :asc)
+    |> Enum.sort_by(fn a -> a.detourDiff end, :asc)
   end
 end

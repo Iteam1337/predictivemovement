@@ -119,7 +119,6 @@ defmodule CarTest do
 
   ##### </tests-for-old-assign>
 
-  # @tag :only
   test "assign adds new instructions to an empty car" do
     car =
       %{
@@ -144,7 +143,6 @@ defmodule CarTest do
     assert car.heading
   end
 
-  # @tag :only
   test "assign adds new instructions to car with existing instructions" do
     car =
       %{
@@ -172,7 +170,6 @@ defmodule CarTest do
     assert car.heading
   end
 
-  # @tag :only
   test "assign with index inserts new instructions at given index" do
     car =
       %{
@@ -200,7 +197,6 @@ defmodule CarTest do
     assert car.heading
   end
 
-  # @tag :only
   test "assign instructions independent at given indexes" do
     car =
       %{
@@ -228,7 +224,6 @@ defmodule CarTest do
     assert car.heading
   end
 
-  # @tag :only
   test "assign with :auto adds the instructions at the start" do
     # Given @hub as 0 the furthest away is @letsbo
     #
@@ -265,7 +260,6 @@ defmodule CarTest do
            ]
   end
 
-  # @tag :only
   test "assign with :auto adds the instructions at the end" do
     # Given @hub as 0 the furthest away is @letsbo
     #
@@ -302,7 +296,6 @@ defmodule CarTest do
            ]
   end
 
-  # @tag :only
   test "assign with :auto adds new booking between existing instructions if that is the case" do
     car =
       %{
@@ -363,7 +356,6 @@ defmodule CarTest do
            ]
   end
 
-  # @tag :only
   test "calculate detour between a previous booking " do
     car =
       %{
@@ -406,7 +398,6 @@ defmodule CarTest do
     assert first.score > second.score
   end
 
-  # @tag :only
   test "first booking from hub to Nore and second booking from Letsbo back to hub" do
     # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
 

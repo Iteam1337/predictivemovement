@@ -1,6 +1,6 @@
 defmodule SimulatorTest do
   use ExUnit.Case
-  doctest CarsSimulator
+  doctest Engine
 
   # test "greets the world" do
   #   assert Simulator.hello() == :world
@@ -26,12 +26,6 @@ defmodule SimulatorTest do
     assert updated_heading.heading.lon == 17.05948
     assert updated_heading.route.distance > 0
   end
-
-  # test "generates cars" do
-  #   center = %{lat: 61.829182, lon: 16.0896213}
-  #   cars = CarsSimulator.simulate(center, 1337)
-  #   assert length(cars) == 4
-  # end
 
   @tag :skip
   test "send cars to Rabbitmq" do

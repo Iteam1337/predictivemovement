@@ -1,6 +1,6 @@
 defmodule InterpolateTest do
   use ExUnit.Case
-  doctest CarsSimulator
+  doctest Interpolate
 
   @route %{
     started: 0,

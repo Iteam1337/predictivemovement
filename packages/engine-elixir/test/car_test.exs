@@ -373,7 +373,7 @@ defmodule CarTest do
     [firstInstruction, secondInstruction] = car.instructions
     assert first.after == firstInstruction.position
     assert first.before == secondInstruction.position
-    assert first.score != 0
+    assert first.detourDiff != 0
   end
 
   @tag :only
@@ -395,7 +395,7 @@ defmodule CarTest do
     [first | _rest] = Car.calculateDetours(firstCar, secondBooking)
     [second | _rest] = Car.calculateDetours(@secondCar, secondBooking)
 
-    assert first.score > second.score
+    assert first.detourDiff > second.detourDiff
   end
 
   test "first booking from hub to Nore and second booking from Letsbo back to hub" do

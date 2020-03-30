@@ -8,7 +8,7 @@ defmodule Engine do
 
   def find_candidates(bookings, cars) do
     bookings
-    |> Enum.reduce(%{cars: cars, assignments: []}, fn booking, result ->
+    |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->
       [candidate | _rest] = CarFinder.find(booking, result.cars)
       scoreBefore = Score.calculate(candidate.car, candidate.booking)
       bestCar = Car.assign(candidate.car, candidate.booking, :auto)
@@ -23,10 +23,9 @@ defmodule Engine do
       %{
         cars: newCars,
         assignments: result.assignments ++ [%{booking: booking, car: bestCar}],
-        score: scoreAfter - scoreBefore
+        score: result.score + (scoreAfter - scoreBefore)
       }
     end)
-    |> Score.calculateTotalScore()
   end
 
   def start(_type, _args) do

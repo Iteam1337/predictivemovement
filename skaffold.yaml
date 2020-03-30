@@ -1,0 +1,24 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  name: pm-mapbox-test
+build:
+  artifacts:
+  - image: booking-simulator
+    context: packages/booking-simulator
+  - image: car-simulator
+    context: packages/car-simulator
+deploy:
+  kubectl:
+    manifests:
+    - k8s/booking-simulator-deployment.yaml
+    - k8s/car-simulator-deployment.yaml
+    - k8s/rabbitmq-deployment.yaml
+    - k8s/rabbitmq-service.yaml
+#    - k8s/osrm.yaml
+#    - k8s/redis.yaml
+#    - k8s/travis-rbac.yaml
+#    - k8s/cert-manager/issuer.yaml
+#    - k8s/cert-manager/map-certificate.yaml
+#    - k8s/cert-manager/match-route-certificate.yaml
+#    - k8s/traefik/traefik.yaml

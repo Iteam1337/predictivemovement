@@ -23,5 +23,8 @@ erl_crash.dump
 booking_simulator-*.tar
 
 
+.elixir_ls
+
+# Who even cares about logs
 *.log
 log

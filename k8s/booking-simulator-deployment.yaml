@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-simulator
+  labels:
+    app: booking-simulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-simulator
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: booking-simulator
+    spec:
+      containers:
+      - env:
+        - name: AMQP_HOST
+          value: amqp://rabbitmq
+        image: booking-simulator
+        name: booking-simulator
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}

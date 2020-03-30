@@ -15,7 +15,7 @@ defmodule BookingSimulator.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      env: [amqp_host: "amqp://localhost", queue: "simulated_bookings"],
+      env: [amqp_host: "amqp://localhost", exchange: "bookings"],
       extra_applications: [:lager, :logger],
       mod: {BookingSimulator, []}
     ]

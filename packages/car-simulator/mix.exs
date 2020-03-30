@@ -15,7 +15,7 @@ defmodule CarSimulator.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      env: [amqp_host: "amqp://localhost", queue: "simulated_cars"],
+      env: [amqp_host: "amqp://localhost", exchange: "cars"],
       extra_applications: [:lager, :logger],
       mod: {CarSimulator, []}
     ]

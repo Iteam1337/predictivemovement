@@ -5,12 +5,15 @@ defmodule BookingRequests do
     Stream.resource(
       fn ->
         spawn(fn ->
-          queue = "simulated_bookings"
+          queue_name = "booking_requests"
+          bookings_exchange = Application.fetch_env!(:engine, :bookings_exchange)
           {:ok, connection} = AMQP.Connection.open()
           {:ok, channel} = AMQP.Channel.open(connection)
-          AMQP.Queue.declare(channel, queue)
+          AMQP.Exchange.declare(channel, bookings_exchange, :headers)
+          AMQP.Queue.declare(channel, queue_name)
+          AMQP.Queue.bind(channel, queue_name, bookings_exchange)
 
-          AMQP.Queue.subscribe(channel, queue, fn booking, _meta ->
+          AMQP.Queue.subscribe(channel, queue_name, fn booking, _meta ->
             send(parent, {:msg, booking: booking |> Poison.decode!(%{keys: :atoms})})
           end)
         end)

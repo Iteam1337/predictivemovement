@@ -4,23 +4,32 @@ const Markup = require('telegraf/markup')
 
 const init = bot => {
   const stepHandler = new Composer()
+
   stepHandler.action('accept', ctx => {
     ctx.reply('Toppen, då hämtar du detta paketet')
-  })
-  stepHandler.action('denial', ctx => {
-    ctx.reply('Okej. Du är inte ansvarig för att hämta upp paketet')
+    return ctx.wizard.next()
   })
 
-  const bookingSuggestionWizard = new WizardScene('booking-suggestion', ctx => {
-    ctx.replyWithMarkdown(
-      'Det finns en bokning i närheten',
-      Markdown.inlineKeyboard([
-        Markdown.callbackButton('Godkänn', 'accept'),
-        Markdown.callbackButton('Avbryt', 'denial'),
-      ]).extra()
-    )
-    console.log('Inside wizard')
+  stepHandler.action('denial', ctx => {
+    ctx.reply('Okej. Då letar vi vidare')
+    return ctx.wizard.next()
   })
+
+  const bookingSuggestionWizard = new WizardScene(
+    'booking-suggestion',
+    ctx => {
+      ctx.replyWithMarkdown(
+        'Det finns en bokning i närheten, har du möjlighet att hämta denna?',
+        Markdown.inlineKeyboard([
+          Markdown.callbackButton('Godkänn', 'accept'),
+          Markdown.callbackButton('Avbryt', 'denial'),
+        ]).extra()
+      )
+      console.log('Inside wizard')
+    },
+    stepHandler,
+    ctx => ctx.scene.leave()
+  )
 
   const bookingsRequest = (msg, isAccepted) => {
     const exchange = 'bookings'
@@ -35,17 +44,6 @@ const init = bot => {
       )
       .catch(console.warn)
   }
-
-  bot.action('accept', (ctx, next) => {
-    console.log('ctx from accept', ctx)
-    return bookingsRequest(ctx, true).then(() =>
-      ctx.reply('bokningen är din!').then(() => next())
-    )
-  })
-
-  bot.action('denial', (ctx, next) => {
-    return bookingsRequest(ctx, false).then(() =>
-      ctx.reply('Okej! Vi letar vidare :)').then(() => next())
-    )
-  })
 }
+
+module.exports = { init }

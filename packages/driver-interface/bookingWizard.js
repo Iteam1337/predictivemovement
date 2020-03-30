@@ -9,6 +9,7 @@ const { createBooking } = require('./amqp')
 
 const init = bot => {
   const stepHandler = new Composer()
+
   stepHandler.action('confirm', ctx => {
     ctx.reply('Perfekt, din bokning är inlagd')
     const booking = {
@@ -25,9 +26,11 @@ const init = bot => {
         address: 'Kaponjärgatan 4C',
       },
     }
+
     createBooking(booking)
     return ctx.wizard.next()
   })
+
   stepHandler.action('cancel', ctx => {
     ctx.reply('Din bokning är avbruten')
     return ctx.wizard.next()
@@ -82,4 +85,4 @@ const init = bot => {
   bot.use(stage.middleware())
 }
 
-module.exports = { init } //{ init: bot => init(bot) }
+module.exports = { init }

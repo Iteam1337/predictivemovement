@@ -4,15 +4,17 @@ const cors = require('cors')
 const bot = require('./bot')
 const driver = require('./driver')
 const bookingWizard = require('./bookingWizard')
+const amqp = require('./amqp')
 
 bot.start(ctx => {
-  const { first_name, last_name, id } = ctx.update.message.from
+  const { first_name, last_name } = ctx.update.message.from
 
   ctx.reply(
     `Welcome ${first_name} ${last_name}. Press the "share" button to the left of the message input field to share your location! :)`
   )
 })
 
+amqp.registerHandlers()
 bookingWizard.init(bot)
 
 bot.command('newbooking', ctx => {

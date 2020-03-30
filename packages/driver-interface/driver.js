@@ -1,8 +1,32 @@
 const { open } = require('./amqp')
-const Composer = require('telegraf/composer')
-const WizardScene = require('telegraf/scenes/wizard')
 
 const init = bot => {
+  const exchange = 'booking_suggestions'
+  const queue = 'booking_suggestions'
+  open
+    .then(conn => conn.createChannel())
+    .then(ch => {
+      ch.assertExchange(exchange, 'fanout', {
+        durable: false,
+      })
+      ch.assertQueue(queue)
+      ch.bindQueue(queue, exchange)
+    })
+    .catch(console.warn)
+
+  open
+    .then(conn => conn.createChannel())
+    .then(ch =>
+      ch.consume(queue, msg => {
+        console.log('receiving msg from queue:', msg.content.toString())
+        const message = JSON.parse(msg.content)
+
+        bot.telegram.sendMessage(message.id, 'Hello there')
+
+        ch.ack(msg)
+      })
+    )
+
   bot.on('message', ctx => {
     const msg = ctx.message
     onMessage(msg)
@@ -46,6 +70,4 @@ const init = bot => {
   }
 }
 
-module.exports = {
-  init,
-}
+module.exports = { init }

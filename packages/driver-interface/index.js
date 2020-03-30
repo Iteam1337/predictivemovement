@@ -6,24 +6,25 @@ const driver = require('./driver')
 const bookingWizard = require('./bookingWizard')
 
 bot.start(ctx => {
-  const user = ctx.update.message.from
+  const { first_name, last_name, id } = ctx.update.message.from
 
   ctx.reply(
-    `Welcome ${user.first_name} ${user.last_name}. Press the "share" button to the left of the message input field to share your location! :)`
+    `Welcome ${first_name} ${last_name}. Press the "share" button to the left of the message input field to share your location! :)`
   )
 })
 
 bookingWizard.init(bot)
+
 bot.command('newbooking', ctx => {
   ctx.scene.enter('booking-wizard')
 })
 
-bot.command('', ctx => {
-  ctx.scene.enter('booking-wizard')
+bot.command('user', ctx => {
+  console.log('här är jag')
+  console.log(ctx.message)
 })
 
 driver.init(bot)
-
 bot.launch()
 
 const app = express()

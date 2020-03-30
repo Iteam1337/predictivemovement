@@ -1,5 +1,6 @@
 const Composer = require('telegraf/composer')
 const WizardScene = require('telegraf/scenes/wizard')
+const Markup = require('telegraf/markup')
 
 const init = bot => {
   const stepHandler = new Composer()
@@ -11,6 +12,13 @@ const init = bot => {
   })
 
   const bookingSuggestionWizard = new WizardScene('booking-suggestion', ctx => {
+    ctx.replyWithMarkdown(
+      'Det finns en bokning i närheten',
+      Markdown.inlineKeyboard([
+        Markdown.callbackButton('Godkänn', 'accept'),
+        Markdown.callbackButton('Avbryt', 'denial'),
+      ]).extra()
+    )
     console.log('Inside wizard')
   })
 

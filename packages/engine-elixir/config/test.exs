@@ -1,0 +1,1 @@
+config :logger, level: :error

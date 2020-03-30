@@ -21,11 +21,16 @@ defmodule Osrm do
   #       return route
   #     })
   # },
-  def route(from, to) do
-    url =
-      "#{@osrmBase}route/v1/driving/#{from.lon},#{from.lat};#{to.lon},#{to.lat}?steps=true&alternatives=false&overview=full&annotations=true"
+  def route(from, to), do: route([from, to])
 
-    IO.inspect(url, label: "this is the url")
+  def route(positions) do
+    coordinates =
+      positions
+      |> Enum.map(fn %{lat: lat, lon: lon} -> Enum.join([lon, lat], ",") end)
+      |> Enum.join(";")
+
+    url =
+      "#{@osrmBase}route/v1/driving/#{coordinates}?steps=true&alternatives=false&overview=full&annotations=true"
 
     Fetch.json(url)
     |> Map.get(:routes)

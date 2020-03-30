@@ -1,6 +1,7 @@
 defmodule InterpolateTest do
   use ExUnit.Case
   doctest CarsSimulator
+
   @route %{
     started: 0,
     geometry: %{
@@ -12,7 +13,6 @@ defmodule InterpolateTest do
       }
     ]
   }
-
   test "get coming segments" do
     [current | future] = Interpolate.get_future_segments_from_route(@route, 2)
     assert current == %{duration: 2, passed: 3, coordinates: %{lon: 60, lat: 19}}
@@ -24,7 +24,6 @@ defmodule InterpolateTest do
     assert position == %{lon: 60.25, lat: 19.25}
   end
 
-
   test "moves in correct direction" do
     position1 = Interpolate.get_position_from_route(@route, 2)
     position2 = Interpolate.get_position_from_route(@route, 2.5)
@@ -33,7 +32,6 @@ defmodule InterpolateTest do
     assert position1.lon < position2.lon
   end
 
-  @tag :skip
   test "position returns current position in the future" do
     car =
       Car.make(1337, %{lon: 16.0896213, lat: 61.829182}, false)
@@ -48,13 +46,28 @@ defmodule InterpolateTest do
     assert position.lon < 17.05948
   end
 
-  @tag :skip
   test "position returns current position when no route is present" do
     car = Car.make(1337, %{lon: 16.0896213, lat: 61.829182}, false)
 
     position = Car.position(car)
     assert position.lon == 16.0896213
-    assert position.lat == 62.829182
+    assert position.lat == 61.829182
   end
 
+  test "handles zero distance correctly" do
+    route = %{
+      distance: 0,
+      duration: 0,
+      geometry: %{
+        coordinates: [
+          %{lat: 61.8214, lon: 16.05798},
+          %{lat: 61.8214, lon: 16.05798}
+        ]
+      }
+    }
+
+    position = Interpolate.get_position_from_route(route, 0)
+    assert position.lon == 16.05798
+    assert position.lat == 61.8214
+  end
 end

@@ -1,5 +1,4 @@
 defmodule Interpolate do
-
   @moduledoc """
   Documentation for `Interpolate`.
   """
@@ -17,11 +16,11 @@ defmodule Interpolate do
   def get_future_segments_from_route(route, time) do
     route.legs
     |> Enum.flat_map(fn leg -> leg.annotation.duration end)
-    |> Enum.scan(%{passed: 0}, fn a, b -> %{duration: a, passed: b.passed + a} end) # add time passed for each step
+    # add time passed for each step
+    |> Enum.scan(%{passed: 0}, fn a, b -> %{duration: a, passed: b.passed + a} end)
     |> Enum.zip(route.geometry.coordinates)
     |> Enum.filter(fn {annotation, _coordinates} -> annotation.passed >= time end)
     |> Enum.map(fn {annotation, coordinates} -> Map.put(annotation, :coordinates, coordinates) end)
-
   end
 
   @doc """
@@ -33,9 +32,13 @@ defmodule Interpolate do
       iex> Interpolate.get_position_from_route(route, NaiveDateTime.utc_now() + 20)
       : %{lon: x, lat: y}
   """
+  def get_position_from_route(%{distance: 0, geometry: %{coordinates: [position | _rest]}}, time),
+    do: position
+
   def get_position_from_route(route, time) do
     [current, next] = get_future_segments_from_route(route, time) |> Enum.slice(0..1)
-    progress = (time - current.passed + current.duration ) / current.duration
+
+    progress = (time - current.passed + current.duration) / current.duration
 
     %{
       lon: current.coordinates.lon + (next.coordinates.lon - current.coordinates.lon) * progress,

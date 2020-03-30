@@ -126,6 +126,18 @@ export const bookingToFeature = newBookings =>
     multiPoint(
       [
         [departure.lon, departure.lat],
+        // [destination.lon, destination.lat],
+      ],
+      {
+        id,
+        properties: {
+          color: '#ffff00', // yellow
+        },
+      }
+    ),
+    multiPoint(
+      [
+        // [departure.lon, departure.lat],
         [destination.lon, destination.lat],
       ],
       {

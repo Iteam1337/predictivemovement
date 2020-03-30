@@ -5,25 +5,33 @@ const Car = require('../lib/car')
 //const positions = require('./positions')
 const range = length => Array.from({ length }).map((value, i) => i)
 
-function generateCar(nr) {
+function generateCar({ position, heading, id }) {
+  const car = new Car(id, position)
+  car.position = position
+  car.navigateTo(position, heading)
+  car.on('dropoff', () => {
+    randomize().then(position => car.navigateTo(position))
+  })
+
+  return car
+}
+
+function generateRandomCar(id) {
   return _(
     Promise.all([randomize(), randomize()])
-      .then(fromTo => {
-        const car = new Car(nr, fromTo[0])
-        car.position = fromTo[0]
-        car.navigateTo(fromTo[1])
-        car.on('dropoff', () => {
-          randomize().then(position => car.navigateTo(position))
-        })
-        return car
-      })
-      .catch(err => console.error('simulation error', err)),
+      .then(positions => generateCar({ positions, id }))
+      .catch(err => console.error('simulation error', err))
   )
 }
 
-module.exports = _(range(400))
-  .flatMap(generateCar)
-  .errors(err => console.error('initialize error', err))
-  .map(car => _('moved', car))
-  .errors(err => console.error('move error', err))
-  .merge()
+module.exports = {
+  simulate: () =>
+    _(range(50))
+      .flatMap(generateRandomCar)
+      .errors(err => console.error('initialize error', err))
+      .map(car => _('moved', car))
+      .errors(err => console.error('move error', err))
+      .merge(),
+
+  generate: generateCar,
+}

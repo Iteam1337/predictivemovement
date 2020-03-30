@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  car-simulator:
+    build: ./packages/car-simulator
+    environment:
+      AMQP_HOST: amqp://rabbitmq
+    depends_on:
+      - rabbitmq
+
+  booking-simulator:
+    build: ./packages/booking-simulator
+    environment:
+      AMQP_HOST: amqp://rabbitmq
+    depends_on:
+      - rabbitmq
+

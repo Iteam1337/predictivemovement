@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@deck.gl/core": "^8.0.12",
+    "@deck.gl/layers": "^8.0.12",
+    "@deck.gl/react": "^8.0.12",
     "@iteam1337/engine": "file:../engine",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
@@ -20,6 +23,7 @@
     "react-map-gl": "^5.2.1",
     "react-scripts": "3.3.0",
     "socket.io-client": "^2.3.0",
+    "styled-components": "^5.0.0",
     "typescript": "^3.7.5",
     "use-socketio": "^2.0.0"
   },

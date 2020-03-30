@@ -1,6 +1,4 @@
 const { open } = require('./amqp')
-const Composer = require('telegraf/composer')
-const WizardScene = require('telegraf/scenes/wizard')
 
 const init = bot => {
   bot.on('message', ctx => {

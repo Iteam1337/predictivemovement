@@ -18,6 +18,10 @@ bot.command('newbooking', ctx => {
   ctx.scene.enter('booking-wizard')
 })
 
+bot.command('', ctx => {
+  ctx.scene.enter('booking-wizard')
+})
+
 driver.init(bot)
 
 bot.launch()

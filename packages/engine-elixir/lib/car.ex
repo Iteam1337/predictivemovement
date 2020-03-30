@@ -174,6 +174,6 @@ defmodule Car do
 
       # |> Enum.map(fn modifier -> Map.put(modifier, :score, Score.calculate(booking,  %{ route: route }, modifier.route)) end)
     end)
-    |> Enum.sort_by(fn a -> a.score end, :desc)
+    |> Enum.sort_by(fn a -> a.score end, :asc)
   end
 end

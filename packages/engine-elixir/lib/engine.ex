@@ -29,17 +29,36 @@ defmodule Engine do
   end
 
   def start(_type, _args) do
-    cars = Routes.init() |> Enum.take(5)
+    cars = Routes.init()
+    bookings = BookingRequests.init()
 
-    BookingRequests.init()
-    |> Stream.flat_map(fn booking ->
-      CarFinder.find(booking, cars)
-    end)
-    |> Stream.map(fn %{booking: booking, car: car, detour: detour} ->
-      Score.score(booking, car, detour)
-    end)
+    ### -- HERE >>
+    batch_of_bookings =
+      bookings
+      |> Enum.filter(!&1.assignedCar)
+      |> Window.of_time(1, :minute)
+
+    batch_of_cars =
+      cars
+      # |> Enum.filter(!&1.full)
+      |> Window.of_time(1, :minute)
+
+    Stream.zip([batch_of_bookings, batch_of_cars])
+    |> Stream.map(fn [bookings, cars] -> find_candidates(bookings, cars) end)
     |> Stream.map(fn candidates -> MQ.publish("candidates", candidates) end)
     |> Stream.run()
+
+    # candidates = CandidatesStream.init()
+    #  |> Dispatch.evaluateAndFilter() # Evalualtes if the car and booking is ready to be dispatched
+    #  |> Stream.map(fn [car, booking] ->
+    #   cars
+    #     |> Stream.map(fn car -> Car.offer(booking)))
+    #     |> Enum.filter(&1.accepted)
+
+    #   , bookings] = CommCentral.communicate(cars, bookings)
+    #   MQ.publish("assignedCars", cars)
+    #   MQ.publish("assignedBookings", bookings)
+    # end)
 
     # candidates
     # |> IO.inspect(label: "Found new candidateç")

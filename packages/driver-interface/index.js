@@ -19,11 +19,6 @@ bot.command('newbooking', ctx => {
   ctx.scene.enter('booking-wizard')
 })
 
-bot.command('user', ctx => {
-  console.log('här är jag')
-  console.log(ctx.message)
-})
-
 driver.init(bot)
 bot.launch()
 

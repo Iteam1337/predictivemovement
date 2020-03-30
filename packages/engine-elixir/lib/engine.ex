@@ -2,7 +2,30 @@ defmodule Engine do
   use Application
 
   defp score(booking, car, detour) do
+    # TODO: change to using Score.calculate instead
     %{booking: booking, car: car, score: detour.diff}
+  end
+
+  def find_candidates(bookings, cars) do
+    bookings
+    |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->
+      [candidate | _rest] = CarFinder.find(booking, result.cars)
+      scoreBefore = Score.calculate(candidate.car, candidate.booking)
+      bestCar = Car.assign(candidate.car, candidate.booking, :auto)
+      scoreAfter = Score.calculate(candidate.car, candidate.booking)
+
+      newCars =
+        result.cars
+        |> Enum.map(fn car ->
+          if car.id == bestCar.id, do: bestCar, else: car
+        end)
+
+      %{
+        cars: newCars,
+        assignments: result.assignments ++ [%{booking: booking, car: bestCar}],
+        score: result.score + (scoreAfter - scoreBefore)
+      }
+    end)
   end
 
   def start(_type, _args) do
@@ -13,7 +36,7 @@ defmodule Engine do
       CarFinder.find(booking, cars)
     end)
     |> Stream.map(fn %{booking: booking, car: car, detour: detour} ->
-      score(booking, car, detour)
+      Score.score(booking, car, detour)
     end)
     |> Stream.map(fn candidates -> MQ.publish("candidates", candidates) end)
     |> Stream.run()

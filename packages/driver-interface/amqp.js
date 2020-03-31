@@ -2,11 +2,12 @@ const open = require('amqplib').connect('amqp://localhost')
 
 const exchanges = {
   BOOKINGS: 'bookings',
-  BOOKING_SUGGESTIONS: 'booking_suggestions',
+  DELIVERY_REQUESTS: 'delivery_requests',
+  CARS: 'cars',
 }
 
 const queues = {
-  BOOKING_SUGGESTIONS: 'booking_suggestions',
+  DELIVERY_REQUESTS: 'delivery_requests',
 }
 
 const init = () =>
@@ -14,17 +15,14 @@ const init = () =>
     .then(conn => conn.createChannel())
     .then(ch =>
       ch
-        .assertQueue(queues.BOOKING_SUGGESTIONS)
+        .assertQueue(queues.DELIVERY_REQUESTS)
         .then(() =>
-          ch.assertExchange(exchanges.BOOKING_SUGGESTIONS, 'fanout', {
+          ch.assertExchange(exchanges.DELIVERY_REQUESTS, 'fanout', {
             durable: false,
           })
         )
         .then(() =>
-          ch.bindQueue(
-            queues.BOOKING_SUGGESTIONS,
-            exchanges.BOOKING_SUGGESTIONS
-          )
+          ch.bindQueue(queues.DELIVERY_REQUESTS, exchanges.DELIVERY_REQUESTS)
         )
     )
     .catch(console.warn)
@@ -42,17 +40,49 @@ const subscribe = (queue, callback) =>
     .catch(console.warn)
 
 const createBooking = booking => {
-  const exchange = 'bookings'
+  console.log(booking)
   return open
     .then(conn => conn.createChannel())
     .then(ch =>
       ch
-        .assertExchange(exchange, 'headers', { durable: false })
+        .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
         .then(() =>
-          ch.publish(exchange, '', Buffer.from(JSON.stringify(booking)))
+          ch.publish(
+            exchanges.BOOKINGS,
+            '',
+            Buffer.from(JSON.stringify(booking))
+          )
         )
     )
     .catch(console.warn)
 }
 
-module.exports = { open, createBooking, init, subscribe, queues, exchanges }
+const deliveryRequest = (driver, isAccepted) => {
+  return open
+    .then(conn => conn.createChannel())
+    .then(ch =>
+      ch
+        .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
+        .then(() =>
+          ch.publish(
+            exchanges.BOOKINGS,
+            '',
+            Buffer.from(JSON.stringify(driver)),
+            {
+              headers: { isAccepted },
+            }
+          )
+        )
+    )
+    .catch(console.warn)
+}
+
+module.exports = {
+  open,
+  createBooking,
+  init,
+  subscribe,
+  deliveryRequest,
+  queues,
+  exchanges,
+}

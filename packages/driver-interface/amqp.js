@@ -9,42 +9,37 @@ const queues = {
   BOOKING_SUGGESTIONS: 'booking_suggestions',
 }
 
-const registerHandlers = () => {
+const init = () =>
   open
     .then(conn => conn.createChannel())
-    .then(ch => {
-      // this isn't working properly...
-
-      return ch
-        .assertQueue(queues.BOOKING_SUGGESTIONS, { durable: false })
+    .then(ch =>
+      ch
+        .assertQueue(queues.BOOKING_SUGGESTIONS)
         .then(() =>
           ch.assertExchange(exchanges.BOOKING_SUGGESTIONS, 'fanout', {
             durable: false,
           })
         )
-
         .then(() =>
           ch.bindQueue(
             queues.BOOKING_SUGGESTIONS,
             exchanges.BOOKING_SUGGESTIONS
           )
         )
-    })
+    )
     .catch(console.warn)
 
+const subscribe = (queue, callback) =>
   open
-    .then(conn => conn.createChannel())
-    .then(ch =>
-      ch.consume(queues.BOOKING_SUGGESTIONS, msg => {
-        console.log('receiving msg from queue:', msg.content.toString())
-        const message = JSON.parse(msg.content)
-
-        bot.telegram.sendMessage(message.id, 'Hello there')
-
-        ch.ack(msg)
-      })
+    .then(conn =>
+      conn.createChannel().then(ch =>
+        ch.consume(queue, msg => {
+          callback(msg)
+          ch.ack(msg)
+        })
+      )
     )
-}
+    .catch(console.warn)
 
 const createBooking = booking => {
   const exchange = 'bookings'
@@ -60,4 +55,4 @@ const createBooking = booking => {
     .catch(console.warn)
 }
 
-module.exports = { open, createBooking, registerHandlers }
+module.exports = { open, createBooking, init, subscribe, queues, exchanges }

@@ -4,6 +4,8 @@ const cors = require('cors')
 const bot = require('./bot')
 const driver = require('./driver')
 const bookingWizard = require('./bookingWizard')
+const bookingSuggestionWizard = require('./bookingSuggestionWizard')
+
 const amqp = require('./amqp')
 
 bot.start(ctx => {
@@ -14,8 +16,12 @@ bot.start(ctx => {
   )
 })
 
-amqp.registerHandlers()
 bookingWizard.init(bot)
+bookingSuggestionWizard.init(bot)
+
+amqp
+  .init()
+  .then(() => amqp.subscribe(amqp.queues.BOOKING_SUGGESTIONS, console.log))
 
 bot.command('newbooking', ctx => {
   ctx.scene.enter('booking-wizard')

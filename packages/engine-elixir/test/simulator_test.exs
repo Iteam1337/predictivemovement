@@ -31,7 +31,7 @@ defmodule SimulatorTest do
   test "send cars to Rabbitmq" do
     File.stream!("test/cars.json")
     |> Jaxon.Stream.query([:root, :all])
-    |> Enum.map(fn t -> MQ.publish("cars", t) end)
+    |> Enum.map(fn t -> MQ.publish(t, "cars") end)
   end
 
   @tag :skip
@@ -42,7 +42,7 @@ defmodule SimulatorTest do
     |> Enum.to_list()
     |> Poison.encode!()
     |> Poison.decode!(%{keys: :atoms})
-    |> Enum.map(fn t -> MQ.publish("bookings", t) end)
+    |> Enum.map(fn t -> MQ.publish(t, "bookings") end)
   end
 
   @tag :skip
@@ -72,7 +72,7 @@ defmodule SimulatorTest do
     [%{booking: _booking, cars: cars} | _rest] = candidates
 
     # candidates
-    # |> Enum.map(fn t -> MQ.publish("candidates", t) end)
+    # |> Enum.map(fn t -> MQ.publish(t, "candidates") end)
 
     assert length(cars) == 2
   end

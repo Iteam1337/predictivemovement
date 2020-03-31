@@ -6,7 +6,8 @@ defmodule BookingRequests do
       fn ->
         spawn(fn ->
           queue_name = "booking_requests"
-          bookings_exchange = Application.fetch_env!(:engine, :bookings_exchange)
+          # Application.fetch_env!(:engine, :bookings_exchange)
+          bookings_exchange = "bookings"
           {:ok, connection} = AMQP.Connection.open()
           {:ok, channel} = AMQP.Channel.open(connection)
           AMQP.Exchange.declare(channel, bookings_exchange, :headers)

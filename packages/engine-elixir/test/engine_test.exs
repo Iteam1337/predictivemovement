@@ -1,5 +1,7 @@
 defmodule EngineTest do
   use ExUnit.Case
+  use ExUnitProperties
+
   doctest Engine
 
   @christian %{lat: 59.338791, lon: 17.897773}
@@ -244,5 +246,96 @@ defmodule EngineTest do
 
     assert route ==
              "(volvo) iteamToRadu -> (volvo) iteamToChristian -> (volvo) raduToKungstradgarden"
+  end
+
+  # @tag :window
+  # test "window" do
+  # window = Flow.Window.global() |> Flow.Window.trigger_every(10)
+
+  # flow = Flow.from_enumerable(1..100) |> Flow.partition(window: window, stages: 1)
+
+  # flow
+  # |> Flow.reduce(fn -> 0 end, &(&1 + &2))
+  # |> Flow.emit(:state)
+  # |> Enum.to_list()
+  # |> IO.inspect(label: "result")
+
+  # data = [
+  #   {"elixir", 0},
+  #   {"elixir", 1_000},
+  #   {"erlang", 60_000},
+  #   {"concurrency", 3_200_000},
+  #   {"elixir", 4_000_000},
+  #   {"erlang", 5_000_000},
+  #   {"erlang", 6_000_000}
+  # ]
+
+  # window =
+  #   Flow.Window.fixed(1, :hour, fn {_word, timestamp} ->
+  #     IO.inspect(_word, label: "this is a value")
+  #     timestamp
+  #   end)
+
+  # flow = Flow.from_enumerable(data, max_demand: 5, stages: 1)
+  # flow = Flow.partition(flow, window: window, stages: 1)
+
+  # flow =
+  #   Flow.reduce(flow, fn -> %{} end, fn {word, _}, acc ->
+  #     Map.update(acc, word, 1, &(&1 + 1))
+  #   end)
+
+  # flow
+  # |> Flow.emit(:state)
+  # |> Enum.to_list()
+  # |> IO.inspect(label: "result")
+
+  #   hub = %{lat: 61.820701, lon: 16.057731}
+
+  #   window = Flow.Window.global() |> Flow.Window.trigger_every(10)
+
+  #   bookings =
+  #     integer()
+  #     |> Flow.from_enumerable()
+  #     |> Flow.partition(window: window, stages: 1)
+  #     |> Flow.map(&BookingSimulator.generate_booking(&1, hub, Address.random(hub)))
+  #     |> Enum.take(5)
+  #     |> Enum.to_list()
+  #     |> IO.inspect(label: "bookings")
+  # end
+
+  @tag :only
+  test "description" do
+    hub = %{lat: 61.820701, lon: 16.057731}
+
+    bookings =
+      integer()
+      |> Stream.map(&Booking.make(&1, hub, Address.random(hub)))
+
+    cars = integer() |> Stream.map(&Car.make(&1, hub, false))
+
+    latest_bookings =
+      bookings
+      |> Stream.chunk_every(5)
+      |> Enum.take(1)
+      |> List.first()
+
+    latest_cars =
+      cars
+      |> Stream.chunk_every(5)
+      |> Enum.take(1)
+      |> List.first()
+
+    IO.inspect(latest_bookings)
+    IO.inspect(latest_cars)
+
+    candidates =
+      Engine.find_candidates(latest_bookings, latest_cars)
+      |> (fn %{assignments: assignments} -> assignments end).()
+      |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+      |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+      |> IO.inspect(label: "data")
+
+    assert length(latest_bookings) == 5
+    assert length(latest_cars) == 5
   end
 end

@@ -35,7 +35,7 @@ defmodule Engine do
     ### -- HERE >>
     batch_of_bookings =
       bookings
-      |> Enum.filter(!&1.assignedCar)
+      |> Enum.filter(&is_nil(&1.assignedCar))
       |> Window.of_time(1, :minute)
 
     batch_of_cars =
@@ -43,21 +43,21 @@ defmodule Engine do
       # |> Enum.filter(!&1.full)
       |> Window.of_time(1, :minute)
 
-    Stream.zip([batch_of_bookings, batch_of_cars])
-    |> Stream.map(fn [bookings, cars] -> find_candidates(bookings, cars) end)
-    |> Stream.map(fn candidates -> MQ.publish("candidates", candidates) end)
-    |> Stream.run()
+    # Stream.zip([batch_of_bookings, batch_of_cars])
+    # |> Stream.map(fn [bookings, cars] -> find_candidates(bookings, cars) end)
+    # |> Stream.map(fn candidates -> MQ.publish(candidates, "candidates") end)
+    # |> Stream.run()
 
-    # candidates = CandidatesStream.init()
-    #  |> Dispatch.evaluateAndFilter() # Evalualtes if the car and booking is ready to be dispatched
+    # # candidates = CandidatesStream.init()
+    # #  |> Dispatch.evaluateAndFilter() # Evalualtes if the car and booking is ready to be dispatched
     #  |> Stream.map(fn [car, booking] ->
     #   cars
     #     |> Stream.map(fn car -> Car.offer(booking)))
     #     |> Enum.filter(&1.accepted)
 
     #   , bookings] = CommCentral.communicate(cars, bookings)
-    #   MQ.publish("assignedCars", cars)
-    #   MQ.publish("assignedBookings", bookings)
+    #   MQ.publish(cars, "assignedCars")
+    #   MQ.publish(bookings, "assignedBookings")
     # end)
 
     # candidates

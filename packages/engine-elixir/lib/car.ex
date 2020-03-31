@@ -171,4 +171,8 @@ defmodule Car do
     end)
     |> Enum.sort_by(fn a -> a.detourDiff end, :asc)
   end
+
+  def offer(car, booking) do
+    MQ.rpc(%{car: car, booking: booking}, "offers")
+  end
 end

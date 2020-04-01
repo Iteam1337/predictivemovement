@@ -1,5 +1,24 @@
-defmodule Engine do
-  use Application
+defmodule Engine.Supervisor do
+  use Supervisor
+
+  def start_link(init_arg) do
+    Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_init_arg) do
+    children = [Engine.App]
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
+end
+
+defmodule Engine.App do
+  use Task
+
+  def start_link(_arg) do
+    Task.start_link(__MODULE__, :start, _arg)
+  end
 
   defp score(booking, car, detour) do
     # TODO: change to using Score.calculate instead
@@ -28,7 +47,7 @@ defmodule Engine do
     end)
   end
 
-  def start(_type, _args) do
+  def start() do
     RpcServer.init()
 
     car = %{
@@ -69,9 +88,5 @@ defmodule Engine do
     # candidates
     # |> IO.inspect(label: "Found new candidateç")
     # |> Enum.map(fn booking -> MQ.publish("candidates", booking) end)
-
-    children = []
-
-    Supervisor.start_link(children, strategy: :one_for_one)
   end
 end

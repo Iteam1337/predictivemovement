@@ -26,6 +26,7 @@ botCommands.registerHandlers(bot)
 
 amqp
   .init()
+  .then(() => amqp.rpcServer())
   .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
 
 driver.init(bot)

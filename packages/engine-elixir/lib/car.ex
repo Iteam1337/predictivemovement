@@ -173,8 +173,6 @@ defmodule Car do
   end
 
   def offer(car, booking) do
-    MQ.rpc(%{car: car, booking: booking}, "offers")
-
-    RpcClient.call(%{car: car, booking: booking}, "offers")
+    MQ.publish_rpc(%{car: car, booking: booking}, "offers")
   end
 end

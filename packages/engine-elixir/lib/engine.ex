@@ -47,21 +47,47 @@ defmodule Engine.App do
     end)
   end
 
-
   def start() do
-    cars = Routes.init()
-    bookings = BookingRequests.init()
+    hub = %{lat: 61.820701, lon: 16.057731}
 
-    ### -- HERE >>
-    batch_of_bookings =
+    bookings =
+      1..5
+      |> Stream.map(&Booking.make(&1, hub, Address.random(hub)))
+
+    cars = 1..5 |> Stream.map(&Car.make(&1, hub, false))
+
+    latest_bookings =
       bookings
-      |> Enum.filter(&is_nil(&1.assignedCar))
-      |> Window.of_time(1, :minute)
+      |> Stream.chunk_every(5)
+      |> Enum.take(1)
+      |> List.first()
 
-    batch_of_cars =
+    latest_cars =
       cars
-      # |> Enum.filter(!&1.full)
-      |> Window.of_time(1, :minute)
+      |> Stream.chunk_every(5)
+      |> Enum.take(1)
+      |> List.first()
+
+    candidates =
+      Engine.App.find_candidates(latest_bookings, latest_cars)
+      |> (fn %{assignments: assignments} -> assignments end).()
+      |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+      |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+      |> IO.inspect(label: "data")
+
+    # cars = Routes.init()
+    # bookings = BookingRequests.init()
+
+    # ### -- HERE >>
+    # batch_of_bookings =
+    #   bookings
+    #   |> Enum.filter(&is_nil(&1.assignedCar))
+    #   |> Window.of_time(1, :minute)
+
+    # batch_of_cars =
+    #   cars
+    #   # |> Enum.filter(!&1.full)
+    #   |> Window.of_time(1, :minute)
 
     # Stream.zip([batch_of_bookings, batch_of_cars])
     # |> Stream.map(fn [bookings, cars] -> find_candidates(bookings, cars) end)

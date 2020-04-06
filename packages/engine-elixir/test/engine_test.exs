@@ -304,7 +304,7 @@ defmodule EngineTest do
   # end
 
   @tag :only
-  test "description" do
+  test "offer booking to car" do
     hub = %{lat: 61.820701, lon: 16.057731}
 
     bookings =
@@ -329,7 +329,7 @@ defmodule EngineTest do
     IO.inspect(latest_cars)
 
     candidates =
-      Engine.find_candidates(latest_bookings, latest_cars)
+      Engine.App.find_candidates(latest_bookings, latest_cars)
       |> (fn %{assignments: assignments} -> assignments end).()
       |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
       |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)

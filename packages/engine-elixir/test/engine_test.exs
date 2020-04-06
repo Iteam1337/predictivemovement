@@ -325,15 +325,22 @@ defmodule EngineTest do
       |> Enum.take(1)
       |> List.first()
 
-    IO.inspect(latest_bookings)
-    IO.inspect(latest_cars)
-
     candidates =
       Engine.App.find_candidates(latest_bookings, latest_cars)
       |> (fn %{assignments: assignments} -> assignments end).()
       |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-      |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-      |> IO.inspect(label: "data")
+      |> Enum.map(fn %{booking: booking, car: car} ->
+        # Car.offer(car, booking)
+        %{booking: booking, car: car, accepted: true}
+      end)
+      |> Enum.filter(fn %{accepted: accepted} -> accepted end)
+
+    # |> Enum.map(fn %{booking: booking, car: car} -> Booking.assign(car, booking) end)
+    # |> Enum.map(fn %{booking: booking, car: car} ->
+    #   MQ.publish(car, "assignedCars")
+    #   MQ.publish(booking, "assignedBookings")
+    # end)
+    # |> IO.inspect(label: "data")
 
     assert length(latest_bookings) == 5
     assert length(latest_cars) == 5

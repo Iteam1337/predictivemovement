@@ -31,7 +31,7 @@ defmodule Engine.App do
       [candidate | _rest] = CarFinder.find(booking, result.cars)
       scoreBefore = Score.calculate(candidate.car, candidate.booking)
       bestCar = Car.assign(candidate.car, candidate.booking, :auto)
-      scoreAfter = Score.calculate(candidate.car, candidate.booking)
+      scoreAfter = Score.calculate(bestCar, candidate.booking)
 
       newCars =
         result.cars
@@ -73,6 +73,7 @@ defmodule Engine.App do
       |> (fn %{assignments: assignments} -> assignments end).()
       |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
       |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+      |> Enum.filter(fn %{accepted: accepted} -> accepted end)
       |> IO.inspect(label: "data")
 
     # cars = Routes.init()

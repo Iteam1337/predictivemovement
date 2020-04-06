@@ -1,9 +1,9 @@
-const registerHandlers = bot => {
-  bot.command('boka', ctx => {
+const registerHandlers = (bot) => {
+  bot.command('nybokning', (ctx) => {
     ctx.scene.enter('booking-wizard')
   })
 
-  bot.command('testa', ctx => {
+  bot.command('testa', (ctx) => {
     ctx.scene.enter('delivery-request')
   })
 }

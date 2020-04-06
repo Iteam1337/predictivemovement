@@ -20,4 +20,8 @@ defmodule Dispatch do
     end)
     |> Score.calculateTotalScore()
   end
+
+  def deliveryRequest() do
+    RpcClient.call(5)
+  end
 end

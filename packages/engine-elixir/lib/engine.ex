@@ -1,5 +1,24 @@
-defmodule Engine do
-  use Application
+defmodule Engine.Supervisor do
+  use Supervisor
+
+  def start_link(init_arg) do
+    Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_init_arg) do
+    children = [Engine.App]
+
+    Supervisor.init(children, strategy: :one_for_one)
+  end
+end
+
+defmodule Engine.App do
+  use Task
+
+  def start_link(_arg) do
+    Task.start_link(__MODULE__, :start, _arg)
+  end
 
   defp score(booking, car, detour) do
     # TODO: change to using Score.calculate instead
@@ -28,25 +47,46 @@ defmodule Engine do
     end)
   end
 
-  def start(_type, _args) do
-    cars = Routes.init() |> Enum.take(5)
+  def start() do
+    RpcServer.init()
 
-    BookingRequests.init()
-    |> Stream.flat_map(fn booking ->
-      CarFinder.find(booking, cars)
-    end)
-    |> Stream.map(fn %{booking: booking, car: car, detour: detour} ->
-      Score.score(booking, car, detour)
-    end)
-    |> Stream.map(fn candidates -> MQ.publish("candidates", candidates) end)
-    |> Stream.run()
+    car = %{
+      busy: false,
+      heading: nil,
+      id: 1,
+      instructions: [],
+      position: @hub,
+      route: nil
+    }
+
+    hub = %{lat: 61.820701, lon: 16.057731}
+
+    # 1..5
+    # |> Enum.map(fn id -> Map.put(car, :id, id) end)
+    # |> Enum.map(&Car.offer(&1, hub))
+    1..5
+    |> Flow.from_enumerable()
+    |> Flow.map(fn id -> Map.put(car, :id, id) end)
+    |> IO.inspect(label: "offering car")
+    |> Flow.map(fn car -> Car.offer(car, hub) end)
+    |> Flow.partition()
+
+    IO.puts("Its alive")
+
+    # cars = Routes.init() |> Enum.take(5)
+
+    # BookingRequests.init()
+    # |> Stream.flat_map(fn booking ->
+    #   CarFinder.find(booking, cars)
+    # end)
+    # |> Stream.map(fn %{booking: booking, car: car, detour: detour} ->
+    #   Score.score(booking, car, detour)
+    # end)
+    # |> Stream.map(fn candidates -> MQ.publish("candidates", candidates) end)
+    # |> Stream.run()
 
     # candidates
     # |> IO.inspect(label: "Found new candidateç")
     # |> Enum.map(fn booking -> MQ.publish("candidates", booking) end)
-
-    children = []
-
-    Supervisor.start_link(children, strategy: :one_for_one)
   end
 end

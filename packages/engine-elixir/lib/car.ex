@@ -173,6 +173,7 @@ defmodule Car do
   end
 
   def offer(car, booking) do
-    MQ.publish_rpc(%{car: car, booking: booking}, "offers")
+    accepted = MQ.publish_rpc(%{car: car, booking: booking}, "offers")
+    %{car: car, booking: booking, accepted: accepted}
   end
 end

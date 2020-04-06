@@ -1,5 +1,6 @@
 defmodule InterpolateTest do
   use ExUnit.Case
+
   doctest Interpolate
 
   @route %{

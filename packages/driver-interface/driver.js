@@ -1,4 +1,5 @@
 const { open } = require('./amqp')
+const amqp = require('./amqp')
 
 const init = bot => {
   bot.on('message', ctx => {
@@ -23,7 +24,7 @@ const init = bot => {
     const message = {
       username,
       id: msg.from.id,
-      chatId: msg.chat.id,
+      // chatId: msg.chat.id, // this borks engine-elixir
       position,
       date: Date(msg.edit_date),
     }
@@ -37,40 +38,11 @@ const init = bot => {
       .then(conn => conn.createChannel())
       .then(ch =>
         ch
-          .assertExchange('cars', 'fanout', { durable: false })
+          .assertExchange(amqp.exchanges.CARS, 'fanout', { durable: false })
           .then(() => ch.publish('cars', '', Buffer.from(JSON.stringify(msg))))
       )
       .catch(console.warn)
   }
-
-  const bookingsRequest = (msg, isAccepted) => {
-    const exchange = 'bookings'
-    return open
-      .then(conn => conn.createChannel())
-      .then(ch =>
-        ch.assertExchange(exchange, 'headers', { durable: false }).then(() =>
-          ch.publish(exchange, '', Buffer.from(JSON.stringify(msg)), {
-            headers: { isAccepted },
-          })
-        )
-      )
-      .catch(console.warn)
-  }
-
-  bot.action('accept', (ctx, next) => {
-    console.log('ctx from accept', ctx)
-    return bookingsRequest(ctx, true).then(() =>
-      ctx.reply('bokningen är din!').then(() => next())
-    )
-  })
-
-  bot.action('denial', (ctx, next) => {
-    return bookingsRequest(ctx, false).then(() =>
-      ctx.reply('Okej! Vi letar vidare :)').then(() => next())
-    )
-  })
 }
 
-module.exports = {
-  init,
-}
+module.exports = { init }

@@ -3,4 +3,8 @@ defmodule Dispatch do
     # TODO: filter based on if the car is full, booking has restrictions etc.
     true
   end
+
+  def deliveryRequest() do
+    RpcClient.call(5)
+  end
 end

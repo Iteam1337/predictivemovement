@@ -419,4 +419,9 @@ defmodule CarTest do
     IO.inspect(first, label: "first")
     IO.inspect(second, label: "second")
   end
+
+  @tag :rpc
+  test "offer does an rpc call" do
+    Car.offer(@firstCar, @hub)
+  end
 end

@@ -67,13 +67,17 @@ defmodule Car do
     |> calculateDetours(booking)
     |> List.first()
     |> case do
-      %{at: :start} ->
-        assign(car, booking, 0)
+      # The last element of an instruction segment
+      %{before: nil, after: afterPosition} ->
+        index =
+          Enum.find_index(car.instructions, fn i ->
+            i.position == afterPosition
+          end)
+          |> Kernel.+(1)
 
-      %{at: :end} ->
-        assign(car, booking)
+        assign(car, booking, index)
 
-      %{at: nil, before: before, after: _after} ->
+      %{before: before, after: _after} ->
         before_index =
           Enum.find_index(car.instructions, fn i ->
             i.position == before
@@ -81,12 +85,6 @@ defmodule Car do
 
         assign(car, booking, before_index)
     end
-
-    # before_index = Enum.find_index(car.instructions, fn i ->
-    #   i.position == best_instruction.before.position
-    # end)
-
-    # assign(car, booking, before_index)
   end
 
   def assign(car, booking), do: assign(car, booking, length(car.instructions))
@@ -140,19 +138,16 @@ defmodule Car do
       [
         %{
           positions: [a, b, booking.departure, booking.destination],
-          at: :end,
           before: nil,
           after: b
         },
         %{
           positions: [booking.departure, booking.destination, a, b],
-          at: :start,
           before: a,
           after: nil
         },
         %{
           positions: [a, booking.departure, booking.destination, b],
-          at: nil,
           before: b,
           after: a
         }
@@ -160,10 +155,8 @@ defmodule Car do
       |> Enum.map(fn modifier ->
         %{
           detourDiff: Distance.haversine(modifier.positions) - Distance.haversine(a, b),
-          # route: Osrm.route(modifier.positions),
           before: modifier.before,
-          after: modifier.after,
-          at: modifier.at
+          after: modifier.after
         }
       end)
 

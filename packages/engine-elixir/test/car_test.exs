@@ -40,6 +40,59 @@ defmodule CarTest do
     route: nil
   }
 
+  @odengatan_first %{lat: 59.339961, lon: 18.039203}
+
+  @odengatan_second %{lat: 59.340239, lon: 18.040300}
+
+  @odengatan_third %{lat: 59.340595, lon: 18.041687}
+
+  @odengatan_fourth %{lat: 59.340737, lon: 18.042224}
+
+  @odengatan_fifth %{lat: 59.340835, lon: 18.042632}
+
+  @odengatan_sixth %{lat: 59.341084, lon: 18.043651}
+
+  @odengatan_seventh %{lat: 59.341286, lon: 18.044477}
+
+  @firstToSecond %{
+    departure: @odengatan_first,
+    destination: @odengatan_second,
+    id: "firstToSecond"
+  }
+
+  @secondToThird %{
+    departure: @odengatan_second,
+    destination: @odengatan_third,
+    id: "secondToThird"
+  }
+
+  @thirdToFourth %{
+    departure: @odengatan_third,
+    destination: @odengatan_fourth,
+    id: "thirdToFourth"
+  }
+
+  @fourthToFifth %{
+    departure: @odengatan_fourth,
+    destination: @odengatan_fifth,
+    id: "fourthToFifth"
+  }
+
+  @fifthToSixth %{
+    departure: @odengatan_fifth,
+    destination: @odengatan_sixth,
+    id: "fifthToSixth"
+  }
+
+  @volvo %{
+    busy: false,
+    heading: nil,
+    id: "volvo",
+    instructions: [],
+    position: @hub,
+    route: nil
+  }
+
   # Given @hub as 0 the furthest away is @letsbo
   #
   # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
@@ -322,7 +375,7 @@ defmodule CarTest do
   @tag :skip
   test "assign with :auto can assign pickup and dropoff independent in the instructions list" do
     # Given @hub as 0 the furthest away is @letsbo
-    #
+
     # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
     firstBooking =
       @firstBooking
@@ -376,7 +429,6 @@ defmodule CarTest do
     assert first.detourDiff != 0
   end
 
-  @tag :only
   test "2 bookings from hub to different points" do
     # @hub -> @somewhereInNore -> @sillerbo -> @letsbo
 
@@ -418,10 +470,5 @@ defmodule CarTest do
 
     IO.inspect(first, label: "first")
     IO.inspect(second, label: "second")
-  end
-
-  @tag :rpc
-  test "offer does an rpc call" do
-    Car.offer(@firstCar, @hub)
   end
 end

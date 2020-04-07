@@ -30,6 +30,7 @@ defmodule Engine.App do
     |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->
       [candidate | _rest] = CarFinder.find(booking, result.cars)
       scoreBefore = Score.calculate(candidate.car, candidate.booking)
+
       bestCar = Car.assign(candidate.car, candidate.booking, :auto)
       scoreAfter = Score.calculate(bestCar, candidate.booking)
 
@@ -45,6 +46,7 @@ defmodule Engine.App do
         score: result.score + (scoreAfter - scoreBefore)
       }
     end)
+    |> (fn %{assignments: assignments} -> assignments end).()
   end
 
   def start() do
@@ -61,15 +63,11 @@ defmodule Engine.App do
 
     Stream.zip(batch_of_bookings, batch_of_cars)
     |> Stream.map(fn {latest_bookings, latest_cars} ->
-      # IO.inspect(latest_bookings, label: "latest bookings")
-      # IO.inspect(latest_cars, label: "latest cars")
       Engine.App.find_candidates(latest_bookings, latest_cars)
     end)
-    # |> (fn %{assignments: assignments} -> assignments end).()
-    # |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-    # |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-    # |> Stream.filter(fn %{accepted: accepted} -> accepted end)
-
+    |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+    |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+    |> Stream.filter(fn %{accepted: accepted} -> accepted end)
     |> Stream.run()
 
     # candidates =

@@ -59,26 +59,6 @@ const createBooking = (booking) => {
     .catch(console.warn)
 }
 
-// const deliveryRequest = (driver, isAccepted) => {
-//   return open
-//     .then((conn) => conn.createChannel())
-//     .then((ch) =>
-//       ch
-//         .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
-//         .then(() =>
-//           ch.publish(
-//             exchanges.BOOKINGS,
-//             '',
-//             Buffer.from(JSON.stringify(driver)),
-//             {
-//               headers: { isAccepted },
-//             }
-//           )
-//         )
-//     )
-//     .catch(console.warn)
-// }
-
 const rpcServer = () => {
   return open
     .then((conn) => conn.createChannel())
@@ -88,7 +68,6 @@ const rpcServer = () => {
         .then(() =>
           ch.consume(queues.DELIVERY_RPC, (message) => {
             const msg = JSON.parse(message.content.toString())
-            // console.log('msg', message)
             deliveryRequest(msg.id, {
               replyQueue: message.properties.replyTo,
               correlationId: message.properties.correlationId,
@@ -105,7 +84,6 @@ module.exports = {
   createBooking,
   init,
   subscribe,
-  deliveryRequest,
   queues,
   exchanges,
   rpcServer,

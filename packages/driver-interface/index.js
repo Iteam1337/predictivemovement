@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -24,14 +26,12 @@ amqp
   .init()
   .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
   .then(() => amqp.rpcServer())
-// .then((callback) => {
-//   bot.use(session())
-//   const stage = new Stage([bookingWizard])
 
-//   bot.use(stage.middleware())
+const stage = new Stage([bookingWizard])
 
-//   botCommands.registerHandlers(bot)
-// })
+bot.use(stage.middleware())
+
+botCommands.registerHandlers(bot)
 
 driver.init(bot)
 

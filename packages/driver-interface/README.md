@@ -2,11 +2,17 @@
 
 ## Usage
 
-Open `t.me/pm_driver_bot` from telegram app on you phone. This will add the telegram bot `pm_driver` to your telegram.
+Create .env file in root with following content:
+
+```
+BOT_TOKEN=<your telegram bot token>
+```
+
+Open `t.me/predictive_movement_bot` from telegram app on you phone. This will add the telegram bot `pm_driver_bot` to your telegram.
 
 ### Booking
 
-Start the booking wizard by typing the command `/newbooking`. This will take you through the booking, step by step
+Start the booking wizard by typing the command `/boka`. This will take you through the booking, step by step
 
 ### Driver
 

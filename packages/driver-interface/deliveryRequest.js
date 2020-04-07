@@ -1,9 +1,7 @@
 const bot = require('./bot')
-// const { rpcResponse } = require('./amqp')
 const open = require('amqplib').connect('amqp://localhost')
 
 const deliveryRequest = (chatId, msgOptions) => {
-  console.log(chatId)
   bot.telegram.sendMessage(
     chatId,
     `Ett paket finns att hämta på Munkebäcksgatan 33F som ska levereras till Storhöjdsgatan 9, har du möjlighet att hämta detta?`,
@@ -38,28 +36,31 @@ const deliveryRequest = (chatId, msgOptions) => {
 }
 
 bot.on('callback_query', (msg) => {
-  const { a, ...options } = JSON.parse(msg.update.callback_query.data)
+  let isAccepted
+  let options
+
+  try {
+    const { a, ...opt } = JSON.parse(msg.update.callback_query.data)
+    isAccepted = a
+    options = opt
+  } catch (error) {
+    return
+  }
 
   if (!options || !options.r || !options.id) return
+
+  msg.editMessageReplyMarkup()
+  msg.answerCbQuery()
+  msg.reply(isAccepted ? 'Kul!' : 'Tråkigt!')
+
   return open
     .then((conn) => conn.createChannel())
     .then((ch) =>
-      ch.sendToQueue(options.r, Buffer.from(a.toString()), {
+      ch.sendToQueue(options.r, Buffer.from(isAccepted.toString()), {
         correlationId: options.id,
       })
     )
     .catch(console.warn)
 })
-
-// bot.action('accept', (ctx, next) => {
-//   console.log('ctx from accept', ctx)
-//   callback(true)
-//   ctx.reply('bokningen är din!').then(() => next())
-// })
-
-// bot.action('denial', (ctx, next) => {
-//   callback(false)
-//   ctx.reply('Okej! Vi letar vidare :)').then(() => next())
-// })
 
 module.exports = { deliveryRequest }

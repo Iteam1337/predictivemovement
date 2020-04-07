@@ -18,8 +18,7 @@ defmodule Bookings do
     # |> Flow.map(fn x -> generate_random_booking(x, center) end)
     # |> Enum.to_list()
 
-    Stream.interval(5000)
+    Stream.interval(1000)
     |> Stream.map(fn x -> generate_random_booking(x, center) end)
-
   end
 end

@@ -6,7 +6,7 @@ const cors = require('cors')
 const bot = require('./bot')
 const driver = require('./driver')
 const { bookingWizard } = require('./bookingWizard')
-const deliveryRequest = require('./deliveryRequestWizard')
+// const deliveryRequest = require('./deliveryRequestWizard')
 const botCommands = require('./botCommands')
 const session = require('telegraf/session')
 const amqp = require('./amqp')
@@ -22,16 +22,16 @@ bot.start((ctx) => {
 
 bot.use(session())
 
-amqp
-  .init()
-  .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
-  .then(() => amqp.rpcServer())
-
 const stage = new Stage([bookingWizard])
 
 bot.use(stage.middleware())
 
 botCommands.registerHandlers(bot)
+
+amqp
+  .init()
+  .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
+  .then(() => amqp.rpcServer())
 
 driver.init(bot)
 

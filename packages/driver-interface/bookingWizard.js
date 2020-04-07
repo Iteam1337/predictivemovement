@@ -1,12 +1,12 @@
 const Composer = require('telegraf/composer')
 const Markup = require('telegraf/markup')
 const WizardScene = require('telegraf/scenes/wizard')
-const { v4: uuidv4 } = require('uuid')
+const { v4: uuidv4 } = require('uuid') // https://www.npmjs.com/package/id62
 const { createBooking } = require('./amqp')
 
 const stepHandler = new Composer()
 
-stepHandler.action('confirm', ctx => {
+stepHandler.action('confirm', (ctx) => {
   ctx.reply('Perfekt, din bokning är inlagd')
   const booking = {
     id: uuidv4(),
@@ -14,12 +14,10 @@ stepHandler.action('confirm', ctx => {
     departure: {
       lon: ctx.wizard.state.data.from.lon,
       lat: ctx.wizard.state.data.from.lat,
-      address: 'Olskroksgatan 20',
     },
     destination: {
       lon: ctx.wizard.state.data.to.lon,
       lat: ctx.wizard.state.data.to.lat,
-      address: 'Kaponjärgatan 4C',
     },
   }
 
@@ -27,19 +25,19 @@ stepHandler.action('confirm', ctx => {
   return ctx.wizard.next()
 })
 
-stepHandler.action('cancel', ctx => {
+stepHandler.action('cancel', (ctx) => {
   ctx.reply('Din bokning är avbruten')
   return ctx.wizard.next()
 })
 
 const bookingWizard = new WizardScene(
   'booking-wizard',
-  ctx => {
-    ctx.reply('Hej! Vart ska paketet levereras ifrån?')
+  (ctx) => {
+    ctx.reply('Hej! Vart ska paketet hämtas ifrån? (välj plats med gemet)')
     ctx.wizard.state.data = {}
     return ctx.wizard.next()
   },
-  ctx => {
+  (ctx) => {
     if (!ctx.message.location) {
       return ctx.reply('Du måste välja på karta juh')
     }
@@ -48,11 +46,11 @@ const bookingWizard = new WizardScene(
       lat: ctx.message.location.latitude,
       lon: ctx.message.location.longitude,
     }
-    ctx.reply('Härligt, nu är det bara att välja en destination')
+    ctx.reply('Härligt, nu är det bara att välja destination')
     return ctx.wizard.next()
   },
-  ctx => {
-    if (!ctx.message.location) {
+  (ctx) => {
+    if (!ctx.message || !ctx.message.location) {
       return ctx.reply('Du måste välja på karta juh')
     }
 
@@ -71,7 +69,7 @@ const bookingWizard = new WizardScene(
     return ctx.wizard.next()
   },
   stepHandler,
-  ctx => {
+  (ctx) => {
     console.log('leaving booking request scene')
     return ctx.scene.leave()
   }

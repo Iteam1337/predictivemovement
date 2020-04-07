@@ -1,5 +1,6 @@
 const bot = require('./bot')
 const open = require('amqplib').connect('amqp://localhost')
+const Markup = require('telegraf/markup')
 
 const deliveryRequest = (chatId, msgOptions) => {
   bot.telegram.sendMessage(
@@ -55,11 +56,32 @@ bot.on('callback_query', (msg) => {
 
   return open
     .then((conn) => conn.createChannel())
-    .then((ch) =>
+    .then((ch) => {
       ch.sendToQueue(options.r, Buffer.from(isAccepted.toString()), {
         correlationId: options.id,
       })
+      return ch
+    })
+    .then(
+      (ch) =>
+        new Promise((resolve) =>
+          ch.consume('pickupInstructions', (msg) => {
+            ch.ack(msg)
+            resolve(msg)
+          })
+        )
     )
+    .then((data) => JSON.parse(data.content.toString()))
+    .then((instructions) => {
+      console.log('received instructions', instructions)
+      msg.replyWithMarkdown(
+        `Bra du ska nu åka hit [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${instructions.booking.destination.lat},${instructions.booking.destination.lon})`,
+        Markup.inlineKeyboard([
+          Markup.callbackButton('Hämtat', 'confirm'),
+          Markup.callbackButton('Hinner inte', 'confirm'),
+        ]).extra()
+      )
+    })
     .catch(console.warn)
 })
 

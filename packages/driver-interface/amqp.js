@@ -48,7 +48,7 @@ const createBooking = (booking) => {
     .then((ch) =>
       ch
         .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
-        .then((ch) =>
+        .then(() =>
           ch.publish(
             exchanges.BOOKINGS,
             '',

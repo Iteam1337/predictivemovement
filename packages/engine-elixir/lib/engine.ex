@@ -55,11 +55,11 @@ defmodule Engine.App do
 
     batch_of_bookings =
       bookingsStream
-      |> Stream.chunk_every(2)
+      |> Stream.chunk_every(1)
 
     batch_of_cars =
       carsStream
-      |> Stream.chunk_every(2)
+      |> Stream.chunk_every(1)
 
     Stream.zip(batch_of_bookings, batch_of_cars)
     |> Stream.map(fn {latest_bookings, latest_cars} ->
@@ -71,8 +71,9 @@ defmodule Engine.App do
     end)
     |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
     |> Stream.filter(fn %{accepted: accepted} -> accepted end)
-    |> Stream.map(fn %{car: car, booking: booking} ->
+    |> Stream.map(fn %{booking: booking, car: car} = pickup ->
       IO.puts("Car #{car.id} accepted booking #{booking.id}")
+      MQ.publish(pickup, "pickupInstructions")
     end)
     |> Stream.run()
 

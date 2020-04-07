@@ -1,9 +1,13 @@
 defmodule MQ do
-  def publish(queue, data) do
+  def publish(data, queue_name) do
     {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
     {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.declare(channel, queue)
-    AMQP.Basic.publish(channel, "", queue, Poison.encode!(data), content_type: "application/json")
+    AMQP.Queue.declare(channel, queue_name)
+
+    AMQP.Basic.publish(channel, "", queue_name, Poison.encode!(data),
+      content_type: "application/json"
+    )
+
     AMQP.Connection.close(connection)
   end
 

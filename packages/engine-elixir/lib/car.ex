@@ -12,9 +12,11 @@ defmodule Car do
             instructions: [],
             route: nil
 
-  def make(%{id: id, position: position, heading: heading}) do
-    make(id, position, false) |> navigateTo(heading)
-  end
+  def make(%{id: id, position: position, heading: nil}), do: make(id, position, false)
+  def make(%{id: id, position: position}), do: make(id, position, false)
+
+  def make(%{id: id, position: position, heading: heading}),
+    do: make(id, position, false) |> navigateTo(heading)
 
   def make(id, position, busy) do
     %Car{id: id, position: position, busy: busy}
@@ -121,11 +123,11 @@ defmodule Car do
     |> Map.put(:busy, true)
   end
 
-  def calculateDetours(%{instructions: [], route: route}, %{
+  def calculateDetours(%{instructions: [], route: route, position: position}, %{
         departure: departure,
         destination: destination
       }) do
-    car_position = Car.position(%{route: route})
+    car_position = Car.position(%{route: route, position: position})
 
     [
       %{

@@ -65,9 +65,15 @@ defmodule Engine.App do
     |> Stream.map(fn {latest_bookings, latest_cars} ->
       find_candidates(latest_bookings, latest_cars)
     end)
-    |> Stream.filter(fn [booking, car] -> Dispatch.evaluate(booking, car) end)
-    |> Stream.map(fn [booking, car] -> Car.offer(car, booking) end)
-    # |> Stream.filter(fn %{accepted: accepted} -> accepted end)
+    |> Stream.flat_map(fn candidates ->
+      candidates
+      |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+    end)
+    |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+    |> Stream.filter(fn %{accepted: accepted} -> accepted end)
+    |> Stream.map(fn %{car: car, booking: booking} ->
+      IO.puts("Car #{car.id} accepted booking #{booking.id}")
+    end)
     |> Stream.run()
 
     IO.puts("Its alive")

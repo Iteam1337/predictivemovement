@@ -26,7 +26,7 @@ const init = (bot) => {
       id: msg.from.id,
       // chatId: msg.chat.id, // this borks engine-elixir
       position,
-      date: Date(msg.edit_date),
+      // date: Date(msg.edit_date),
     }
 
     updateLocation(message, ctx)

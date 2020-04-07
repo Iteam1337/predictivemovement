@@ -9,12 +9,15 @@ defmodule CarFinder do
   """
   def distance(car, %{departure: departure}) do
     distance = Distance.haversine(Car.position(car), departure)
+
     %{car: car, distance: distance}
   end
 
   @doc """
   Sort all cars in a list according to birds distance to a booking
   """
+  def closestCars(booking, []), do: []
+
   def closestCars(booking, cars) do
     cars
     |> Enum.map(fn car -> distance(car, booking) end)
@@ -31,12 +34,15 @@ defmodule CarFinder do
     |> Enum.take(2)
   end
 
+  def detourCars([], booking), do: []
+
   def detourCars(cars, booking) do
+    IO.puts("detour cars works cars: #{length(cars)}, booking: #{booking.id}")
+
     cars
-    |> Enum.map(fn car ->
-      Car.calculateDetours(car, booking)
-      |> (fn [first | _rest] -> %{car: car, booking: booking, detourDiff: first.detourDiff} end).()
-    end)
+    |> Enum.map(&Car.calculateDetours(&1, booking))
+    |> List.first()
+    |> (fn first -> %{car: car, booking: booking, detourDiff: first.detourDiff} end).()
     |> Enum.sort_by(fn a -> a.detourDiff end, :asc)
   end
 end

@@ -48,38 +48,43 @@ defmodule Engine.App do
   end
 
   def start() do
-    hub = %{lat: 61.820701, lon: 16.057731}
+    carsStream = Routes.init()
+    bookingsStream = BookingRequests.init()
 
-    bookings =
-      1..5
-      |> Stream.map(&Booking.make(&1, hub, Address.random(hub)))
+    batch_of_bookings =
+      bookingsStream
+      |> Stream.chunk_every(2)
 
-    cars = 1..5 |> Stream.map(&Car.make(&1, hub, false))
+    batch_of_cars =
+      carsStream
+      |> Stream.chunk_every(2)
 
-    latest_bookings =
-      bookings
-      |> Stream.chunk_every(5)
-      |> Enum.take(1)
-      |> List.first()
-
-    latest_cars =
-      cars
-      |> Stream.chunk_every(5)
-      |> Enum.take(1)
-      |> List.first()
-
-    candidates =
+    Stream.zip(batch_of_bookings, batch_of_cars)
+    |> Stream.map(fn {latest_bookings, latest_cars} ->
+      # IO.inspect(latest_bookings, label: "latest bookings")
+      # IO.inspect(latest_cars, label: "latest cars")
       Engine.App.find_candidates(latest_bookings, latest_cars)
-      |> (fn %{assignments: assignments} -> assignments end).()
-      |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-      |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-      |> Enum.filter(fn %{accepted: accepted} -> accepted end)
-      |> IO.inspect(label: "data")
+    end)
+    # |> (fn %{assignments: assignments} -> assignments end).()
+    # |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+    # |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+    # |> Stream.filter(fn %{accepted: accepted} -> accepted end)
+
+    |> Stream.run()
+
+    # candidates =
+    #   Engine.App.find_candidates(latest_bookings, latest_cars)
+    #   |> (fn %{assignments: assignments} -> assignments end).()
+    #   |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+    #   |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+    #   |> Enum.filter(fn %{accepted: accepted} -> accepted end)
+    #   |> IO.inspect(label: "data")
+
+    # ### -- HERE >>
 
     # cars = Routes.init()
     # bookings = BookingRequests.init()
 
-    # ### -- HERE >>
     # batch_of_bookings =
     #   bookings
     #   |> Enum.filter(&is_nil(&1.assignedCar))

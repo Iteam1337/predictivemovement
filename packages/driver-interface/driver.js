@@ -1,18 +1,18 @@
 const { open } = require('./amqp')
 const amqp = require('./amqp')
 
-const init = bot => {
-  bot.on('message', ctx => {
+const init = (bot) => {
+  bot.on('message', (ctx) => {
     const msg = ctx.message
-    onMessage(msg)
+    onMessage(msg, ctx)
   })
 
-  bot.on('edited_message', ctx => {
+  bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
-    onMessage(msg)
+    onMessage(msg, ctx)
   })
 
-  const onMessage = msg => {
+  const onMessage = (msg, ctx) => {
     if (!msg.location) return
 
     const position = {
@@ -29,18 +29,19 @@ const init = bot => {
       date: Date(msg.edit_date),
     }
 
-    updateLocation(message)
+    updateLocation(message, ctx)
   }
 
-  const updateLocation = msg => {
+  const updateLocation = (msg, ctx) => {
     // Publisher
     open
-      .then(conn => conn.createChannel())
-      .then(ch =>
-        ch
-          .assertExchange(amqp.exchanges.CARS, 'fanout', { durable: false })
-          .then(() => ch.publish('cars', '', Buffer.from(JSON.stringify(msg))))
-      )
+      .then((conn) => conn.createChannel())
+      .then((ch) => {
+        ch.assertExchange(amqp.exchanges.CARS, 'fanout', {
+          durable: false,
+        }).then(() => ch.publish('cars', '', Buffer.from(JSON.stringify(msg))))
+      })
+
       .catch(console.warn)
   }
 }

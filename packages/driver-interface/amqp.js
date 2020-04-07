@@ -1,4 +1,6 @@
 const open = require('amqplib').connect('amqp://localhost')
+const Stage = require('telegraf/stage')
+const { deliveryRequest } = require('./deliveryRequest')
 
 const exchanges = {
   BOOKINGS: 'bookings',
@@ -7,13 +9,14 @@ const exchanges = {
 }
 
 const queues = {
+  DELIVERY_RPC: 'rpc_queue',
   DELIVERY_REQUESTS: 'delivery_requests',
 }
 
 const init = () =>
   open
-    .then(conn => conn.createChannel())
-    .then(ch =>
+    .then((conn) => conn.createChannel())
+    .then((ch) =>
       ch
         .assertQueue(queues.DELIVERY_REQUESTS)
         .then(() =>
@@ -29,9 +32,9 @@ const init = () =>
 
 const subscribe = (queue, callback) =>
   open
-    .then(conn =>
-      conn.createChannel().then(ch =>
-        ch.consume(queue, msg => {
+    .then((conn) =>
+      conn.createChannel().then((ch) =>
+        ch.consume(queue, (msg) => {
           callback(msg)
           ch.ack(msg)
         })
@@ -39,14 +42,13 @@ const subscribe = (queue, callback) =>
     )
     .catch(console.warn)
 
-const createBooking = booking => {
-  console.log(booking)
+const createBooking = (booking) => {
   return open
-    .then(conn => conn.createChannel())
-    .then(ch =>
+    .then((conn) => conn.createChannel())
+    .then((ch) =>
       ch
         .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
-        .then(ch =>
+        .then((ch) =>
           ch.publish(
             exchanges.BOOKINGS,
             '',
@@ -57,42 +59,45 @@ const createBooking = booking => {
     .catch(console.warn)
 }
 
-const deliveryRequest = (driver, isAccepted) => {
-  return open
-    .then(conn => conn.createChannel())
-    .then(ch =>
-      ch
-        .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
-        .then(() =>
-          ch.publish(
-            exchanges.BOOKINGS,
-            '',
-            Buffer.from(JSON.stringify(driver)),
-            {
-              headers: { isAccepted },
-            }
-          )
-        )
-    )
-    .catch(console.warn)
-}
+// const deliveryRequest = (driver, isAccepted) => {
+//   return open
+//     .then((conn) => conn.createChannel())
+//     .then((ch) =>
+//       ch
+//         .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
+//         .then(() =>
+//           ch.publish(
+//             exchanges.BOOKINGS,
+//             '',
+//             Buffer.from(JSON.stringify(driver)),
+//             {
+//               headers: { isAccepted },
+//             }
+//           )
+//         )
+//     )
+//     .catch(console.warn)
+// }
 
 const rpcServer = () => {
   return open
-    .then(conn => conn.createChannel())
-    .then(ch =>
-      ch.assertQueue('rpc_queue', { durable: false }).then(() =>
-        ch.consume('rpc_queue', msg => {
-          const message = msg.toString()
-
-          ch.sendToQueue(msg.properties.replyTo, Buffer.from('someMessage'), {
-            correlationId: msg.properties.correlationId,
+    .then((conn) => conn.createChannel())
+    .then((ch) =>
+      ch
+        .assertQueue(queues.DELIVERY_RPC, { durable: false })
+        .then(() =>
+          ch.consume(queues.DELIVERY_RPC, (message) => {
+            const msg = JSON.parse(message.content.toString())
+            // console.log('msg', message)
+            deliveryRequest(msg.id, {
+              replyQueue: message.properties.replyTo,
+              correlationId: message.properties.correlationId,
+            })
+            ch.ack(message)
           })
-          ch.ack(msg)
-        })
-      )
+        )
+        .catch(console.warn)
     )
-    .catch(console.warn)
 }
 
 module.exports = {

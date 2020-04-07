@@ -67,6 +67,9 @@ defmodule Car do
     |> calculateDetours(booking)
     |> List.first()
     |> case do
+      %{before: nil, after: nil} ->
+        assign(car, booking, 0)
+
       # The last element of an instruction segment
       %{before: nil, after: afterPosition} ->
         index =
@@ -118,12 +121,16 @@ defmodule Car do
     |> Map.put(:busy, true)
   end
 
-  def calculateDetours(%{instructions: [], route: nil}, booking) do
+  def calculateDetours(%{instructions: [], route: route}, %{
+        departure: departure,
+        destination: destination
+      }) do
+    car_position = Car.position(%{route: route})
+
     [
       %{
         # rather assign a car with same pickup and destination before assigning it to an empty car
-        detourDiff: 1,
-        at: :start,
+        detourDiff: Distance.haversine([car_position, departure, destination, car_position]),
         before: nil,
         after: nil
       }

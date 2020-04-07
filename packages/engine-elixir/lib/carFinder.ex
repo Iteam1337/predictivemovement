@@ -37,12 +37,12 @@ defmodule CarFinder do
   def detourCars([], booking), do: []
 
   def detourCars(cars, booking) do
-    IO.puts("detour cars works cars: #{length(cars)}, booking: #{booking.id}")
-
     cars
-    |> Enum.map(&Car.calculateDetours(&1, booking))
-    |> List.first()
-    |> (fn first -> %{car: car, booking: booking, detourDiff: first.detourDiff} end).()
+    |> Enum.map(fn car ->
+      Car.calculateDetours(car, booking)
+      |> List.first()
+      |> (fn first -> %{car: car, booking: booking, detourDiff: first.detourDiff} end).()
+    end)
     |> Enum.sort_by(fn a -> a.detourDiff end, :asc)
   end
 end

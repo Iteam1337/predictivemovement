@@ -63,20 +63,14 @@ defmodule Engine.App do
 
     Stream.zip(batch_of_bookings, batch_of_cars)
     |> Stream.map(fn {latest_bookings, latest_cars} ->
-      Engine.App.find_candidates(latest_bookings, latest_cars)
+      find_candidates(latest_bookings, latest_cars)
     end)
-    |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-    |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-    |> Stream.filter(fn %{accepted: accepted} -> accepted end)
+    |> Stream.filter(fn [booking, car] -> Dispatch.evaluate(booking, car) end)
+    |> Stream.map(fn [booking, car] -> Car.offer(car, booking) end)
+    # |> Stream.filter(fn %{accepted: accepted} -> accepted end)
     |> Stream.run()
 
-    # candidates =
-    #   Engine.App.find_candidates(latest_bookings, latest_cars)
-    #   |> (fn %{assignments: assignments} -> assignments end).()
-    #   |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-    #   |> Enum.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-    #   |> Enum.filter(fn %{accepted: accepted} -> accepted end)
-    #   |> IO.inspect(label: "data")
+    IO.puts("Its alive")
 
     # ### -- HERE >>
 
@@ -109,8 +103,6 @@ defmodule Engine.App do
     #   MQ.publish(cars, "assignedCars")
     #   MQ.publish(bookings, "assignedBookings")
     # end)
-
-    IO.puts("Its alive")
 
     # cars = Routes.init() |> Enum.take(5)
 

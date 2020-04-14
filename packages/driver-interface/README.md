@@ -10,10 +10,6 @@ BOT_TOKEN=<your telegram bot token>
 
 Open `t.me/predictive_movement_bot` from telegram app on you phone. This will add the telegram bot `pm_driver_bot` to your telegram.
 
-### Booking
-
-Start the booking wizard by typing the command `/boka`. This will take you through the booking, step by step
-
 ### Driver
 
 The API behind the bot takes a location payload from the client (you), you enable this by live sharing your location to the bot. To do this you press the paperclip icon next to the message input and select `live location`.

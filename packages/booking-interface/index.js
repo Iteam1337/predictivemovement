@@ -4,8 +4,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const bot = require('./bot')
-const driver = require('./driver')
-// const deliveryRequest = require('./deliveryRequestWizard')
+const { bookingWizard } = require('./bookingWizard')
 const botCommands = require('./botCommands')
 const session = require('telegraf/session')
 const amqp = require('./amqp')
@@ -20,21 +19,21 @@ bot.start((ctx) => {
     id,
   } = ctx.update.message.from
 
-  ctx.reply(
-    `Välkommen ${first_name} ${last_name}! Klicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :) Ditt id är ${id}`
-  )
+  ctx.reply(`Välkommen ${first_name} ${last_name}! :) Ditt id är ${id}`)
 })
 
 bot.use(session())
 
+const stage = new Stage([bookingWizard])
+
+bot.use(stage.middleware())
+
 botCommands.registerHandlers(bot)
 
-amqp
-  .init()
-  .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
-  .then(() => amqp.rpcServer())
-
-driver.init(bot)
+// amqp
+//   .init()
+//   .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
+//   .then(() => amqp.rpcServer())
 
 bot.launch()
 

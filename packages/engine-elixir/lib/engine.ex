@@ -56,12 +56,36 @@ defmodule Engine.App do
     batch_of_bookings =
       bookings_stream
       # time window every minute?
-      |> Stream.chunk_every(1)
+      |> Stream.chunk_every(2)
 
     batch_of_cars =
       cars_stream
       # sliding window of ten minutes?
-      |> Stream.chunk_every(1)
+      |> Stream.chunk_every(2)
+
+    # 1. start with enum, move to flow
+    # We think we can solve the car.offer with flow
+
+    # Flow.from_enumerables([batch_of_bookings, batch_of_cars])
+    # |> Flow.map(fn {latest_bookings, latest_cars} ->
+    #   IO.inspect(length(latest_cars), label: "batch of")
+    #   {latest_bookings, latest_cars}
+    # end)
+    # |> Flow.map(fn {latest_bookings, latest_cars} ->
+    #   find_candidates(latest_bookings, latest_cars)
+    # end)
+    # |> Flow.flat_map(fn candidates ->
+    #   candidates
+    #   |> Flow.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+    # end)
+    # |> Flow.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
+    # # |> Flow.partition()
+    # |> Flow.filter(fn %{accepted: accepted} -> accepted end)
+    # |> Flow.map(fn %{booking: booking, car: car} ->
+    #   IO.puts("Car #{car.id} accepted booking #{booking.id}")
+    #   Booking.assign(booking, car)
+    # end)
+    # |> Flow.run()
 
     Stream.zip(batch_of_bookings, batch_of_cars)
     |> Stream.map(fn {latest_bookings, latest_cars} ->

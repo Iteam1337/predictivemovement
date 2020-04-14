@@ -11,6 +11,8 @@ const session = require('telegraf/session')
 const amqp = require('./amqp')
 const Stage = require('telegraf/stage')
 
+const { pickupInstructions } = require('./deliveryRequest')
+
 bot.start((ctx) => {
   const {
     first_name,
@@ -29,10 +31,10 @@ bot.use(session())
 
 botCommands.registerHandlers(bot)
 
-amqp
-  .init()
-  .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
-  .then(() => amqp.rpcServer())
+amqp.open.then(() => {
+  pickupInstructions()
+  amqp.rpcServer()
+})
 
 driver.init(bot)
 

@@ -65,7 +65,7 @@ bot.on('callback_query', (msg) => {
     .then(
       (ch) =>
         new Promise((resolve) =>
-          ch.consume('pickupInstructions', (msg) => {
+          ch.consume('pickup_instructions', (msg) => {
             ch.ack(msg)
             resolve(msg)
           })

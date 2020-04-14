@@ -11,26 +11,6 @@ defmodule MQ do
     AMQP.Connection.close(connection)
   end
 
-  # def publishExchange(exchange, data) do
-  #   {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
-  #   {:ok, channel} = AMQP.Channel.open(connection)
-  #   AMQP.Exchange.declare(channel, exchange, :fanout)
-  #   AMQP.Basic.publish(channel, exchange, "", Poison.encode!(data), content_type: "application/json")
-  #   AMQP.Connection.close(connection)
-  # end
-
-  # THIS DOES NOT WORK PROPERLY, USE AT OWN RISK
-  # def subscribe(queue) do
-  #   {:ok, connection} = AMQP.Connection.open()
-  #   {:ok, channel} = AMQP.Channel.open(connection)
-  #   AMQP.Queue.declare(channel, queue)
-
-  #   AMQP.Basic.consume(
-  #     channel,
-  #     queue,
-  #     nil
-  #   )
-  # end
   def wait_for_messages(_channel, correlation_id) do
     receive do
       {:basic_deliver, payload, %{correlation_id: ^correlation_id}} ->
@@ -38,16 +18,16 @@ defmodule MQ do
     end
   end
 
-  def publish_rpc(data, queue_name) do
+  def publish_rpc(data, queue_name, response_queue_name) do
     {:ok, connection} = AMQP.Connection.open()
     {:ok, channel} = AMQP.Channel.open(connection)
 
     AMQP.Queue.declare(
       channel,
-      queue_name
+      response_queue_name
     )
 
-    AMQP.Basic.consume(channel, queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, response_queue_name, nil, no_ack: true)
 
     correlation_id =
       :erlang.unique_integer()
@@ -57,9 +37,9 @@ defmodule MQ do
     AMQP.Basic.publish(
       channel,
       "",
-      "rpc_queue",
+      queue_name,
       Poison.encode!(data),
-      reply_to: queue_name,
+      reply_to: response_queue_name,
       correlation_id: correlation_id
     )
 

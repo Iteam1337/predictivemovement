@@ -47,7 +47,9 @@ const createBooking = (booking) => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertExchange(exchanges.BOOKINGS, 'headers', { durable: false })
+        .assertExchange(exchanges.BOOKINGS, 'headers', {
+          durable: false,
+        })
         .then(() =>
           ch.publish(
             exchanges.BOOKINGS,
@@ -64,14 +66,23 @@ const rpcServer = () => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(queues.DELIVERY_RPC, { durable: false })
+        .assertQueue(queues.DELIVERY_RPC, {
+          durable: false,
+        })
         .then(() =>
           ch.consume(queues.DELIVERY_RPC, (message) => {
-            const msg = JSON.parse(message.content.toString())
-            deliveryRequest(msg.car.id, {
-              replyQueue: message.properties.replyTo,
-              correlationId: message.properties.correlationId,
-            })
+            const { car, booking } = JSON.parse(message.content.toString())
+            deliveryRequest(
+              car.id,
+              {
+                replyQueue: message.properties.replyTo,
+                correlationId: message.properties.correlationId,
+              },
+              {
+                car,
+                booking,
+              }
+            )
             ch.ack(message)
           })
         )

@@ -9,7 +9,7 @@ const exchanges = {
 }
 
 const queues = {
-  DELIVERY_RPC: 'rpc_queue',
+  DELIVERY_RPC: 'pickup_offers',
   DELIVERY_REQUESTS: 'delivery_requests',
 }
 

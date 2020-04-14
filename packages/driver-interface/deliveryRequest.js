@@ -2,7 +2,9 @@ const bot = require('./bot')
 const open = require('amqplib').connect('amqp://localhost')
 const Markup = require('telegraf/markup')
 
-const deliveryRequest = (chatId, msgOptions) => {
+const deliveryRequest = (chatId, msgOptions, { car, booking }) => {
+  console.log('msgOptions', car)
+  console.log('msgOptions', booking)
   bot.telegram.sendMessage(
     chatId,
     `Ett paket finns att hämta på Munkebäcksgatan 33F som ska levereras till Storhöjdsgatan 9, har du möjlighet att hämta detta?`,
@@ -35,6 +37,11 @@ const deliveryRequest = (chatId, msgOptions) => {
     }
   )
 }
+
+bot.action('confirm', (ctx) => {
+  console.log(ctx)
+  ctx.reply('yay')
+})
 
 bot.on('callback_query', (msg) => {
   let isAccepted
@@ -75,14 +82,15 @@ bot.on('callback_query', (msg) => {
     .then((instructions) => {
       console.log('received instructions', instructions)
       msg.replyWithMarkdown(
-        `Bra du ska nu åka hit [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${instructions.booking.destination.lat},${instructions.booking.destination.lon})`,
+        `Bra du ska nu åka hit [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${instructions.booking.departure.lat},${instructions.booking.departure.lon})`,
         Markup.inlineKeyboard([
           Markup.callbackButton('Hämtat', 'confirm'),
-          Markup.callbackButton('Hinner inte', 'confirm'),
         ]).extra()
       )
     })
     .catch(console.warn)
 })
 
-module.exports = { deliveryRequest }
+module.exports = {
+  deliveryRequest,
+}

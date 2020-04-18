@@ -1,6 +1,10 @@
 # Jupyter
 .ipynb_checkpoints
 
+# Python
+venv
+__pycache__
+
 # OSX
 .DS_Store
 

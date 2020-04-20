@@ -1,23 +1,19 @@
-const {
-  open,
-  queues: { PICKUP_OFFERS },
-} = require('../adapters/amqp')
-
-const bot = require('../services/messaging')
+const { open, queues } = require('../adapters/amqp')
+const messaging = require('../services/messaging')
 
 const pickupOffers = () => {
   return open
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(PICKUP_OFFERS, {
+        .assertQueue(queues.PICKUP_OFFERS, {
           durable: false,
         })
         .then(() =>
-          ch.consume(PICKUP_OFFERS, (message) => {
+          ch.consume(queues.PICKUP_OFFERS, (message) => {
             const { car, booking } = JSON.parse(message.content.toString())
 
-            bot.messaging.deliveryRequest(
+            messaging.onDeliveryRequest(
               car.id,
               {
                 replyQueue: message.properties.replyTo,

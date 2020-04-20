@@ -1,13 +1,15 @@
-const open = require('../adapters/amqp')
+const { open, exchanges } = require('../adapters/amqp')
 
 const updateLocation = (msg, ctx) => {
   // Publisher
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {
-      ch.assertExchange(CARS, 'fanout', {
+      ch.assertExchange(exchanges.CARS, 'fanout', {
         durable: false,
-      }).then(() => ch.publish(CARS, '', Buffer.from(JSON.stringify(msg))))
+      }).then(() =>
+        ch.publish(exchanges.CARS, '', Buffer.from(JSON.stringify(msg)))
+      )
     })
 
     .catch(console.warn)

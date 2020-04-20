@@ -25,6 +25,26 @@ defmodule Engine.App do
     %{booking: booking, car: car, score: detour.diff}
   end
 
+  def find_and_offer_cars(batch_of_bookings, batch_of_cars, ask_driver) do
+    Stream.zip(batch_of_bookings, batch_of_cars)
+    |> Stream.flat_map(fn {latest_bookings, latest_cars} ->
+      find_candidates(latest_bookings, latest_cars)
+    end)
+    |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+    # divide into separate branches and evaluate them in parallell
+    |> IO.inspect(label: "This should be a list of objects")
+
+    # |> Flow.from_enumerable()
+
+    # |> Flow.partition(key: fn %{car: car} -> car.id end)
+    # |> Flow.map(fn %{booking: booking, car: car} -> ask_driver.(booking, car) end)
+    # |> Flow.filter(fn %{accepted: accepted} -> accepted end)
+    # |> Flow.map(fn %{booking: booking, car: car} ->
+    #   IO.puts("Car #{car.id} accepted booking #{booking.id}")
+    #   Booking.assign(booking, car)
+    # end)
+  end
+
   def find_candidates(bookings, cars) do
     bookings
     |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->
@@ -63,45 +83,7 @@ defmodule Engine.App do
       # sliding window of ten minutes?
       |> Stream.chunk_every(2)
 
-    # 1. start with enum, move to flow
-    # We think we can solve the car.offer with flow
-
-    # Flow.from_enumerables([batch_of_bookings, batch_of_cars])
-    # |> Flow.map(fn {latest_bookings, latest_cars} ->
-    #   IO.inspect(length(latest_cars), label: "batch of")
-    #   {latest_bookings, latest_cars}
-    # end)
-    # |> Flow.map(fn {latest_bookings, latest_cars} ->
-    #   find_candidates(latest_bookings, latest_cars)
-    # end)
-    # |> Flow.flat_map(fn candidates ->
-    #   candidates
-    #   |> Flow.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-    # end)
-    # |> Flow.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-    # # |> Flow.partition()
-    # |> Flow.filter(fn %{accepted: accepted} -> accepted end)
-    # |> Flow.map(fn %{booking: booking, car: car} ->
-    #   IO.puts("Car #{car.id} accepted booking #{booking.id}")
-    #   Booking.assign(booking, car)
-    # end)
-    # |> Flow.run()
-
-    Stream.zip(batch_of_bookings, batch_of_cars)
-    |> Stream.map(fn {latest_bookings, latest_cars} ->
-      find_candidates(latest_bookings, latest_cars)
-    end)
-    |> Stream.flat_map(fn candidates ->
-      candidates
-      |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-    end)
-    |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-    |> Stream.filter(fn %{accepted: accepted} -> accepted end)
-    |> Stream.map(fn %{booking: booking, car: car} ->
-      IO.puts("Car #{car.id} accepted booking #{booking.id}")
-      Booking.assign(booking, car)
-    end)
-    |> Stream.run()
+    find_and_offer_cars(batch_of_bookings, batch_of_cars, &Car.offer/2)
 
     IO.puts("Its alive")
   end

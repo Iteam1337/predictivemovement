@@ -327,16 +327,17 @@ defmodule EngineTest do
       accept
     end
 
-    candidates =
-      Stream.zip(batch_of_bookings, batch_of_cars)
-      |> Enum.take(50)
-      |> Flow.from_enumerable()
-      |> Flow.partition(key: fn {booking, car} -> car.id end)
-      |> Flow.map(fn {booking, car} -> Car.offer(car, booking, delay_and_accept.(10)) end)
-      |> Enum.to_list()
+    car_offer = fn car, booking ->
+      Car.offer(car, booking, delay_and_accept.(10))
+    end
 
     assert length(batch_of_bookings) == 50
     assert length(batch_of_cars) == 50
+
+    candidates =
+      Engine.App.find_and_offer_cars(batch_of_bookings, batch_of_cars, car_offer)
+      |> Enum.to_list()
+
     assert length(candidates) == 50
   end
 end

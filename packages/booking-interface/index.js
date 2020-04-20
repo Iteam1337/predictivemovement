@@ -3,38 +3,22 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const bot = require('./bot')
+const bot = require('./adapters/bot')
 const { bookingWizard } = require('./bookingWizard')
-const botCommands = require('./botCommands')
+const botRoutes = require('./botRoutes')
 const session = require('telegraf/session')
-const amqp = require('./amqp')
 const Stage = require('telegraf/stage')
+const consumers = require('./consumers')
+const messaging = require('./services/messaging')
 
-bot.start((ctx) => {
-  const {
-    first_name,
-
-    last_name,
-
-    id,
-  } = ctx.update.message.from
-
-  ctx.reply(`Välkommen ${first_name} ${last_name}! :) Ditt id är ${id}`)
-})
-
+bot.start(messaging.onBotStart)
 bot.use(session())
+consumers.register()
 
 const stage = new Stage([bookingWizard])
-
 bot.use(stage.middleware())
 
-botCommands.registerHandlers(bot)
-
-// amqp
-//   .init()
-//   .then(() => amqp.subscribe(amqp.queues.DELIVERY_REQUESTS, console.log))
-//   .then(() => amqp.rpcServer())
-
+botRoutes.init(bot)
 bot.launch()
 
 const app = express()
@@ -47,5 +31,5 @@ const app = express()
   )
 
 const server = require('http').Server(app)
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 8000
 server.listen(port, console.log(`listening on ${port}`))

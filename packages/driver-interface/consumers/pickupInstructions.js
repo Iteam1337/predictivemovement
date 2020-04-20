@@ -1,21 +1,8 @@
 const {
   open,
   queues: { PICKUP_INSTRUCTIONS },
+  exchanges: { BOOKING_ASSIGNMENTS },
 } = require('../adapters/amqp')
-
-//   .then((conn) => conn.createChannel())
-//   .then((ch) =>
-//     ch
-//     .assertQueue(queues.DELIVERY_REQUESTS)
-//     .then(() =>
-//       ch.assertExchange(exchanges.DELIVERY_REQUESTS, 'fanout', {
-//         durable: false,
-//       })
-//     )
-//     .then(() =>
-//       ch.bindQueue(queues.DELIVERY_REQUESTS, exchanges.DELIVERY_REQUESTS)
-//     )
-//   )
 
 const pickupInstructions = () => {
   return open
@@ -26,11 +13,11 @@ const pickupInstructions = () => {
           durable: false,
         })
         .then(() =>
-          ch.assertExchange('booking_assignments', 'fanout', {
+          ch.assertExchange(BOOKING_ASSIGNMENTS, 'fanout', {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, 'booking_assignments'))
+        .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, BOOKING_ASSIGNMENTS))
         .then(
           () =>
             new Promise((resolve) => {

@@ -2,50 +2,17 @@ const open = require('amqplib').connect('amqp://localhost')
 
 const exchanges = {
   BOOKINGS: 'bookings',
-  // DELIVERY_REQUESTS: 'delivery_requests',
+  BOOKING_ASSIGNMENTS: 'booking_assignments',
   CARS: 'cars',
 }
 
 const queues = {
   PICKUP_OFFERS: 'pickup_offers',
-  // DELIVERY_REQUESTS: 'delivery_requests',
   PICKUP_INSTRUCTIONS: 'pickup_instructions',
 }
 
-// const subscribe = (queue, callback) =>
-//   open
-//     .then((conn) =>
-//       conn.createChannel().then((ch) =>
-//         ch.consume(queue, (msg) => {
-//           callback(msg)
-//           ch.ack(msg)
-//         })
-//       )
-//     )
-//     .catch(console.warn)
-
-// const createBooking = (booking) => {
-//   return open
-//     .then((conn) => conn.createChannel())
-//     .then((ch) =>
-//       ch
-//         .assertExchange(exchanges.BOOKINGS, 'headers', {
-//           durable: false,
-//         })
-//         .then(() =>
-//           ch.publish(
-//             exchanges.BOOKINGS,
-//             '',
-//             Buffer.from(JSON.stringify(booking))
-//           )
-//         )
-//     )
-//     .catch(console.warn)
-// }
-
 module.exports = {
   open,
-  // createBooking,
   queues,
   exchanges,
 }

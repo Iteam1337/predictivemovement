@@ -32,17 +32,15 @@ defmodule Engine.App do
     end)
     |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
     # divide into separate branches and evaluate them in parallell
-    |> IO.inspect(label: "This should be a list of objects")
+    |> Flow.from_enumerable()
+    |> Flow.partition(key: fn %{car: car} -> car.id end)
+    |> Flow.map(fn %{booking: booking, car: car} -> ask_driver.(booking, car) end)
+    |> Flow.filter(fn %{accepted: accepted} -> accepted end)
+    |> Flow.map(fn %{booking: booking, car: car} ->
+      IO.puts("Car #{car.id} accepted booking #{booking.id}")
 
-    # |> Flow.from_enumerable()
-
-    # |> Flow.partition(key: fn %{car: car} -> car.id end)
-    # |> Flow.map(fn %{booking: booking, car: car} -> ask_driver.(booking, car) end)
-    # |> Flow.filter(fn %{accepted: accepted} -> accepted end)
-    # |> Flow.map(fn %{booking: booking, car: car} ->
-    #   IO.puts("Car #{car.id} accepted booking #{booking.id}")
-    #   Booking.assign(booking, car)
-    # end)
+      # Booking.assign(booking, car) # TODO: we need to use same approach as with ask_driver since this publishes to Q
+    end)
   end
 
   def find_candidates(bookings, cars) do

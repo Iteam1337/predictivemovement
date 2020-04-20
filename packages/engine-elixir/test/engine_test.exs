@@ -303,46 +303,48 @@ defmodule EngineTest do
   #     |> IO.inspect(label: "bookings")
   # end
 
-  # @tag :only
+  @tag :only
   test "offer booking to car" do
     hub = %{lat: 61.820701, lon: 16.057731}
 
     bookings =
-      integer()
-      |> Stream.map(&Booking.make(&1, hub, Address.random(hub)))
+      Stream.iterate(0, &(&1 + 1)) |> Stream.map(&Booking.make(&1, hub, Address.random(hub)))
 
-    cars = integer() |> Stream.map(&Car.make(&1, hub, false))
+    cars = Stream.iterate(0, &(&1 + 1)) |> Stream.map(&Car.make(&1, hub, false))
 
-    latest_bookings =
+    batch_of_bookings =
       bookings
-      |> Stream.chunk_every(5)
-      |> Enum.take(1)
-      |> List.first()
+      |> Stream.chunk_every(1)
+      |> Enum.take(5)
 
-    latest_cars =
-      cars
-      |> Stream.chunk_every(5)
-      |> Enum.take(1)
-      |> List.first()
+    first_ten = cars |> Stream.chunk_every(1) |> Enum.take(1)
+
+    batch_of_cars = first_ten ++ first_ten ++ first_ten ++ first_ten ++ first_ten
+
+    accept = fn car, booking ->
+      IO.puts("Offer #{booking.id} to #{car.id}")
+      true
+    end
+
+    delay_and_accept = fn delay ->
+      Process.sleep(delay)
+      accept
+    end
+
+    car_offer = fn car, booking ->
+      Car.offer(car, booking, delay_and_accept.(10))
+    end
+
+    # TODO: adjust chunk size & total size and then enable the asserts
+    # We need to pass chunks to find and offer cars or change the way we pass data from the start()
+
+    # assert length(batch_of_bookings) == 50
+    # assert length(batch_of_cars) == 50
 
     candidates =
-      Engine.App.find_candidates(latest_bookings, latest_cars)
-      |> (fn %{assignments: assignments} -> assignments end).()
-      |> Enum.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-      |> Enum.map(fn %{booking: booking, car: car} ->
-        # Car.offer(car, booking)
-        %{booking: booking, car: car, accepted: true}
-      end)
-      |> Enum.filter(fn %{accepted: accepted} -> accepted end)
+      Engine.App.find_and_offer_cars(batch_of_bookings, batch_of_cars, car_offer)
+      |> Enum.to_list()
 
-      # |> Enum.map(fn %{booking: booking, car: car} -> Booking.assign(car, booking) end)
-      # |> Enum.map(fn %{booking: booking, car: car} ->
-      #   MQ.publish(car, "assignedCars")
-      #   MQ.publish(booking, "assignedBookings")
-      # end)
-      |> IO.inspect(label: "data")
-
-    assert length(latest_bookings) == 5
-    assert length(latest_cars) == 5
+    # assert length(candidates) == 50
   end
 end

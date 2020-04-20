@@ -175,14 +175,19 @@ defmodule Car do
   end
 
   def offer(car, booking) do
-    accepted =
+    ask_car = fn car, booking ->
       MQ.publish_rpc(
         %{car: %{id: car.id}, booking: booking},
         Application.fetch_env!(:engine, :pickup_offers_queue),
-        "offers"
-        # Application.fetch_env!(:engine, :pickup_response_queue)
+        Application.fetch_env!(:engine, :pickup_response_queue)
       )
+    end
 
+    offer(car, booking, ask_car)
+  end
+
+  def offer(car, booking, ask_car) do
+    accepted = ask_car.(car, booking)
     %{car: car, booking: booking, accepted: accepted}
   end
 end

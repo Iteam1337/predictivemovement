@@ -16,7 +16,7 @@ const getAddressFromCoordinate = (coordinate) =>
     .then((res) => res.json())
     .then(({ results }) => {
       if (!results.length)
-        throw new Error('No results found for that coordinate.')
+        throw new Error('No results found for that coordinate')
 
       const [first] = results
       return trimCountrySpec(first.formatted_address)

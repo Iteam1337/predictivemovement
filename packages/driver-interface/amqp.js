@@ -1,16 +1,15 @@
 const open = require('amqplib').connect('amqp://localhost')
-const Stage = require('telegraf/stage')
-const { deliveryRequest } = require('./deliveryRequest')
 
 const exchanges = {
   BOOKINGS: 'bookings',
-  DELIVERY_REQUESTS: 'delivery_requests',
+  // DELIVERY_REQUESTS: 'delivery_requests',
   CARS: 'cars',
 }
 
 const queues = {
-  DELIVERY_RPC: 'pickup_offers',
-  DELIVERY_REQUESTS: 'delivery_requests',
+  PICKUP_OFFERS: 'pickup_offers',
+  // DELIVERY_REQUESTS: 'delivery_requests',
+  PICKUP_INSTRUCTIONS: 'pickup_instructions',
 }
 
 // const subscribe = (queue, callback) =>
@@ -44,41 +43,11 @@ const queues = {
 //     .catch(console.warn)
 // }
 
-const rpcServer = () => {
-  return open
-    .then((conn) => conn.createChannel())
-    .then((ch) =>
-      ch
-        .assertQueue(queues.DELIVERY_RPC, {
-          durable: false,
-        })
-        .then(() =>
-          ch.consume(queues.DELIVERY_RPC, (message) => {
-            const { car, booking } = JSON.parse(message.content.toString())
-            deliveryRequest(
-              car.id,
-              {
-                replyQueue: message.properties.replyTo,
-                correlationId: message.properties.correlationId,
-              },
-              {
-                car,
-                booking,
-              }
-            )
-            ch.ack(message)
-          })
-        )
-        .catch(console.warn)
-    )
-}
-
 module.exports = {
   open,
   // createBooking,
   queues,
   exchanges,
-  rpcServer,
 }
 
 // {

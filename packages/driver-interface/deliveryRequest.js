@@ -1,8 +1,10 @@
 const bot = require('./bot')
 const open = require('amqplib').connect('amqp://localhost')
 const Markup = require('telegraf/markup')
+const { queues } = require('./amqp')
 
 const deliveryRequest = (chatId, msgOptions, { car, booking }) => {
+  console.log(booking)
   bot.telegram.sendMessage(
     chatId,
     `Ett paket finns att hämta på Munkebäcksgatan 33F som ska levereras till Storhöjdsgatan 9, har du möjlighet att hämta detta?`,
@@ -66,14 +68,14 @@ const pickupInstructions = () => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue('pickupInstructions', {
+        .assertQueue(queues.PICKUP_INSTRUCTIONS, {
           durable: false,
         })
 
         .then(
           () =>
             new Promise((resolve) => {
-              ch.consume('pickupInstructions', (msg) => {
+              ch.consume(queues.PICKUP_INSTRUCTIONS, (msg) => {
                 const message = JSON.parse(msg.content.toString())
                 ch.ack(msg)
                 resolve(message)

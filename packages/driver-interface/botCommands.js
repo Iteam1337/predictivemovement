@@ -1,6 +1,7 @@
 const registerHandlers = (bot) => {
   bot.command('testa', (ctx) => {
-    ctx.scene.enter('delivery-request')
+    console.log('hej')
+    // ctx.scene.enter('delivery-request')
   })
 }
 

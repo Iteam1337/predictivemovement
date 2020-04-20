@@ -1,5 +1,8 @@
-const { open } = require('./amqp')
-const amqp = require('./amqp')
+// const { open } = require('./amqp')
+const {
+  open,
+  exchanges: { CARS },
+} = require('./amqp')
 
 const init = (bot) => {
   bot.on('message', (ctx) => {
@@ -37,9 +40,9 @@ const init = (bot) => {
     open
       .then((conn) => conn.createChannel())
       .then((ch) => {
-        ch.assertExchange(amqp.exchanges.CARS, 'fanout', {
+        ch.assertExchange(CARS, 'fanout', {
           durable: false,
-        }).then(() => ch.publish('cars', '', Buffer.from(JSON.stringify(msg))))
+        }).then(() => ch.publish(CARS, '', Buffer.from(JSON.stringify(msg))))
       })
 
       .catch(console.warn)

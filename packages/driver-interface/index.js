@@ -5,11 +5,11 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const bot = require('./bot')
 const driver = require('./driver')
-// const deliveryRequest = require('./deliveryRequestWizard')
 const botCommands = require('./botCommands')
 const session = require('telegraf/session')
 const amqp = require('./amqp')
 const Stage = require('telegraf/stage')
+const consumers = require('./consumers')
 
 const { pickupInstructions } = require('./deliveryRequest')
 
@@ -31,10 +31,7 @@ bot.use(session())
 
 botCommands.registerHandlers(bot)
 
-amqp.open.then(() => {
-  pickupInstructions()
-  amqp.rpcServer()
-})
+consumers.register()
 
 driver.init(bot)
 

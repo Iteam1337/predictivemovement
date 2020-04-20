@@ -88,7 +88,9 @@ defmodule EngineTest do
     route: nil
   }
 
-  def pretty(%{cars: cars, assignments: assignments}) do
+  def pretty(%{cars: cars, assignments: assignments}), do: pretty(assignments)
+
+  def pretty(assignments) do
     assignments
     |> Enum.map(fn %{car: car, booking: booking} ->
       "(#{car.id}) #{booking.id}"
@@ -141,19 +143,20 @@ defmodule EngineTest do
 
     route =
       [@iteamToRadu, @iteamToChristian]
-      |> Engine.find_candidates(cars)
+      |> Engine.App.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
     assert route == "(volvo) iteamToRadu -> (tesla) iteamToChristian"
   end
 
+  @tag :only
   test "three bookings with two cars" do
     cars = [@tesla, @volvo]
 
     route =
       [@iteamToRadu, @iteamToChristian, @raduToKungstradgarden]
-      |> Engine.find_candidates(cars)
+      |> Engine.App.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -166,7 +169,7 @@ defmodule EngineTest do
 
     route =
       [@iteamToRadu, @iteamToRadu, @iteamToRadu, @iteamToRadu, @iteamToRadu]
-      |> Engine.find_candidates(cars)
+      |> Engine.App.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -179,7 +182,7 @@ defmodule EngineTest do
 
     route =
       [@iteamToRadu, @iteamToChristian, @iteamToKungstradgarden, @iteamToRalis, @iteamToRadu]
-      |> Engine.find_candidates(cars)
+      |> Engine.App.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -248,81 +251,25 @@ defmodule EngineTest do
              "(volvo) iteamToRadu -> (volvo) iteamToChristian -> (volvo) raduToKungstradgarden"
   end
 
-  # @tag :window
-  # test "window" do
-  # window = Flow.Window.global() |> Flow.Window.trigger_every(10)
-
-  # flow = Flow.from_enumerable(1..100) |> Flow.partition(window: window, stages: 1)
-
-  # flow
-  # |> Flow.reduce(fn -> 0 end, &(&1 + &2))
-  # |> Flow.emit(:state)
-  # |> Enum.to_list()
-  # |> IO.inspect(label: "result")
-
-  # data = [
-  #   {"elixir", 0},
-  #   {"elixir", 1_000},
-  #   {"erlang", 60_000},
-  #   {"concurrency", 3_200_000},
-  #   {"elixir", 4_000_000},
-  #   {"erlang", 5_000_000},
-  #   {"erlang", 6_000_000}
-  # ]
-
-  # window =
-  #   Flow.Window.fixed(1, :hour, fn {_word, timestamp} ->
-  #     IO.inspect(_word, label: "this is a value")
-  #     timestamp
-  #   end)
-
-  # flow = Flow.from_enumerable(data, max_demand: 5, stages: 1)
-  # flow = Flow.partition(flow, window: window, stages: 1)
-
-  # flow =
-  #   Flow.reduce(flow, fn -> %{} end, fn {word, _}, acc ->
-  #     Map.update(acc, word, 1, &(&1 + 1))
-  #   end)
-
-  # flow
-  # |> Flow.emit(:state)
-  # |> Enum.to_list()
-  # |> IO.inspect(label: "result")
-
-  #   hub = %{lat: 61.820701, lon: 16.057731}
-
-  #   window = Flow.Window.global() |> Flow.Window.trigger_every(10)
-
-  #   bookings =
-  #     integer()
-  #     |> Flow.from_enumerable()
-  #     |> Flow.partition(window: window, stages: 1)
-  #     |> Flow.map(&BookingSimulator.generate_booking(&1, hub, Address.random(hub)))
-  #     |> Enum.take(5)
-  #     |> Enum.to_list()
-  #     |> IO.inspect(label: "bookings")
-  # end
-
   @tag :only
   test "offer booking to car" do
     hub = %{lat: 61.820701, lon: 16.057731}
+    chunk_size = 12
 
     bookings =
       Stream.iterate(0, &(&1 + 1)) |> Stream.map(&Booking.make(&1, hub, Address.random(hub)))
 
     cars = Stream.iterate(0, &(&1 + 1)) |> Stream.map(&Car.make(&1, hub, false))
 
-    batch_of_bookings =
-      bookings
-      |> Stream.chunk_every(1)
-      |> Enum.take(5)
+    batch_of_bookings = bookings |> Enum.take(chunk_size)
 
-    first_ten = cars |> Stream.chunk_every(1) |> Enum.take(1)
+    # first_ten = cars  |> Enum.take(10)
 
-    batch_of_cars = first_ten ++ first_ten ++ first_ten ++ first_ten ++ first_ten
+    #  batch_of_cars =  first_ten ++ first_ten ++ first_ten ++ first_ten ++ first_ten
+    batch_of_cars = cars |> Enum.take(chunk_size)
 
     accept = fn car, booking ->
-      IO.puts("Offer #{booking.id} to #{car.id}")
+      IO.puts("Offer booking #{booking.id} to car #{car.id}")
       true
     end
 
@@ -335,16 +282,13 @@ defmodule EngineTest do
       Car.offer(car, booking, delay_and_accept.(10))
     end
 
-    # TODO: adjust chunk size & total size and then enable the asserts
-    # We need to pass chunks to find and offer cars or change the way we pass data from the start()
-
-    # assert length(batch_of_bookings) == 50
-    # assert length(batch_of_cars) == 50
+    assert length(batch_of_bookings) == chunk_size
+    assert length(batch_of_cars) == chunk_size
 
     candidates =
-      Engine.App.find_and_offer_cars(batch_of_bookings, batch_of_cars, car_offer)
+      Engine.App.find_and_offer_cars([batch_of_bookings], [batch_of_cars], car_offer)
       |> Enum.to_list()
 
-    # assert length(candidates) == 50
+    assert length(candidates) == chunk_size
   end
 end

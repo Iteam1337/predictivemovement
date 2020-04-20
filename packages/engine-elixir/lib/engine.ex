@@ -16,6 +16,8 @@ end
 defmodule Engine.App do
   use Task
 
+  @chunk_size 2
+
   def start_link(_arg) do
     Task.start_link(__MODULE__, :start, _arg)
   end
@@ -34,7 +36,7 @@ defmodule Engine.App do
     # divide into separate branches and evaluate them in parallell
     |> Flow.from_enumerable()
     |> Flow.partition(key: fn %{car: car} -> car.id end)
-    |> Flow.map(fn %{booking: booking, car: car} -> ask_driver.(booking, car) end)
+    |> Flow.map(fn %{booking: booking, car: car} -> ask_driver.(car, booking) end)
     |> Flow.filter(fn %{accepted: accepted} -> accepted end)
     |> Flow.map(fn %{booking: booking, car: car} ->
       IO.puts("Car #{car.id} accepted booking #{booking.id}")
@@ -74,12 +76,12 @@ defmodule Engine.App do
     batch_of_bookings =
       bookings_stream
       # time window every minute?
-      |> Stream.chunk_every(2)
+      |> Stream.chunk_every(@chunk_size)
 
     batch_of_cars =
       cars_stream
       # sliding window of ten minutes?
-      |> Stream.chunk_every(2)
+      |> Stream.chunk_every(@chunk_size)
 
     find_and_offer_cars(batch_of_bookings, batch_of_cars, &Car.offer/2)
 

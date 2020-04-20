@@ -4,7 +4,7 @@ const pickupInstructions = require('./pickupInstructions')
 const register = () => {
   pickupOffers()
   // deliveryRequest()
-  pickupInstructions
+  pickupInstructions()
 }
 
 module.exports = {

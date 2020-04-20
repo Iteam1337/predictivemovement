@@ -1,7 +1,7 @@
 const {
   open,
   queues: { PICKUP_INSTRUCTIONS },
-} = require('../amqp')
+} = require('../adapters/amqp')
 
 const pickupInstructions = () => {
   return open
@@ -43,3 +43,5 @@ const pickupInstructions = () => {
         })
     )
 }
+
+module.exports = pickupInstructions

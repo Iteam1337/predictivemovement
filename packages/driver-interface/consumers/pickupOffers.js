@@ -1,10 +1,9 @@
 const {
   open,
   queues: { PICKUP_OFFERS },
-} = require('../amqp')
+} = require('../adapters/amqp')
 
-const bot = require('../services/messaging/bot')
-const { deliveryRequest } = require('../deliveryRequest')
+const bot = require('../services/messaging')
 
 const pickupOffers = () => {
   return open

@@ -1,5 +1,6 @@
 const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
+const { open } = require('../adapters/amqp')
 
 const onBotStart = (ctx) => {
   const {
@@ -72,13 +73,12 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
         correlationId: options.id,
       })
     })
-
     .catch(console.warn)
 }
 
 const sendPickupInstructions = (message) =>
   bot.telegram.sendMessage(
-    message.id,
+    message.car.id,
     `Bra du ska nu åka hit [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})`,
     {
       parse_mode: 'markdown',

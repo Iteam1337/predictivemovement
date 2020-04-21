@@ -42,8 +42,7 @@ defmodule Engine.MixProject do
       {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
       {:httpoison, "~> 1.6"},
       {:poison, "~> 3.1"},
-      {:polyline, "~> 1.2"},
-      {:stream_data, "~> 0.1", only: :test}
+      {:polyline, "~> 1.2"}
     ]
   end
 

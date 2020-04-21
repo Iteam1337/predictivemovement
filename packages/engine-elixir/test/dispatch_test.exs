@@ -1,8 +1,7 @@
-defmodule EngineTest do
+defmodule DispatchTest do
   use ExUnit.Case
-  use ExUnitProperties
 
-  doctest Engine
+  doctest Dispatch
 
   @christian %{lat: 59.338791, lon: 17.897773}
   @radu %{lat: 59.318672, lon: 18.072149}
@@ -88,7 +87,11 @@ defmodule EngineTest do
     route: nil
   }
 
-  def pretty(%{cars: cars, assignments: assignments}), do: pretty(assignments)
+  def pretty(%{assignments: assignments}), do: pretty(assignments)
+
+  def pretty(%{action: action, booking: booking}) do
+    "(#{action}) #{booking.id}"
+  end
 
   def pretty(assignments) do
     assignments
@@ -97,16 +100,14 @@ defmodule EngineTest do
     end)
   end
 
-  def pretty(%{action: action, booking: booking}) do
-    "(#{action}) #{booking.id}"
-  end
+
 
   test "happy path" do
     cars = [@tesla]
 
     route =
       [@iteamToRadu, @raduToKungstradgarden, @kungstradgardenToRalis]
-      |> Engine.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -119,11 +120,11 @@ defmodule EngineTest do
 
     candidates1 =
       [@iteamToRadu, @raduToKungstradgarden, @kungstradgardenToRalis]
-      |> Engine.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
 
     candidates2 =
       [@raduToKungstradgarden, @iteamToRadu, @kungstradgardenToRalis]
-      |> Engine.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
 
     instructions1 =
       candidates1.cars
@@ -143,7 +144,7 @@ defmodule EngineTest do
 
     route =
       [@iteamToRadu, @iteamToChristian]
-      |> Engine.App.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -156,7 +157,7 @@ defmodule EngineTest do
 
     route =
       [@iteamToRadu, @iteamToChristian, @raduToKungstradgarden]
-      |> Engine.App.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -169,7 +170,7 @@ defmodule EngineTest do
 
     route =
       [@iteamToRadu, @iteamToRadu, @iteamToRadu, @iteamToRadu, @iteamToRadu]
-      |> Engine.App.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -177,12 +178,13 @@ defmodule EngineTest do
              "(volvo) iteamToRadu -> (volvo) iteamToRadu -> (volvo) iteamToRadu -> (volvo) iteamToRadu -> (volvo) iteamToRadu"
   end
 
+  @tag :only
   test "many bookings from the same pickup with different destinations" do
     cars = [@tesla, @volvo]
 
     route =
       [@iteamToRadu, @iteamToChristian, @iteamToKungstradgarden, @iteamToRalis, @iteamToRadu]
-      |> Engine.App.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -199,7 +201,7 @@ defmodule EngineTest do
 
     route =
       (route1 ++ route2)
-      |> Engine.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -212,8 +214,8 @@ defmodule EngineTest do
     cars = [@tesla, @volvo]
 
     route =
-      0..10
-      |> Enum.reduce([], fn i, result ->
+      0..1000
+      |> Enum.reduce([], fn _i, result ->
         result ++
           [
             @iteamToRadu,
@@ -223,7 +225,7 @@ defmodule EngineTest do
             @christianToRadu
           ]
       end)
-      |> Engine.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -239,11 +241,11 @@ defmodule EngineTest do
 
     %{cars: updated_cars} =
       bookingsBatch1
-      |> Engine.find_candidates(cars)
+      |> Dispatch.find_candidates(cars)
 
     route =
       bookingsBatch2
-      |> Engine.find_candidates(updated_cars)
+      |> Dispatch.find_candidates(updated_cars)
       |> pretty()
       |> Enum.join(" -> ")
 
@@ -286,7 +288,7 @@ defmodule EngineTest do
     assert length(batch_of_cars) == chunk_size
 
     candidates =
-      Engine.App.find_and_offer_cars([batch_of_bookings], [batch_of_cars], car_offer)
+      Dispatch.find_and_offer_cars([batch_of_bookings], [batch_of_cars], car_offer)
       |> Enum.to_list()
 
     assert length(candidates) == chunk_size

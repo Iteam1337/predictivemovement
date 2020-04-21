@@ -4,6 +4,8 @@ const {
   exchanges: { BOOKING_ASSIGNMENTS },
 } = require('../adapters/amqp')
 
+const { sendPickupInstructions } = require('../services/messaging')
+
 const pickupInstructions = () => {
   return open
     .then((conn) => conn.createChannel())
@@ -18,35 +20,12 @@ const pickupInstructions = () => {
           })
         )
         .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, BOOKING_ASSIGNMENTS))
-        .then(
-          () =>
-            new Promise((resolve) => {
-              ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
-                const message = JSON.parse(msg.content.toString())
-                ch.ack(msg)
-                resolve(message)
-              })
-            })
+        .then(() =>
+          ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
+            sendPickupInstructions(JSON.parse(msg.content.toString()))
+            ch.ack(msg)
+          })
         )
-        .then((instructions) => {
-          bot.telegram.sendMessage(
-            instructions.id,
-            `Bra du ska nu åka hit [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${instructions.booking.departure.lat},${instructions.booking.departure.lon})`,
-            {
-              parse_mode: 'markdown',
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    {
-                      text: 'Hämtat',
-                      callback_data: 'confirm',
-                    },
-                  ],
-                ],
-              },
-            }
-          )
-        })
     )
 }
 

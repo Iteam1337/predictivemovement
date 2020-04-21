@@ -13,7 +13,7 @@ const pickupOffers = () => {
           ch.consume(queues.PICKUP_OFFERS, (message) => {
             const { car, booking } = JSON.parse(message.content.toString())
 
-            messaging.onDeliveryRequest(
+            messaging.sendPickupOffer(
               car.id,
               {
                 replyQueue: message.properties.replyTo,

@@ -1,4 +1,5 @@
 const bot = require('../adapters/bot')
+const Markup = require('telegraf/markup')
 
 const onBotStart = (ctx) => {
   const {
@@ -14,7 +15,7 @@ const onBotStart = (ctx) => {
   )
 }
 
-const onDeliveryRequest = (chatId, msgOptions, { car, booking }) => {
+const sendPickupOffer = (chatId, msgOptions, { car, booking }) => {
   console.log({ car, booking })
 
   bot.telegram.sendMessage(
@@ -50,32 +51,16 @@ const onDeliveryRequest = (chatId, msgOptions, { car, booking }) => {
   )
 }
 
-const onPickupConfirm = (msg) => {
-  const chatId = msg.update.callback_query.from.id
-  bot.telegram.sendMessage(
-    chatId,
+const onPickupConfirm = (ctx) => {
+  return ctx.replyWithMarkdown(
     `Härligt, nu kan du köra paketet till <insert en destination>`,
-    {
-      parse_mode: 'markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Levererat',
-              callback_data: 'delivered',
-            },
-          ],
-        ],
-      },
-    }
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Levererat', 'delivered'),
+    ]).extra()
   )
 }
 
-const onPackageDelivered = () => {
-  console.log('package has been delivered')
-}
-
-const onDeliveryRequestResponse = (isAccepted, options, msg) => {
+const onPickupOfferResponse = (isAccepted, options, msg) => {
   msg.editMessageReplyMarkup()
   msg.answerCbQuery()
   msg.reply(isAccepted ? 'Kul!' : 'Tråkigt!')
@@ -91,10 +76,29 @@ const onDeliveryRequestResponse = (isAccepted, options, msg) => {
     .catch(console.warn)
 }
 
+const sendPickupInstructions = (message) =>
+  bot.telegram.sendMessage(
+    message.id,
+    `Bra du ska nu åka hit [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})`,
+    {
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Hämtat',
+              callback_data: 'confirm',
+            },
+          ],
+        ],
+      },
+    }
+  )
+
 module.exports = {
   onBotStart,
-  onDeliveryRequest,
+  sendPickupOffer,
+  sendPickupInstructions,
   onPickupConfirm,
-  onPackageDelivered,
-  onDeliveryRequestResponse,
+  onPickupOfferResponse,
 }

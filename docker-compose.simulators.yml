@@ -20,4 +20,3 @@ services:
       AMQP_HOST: amqp://rabbitmq
     depends_on:
       - rabbitmq
-

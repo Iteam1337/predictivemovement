@@ -3,8 +3,6 @@ defmodule Address do
     lon = lon + (Enum.random(0..100) - 50) / 200
     lat = lat + (Enum.random(0..100) - 50) / 500
 
-    IO.puts("Finding address for #{lon} #{lat}")
-
     position = %{lon: lon, lat: lat}
     parse(Osrm.nearest(position), position)
   end

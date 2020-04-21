@@ -28,7 +28,7 @@ const pickupOffers = () => {
                   replyQueue: message.properties.replyTo,
                   correlationId: message.properties.correlationId,
                 },
-                { pickupAddress, deliveryAddress }
+                { pickupAddress, deliveryAddress, booking }
               )
               ch.ack(message)
             } catch (error) {

@@ -15,12 +15,14 @@ const onBotStart = (ctx) => {
   )
 }
 
-const sendPickupOffer = (chatId, msgOptions, { car, booking }) => {
-  console.log({ car, booking })
-
+const sendPickupOffer = (
+  chatId,
+  msgOptions,
+  { pickupAddress, deliveryAddress }
+) => {
   bot.telegram.sendMessage(
     chatId,
-    `Ett paket finns att hämta på Munkebäcksgatan 33F som ska levereras till Storhöjdsgatan 9, har du möjlighet att hämta detta?`,
+    `Ett paket finns att hämta på ${pickupAddress} som ska levereras till ${deliveryAddress}, har du möjlighet att hämta detta?`,
     {
       parse_mode: 'markdown',
       reply_markup: {

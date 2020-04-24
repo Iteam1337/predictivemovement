@@ -1,7 +1,7 @@
 const {
   open,
   queues: { PICKUP_INSTRUCTIONS },
-  exchanges: { BOOKING_ASSIGNMENTS },
+  exchanges: { BOOKING_ASSIGNMENTS, BOOKINGS },
 } = require('../adapters/amqp')
 
 const { sendPickupInstructions } = require('../services/messaging')
@@ -15,13 +15,15 @@ const pickupInstructions = () => {
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(BOOKING_ASSIGNMENTS, 'fanout', {
+          ch.assertExchange(BOOKINGS, 'topic', {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, BOOKING_ASSIGNMENTS))
+        .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, BOOKINGS, 'assigned'))
+        // AMQP.Queue.bind(channel, queue_name, bookings_exchange, routing_key: "new")
         .then(() =>
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
+            console.log('i have now consumed the routing key assigned')
             sendPickupInstructions(JSON.parse(msg.content.toString()))
             ch.ack(msg)
           })

@@ -19,11 +19,14 @@ const init = (bot) => {
   })
 
   bot.on('callback_query', (msg) => {
+    console.log('callback_query')
     if (msg.update.callback_query.data === 'confirm') {
+      console.log('confirm')
       return messaging.onPickupConfirm(msg)
     }
 
     if (msg.update.callback_query.data === 'delivered') {
+      console.log('delivered')
       return open
         .then((conn) => conn.createChannel())
         .then((ch) => {

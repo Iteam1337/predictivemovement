@@ -61,10 +61,14 @@ const bookingWizard = new WizardScene(
     }
 
     ctx.replyWithMarkdown(
-      `[Se på kartan!](https://www.google.com/maps/dir/?api=1&origin=${ctx.wizard.state.data.from.lat},${ctx.wizard.state.data.from.lon}&destination=${ctx.wizard.state.data.to.lat},${ctx.wizard.state.data.to.lon})`,
+      `[Se på kartan!](https://www.google.com/maps/dir/?api=1&origin=${ctx.wizard.state.data.from.lat},${ctx.wizard.state.data.from.lon}&destination=${ctx.wizard.state.data.to.lat},${ctx.wizard.state.data.to.lon})`
+    )
+
+    ctx.replyWithMarkdown(
+      `Bekräfta din boking genom att klicka på någon av följande:`,
       Markup.inlineKeyboard([
-        Markup.callbackButton('Godkänn', 'confirm'),
         Markup.callbackButton('Avbryt', 'cancel'),
+        Markup.callbackButton('Godkänn', 'confirm'),
       ]).extra()
     )
 

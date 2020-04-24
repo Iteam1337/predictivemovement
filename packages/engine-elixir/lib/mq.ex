@@ -12,6 +12,8 @@ defmodule MQ do
     )
 
     AMQP.Connection.close(connection)
+
+    data
   end
 
   def wait_for_messages(_channel, correlation_id) do

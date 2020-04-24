@@ -51,5 +51,6 @@ defmodule Dispatch do
       }
     end)
     |> (fn %{assignments: assignments} -> assignments end).()
+    |> MQ.publish(Application.fetch_env!(:engine, :candidates_exchange))
   end
 end

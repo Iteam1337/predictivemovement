@@ -1,7 +1,7 @@
 const {
   open,
   queues: { PICKUP_INSTRUCTIONS },
-  exchanges: { BOOKING_ASSIGNMENTS, BOOKINGS },
+  exchanges: { BOOKINGS },
 } = require('../adapters/amqp')
 
 const { sendPickupInstructions } = require('../services/messaging')

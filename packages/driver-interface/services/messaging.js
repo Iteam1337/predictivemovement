@@ -1,6 +1,7 @@
 const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
+const store = new Map()
 
 const onBotStart = (ctx) => {
   const {
@@ -55,20 +56,22 @@ const sendPickupOffer = (
   )
 }
 
-const onPickupConfirm = (ctx) => {
-  console.log(ctx)
-  return ctx.replyWithMarkdown(
+const onPickupConfirm = (ctx) =>
+  ctx.replyWithMarkdown(
     `Härligt, nu kan du köra paketet till <insert en destination>`,
     Markup.inlineKeyboard([
       Markup.callbackButton('Levererat', 'delivered'),
     ]).extra()
   )
-}
 
 const onPickupOfferResponse = (isAccepted, options, msg) => {
   msg.editMessageReplyMarkup()
   msg.answerCbQuery()
   msg.reply(isAccepted ? 'Kul!' : 'Tråkigt!')
+
+  if (isAccepted) {
+    store.set(msg.from.id, msg)
+  }
 
   return open
     .then((conn) => conn.createChannel())
@@ -91,7 +94,7 @@ const sendPickupInstructions = (message) =>
           [
             {
               text: 'Hämtat',
-              callback_data: 'confirm',
+              callback_data: { event: 'pickup', senderId: '1234' },
             },
           ],
         ],

@@ -9,6 +9,8 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.on('message', (ctx) => {
+    console.log('on message ctx', ctx)
+    console.log('on message message', ctx.message)
     const msg = ctx.message
     botServices.onMessage(msg, ctx)
   })
@@ -19,13 +21,23 @@ const init = (bot) => {
   })
 
   bot.on('callback_query', (msg) => {
-    console.log('callback_query')
-    if (msg.update.callback_query.data === 'confirm') {
-      console.log('confirm')
+    if (msg.update.callback_query.data.event === 'pickup') {
+      open
+        .then((conn) => conn.createChannel())
+        .then((ch) => {
+          console.log('this is the msg: ', msg)
+          ch.assertExchange(BOOKINGS, 'topic', {
+            durable: false,
+          }).then(() => {
+            const data = ({ senderId, carId } = msg.update.callback_query.data)
+            ch.publish(BOOKINGS, 'pickup', Buffer.from(JSON.stringify(data)))
+          })
+        })
+
       return messaging.onPickupConfirm(msg)
     }
 
-    if (msg.update.callback_query.data === 'delivered') {
+    if (msg.update.callback_query.data.event === 'delivered') {
       console.log('delivered')
       return open
         .then((conn) => conn.createChannel())

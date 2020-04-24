@@ -1,16 +1,17 @@
 const {
   open,
-  queues: { BOOKING_ASSIGNED },
+  queues: { PICKUP_CONFIRMED },
   exchanges: { BOOKINGS },
 } = require('../adapters/amqp')
+
 const messaging = require('../services/messaging')
 
-const bookingAssignments = () => {
-  return open
+const pickupConfirmed = () =>
+  open
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(BOOKING_ASSIGNED, {
+        .assertQueue(PICKUP_CONFIRMED, {
           durable: false,
         })
         .then(() =>
@@ -18,21 +19,18 @@ const bookingAssignments = () => {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(BOOKING_ASSIGNED, BOOKINGS, 'assigned'))
+        .then(() => ch.bindQueue(PICKUP_CONFIRMED, BOOKINGS, 'pickup'))
         .then(
           () =>
             new Promise((resolve) => {
-              ch.consume(BOOKING_ASSIGNED, (msg) => {
+              ch.consume(PICKUP_CONFIRMED, (msg) => {
                 const message = JSON.parse(msg.content.toString())
                 ch.ack(msg)
                 resolve(message)
               })
             })
         )
-        .then(({ booking, car }) =>
-          messaging.onBookingConfirmed(booking.senderId, car.id)
-        )
+        .then((msg) => messaging.onPickupConfirmed(msg))
     )
-}
 
-module.exports = { bookingAssignments }
+module.exports = { pickupConfirmed }

@@ -7,9 +7,12 @@ const { createBooking } = require('./services/amqp')
 const stepHandler = new Composer()
 
 stepHandler.action('confirm', (ctx) => {
+  const senderId = ctx.update.callback_query.from.id
+
   ctx.reply('Perfekt, din bokning är inlagd')
   const booking = {
     id: uuidv4(),
+    senderId,
     bookingDate: new Date().toISOString(),
     departure: {
       lon: ctx.wizard.state.data.from.lon,

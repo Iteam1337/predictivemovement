@@ -23,7 +23,6 @@ const pickupInstructions = () => {
         // AMQP.Queue.bind(channel, queue_name, bookings_exchange, routing_key: "new")
         .then(() =>
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
-            console.log('i have now consumed the routing key assigned')
             sendPickupInstructions(JSON.parse(msg.content.toString()))
             ch.ack(msg)
           })

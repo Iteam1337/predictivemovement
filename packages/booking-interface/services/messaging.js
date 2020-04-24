@@ -21,11 +21,11 @@ const onBookingConfirmed = (senderId, carId) => {
   )
 }
 
-const onPickupConfirmed = () => {
+const onPickupConfirmed = (senderId) => {
   bot.telegram.sendMessage(senderId, `Din bokning har nu blivit upplockad!`)
 }
 
-const onDeliveryConfirmed = () => {
+const onDeliveryConfirmed = (senderId) => {
   bot.telegram.sendMessage(
     senderId,
     `Din bokning har nu anlänt till sin destination!`

@@ -1,7 +1,6 @@
 const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
-const store = new Map()
 
 const onBotStart = (ctx) => {
   const {
@@ -56,22 +55,24 @@ const sendPickupOffer = (
   )
 }
 
-const onPickupConfirm = (ctx) =>
-  ctx.replyWithMarkdown(
-    `Härligt, nu kan du köra paketet till <insert en destination>`,
+const onPickupConfirm = (ctx) => {
+  const { id } = JSON.parse(ctx.update.callback_query.data)
+
+  return ctx.replyWithMarkdown(
+    'Härligt, nu kan du köra paketet till dess destination!',
     Markup.inlineKeyboard([
-      Markup.callbackButton('Levererat', 'delivered'),
+      Markup.callbackButton(
+        'Levererat',
+        JSON.stringify({ e: 'delivered', id })
+      ),
     ]).extra()
   )
+}
 
 const onPickupOfferResponse = (isAccepted, options, msg) => {
   msg.editMessageReplyMarkup()
   msg.answerCbQuery()
   msg.reply(isAccepted ? 'Kul!' : 'Tråkigt!')
-
-  if (isAccepted) {
-    store.set(msg.from.id, msg)
-  }
 
   return open
     .then((conn) => conn.createChannel())
@@ -83,8 +84,8 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
     .catch(console.warn)
 }
 
-const sendPickupInstructions = (message) =>
-  bot.telegram.sendMessage(
+const sendPickupInstructions = (message) => {
+  return bot.telegram.sendMessage(
     message.car.id,
     `Bra du ska nu åka hit [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})`,
     {
@@ -94,13 +95,17 @@ const sendPickupInstructions = (message) =>
           [
             {
               text: 'Hämtat',
-              callback_data: { event: 'pickup', senderId: '1234' },
+              callback_data: JSON.stringify({
+                e: 'pickup',
+                id: message.booking.senderId,
+              }),
             },
           ],
         ],
       },
     }
   )
+}
 
 module.exports = {
   onBotStart,

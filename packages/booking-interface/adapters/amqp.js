@@ -11,10 +11,16 @@ const queues = {
   DELIVERY_CONFIRMED: 'delivery_confirmed',
 }
 
+const routingKeys = {
+  DELIVERY: 'delivery',
+  PICKUP: 'pickup',
+}
+
 module.exports = {
   open,
   exchanges,
   queues,
+  routingKeys,
 }
 
 // {

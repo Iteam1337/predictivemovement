@@ -9,8 +9,6 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.on('message', (ctx) => {
-    console.log('on message ctx', ctx)
-    console.log('on message message', ctx.message)
     const msg = ctx.message
     botServices.onMessage(msg, ctx)
   })
@@ -21,36 +19,33 @@ const init = (bot) => {
   })
 
   bot.on('callback_query', (msg) => {
-    if (msg.update.callback_query.data.event === 'pickup') {
+    const callbackPayload = JSON.parse(msg.update.callback_query.data)
+
+    if (callbackPayload.e === 'pickup') {
       open
         .then((conn) => conn.createChannel())
         .then((ch) => {
-          console.log('this is the msg: ', msg)
           ch.assertExchange(BOOKINGS, 'topic', {
             durable: false,
           }).then(() => {
-            const data = ({ senderId, carId } = msg.update.callback_query.data)
-            ch.publish(BOOKINGS, 'pickup', Buffer.from(JSON.stringify(data)))
+            const { id } = callbackPayload
+            ch.publish(BOOKINGS, 'pickup', Buffer.from(JSON.stringify(id)))
           })
         })
 
       return messaging.onPickupConfirm(msg)
     }
 
-    if (msg.update.callback_query.data.event === 'delivered') {
-      console.log('delivered')
+    if (callbackPayload.e === 'delivered') {
       return open
         .then((conn) => conn.createChannel())
         .then((ch) => {
           ch.assertExchange(BOOKINGS, 'topic', {
             durable: false,
-          }).then(() =>
-            ch.publish(
-              BOOKINGS,
-              'delivered',
-              Buffer.from(JSON.stringify('delivered'))
-            )
-          )
+          }).then(() => {
+            const { id } = callbackPayload
+            ch.publish(BOOKINGS, 'delivery', Buffer.from(JSON.stringify(id)))
+          })
         })
 
         .catch(console.warn)

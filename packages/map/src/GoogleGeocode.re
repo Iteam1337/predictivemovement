@@ -42,5 +42,5 @@ let fromArray = json => {
 let getCoordinates = address =>
   "https://maps.googleapis.com/maps/api/geocode/json?address="
   ++ address
-  ++ "&key="
+  ++ "&key="gfcsefa
   ++ Config.googleApiToken;

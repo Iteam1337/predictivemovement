@@ -123,16 +123,14 @@ defmodule Car do
     |> Map.put(:busy, true)
   end
 
-  def calculateDetours(%{instructions: [], route: route, position: position}, %{
+  def calculateDetours(%{instructions: [], position: position}, %{
         departure: departure,
         destination: destination
       }) do
-    car_position = Car.position(%{route: route, position: position})
-
     [
       %{
         # rather assign a car with same pickup and destination before assigning it to an empty car
-        detourDiff: Distance.haversine([car_position, departure, destination, car_position]),
+        detourDiff: Distance.haversine([position, departure, destination]),
         before: nil,
         after: nil
       }
@@ -140,6 +138,7 @@ defmodule Car do
   end
 
   def calculateDetours(%{instructions: instructions, route: route}, booking) do
+
     instructions
     # returns pairs, i.e [a, b, c, d] -> [[a, b], [b, c], [c, d]]
     |> Enum.chunk_every(2, 1, :discard)
@@ -175,7 +174,19 @@ defmodule Car do
   end
 
   def offer(car, booking) do
-    accepted = MQ.publish_rpc(%{car: car, booking: booking}, "offers")
+    ask_car = fn car, booking ->
+      MQ.publish_rpc(
+        %{car: %{id: car.id}, booking: booking},
+        Application.fetch_env!(:engine, :pickup_offers_queue),
+        Application.fetch_env!(:engine, :pickup_response_queue)
+      )
+    end
+
+    offer(car, booking, ask_car)
+  end
+
+  def offer(car, booking, ask_car) do
+    accepted = ask_car.(car, booking)
     %{car: car, booking: booking, accepted: accepted}
   end
 end

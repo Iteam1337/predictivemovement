@@ -1,5 +1,5 @@
 {
-  "name": "driver-interface",
+  "name": "booking-interface",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,11 +16,10 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "node-fetch": "^2.6.0",
-    "telegraf": "^3.36.0",
-    "uuid": "^7.0.2"
+    "telegraf": "^3.37.0",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.3"
   }
 }

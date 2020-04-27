@@ -31,19 +31,17 @@ const sendPickupOffer = (
         inline_keyboard: [
           [
             {
-              text: 'Ja',
+              text: 'Nej',
               callback_data: JSON.stringify({
-                a: true,
+                a: false,
                 id: msgOptions.correlationId,
                 r: msgOptions.replyQueue,
               }),
             },
-          ],
-          [
             {
-              text: 'Nej',
+              text: 'Ja',
               callback_data: JSON.stringify({
-                a: false,
+                a: true,
                 id: msgOptions.correlationId,
                 r: msgOptions.replyQueue,
               }),

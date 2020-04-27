@@ -10,6 +10,8 @@ const init = (bot) => {
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
+    ctx.reply('Du finns nu tillgänglig för bokningar')
+
     botServices.onMessage(msg, ctx)
   })
 

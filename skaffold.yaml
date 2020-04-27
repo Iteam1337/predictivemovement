@@ -17,8 +17,10 @@ build:
 deploy:
   kubectl:
     manifests:
-      - k8s/packages/booking-simulator.yaml
-      - k8s/packages/car-simulator.yaml
+      # TODO: Disabled since cars from simulator can't accept offers and it blocks the engine from processing items
+      # - k8s/packages/booking-simulator.yaml
+      # - k8s/packages/car-simulator.yaml
+
       - k8s/packages/booking-interface.yaml
       - k8s/packages/driver-interface.yaml
       - k8s/packages/engine.yaml

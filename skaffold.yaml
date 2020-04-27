@@ -4,17 +4,25 @@ metadata:
   name: pm-mapbox-test
 build:
   artifacts:
-  - image: booking-simulator
-    context: packages/booking-simulator
-  - image: car-simulator
-    context: packages/car-simulator
+    - image: iteam1337/pm-booking-simulator
+      context: packages/booking-simulator
+    - image: iteam1337/pm-car-simulator
+      context: packages/car-simulator
+    - image: iteam1337/pm-booking-interface
+      context: packages/booking-interface
+    - image: iteam1337/pm-driver-interface
+      context: packages/driver-interface
+    - image: iteam1337/pm-engine
+      context: packages/engine-elixir
 deploy:
   kubectl:
     manifests:
-    - k8s/booking-simulator-deployment.yaml
-    - k8s/car-simulator-deployment.yaml
-    - k8s/rabbitmq-deployment.yaml
-    - k8s/rabbitmq-service.yaml
+      - k8s/packages/booking-simulator.yaml
+      - k8s/packages/car-simulator.yaml
+      - k8s/packages/booking-interface.yaml
+      - k8s/packages/driver-interface.yaml
+      - k8s/packages/engine.yaml
+      - k8s/rabbitmq.yaml
 #    - k8s/osrm.yaml
 #    - k8s/redis.yaml
 #    - k8s/travis-rbac.yaml

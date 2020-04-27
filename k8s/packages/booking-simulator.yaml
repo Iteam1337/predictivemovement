@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: booking-simulator
+  namespace: predictivemovement
   labels:
     app: booking-simulator
 spec:
@@ -16,12 +17,10 @@ spec:
         app: booking-simulator
     spec:
       containers:
-      - env:
-        - name: AMQP_HOST
-          value: amqp://rabbitmq
-        image: booking-simulator
-        name: booking-simulator
-        resources: {}
+        - env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+          image: iteam1337/pm-booking-simulator
+          name: booking-simulator
+          resources: {}
       restartPolicy: Always
-      serviceAccountName: ""
-status: {}

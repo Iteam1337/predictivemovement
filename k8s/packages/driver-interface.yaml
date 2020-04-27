@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-interface
+  namespace: predictivemovement
+  labels:
+    app: driver-interface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: driver-interface
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: driver-interface
+    spec:
+      containers:
+        - env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: DRIVER_TOKEN
+                  name: driver-token
+          image: iteam1337/pm-driver-interface
+          name: driver-interface
+          resources: {}
+      restartPolicy: Always

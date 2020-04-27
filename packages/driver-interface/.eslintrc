@@ -2,8 +2,9 @@
   "extends": ["@iteam/eslint-config-node"],
   "overrides": [
     {
+      "files": ["**/*.js"],
       "rules": {
-        "@iteam/eslint-config-node": [
+        "no-unused-vars": [
           "error",
           {
             "vars": "all",

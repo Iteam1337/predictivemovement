@@ -15,12 +15,12 @@ spec:
         app: car-simulator
     spec:
       containers:
-      - env:
-        - name: AMQP_HOST
-          value: amqp://rabbitmq
-        image: car-simulator
-        name: car-simulator
-        resources: {}
+        - env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+          image: iteam1337/pm-car-simulator
+          name: car-simulator
+          resources: {}
       restartPolicy: Always
       serviceAccountName: ""
 status: {}

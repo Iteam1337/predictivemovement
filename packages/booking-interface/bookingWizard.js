@@ -9,7 +9,7 @@ const stepHandler = new Composer()
 stepHandler.action('confirm', (ctx) => {
   const senderId = ctx.update.callback_query.from.id
 
-  ctx.reply('Perfekt, din bokning är inlagd')
+  ctx.reply('Perfekt! Din bokning är registrerad')
   const booking = {
     id: uuidv4(),
     senderId,
@@ -36,13 +36,15 @@ stepHandler.action('cancel', (ctx) => {
 const bookingWizard = new WizardScene(
   'booking-wizard',
   (ctx) => {
-    ctx.reply('Hej! Vart ska paketet hämtas ifrån? (välj plats med gemet)')
+    ctx.reply(
+      'Hej! Var ska paketet hämtas? (Klicka på "gemet" nere till vänster om textfältet och välj "location", för att välja position)'
+    )
     ctx.wizard.state.data = {}
     return ctx.wizard.next()
   },
   (ctx) => {
     if (!ctx.message.location) {
-      return ctx.reply('Du måste välja på karta juh')
+      return ctx.reply('Du måste välja på kartan juh')
     }
 
     ctx.wizard.state.data.from = {
@@ -50,12 +52,12 @@ const bookingWizard = new WizardScene(
       lon: ctx.message.location.longitude,
     }
 
-    ctx.reply('Härligt, nu är det bara att välja destination')
+    ctx.reply('Härligt! Nu är det bara att välja destination')
     return ctx.wizard.next()
   },
   (ctx) => {
     if (!ctx.message || !ctx.message.location) {
-      return ctx.reply('Du måste välja på karta juh')
+      return ctx.reply('Du måste välja på kartan juh')
     }
 
     ctx.wizard.state.data.to = {
@@ -64,7 +66,7 @@ const bookingWizard = new WizardScene(
     }
 
     ctx.replyWithMarkdown(
-      `[Se på kartan!](https://www.google.com/maps/dir/?api=1&origin=${ctx.wizard.state.data.from.lat},${ctx.wizard.state.data.from.lon}&destination=${ctx.wizard.state.data.to.lat},${ctx.wizard.state.data.to.lon})`
+      `[Visa på kartan!](https://www.google.com/maps/dir/?api=1&origin=${ctx.wizard.state.data.from.lat},${ctx.wizard.state.data.from.lon}&destination=${ctx.wizard.state.data.to.lat},${ctx.wizard.state.data.to.lon})`
     )
 
     ctx.replyWithMarkdown(

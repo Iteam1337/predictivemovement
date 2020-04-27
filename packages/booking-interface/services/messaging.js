@@ -17,19 +17,16 @@ const onBotStart = (ctx) => {
 const onBookingConfirmed = (senderId, carId) => {
   bot.telegram.sendMessage(
     senderId,
-    `Din bokning har nu bekräftats för leverans! Förare: ${carId}`
+    `Din bokning har accepterats av förare ${carId}`
   )
 }
 
 const onPickupConfirmed = (senderId) => {
-  bot.telegram.sendMessage(senderId, `Din bokning har nu blivit upplockad!`)
+  bot.telegram.sendMessage(senderId, `Din bokning har blivit hämtad!`)
 }
 
 const onDeliveryConfirmed = (senderId) => {
-  bot.telegram.sendMessage(
-    senderId,
-    `Din bokning har nu anlänt till sin destination!`
-  )
+  bot.telegram.sendMessage(senderId, `Din bokning har kommit fram!`)
 }
 
 module.exports = {

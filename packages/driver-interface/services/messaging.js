@@ -85,7 +85,7 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
     message.car.id,
-    `Hämta paketet här! [Starta GPS](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})`,
+    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})!`,
     {
       parse_mode: 'markdown',
       reply_markup: {

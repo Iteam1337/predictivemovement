@@ -15,7 +15,7 @@ defmodule Routes do
     spawn(fn ->
       exchange = "cars"
       queue = "routes"
-      {:ok, connection} = AMQP.Connection.open()
+      {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
       {:ok, channel} = AMQP.Channel.open(connection)
       AMQP.Exchange.declare(channel, exchange, :fanout)
       AMQP.Queue.declare(channel, queue)

@@ -25,6 +25,11 @@ spec:
                 secretKeyRef:
                   key: DRIVER_TOKEN
                   name: driver-token
+            - name: GOOGLE_API_TOKEN
+              valueFrom:
+                  secretKeyRef:
+                    key: GOOGLE_TOKEN
+                    name: google-token
           image: iteam1337/pm-driver-interface
           name: driver-interface
           resources: {}

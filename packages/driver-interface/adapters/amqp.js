@@ -1,4 +1,6 @@
-const open = require('amqplib').connect('amqp://localhost')
+const open = require('amqplib').connect(
+  process.env.RABBITMQ_URL || 'amqp://localhost'
+)
 
 const exchanges = {
   BOOKINGS: 'bookings',

@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: booking-simulator
+  name: car-simulator
+  namespace: predictivemovement
   labels:
-    app: booking-simulator
+    app: car-simulator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: booking-simulator
-  strategy: {}
+      app: car-simulator
   template:
     metadata:
       labels:
-        app: booking-simulator
+        app: car-simulator
     spec:
       containers:
       - env:
         - name: AMQP_HOST
           value: amqp://rabbitmq
-        image: booking-simulator
-        name: booking-simulator
+        image: iteam1337/pm-car-simulator
+        name: car-simulator
         resources: {}
       restartPolicy: Always
       serviceAccountName: ""

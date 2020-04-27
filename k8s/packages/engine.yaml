@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engine
+  namespace: predictivemovement
+  labels:
+    app: engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: engine
+  template:
+    metadata:
+      labels:
+        app: engine
+    spec:
+      containers:
+        - env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+          image: iteam1337/pm-engine
+          name: engine
+          resources: {}
+      restartPolicy: Always

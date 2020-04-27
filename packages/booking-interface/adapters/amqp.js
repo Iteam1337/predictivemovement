@@ -14,6 +14,7 @@ const queues = {
 const routingKeys = {
   DELIVERY: 'delivery',
   PICKUP: 'pickup',
+  NEW: 'new',
 }
 
 module.exports = {

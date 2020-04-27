@@ -9,12 +9,20 @@ const exchanges = {
 
 const queues = {
   BOOKING_ASSIGNED: 'booking_assigned',
+  PICKUP_CONFIRMED: 'pickup_confirmed',
+  DELIVERY_CONFIRMED: 'delivery_confirmed',
+}
+
+const routingKeys = {
+  DELIVERY: 'delivery',
+  PICKUP: 'pickup',
 }
 
 module.exports = {
   open,
   exchanges,
   queues,
+  routingKeys,
 }
 
 // {

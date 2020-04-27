@@ -1,5 +1,6 @@
 const { open, queues } = require('../adapters/amqp')
 const messaging = require('../services/messaging')
+const google = require('../services/google')
 
 const pickupOffers = () => {
   return open
@@ -10,21 +11,32 @@ const pickupOffers = () => {
           durable: false,
         })
         .then(() =>
-          ch.consume(queues.PICKUP_OFFERS, (message) => {
+          ch.consume(queues.PICKUP_OFFERS, async (message) => {
             const { car, booking } = JSON.parse(message.content.toString())
+            try {
+              const pickupAddress = await google.getAddressFromCoordinate(
+                booking.departure
+              )
 
-            messaging.onDeliveryRequest(
-              car.id,
-              {
-                replyQueue: message.properties.replyTo,
-                correlationId: message.properties.correlationId,
-              },
-              {
-                car,
-                booking,
-              }
-            )
-            ch.ack(message)
+              const deliveryAddress = await google.getAddressFromCoordinate(
+                booking.destination
+              )
+
+              messaging.sendPickupOffer(
+                car.id,
+                {
+                  replyQueue: message.properties.replyTo,
+                  correlationId: message.properties.correlationId,
+                },
+                { pickupAddress, deliveryAddress, booking }
+              )
+              ch.ack(message)
+            } catch (error) {
+              console.warn(
+                'something went wrong with getting address from google: ',
+                error.message
+              )
+            }
           })
         )
         .catch(console.warn)

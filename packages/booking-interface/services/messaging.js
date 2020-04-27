@@ -1,3 +1,5 @@
+const bot = require('../adapters/bot')
+
 const onBotStart = (ctx) => {
   const {
     first_name,
@@ -12,4 +14,27 @@ const onBotStart = (ctx) => {
   )
 }
 
-module.exports = { onBotStart }
+const onBookingConfirmed = (senderId, carId) => {
+  bot.telegram.sendMessage(
+    senderId,
+    `Din bokning har nu bekräftats för leverans! Förare: ${carId}`
+  )
+}
+
+const onPickupConfirmed = (senderId) => {
+  bot.telegram.sendMessage(senderId, `Din bokning har nu blivit upplockad!`)
+}
+
+const onDeliveryConfirmed = (senderId) => {
+  bot.telegram.sendMessage(
+    senderId,
+    `Din bokning har nu anlänt till sin destination!`
+  )
+}
+
+module.exports = {
+  onBotStart,
+  onBookingConfirmed,
+  onPickupConfirmed,
+  onDeliveryConfirmed,
+}

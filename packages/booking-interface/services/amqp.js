@@ -8,11 +8,11 @@ const createBooking = (booking) => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertExchange(BOOKINGS, 'headers', {
+        .assertExchange(BOOKINGS, 'topic', {
           durable: false,
         })
         .then(() =>
-          ch.publish(BOOKINGS, '', Buffer.from(JSON.stringify(booking)))
+          ch.publish(BOOKINGS, 'new', Buffer.from(JSON.stringify(booking)))
         )
     )
     .catch(console.warn)

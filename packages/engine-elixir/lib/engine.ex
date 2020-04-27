@@ -43,7 +43,8 @@ defmodule Engine.App do
       # sliding window of ten minutes?
       |> Stream.chunk_every(@chunk_size)
 
-    find_and_offer_cars(batch_of_bookings, batch_of_cars, &Car.offer/2)
+
+    Dispatch.find_and_offer_cars(batch_of_bookings, batch_of_cars, &Car.offer/2, &Booking.assign/2)
     |> Stream.run()
   end
 end

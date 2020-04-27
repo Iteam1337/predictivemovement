@@ -1,8 +1,9 @@
 const {
   open,
   queues: { BOOKING_ASSIGNED },
-  exchanges: { BOOKING_ASSIGNMENTS },
+  exchanges: { BOOKINGS },
 } = require('../adapters/amqp')
+const messaging = require('../services/messaging')
 
 const bookingAssignments = () => {
   return open
@@ -13,11 +14,11 @@ const bookingAssignments = () => {
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(BOOKING_ASSIGNMENTS, 'fanout', {
+          ch.assertExchange(BOOKINGS, 'topic', {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(BOOKING_ASSIGNED, BOOKING_ASSIGNMENTS))
+        .then(() => ch.bindQueue(BOOKING_ASSIGNED, BOOKINGS, 'assigned'))
         .then(
           () =>
             new Promise((resolve) => {
@@ -28,9 +29,9 @@ const bookingAssignments = () => {
               })
             })
         )
-        .then(() => {
-          // Skicka meddelande om booking assigned
-        })
+        .then(({ booking, car }) =>
+          messaging.onBookingConfirmed(booking.senderId, car.id)
+        )
     )
 }
 

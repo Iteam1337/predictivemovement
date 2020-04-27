@@ -4,7 +4,7 @@ defmodule Dispatch do
     true
   end
 
-  def find_and_offer_cars(batch_of_bookings, batch_of_cars, ask_driver) do
+  def find_and_offer_cars(batch_of_bookings, batch_of_cars, ask_driver, assign_booking) do
     Stream.zip(batch_of_bookings, batch_of_cars)
     |> Stream.flat_map(fn {latest_bookings, latest_cars} ->
       find_candidates(latest_bookings, latest_cars)
@@ -18,17 +18,14 @@ defmodule Dispatch do
     # |> Flow.filter(fn %{accepted: accepted} -> accepted end)
     # |> Flow.map(fn %{booking: booking, car: car} ->
     #   IO.puts("Car #{car.id} accepted booking #{booking.id}")
-
-    #   # Booking.assign(booking, car) # TODO: we need to use same approach as with ask_driver since this publishes to Q
+    #   assign_booking.(booking, car)
     # end)
 
     |> Stream.map(fn %{booking: booking, car: car} -> ask_driver.(car, booking) end)
     |> Stream.filter(fn %{accepted: accepted} -> accepted end)
     |> Stream.map(fn %{booking: booking, car: car} ->
       IO.puts("Car #{car.id} accepted booking #{booking.id}")
-
-      # TODO: we need to use same approach as with ask_driver since this publishes to Q
-      Booking.assign(booking, car)
+      assign_booking.(booking, car)
     end)
   end
 
@@ -36,24 +33,24 @@ defmodule Dispatch do
     bookings
     |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->
       [candidate | _rest] = CarFinder.find(booking, result.cars)
-      scoreBefore = Score.calculate(candidate.car, candidate.booking)
 
-      scoreAfter = candidate.car
-      |> Car.assign(candidate.booking, :auto)
-      |> Score.calculate(candidate.booking)
+      score_before = Score.calculate(candidate.car, candidate.booking)
+      best_car = Car.assign(candidate.car, candidate.booking, :auto)
+      score_after = Score.calculate(candidate.car, candidate.booking)
 
       newCars =
         result.cars
         |> Enum.map(fn car ->
-          if car.id == candidate.car.id, do: candidate.car, else: car
+          if car.id == candidate.car.id, do: best_car, else: car
         end)
 
       %{
         cars: newCars,
-        assignments: result.assignments ++ [%{booking: booking, car: candidate.car}],
-        score: result.score + (scoreAfter - scoreBefore)
+        assignments: result.assignments ++ [%{booking: booking, car: best_car}],
+        score: result.score + (score_after - score_before)
       }
     end)
     |> (fn %{assignments: assignments} -> assignments end).()
+    |> MQ.publish(Application.fetch_env!(:engine, :candidates_exchange))
   end
 end

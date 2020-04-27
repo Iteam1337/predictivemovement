@@ -1,0 +1,19 @@
+{
+  "extends": ["@iteam/eslint-config-node"],
+  "overrides": [
+    {
+      "rules": {
+        "@iteam/eslint-config-node": [
+          "error",
+          {
+            "vars": "all",
+            "args": "after-used",
+            "ignoreRestSiblings": true,
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
+        ]
+      }
+    }
+  ]
+}

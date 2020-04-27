@@ -19,6 +19,7 @@ defmodule Engine.MixProject do
         amqp_host: "amqp://localhost",
         bookings_exchange: "bookings",
         cars_exchange: "cars",
+        candidates_exchange: "candidates",
         booking_requests_queue: "booking_requests",
         routes_queue: "routes",
         pickup_offers_queue: "pickup_offers",

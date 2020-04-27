@@ -447,7 +447,7 @@ defmodule CarTest do
     [first | _rest] = Car.calculateDetours(firstCar, secondBooking)
     [second | _rest] = Car.calculateDetours(@secondCar, secondBooking)
 
-    assert first.detourDiff < second.detourDiff
+    assert first.detourDiff > second.detourDiff
   end
 
   test "first booking from hub to Nore and second booking from Letsbo back to hub" do

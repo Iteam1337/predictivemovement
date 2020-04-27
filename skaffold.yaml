@@ -24,7 +24,9 @@ deploy:
       - k8s/packages/booking-interface.yaml
       - k8s/packages/driver-interface.yaml
       - k8s/packages/engine.yaml
-      - k8s/rabbitmq.yaml
+      # TODO: Disabled because this should be done once and not redeployed every time
+      # - k8s/rabbitmq.yaml
+      
 #    - k8s/osrm.yaml
 #    - k8s/redis.yaml
 #    - k8s/travis-rbac.yaml

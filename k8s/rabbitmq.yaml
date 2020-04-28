@@ -21,7 +21,6 @@ spec:
             - containerPort: 15672
           resources: {}
       restartPolicy: Always
-      serviceAccountName: ""
 status: {}
 ---
 apiVersion: v1

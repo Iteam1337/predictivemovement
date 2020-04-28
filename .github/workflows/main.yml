@@ -43,8 +43,8 @@ jobs:
           sed -i "s;KUBE_USER_TOKEN;${{ secrets.KUBE_USER_TOKEN }};g" config
           kubectl config use-context ${{ secrets.KUBE_CLUSTER_NAME }}
 
-      - name: build-and-deploy
-        run: skaffold run
+      - name: build
+        run: skaffold build
       # - uses: actions/checkout@v2
       # - name: skaffold build & publish
       #   uses: anarcher/skaffold-action@v1

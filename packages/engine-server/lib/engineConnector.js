@@ -2,16 +2,35 @@ const amqp = require('fluent-amqp')('amqp://localhost')
 // const { generate } = require('@iteam1337/engine/simulator/cars')
 
 const bookings = amqp
-  .exchange('bookings', 'topic', { durable: false })
-  .queue('booking_requests', { durable: false })
-  .subscribe(['*'])
-  .map((bookings) => bookings.json())
+  .exchange('bookings', 'topic', {
+    durable: false,
+  })
+  .queue('bookings_to_map', {
+    durable: false,
+  })
+  .subscribe(
+    {
+      noAck: false,
+    },
+    ['new']
+  )
+  .each((bookings) => bookings.ack())
+  .map((bookings) => {
+    console.log(bookings)
+    return bookings.json()
+  })
 
 const cars = amqp
-  .exchange('cars', 'fanout', { durable: false })
-  .queue('routes', { durable: false })
+  .exchange('cars', 'fanout', {
+    durable: false,
+  })
+  .queue('map_car_positions', {
+    durable: false,
+  })
   .subscribe(['*'])
-  .map((cars) => cars.json())
+  .map((cars) => {
+    return cars.json()
+  })
 // .map(generate)
 
 // const possibleRoutes = amqp

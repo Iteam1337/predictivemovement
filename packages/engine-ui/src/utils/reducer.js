@@ -3,11 +3,21 @@ export const reducer = (state, action) => {
     case 'setCars':
       return {
         ...state,
-        carCollection: { ...state.carCollection, features: action.payload },
+        carCollection: {
+          ...state.carCollection,
+          features: action.payload,
+        },
       }
     case 'setMovingCars':
-      return { ...state, movingCarsCollection: action.payload }
+      return {
+        ...state,
+        movingCarsCollection: action.payload,
+      }
     case 'setBookings':
+      console.log({
+        state,
+        action,
+      })
       return {
         ...state,
         bookingCollection: {
@@ -24,12 +34,21 @@ export const reducer = (state, action) => {
         },
       }
     case 'setCarInfo':
-      return { ...state, carInfo: { ...action.payload } }
+      return {
+        ...state,
+        carInfo: {
+          ...action.payload,
+        },
+      }
     default:
       return state
   }
 }
-const featureCollection = { type: 'FeatureCollection', features: [] }
+
+const featureCollection = {
+  type: 'FeatureCollection',
+  features: [],
+}
 
 export const initState = {
   carCollection: featureCollection,

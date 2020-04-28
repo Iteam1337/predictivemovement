@@ -72,7 +72,6 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
   msg.answerCbQuery()
   msg.reply(isAccepted ? 'Kul!' : 'Tråkigt, kanske nästa gång!')
 
-  console.log(isAccepted.toString())
   return open
     .then((conn) => conn.createChannel())
     .then((ch) => {

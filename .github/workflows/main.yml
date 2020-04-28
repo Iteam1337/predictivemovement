@@ -32,7 +32,7 @@ jobs:
 
       - name: Create kubeconfig
         run: |
-          pwd
+          ls
           mkdir ${HOME}/.kube
           cat k8s/config.yaml
           cp k8s/config.yaml ${HOME}/.kube/config

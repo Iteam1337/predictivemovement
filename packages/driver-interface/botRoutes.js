@@ -11,11 +11,17 @@ const init = (bot) => {
   bot.on('message', (ctx) => {
     const msg = ctx.message
 
+  if (!msg.location) return
+
+  ctx.reply('Du finns nu tillgänglig för bokningar')
+
     botServices.onMessage(msg, ctx)
   })
 
   bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
+  if (!msg.location) return
+
     botServices.onMessage(msg, ctx)
   })
 

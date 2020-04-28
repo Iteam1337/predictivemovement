@@ -25,10 +25,10 @@ jobs:
         run: |
           curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
           chmod +x skaffold
-          mv skaffold /usr/local/bin
+          sudo mv skaffold /usr/local/bin
           curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
           chmod +x ./kubectl
-          mv ./kubectl /usr/local/bin/kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
       # - uses: actions/checkout@v2
       # - name: skaffold build & publish
       #   uses: anarcher/skaffold-action@v1

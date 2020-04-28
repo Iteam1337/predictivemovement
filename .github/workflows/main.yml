@@ -34,6 +34,7 @@ jobs:
         run: |
           pwd
           mkdir ${HOME}/.kube
+          cat k8s/config.yaml
           cp k8s/config.yaml ${HOME}/.kube/config
           cd ${HOME}/.kube
           '${{ secrets.YOUR_ENV_VARIABLE }}'

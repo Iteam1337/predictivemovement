@@ -16,14 +16,14 @@ defmodule BroadwayEngine.OrderProcessor do
     )
   end
 
-  def handle_message(_processor, %Broadway.Message{data: {cars, booking}} = msg, _context) do
-    IO.inspect({cars, booking}, label: "oh a message")
+  def handle_message(_processor, %Broadway.Message{data: {cars, order}} = msg, _context) do
+    IO.inspect({cars, order}, label: "oh a message")
 
     cars_sorted_by_score =
       cars
       |> Flow.from_enumerable()
       |> Flow.partition(stages: 50)
-      |> Flow.map(fn car -> calculate_score(booking, car) end)
+      |> Flow.map(fn car -> Booking.calculate_score(car, order) end)
       |> Enum.sort(fn {_, _, score1}, {_, _, score2} -> score1 > score2 end)
       |> Enum.to_list()
 

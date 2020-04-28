@@ -62,7 +62,7 @@ defmodule BroadwayEngine.MatchProducer do
     {:noreply, [], state}
   end
 
-  def ack(ack_ref, successful, failed) do
+  def ack(_ack_ref, _successful, _failed) do
     :ok
   end
 

@@ -25,7 +25,10 @@ defmodule BroadwayEngine.MixProject do
       {:flow, "~> 1.0.0"},
       {:broadway, "~> 0.6.0"},
       {:broadway_rabbitmq, "~> 0.6.0"},
-      {:gen_rmq, "~> 2.6.0"}
+      {:gen_rmq, "~> 2.6.0"},
+      {:jason, "~> 1.2"},
+      {:mix_test_watch, "~> 0.8"},
+      {:math, "~> 0.4.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

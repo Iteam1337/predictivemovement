@@ -22,7 +22,7 @@ defmodule Dispatch do
     # end)
 
     |> Stream.map(fn %{booking: booking, car: car} -> ask_driver.(car, booking) end)
-    |> Stream.filter(fn %{accepted: accepted} -> accepted end)
+    |> Stream.filter(fn %{accepted: accepted} -> accepted == "true" end)
     |> Stream.map(fn %{booking: booking, car: car} ->
       IO.puts("Car #{car.id} accepted booking #{booking.id}")
       assign_booking.(booking, car)

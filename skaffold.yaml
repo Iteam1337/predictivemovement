@@ -8,8 +8,8 @@ build:
       context: packages/booking-simulator
     - image: iteam1337/pm-car-simulator
       context: packages/car-simulator
-#    - image: iteam1337/pm-engine-server
-#      context: packages/engine-server
+    #    - image: iteam1337/pm-engine-server
+    #      context: packages/engine-server
     - image: iteam1337/pm-booking-interface
       context: packages/booking-interface
     - image: iteam1337/pm-driver-interface
@@ -19,14 +19,15 @@ build:
 deploy:
   kubectl:
     manifests:
-      - k8s/packages/booking-simulator-deployment.yaml
-      - k8s/packages/car-simulator-deployment.yaml
+      # TODO: Disabled since cars from simulator can't accept offers and it blocks the engine from processing items
+      # - k8s/packages/booking-simulator.yaml
+      # - k8s/packages/car-simulator.yaml
+
       - k8s/packages/booking-interface.yaml
       - k8s/packages/driver-interface.yaml
       - k8s/packages/engine.yaml
-      - k8s/rabbitmq-deployment.yaml
-      - k8s/rabbitmq-service.yaml
-#      - k8s/engine-server.yaml
+      # TODO: Disabled because this should be done once and not redeployed every time
+      # - k8s/rabbitmq.yaml
 #    - k8s/osrm.yaml
 #    - k8s/redis.yaml
 #    - k8s/travis-rbac.yaml

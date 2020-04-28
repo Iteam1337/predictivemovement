@@ -16,10 +16,11 @@ spec:
         app: engine
     spec:
       containers:
-        - env:
+        - name: engine
+          image: iteam1337/pm-engine
+          imagePullPolicy: Always
+          env:
             - name: AMQP_HOST
               value: amqp://rabbitmq
-          image: iteam1337/pm-engine
-          name: engine
           resources: {}
-      restartPolicy: Always
+          restartPolicy: Always

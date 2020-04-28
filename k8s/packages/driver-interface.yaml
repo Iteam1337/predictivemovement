@@ -1,22 +1,12 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: driver-interface
-  namespace: predictivemovement
-spec:
-  ports:
-  - port: 8000
-  type: LoadBalancer
-  selector:
-    app: driver-interface
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: predictivemovement
-# kubectl create secret generic driver-token --from-literal=DRIVER_TOKEN=fdsdadsa
   name: driver-interface
+  namespace: predictivemovement
+  labels:
+    app: driver-interface
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: driver-interface
@@ -26,36 +16,20 @@ spec:
         app: driver-interface
     spec:
       containers:
-      - name: driver-interface
-        image: iteam1337/pm-driver-interface
-        ports:
-        - containerPort: 8000
-        env:
-          - name: RABBITMQ_URL
-            value: amqp://rabbitmq
-          - name: BOT_TOKEN
-            valueFrom:
-              secretKeyRef:
-              name: driver-token
-              key: DRIVER_TOKEN
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: driver-interface-ingress
-  namespace: predictivemovement
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-spec:
-  tls:
-  - hosts:
-    - driver-interface.iteamdev.io
-    secretName: driver-interface-prod-tls
-  rules:
-  - host: driver-interface.iteamdev.io
-    http:
-      paths:
-      - backend:
-          serviceName: driver-interface
-          servicePort: 8000
+        - env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: DRIVER_TOKEN
+                  name: driver-token
+            - name: GOOGLE_API_TOKEN
+              valueFrom:
+                  secretKeyRef:
+                    key: GOOGLE_TOKEN
+                    name: google-token
+          image: iteam1337/pm-driver-interface
+          name: driver-interface
+          resources: {}
+      restartPolicy: Always

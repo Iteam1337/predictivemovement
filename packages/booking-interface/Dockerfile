@@ -1,6 +1,12 @@
 FROM node:slim
+
 WORKDIR /app
-COPY ./package.json .
-RUN npm install --production
+
+COPY package.json .
+COPY package-lock.json .
+
+RUN npm ci --quiet
+
 COPY . .
+
 CMD npm start

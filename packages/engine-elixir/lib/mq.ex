@@ -35,7 +35,7 @@ defmodule MQ do
   end
 
   def publish_rpc(data, queue_name, response_queue_name) do
-    {:ok, connection} = AMQP.Connection.open()
+    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
     {:ok, channel} = AMQP.Channel.open(connection)
 
     AMQP.Queue.declare(

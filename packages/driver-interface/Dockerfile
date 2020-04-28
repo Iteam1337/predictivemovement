@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:slim
 
 WORKDIR /app
 
@@ -9,4 +9,4 @@ RUN npm ci --quiet
 
 COPY . .
 
-CMD ["node", "."]
+CMD npm start

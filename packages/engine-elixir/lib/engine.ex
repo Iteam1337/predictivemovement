@@ -27,6 +27,8 @@ defmodule Engine.App do
     %{booking: booking, car: car, score: detour.diff}
   end
 
+
+
   def start() do
     cars_stream = Routes.init()
     bookings_stream = BookingRequests.init()

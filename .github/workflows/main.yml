@@ -6,9 +6,10 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [github-actions]
+    # branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -19,15 +20,14 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-        
-    - name: skaffold build & publish 
-      uses: anarcher/skaffold-action@v1
-      with:
-        skaffold: build 
-        docker_username: ${{ secrets.DOCKER_GITHUB_USERNAME }}
-        docker_password: ${{ secrets.DOCKER_GITHUB_PASSWORD }}
-      env:
-        IMAGE_TAG: ${{ github.ref }}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
 
+      - name: skaffold build & publish
+        uses: anarcher/skaffold-action@v1
+        with:
+          skaffold: build
+          docker_username: ${{ secrets.DOCKER_GITHUB_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_GITHUB_PASSWORD }}
+        env:
+          IMAGE_TAG: ${{ github.ref }}

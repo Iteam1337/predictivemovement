@@ -20,6 +20,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/checkout@v1
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Install dependencies
         run: |
@@ -31,7 +32,6 @@ jobs:
           sudo mv ./kubectl /usr/local/bin/kubectl
 
       - name: Create kubeconfig
-        working-directory: k8s
         run: ls -la
 
       - name:

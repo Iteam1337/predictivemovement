@@ -10,7 +10,6 @@ spec:
   selector:
     matchLabels:
       app: driver-interface
-  strategy: {}
   template:
     metadata:
       labels:

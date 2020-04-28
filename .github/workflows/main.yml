@@ -31,8 +31,7 @@ jobs:
           sudo mv ./kubectl /usr/local/bin/kubectl
 
       - name: Create kubeconfig
-        run: |
-          ls
+        run: ls
 
       - name:
           Show kubeconfig

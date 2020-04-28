@@ -1,7 +1,7 @@
 apiVersion: v1
 clusters:
   - cluster:
-      certificate-authority-data: KUBE_CLUSTER_CERTIFICATE
+      insecure-skip-tls-verify: true
       server: KUBE_CLUSTER_SERVER
     name: KUBE_CLUSTER_NAME
 contexts:

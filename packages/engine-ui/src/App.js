@@ -3,7 +3,7 @@ import Map from './components/Map'
 import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import mapUtils, { feature } from './utils/mapUtils'
+import mapUtils from './utils/mapUtils'
 import { reducer, initState } from './utils/reducer'
 
 const App = () => {
@@ -11,28 +11,27 @@ const App = () => {
 
   useSocket('bookings', (newBookings) => {
     const features = mapUtils.bookingToFeature(newBookings)
-    console.log(features)
     dispatch({
       type: 'setBookings',
       payload: features,
     })
   })
 
-  // useSocket('cars', (newCars) => {
-  //   const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
-  //     newCars,
-  //     state.carCollection,
-  //     state.carLineCollection
-  //   )
-  //   dispatch({
-  //     type: 'setCars',
-  //     payload: carFeatures,
-  //   })
-  //   dispatch({
-  //     type: 'setCarsLines',
-  //     payload: carLineFeatures,
-  //   })
-  // })
+  useSocket('cars', (newCars) => {
+    const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
+      newCars,
+      state.carCollection,
+      state.carLineCollection
+    )
+    dispatch({
+      type: 'setCars',
+      payload: carFeatures,
+    })
+    dispatch({
+      type: 'setCarsLines',
+      payload: carLineFeatures,
+    })
+  })
 
   useSocket('moving-cars', (newCars) => {
     const movingCarsFeatures = mapUtils.movingCarToFeature(

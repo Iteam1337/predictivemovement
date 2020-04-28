@@ -8,15 +8,11 @@ const bookings = amqp
   .queue('bookings_to_map', {
     durable: false,
   })
-  .subscribe(
-    {
-      noAck: false,
-    },
-    ['new']
-  )
-  .each((bookings) => bookings.ack())
+  /* .subscribe is supposed to default to {noAck: true}, dont know what
+   * it means but messages are not acked if i don't specify this
+   */
+  .subscribe({ noAck: true }, 'new')
   .map((bookings) => {
-    console.log(bookings)
     return bookings.json()
   })
 
@@ -24,10 +20,10 @@ const cars = amqp
   .exchange('cars', 'fanout', {
     durable: false,
   })
-  .queue('map_car_positions', {
+  .queue('cars_to_map', {
     durable: false,
   })
-  .subscribe(['*'])
+  .subscribe({ noAck: true })
   .map((cars) => {
     return cars.json()
   })

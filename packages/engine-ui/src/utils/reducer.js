@@ -14,15 +14,13 @@ export const reducer = (state, action) => {
         movingCarsCollection: action.payload,
       }
     case 'setBookings':
-      console.log({
-        state,
-        action,
-      })
+      const newState = state.bookingCollection.features.concat(action.payload)
+
       return {
         ...state,
         bookingCollection: {
           ...state.bookingCollection,
-          features: action.payload,
+          features: newState,
         },
       }
     case 'setCarsLines':

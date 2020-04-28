@@ -29,7 +29,7 @@ const bookingsCache = new Map()
 //   .fork()
 //   .flatMap(pr => pr.cars)
 //   .errors(err => console.error(err))
-a
+
 // const movingCars = engine.cars.fork().errors(err => console.error(err))
 
 // engine.cars.fork().each(car => console.log('car', car.id))
@@ -58,11 +58,13 @@ function register(io) {
     //   .errors(console.error)
     //   .each(cars => socket.volatile.emit('cars', cars))
 
-    _.merge([bookings.fork()])
+    _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto((booking) => bookingsCache.set(booking.id, booking))
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
-      .each((bookings) => socket.emit('bookings', bookings))
+      .each((bookings) => {
+        socket.emit('bookings', bookings)
+      })
 
     _.merge([_(movingCarsCache.values()), cars.fork()])
       .filter((car) => car.id)

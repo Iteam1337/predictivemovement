@@ -13,12 +13,12 @@ Predictive Movement is a project financed by, among others, Sweden’s Innovatio
 
 The source code for the project is contained in this mono-repo. Within the [packages](packages) folder you will find all included packages. Here is a summary of the components:
   
-  [Engine](packages/engine-elixir) The main logic written in Elixir/Erlang
-  [Driver interface](packages/driver-interface) Bot in Telegram for communicating with drivers
-  [Booking interface](packages/booking-interface) Bot in Telegram for communicating with bookers of transport
-  [Engine UI](packages/engine-ui) Main UI for visualising current bookings and cars
-  [Booking Simulator](packages/booking-simulator) Simulates a new booking every X seconds 
-  [Car Simulator](packages/car-simulator) Simulates cars driving on map
+ * [Engine](packages/engine-elixir) The main logic written in Elixir/Erlang
+ * [Driver interface](packages/driver-interface) Bot in Telegram for communicating with drivers
+ * [Booking interface](packages/booking-interface) Bot in Telegram for communicating with bookers of transport
+ * [Engine UI](packages/engine-ui) Main UI for visualising current bookings and cars
+ * [Booking Simulator](packages/booking-simulator) Simulates a new booking every X seconds 
+ * [Car Simulator](packages/car-simulator) Simulates cars driving on map
   
 To deploy the relevant packages to your Kubernetes cluster, use Skaffold:
 

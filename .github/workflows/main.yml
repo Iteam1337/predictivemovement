@@ -6,9 +6,6 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [github-actions]
-    # branches: [ master ]
-  pull_request:
     branches: [master]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -43,17 +40,8 @@ jobs:
           sed -i "s;KUBE_USER_TOKEN;${{ secrets.KUBE_USER_TOKEN }};g" config
           kubectl config use-context ${{ secrets.KUBE_CLUSTER_NAME }}
 
-      - name: build
+      - name: build-and-deploy
         run: |
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-          skaffold build
+          skaffold run
           docker logout
-      # - uses: actions/checkout@v2
-      # - name: skaffold build & publish
-      #   uses: anarcher/skaffold-action@v1
-      #   with:
-      #     skaffold: build
-      #     docker_username: ${{ secrets.DOCKER_GITHUB_USERNAME }}
-      #     docker_password: ${{ secrets.DOCKER_GITHUB_PASSWORD }}
-      #   env:
-      #     IMAGE_TAG: ${{ github.ref }}

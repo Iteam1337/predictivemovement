@@ -32,8 +32,20 @@ jobs:
 
       - name: Create kubeconfig
         run: |
-          kubectl
-          skaffold
+          pwd
+          mkdir ${HOME}/.kube
+          cp ./k8s/config.yaml ${HOME}/.kube/config
+          cd ${HOME}/.kube
+          sed -i 's/KUBE_CLUSTER_NAME/'"$KUBE_CLUSTER_NAME"'/g' config
+          sed -i 's/KUBE_CLUSTER_SERVER/'"$KUBE_CLUSTER_SERVER"'/g' config
+          sed -i 's/KUBE_CLUSTER_CERTIFICATE/'"$KUBE_CLUSTER_CERTIFICATE"'/g' config
+          sed -i 's/KUBE_USER/'"$KUBE_USER"'/g' config
+          sed -i 's/KUBE_USER_TOKEN/'"$KUBE_USER_TOKEN"'/g' config
+          kubectl config use-context $KUBE_CLUSTER_NAME
+
+      - name: Show kubeconfig
+        run: |
+          cat ${HOME}/.kube/config
       # - uses: actions/checkout@v2
       # - name: skaffold build & publish
       #   uses: anarcher/skaffold-action@v1

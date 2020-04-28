@@ -44,7 +44,10 @@ jobs:
           kubectl config use-context ${{ secrets.KUBE_CLUSTER_NAME }}
 
       - name: build
-        run: skaffold build
+        run: |
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+          skaffold build
+          docker logout
       # - uses: actions/checkout@v2
       # - name: skaffold build & publish
       #   uses: anarcher/skaffold-action@v1

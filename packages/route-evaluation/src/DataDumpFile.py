@@ -12,7 +12,7 @@ class DataDumpFile():
     """
 
     def __init__(self, folder, filename):
-        self.log = logger.create(self.__class__.__name__, logging.DEBUG)
+        self.log = logger.create(self.__class__.__name__)
 
         self.dump_folder = folder
         self.dump_filename = filename
@@ -27,11 +27,11 @@ class DataDumpFile():
         now = datetime.datetime.now()
         self.dump_timestamp = now.strftime("%Y%m%d_%H%M%S")
 
-        self.log.info("Timestamp for dump files is: {}".format(self.dump_timestamp))
+        self.log.info(f"Timestamp for dump files is: {self.dump_timestamp}")
 
     def __create_dump_folder(self):
         Path(self.dump_folder).mkdir(parents=True, exist_ok=True)
-        self.log.info("Writing dump files to: {}".format(self.dump_folder))
+        self.log.info(f"Writing dump files to: {self.dump_folder}")
 
     def create_filename(self):
         timestamp_counter = self.dump_timestamp + "_" + str(self.write_counter)
@@ -48,4 +48,4 @@ class DataDumpFile():
         with open(filepath, 'w') as dump_file:
             json_msg = json.loads(json_body)
             json.dump(json_msg, dump_file)
-            self.log.info("MQ message data dumped to file: {}".format(filepath))
+            self.log.info(f"MQ message data dumped to file: {filepath}")

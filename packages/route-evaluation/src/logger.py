@@ -6,7 +6,7 @@ from pathlib import Path
 log_filename = "packages/route-evaluation/tmp/route-evaluation.log"
 
 
-def create(name, level):
+def create(name, level=logging.DEBUG):
     logger = logging.getLogger(name)
     logger.setLevel(level)
 

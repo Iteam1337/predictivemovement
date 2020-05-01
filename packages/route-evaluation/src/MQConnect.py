@@ -39,6 +39,8 @@ class MQConnect():
 
     def bind(self, bindings: MQBindings):
         self.channel.queue_declare(queue=bindings.queue_name)
+        self.channel.exchange_declare(exchange=bindings.exchange_name,
+                                      exchange_type=bindings.exchange_type)
         self.channel.queue_bind(exchange=bindings.exchange_name,
                                 queue=bindings.queue_name,
                                 routing_key=bindings.routing_key)

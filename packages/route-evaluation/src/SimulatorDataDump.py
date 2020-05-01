@@ -1,12 +1,24 @@
 import logger
-import logging
 import traceback
 import pika
 
-from pika.exceptions import ChannelWrongStateError
 from DataDumpFile import DataDumpFile
 from MQConnect import MQConnect
 from MQBindings import MQBindings
+
+
+def simulator_dump(
+        dump_folder,
+        dump_filename,
+        number_of_messages,
+        mq_exchange_name,
+        mq_exchange_type,
+        routing_key=None):
+
+    data_dump_file = DataDumpFile(dump_folder, dump_filename)
+    data_dump = SimulatorDataDump(data_dump_file, mq_exchange_name, mq_exchange_type, routing_key).init()
+    data_dump.dump_to_json(number_of_messages)
+    data_dump.close()
 
 
 class SimulatorDataDump():
@@ -14,13 +26,13 @@ class SimulatorDataDump():
     This class consumes messages from the MQ and dumps them to a file.
     """
 
-    def __init__(self, data_dump_file: DataDumpFile, mq_exchange_name, routing_key=None):
+    def __init__(self, data_dump_file: DataDumpFile, mq_exchange_name, exchange_type, routing_key=None):
         self.log = logger.create(self.__class__.__name__)
 
         self.data_dump_file = data_dump_file
 
         queue_name = "simulator_data_dump_" + mq_exchange_name
-        self.bindings = MQBindings().init(queue_name, mq_exchange_name, routing_key)
+        self.bindings = MQBindings().init(queue_name, mq_exchange_name, exchange_type, routing_key)
 
         self.mq = None
 

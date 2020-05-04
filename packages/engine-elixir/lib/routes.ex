@@ -22,7 +22,9 @@ defmodule Routes do
       AMQP.Queue.bind(channel, queue, exchange)
 
       AMQP.Queue.subscribe(channel, queue, fn car, _meta ->
-        send(parent, {:msg, car: Car.make(decode(car))})
+        car_decoded = decode(car)
+        IO.puts("Got location for car #{car_decoded.id}")
+        send(parent, {:msg, car: Car.make(car_decoded)})
       end)
     end)
   end

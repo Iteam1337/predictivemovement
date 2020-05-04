@@ -5,11 +5,16 @@ defmodule Dispatch do
   end
 
   def find_and_offer_cars(batch_of_bookings, batch_of_cars, ask_driver, assign_booking) do
+    IO.puts("will now try to find and offer cars")
+
     Stream.zip(batch_of_bookings, batch_of_cars)
     |> Stream.flat_map(fn {latest_bookings, latest_cars} ->
       find_candidates(latest_bookings, latest_cars)
     end)
-    |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
+    |> Stream.filter(fn %{booking: booking, car: car} ->
+      IO.puts("evaluating candidates")
+      Dispatch.evaluate(booking, car)
+    end)
     # divide into separate branches and evaluate them in parallell
     # TODO: Revert to this code when YOU understand how Flow works
     # |> Flow.from_enumerable()
@@ -21,7 +26,10 @@ defmodule Dispatch do
     #   assign_booking.(booking, car)
     # end)
 
-    |> Stream.map(fn %{booking: booking, car: car} -> ask_driver.(car, booking) end)
+    |> Stream.map(fn %{booking: booking, car: car} ->
+      IO.puts("asking the driver")
+      ask_driver.(car, booking)
+    end)
     |> Stream.filter(fn %{accepted: accepted} -> accepted == "true" end)
     |> Stream.map(fn %{booking: booking, car: car} ->
       IO.puts("Car #{car.id} accepted booking #{booking.id}")
@@ -30,6 +38,8 @@ defmodule Dispatch do
   end
 
   def find_candidates(bookings, cars) do
+    IO.puts("finding candidates")
+
     bookings
     |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->
       [candidate | _rest] = CarFinder.find(booking, result.cars)

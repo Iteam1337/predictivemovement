@@ -33,10 +33,10 @@ defmodule Engine.App do
 
     # todo: add date field to the booking
     booking_window =
-      Flow.Window.fixed(1, :minute, fn _booking -> :os.system_time(:milli_seconds) end)
+      Flow.Window.fixed(20, :second, fn _booking -> :os.system_time(:milli_seconds) end)
 
     # todo: add date field to car position update
-    car_window = Flow.Window.fixed(1, :minute, fn _car -> :os.system_time(:milli_seconds) end)
+    car_window = Flow.Window.fixed(20, :second, fn _car -> :os.system_time(:milli_seconds) end)
 
     batch_of_bookings =
       bookings_stream
@@ -45,6 +45,10 @@ defmodule Engine.App do
       |> Flow.partition(window: booking_window, stages: 1, max_demand: 5)
       |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
       |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
+      |> Flow.map(fn items ->
+        IO.puts("Process a batch of #{length(items)} bookings")
+        items
+      end)
 
     # |> Stream.chunk_every(@chunk_size)
 
@@ -55,8 +59,14 @@ defmodule Engine.App do
       |> Flow.partition(window: car_window, stages: 1, max_demand: 5)
       |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
       |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
+      |> Flow.map(fn items ->
+        IO.puts("Process a batch of #{length(items)} cars")
+        items
+      end)
 
     # |> Stream.chunk_every(@chunk_size)
+
+    IO.puts("Starting dispatch")
 
     Dispatch.find_and_offer_cars(
       batch_of_bookings,

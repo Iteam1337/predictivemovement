@@ -22,7 +22,9 @@ defmodule BookingRequests do
       AMQP.Queue.bind(channel, queue, exchange, routing_key: "new")
 
       AMQP.Queue.subscribe(channel, queue, fn booking, _meta ->
-        send(parent, {:msg, booking: decode(booking)})
+        booking_decoded = decode(booking)
+        IO.puts("Got info about booking #{booking_decoded.id}")
+        send(parent, {:msg, booking: booking_decoded})
       end)
     end)
   end

@@ -12,7 +12,7 @@ const Map = ({ dispatch, state }) => {
     },
   })
 
-  const dispatcher = type => object =>
+  const dispatcher = (type) => (object) =>
     dispatch({ type, payload: { ...object } })
 
   return (

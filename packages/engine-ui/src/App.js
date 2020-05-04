@@ -9,7 +9,7 @@ import { reducer, initState } from './utils/reducer'
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
 
-  useSocket('bookings', newBookings => {
+  useSocket('bookings', (newBookings) => {
     const features = mapUtils.bookingToFeature(newBookings)
     dispatch({
       type: 'setBookings',
@@ -17,7 +17,7 @@ const App = () => {
     })
   })
 
-  useSocket('cars', newCars => {
+  useSocket('cars', (newCars) => {
     const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
       newCars,
       state.carCollection,
@@ -33,21 +33,23 @@ const App = () => {
     })
   })
 
-  useSocket('moving-cars', newCars => {
+  useSocket('moving-cars', (newCars) => {
     const movingCarsFeatures = mapUtils.movingCarToFeature(
       newCars,
       state.movingCarsCollection
     )
     dispatch({
       type: 'setMovingCars',
-      payload: { ...state.movingCarsCollection, features: movingCarsFeatures },
+      payload: {
+        ...state.movingCarsCollection,
+        features: movingCarsFeatures,
+      },
     })
   })
 
   return (
     <>
-      <Sidebar {...state.carInfo} />
-      <Map dispatch={dispatch} state={state} />
+      <Sidebar {...state.carInfo} /> <Map dispatch={dispatch} state={state} />{' '}
     </>
   )
 }

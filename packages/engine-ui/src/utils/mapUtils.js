@@ -44,7 +44,7 @@ export const hexToRGBA = (hex, opacity) => {
   return [r, g, b, opacity]
 }
 
-export const hexToRGB = hex => {
+export const hexToRGB = (hex) => {
   hex = hex.replace('#', '')
   const r = parseInt(hex.substring(0, 2), 16)
   const g = parseInt(hex.substring(2, 4), 16)
@@ -56,7 +56,7 @@ export const hexToRGB = hex => {
 export const carToFeature = (newCars, carCollection, carLineCollection) => {
   const carFeatures = [
     ...carCollection.features.filter(
-      car => !newCars.some(nc => nc.id === car.id)
+      (car) => !newCars.some((nc) => nc.id === car.id)
     ),
     ...newCars.flatMap(({ id, tail, position, heading, detour }, i) => [
       multiPoint(
@@ -78,7 +78,7 @@ export const carToFeature = (newCars, carCollection, carLineCollection) => {
 
   const carLineFeatures = [
     ...carLineCollection.features.filter(
-      carLine => !newCars.some(nc => nc.id === carLine.id)
+      (carLine) => !newCars.some((nc) => nc.id === carLine.id)
     ),
 
     ...newCars.flatMap(({ id, detour }, i) =>
@@ -100,7 +100,7 @@ export const movingCarToFeature = (newCars, movingCarsCollection) => {
   try {
     return [
       ...movingCarsCollection.features.filter(
-        car => !newCars.some(nc => nc.id === car.id)
+        (car) => !newCars.some((nc) => nc.id === car.id)
       ),
       ...newCars.flatMap(({ id, tail, position, heading }, i) => {
         index = i
@@ -121,7 +121,7 @@ export const movingCarToFeature = (newCars, movingCarsCollection) => {
   }
 }
 
-export const bookingToFeature = newBookings =>
+export const bookingToFeature = (newBookings) =>
   newBookings.flatMap(({ id, departure, destination }) => [
     multiPoint(
       [
@@ -179,21 +179,21 @@ export const toGeoJsonLayer = (id, data, callback) =>
     extruded: true,
     lineWidthScale: 1,
     lineWidthMinPixels: 2,
-    getFillColor: d => hexToRGBA(d.properties.color, 255),
+    getFillColor: (d) => hexToRGBA(d.properties.color, 255),
     highlightColor: [104, 211, 245, 255],
     autoHighlight: true,
-    getLineColor: d => hexToRGBA(d.properties.color, 100),
-    getRadius: d => d.properties.size || 300,
+    getLineColor: (d) => hexToRGBA(d.properties.color, 100),
+    getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
     onHover: ({ object }) => object && callback(object),
   })
 
-export const toIconLayer = data => {
+export const toIconLayer = (data) => {
   const ICON_MAPPING = {
     marker: { x: 0, y: 0, width: 160, height: 160, mask: true },
   }
-  const iconData = data.features.map(feature => ({
+  const iconData = data.features.map((feature) => ({
     coordinates: feature.geometry.coordinates,
   }))
 
@@ -203,11 +203,11 @@ export const toIconLayer = data => {
     pickable: true,
     iconAtlas: markerIcon,
     iconMapping: ICON_MAPPING,
-    getIcon: d => 'marker',
+    getIcon: (d) => 'marker',
     sizeScale: 7,
-    getPosition: d => d.coordinates,
-    getSize: d => 5,
-    getColor: d => [Math.sqrt(d.exits), 140, 0],
+    getPosition: (d) => d.coordinates,
+    getSize: (d) => 5,
+    getColor: (d) => [Math.sqrt(d.exits), 140, 0],
     onHover: ({ object, x, y }) => {},
   })
 }

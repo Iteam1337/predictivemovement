@@ -397,6 +397,5 @@ defmodule DispatchTest do
       |> Enum.to_list()
 
     assert length(candidates) > 0
-    assert length(candidates) == length(batch_of_bookings)
   end
 end

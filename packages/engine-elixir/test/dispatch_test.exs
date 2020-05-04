@@ -255,7 +255,7 @@ defmodule DispatchTest do
 
     accept = fn car, booking ->
       IO.puts("Offer booking #{booking.id} to car #{car.id}")
-      true
+      "true"
     end
 
     delay_and_accept = fn delay ->
@@ -333,14 +333,22 @@ defmodule DispatchTest do
     assert length(batch_of_cars) == 3
   end
 
-  @tag :flow
   test "offers bookings to cars using fixed windows" do
     hub = %{lat: 61.820701, lon: 16.057731}
 
     bookings =
-      Stream.iterate(0, &(&1 + 1)) |> Stream.map(&Booking.make(&1, hub, Address.random(hub)))
+      Stream.iterate(0, &(&1 + 1))
+      |> Stream.map(fn id ->
+        Process.sleep(1100)
+        Booking.make(id, hub, Address.random(hub))
+      end)
 
-    cars = Stream.iterate(0, &(&1 + 1)) |> Stream.map(&Car.make(&1, hub, false))
+    cars =
+      Stream.iterate(0, &(&1 + 1))
+      |> Stream.map(fn id ->
+        Process.sleep(1500)
+        Car.make(id, hub, false)
+      end)
 
     booking_window =
       Flow.Window.fixed(5, :second, fn _booking -> :os.system_time(:milli_seconds) end)
@@ -354,8 +362,6 @@ defmodule DispatchTest do
       |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
       |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
       |> Enum.take(1)
-      |> List.first()
-      |> IO.inspect(label: "is bookings")
 
     batch_of_cars =
       cars
@@ -364,12 +370,10 @@ defmodule DispatchTest do
       |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
       |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
       |> Enum.take(1)
-      |> List.first()
-      |> IO.inspect(label: "is cars")
 
     accept = fn car, booking ->
       IO.puts("Offer booking #{booking.id} to car #{car.id}")
-      true
+      "true"
     end
 
     delay_and_accept = fn delay ->
@@ -390,9 +394,9 @@ defmodule DispatchTest do
         car_offer,
         assign_booking
       )
-      |> Enum.take(2)
-      |> List.first()
+      |> Enum.to_list()
 
-    assert length(candidates) == 2
+    assert length(candidates) > 0
+    assert length(candidates) == length(batch_of_bookings)
   end
 end

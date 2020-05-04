@@ -32,15 +32,19 @@ defmodule Engine.App do
     bookings_stream = BookingRequests.init()
 
     # todo: add date field to the booking
-    booking_window = Flow.Window.fixed(1, :minute, fn _booking -> NaiveDateTime.utc_now() end)
+    booking_window =
+      Flow.Window.fixed(1, :minute, fn _booking -> :os.system_time(:milli_seconds) end)
+
     # todo: add date field to car position update
-    car_window = Flow.Window.fixed(1, :minute, fn _car -> NaiveDateTime.utc_now() end)
+    car_window = Flow.Window.fixed(1, :minute, fn _car -> :os.system_time(:milli_seconds) end)
 
     batch_of_bookings =
       bookings_stream
       # time window every minute?
       |> Flow.from_enumerable()
-      |> Flow.partition(window: booking_window, stages: 1, max_demand: 5)
+      |> Flow.partition(window: booking_window, stages: 1, max_demand: 1)
+      |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
+      |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
 
     # |> Stream.chunk_every(@chunk_size)
 
@@ -48,7 +52,9 @@ defmodule Engine.App do
       cars_stream
       # sliding window of ten minutes?
       |> Flow.from_enumerable()
-      |> Flow.partition(window: car_window, stages: 1, max_demand: 5)
+      |> Flow.partition(window: booking_window, stages: 1, max_demand: 1)
+      |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
+      |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
 
     # |> Stream.chunk_every(@chunk_size)
 

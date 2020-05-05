@@ -7,11 +7,11 @@ defmodule Dispatch do
   def find_and_offer_cars(batch_of_bookings, batch_of_cars, ask_driver, assign_booking) do
     IO.puts("will now try to find and offer cars")
 
-    Stream.zip(batch_of_bookings, batch_of_cars)
-    |> Stream.flat_map(fn {latest_bookings, latest_cars} ->
+    Enum.zip(batch_of_bookings, batch_of_cars)
+    |> Enum.flat_map(fn {latest_bookings, latest_cars} ->
       find_candidates(latest_bookings, latest_cars)
     end)
-    |> Stream.filter(fn %{booking: booking, car: car} ->
+    |> Enum.filter(fn %{booking: booking, car: car} ->
       IO.puts("evaluating candidates")
       Dispatch.evaluate(booking, car)
     end)
@@ -26,12 +26,12 @@ defmodule Dispatch do
     #   assign_booking.(booking, car)
     # end)
 
-    |> Stream.map(fn %{booking: booking, car: car} ->
+    |> Enum.map(fn %{booking: booking, car: car} ->
       IO.puts("asking the driver")
       ask_driver.(car, booking)
     end)
-    |> Stream.filter(fn %{accepted: accepted} -> accepted == "true" end)
-    |> Stream.map(fn %{booking: booking, car: car} ->
+    |> Enum.filter(fn %{accepted: accepted} -> accepted == "true" end)
+    |> Enum.map(fn %{booking: booking, car: car} ->
       IO.puts("Car #{car.id} accepted booking #{booking.id}")
       assign_booking.(booking, car)
     end)

@@ -1,19 +1,17 @@
 defmodule Routes do
   def init do
-    IO.puts("Initialize the stream for cars")
+    IO.puts("Initialize the cars SUBSCRIBER")
 
-    Stream.resource(
-      fn -> subscribe(self()) end,
-      fn pid -> receive_next_value(pid) end,
-      fn values -> values end
-    )
+    {:ok, agent} = Agent.start_link(fn -> [] end)
+    subscribe(agent)
+    agent
   end
 
   defp decode(car) do
     car |> Poison.decode!(%{keys: :atoms})
   end
 
-  defp subscribe(parent) do
+  defp subscribe(agent) do
     IO.puts("Subscribe for cars")
 
     spawn(fn ->
@@ -28,21 +26,11 @@ defmodule Routes do
       IO.puts("Now we bound the #{queue} to cars exchange")
 
       AMQP.Queue.subscribe(channel, queue, fn car, _meta ->
-        IO.puts("Now we have a message from routes queue")
+        # IO.puts("Now we have a message from routes queue")
         car_decoded = decode(car)
-        IO.puts("Got location for car #{car_decoded.id}")
-        send(parent, {:msg, car: Car.make(car_decoded)})
+        # IO.puts("Got location for car #{car_decoded.id}")
+        Agent.update(agent, fn cars -> cars ++ [Car.make(car_decoded)] end)
       end)
     end)
-  end
-
-  defp receive_next_value(pid) do
-    receive do
-      {:msg, car: car} ->
-        {[car], pid}
-
-      _ ->
-        receive_next_value(pid)
-    end
   end
 end

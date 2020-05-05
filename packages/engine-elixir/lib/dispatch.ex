@@ -17,24 +17,25 @@ defmodule Dispatch do
     end)
     # divide into separate branches and evaluate them in parallell
     # TODO: Revert to this code when YOU understand how Flow works
-    # |> Flow.from_enumerable()
-    # |> Flow.partition(key: fn %{car: car} -> car.id end)
-    # |> Flow.map(fn %{booking: booking, car: car} -> ask_driver.(car, booking) end)
-    # |> Flow.filter(fn %{accepted: accepted} -> accepted end)
-    # |> Flow.map(fn %{booking: booking, car: car} ->
-    #   IO.puts("Car #{car.id} accepted booking #{booking.id}")
-    #   assign_booking.(booking, car)
-    # end)
-
-    |> Enum.map(fn %{booking: booking, car: car} ->
-      IO.puts("asking the driver")
-      ask_driver.(car, booking)
-    end)
-    |> Enum.filter(fn %{accepted: accepted} -> accepted == "true" end)
-    |> Enum.map(fn %{booking: booking, car: car} ->
+    |> Flow.from_enumerable()
+    |> Flow.partition(key: fn %{car: car} -> car.id end)
+    |> Flow.map(fn %{booking: booking, car: car} -> ask_driver.(car, booking) end)
+    |> Flow.filter(fn %{accepted: accepted} -> accepted == "true" end)
+    |> Flow.map(fn %{booking: booking, car: car} ->
       IO.puts("Car #{car.id} accepted booking #{booking.id}")
       assign_booking.(booking, car)
     end)
+    |> Enum.to_list()
+
+    # |> Enum.map(fn %{booking: booking, car: car} ->
+    #   IO.puts("asking the driver")
+    #   ask_driver.(car, booking)
+    # end)
+    # |> Enum.filter(fn %{accepted: accepted} -> accepted == "true" end)
+    # |> Enum.map(fn %{booking: booking, car: car} ->
+    #   IO.puts("Car #{car.id} accepted booking #{booking.id}")
+    #   assign_booking.(booking, car)
+    # end)
   end
 
   def find_candidates(bookings, cars) do

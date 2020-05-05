@@ -17,6 +17,13 @@ const App = () => {
     })
   })
 
+  useSocket('bookings_delivered', (deliveredBookings) => {
+    dispatch({
+      type: 'removeBookings',
+      payload: deliveredBookings,
+    })
+  })
+
   useSocket('cars', (newCars) => {
     const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
       newCars,

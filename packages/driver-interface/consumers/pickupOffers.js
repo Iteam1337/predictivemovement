@@ -1,6 +1,7 @@
 const { open, queues } = require('../adapters/amqp')
 const messaging = require('../services/messaging')
 const google = require('../services/google')
+const { addBooking } = require('../services/cache')
 
 const pickupOffers = () => {
   return open
@@ -21,6 +22,15 @@ const pickupOffers = () => {
               const deliveryAddress = await google.getAddressFromCoordinate(
                 booking.destination
               )
+
+              addBooking(booking.id, {
+                car,
+                booking: {
+                  ...booking,
+                  pickupAddress,
+                  deliveryAddress,
+                },
+              })
 
               messaging.sendPickupOffer(
                 car.id,

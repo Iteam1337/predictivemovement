@@ -1,11 +1,11 @@
 FROM node:slim as build
-ARG REACT_APP_MAPBOX_ACCESS_TOKEN
-ARG REACT_APP_ENGINE_SERVER
 WORKDIR /app
 COPY ./package.json .
 COPY ./package-lock.json .
-RUN npm install --production
+RUN npm ci
 COPY . .
+ARG REACT_APP_MAPBOX_ACCESS_TOKEN
+ARG REACT_APP_ENGINE_SERVER
 RUN npm run build
 
 # production environment

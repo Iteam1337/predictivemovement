@@ -2,9 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: engine-server
+  namespace: predictivemovement
 spec:
   ports:
-  - port: 4000
+    - port: 4000
   type: LoadBalancer
   selector:
     app: engine-server
@@ -13,6 +14,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: engine-server
+  namespace: predictivemovement
 spec:
   selector:
     matchLabels:
@@ -23,27 +25,32 @@ spec:
         app: engine-server
     spec:
       containers:
-      - name: engine-server
-        image: iteam1337/pm-engine-server
-        ports:
-        - containerPort: 4000
+        - name: engine-server
+          image: iteam1337/pm-engine-server
+          ports:
+            - containerPort: 4000
+          env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+
 ---
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: engine-server-ingress
+  namespace: predictivemovement
   annotations:
     kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   tls:
-  - hosts:
-    - engine-server.iteamdev.io
-    secretName: engine-server-prod-tls
+    - hosts:
+        - engine-server.iteamdev.io
+      secretName: engine-server-prod-tls
   rules:
-  - host: engine-server.iteamdev.io
-    http:
-      paths:
-      - backend:
-          serviceName: engine-server
-          servicePort: 4000
+    - host: engine-server.iteamdev.io
+      http:
+        paths:
+          - backend:
+              serviceName: engine-server
+              servicePort: 4000

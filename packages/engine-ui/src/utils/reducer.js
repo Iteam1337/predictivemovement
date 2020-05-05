@@ -23,6 +23,18 @@ export const reducer = (state, action) => {
           features: newState,
         },
       }
+    case 'removeBookings':
+      const filtered = state.bookingCollection.features.filter(
+        (x) => !action.payload.some((i) => i.id === x.id)
+      )
+
+      return {
+        ...state,
+        bookingCollection: {
+          ...state.bookingCollection,
+          features: filtered,
+        },
+      }
     case 'setCarsLines':
       return {
         ...state,

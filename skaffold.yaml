@@ -14,6 +14,10 @@ build:
       context: packages/driver-interface
     - image: iteam1337/pm-engine
       context: packages/engine-elixir
+      sync:
+        infer:
+          - "**/*.ex"
+          - "**/*.exs"
     - image: iteam1337/pm-engine-server
       context: packages/engine-server
     - image: iteam1337/pm-engine-ui
@@ -22,7 +26,6 @@ build:
         buildArgs:
           REACT_APP_MAPBOX_ACCESS_TOKEN: ${REACT_APP_MAPBOX_ACCESS_TOKEN}
           REACT_APP_ENGINE_SERVER: ${REACT_APP_ENGINE_SERVER}
-
 deploy:
   kubectl:
     manifests:

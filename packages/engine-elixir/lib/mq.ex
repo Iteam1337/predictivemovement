@@ -31,6 +31,9 @@ defmodule MQ do
     receive do
       {:basic_deliver, payload, %{correlation_id: ^correlation_id}} ->
         payload
+    after
+      20000 ->
+        "false"
     end
   end
 

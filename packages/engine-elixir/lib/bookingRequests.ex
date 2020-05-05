@@ -1,36 +1,35 @@
 defmodule BookingRequests do
   def init do
-    parent = self()
-
-    Stream.resource(
-      fn ->
-        spawn(fn ->
-          queue_name = "booking_requests"
-          # Application.fetch_env!(:engine, :bookings_exchange)
-          bookings_exchange = "bookings"
-          {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
-          {:ok, channel} = AMQP.Channel.open(connection)
-          AMQP.Exchange.declare(channel, bookings_exchange, :topic)
-          AMQP.Queue.declare(channel, queue_name)
-          AMQP.Queue.bind(channel, queue_name, bookings_exchange, routing_key: "new")
-
-          AMQP.Queue.subscribe(channel, queue_name, fn booking, _meta ->
-            send(parent, {:msg, booking: booking |> Poison.decode!(%{keys: :atoms})})
-          end)
-        end)
-      end,
-      fn pid -> receive_next_value(pid) end,
-      fn values -> values end
-    )
+    IO.puts("Initialize the booking requests SUBSCRIBER")
+    {:ok, agent} = Agent.start_link(fn -> [] end)
+    subscribe(agent)
+    agent
   end
 
-  defp receive_next_value(pid) do
-    receive do
-      {:msg, booking: booking} ->
-        {[booking], pid}
+  defp decode(booking) do
+    booking |> Poison.decode!(%{keys: :atoms})
+  end
 
-      _ ->
-        receive_next_value(pid)
-    end
+  defp subscribe(agent) do
+    IO.puts("Subscribe for bookings")
+
+    spawn(fn ->
+      exchange = "bookings"
+      queue = "booking_requests"
+      IO.puts("Now we create a #{queue} for bookings exchange")
+      {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+      {:ok, channel} = AMQP.Channel.open(connection)
+      AMQP.Exchange.declare(channel, exchange, :topic)
+      AMQP.Queue.declare(channel, queue)
+      AMQP.Queue.bind(channel, queue, exchange, routing_key: "new")
+      IO.puts("Now we bound the #{queue} to bookings exchange")
+
+      AMQP.Queue.subscribe(channel, queue, fn booking, _meta ->
+        # IO.puts("Now we have a message from booking_requests queue")
+        booking_decoded = decode(booking)
+        # IO.puts("Got info about booking #{booking_decoded.id}")
+        Agent.update(agent, fn bookings -> bookings ++ [booking_decoded] end)
+      end)
+    end)
   end
 end

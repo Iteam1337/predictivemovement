@@ -16,6 +16,10 @@ build:
       context: packages/driver-interface
     - image: iteam1337/pm-engine
       context: packages/engine-elixir
+      sync:
+        infer:
+          - "**/*.ex"
+          - "**/*.exs"
 deploy:
   kubectl:
     manifests:

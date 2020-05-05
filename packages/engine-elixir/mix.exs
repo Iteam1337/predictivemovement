@@ -19,12 +19,13 @@ defmodule Engine.MixProject do
         amqp_host: "amqp://localhost",
         bookings_exchange: "bookings",
         cars_exchange: "cars",
+        candidates_exchange: "candidates",
         booking_requests_queue: "booking_requests",
         routes_queue: "routes",
         pickup_offers_queue: "pickup_offers",
-        pickup_response_queue: "pickup_response",
-        pickup_instructions_queue: "pickup_instructions",
-        booking_assignments_queue: "booking_assignments",
+        # TODO: Rename when we update message size in Telegram
+        pickup_response_queue: "p_response",
+        booking_assignments_exchange: "booking_assignments",
         booking_updates_queue: "booking_updates"
       ],
       extra_applications: [:lager, :logger],
@@ -42,8 +43,7 @@ defmodule Engine.MixProject do
       {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
       {:httpoison, "~> 1.6"},
       {:poison, "~> 3.1"},
-      {:polyline, "~> 1.2"},
-      {:stream_data, "~> 0.1", only: :test}
+      {:polyline, "~> 1.2"}
     ]
   end
 

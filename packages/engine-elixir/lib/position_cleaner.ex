@@ -11,7 +11,7 @@ defmodule PositionCleaner do
   @queue_positions_cleaned "positions_cleaned"
 
   def init(_opts) do
-    {:ok, conn} = Connection.open()
+    {:ok, conn} = Connection.open(Application.fetch_env!(:engine, :amqp_host))
     {:ok, chan} = Channel.open(conn)
     setup_queue(chan)
 

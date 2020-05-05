@@ -16,6 +16,8 @@ end
 defmodule Engine.App do
   use Task
 
+  @chunk_size 1
+
   def start_link(_arg) do
     Task.start_link(__MODULE__, :start, _arg)
   end
@@ -25,29 +27,7 @@ defmodule Engine.App do
     %{booking: booking, car: car, score: detour.diff}
   end
 
-  def find_candidates(bookings, cars) do
-    bookings
-    |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->
-      [candidate | _rest] = CarFinder.find(booking, result.cars)
-      scoreBefore = Score.calculate(candidate.car, candidate.booking)
 
-      bestCar = Car.assign(candidate.car, candidate.booking, :auto)
-      scoreAfter = Score.calculate(bestCar, candidate.booking)
-
-      newCars =
-        result.cars
-        |> Enum.map(fn car ->
-          if car.id == bestCar.id, do: bestCar, else: car
-        end)
-
-      %{
-        cars: newCars,
-        assignments: result.assignments ++ [%{booking: booking, car: bestCar}],
-        score: result.score + (scoreAfter - scoreBefore)
-      }
-    end)
-    |> (fn %{assignments: assignments} -> assignments end).()
-  end
 
   def start() do
     cars_stream = Routes.init()
@@ -56,29 +36,15 @@ defmodule Engine.App do
     batch_of_bookings =
       bookings_stream
       # time window every minute?
-      |> Stream.chunk_every(1)
+      |> Stream.chunk_every(@chunk_size)
 
     batch_of_cars =
       cars_stream
       # sliding window of ten minutes?
-      |> Stream.chunk_every(1)
+      |> Stream.chunk_every(@chunk_size)
 
-    Stream.zip(batch_of_bookings, batch_of_cars)
-    |> Stream.map(fn {latest_bookings, latest_cars} ->
-      find_candidates(latest_bookings, latest_cars)
-    end)
-    |> Stream.flat_map(fn candidates ->
-      candidates
-      |> Stream.filter(fn %{booking: booking, car: car} -> Dispatch.evaluate(booking, car) end)
-    end)
-    |> Stream.map(fn %{booking: booking, car: car} -> Car.offer(car, booking) end)
-    |> Stream.filter(fn %{accepted: accepted} -> accepted end)
-    |> Stream.map(fn %{booking: booking, car: car} ->
-      IO.puts("Car #{car.id} accepted booking #{booking.id}")
-      Booking.assign(booking, car)
-    end)
+
+    Dispatch.find_and_offer_cars(batch_of_bookings, batch_of_cars, &Car.offer/2, &Booking.assign/2)
     |> Stream.run()
-
-    IO.puts("Its alive")
   end
 end

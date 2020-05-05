@@ -13,12 +13,8 @@ defmodule Booking do
   def assign(booking, car) do
     MQ.publish(
       %{booking: booking, car: car},
-      Application.fetch_env!(:engine, :booking_assignments_queue)
-    )
-
-    MQ.publish(
-      %{booking: booking, car: car},
-      Application.fetch_env!(:engine, :pickup_instructions_queue)
+      Application.fetch_env!(:engine, :bookings_exchange),
+      "assigned"
     )
   end
 

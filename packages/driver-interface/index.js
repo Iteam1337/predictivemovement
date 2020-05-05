@@ -1,42 +1,17 @@
 require('dotenv').config()
-
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const bot = require('./bot')
-const driver = require('./driver')
-// const deliveryRequest = require('./deliveryRequestWizard')
-const botCommands = require('./botCommands')
+const bot = require('./adapters/bot')
+const botRoutes = require('./botRoutes')
 const session = require('telegraf/session')
-const amqp = require('./amqp')
-const Stage = require('telegraf/stage')
-
-const { pickupInstructions } = require('./deliveryRequest')
-
-bot.start((ctx) => {
-  const {
-    first_name,
-
-    last_name,
-
-    id,
-  } = ctx.update.message.from
-
-  ctx.reply(
-    `Välkommen ${first_name} ${last_name}! Klicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :) Ditt id är ${id}`
-  )
-})
+const consumers = require('./consumers')
 
 bot.use(session())
 
-botCommands.registerHandlers(bot)
+consumers.register()
 
-amqp.open.then(() => {
-  pickupInstructions()
-  amqp.rpcServer()
-})
-
-driver.init(bot)
+botRoutes.init(bot)
 
 bot.launch()
 
@@ -52,3 +27,62 @@ const app = express()
 const server = require('http').Server(app)
 const port = process.env.PORT || 5000
 server.listen(port, console.log(`listening on ${port}`))
+
+// Pickup instructions example message
+// { "id": "1124095220",
+//   "booking":{
+//      "departure": {"latitude": "57.00234", "longitude": "16.0134143" }}}
+
+// Delivery RPC example message
+// {
+//   "car": {
+//     "route": {
+//       "weight_name": "routability",
+//       "weight": 1561,
+//       "started": "2020-04-07T13:09:42.334878",
+//       "legs": [
+//         null
+//       ],
+//       "geometry": [
+//         null
+//       ],
+//       "duration": 1561,
+//       "distance": 18171
+//     },
+//     "position": {
+//       "lon": 11.801236,
+//       "lat": 57.736512
+//     },
+//     "instructions": [
+//       [
+//         null
+//       ],
+//       [
+//         null
+//       ]
+//     ],
+//     "id": 1124095220,
+//     "heading": {
+//       "position": [
+//         null
+//       ],
+//       "booking": [
+//         null
+//       ],
+//       "action": "pickup"
+//     },
+//     "busy": false
+//   },
+//   "booking": {
+//     "id": 493,
+//     "destination": {
+//       "lon": 16.143512,
+//       "lat": 61.905908
+//     },
+//     "departure": {
+//       "lon": 15.981676,
+//       "lat": 61.847311
+//     },
+//     "bookingDate": "2020-04-07T13:09:15.732840Z"
+//   }
+// }

@@ -8,11 +8,11 @@ defmodule BookingRequests do
           queue_name = "booking_requests"
           # Application.fetch_env!(:engine, :bookings_exchange)
           bookings_exchange = "bookings"
-          {:ok, connection} = AMQP.Connection.open()
+          {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
           {:ok, channel} = AMQP.Channel.open(connection)
-          AMQP.Exchange.declare(channel, bookings_exchange, :headers)
+          AMQP.Exchange.declare(channel, bookings_exchange, :topic)
           AMQP.Queue.declare(channel, queue_name)
-          AMQP.Queue.bind(channel, queue_name, bookings_exchange)
+          AMQP.Queue.bind(channel, queue_name, bookings_exchange, routing_key: "new")
 
           AMQP.Queue.subscribe(channel, queue_name, fn booking, _meta ->
             send(parent, {:msg, booking: booking |> Poison.decode!(%{keys: :atoms})})

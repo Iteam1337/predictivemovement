@@ -1,19 +1,11 @@
 const _ = require('highland')
-const Engine = require('@iteam1337/engine')
-const simulator = require('@iteam1337/engine/simulator')
-const {
-  bookings,
-  cars,
-  possibleRoutes,
-  updatePosition,
-} = require('./engineConnector')
+const { bookings, cars, bookings_delivered } = require('./engineConnector')
 
 // const engine = new Engine({
 //   bookings: simulator.bookings,
 //   cars: simulator.cars.simulate(),
 // })
 
-const carsCache = new Map()
 const movingCarsCache = new Map()
 const bookingsCache = new Map()
 
@@ -38,7 +30,7 @@ const bookingsCache = new Map()
 // engine.bookings.fork().each(booking => console.log('booking', booking.id))
 
 function register(io) {
-  io.on('connection', function(socket) {
+  io.on('connection', function (socket) {
     // _.merge([_(carsCache.values()), candidates.fork()])
     //   .filter(car => car.car.id)
     //   .doto(car => {
@@ -61,17 +53,26 @@ function register(io) {
     //   .each(cars => socket.volatile.emit('cars', cars))
 
     _.merge([_(bookingsCache.values()), bookings.fork()])
-      .doto(booking => bookingsCache.set(booking.id, booking))
+      .doto((booking) => bookingsCache.set(booking.id, booking))
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
-      .each(bookings => socket.emit('bookings', bookings))
+      .each((bookings) => {
+        socket.emit('bookings', bookings)
+      })
+
+    bookings_delivered
+      .fork()
+      .map((booking) => booking.booking)
+      .doto(({ id }) => bookingsCache.delete(id))
+      .batchWithTimeOrCount(1000, 1000)
+      .errors(console.error)
+      .each((bookings) => {
+        socket.emit('bookings_delivered', bookings)
+      })
 
     _.merge([_(movingCarsCache.values()), cars.fork()])
-      .filter(car => car.id)
-      .tap(car => console.log(car))
-      // .map(car => _('moved', car))
-      // .merge()
-      .doto(car => {
+      .filter((car) => car.id)
+      .doto((car) => {
         movingCarsCache.set(car.id, car)
       })
       .pick([
@@ -87,7 +88,7 @@ function register(io) {
       // .tap(updatePosition)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
-      .each(cars => socket.emit('moving-cars', cars))
+      .each((cars) => socket.emit('moving-cars', cars))
   })
 }
 

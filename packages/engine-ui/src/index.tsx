@@ -6,7 +6,9 @@ import * as serviceWorker from './serviceWorker'
 import { SocketIOProvider } from 'use-socketio'
 
 ReactDOM.render(
-  <SocketIOProvider url="http://localhost:4000">
+  <SocketIOProvider
+    url={process.env.REACT_APP_ENGINE_SERVER || 'http://localhost:4000'}
+  >
     <App />
   </SocketIOProvider>,
   document.getElementById('root')

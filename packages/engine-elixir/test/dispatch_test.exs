@@ -196,7 +196,6 @@ defmodule DispatchTest do
              "(volvo) iteamToRadu -> (tesla) iteamToChristian -> (volvo) iteamToKungstradgarden -> (tesla) iteamToRalis -> (volvo) iteamToRadu"
   end
 
-
   test "two optimal routes with two cars" do
     cars = [@tesla, @volvo]
 
@@ -256,7 +255,7 @@ defmodule DispatchTest do
 
     accept = fn car, booking ->
       IO.puts("Offer booking #{booking.id} to car #{car.id}")
-      true
+      "true"
     end
 
     delay_and_accept = fn delay ->
@@ -274,9 +273,129 @@ defmodule DispatchTest do
     assert length(batch_of_cars) == chunk_size
 
     candidates =
-      Dispatch.find_and_offer_cars([batch_of_bookings], [batch_of_cars], car_offer, assign_booking)
+      Dispatch.find_and_offer_cars(
+        [batch_of_bookings],
+        [batch_of_cars],
+        car_offer,
+        assign_booking
+      )
       |> Enum.to_list()
 
     assert length(candidates) == chunk_size
+  end
+
+  test "get batch of cars and bookings using fixed windows" do
+    hub = %{lat: 61.820701, lon: 16.057731}
+    chunk_size = 2
+
+    bookings =
+      Stream.iterate(0, &(&1 + 1))
+      |> Stream.map(fn id ->
+        Process.sleep(1100)
+        %{id: id, type: "booking"}
+      end)
+
+    cars =
+      Stream.iterate(0, &(&1 + 1))
+      |> Stream.map(fn id ->
+        Process.sleep(1500)
+        %{id: id, type: "car"}
+      end)
+
+    booking_window =
+      Flow.Window.fixed(5, :second, fn _booking -> :os.system_time(:milli_seconds) end)
+
+    car_window = Flow.Window.fixed(5, :second, fn _car -> :os.system_time(:milli_seconds) end)
+
+    batch_of_bookings =
+      bookings
+      |> Flow.from_enumerable()
+      |> Flow.partition(window: booking_window, stages: 1, max_demand: 1)
+      |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
+      |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
+      |> Enum.take(1)
+      |> List.first()
+      |> IO.inspect(label: "is booking")
+
+    batch_of_cars =
+      cars
+      |> Flow.from_enumerable()
+      |> Flow.partition(window: car_window, stages: 1, max_demand: 1)
+      |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
+      |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
+      |> Enum.take(1)
+      |> List.first()
+      |> IO.inspect(label: "is cars")
+
+    assign_booking = fn _booking, _car -> true end
+
+    assert length(batch_of_bookings) == 4
+    assert length(batch_of_cars) == 3
+  end
+
+  test "offers bookings to cars using fixed windows" do
+    hub = %{lat: 61.820701, lon: 16.057731}
+
+    bookings =
+      Stream.iterate(0, &(&1 + 1))
+      |> Stream.map(fn id ->
+        Process.sleep(1100)
+        Booking.make(id, hub, Address.random(hub))
+      end)
+
+    cars =
+      Stream.iterate(0, &(&1 + 1))
+      |> Stream.map(fn id ->
+        Process.sleep(1500)
+        Car.make(id, hub, false)
+      end)
+
+    booking_window =
+      Flow.Window.fixed(5, :second, fn _booking -> :os.system_time(:milli_seconds) end)
+
+    car_window = Flow.Window.fixed(5, :second, fn _car -> :os.system_time(:milli_seconds) end)
+
+    batch_of_bookings =
+      bookings
+      |> Flow.from_enumerable()
+      |> Flow.partition(window: booking_window, stages: 1, max_demand: 1)
+      |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
+      |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
+      |> Enum.take(1)
+
+    batch_of_cars =
+      cars
+      |> Flow.from_enumerable()
+      |> Flow.partition(window: car_window, stages: 1, max_demand: 1)
+      |> Flow.reduce(fn -> [] end, fn e, acc -> [e | acc] end)
+      |> Flow.departition(fn -> [] end, &(&1 ++ &2), &Enum.sort/1)
+      |> Enum.take(1)
+
+    accept = fn car, booking ->
+      IO.puts("Offer booking #{booking.id} to car #{car.id}")
+      "true"
+    end
+
+    delay_and_accept = fn delay ->
+      Process.sleep(delay)
+      accept
+    end
+
+    car_offer = fn car, booking ->
+      Car.offer(car, booking, delay_and_accept.(10))
+    end
+
+    assign_booking = fn _booking, _car -> true end
+
+    candidates =
+      Dispatch.find_and_offer_cars(
+        batch_of_bookings,
+        batch_of_cars,
+        car_offer,
+        assign_booking
+      )
+      |> Enum.to_list()
+
+    assert length(candidates) > 0
   end
 end

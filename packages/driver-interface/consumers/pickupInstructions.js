@@ -20,7 +20,6 @@ const pickupInstructions = () => {
           })
         )
         .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, BOOKINGS, 'assigned'))
-        // AMQP.Queue.bind(channel, queue_name, bookings_exchange, routing_key: "new")
         .then(() =>
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
             sendPickupInstructions(JSON.parse(msg.content.toString()))

@@ -95,7 +95,7 @@ const sendPickupInstructions = (message) => {
               text: 'Hämtat',
               callback_data: JSON.stringify({
                 e: 'pickup',
-                id: message.booking.senderId,
+                id: message.booking.id,
               }),
             },
           ],

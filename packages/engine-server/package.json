@@ -18,7 +18,8 @@
     "url": "git+https://github.com/Iteam1337/pm-mapbox-test.git"
   },
   "scripts": {
-    "start": "nodemon lib/index.js",
+    "dev": "nodemon lib/index.js",
+    "start": "node lib/index.js",
     "test": "jest --watch"
   },
   "bugs": {

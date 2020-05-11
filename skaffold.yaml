@@ -24,8 +24,8 @@ build:
       context: packages/engine-ui
       docker:
         buildArgs:
-          REACT_APP_MAPBOX_ACCESS_TOKEN: ${REACT_APP_MAPBOX_ACCESS_TOKEN}
-          REACT_APP_ENGINE_SERVER: ${REACT_APP_ENGINE_SERVER}
+          REACT_APP_MAPBOX_ACCESS_TOKEN: "{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}"
+          REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
 deploy:
   kubectl:
     manifests:

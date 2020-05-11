@@ -6,7 +6,6 @@
     "@deck.gl/core": "^8.0.12",
     "@deck.gl/layers": "^8.0.12",
     "@deck.gl/react": "^8.0.12",
-    "@iteam1337/engine": "file:../engine",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",

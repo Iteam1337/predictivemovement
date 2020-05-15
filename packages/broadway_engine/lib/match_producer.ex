@@ -32,7 +32,7 @@ defmodule BroadwayEngine.MatchProducer do
   end
 
   def handle_info(
-        {:basic_deliver, booking, %{routing_key: "new"}},
+        {:basic_deliver, booking, %{exchange: @bookings_exchange, routing_key: "new"}},
         %{
           cars: cars,
           bookings: bookings

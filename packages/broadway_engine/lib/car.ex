@@ -28,6 +28,7 @@ defmodule Car do
       |> Enum.map(fn new_instructions ->
         {new_instructions, sum_of_straight_line_distances(new_instructions)}
       end)
+      |> Enum.sort_by(fn {_, score} -> score end, :asc)
       |> List.first()
 
     {new_instructions, new_score - sum_of_straight_line_distances(old_instructions)}

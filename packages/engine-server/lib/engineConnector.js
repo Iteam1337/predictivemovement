@@ -1,6 +1,10 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
 // const { generate } = require('@iteam1337/engine/simulator/cars')
 
+const routingKeys = {
+  NEW: 'new',
+}
+
 const bookings = amqp
   .exchange('bookings', 'topic', {
     durable: false,
@@ -11,7 +15,7 @@ const bookings = amqp
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, 'new')
+  .subscribe({ noAck: true }, routingKeys.NEW)
   .map((bookings) => {
     return bookings.json()
   })
@@ -49,10 +53,22 @@ const cars = amqp
 // const updatePosition = car =>
 //   queue.queue('car_positions', { durable: false }).publish(car)
 
+const createBooking = (booking) => {
+  return amqp
+    .exchange('bookings', 'topic', {
+      durable: false,
+    })
+    .publish(booking, routingKeys.NEW)
+    .then(() =>
+      console.log(` [x] Created booking '${JSON.stringify(booking, null, 2)}'`)
+    )
+}
+
 module.exports = {
   bookings,
   bookings_delivered,
   // possibleRoutes,
   cars,
+  createBooking,
   // updatePosition,
 }

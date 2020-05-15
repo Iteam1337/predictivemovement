@@ -39,8 +39,72 @@ const NavStrip = styled.div`
   }
 `
 
-const Sidebar = data => {
-  const [open, setOpen] = React.useState(false)
+const CreateBooking = ({ createBooking }) => {
+  const [formState, setState] = React.useState({
+    pickup: '61.8294925,16.0565493',
+    dropoff: '61.8644045,16.001133',
+  })
+
+  const create = (event) => {
+    event.preventDefault()
+
+    const pickup = formState.pickup
+      .split(',')
+      .map(parseFloat)
+      .filter((x) => !!x)
+    const dropoff = formState.dropoff
+      .split(',')
+      .map(parseFloat)
+      .filter((x) => !!x)
+
+    if (!pickup.length || !dropoff.length) return false
+    createBooking({ pickup, dropoff })
+  }
+  return (
+    <div>
+      <h2>Skapa en ny bokning</h2>
+      <form onSubmit={create}>
+        <div>
+          <div>
+            <label>Pickup</label>
+          </div>
+          <input
+            type="text"
+            value={formState.pickup}
+            onChange={(e) =>
+              setState({
+                pickup: e.target.value,
+                dropoff: formState.dropoff,
+              })
+            }
+          />
+        </div>
+        <div>
+          <div>
+            <label>Dropoff</label>
+          </div>
+          <input
+            type="text"
+            value={formState.dropoff}
+            onChange={(e) =>
+              setState({
+                pickup: formState.pickup,
+                dropoff: e.target.value,
+              })
+            }
+          />
+        </div>
+        <div>
+          <button type="submit">Skapa bokning</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+const Sidebar = (data) => {
+  console.log(data)
+  const [open, setOpen] = React.useState(true)
 
   useEffect(() => {
     if (!data.id) return
@@ -50,10 +114,10 @@ const Sidebar = data => {
   return (
     <>
       <NavStrip>
-        <img onClick={() => setOpen(current => !current)} src={Icon} alt="" />
+        <img onClick={() => setOpen((current) => !current)} src={Icon} alt="" />
       </NavStrip>
-
       <Container open={open}>
+        <CreateBooking createBooking={data.createBooking} />
         {data && data.id && (
           <>
             <p>{data.id}</p>

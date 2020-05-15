@@ -5,6 +5,7 @@ defmodule BroadwayEngine.MatchProducer do
   @rmq_uri "amqp://localhost"
   @cars_exchange "cars"
   @bookings_exchange "bookings"
+
   @available_cars_queue_name "routes"
   @available_bookings_queue_name "booking_requests"
 
@@ -21,7 +22,7 @@ defmodule BroadwayEngine.MatchProducer do
     {:noreply, [], state}
   end
 
-  def handle_info({:basic_deliver, car, %{routing_key: @available_cars_queue_name}}, %{
+  def handle_info({:basic_deliver, car, %{exchange: @cars_exchange}}, %{
         cars: cars,
         bookings: bookings
       }) do
@@ -31,7 +32,7 @@ defmodule BroadwayEngine.MatchProducer do
   end
 
   def handle_info(
-        {:basic_deliver, booking, %{routing_key: @available_bookings_queue_name}},
+        {:basic_deliver, booking, %{routing_key: "new"}},
         %{
           cars: cars,
           bookings: bookings
@@ -40,6 +41,10 @@ defmodule BroadwayEngine.MatchProducer do
     IO.puts("new booking!")
 
     dispatch_events(cars, [booking | bookings])
+  end
+
+  def handle_info(oj, hej) do
+    IO.inspect(oj, label: "whatzzz")
   end
 
   def dispatch_events(cars, [] = _bookings), do: {:noreply, [], %{bookings: [], cars: cars}}
@@ -72,12 +77,12 @@ defmodule BroadwayEngine.MatchProducer do
     {:ok, channel} = AMQP.Channel.open(connection)
 
     # Create exchange
-    AMQP.Exchange.declare(channel, @cars_exchange, :topic, durable: true)
-    AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: true)
+    AMQP.Exchange.fanout(channel, @cars_exchange, durable: false)
+    AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: false)
 
     # Create queues
-    AMQP.Queue.declare(channel, @available_cars_queue_name, durable: true)
-    AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: true)
+    AMQP.Queue.declare(channel, @available_cars_queue_name, durable: false)
+    AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: false)
 
     # Bind queues to exchange
     AMQP.Queue.bind(channel, @available_cars_queue_name, @cars_exchange,
@@ -85,7 +90,7 @@ defmodule BroadwayEngine.MatchProducer do
     )
 
     AMQP.Queue.bind(channel, @available_bookings_queue_name, @bookings_exchange,
-      routing_key: @available_bookings_queue_name
+      routing_key: "new"
     )
 
     AMQP.Basic.consume(channel, @available_cars_queue_name, nil, no_ack: true)

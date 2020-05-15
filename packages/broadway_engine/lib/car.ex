@@ -14,19 +14,23 @@ defmodule Car do
         pickup: pickup,
         dropoff: dropoff
       }),
-      do: sum_of_straight_line_distances([car_position, pickup, dropoff, car_position])
+      do:
+        {[pickup, dropoff],
+         sum_of_straight_line_distances([car_position, pickup, dropoff, car_position])}
 
   def get_score_diff_with_new_order(
-        %Car{instructions: instructions, position: car_position},
+        %Car{instructions: old_instructions, position: _car_position},
         %Order{pickup: pickup, dropoff: dropoff}
       ) do
-    new_score =
-      instructions
+    {new_instructions, new_score} =
+      old_instructions
       |> get_possible_route_permutations(pickup, dropoff)
-      |> Enum.map(&sum_of_straight_line_distances/1)
-      |> Enum.first()
+      |> Enum.map(fn new_instructions ->
+        {new_instructions, sum_of_straight_line_distances(new_instructions)}
+      end)
+      |> List.first()
 
-    new_score - sum_of_straight_line_distances(instructions)
+    {new_instructions, new_score - sum_of_straight_line_distances(old_instructions)}
   end
 
   def get_possible_route_permutations(instructions, pickup, dropoff) do

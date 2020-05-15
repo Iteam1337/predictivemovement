@@ -16,36 +16,50 @@ defmodule BroadwayEngine.OrderProcessor do
     )
   end
 
-  def handle_message(_processor, %Broadway.Message{data: {cars, order}} = msg, _context) do
-    IO.inspect({cars, order}, label: "oh a message")
+  def message_to_car_transform(message) do
+    message
+    |> Poison.decode!(%{keys: :atoms!})
+    |> Map.get(:position)
+    |> (fn position -> Car.make(1, position) end).()
+  end
+
+  def message_to_order_transform(message) do
+    decoded = Poison.decode!(message, %{keys: :atoms})
+
+    %Order{}
+    |> Map.put(:pickup, decoded.departure)
+    |> Map.put(:dropoff, decoded.destination)
+  end
+
+  def handle_message(_processor, %Broadway.Message{data: {cars, order_message}} = msg, _context) do
+    IO.inspect({cars, order_message}, label: "oh a message")
+    %{"id" => order_id} = Poison.decode!(order_message)
+    IO.inspect(order_id, label: "order with ID")
 
     cars_sorted_by_score =
       cars
       |> Flow.from_enumerable()
       |> Flow.partition(stages: 50)
-      |> Flow.map(fn car -> Booking.calculate_score(car, order) end)
-      |> Enum.sort(fn {_, _, score1}, {_, _, score2} -> score1 > score2 end)
+      |> Flow.map(&message_to_car_transform/1)
+      |> Flow.map(fn car ->
+        Booking.calculate_score(car, order_message |> message_to_order_transform)
+      end)
+      |> Enum.sort(fn {_, score1}, {_, score2} -> score1 > score2 end)
       |> Enum.to_list()
+
+    IO.inspect(order_id, label: "making offer on order")
 
     cars_sorted_by_score
     |> Stream.map(&offer/1)
     |> Stream.run()
 
-    Process.sleep(15000)
-
     IO.puts("done")
     msg
   end
 
-  def calculate_score(booking, car) do
-    IO.inspect(car, label: "calculating score...")
-    Process.sleep(4000)
-    IO.puts("score calculated!")
-    {booking, car, :rand.uniform(1000)}
-  end
-
   def offer(offer) do
     IO.inspect(offer, label: "offer to car")
-    Process.sleep(30000)
+    Process.sleep(15000)
+    IO.puts("car timed out.. onto the next in line")
   end
 end

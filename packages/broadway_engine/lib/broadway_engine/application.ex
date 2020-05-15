@@ -7,7 +7,7 @@ defmodule BroadwayEngine.Application do
 
   def start(_type, _args) do
     children = [
-      # BroadwayEngine.OrderProcessor
+      BroadwayEngine.OrderProcessor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

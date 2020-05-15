@@ -43,10 +43,6 @@ defmodule BroadwayEngine.MatchProducer do
     dispatch_events(cars, [booking | bookings])
   end
 
-  def handle_info(oj, hej) do
-    IO.inspect(oj, label: "whatzzz")
-  end
-
   def dispatch_events(cars, [] = _bookings), do: {:noreply, [], %{bookings: [], cars: cars}}
 
   def dispatch_events(cars, bookings) when length(cars) < 2,

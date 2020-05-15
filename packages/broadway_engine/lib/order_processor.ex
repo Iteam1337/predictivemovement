@@ -18,13 +18,13 @@ defmodule BroadwayEngine.OrderProcessor do
 
   def message_to_car_transform(message) do
     message
-    |> Poison.decode!(%{keys: :atoms!})
+    |> Poison.decode!(keys: :atoms!)
     |> Map.get(:position)
     |> (fn position -> Car.make(1, position) end).()
   end
 
   def message_to_order_transform(message) do
-    decoded = Poison.decode!(message, %{keys: :atoms})
+    decoded = Poison.decode!(message, keys: :atoms)
 
     %Order{}
     |> Map.put(:pickup, decoded.departure)

@@ -1,5 +1,4 @@
 import logger
-import logging
 import traceback
 import pika
 import time

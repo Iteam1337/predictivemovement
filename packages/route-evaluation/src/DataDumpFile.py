@@ -1,5 +1,4 @@
 import logger
-import logging
 import json
 import datetime
 

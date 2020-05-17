@@ -1,4 +1,4 @@
-const amqp = require('fluent-amqp')('amqp://localhost')
+const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
 // const { generate } = require('@iteam1337/engine/simulator/cars')
 
 const bookings = amqp

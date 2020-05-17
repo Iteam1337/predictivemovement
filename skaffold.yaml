@@ -8,14 +8,24 @@ build:
       context: packages/booking-simulator
     - image: iteam1337/pm-car-simulator
       context: packages/car-simulator
-    #    - image: iteam1337/pm-engine-server
-    #      context: packages/engine-server
     - image: iteam1337/pm-booking-interface
       context: packages/booking-interface
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine
       context: packages/engine-elixir
+      sync:
+        infer:
+          - "**/*.ex"
+          - "**/*.exs"
+    - image: iteam1337/pm-engine-server
+      context: packages/engine-server
+    - image: iteam1337/pm-engine-ui
+      context: packages/engine-ui
+      docker:
+        buildArgs:
+          REACT_APP_MAPBOX_ACCESS_TOKEN: "{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}"
+          REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
 deploy:
   kubectl:
     manifests:
@@ -26,6 +36,8 @@ deploy:
       - k8s/packages/booking-interface.yaml
       - k8s/packages/driver-interface.yaml
       - k8s/packages/engine.yaml
+      - k8s/packages/engine-server.yaml
+      - k8s/packages/engine-ui.yaml
       # TODO: Disabled because this should be done once and not redeployed every time
       # - k8s/rabbitmq.yaml
 #    - k8s/osrm.yaml

@@ -14,24 +14,24 @@ defmodule Car do
         pickup: pickup,
         dropoff: dropoff
       }),
-      do:
-        {[pickup, dropoff],
-         sum_of_straight_line_distances([car_position, pickup, dropoff, car_position])}
+      do: {[pickup, dropoff], get_osrm_distance([car_position, pickup, dropoff, car_position])}
 
   def get_score_diff_with_new_order(
         %Car{instructions: old_instructions, position: _car_position},
         %Order{pickup: pickup, dropoff: dropoff}
       ) do
+    old_score = get_osrm_distance(old_instructions)
+
     {new_instructions, new_score} =
       old_instructions
       |> get_possible_route_permutations(pickup, dropoff)
       |> Enum.map(fn new_instructions ->
-        {new_instructions, sum_of_straight_line_distances(new_instructions)}
+        {new_instructions, get_osrm_distance(new_instructions)}
       end)
       |> Enum.sort_by(fn {_, score} -> score end, :asc)
       |> List.first()
 
-    {new_instructions, new_score - sum_of_straight_line_distances(old_instructions)}
+    {new_instructions, old_score - new_score}
   end
 
   def get_possible_route_permutations(instructions, pickup, dropoff) do
@@ -59,35 +59,8 @@ defmodule Car do
       do_get_indices(pickup_index, dropoff_index + 1, list_length)
       |> Enum.concat([{pickup_index, dropoff_index}])
 
-  defmodule Instructions do
-    defstruct [:instruction, :position, :booking_id]
-  end
-
-  defp sum_of_straight_line_distances(positions) do
-    positions
-    |> Enum.chunk_every(2, 1, :discard)
-    |> Enum.reduce(0, fn [a, b | _rest], sum -> sum + haversine(a, b) end)
-  end
-
-  defp haversine(p1, p2) do
-    radius = 6_371_000
-
-    dLat = rad(p2.lat - p1.lat)
-    dLong = rad(p2.lon - p1.lon)
-
-    a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) * Math.sin(dLong / 2) *
-          Math.sin(dLong / 2)
-
-    c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-
-    d = radius * c
-
-    Kernel.round(d)
-  end
-
-  defp rad(x) do
-    x * Math.pi() / 180
+  def get_osrm_distance(instructions) do
+    Osrm.route(instructions)
+    |> Map.get(:distance)
   end
 end

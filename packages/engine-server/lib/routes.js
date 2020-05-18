@@ -60,8 +60,12 @@ function register(io) {
 
     bookings_assigned
       .fork()
-      .doto(({ booking }) => bookingsCache.set(booking.id, booking))
-      .doto(({ car }) => movingCarsCache.set(car.id, car))
+      .doto(({
+        booking
+      }) => bookingsCache.set(booking.id, booking))
+      .doto(({
+        car
+      }) => movingCarsCache.set(car.id, car))
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
@@ -79,7 +83,9 @@ function register(io) {
     bookings_delivered
       .fork()
       .map((booking) => booking.booking)
-      .doto(({ id }) => bookingsCache.delete(id))
+      .doto(({
+        id
+      }) => bookingsCache.delete(id))
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
@@ -106,7 +112,10 @@ function register(io) {
       .errors(console.error)
       .each((cars) => socket.emit('moving-cars', cars))
 
-    socket.on('new-booking', ({ pickup, dropoff }) => {
+    socket.on('new-booking', ({
+      pickup,
+      dropoff
+    }) => {
       const [pickupLat, pickupLon] = pickup
       const [dropoffLat, dropoffLon] = dropoff
 

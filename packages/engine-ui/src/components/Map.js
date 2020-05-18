@@ -6,15 +6,21 @@ import DeckGL from '@deck.gl/react'
 const Map = ({ dispatch, state }) => {
   const [mapState] = useState({
     viewport: {
-      latitude: 61.8294925,
-      longitude: 16.0565493,
+      latitude: 57.6874841,
+      longitude: 11.7650999,
       zoom: 10,
     },
   })
 
   const dispatcher = (type) => (object) =>
-    dispatch({ type, payload: { ...object } })
+    dispatch({
+      type,
+      payload: {
+        ...object,
+      },
+    })
 
+  console.log('carlinecollection', state.carInfo)
   return (
     <DeckGL
       initialViewState={mapState.viewport}

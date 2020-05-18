@@ -44,6 +44,7 @@ export const reducer = (state, action) => {
         },
       }
     case 'setCarInfo':
+      console.log('setCarInfo', action.payload)
       return {
         ...state,
         carInfo: {

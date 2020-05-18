@@ -54,6 +54,7 @@ export const hexToRGB = (hex) => {
 }
 
 export const carToFeature = (newCars, carCollection, carLineCollection) => {
+  console.log('newcars', newCars)
   const carFeatures = [
     ...carCollection.features.filter(
       (car) => !newCars.some((nc) => nc.id === car.id)
@@ -75,7 +76,6 @@ export const carToFeature = (newCars, carCollection, carLineCollection) => {
       ),
     ]),
   ]
-
   const carLineFeatures = [
     ...carLineCollection.features.filter(
       (carLine) => !newCars.some((nc) => nc.id === carLine.id)
@@ -92,7 +92,38 @@ export const carToFeature = (newCars, carCollection, carLineCollection) => {
     ),
   ]
 
-  return { carFeatures, carLineFeatures }
+  return {
+    carFeatures,
+    carLineFeatures,
+  }
+}
+
+export const carRoute = (newCarRoute, carCollection, carLineCollection) => {
+  console.log('Assigned cars', newCarRoute)
+
+  // const layer = new GeoJsonLayer({
+  //   id: 'geojson-layer',
+  //   data,
+  //   pickable: true,
+  //   stroked: false,
+  //   filled: true,
+  //   extruded: true,
+  //   lineWidthScale: 20,
+  //   lineWidthMinPixels: 2,
+  //   getFillColor: [160, 160, 180, 200],
+  //   getLineColor: d => colorToRGBArray(d.properties.color),
+  //   getRadius: 100,
+  //   getLineWidth: 1,
+  //   getElevation: 30,
+  //   onHover: ({object, x, y}) => {
+  //     const tooltip = object.properties.name || object.properties.station;
+  //     /* Update tooltip
+  //        http://deck.gl/#/documentation/developer-guide/adding-interactivity?section=example-display-a-tooltip-for-hovered-object
+  //     */
+  //   }
+  // });
+
+  // return carLineFeatures
 }
 
 export const movingCarToFeature = (newCars, movingCarsCollection) => {
@@ -169,8 +200,9 @@ export const diff = (
   distance: detourDistance - headingDistance,
 })
 
-export const toGeoJsonLayer = (id, data, callback) =>
-  new GeoJsonLayer({
+export const toGeoJsonLayer = (id, data, callback) => {
+  console.log('what is gejoson data', data)
+  return new GeoJsonLayer({
     id,
     data,
     pickable: true,
@@ -188,10 +220,17 @@ export const toGeoJsonLayer = (id, data, callback) =>
     getElevation: 30,
     onHover: ({ object }) => object && callback(object),
   })
+}
 
 export const toIconLayer = (data) => {
   const ICON_MAPPING = {
-    marker: { x: 0, y: 0, width: 160, height: 160, mask: true },
+    marker: {
+      x: 0,
+      y: 0,
+      width: 160,
+      height: 160,
+      mask: true,
+    },
   }
   const iconData = data.features.map((feature) => ({
     coordinates: feature.geometry.coordinates,
@@ -220,6 +259,7 @@ export default {
   bookingToFeature,
   movingCarToFeature,
   carToFeature,
+  carRoute,
   toGeoJsonLayer,
   toIconLayer,
   hexToRGB,

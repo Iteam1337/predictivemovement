@@ -103,7 +103,6 @@ const CreateBooking = ({ createBooking }) => {
 }
 
 const Sidebar = (data) => {
-  console.log(data)
   const [open, setOpen] = React.useState(true)
 
   useEffect(() => {

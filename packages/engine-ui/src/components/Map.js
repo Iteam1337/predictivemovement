@@ -36,6 +36,11 @@ const Map = ({ dispatch, state }) => {
           dispatcher('setCarInfo')
         ),
         mapUtils.toGeoJsonLayer(
+          'geojson-carbookings-layer',
+          state.carBookingLineCollection,
+          () => {}
+        ),
+        mapUtils.toGeoJsonLayer(
           'geojson-bookings-layer',
           state.bookingCollection,
           () => {}

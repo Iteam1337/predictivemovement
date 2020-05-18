@@ -35,16 +35,15 @@ const App = () => {
 
   useSocket('booking-assigned', (assignedBookings) => {
     console.log('socket assigned bookings', assignedBookings)
-    mapUtils.carRoute(
+    const carBookingLineFeatures = mapUtils.carBookingRoute(
       assignedBookings,
-      state.carCollection,
-      state.carLineCollection
+      state.carBookingLineCollection
     )
 
-    // dispatch({
-    //   type: 'setCarsLines',
-    //   payload: carLineFeatures,
-    // })
+    dispatch({
+      type: 'setCarBookingLines',
+      payload: carBookingLineFeatures,
+    })
   })
 
   useSocket('cars', (newCars) => {

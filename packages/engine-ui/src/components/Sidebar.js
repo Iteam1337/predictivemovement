@@ -104,7 +104,6 @@ const CreateBooking = ({ createBooking }) => {
 
 const Sidebar = (data) => {
   const [open, setOpen] = React.useState(true)
-
   useEffect(() => {
     if (!data.id) return
     setOpen(true)

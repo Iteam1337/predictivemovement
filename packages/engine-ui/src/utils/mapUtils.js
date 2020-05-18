@@ -98,32 +98,21 @@ export const carToFeature = (newCars, carCollection, carLineCollection) => {
   }
 }
 
-export const carRoute = (newCarRoute, carCollection, carLineCollection) => {
-  console.log('Assigned cars', newCarRoute)
-
-  // const layer = new GeoJsonLayer({
-  //   id: 'geojson-layer',
-  //   data,
-  //   pickable: true,
-  //   stroked: false,
-  //   filled: true,
-  //   extruded: true,
-  //   lineWidthScale: 20,
-  //   lineWidthMinPixels: 2,
-  //   getFillColor: [160, 160, 180, 200],
-  //   getLineColor: d => colorToRGBArray(d.properties.color),
-  //   getRadius: 100,
-  //   getLineWidth: 1,
-  //   getElevation: 30,
-  //   onHover: ({object, x, y}) => {
-  //     const tooltip = object.properties.name || object.properties.station;
-  //     /* Update tooltip
-  //        http://deck.gl/#/documentation/developer-guide/adding-interactivity?section=example-display-a-tooltip-for-hovered-object
-  //     */
-  //   }
-  // });
-
-  // return carLineFeatures
+export const carBookingRoute = (newCarRoute) => {
+  return [
+    ...newCarRoute.flatMap(({ car }, i) =>
+      line(
+        car.route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+        {
+          id: car.id,
+          properties: {
+            color: palette[i][0],
+            offset: i * 2,
+          },
+        }
+      )
+    ),
+  ]
 }
 
 export const movingCarToFeature = (newCars, movingCarsCollection) => {
@@ -259,7 +248,7 @@ export default {
   bookingToFeature,
   movingCarToFeature,
   carToFeature,
-  carRoute,
+  carBookingRoute,
   toGeoJsonLayer,
   toIconLayer,
   hexToRGB,

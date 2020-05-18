@@ -8,6 +8,11 @@ import { reducer, initState } from './utils/reducer'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
+  const { socket } = useSocket()
+
+  const createBooking = ({ pickup, dropoff }) => {
+    socket.emit('new-booking', { pickup, dropoff })
+  }
 
   useSocket('bookings', (newBookings) => {
     const features = mapUtils.bookingToFeature(newBookings)
@@ -30,10 +35,12 @@ const App = () => {
       state.carCollection,
       state.carLineCollection
     )
+
     dispatch({
       type: 'setCars',
       payload: carFeatures,
     })
+
     dispatch({
       type: 'setCarsLines',
       payload: carLineFeatures,
@@ -56,7 +63,8 @@ const App = () => {
 
   return (
     <>
-      <Sidebar {...state.carInfo} /> <Map dispatch={dispatch} state={state} />{' '}
+      <Sidebar {...state.carInfo} createBooking={createBooking} />
+      <Map dispatch={dispatch} state={state} />
     </>
   )
 }

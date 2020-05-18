@@ -1,6 +1,11 @@
 const _ = require('highland')
-const { bookings, cars, bookings_delivered } = require('./engineConnector')
-
+const {
+  bookings,
+  cars,
+  bookings_delivered,
+  createBooking,
+} = require('./engineConnector')
+const id62 = require('id62').default // https://www.npmjs.com/package/id62
 // const engine = new Engine({
 //   bookings: simulator.bookings,
 //   cars: simulator.cars.simulate(),
@@ -89,6 +94,27 @@ function register(io) {
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each((cars) => socket.emit('moving-cars', cars))
+
+    socket.on('new-booking', ({ pickup, dropoff }) => {
+      const [pickupLat, pickupLon] = pickup
+      const [dropoffLat, dropoffLon] = dropoff
+
+      const booking = {
+        id: id62(),
+        senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
+        bookingDate: new Date().toISOString(),
+        departure: {
+          lat: pickupLat,
+          lon: pickupLon,
+        },
+        destination: {
+          lat: dropoffLat,
+          lon: dropoffLon,
+        },
+      }
+
+      createBooking(booking)
+    })
   })
 }
 

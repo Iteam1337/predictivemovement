@@ -20,32 +20,24 @@ const Map = ({ dispatch, state }) => {
       },
     })
 
-  console.log('carlinecollection', state.carInfo)
   return (
     <DeckGL
       initialViewState={mapState.viewport}
       layers={[
         mapUtils.toGeoJsonLayer(
-          'geojson-carline-layer',
-          state.carLineCollection,
-          dispatcher('setCarInfo')
-        ),
-        mapUtils.toGeoJsonLayer(
-          'geojson-cars-layer',
-          state.carCollection,
-          dispatcher('setCarInfo')
-        ),
-        mapUtils.toGeoJsonLayer(
           'geojson-carbookings-layer',
           state.carBookingLineCollection,
-          () => {}
+          dispatcher('setCarBookingLines')
         ),
         mapUtils.toGeoJsonLayer(
           'geojson-bookings-layer',
           state.bookingCollection,
           () => {}
         ),
-        mapUtils.toIconLayer(state.movingCarsCollection),
+        mapUtils.toIconLayer(
+          state.movingCarsCollection,
+          dispatcher('setCarBookingLine')
+        ),
       ]}
       controller={true}
     >

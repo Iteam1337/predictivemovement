@@ -18,6 +18,13 @@ export const reducer = (state, action) => {
         ...state,
         carBookingLineCollection: action.payload,
       }
+    case 'setCarBookingLine':
+      return {
+        ...state,
+        carBookingLine: state.carBookingLineCollection.filter(
+          (line) => line.id === action.payload
+        ),
+      }
     case 'setBookings':
       const newState = state.bookingCollection.features.concat(action.payload)
 
@@ -70,7 +77,8 @@ export const initState = {
   carCollection: featureCollection,
   movingCarsCollection: featureCollection,
   carLineCollection: featureCollection,
-  carBookingLineCollection: featureCollection,
+  carBookingLineCollection: [],
+  carBookingLine: {},
   bookingCollection: featureCollection,
   carInfo: {},
 }

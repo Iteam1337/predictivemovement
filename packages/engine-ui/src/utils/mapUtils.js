@@ -1,5 +1,5 @@
 import palette from '../palette'
-import { GeoJsonLayer, IconLayer, PathLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
 import markerIcon from '../assets/car.svg'
 
 export const point = (coordinates, props) => ({
@@ -54,7 +54,6 @@ export const hexToRGB = (hex) => {
 }
 
 export const carToFeature = (newCars, carCollection, carLineCollection) => {
-  console.log('newcars', newCars)
   const carFeatures = [
     ...carCollection.features.filter(
       (car) => !newCars.some((nc) => nc.id === car.id)
@@ -190,7 +189,6 @@ export const diff = (
 })
 
 export const toGeoJsonLayer = (id, data, callback) => {
-  console.log('what is gejoson data', data)
   return new GeoJsonLayer({
     id,
     data,
@@ -211,7 +209,7 @@ export const toGeoJsonLayer = (id, data, callback) => {
   })
 }
 
-export const toIconLayer = (data) => {
+export const toIconLayer = (data, callback) => {
   const ICON_MAPPING = {
     marker: {
       x: 0,
@@ -223,6 +221,7 @@ export const toIconLayer = (data) => {
   }
   const iconData = data.features.map((feature) => ({
     coordinates: feature.geometry.coordinates,
+    properties: { id: feature.id },
   }))
 
   return new IconLayer({
@@ -236,7 +235,7 @@ export const toIconLayer = (data) => {
     getPosition: (d) => d.coordinates,
     getSize: (d) => 5,
     getColor: (d) => [Math.sqrt(d.exits), 140, 0],
-    onHover: ({ object, x, y }) => {},
+    onHover: ({ object }) => object && callback(object.properties.id),
   })
 }
 

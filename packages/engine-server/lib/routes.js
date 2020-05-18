@@ -3,6 +3,7 @@ const {
   bookings,
   cars,
   bookings_delivered,
+  bookings_assigned,
   createBooking,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
@@ -56,6 +57,16 @@ function register(io) {
     //   .batchWithTimeOrCount(1000, 2000)
     //   .errors(console.error)
     //   .each(cars => socket.volatile.emit('cars', cars))
+
+    bookings_assigned
+      .fork()
+      .doto(({ booking }) => bookingsCache.set(booking.id, booking))
+      .doto(({ car }) => movingCarsCache.set(car.id, car))
+      .batchWithTimeOrCount(1000, 1000)
+      .errors(console.error)
+      .each((bookings) => {
+        socket.emit('booking-assigned', bookings)
+      })
 
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto((booking) => bookingsCache.set(booking.id, booking))

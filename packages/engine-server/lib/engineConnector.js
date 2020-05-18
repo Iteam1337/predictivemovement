@@ -32,6 +32,18 @@ const bookings_delivered = amqp
     return bookings.json()
   })
 
+const bookings_assigned = amqp
+  .exchange('bookings', 'topic', {
+    durable: false,
+  })
+  .queue('assigned_bookings_to_map', {
+    durable: false,
+  })
+  .subscribe({ noAck: true }, 'assigned')
+  .map((bookings) => {
+    return bookings.json()
+  })
+
 const cars = amqp
   .exchange('cars', 'fanout', {
     durable: false,
@@ -67,6 +79,7 @@ const createBooking = (booking) => {
 module.exports = {
   bookings,
   bookings_delivered,
+  bookings_assigned,
   // possibleRoutes,
   cars,
   createBooking,

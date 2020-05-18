@@ -15,6 +15,7 @@ const App = () => {
   }
 
   useSocket('bookings', (newBookings) => {
+    console.log('bookings', newBookings)
     const features = mapUtils.bookingToFeature(newBookings)
     dispatch({
       type: 'setBookings',
@@ -29,7 +30,12 @@ const App = () => {
     })
   })
 
+  useSocket('booking-assigned', (assignedBookings) => {
+    console.log('bookings-assinged', assignedBookings)
+  })
+
   useSocket('cars', (newCars) => {
+    console.log('cars', newCars)
     const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
       newCars,
       state.carCollection,
@@ -48,6 +54,7 @@ const App = () => {
   })
 
   useSocket('moving-cars', (newCars) => {
+    console.log('moving-cars', newCars)
     const movingCarsFeatures = mapUtils.movingCarToFeature(
       newCars,
       state.movingCarsCollection

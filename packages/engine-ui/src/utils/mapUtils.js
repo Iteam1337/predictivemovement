@@ -114,14 +114,11 @@ export const carBookingRoute = (newCarRoute) => {
   ]
 }
 
-export const movingCarToFeature = (newCars, movingCarsCollection) => {
+export const movingCarToFeature = (cars) => {
   let index = 0
   try {
     return [
-      ...movingCarsCollection.features.filter(
-        (car) => !newCars.some((nc) => nc.id === car.id)
-      ),
-      ...newCars.flatMap(({ id, tail, position, heading }, i) => {
+      ...cars.flatMap(({ id, tail, position }, i) => {
         index = i
         return [
           point([position.lon, position.lat], {
@@ -188,7 +185,7 @@ export const diff = (
   distance: detourDistance - headingDistance,
 })
 
-export const toGeoJsonLayer = (id, data, callback) => {
+export const toGeoJsonLayer = (id, data) => {
   return new GeoJsonLayer({
     id,
     data,
@@ -205,11 +202,13 @@ export const toGeoJsonLayer = (id, data, callback) => {
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
-    onHover: ({ object }) => object && callback(object),
   })
 }
 
 export const toIconLayer = (data, callback) => {
+  if (!data.length) {
+    return
+  }
   const ICON_MAPPING = {
     marker: {
       x: 0,

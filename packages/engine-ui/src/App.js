@@ -5,6 +5,8 @@ import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import mapUtils from './utils/mapUtils'
 import { reducer, initState } from './utils/reducer'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import Booking from './Booking'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
@@ -18,11 +20,9 @@ const App = () => {
   }
 
   useSocket('bookings', (newBookings) => {
-    console.log('bookings', newBookings)
-    const features = mapUtils.bookingToFeature(newBookings)
     dispatch({
       type: 'setBookings',
-      payload: features,
+      payload: newBookings,
     })
   })
 
@@ -34,56 +34,50 @@ const App = () => {
   })
 
   useSocket('booking-assigned', (assignedBookings) => {
-    console.log('socket assigned bookings', assignedBookings)
-    const carBookingLineFeatures = mapUtils.carBookingRoute(
-      assignedBookings,
-      state.carBookingLineCollection
-    )
-
     dispatch({
-      type: 'setCarBookingLines',
-      payload: carBookingLineFeatures,
+      type: 'setBookings',
+      payload: assignedBookings.map(({ booking }) => booking),
     })
   })
 
   useSocket('cars', (newCars) => {
-    console.log('cars', newCars)
-    const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
-      newCars,
-      state.carCollection,
-      state.carLineCollection
-    )
-
     dispatch({
       type: 'setCars',
-      payload: carFeatures,
-    })
-
-    dispatch({
-      type: 'setCarsLines',
-      payload: carLineFeatures,
+      payload: newCars,
     })
   })
 
-  useSocket('moving-cars', (newCars) => {
-    console.log('moving-cars', newCars)
-    const movingCarsFeatures = mapUtils.movingCarToFeature(
-      newCars,
-      state.movingCarsCollection
-    )
+  const dispatcher = (type) => (object) =>
     dispatch({
-      type: 'setMovingCars',
+      type,
       payload: {
-        ...state.movingCarsCollection,
-        features: movingCarsFeatures,
+        ...object,
       },
     })
-  })
+
+  const layers = [
+    mapUtils.toGeoJsonLayer(
+      'geojson-carbookings-layer',
+      state.carBookingLineCollection
+    ),
+    mapUtils.toGeoJsonLayer(
+      'geojson-bookings-layer',
+      mapUtils.bookingToFeature(state.bookings)
+    ),
+    mapUtils.toIconLayer(mapUtils.movingCarToFeature(state.cars), () => {}),
+  ]
 
   return (
     <>
-      <Sidebar {...state.carInfo} createBooking={createBooking} />
-      <Map dispatch={dispatch} state={state} />
+      <Router>
+        <Sidebar {...state} createBooking={createBooking} />
+        <Route exact path="/">
+          <Map layers={layers} state={state} />
+        </Route>
+        <Route path="/booking/:id">
+          <Booking state={state} />
+        </Route>
+      </Router>
     </>
   )
 }

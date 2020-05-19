@@ -14,6 +14,7 @@ const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const movingCarsCache = new Map()
 const bookingsCache = new Map()
+const assignedBookingscache = new Map()
 
 // const bookings = engine.possibleRoutes
 //   .fork()
@@ -58,14 +59,11 @@ function register(io) {
     //   .errors(console.error)
     //   .each(cars => socket.volatile.emit('cars', cars))
 
-    bookings_assigned
+    _.merge([_(assignedBookingscache.values()), bookings_assigned.fork()])
       .fork()
-      .doto(({
-        booking
-      }) => bookingsCache.set(booking.id, booking))
-      .doto(({
-        car
-      }) => movingCarsCache.set(car.id, car))
+      .doto((assigned) =>
+        assignedBookingscache.set(assigned.booking.id, assigned)
+      )
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
@@ -83,9 +81,7 @@ function register(io) {
     bookings_delivered
       .fork()
       .map((booking) => booking.booking)
-      .doto(({
-        id
-      }) => bookingsCache.delete(id))
+      .doto(({ id }) => bookingsCache.delete(id))
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
@@ -110,12 +106,9 @@ function register(io) {
       // .tap(updatePosition)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
-      .each((cars) => socket.emit('moving-cars', cars))
+      .each((cars) => socket.emit('cars', cars))
 
-    socket.on('new-booking', ({
-      pickup,
-      dropoff
-    }) => {
+    socket.on('new-booking', ({ pickup, dropoff }) => {
       const [pickupLat, pickupLon] = pickup
       const [dropoffLat, dropoffLon] = dropoff
 

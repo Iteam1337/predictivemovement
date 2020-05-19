@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import Icon from '../assets/dashboard.svg'
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
   position: absolute;
@@ -102,12 +103,22 @@ const CreateBooking = ({ createBooking }) => {
   )
 }
 
+const BookingsContainer = styled.div``
+const BookingListItem = styled.div`
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 1rem;
+`
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+  display: inline-block;
+`
+
 const Sidebar = (data) => {
   const [open, setOpen] = React.useState(true)
-  useEffect(() => {
-    if (!data.id) return
-    setOpen(true)
-  }, [data])
 
   return (
     <>
@@ -116,17 +127,19 @@ const Sidebar = (data) => {
       </NavStrip>
       <Container open={open}>
         <CreateBooking createBooking={data.createBooking} />
-        {data && data.id && (
-          <>
-            <p>{data.id}</p>
-            {data.properties.diff && (
-              <p>{`Duration diff: ${data.properties.diff.duration}`}</p>
-            )}
-            {data.properties.diff && (
-              <p>{`Distance diff: ${data.properties.diff.distance}`}</p>
-            )}
-          </>
-        )}
+        <BookingsContainer>
+          <p>Nuvarande bokningar:</p>
+          {data.bookings.map((booking) => {
+            return (
+              <StyledLink
+                key={booking.id}
+                to={{ pathname: `/booking/${booking.id}`, state: { ok: true } }}
+              >
+                <BookingListItem>{booking.id}</BookingListItem>
+              </StyledLink>
+            )
+          })}
+        </BookingsContainer>
       </Container>
     </>
   )

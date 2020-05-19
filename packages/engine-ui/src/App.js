@@ -47,14 +47,6 @@ const App = () => {
     })
   })
 
-  const dispatcher = (type) => (object) =>
-    dispatch({
-      type,
-      payload: {
-        ...object,
-      },
-    })
-
   const layers = [
     mapUtils.toGeoJsonLayer(
       'geojson-carbookings-layer',

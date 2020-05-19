@@ -8,13 +8,20 @@ import { useParams } from 'react-router-dom'
 const Booking = ({ state }) => {
   const { id } = useParams()
 
+  const booking = state.bookings.find((booking) => booking.id === id)
+
+  React.useEffect(() => {
+    if (booking) {
+      console.log(booking)
+    }
+  })
+
   const layers = [
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
       mapUtils.bookingToFeature(
         state.bookings.filter((booking) => booking.id === id)
-      ),
-      () => {}
+      )
     ),
   ]
   return <Map layers={layers} />

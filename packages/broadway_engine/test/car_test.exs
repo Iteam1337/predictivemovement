@@ -44,18 +44,22 @@ defmodule CarTest do
     |> assert()
   end
 
-  describe "get_score_diff_with_new_order" do
-    test "score is higher when dropoff is further away from pickup" do
+  describe "get_score_diff_with_new_booking" do
+    test "score is higher when delivery is further away from pickup" do
       pickup = %{lat: 61.824549, lon: 16.064589}
-      dropoff_far = %{lat: 61.8362339, lon: 16.1018996}
-      dropoff_close = %{lat: 61.8295033, lon: 16.0869526}
+      delivery_far = %{lat: 61.8362339, lon: 16.1018996}
+      delivery_close = %{lat: 61.8295033, lon: 16.0869526}
       hub = %{lat: 61.820701, lon: 16.057731}
       car = Car.make(1, hub)
 
-      diff1 = Car.get_score_diff_with_new_order(car, %Order{pickup: pickup, dropoff: dropoff_far})
+      diff1 =
+        Car.get_score_diff_with_new_booking(car, %Booking{pickup: pickup, delivery: delivery_far})
 
       diff2 =
-        Car.get_score_diff_with_new_order(car, %Order{pickup: pickup, dropoff: dropoff_close})
+        Car.get_score_diff_with_new_booking(car, %Booking{
+          pickup: pickup,
+          delivery: delivery_close
+        })
 
       assert diff1 > diff2
     end
@@ -63,16 +67,17 @@ defmodule CarTest do
     test "score is higher when pickup is further away from car position" do
       pickup_close = %{lat: 61.824549, lon: 16.064589}
       pickup_far = %{lat: 61.8345958, lon: 16.0566906}
-      dropoff = %{lat: 61.8362339, lon: 16.1018996}
+      delivery = %{lat: 61.8362339, lon: 16.1018996}
       hub = %{lat: 61.820701, lon: 16.057731}
       car = Car.make(1, hub)
 
       diff1 =
         car
-        |> Car.get_score_diff_with_new_order(%Order{pickup: pickup_far, dropoff: dropoff})
+        |> Car.get_score_diff_with_new_booking(%Booking{pickup: pickup_far, delivery: delivery})
 
       diff2 =
-        car |> Car.get_score_diff_with_new_order(%Order{pickup: pickup_close, dropoff: dropoff})
+        car
+        |> Car.get_score_diff_with_new_booking(%Booking{pickup: pickup_close, delivery: delivery})
 
       assert diff1 > diff2
     end

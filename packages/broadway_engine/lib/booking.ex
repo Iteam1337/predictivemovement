@@ -1,5 +1,7 @@
 defmodule Booking do
-  def calculate_score(%Car{} = car, %Order{} = order) do
-    Car.get_score_diff_with_new_order(car, order)
+  defstruct [:id, :pickup, :delivery, :assignedCar]
+
+  def calculate_score(%Car{} = car, %Booking{} = booking) do
+    Car.get_score_diff_with_new_booking(car, booking)
   end
 end

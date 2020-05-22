@@ -28,6 +28,8 @@ defmodule BroadwayEngine.MatchProducer do
       }) do
     IO.puts("new car!")
 
+    car = string_to_car_transform(car)
+
     dispatch_events([car | cars], bookings)
   end
 
@@ -39,7 +41,7 @@ defmodule BroadwayEngine.MatchProducer do
         }
       ) do
     IO.puts("new booking!")
-
+    booking = string_to_booking_transform(booking)
     dispatch_events(cars, [booking | bookings])
   end
 
@@ -65,6 +67,23 @@ defmodule BroadwayEngine.MatchProducer do
 
   def ack(_ack_ref, _successful, _failed) do
     :ok
+  end
+
+  def string_to_car_transform(car_string) do
+    car_string
+    |> Poison.decode!(keys: :atoms!)
+    |> Map.get(:position)
+    |> (fn position -> Car.make(1, position) end).()
+  end
+
+  def string_to_booking_transform(booking_string) do
+    decoded = Poison.decode!(booking_string, keys: :atoms)
+
+    %Booking{}
+    |> Map.put(:pickup, decoded.departure)
+    |> Map.put(:delivery, decoded.destination)
+    # TODO: Add correct id
+    |> Map.put(:id, Enum.random(0..10000))
   end
 
   defp create_rmq_resources do

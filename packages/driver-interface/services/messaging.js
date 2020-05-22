@@ -22,9 +22,9 @@ const sendPickupOffer = (
   { pickupAddress, deliveryAddress, booking }
 ) => {
   bot.telegram.sendMessage(
-    chatId,
+    parseInt(chatId),
     `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Har du möjlighet att hämta detta?
-    [Se på kartan](https://www.google.com/maps/dir/${booking.departure.lat},${booking.departure.lon}/${booking.destination.lat},${booking.destination.lon})`,
+    [Se på kartan](https://www.google.com/maps/dir/${booking.pickup.lat},${booking.pickup.lon}/${booking.delivery.lat},${booking.delivery.lon})`,
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -85,7 +85,7 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
     message.car.id,
-    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})!`,
+    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.pickup.lat},${message.booking.delivery.lon})!`,
     {
       parse_mode: 'markdown',
       reply_markup: {

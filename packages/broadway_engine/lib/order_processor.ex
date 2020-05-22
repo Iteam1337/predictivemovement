@@ -34,7 +34,9 @@ defmodule BroadwayEngine.OrderProcessor do
         %Car{instructions: activities, id: id}
       end)
 
-    IO.puts("done")
+    cars
+    |> Enum.zip(bookings)
+    |> Enum.each(&offer/1)
 
     %Broadway.Message{
       data: {cars, bookings},
@@ -42,9 +44,10 @@ defmodule BroadwayEngine.OrderProcessor do
     }
   end
 
-  def offer(offer) do
-    IO.inspect(offer, label: "offer to car")
-    # Process.sleep(15000)
-    IO.puts("car timed out.. onto the next in line")
+  def offer({%Car{id: id} = car, %Booking{} = booking}) do
+    IO.inspect(car, label: "offer to car")
+    accepted = AMQP.call(%{car: %{id: id}, booking: booking})
+
+    IO.puts("Did the car accept? The answer is #{accepted}")
   end
 end

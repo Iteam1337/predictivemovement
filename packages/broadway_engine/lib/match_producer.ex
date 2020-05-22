@@ -68,10 +68,8 @@ defmodule BroadwayEngine.MatchProducer do
   end
 
   def string_to_car_transform(car_string) do
-    car_string
-    |> Poison.decode!(keys: :atoms!)
-    |> Map.get(:position)
-    |> (fn position -> Car.make(1, position) end).()
+    %{position: position, id: id} = car_string |> Poison.decode!(keys: :atoms!)
+    Car.make(id, position)
   end
 
   def string_to_booking_transform(booking_string) do
@@ -80,8 +78,8 @@ defmodule BroadwayEngine.MatchProducer do
     %Booking{}
     |> Map.put(:pickup, decoded.departure)
     |> Map.put(:delivery, decoded.destination)
-    # TODO: Add correct id
-    |> Map.put(:id, Enum.random(0..10000))
+    |> Map.put(:id, decoded.id)
+    |> Map.put(:senderId, decoded.senderId)
   end
 
   defp create_rmq_resources do

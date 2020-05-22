@@ -16,11 +16,11 @@ const pickupOffers = () => {
             const { car, booking } = JSON.parse(message.content.toString())
             try {
               const pickupAddress = await google.getAddressFromCoordinate(
-                booking.departure
+                booking.pickup
               )
 
               const deliveryAddress = await google.getAddressFromCoordinate(
-                booking.destination
+                booking.delivery
               )
 
               addBooking(booking.id, {
@@ -44,7 +44,7 @@ const pickupOffers = () => {
             } catch (error) {
               console.warn(
                 'something went wrong with getting address from google: ',
-                error.message
+                error
               )
             }
           })

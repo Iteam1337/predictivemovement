@@ -18,31 +18,26 @@ defmodule BroadwayEngine.OrderProcessor do
 
   def handle_message(
         _processor,
-        %Broadway.Message{acknowledger: acknowledger, data: {cars, booking}},
+        %Broadway.Message{acknowledger: acknowledger, data: {cars, bookings}},
         _context
       ) do
-    IO.inspect({cars, booking}, label: "oh a message")
+    IO.inspect({cars, bookings}, label: "oh a message")
 
-    cars_sorted_by_score =
-      cars
-      |> Flow.from_enumerable()
-      |> Flow.partition(stages: 50)
-      |> Flow.map(fn car ->
-        Booking.calculate_score(car, booking)
+    # cars -> [instructions]
+    %{solution: %{routes: routes}} =
+      Graphhopper.find_optimal_routes(cars, bookings)
+      |> IO.inspect(label: "radu")
+
+    cars =
+      routes
+      |> Enum.map(fn %{activities: activities, vehicle_id: id} ->
+        %Car{instructions: activities, id: id}
       end)
-      |> Enum.sort_by(fn {_, score} -> score end, :asc)
-      |> Enum.to_list()
-
-    IO.inspect(booking.id, label: "making offer on order")
-
-    cars_sorted_by_score
-    |> Stream.map(&offer/1)
-    |> Stream.run()
 
     IO.puts("done")
 
     %Broadway.Message{
-      data: {cars_sorted_by_score, booking},
+      data: {cars, bookings},
       acknowledger: acknowledger
     }
   end

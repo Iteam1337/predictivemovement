@@ -47,14 +47,12 @@ defmodule BroadwayEngine.MatchProducer do
 
   def dispatch_events(cars, [] = _bookings), do: {:noreply, [], %{bookings: [], cars: cars}}
 
-  def dispatch_events(cars, bookings) when length(cars) < 2,
+  def dispatch_events(cars, bookings) when length(cars) < 1,
     do: {:noreply, [], %{bookings: bookings, cars: cars}}
 
   def dispatch_events(cars, bookings) do
-    [latest_booking | bookings] = bookings
-
     message = %Message{
-      data: {cars, latest_booking},
+      data: {cars, bookings},
       acknowledger: {__MODULE__, :ack_id, :ack_data}
     }
 

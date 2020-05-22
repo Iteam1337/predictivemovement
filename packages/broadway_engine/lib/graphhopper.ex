@@ -13,7 +13,7 @@ defmodule Graphhopper do
 
   def car_to_vehicle(%Car{id: vehicle_id, position: position}) do
     %{
-      vehicle_id: vehicle_id,
+      vehicle_id: vehicle_id |> to_string(),
       start_address: %{
         location_id: Enum.random(1..1_000_000) |> to_string(),
         lon: position.lon,
@@ -26,7 +26,7 @@ defmodule Graphhopper do
 
   def booking_to_shipment(%Booking{pickup: pickup, delivery: delivery, id: id}) do
     %{
-      id: id,
+      id: id |> to_string(),
       name: "pickup and deliver #{id}",
       pickup: %{
         address: %{

@@ -12,7 +12,7 @@ const createBooking = (booking) => {
           ch.publish(
             exchanges.BOOKINGS,
             routingKeys.NEW,
-            Buffer.from(JSON.stringify(booking))
+            Buffer.from(JSON.stringify({...booking, assigned_to: null}))
           )
         )
     )

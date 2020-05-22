@@ -29,7 +29,7 @@ const bookingAssignments = () => {
               })
             })
         )
-        .then(( booking) =>
+        .then((booking) =>
           messaging.onBookingConfirmed(booking.senderId, booking.assigned_to.id)
         )
     )

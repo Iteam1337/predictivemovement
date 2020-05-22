@@ -40,6 +40,8 @@ defmodule Dispatch do
 
   def find_candidates(bookings, cars) do
     IO.puts("finding candidates")
+    IO.inspect(bookings, label: "bookings")
+    IO.inspect(cars, label: "cars")
 
     bookings
     |> Enum.reduce(%{cars: cars, assignments: [], score: 0}, fn booking, result ->

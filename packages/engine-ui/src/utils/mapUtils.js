@@ -226,7 +226,6 @@ export const toIconLayer = (data, callback) => {
     getPosition: (d) => d.coordinates,
     getSize: (d) => 5,
     getColor: (d) => [Math.sqrt(d.exits), 140, 0],
-    onHover: ({ object }) => object && callback(object.properties.id),
   })
 }
 

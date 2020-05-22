@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Icon from '../assets/dashboard.svg'
-import { Link } from 'react-router-dom'
+import Bookings from './Bookings'
 import CreateBooking from './CreateBooking'
 
 const Container = styled.div`
@@ -38,27 +38,6 @@ const NavStrip = styled.div`
   }
 `
 
-const BookingsContainer = styled.div`
-  a:not(:first-child) {
-    margin-top: 0.5rem;
-  }
-`
-
-const BookingListItem = styled(Link)`
-  background: #e6f5ff;
-  border-radius: 0.75rem;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.875rem;
-  :visited {
-    color: black;
-  }
-  :hover {
-    background: #abd4ed;
-  }
-`
-
 const Sidebar = (data) => {
   const [open, setOpen] = React.useState(true)
 
@@ -69,19 +48,8 @@ const Sidebar = (data) => {
       </NavStrip>
       <Container open={open}>
         <CreateBooking createBooking={data.createBooking} />
-        <h3>Nuvarande bokningar</h3>
-        <BookingsContainer>
-          {data.bookings.map((booking) => {
-            return (
-              <BookingListItem
-                key={booking.id}
-                to={{ pathname: `/booking/${booking.id}`, state: { ok: true } }}
-              >
-                {booking.id}
-              </BookingListItem>
-            )
-          })}
-        </BookingsContainer>
+        <h3>Aktuella bokningar</h3>
+        <Bookings bookings={data.bookings} />
       </Container>
     </>
   )

@@ -75,6 +75,7 @@ export const carToFeature = (newCars, carCollection, carLineCollection) => {
       ),
     ]),
   ]
+
   const carLineFeatures = [
     ...carLineCollection.features.filter(
       (carLine) => !newCars.some((nc) => nc.id === carLine.id)
@@ -139,30 +140,18 @@ export const movingCarToFeature = (cars) => {
 
 export const bookingToFeature = (newBookings) =>
   newBookings.flatMap(({ id, departure, destination }) => [
-    multiPoint(
-      [
-        [departure.lon, departure.lat],
-        // [destination.lon, destination.lat],
-      ],
-      {
-        id,
-        properties: {
-          color: '#ffff00', // yellow
-        },
-      }
-    ),
-    multiPoint(
-      [
-        // [departure.lon, departure.lat],
-        [destination.lon, destination.lat],
-      ],
-      {
-        id,
-        properties: {
-          color: '#455DF7', // blue
-        },
-      }
-    ),
+    point([departure.lon, departure.lat], {
+      id,
+      properties: {
+        color: '#ffff00', // yellow
+      },
+    }),
+    point([destination.lon, destination.lat], {
+      id,
+      properties: {
+        color: '#455DF7', // blue
+      },
+    }),
     line(
       [
         [destination.lon, destination.lat],
@@ -202,6 +191,8 @@ export const toGeoJsonLayer = (id, data) => {
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
+    pointRadiusScale: 1,
+    pointRadiusMaxPixels: 10,
   })
 }
 
@@ -218,7 +209,8 @@ export const toIconLayer = (data, callback) => {
       mask: true,
     },
   }
-  const iconData = data.features.map((feature) => ({
+
+  const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
     properties: { id: feature.id },
   }))

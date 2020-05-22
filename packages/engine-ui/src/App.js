@@ -19,6 +19,7 @@ const App = () => {
   }
 
   useSocket('bookings', (newBookings) => {
+    console.log({ newBookings })
     dispatch({
       type: 'setBookings',
       payload: newBookings,
@@ -29,13 +30,6 @@ const App = () => {
     dispatch({
       type: 'removeBookings',
       payload: deliveredBookings,
-    })
-  })
-
-  useSocket('booking-assigned', (assignedBookings) => {
-    dispatch({
-      type: 'setBookings',
-      payload: assignedBookings.map(({ booking }) => booking),
     })
   })
 

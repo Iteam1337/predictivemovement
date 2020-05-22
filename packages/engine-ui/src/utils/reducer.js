@@ -13,7 +13,7 @@ export const reducer = (state, action) => {
     case 'setBookings':
       return {
         ...state,
-        bookings: [...state.bookings, ...action.payload],
+        bookings: action.payload,
       }
     case 'removeBookings':
       const filtered = state.bookings.filter(
@@ -32,5 +32,6 @@ export const reducer = (state, action) => {
 export const initState = {
   carBookingLineCollection: [],
   bookings: [],
+  assignedBookings: [],
   cars: [],
 }

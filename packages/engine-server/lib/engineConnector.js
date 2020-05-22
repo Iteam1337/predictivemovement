@@ -3,6 +3,8 @@ const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
 
 const routingKeys = {
   NEW: 'new',
+  ASSIGNED: 'assigned',
+  DELIVERED: 'delivered',
 }
 
 const bookings = amqp
@@ -15,31 +17,11 @@ const bookings = amqp
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, routingKeys.NEW)
-  .map((bookings) => {
-    return bookings.json()
-  })
-
-const bookings_delivered = amqp
-  .exchange('bookings', 'topic', {
-    durable: false,
-  })
-  .queue('delivered_bookings_to_map', {
-    durable: false,
-  })
-  .subscribe({ noAck: true }, 'delivery')
-  .map((bookings) => {
-    return bookings.json()
-  })
-
-const bookings_assigned = amqp
-  .exchange('bookings', 'topic', {
-    durable: false,
-  })
-  .queue('assigned_bookings_to_map', {
-    durable: false,
-  })
-  .subscribe({ noAck: true }, 'assigned')
+  .subscribe({ noAck: true }, [
+    routingKeys.NEW,
+    routingKeys.ASSIGNED,
+    routingKeys.DELIVERED,
+  ])
   .map((bookings) => {
     return bookings.json()
   })
@@ -78,10 +60,6 @@ const createBooking = (booking) => {
 
 module.exports = {
   bookings,
-  bookings_delivered,
-  bookings_assigned,
-  // possibleRoutes,
   cars,
   createBooking,
-  // updatePosition,
 }

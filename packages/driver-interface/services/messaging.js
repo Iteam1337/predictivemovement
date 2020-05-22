@@ -84,8 +84,8 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
 
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
-    message.car.id,
-    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})!`,
+    message.assigned_to.id,
+    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.departure.lat},${message.departure.lon})!`,
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -95,7 +95,7 @@ const sendPickupInstructions = (message) => {
               text: 'Hämtat',
               callback_data: JSON.stringify({
                 e: 'pickup',
-                id: message.booking.id,
+                id: message.id,
               }),
             },
           ],

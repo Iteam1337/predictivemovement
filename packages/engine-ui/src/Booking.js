@@ -14,6 +14,7 @@ const Booking = ({ state }) => {
       )
     ),
   ]
+
   return <Map layers={layers} />
 }
 

@@ -1,4 +1,4 @@
-defmodule BroadwayEngine.Application do
+defmodule Engine.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -7,12 +7,12 @@ defmodule BroadwayEngine.Application do
 
   def start(_type, _args) do
     children = [
-      BroadwayEngine.OrderProcessor
+      Engine.OrderProcessor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: BroadwayEngine.Supervisor]
+    opts = [strategy: :one_for_one, name: Engine.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

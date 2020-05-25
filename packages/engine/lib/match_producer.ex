@@ -1,4 +1,4 @@
-defmodule BroadwayEngine.MatchProducer do
+defmodule Engine.MatchProducer do
   use GenStage
   alias Broadway.Message
 
@@ -10,7 +10,7 @@ defmodule BroadwayEngine.MatchProducer do
   @available_bookings_queue_name "booking_requests"
 
   def start_link() do
-    GenStage.start_link(BroadwayEngine.MatchProducer, %{})
+    GenStage.start_link(Engine.MatchProducer, %{})
   end
 
   def init(_) do

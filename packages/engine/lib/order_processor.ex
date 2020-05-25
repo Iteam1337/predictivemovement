@@ -1,11 +1,11 @@
-defmodule BroadwayEngine.OrderProcessor do
+defmodule Engine.OrderProcessor do
   use Broadway
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
       name: __MODULE__,
       producer: [
-        module: {BroadwayEngine.MatchProducer, []},
+        module: {Engine.MatchProducer, []},
         concurrency: 1
       ],
       processors: [

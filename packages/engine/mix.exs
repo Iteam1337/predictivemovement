@@ -1,9 +1,9 @@
-defmodule BroadwayEngine.MixProject do
+defmodule Engine.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :broadway_engine,
+      app: :engine,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule BroadwayEngine.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {BroadwayEngine.Application, []}
+      mod: {Engine.Application, []}
     ]
   end
 

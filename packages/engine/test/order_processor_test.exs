@@ -74,7 +74,7 @@ defmodule OrderProcessorTest do
     bookings = [@iteamToRadu, @iteamToChristian]
 
     ref =
-      Broadway.test_messages(BroadwayEngine.OrderProcessor, [
+      Broadway.test_messages(Engine.OrderProcessor, [
         {cars, bookings}
       ])
 
@@ -109,7 +109,7 @@ defmodule OrderProcessorTest do
     ]
 
     ref =
-      Broadway.test_messages(BroadwayEngine.OrderProcessor, [
+      Broadway.test_messages(Engine.OrderProcessor, [
         {cars, bookings}
       ])
 
@@ -129,7 +129,7 @@ defmodule OrderProcessorTest do
   #   bookings = [@iteamToRadu, @iteamToChristian]
 
   #   ref =
-  #     Broadway.test_messages(BroadwayEngine.OrderProcessor, [
+  #     Broadway.test_messages(Engine.OrderProcessor, [
   #       {cars, bookings}
   #     ])
 

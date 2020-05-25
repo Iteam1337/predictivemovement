@@ -6,10 +6,9 @@ defmodule AMQP do
     end
   end
 
-  def call(data) do
+  def call(data, queue, reply_queue) do
     {:ok, connection} = AMQP.Connection.open()
     {:ok, channel} = AMQP.Channel.open(connection)
-    reply_queue = "p_response"
 
     {:ok, %{queue: _queue_name}} =
       AMQP.Queue.declare(
@@ -29,7 +28,7 @@ defmodule AMQP do
     AMQP.Basic.publish(
       channel,
       "",
-      "pickup_offers",
+      queue,
       request,
       reply_to: reply_queue,
       correlation_id: correlation_id

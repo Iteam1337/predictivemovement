@@ -25,7 +25,7 @@ defmodule Engine.BookingProcessor do
 
     # vehicles -> [instructions]
     %{solution: %{routes: routes}} =
-      Graphhopper.find_optimal_routes(vehicles, bookings)
+      Candidates.find_optimal_routes(vehicles, bookings)
       |> IO.inspect(label: "optimal routes")
 
     vehicles =
@@ -46,7 +46,7 @@ defmodule Engine.BookingProcessor do
 
   def offer({%Vehicle{id: id} = vehicle, %Booking{} = booking}) do
     IO.inspect(vehicle, label: "offer to vehicle")
-    accepted = AMQP.call(%{vehicle: %{id: id}, booking: booking})
+    accepted = AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
 
     IO.puts("Did the vehicle accept? The answer is #{accepted}")
   end

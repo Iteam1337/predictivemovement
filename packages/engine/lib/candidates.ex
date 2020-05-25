@@ -1,4 +1,4 @@
-defmodule Graphhopper do
+defmodule Candidates do
   @car %{
     type_id: "car",
     capacity: [
@@ -11,7 +11,7 @@ defmodule Graphhopper do
     @car
   ]
 
-  def car_to_vehicle(%Car{id: vehicle_id, position: position}) do
+  def car_to_vehicle(%Vehicle{id: vehicle_id, position: position}) do
     %{
       vehicle_id: vehicle_id |> to_string(),
       start_address: %{

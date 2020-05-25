@@ -1,4 +1,4 @@
-defmodule OrderProcessorTest do
+defmodule BookingProcessorTest do
   use ExUnit.Case
 
   @christian %{lat: 59.338791, lon: 17.897773}
@@ -74,7 +74,7 @@ defmodule OrderProcessorTest do
     bookings = [@iteamToRadu, @iteamToChristian]
 
     ref =
-      Broadway.test_messages(Engine.OrderProcessor, [
+      Broadway.test_messages(Engine.BookingProcessor, [
         {cars, bookings}
       ])
 
@@ -109,7 +109,7 @@ defmodule OrderProcessorTest do
     ]
 
     ref =
-      Broadway.test_messages(Engine.OrderProcessor, [
+      Broadway.test_messages(Engine.BookingProcessor, [
         {cars, bookings}
       ])
 
@@ -129,7 +129,7 @@ defmodule OrderProcessorTest do
   #   bookings = [@iteamToRadu, @iteamToChristian]
 
   #   ref =
-  #     Broadway.test_messages(Engine.OrderProcessor, [
+  #     Broadway.test_messages(Engine.BookingProcessor, [
   #       {cars, bookings}
   #     ])
 

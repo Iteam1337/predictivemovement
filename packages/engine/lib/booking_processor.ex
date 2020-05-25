@@ -1,4 +1,4 @@
-defmodule Engine.OrderProcessor do
+defmodule Engine.BookingProcessor do
   use Broadway
 
   def start_link(_opts) do

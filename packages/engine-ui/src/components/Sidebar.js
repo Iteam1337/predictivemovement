@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Icon from '../assets/dashboard.svg'
 import Bookings from './Bookings'
 import CreateBooking from './CreateBooking'
-import { Switch, Route, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 
 const Container = styled.div`

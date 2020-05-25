@@ -7,9 +7,6 @@ const Start = ({ state }) => {
   const useQuery = () => new URLSearchParams(useLocation().search)
   const [filters, setFilters] = React.useState([])
 
-  // const queryParams = useQuery()
-  // const id = queryParams.get('booking')
-
   const route = useRouteMatch()
   const { id } = useParams()
 

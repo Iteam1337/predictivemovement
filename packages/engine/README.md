@@ -8,11 +8,12 @@
 
 # Select broadway engine gameplan
 
-- Rename all broadway engine -> engine
-- Rename order -> booking
-- Rename car - vehicle
-- Rename graphhopper -> candidates_request + candidates_response
-- Produce multiple [bookings] + [vehicles] into a candidates_request
-- Offer the vehicles the bookings and gather the response
-- Dockerfile + yaml for running in test environment
-- Profit!
+- [x] Rename all broadway engine -> engine
+- [ ] Rename old engine-elixir + engine to -> engine-old, engine-js
+- [ ] Rename order -> booking
+- [ ] Rename car -> vehicle
+- [ ] Rename graphhopper -> candidates_request + candidates_response
+- [ ] Produce multiple [bookings] + [vehicles] into a candidates_request according to this [format](https://docs.graphhopper.com/#tag/Route-Optimization-API)
+- [ ] Offer the vehicles the bookings and gather the response
+- [ ] Dockerfile + yaml for running in test environment
+- [ ] Profit!

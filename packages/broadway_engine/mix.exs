@@ -30,7 +30,8 @@ defmodule BroadwayEngine.MixProject do
       {:jason, "~> 1.2"},
       {:mix_test_watch, "~> 0.8"},
       {:math, "~> 0.4.0"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

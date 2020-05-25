@@ -3,10 +3,10 @@ defmodule Engine.MatchProducer do
   alias Broadway.Message
 
   @rmq_uri "amqp://localhost"
-  @cars_exchange "cars"
+  @vehicles_exchange "cars"
   @bookings_exchange "bookings"
 
-  @available_cars_queue_name "routes"
+  @available_vehicles_queue_name "routes"
   @available_bookings_queue_name "booking_requests"
 
   def start_link() do
@@ -15,48 +15,49 @@ defmodule Engine.MatchProducer do
 
   def init(_) do
     create_rmq_resources()
-    {:producer, %{cars: [], bookings: []}}
+    {:producer, %{vehicles: [], bookings: []}}
   end
 
   def handle_info({:basic_consume_ok, _}, state) do
     {:noreply, [], state}
   end
 
-  def handle_info({:basic_deliver, car, %{exchange: @cars_exchange}}, %{
-        cars: cars,
+  def handle_info({:basic_deliver, vehicle, %{exchange: @vehicles_exchange}}, %{
+        vehicles: vehicles,
         bookings: bookings
       }) do
-    IO.puts("new car!")
+    IO.puts("new vehicle!")
 
-    car = string_to_car_transform(car)
+    vehicle = string_to_vehicle_transform(vehicle)
 
-    dispatch_events([car | cars], bookings)
+    dispatch_events([vehicle | vehicles], bookings)
   end
 
   def handle_info(
         {:basic_deliver, booking, %{exchange: @bookings_exchange, routing_key: "new"}},
         %{
-          cars: cars,
+          vehicles: vehicles,
           bookings: bookings
         }
       ) do
     IO.puts("new booking!")
     booking = string_to_booking_transform(booking)
-    dispatch_events(cars, [booking | bookings])
+    dispatch_events(vehicles, [booking | bookings])
   end
 
-  def dispatch_events(cars, [] = _bookings), do: {:noreply, [], %{bookings: [], cars: cars}}
+  def dispatch_events(vehicles, [] = _bookings),
+    do: {:noreply, [], %{bookings: [], vehicles: vehicles}}
 
-  def dispatch_events(cars, bookings) when length(cars) < 1,
-    do: {:noreply, [], %{bookings: bookings, cars: cars}}
+  def dispatch_events(vehicles, bookings) when length(vehicles) < 1,
+    do: {:noreply, [], %{bookings: bookings, vehicles: vehicles}}
 
-  def dispatch_events(cars, bookings) do
+  def dispatch_events(vehicles, bookings) do
     message = %Message{
-      data: {cars, bookings},
+      data: {vehicles, bookings},
       acknowledger: {__MODULE__, :ack_id, :ack_data}
     }
 
-    {:noreply, [message], %{bookings: bookings, cars: cars}}
+    {:noreply, [message], %{bookings: bookings, vehicles: vehicles}}
   end
 
   def handle_demand(_demand, state) do
@@ -67,9 +68,9 @@ defmodule Engine.MatchProducer do
     :ok
   end
 
-  def string_to_car_transform(car_string) do
-    %{position: position, id: id} = car_string |> Poison.decode!(keys: :atoms!)
-    Car.make(id, position)
+  def string_to_vehicle_transform(vehicle_string) do
+    %{position: position, id: id} = vehicle_string |> Poison.decode!(keys: :atoms!)
+    Vehicle.make(id, position)
   end
 
   def string_to_booking_transform(booking_string) do
@@ -88,23 +89,23 @@ defmodule Engine.MatchProducer do
     {:ok, channel} = AMQP.Channel.open(connection)
 
     # Create exchange
-    AMQP.Exchange.fanout(channel, @cars_exchange, durable: false)
+    AMQP.Exchange.fanout(channel, @vehicles_exchange, durable: false)
     AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: false)
 
     # Create queues
-    AMQP.Queue.declare(channel, @available_cars_queue_name, durable: false)
+    AMQP.Queue.declare(channel, @available_vehicles_queue_name, durable: false)
     AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: false)
 
     # Bind queues to exchange
-    AMQP.Queue.bind(channel, @available_cars_queue_name, @cars_exchange,
-      routing_key: @available_cars_queue_name
+    AMQP.Queue.bind(channel, @available_vehicles_queue_name, @vehicles_exchange,
+      routing_key: @available_vehicles_queue_name
     )
 
     AMQP.Queue.bind(channel, @available_bookings_queue_name, @bookings_exchange,
       routing_key: "new"
     )
 
-    AMQP.Basic.consume(channel, @available_cars_queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, @available_vehicles_queue_name, nil, no_ack: true)
     AMQP.Basic.consume(channel, @available_bookings_queue_name, nil, no_ack: true)
   end
 end

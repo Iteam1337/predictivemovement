@@ -50,7 +50,7 @@ defmodule BookingProcessorTest do
     id: "iteamToChristian"
   }
 
-  @tesla %Car{
+  @tesla %Vehicle{
     busy: false,
     heading: nil,
     id: "tesla",
@@ -59,7 +59,7 @@ defmodule BookingProcessorTest do
     orsm_route: nil
   }
 
-  @volvo %Car{
+  @volvo %Vehicle{
     busy: false,
     heading: nil,
     id: "volvo",
@@ -69,21 +69,21 @@ defmodule BookingProcessorTest do
   }
 
   @tag :only
-  test "it picks the car closest to the pickup location" do
-    cars = [@tesla]
+  test "it picks the vehicle closest to the pickup location" do
+    vehicles = [@tesla]
     bookings = [@iteamToRadu, @iteamToChristian]
 
     ref =
       Broadway.test_messages(Engine.BookingProcessor, [
-        {cars, bookings}
+        {vehicles, bookings}
       ])
 
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    %Car{id: "tesla", instructions: instructions} =
+    %Vehicle{id: "tesla", instructions: instructions} =
       messages
-      |> Enum.map(fn %Broadway.Message{data: {cars, bookings}} -> List.first(cars) end)
+      |> Enum.map(fn %Broadway.Message{data: {vehicles, bookings}} -> List.first(vehicles) end)
       |> List.first()
 
     instructions
@@ -97,8 +97,8 @@ defmodule BookingProcessorTest do
   end
 
   @tag :only
-  test "the same car gets all the bookings on the same route if it does not reach its capacity" do
-    cars = [@tesla, @volvo]
+  test "the same vehicle gets all the bookings on the same route if it does not reach its capacity" do
+    vehicles = [@tesla, @volvo]
 
     bookings = [
       @iteamToCinema,
@@ -110,35 +110,35 @@ defmodule BookingProcessorTest do
 
     ref =
       Broadway.test_messages(Engine.BookingProcessor, [
-        {cars, bookings}
+        {vehicles, bookings}
       ])
 
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    %Car{id: "tesla", instructions: instructions} =
+    %Vehicle{id: "tesla", instructions: instructions} =
       messages
-      |> Enum.map(fn %Broadway.Message{data: {cars, bookings}} -> List.first(cars) end)
+      |> Enum.map(fn %Broadway.Message{data: {vehicles, bookings}} -> List.first(vehicles) end)
       |> List.first()
 
     assert length(instructions) == 11
   end
 
   # test "it can get another order that is on the same route" do
-  #   cars = [@tesla, @volvo]
+  #   vehicles = [@tesla, @volvo]
   #   bookings = [@iteamToRadu, @iteamToChristian]
 
   #   ref =
   #     Broadway.test_messages(Engine.BookingProcessor, [
-  #       {cars, bookings}
+  #       {vehicles, bookings}
   #     ])
 
   #   assert_receive {:ack, ^ref, messages, failed},
   #                  10000
 
-  #   %Car{id: "tesla", instructions: instructions} =
+  #   %Vehicle{id: "tesla", instructions: instructions} =
   #     messages
-  #     |> Enum.map(fn %Broadway.Message{data: {cars, bookings}} -> List.first(cars) end)
+  #     |> Enum.map(fn %Broadway.Message{data: {vehicles, bookings}} -> List.first(vehicles) end)
   #     |> List.first()
 
   #   instructions
@@ -149,32 +149,32 @@ defmodule BookingProcessorTest do
   #   |> assert()
   # end
 
-  # write a test case where you send 2 messages and you just test based on location that the closest car is picked
+  # write a test case where you send 2 messages and you just test based on location that the closest vehicle is picked
 
   # booking1 = {}
   # booking2 = {}
-  # car1 = { instructions: []}
-  # car2 = { instructions: []}
+  # vehicle1 = { instructions: []}
+  # vehicle2 = { instructions: []}
 
-  # cars = [car1, car2]
+  # vehicles = [vehicle1, vehicle2]
 
-  # result = process.message(booking1, cars)
+  # result = process.message(booking1, vehicles)
 
-  # updated_car1 = { instructions: [booking1] }
-  # updated_cars = accept_offer(result)
+  # updated_vehicle1 = { instructions: [booking1] }
+  # updated_vehicles = accept_offer(result)
 
-  # updated_cars = [updated_car1, car2]
+  # updated_vehicles = [updated_vehicle1, vehicle2]
 
-  # result = process.message(booking2, updated_cars)
-  # a test case where you send 1 booking and 2 cars and then mock the offer acceptance and the updated state as car input for another message
+  # result = process.message(booking2, updated_vehicles)
+  # a test case where you send 1 booking and 2 vehicles and then mock the offer acceptance and the updated state as vehicle input for another message
 end
 
-# test "bookings with two cars" do
-#   cars = [@tesla, @volvo]
+# test "bookings with two vehicles" do
+#   vehicles = [@tesla, @volvo]
 
 #   route =
 #     [@iteamToRadu, @iteamToChristian]
-#     |> Dispatch.find_candidates(cars)
+#     |> Dispatch.find_candidates(vehicles)
 #     |> pretty()
 #     |> Enum.join(" -> ")
 

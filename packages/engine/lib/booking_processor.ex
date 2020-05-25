@@ -18,36 +18,36 @@ defmodule Engine.BookingProcessor do
 
   def handle_message(
         _processor,
-        %Broadway.Message{acknowledger: acknowledger, data: {cars, bookings}},
+        %Broadway.Message{acknowledger: acknowledger, data: {vehicles, bookings}},
         _context
       ) do
-    IO.inspect({cars, bookings}, label: "oh a message")
+    IO.inspect({vehicles, bookings}, label: "oh a message")
 
-    # cars -> [instructions]
+    # vehicles -> [instructions]
     %{solution: %{routes: routes}} =
-      Graphhopper.find_optimal_routes(cars, bookings)
-      |> IO.inspect(label: "radu")
+      Graphhopper.find_optimal_routes(vehicles, bookings)
+      |> IO.inspect(label: "optimal routes")
 
-    cars =
+    vehicles =
       routes
       |> Enum.map(fn %{activities: activities, vehicle_id: id} ->
-        %Car{instructions: activities, id: id}
+        %Vehicle{instructions: activities, id: id}
       end)
 
-    cars
+    vehicles
     |> Enum.zip(bookings)
     |> Enum.each(&offer/1)
 
     %Broadway.Message{
-      data: {cars, bookings},
+      data: {vehicles, bookings},
       acknowledger: acknowledger
     }
   end
 
-  def offer({%Car{id: id} = car, %Booking{} = booking}) do
-    IO.inspect(car, label: "offer to car")
-    accepted = AMQP.call(%{car: %{id: id}, booking: booking})
+  def offer({%Vehicle{id: id} = vehicle, %Booking{} = booking}) do
+    IO.inspect(vehicle, label: "offer to vehicle")
+    accepted = AMQP.call(%{vehicle: %{id: id}, booking: booking})
 
-    IO.puts("Did the car accept? The answer is #{accepted}")
+    IO.puts("Did the vehicle accept? The answer is #{accepted}")
   end
 end

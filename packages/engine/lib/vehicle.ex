@@ -1,4 +1,4 @@
-defmodule Car do
+defmodule Vehicle do
   defstruct id: 0,
             position: %{lon: 53, lat: 14},
             heading: nil,
@@ -7,22 +7,22 @@ defmodule Car do
             orsm_route: nil
 
   def make(id, position, busy \\ false) do
-    %Car{id: id, position: position, busy: busy}
+    %Vehicle{id: id, position: position, busy: busy}
   end
 
   def get_score_diff_with_new_booking(
-        %Car{instructions: [], position: car_position} = car,
+        %Vehicle{instructions: [], position: vehicle_position} = vehicle,
         %Booking{
           pickup: pickup,
           delivery: delivery
         }
       ),
       do:
-        {Map.put(car, :instructions, [pickup, delivery]),
-         get_osrm_distance([car_position, pickup, delivery, car_position])}
+        {Map.put(vehicle, :instructions, [pickup, delivery]),
+         get_osrm_distance([vehicle_position, pickup, delivery, vehicle_position])}
 
   def get_score_diff_with_new_booking(
-        %Car{instructions: old_instructions, position: _car_position} = car,
+        %Vehicle{instructions: old_instructions, position: _vehicle_position} = vehicle,
         %Booking{pickup: pickup, delivery: delivery}
       ) do
     old_score = get_osrm_distance(old_instructions)
@@ -36,7 +36,7 @@ defmodule Car do
       |> Enum.sort_by(fn {_, score} -> score end, :asc)
       |> List.first()
 
-    {Map.put(car, :instructions, new_instructions), old_score - new_score}
+    {Map.put(vehicle, :instructions, new_instructions), old_score - new_score}
   end
 
   def get_possible_route_permutations(instructions, pickup, delivery) do

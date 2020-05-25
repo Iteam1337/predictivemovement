@@ -58,6 +58,7 @@ defmodule Graphhopper do
       shipments: shipments
     }
 
+    # TODO: change to RPC CALL to candidate-requests queue and listen to candidate-response queue
     Fetch.json_post(
       "https://graphhopper.com/api/1/vrp?key=85344d1b-4454-42df-b521-1be0f4fd2868",
       payload

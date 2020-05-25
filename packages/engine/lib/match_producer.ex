@@ -2,7 +2,6 @@ defmodule Engine.MatchProducer do
   use GenStage
   alias Broadway.Message
 
-  @rmq_uri "amqp://localhost"
   @vehicles_exchange "cars"
   @bookings_exchange "bookings"
 
@@ -85,7 +84,7 @@ defmodule Engine.MatchProducer do
 
   defp create_rmq_resources do
     # Setup RabbitMQ connection
-    {:ok, connection} = AMQP.Connection.open(@rmq_uri)
+    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
     {:ok, channel} = AMQP.Channel.open(connection)
 
     # Create exchange

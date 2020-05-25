@@ -3,9 +3,8 @@ import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-importe { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Start from './Start'
-import Booking from './Booking'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
@@ -35,13 +34,12 @@ const App = () => {
   return (
     <>
       <Router>
-        <Sidebar {...state} createBooking={createBooking} />
-        <Route exact path="/">
-          <Start state={state} />
-        </Route>
-        <Route path="/booking/:id">
-          <Booking state={state} />
-        </Route>
+        <Switch>
+          <Route path="/:details?/:id?">
+            <Sidebar {...state} createBooking={createBooking} />
+            <Start state={state} />
+          </Route>
+        </Switch>
       </Router>
     </>
   )

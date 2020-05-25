@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import Icon from '../assets/dashboard.svg'
 import Bookings from './Bookings'
 import CreateBooking from './CreateBooking'
+import { Switch, Route, useParams } from 'react-router-dom'
+import BookingDetails from './BookingDetails'
 
 const Container = styled.div`
   position: absolute;
@@ -40,6 +42,7 @@ const NavStrip = styled.div`
 
 const Sidebar = (data) => {
   const [open, setOpen] = React.useState(true)
+  const { id } = useParams()
 
   return (
     <>
@@ -47,9 +50,15 @@ const Sidebar = (data) => {
         <img onClick={() => setOpen((current) => !current)} src={Icon} alt="" />
       </NavStrip>
       <Container open={open}>
-        <CreateBooking createBooking={data.createBooking} />
-        <h3>Aktuella bokningar</h3>
-        <Bookings bookings={data.bookings} />
+        {!id ? (
+          <>
+            <CreateBooking createBooking={data.createBooking} />
+            <h3>Aktuella bokningar</h3>
+            <Bookings bookings={data.bookings} />
+          </>
+        ) : (
+          <BookingDetails booking={data.bookings.find((b) => b.id === id)} />
+        )}
       </Container>
     </>
   )

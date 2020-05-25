@@ -37,8 +37,8 @@ const Bookings = ({ bookings }) => {
       {bookings.map((booking) => {
         return (
           <BookingListItem
+            to={{ pathname: `/details/${booking.id}` }}
             key={booking.id}
-            to={{ pathname: `/booking/${booking.id}`, state: { ok: true } }}
           >
             {booking.id}
           </BookingListItem>

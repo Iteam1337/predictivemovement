@@ -5,14 +5,10 @@ import Map from './components/Map'
 const Start = ({ state }) => {
   const layers = [
     mapUtils.toGeoJsonLayer(
-      'geojson-carbookings-layer',
-      state.carBookingLineCollection
-    ),
-    mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
       mapUtils.bookingToFeature(state.bookings)
     ),
-    mapUtils.toIconLayer(mapUtils.movingCarToFeature(state.cars)),
+    mapUtils.toIconLayer(mapUtils.carToFeature(state.cars)),
   ]
 
   return <Map layers={layers} state={state} />

@@ -24,9 +24,9 @@ const pickupOffers = () => {
               )
 
               addBooking(booking.id, {
-                car,
                 booking: {
                   ...booking,
+                  assigned_to: car,
                   pickupAddress,
                   deliveryAddress,
                 },

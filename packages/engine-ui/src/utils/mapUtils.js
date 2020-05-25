@@ -53,69 +53,19 @@ export const hexToRGB = (hex) => {
   return [r, g, b]
 }
 
-export const carToFeature = (newCars, carCollection, carLineCollection) => {
-  const carFeatures = [
-    ...carCollection.features.filter(
-      (car) => !newCars.some((nc) => nc.id === car.id)
-    ),
-    ...newCars.flatMap(({ id, tail, position, heading, detour }, i) => [
-      multiPoint(
-        [
-          [position.lon, position.lat],
-          [heading.lon, heading.lat],
-        ],
-        {
-          properties: {
-            color: palette[i][0],
-            diff: diff(heading, detour),
-          },
-          id,
-          tail,
-        }
-      ),
-    ]),
-  ]
+export const routeAssignedToBooking = (assignedTo) =>
+  line(
+    assignedTo.route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+    {
+      id: assignedTo.id,
+      properties: {
+        color: palette[0][0],
+        offset: 0,
+      },
+    }
+  )
 
-  const carLineFeatures = [
-    ...carLineCollection.features.filter(
-      (carLine) => !newCars.some((nc) => nc.id === carLine.id)
-    ),
-
-    ...newCars.flatMap(({ id, detour }, i) =>
-      feature(detour.geometry, {
-        id,
-        properties: {
-          color: palette[i][0],
-          offset: i * 2,
-        },
-      })
-    ),
-  ]
-
-  return {
-    carFeatures,
-    carLineFeatures,
-  }
-}
-
-export const carBookingRoute = (newCarRoute) => {
-  return [
-    ...newCarRoute.flatMap(({ car }, i) =>
-      line(
-        car.route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
-        {
-          id: car.id,
-          properties: {
-            color: palette[i][0],
-            offset: i * 2,
-          },
-        }
-      )
-    ),
-  ]
-}
-
-export const movingCarToFeature = (cars) => {
+export const carToFeature = (cars) => {
   let index = 0
   try {
     return [
@@ -138,44 +88,75 @@ export const movingCarToFeature = (cars) => {
   }
 }
 
-export const bookingToFeature = (newBookings) =>
-  newBookings.flatMap(({ id, departure, destination }) => [
-    point([departure.lon, departure.lat], {
-      id,
-      properties: {
-        color: '#ffff00', // yellow
-      },
-    }),
-    point([destination.lon, destination.lat], {
-      id,
-      properties: {
-        color: '#455DF7', // blue
-      },
-    }),
-    line(
-      [
-        [destination.lon, destination.lat],
-        [departure.lon, departure.lat],
-      ],
-      {
-        id,
-        properties: {
-          color: '#dd0000',
-        },
-      }
-    ),
-  ])
+export const bookingToFeature = (bookings) =>
+  bookings.flatMap(({ id, departure, destination, status, assigned_to }) => {
+    switch (status) {
+      case 'new':
+        return [
+          point([departure.lon, departure.lat], {
+            id,
+            properties: {
+              status,
+              color: '#ffff00', // yellow
+            },
+          }),
+          point([destination.lon, destination.lat], {
+            id,
+            properties: {
+              color: '#455DF7', // blue
+              status,
+            },
+          }),
+          line(
+            [
+              [destination.lon, destination.lat],
+              [departure.lon, departure.lat],
+            ],
+            {
+              id,
+              properties: {
+                status,
+                color: '#dd0000',
+              },
+            }
+          ),
+        ]
+      default:
+        return [
+          point([departure.lon, departure.lat], {
+            id,
+            properties: {
+              status,
+              color: '#ffff00', // yellow
+            },
+          }),
+          point([destination.lon, destination.lat], {
+            id,
+            properties: {
+              color: '#455DF7', // blue
+              status,
+            },
+          }),
+          line(
+            [
+              [destination.lon, destination.lat],
+              [departure.lon, departure.lat],
+            ],
+            {
+              id,
+              properties: {
+                status,
+                color: '#dd0000',
+              },
+            }
+          ),
+          routeAssignedToBooking(assigned_to),
+        ]
+    }
+  })
 
-export const diff = (
-  { route: { distance: headingDistance, duration: headingDuration } },
-  { distance: detourDistance, duration: detourDuration }
-) => ({
-  duration: detourDuration - headingDuration,
-  distance: detourDistance - headingDistance,
-})
-
-export const toGeoJsonLayer = (id, data) => {
-  return new GeoJsonLayer({
+export const toGeoJsonLayer = (id, data) =>
+  new GeoJsonLayer({
     id,
     data,
     pickable: true,
@@ -194,7 +175,6 @@ export const toGeoJsonLayer = (id, data) => {
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
   })
-}
 
 export const toIconLayer = (data, callback) => {
   if (!data.length) {
@@ -235,9 +215,7 @@ export default {
   point,
   line,
   bookingToFeature,
-  movingCarToFeature,
   carToFeature,
-  carBookingRoute,
   toGeoJsonLayer,
   toIconLayer,
   hexToRGB,

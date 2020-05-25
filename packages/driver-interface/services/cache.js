@@ -5,7 +5,6 @@ module.exports = {
   removeBooking: (id) => bookingsCache.delete(id),
   addBooking: (id, booking) => bookingsCache.set(id, booking),
   updateBooking: (id, update) => {
-
     const booking = bookingsCache.get(id)
     bookingsCache.set(id, {
       ...booking,

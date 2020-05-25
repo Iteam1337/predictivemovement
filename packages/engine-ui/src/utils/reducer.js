@@ -5,24 +5,15 @@ export const reducer = (state, action) => {
         ...state,
         cars: action.payload,
       }
-    case 'setCarBookingLines':
-      return {
-        ...state,
-        carBookingLineCollection: action.payload,
-      }
     case 'setBookings':
       return {
         ...state,
-        bookings: action.payload,
-      }
-    case 'removeBookings':
-      const filtered = state.bookings.filter(
-        (x) => !action.payload.some((i) => i.id === x.id)
-      )
-
-      return {
-        ...state,
-        bookings: filtered,
+        bookings: [
+          ...state.bookings.filter(
+            (b) => !action.payload.find((p) => p.id === b.id)
+          ),
+          ...action.payload,
+        ],
       }
     default:
       return state

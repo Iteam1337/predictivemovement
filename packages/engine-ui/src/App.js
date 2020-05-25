@@ -3,7 +3,7 @@ import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+importe { BrowserRouter as Router, Route } from 'react-router-dom'
 import Start from './Start'
 import Booking from './Booking'
 
@@ -18,26 +18,10 @@ const App = () => {
     })
   }
 
-  useSocket('bookings', (newBookings) => {
-    console.log({ newBookings })
+  useSocket('bookings', (bookings) => {
     dispatch({
       type: 'setBookings',
-      payload: newBookings,
-    })
-  })
-
-  useSocket('booking-assigned', (assignedBookings) => {
-    console.log({ assignedBookings })
-    dispatch({
-      type: 'setBookings',
-      payload: assignedBookings.map(({ booking }) => booking),
-    })
-  })
-
-  useSocket('bookings_delivered', (deliveredBookings) => {
-    dispatch({
-      type: 'removeBookings',
-      payload: deliveredBookings,
+      payload: bookings,
     })
   })
 

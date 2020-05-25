@@ -1,16 +1,9 @@
 const _ = require('highland')
-const {
-  bookings,
-  cars,
-  createBooking,
-  bookings_assigned,
-  bookings_delivered,
-} = require('./engineConnector')
+const { bookings, cars, createBooking } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const movingCarsCache = new Map()
 const bookingsCache = new Map()
-const assignedBookingscache = new Map()
 
 function register(io) {
   io.on('connection', function (socket) {
@@ -42,26 +35,27 @@ function register(io) {
       .errors(console.error)
       .each((cars) => socket.emit('cars', cars))
 
-    bookings_delivered
-      .fork()
-      .map((booking) => booking.booking)
-      .doto(({ id }) => bookingsCache.delete(id))
-      .batchWithTimeOrCount(1000, 1000)
-      .errors(console.error)
-      .each((bookings) => {
-        socket.emit('bookings_delivered', bookings)
-      })
+    // bookings_delivered
+    //   .fork()
+    //   .map((booking) => booking.booking)
+    //   .doto(({ id }) => bookingsCache.delete(id))
+    //   .batchWithTimeOrCount(1000, 1000)
+    //   .errors(console.error)
+    //   .each((bookings) => {
+    //     socket.emit('bookings_delivered', bookings)
+    //   })
+    //
 
-    _.merge([_(assignedBookingscache.values()), bookings_assigned.fork()])
-      .fork()
-      .doto((assignedBooking) =>
-        assignedBookingscache.set(assignedBooking.id, assigned)
-      )
-      .batchWithTimeOrCount(1000, 1000)
-      .errors(console.error)
-      .each((bookings) => {
-        socket.emit('booking-assigned', bookings)
-      })
+    // _.merge([_(assignedBookingscache.values()), bookings_assigned.fork()])
+    //   .fork()
+    //   .doto((assignedBooking) =>
+    //     assignedBookingscache.set(assignedBooking.id, assignedBooking)
+    //   )
+    //   .batchWithTimeOrCount(1000, 1000)
+    //   .errors(console.error)
+    //   .each((bookings) => {
+    //     socket.emit('booking-assigned', bookings)
+    //   })
 
     socket.on('new-booking', ({ pickup, dropoff }) => {
       const [pickupLat, pickupLon] = pickup

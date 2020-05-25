@@ -13,8 +13,10 @@
 - [x] Rename order -> booking
 - [x] Rename car -> vehicle
 - [ ] Rename cars exchange -> vehicles
-- [ ] Rename graphhopper -> candidates_request + candidates_response
-- [ ] Produce multiple [bookings] + [vehicles] into a candidates_request according to this [format](https://docs.graphhopper.com/#tag/Route-Optimization-API)
+- [x] Rename graphhopper -> candidates_request + candidates_response
+- [x] Produce multiple [bookings] + [vehicles] into a candidates_request according to this [format](https://docs.graphhopper.com/#tag/Route-Optimization-API)
+      (we already do this)
+- [ ] Produce multiple bookings from the match_producer
 - [ ] Offer the vehicles the bookings and gather the response
 - [ ] Dockerfile + yaml for running in test environment
 - [ ] Profit!

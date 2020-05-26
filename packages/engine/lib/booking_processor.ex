@@ -1,6 +1,9 @@
 defmodule Engine.BookingProcessor do
   use Broadway
 
+  @candidates Application.get_env(:engine, :candidates)
+  @vehicle Application.get_env(:engine, :vehicle)
+
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
       name: __MODULE__,
@@ -22,10 +25,9 @@ defmodule Engine.BookingProcessor do
         _context
       ) do
     IO.inspect({vehicles, bookings}, label: "oh a message")
-
     # vehicles -> [instructions]
     %{solution: %{routes: routes}} =
-      Candidates.find_optimal_routes(vehicles, bookings)
+      @candidates.find_optimal_routes(vehicles, bookings)
       |> IO.inspect(label: "optimal routes")
 
     vehicles =
@@ -36,7 +38,7 @@ defmodule Engine.BookingProcessor do
 
     vehicles
     |> Enum.zip(bookings)
-    |> Enum.each(&Vehicle.offer/1)
+    |> Enum.each(&@vehicle.offer/1)
 
     %Broadway.Message{
       data: {vehicles, bookings},

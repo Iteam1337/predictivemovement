@@ -1,5 +1,4 @@
 defmodule Vehicle do
-  @callback offer(tuple()) :: boolean()
   defstruct id: 0,
             position: %{lon: 53, lat: 14},
             heading: nil,

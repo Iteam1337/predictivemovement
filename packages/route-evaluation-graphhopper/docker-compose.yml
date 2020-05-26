@@ -1,0 +1,15 @@
+version: "3.5"
+services:
+  routeEvaluationGraphhopper:
+    build: .
+    image: pm_route_evaluation/graphhopper:0.0.1-SNAPSHOT
+    container_name: "pm_route_evaluation_graphhopper"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    networks:
+      - pm-mapbox-test_default
+
+networks:
+  pm-mapbox-test_default:
+    external: true

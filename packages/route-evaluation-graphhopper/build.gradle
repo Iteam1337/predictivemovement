@@ -1,0 +1,26 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.0.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.predictivemovement'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '14'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+  	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation group: 'com.graphhopper', name: 'jsprit', version: '1.8', ext: 'pom'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.amqp:spring-rabbit-test'
+}
+
+test {
+	useJUnitPlatform()
+}

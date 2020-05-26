@@ -10,6 +10,7 @@ import BookingDetails from './BookingDetails'
 import Hooks from '../Hooks'
 import CarDetails from './CarDetails'
 import Elements from './Elements'
+import Filters from './Filters'
 
 const Container = styled.div`
   position: absolute;
@@ -41,18 +42,55 @@ const NavigationBar = styled.div`
 
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
-  console.log(data)
-  return type === 'booking' ? (
-    <BookingDetails booking={data} />
-  ) : (
-    <CarDetails car={data} />
-  )
+
+  const componentFromType = () => {
+    switch (type) {
+      case 'booking':
+        return <BookingDetails booking={data.bookings[0]} />
+      case 'car':
+        return <CarDetails car={data.cars[0]} />
+      default:
+        return null
+    }
+  }
+
+  return componentFromType()
 }
 
 const Content = styled.div`
   padding: 2rem;
   width: 325px;
 `
+const useFilters = (data) => {
+  // {
+  //     type: 'bookings'
+  //   property: 'status',
+  //   value: ['assigned', new]
+  // }
+
+  const [filters, setFilters] = React.useState([])
+
+  const temp = React.useMemo(() => {
+    if (!filters.length) return data
+    const filteredData = filters.map((filter) =>
+      data[filter.type].filter((item) =>
+        filter.value.includes(item[filter.property])
+      )
+    )
+    console.log({ filteredData })
+    return filteredData
+  }, [filters, data])
+
+  const handleSetFilters = React.useCallback((filter) => {
+    setFilters((currentFilters) =>
+      Object.prototype.hasOwnProperty.call(currentFilters, filter.property)
+        ? currentFilters.filter((f) => f !== filter)
+        : [...currentFilters, filter]
+    )
+  }, [])
+
+  return [temp, handleSetFilters]
+}
 
 const Sidebar = (data) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
@@ -60,6 +98,16 @@ const Sidebar = (data) => {
   )
 
   const [isChecked, setIsChecked] = React.useState(false)
+
+  const [d, h] = useFilters(data)
+
+  React.useEffect(() => {
+    h({
+      type: 'bookings',
+      property: 'status',
+      value: ['new'],
+    })
+  }, [h])
 
   const currentViewToElement = () => {
     switch (navigationCurrentView) {

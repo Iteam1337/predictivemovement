@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import MaterialSwitch from '@material-ui/core/Switch'
-import { blue } from '@material-ui/core/colors'
+import { blue, grey } from '@material-ui/core/colors'
 
 import { withStyles } from '@material-ui/core/styles'
 
@@ -22,7 +22,10 @@ const Switch = withStyles({
     },
   },
   checked: {},
-  track: {},
+  track: {
+    backgroundColor: grey[400],
+  },
 })(MaterialSwitch)
+
 
 export default { StrongParagraph, Switch }

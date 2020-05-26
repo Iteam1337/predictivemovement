@@ -5,13 +5,21 @@ const useFilteredStateFromQueryParams = (state) => {
   const type = useQueryParams().get('type')
   const id = useQueryParams().get('id')
 
+  if (!type) return { data: state }
+
   return {
     type,
     id,
     data:
       type === 'booking'
-        ? state.bookings.find((item) => item.id === id)
-        : state.cars.find((item) => item.id.toString() === id),
+        ? {
+            ...state,
+            bookings: state.bookings.filter((item) => item.id === id),
+          }
+        : {
+            ...state,
+            cars: state.cars.filter((item) => item.id.toString() === id),
+          },
   }
 }
 

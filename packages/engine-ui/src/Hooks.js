@@ -4,22 +4,24 @@ const useFilteredStateFromQueryParams = (state) => {
   const useQueryParams = () => new URLSearchParams(useLocation().search)
   const type = useQueryParams().get('type')
   const id = useQueryParams().get('id')
+  const status = useQueryParams().get('status')
 
-  if (!type) return { data: state }
+  const statuses = status ? status.split(',') : []
 
   return {
     type,
     id,
-    data:
-      type === 'booking'
-        ? {
-            ...state,
-            bookings: state.bookings.filter((item) => item.id === id),
-          }
-        : {
-            ...state,
-            cars: state.cars.filter((item) => item.id.toString() === id),
-          },
+    data: {
+      ...state,
+      bookings: state.bookings
+        .filter((item) => (type === 'booking' ? item.id === id : true))
+        .filter((item) =>
+          statuses.length ? statuses.includes(item.status) : true
+        ),
+      cars: state.cars.filter((item) =>
+        type === 'car' ? item.id.toString() === id : true
+      ),
+    },
   }
 }
 

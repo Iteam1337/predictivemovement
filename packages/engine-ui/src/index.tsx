@@ -4,7 +4,6 @@ import './index.css'
 import App from './App.js'
 import * as serviceWorker from './serviceWorker'
 import { SocketIOProvider } from 'use-socketio'
-import { BrowserRouter as Router } from 'react-router-dom'
 
 ReactDOM.render(
   <SocketIOProvider

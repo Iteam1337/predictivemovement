@@ -27,5 +27,4 @@ const Switch = withStyles({
   },
 })(MaterialSwitch)
 
-
 export default { StrongParagraph, Switch }

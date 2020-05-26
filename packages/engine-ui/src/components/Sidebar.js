@@ -9,7 +9,6 @@ import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../Hooks'
 import CarDetails from './CarDetails'
-import Elements from './Elements'
 import Filters from './Filters'
 
 const Container = styled.div`
@@ -61,60 +60,21 @@ const Content = styled.div`
   padding: 2rem;
   width: 325px;
 `
-const useFilters = (data) => {
-  // {
-  //     type: 'bookings'
-  //   property: 'status',
-  //   value: ['assigned', new]
-  // }
 
-  const [filters, setFilters] = React.useState([])
-
-  const temp = React.useMemo(() => {
-    if (!filters.length) return data
-    const filteredData = filters.map((filter) =>
-      data[filter.type].filter((item) =>
-        filter.value.includes(item[filter.property])
-      )
-    )
-    console.log({ filteredData })
-    return filteredData
-  }, [filters, data])
-
-  const handleSetFilters = React.useCallback((filter) => {
-    setFilters((currentFilters) =>
-      Object.prototype.hasOwnProperty.call(currentFilters, filter.property)
-        ? currentFilters.filter((f) => f !== filter)
-        : [...currentFilters, filter]
-    )
-  }, [])
-
-  return [temp, handleSetFilters]
-}
-
-const Sidebar = (data) => {
+const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
     'bookings'
   )
 
-  const [isChecked, setIsChecked] = React.useState(false)
-
-  const [d, h] = useFilters(data)
-
-  React.useEffect(() => {
-    h({
-      type: 'bookings',
-      property: 'status',
-      value: ['new'],
-    })
-  }, [h])
+  const { data } = Hooks.useFilteredStateFromQueryParams(state)
 
   const currentViewToElement = () => {
     switch (navigationCurrentView) {
       case 'bookings':
         return (
           <>
-            <CreateBooking createBooking={data.createBooking} />
+            <CreateBooking createBooking={state.createBooking} />
+            <Filters />
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={data.bookings} />
           </>
@@ -129,11 +89,6 @@ const Sidebar = (data) => {
       default:
         return null
     }
-  }
-
-  const handleFilterChange = (event) => {
-    event.persist()
-    setIsChecked((currentValue) => !currentValue)
   }
 
   return (
@@ -158,13 +113,7 @@ const Sidebar = (data) => {
       <Content>
         <RouterSwitch>
           <Route exact path="/">
-            <>
-              <Elements.Switch
-                checked={isChecked}
-                onChange={handleFilterChange}
-              />
-              {currentViewToElement()}
-            </>
+            <>{currentViewToElement()}</>
           </Route>
           <Route path="/details">
             <Details state={data} />

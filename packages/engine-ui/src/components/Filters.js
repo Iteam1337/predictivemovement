@@ -12,7 +12,7 @@ const Filters = () => {
     const params = Object.entries(filters).reduce((prev, [key, val]) => {
       if (!val.length) return prev
 
-      return `${prev}${prev && '&'}${key}=${val.join(',')}`
+      return `${prev && prev + '&'}${key}=${val.join(',')}`
     }, '')
 
     params !== '' ? history.push(`?${params}`) : history.push('')
@@ -33,6 +33,18 @@ const Filters = () => {
       <FormControlLabel
         control={
           <Checkbox
+            checked={filters.status.includes('new')}
+            onChange={() => handleChange('status', 'new')}
+            inputProps={{ 'aria-label': 'primary checkbox' }}
+          />
+        }
+        value="top"
+        label="New"
+        labelPlacement="end"
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
             checked={filters.status.includes('assigned')}
             onChange={() => handleChange('status', 'assigned')}
             inputProps={{ 'aria-label': 'primary checkbox' }}
@@ -45,13 +57,13 @@ const Filters = () => {
       <FormControlLabel
         control={
           <Checkbox
-            checked={filters.status.includes('new')}
-            onChange={() => handleChange('status', 'new')}
+            checked={filters.status.includes('delivered')}
+            onChange={() => handleChange('status', 'delivered')}
             inputProps={{ 'aria-label': 'primary checkbox' }}
           />
         }
         value="top"
-        label="New"
+        label="Delivered"
         labelPlacement="end"
       />
     </>

@@ -10,9 +10,7 @@ ReactDOM.render(
   <SocketIOProvider
     url={process.env.REACT_APP_ENGINE_SERVER || 'http://localhost:4000'}
   >
-    <Router>
-      <App />
-    </Router>
+    <App />
   </SocketIOProvider>,
   document.getElementById('root')
 )

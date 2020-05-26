@@ -4,7 +4,6 @@ import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-
 import Start from './Start'
 
 const App = () => {

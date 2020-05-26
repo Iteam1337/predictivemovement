@@ -1,3 +1,4 @@
 defmodule VehicleMock do
-  def offer(_), do: true
+  def offer({%Vehicle{id: id} = vehicle, %Booking{} = booking}),
+    do: %{vehicle: vehicle, booking: booking, accepted: true}
 end

@@ -72,8 +72,11 @@ defmodule Vehicle do
   def offer({%Vehicle{id: id} = vehicle, %Booking{} = booking}) do
     IO.inspect(vehicle, label: "offer to vehicle")
 
-    AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
-    |> Poison.decode()
-    |> IO.inspect(label: "the driver answered")
+    accepted =
+      AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
+      |> Poison.decode()
+      |> IO.inspect(label: "the driver answered")
+
+    %{vehicle: vehicle, booking: booking, accepted: accepted}
   end
 end

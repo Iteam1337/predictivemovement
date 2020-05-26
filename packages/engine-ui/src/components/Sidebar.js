@@ -1,66 +1,114 @@
 import React from 'react'
 import styled from 'styled-components'
-import Icon from '../assets/dashboard.svg'
+import ParcelIcon from '../assets/parcel.svg'
+import ShippingIcon from '../assets/shipping-fast.svg'
 import Bookings from './Bookings'
+import Cars from './Cars'
 import CreateBooking from './CreateBooking'
-import { useParams } from 'react-router-dom'
+import { Switch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
+import Hooks from '../Hooks'
+import CarDetails from './CarDetails'
 
 const Container = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  height: 100vh;
-  background: white;
-  width: 350px;
   z-index: 1;
-  transition: transform 200ms ease;
-  transform: translateX(-100%);
-  padding: 2rem;
-  ${({ open }) => open && 'transform: translateX(50px);'}
+  background: white;
+  height: 100vh;
+  display: flex;
 `
 
-const NavStrip = styled.div`
-  padding-top: 1rem;
-  position: absolute;
-  left: 0;
-  top: 0;
+const NavigationBar = styled.div`
+  padding: 2rem 1rem;
   height: 100vh;
   background: #abd4ed;
-  width: 50px;
-  z-index: 2;
+  color: white;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.2);
 
   img {
     width: 30px;
     height: 30px;
     cursor: pointer;
+    margin-bottom: 2rem;
   }
 `
 
-const Sidebar = (data) => {
-  const [open, setOpen] = React.useState(true)
-  const { id } = useParams()
+const Details = ({ state }) => {
+  const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
+  console.log(data)
+  return type === 'booking' ? (
+    <BookingDetails booking={data} />
+  ) : (
+    <CarDetails car={data} />
+  )
+}
 
-  return (
-    <>
-      <NavStrip>
-        <img onClick={() => setOpen((current) => !current)} src={Icon} alt="" />
-      </NavStrip>
-      <Container open={open}>
-        {!id ? (
+const Content = styled.div`
+  padding: 2rem;
+  width: 325px;
+`
+
+const Sidebar = (data) => {
+  const [navigationCurrentView, setNavigationCurrentView] = React.useState(
+    'bookings'
+  )
+
+  const currentViewToElement = () => {
+    switch (navigationCurrentView) {
+      case 'bookings':
+        return (
           <>
             <CreateBooking createBooking={data.createBooking} />
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={data.bookings} />
           </>
-        ) : (
-          <BookingDetails booking={data.bookings.find((b) => b.id === id)} />
-        )}
-      </Container>
-    </>
+        )
+      case 'cars':
+        return (
+          <>
+            <h3>Aktuella bilar</h3>
+            <Cars cars={data.cars} />
+          </>
+        )
+      default:
+        return null
+    }
+  }
+  return (
+    <Container>
+      <NavigationBar>
+        <Link to="/">
+          <img
+            onClick={() => setNavigationCurrentView('bookings')}
+            src={ParcelIcon}
+            alt="parcel icon"
+          />
+        </Link>
+        <Link to="/">
+          <img
+            onClick={() => setNavigationCurrentView('cars')}
+            src={ShippingIcon}
+            alt="shipping icon"
+          />
+        </Link>
+      </NavigationBar>
+
+      <Content>
+        <Switch>
+          <Route exact path="/">
+            {currentViewToElement()}
+          </Route>
+          <Route path="/details">
+            <Details state={data} />
+          </Route>
+        </Switch>
+      </Content>
+    </Container>
   )
 }
 

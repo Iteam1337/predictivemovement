@@ -3,7 +3,7 @@ import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Start from './Start'
 
 const App = () => {
@@ -34,12 +34,10 @@ const App = () => {
   return (
     <>
       <Router>
-        <Switch>
-          <Route path="/:details?/:id?">
-            <Sidebar {...state} createBooking={createBooking} />
-            <Start state={state} />
-          </Route>
-        </Switch>
+        <Sidebar {...state} createBooking={createBooking} />
+        <Route path="/">
+          <Start state={state} />
+        </Route>
       </Router>
     </>
   )

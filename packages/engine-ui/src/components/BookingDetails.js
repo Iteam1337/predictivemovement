@@ -4,7 +4,7 @@ import Elements from './Elements'
 
 const BookingDetails = ({ booking }) => {
   if (!booking) return <p>Loading...</p>
-  console.log('booking', booking.assigned_to)
+
   return (
     <div>
       <Elements.StrongParagraph>ID:</Elements.StrongParagraph>
@@ -20,8 +20,8 @@ const BookingDetails = ({ booking }) => {
       <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
       <span>{booking.status}</span>
 
-      <Elements.StrongParagraph>Assigned to: </Elements.StrongParagraph>
-      <span>{booking.assigned_to.id}</span>
+      {/* <Elements.StrongParagraph>Assigned to: </Elements.StrongParagraph>
+      <span>{booking.assigned_to.id}</span> */}
     </div>
   )
 }

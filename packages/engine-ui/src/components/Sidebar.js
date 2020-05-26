@@ -5,10 +5,11 @@ import ShippingIcon from '../assets/shipping-fast.svg'
 import Bookings from './Bookings'
 import Cars from './Cars'
 import CreateBooking from './CreateBooking'
-import { Switch, Route, Link } from 'react-router-dom'
+import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../Hooks'
 import CarDetails from './CarDetails'
+import Elements from './Elements'
 
 const Container = styled.div`
   position: absolute;
@@ -23,7 +24,7 @@ const Container = styled.div`
 const NavigationBar = styled.div`
   padding: 2rem 1rem;
   height: 100vh;
-  background: #abd4ed;
+  background: #64b5f6;
   color: white;
   display: flex;
   flex-direction: column;
@@ -58,6 +59,8 @@ const Sidebar = (data) => {
     'bookings'
   )
 
+  const [isChecked, setIsChecked] = React.useState(false)
+
   const currentViewToElement = () => {
     switch (navigationCurrentView) {
       case 'bookings':
@@ -79,6 +82,12 @@ const Sidebar = (data) => {
         return null
     }
   }
+
+  const handleFilterChange = (event) => {
+    event.persist()
+    setIsChecked((currentValue) => !currentValue)
+  }
+
   return (
     <Container>
       <NavigationBar>
@@ -99,14 +108,20 @@ const Sidebar = (data) => {
       </NavigationBar>
 
       <Content>
-        <Switch>
+        <RouterSwitch>
           <Route exact path="/">
-            {currentViewToElement()}
+            <>
+              <Elements.Switch
+                checked={isChecked}
+                onChange={handleFilterChange}
+              />
+              {currentViewToElement()}
+            </>
           </Route>
           <Route path="/details">
             <Details state={data} />
           </Route>
-        </Switch>
+        </RouterSwitch>
       </Content>
     </Container>
   )

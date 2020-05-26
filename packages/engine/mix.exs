@@ -31,8 +31,9 @@ defmodule Engine.MixProject do
       {:httpoison, "~> 1.6"},
       {:polyline, "~> 1.2"},
       {:jason, "~> 1.2"},
-      {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
+      {:mix_test_watch, "~> 0.8", runtime: false},
       {:math, "~> 0.4.0"},
+      {:mox, "~> 0.5", only: :test},
       {:poison, "~> 3.1"},
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true}
       # {:dep_from_hexpm, "~> 0.3.0"},

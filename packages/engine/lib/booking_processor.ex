@@ -36,18 +36,11 @@ defmodule Engine.BookingProcessor do
 
     vehicles
     |> Enum.zip(bookings)
-    |> Enum.each(&offer/1)
+    |> Enum.each(&Vehicle.offer/1)
 
     %Broadway.Message{
       data: {vehicles, bookings},
       acknowledger: acknowledger
     }
-  end
-
-  def offer({%Vehicle{id: id} = vehicle, %Booking{} = booking}) do
-    IO.inspect(vehicle, label: "offer to vehicle")
-    accepted = AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
-
-    IO.puts("Did the vehicle accept? The answer is #{accepted}")
   end
 end

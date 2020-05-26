@@ -17,6 +17,8 @@ defmodule Engine.MatchProducer do
     {:producer, %{vehicles: [], bookings: []}}
   end
 
+  ## Select events -> dispatch
+
   def handle_info({:basic_consume_ok, _}, state) do
     {:noreply, [], state}
   end
@@ -44,6 +46,8 @@ defmodule Engine.MatchProducer do
     dispatch_events(vehicles, [booking | bookings])
   end
 
+  ## send messages to broadway and update state
+
   def dispatch_events(vehicles, [] = _bookings),
     do: {:noreply, [], %{bookings: [], vehicles: vehicles}}
 
@@ -56,8 +60,11 @@ defmodule Engine.MatchProducer do
       acknowledger: {__MODULE__, :ack_id, :ack_data}
     }
 
+    # pick out the message and return the state we want to keep
     {:noreply, [message], %{bookings: bookings, vehicles: vehicles}}
   end
+
+  ## handle backpressure
 
   def handle_demand(_demand, state) do
     {:noreply, [], state}
@@ -66,6 +73,8 @@ defmodule Engine.MatchProducer do
   def ack(_ack_ref, _successful, _failed) do
     :ok
   end
+
+  ## helpers
 
   def string_to_vehicle_transform(vehicle_string) do
     %{position: position, id: id} = vehicle_string |> Poison.decode!(keys: :atoms!)
@@ -81,6 +90,8 @@ defmodule Engine.MatchProducer do
     |> Map.put(:id, decoded.id)
     |> Map.put(:senderId, decoded.senderId)
   end
+
+  ## set up queues
 
   defp create_rmq_resources do
     # Setup RabbitMQ connection

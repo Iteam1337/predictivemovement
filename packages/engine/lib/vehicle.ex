@@ -1,4 +1,5 @@
 defmodule Vehicle do
+  @callback offer(tuple()) :: boolean()
   defstruct id: 0,
             position: %{lon: 53, lat: 14},
             heading: nil,
@@ -67,5 +68,13 @@ defmodule Vehicle do
   def get_osrm_distance(instructions) do
     Osrm.route(instructions)
     |> Map.get(:distance)
+  end
+
+  def offer({%Vehicle{id: id} = vehicle, %Booking{} = booking}) do
+    IO.inspect(vehicle, label: "offer to vehicle")
+
+    AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
+    |> Poison.decode()
+    |> IO.inspect(label: "the driver answered")
   end
 end

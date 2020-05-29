@@ -172,7 +172,7 @@ defmodule BookingProcessorTest do
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    {%Vehicle{id: "tesla", instructions: instructions}, _} = CandidatesStore.get_candidates()
+    [%Vehicle{id: "tesla", instructions: instructions}] = CandidatesStore.get_candidates()
 
     assert length(instructions) == 3
   end
@@ -209,7 +209,7 @@ defmodule BookingProcessorTest do
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    {%Vehicle{id: "volvo", instructions: instructions}, _} = CandidatesStore.get_candidates()
+    [%Vehicle{id: "volvo", instructions: instructions}] = CandidatesStore.get_candidates()
 
     assert length(instructions) == 3
   end

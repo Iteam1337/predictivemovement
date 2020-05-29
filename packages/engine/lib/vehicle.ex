@@ -4,7 +4,8 @@ defmodule Vehicle do
             heading: nil,
             busy: false,
             instructions: [],
-            orsm_route: nil
+            orsm_route: nil,
+            booking_ids: []
 
   def make(id, position, busy \\ false) do
     %Vehicle{id: id, position: position, busy: busy}

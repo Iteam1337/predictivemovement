@@ -30,15 +30,14 @@ defmodule Engine.BookingProcessor do
       @candidates.find_optimal_routes(vehicles, bookings)
       |> IO.inspect(label: "optimal routes")
 
-    vehicles =
-      routes
-      |> Enum.map(fn %{activities: activities, vehicle_id: id} ->
-        %Vehicle{instructions: activities, id: id}
-      end)
+    routes
+    |> Enum.map(fn %{activities: activities, vehicle_id: id} ->
+      booking_ids =
+        activities |> Enum.filter(&Map.has_key?(&1, :id)) |> Enum.map(& &1.id) |> Enum.uniq()
 
-    vehicles
-    |> Enum.zip(bookings)
-    |> Enum.each(&CandidatesStore.put_candidates/1)
+      %Vehicle{instructions: activities, id: id, booking_ids: booking_ids}
+    end)
+    |> CandidatesStore.put_candidates()
 
     %Broadway.Message{
       data: {vehicles, bookings},

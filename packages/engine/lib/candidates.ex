@@ -1,4 +1,6 @@
 defmodule Candidates do
+  @behaviour CandidatesBehavior
+
   def find_optimal_routes(cars, bookings) do
     IO.puts("call candidates_request")
 

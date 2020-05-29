@@ -38,7 +38,7 @@ defmodule Engine.BookingProcessor do
 
     vehicles
     |> Enum.zip(bookings)
-    |> Enum.map(&@vehicle.offer/1)
+    |> Enum.each(&CandidatesStore.put_candidates/1)
 
     %Broadway.Message{
       data: {vehicles, bookings},

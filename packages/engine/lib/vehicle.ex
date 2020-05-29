@@ -70,14 +70,40 @@ defmodule Vehicle do
     |> Map.get(:distance)
   end
 
-  def offer({%Vehicle{id: id} = vehicle, %Booking{} = booking}) do
+  def offer(%Vehicle{id: id, instructions: instructions, booking_ids: booking_ids} = vehicle) do
     IO.inspect(vehicle, label: "offer to vehicle")
+    instructions_without_start = Enum.filter(instructions, &Map.has_key?(&1, :id))
 
-    accepted =
-      AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
-      |> Poison.decode()
-      |> IO.inspect(label: "the driver answered")
+    accepted_bookings =
+      booking_ids
+      |> Enum.map(fn id ->
+        Enum.filter(instructions_without_start, fn instruction -> instruction.id == id end)
+      end)
+      |> IO.inspect(label: "instructions for booking")
+      |> Enum.each(fn instructions_for_booking ->
+        instruction =
+          instructions_for_booking
+          |> Enum.map(fn %{address: address, type: type} -> {address, type} end)
 
-    %{vehicle: vehicle, booking: booking, accepted: accepted}
+        booking =
+          Map.new()
+          |> Map.put(
+            :pickup,
+            Enum.find(instruction, fn {_, type} -> type == "pickupShipment" end)
+            |> elem(0)
+          )
+          |> Map.put(
+            :delivery,
+            Enum.find(instruction, fn {_, type} -> type == "deliverShipment" end)
+            |> elem(0)
+          )
+          |> IO.inspect(label: "booking")
+
+        AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
+        |> Poison.decode()
+        |> IO.inspect(label: "the driver answered")
+      end)
+
+    %{vehicle: vehicle, booking_ids: booking_ids, accepted_bookings: accepted_bookings}
   end
 end

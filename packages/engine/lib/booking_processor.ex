@@ -25,7 +25,7 @@ defmodule Engine.BookingProcessor do
         _context
       ) do
     IO.inspect({vehicles, bookings}, label: "oh a message")
-    # vehicles -> [instructions]
+
     %{solution: %{routes: routes}} =
       @candidates.find_optimal_routes(vehicles, bookings)
       |> IO.inspect(label: "optimal routes")

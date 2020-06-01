@@ -1,4 +1,4 @@
-let bookingsCache = new Map()
+const bookingsCache = new Map()
 
 module.exports = {
   getBooking: (id) => bookingsCache.get(id),

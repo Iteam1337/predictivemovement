@@ -1,5 +1,5 @@
 import palette from '../palette'
-import { GeoJsonLayer, IconLayer, PathLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
 import markerIcon from '../assets/car.svg'
 
 export const point = (coordinates, props) => ({
@@ -53,56 +53,23 @@ export const hexToRGB = (hex) => {
   return [r, g, b]
 }
 
-export const carToFeature = (newCars, carCollection, carLineCollection) => {
-  const carFeatures = [
-    ...carCollection.features.filter(
-      (car) => !newCars.some((nc) => nc.id === car.id)
-    ),
-    ...newCars.flatMap(({ id, tail, position, heading, detour }, i) => [
-      multiPoint(
-        [
-          [position.lon, position.lat],
-          [heading.lon, heading.lat],
-        ],
-        {
-          properties: {
-            color: palette[i][0],
-            diff: diff(heading, detour),
-          },
-          id,
-          tail,
-        }
-      ),
-    ]),
-  ]
+export const routeAssignedToBooking = (assignedTo) =>
+  line(
+    assignedTo.route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+    {
+      id: assignedTo.id,
+      properties: {
+        color: palette[0][0],
+        offset: 0,
+      },
+    }
+  )
 
-  const carLineFeatures = [
-    ...carLineCollection.features.filter(
-      (carLine) => !newCars.some((nc) => nc.id === carLine.id)
-    ),
-
-    ...newCars.flatMap(({ id, detour }, i) =>
-      feature(detour.geometry, {
-        id,
-        properties: {
-          color: palette[i][0],
-          offset: i * 2,
-        },
-      })
-    ),
-  ]
-
-  return { carFeatures, carLineFeatures }
-}
-
-export const movingCarToFeature = (newCars, movingCarsCollection) => {
+export const carToFeature = (cars) => {
   let index = 0
   try {
     return [
-      ...movingCarsCollection.features.filter(
-        (car) => !newCars.some((nc) => nc.id === car.id)
-      ),
-      ...newCars.flatMap(({ id, tail, position, heading }, i) => {
+      ...cars.flatMap(({ id, tail, position }, i) => {
         index = i
         return [
           point([position.lon, position.lat], {
@@ -121,55 +88,74 @@ export const movingCarToFeature = (newCars, movingCarsCollection) => {
   }
 }
 
-export const bookingToFeature = (newBookings) =>
-  newBookings.flatMap(({ id, departure, destination }) => [
-    multiPoint(
-      [
-        [departure.lon, departure.lat],
-        // [destination.lon, destination.lat],
-      ],
-      {
-        id,
-        properties: {
-          color: '#ffff00', // yellow
-        },
-      }
-    ),
-    multiPoint(
-      [
-        // [departure.lon, departure.lat],
-        [destination.lon, destination.lat],
-      ],
-      {
-        id,
-        properties: {
-          color: '#455DF7', // blue
-        },
-      }
-    ),
-    line(
-      [
-        [destination.lon, destination.lat],
-        [departure.lon, departure.lat],
-      ],
-      {
-        id,
-        properties: {
-          color: '#dd0000',
-        },
-      }
-    ),
-  ])
+export const bookingToFeature = (bookings) =>
+  bookings.flatMap(({ id, departure, destination, status, assigned_to }) => {
+    switch (status) {
+      case 'new':
+        return [
+          point([departure.lon, departure.lat], {
+            id,
+            properties: {
+              status,
+              color: '#ffff00', // yellow
+            },
+          }),
+          point([destination.lon, destination.lat], {
+            id,
+            properties: {
+              color: '#455DF7', // blue
+              status,
+            },
+          }),
+          line(
+            [
+              [destination.lon, destination.lat],
+              [departure.lon, departure.lat],
+            ],
+            {
+              id,
+              properties: {
+                status,
+                color: '#dd0000',
+              },
+            }
+          ),
+        ]
+      default:
+        return [
+          point([departure.lon, departure.lat], {
+            id,
+            properties: {
+              status,
+              color: '#ffff00', // yellow
+            },
+          }),
+          point([destination.lon, destination.lat], {
+            id,
+            properties: {
+              color: '#455DF7', // blue
+              status,
+            },
+          }),
+          line(
+            [
+              [destination.lon, destination.lat],
+              [departure.lon, departure.lat],
+            ],
+            {
+              id,
+              properties: {
+                status,
+                color: '#dd0000',
+              },
+            }
+          ),
+          routeAssignedToBooking(assigned_to),
+        ]
+    }
+  })
 
-export const diff = (
-  { route: { distance: headingDistance, duration: headingDuration } },
-  { distance: detourDistance, duration: detourDuration }
-) => ({
-  duration: detourDuration - headingDuration,
-  distance: detourDistance - headingDistance,
-})
-
-export const toGeoJsonLayer = (id, data, callback) =>
+export const toGeoJsonLayer = (id, data) =>
   new GeoJsonLayer({
     id,
     data,
@@ -186,15 +172,27 @@ export const toGeoJsonLayer = (id, data, callback) =>
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
-    onHover: ({ object }) => object && callback(object),
+    pointRadiusScale: 1,
+    pointRadiusMaxPixels: 10,
   })
 
-export const toIconLayer = (data) => {
-  const ICON_MAPPING = {
-    marker: { x: 0, y: 0, width: 160, height: 160, mask: true },
+export const toIconLayer = (data, callback) => {
+  if (!data.length) {
+    return
   }
-  const iconData = data.features.map((feature) => ({
+  const ICON_MAPPING = {
+    marker: {
+      x: 0,
+      y: 0,
+      width: 160,
+      height: 160,
+      mask: true,
+    },
+  }
+
+  const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
+    properties: { id: feature.id },
   }))
 
   return new IconLayer({
@@ -208,7 +206,6 @@ export const toIconLayer = (data) => {
     getPosition: (d) => d.coordinates,
     getSize: (d) => 5,
     getColor: (d) => [Math.sqrt(d.exits), 140, 0],
-    onHover: ({ object, x, y }) => {},
   })
 }
 
@@ -218,7 +215,6 @@ export default {
   point,
   line,
   bookingToFeature,
-  movingCarToFeature,
   carToFeature,
   toGeoJsonLayer,
   toIconLayer,

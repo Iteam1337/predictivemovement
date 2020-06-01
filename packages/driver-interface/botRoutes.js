@@ -59,7 +59,7 @@ const init = (bot) => {
             const { id } = callbackPayload
             ch.publish(
               BOOKINGS,
-              'delivery',
+              'delivered',
               Buffer.from(JSON.stringify(getBooking(id)))
             )
           })

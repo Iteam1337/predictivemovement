@@ -1,135 +1,126 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import Icon from '../assets/dashboard.svg'
+import ParcelIcon from '../assets/parcel.svg'
+import ShippingIcon from '../assets/shipping-fast.svg'
+import Bookings from './Bookings'
+import Cars from './Cars'
+import CreateBooking from './CreateBooking'
+import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
+import BookingDetails from './BookingDetails'
+import Hooks from '../Hooks'
+import CarDetails from './CarDetails'
+import Filters from './Filters'
 
 const Container = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  height: 100vh;
-  background: #fcf7fc;
-  width: 250px;
   z-index: 1;
-  transition: transform 200ms ease;
-  transform: translateX(-100%);
-  padding: 1rem;
-
-  ${({ open }) => open && 'transform: translateX(50px);'}
+  background: white;
+  height: 100vh;
+  display: flex;
 `
 
-const NavStrip = styled.div`
-  padding-top: 1rem;
-  position: absolute;
-  left: 0;
-  top: 0;
+const NavigationBar = styled.div`
+  padding: 2rem 1rem;
   height: 100vh;
-  background: dodgerblue;
-  width: 50px;
-  z-index: 2;
+  background: #64b5f6;
+  color: white;
   display: flex;
-  justify-content: center;
-  box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.5);
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.2);
 
   img {
     width: 30px;
     height: 30px;
-    :hover {
-      cursor: pointer;
-    }
+    cursor: pointer;
+    margin-bottom: 2rem;
   }
 `
 
-const CreateBooking = ({ createBooking }) => {
-  const [formState, setState] = React.useState({
-    pickup: '61.8294925,16.0565493',
-    dropoff: '61.8644045,16.001133',
-  })
+const Details = ({ state }) => {
+  const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
 
-  const create = (event) => {
-    event.preventDefault()
-
-    const pickup = formState.pickup
-      .split(',')
-      .map(parseFloat)
-      .filter((x) => !!x)
-    const dropoff = formState.dropoff
-      .split(',')
-      .map(parseFloat)
-      .filter((x) => !!x)
-
-    if (!pickup.length || !dropoff.length) return false
-    createBooking({ pickup, dropoff })
+  const componentFromType = () => {
+    switch (type) {
+      case 'booking':
+        return <BookingDetails booking={data.bookings[0]} />
+      case 'car':
+        return <CarDetails car={data.cars[0]} />
+      default:
+        return null
+    }
   }
-  return (
-    <div>
-      <h2>Skapa en ny bokning</h2>
-      <form onSubmit={create}>
-        <div>
-          <div>
-            <label>Pickup</label>
-          </div>
-          <input
-            type="text"
-            value={formState.pickup}
-            onChange={(e) =>
-              setState({
-                pickup: e.target.value,
-                dropoff: formState.dropoff,
-              })
-            }
-          />
-        </div>
-        <div>
-          <div>
-            <label>Dropoff</label>
-          </div>
-          <input
-            type="text"
-            value={formState.dropoff}
-            onChange={(e) =>
-              setState({
-                pickup: formState.pickup,
-                dropoff: e.target.value,
-              })
-            }
-          />
-        </div>
-        <div>
-          <button type="submit">Skapa bokning</button>
-        </div>
-      </form>
-    </div>
-  )
+
+  return componentFromType()
 }
 
-const Sidebar = (data) => {
-  const [open, setOpen] = React.useState(true)
+const Content = styled.div`
+  padding: 2rem;
+  width: 325px;
+`
 
-  useEffect(() => {
-    if (!data.id) return
-    setOpen(true)
-  }, [data])
+const Sidebar = (state) => {
+  const [navigationCurrentView, setNavigationCurrentView] = React.useState(
+    'bookings'
+  )
+
+  const { data } = Hooks.useFilteredStateFromQueryParams(state)
+
+  const currentViewToElement = () => {
+    switch (navigationCurrentView) {
+      case 'bookings':
+        return (
+          <>
+            <CreateBooking createBooking={state.createBooking} />
+            <Filters />
+            <h3>Aktuella bokningar</h3>
+            <Bookings bookings={data.bookings} />
+          </>
+        )
+      case 'cars':
+        return (
+          <>
+            <h3>Aktuella bilar</h3>
+            <Cars cars={data.cars} />
+          </>
+        )
+      default:
+        return null
+    }
+  }
 
   return (
-    <>
-      <NavStrip>
-        <img onClick={() => setOpen((current) => !current)} src={Icon} alt="" />
-      </NavStrip>
-      <Container open={open}>
-        <CreateBooking createBooking={data.createBooking} />
-        {data && data.id && (
-          <>
-            <p>{data.id}</p>
-            {data.properties.diff && (
-              <p>{`Duration diff: ${data.properties.diff.duration}`}</p>
-            )}
-            {data.properties.diff && (
-              <p>{`Distance diff: ${data.properties.diff.distance}`}</p>
-            )}
-          </>
-        )}
-      </Container>
-    </>
+    <Container>
+      <NavigationBar>
+        <Link to="/">
+          <img
+            onClick={() => setNavigationCurrentView('bookings')}
+            src={ParcelIcon}
+            alt="parcel icon"
+          />
+        </Link>
+        <Link to="/">
+          <img
+            onClick={() => setNavigationCurrentView('cars')}
+            src={ShippingIcon}
+            alt="shipping icon"
+          />
+        </Link>
+      </NavigationBar>
+
+      <Content>
+        <RouterSwitch>
+          <Route exact path="/">
+            <>{currentViewToElement()}</>
+          </Route>
+          <Route path="/details">
+            <Details state={data} />
+          </Route>
+        </RouterSwitch>
+      </Content>
+    </Container>
   )
 }
 

@@ -1,0 +1,36 @@
+{
+  "name": "booking-dispatcher",
+  "version": "0.0.0",
+  "description": "Dispatch bookings from spreadsheet",
+  "author": "Simon Lundell <simon.lundell@iteam.se>",
+  "homepage": "https://github.com/Iteam1337/predictivemovement#readme",
+  "license": "ISC",
+  "main": "lib/booking-dispatcher.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Iteam1337/predictivemovement.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "dev": "nodemon lib/booking-dispatcher.js"
+  },
+  "bugs": {
+    "url": "https://github.com/Iteam1337/predictivemovement/issues"
+  },
+  "dependencies": {
+    "date-fns": "^2.14.0",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.0",
+    "xlsx": "^0.16.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

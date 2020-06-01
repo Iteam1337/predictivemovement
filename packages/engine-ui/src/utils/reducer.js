@@ -3,7 +3,12 @@ export const reducer = (state, action) => {
     case 'setCars':
       return {
         ...state,
-        cars: action.payload,
+        cars: [
+          ...state.cars.filter(
+            (c) => !action.payload.find((p) => p.id === c.id)
+          ),
+          ...action.payload,
+        ],
       }
     case 'setBookings':
       return {

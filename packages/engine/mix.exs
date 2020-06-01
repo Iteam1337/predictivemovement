@@ -16,7 +16,17 @@ defmodule Engine.MixProject do
   def application do
     [
       env: [
-        amqp_host: "amqp://localhost"
+        amqp_host: "amqp://localhost",
+        bookings_exchange: "bookings",
+        cars_exchange: "cars",
+        candidates_exchange: "candidates",
+        booking_requests_queue: "booking_requests",
+        routes_queue: "routes",
+        pickup_offers_queue: "pickup_offers",
+        # TODO: Rename when we update message size in Telegram
+        pickup_response_queue: "p_response",
+        booking_assignments_exchange: "booking_assignments",
+        booking_updates_queue: "booking_updates"
       ],
       extra_applications: [:logger],
       mod: {Engine.Application, []}

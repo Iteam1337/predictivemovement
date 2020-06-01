@@ -80,7 +80,7 @@ defmodule Vehicle do
         Enum.filter(instructions_without_start, fn instruction -> instruction.id == id end)
       end)
       |> IO.inspect(label: "instructions for booking")
-      |> Enum.each(fn instructions_for_booking ->
+      |> Enum.map(fn instructions_for_booking ->
         instruction =
           instructions_for_booking
           |> Enum.map(fn %{address: address, type: type} -> {address, type} end)
@@ -99,10 +99,14 @@ defmodule Vehicle do
           )
           |> IO.inspect(label: "booking")
 
-        MQ.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
-        |> Poison.decode()
-        |> IO.inspect(label: "the driver answered")
+        {:ok, accepted} =
+          MQ.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
+          |> Poison.decode()
+          |> IO.inspect(label: "the driver answered")
+
+        %{vehicle: vehicle, booking: booking, accepted: accepted}
       end)
+      |> Enum.filter(fn %{accepted: accepted} -> accepted end)
 
     %{vehicle: vehicle, booking_ids: booking_ids, accepted_bookings: accepted_bookings}
   end

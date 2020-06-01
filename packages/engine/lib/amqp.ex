@@ -36,4 +36,34 @@ defmodule MQ do
 
     wait_for_messages(channel, correlation_id)
   end
+
+  ## TODO: @mikael- where should we place these?
+
+  def publish(data, exchange_name) do
+    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+    {:ok, channel} = AMQP.Channel.open(connection)
+    AMQP.Exchange.declare(channel, exchange_name, :fanout)
+
+    AMQP.Basic.publish(channel, exchange_name, "", Poison.encode!(data),
+      content_type: "application/json"
+    )
+
+    AMQP.Connection.close(connection)
+    data
+  end
+
+  def publish(data, exchange_name, routing_key) do
+    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+    {:ok, channel} = AMQP.Channel.open(connection)
+
+    AMQP.Exchange.declare(channel, exchange_name, :topic)
+
+    AMQP.Basic.publish(channel, exchange_name, routing_key, Poison.encode!(data),
+      content_type: "application/json"
+    )
+
+    AMQP.Connection.close(connection)
+
+    data
+  end
 end

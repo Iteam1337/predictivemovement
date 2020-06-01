@@ -7,7 +7,7 @@ defmodule MQ do
   end
 
   def call(data, queue, reply_queue) do
-    {:ok, connection} = AMQP.Connection.open()
+    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
     {:ok, channel} = AMQP.Channel.open(connection)
 
     {:ok, %{queue: _queue_name}} =

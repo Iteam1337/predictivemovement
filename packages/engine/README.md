@@ -21,4 +21,5 @@
 - [ ] If some producer needs to send metadata they should include it in a meta property
 - [ ] Offer the vehicles the bookings and gather the response
 - [ ] Dockerfile + yaml for running in test environment
+- [ ] Remove unused code from car (route_score, permutations etc)
 - [ ] Profit!

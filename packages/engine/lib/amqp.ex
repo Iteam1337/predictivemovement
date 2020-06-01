@@ -1,4 +1,4 @@
-defmodule AMQP do
+defmodule MQ do
   def wait_for_messages(_channel, correlation_id) do
     receive do
       {:basic_deliver, payload, %{correlation_id: ^correlation_id}} ->

@@ -99,7 +99,7 @@ defmodule Vehicle do
           )
           |> IO.inspect(label: "booking")
 
-        AMQP.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
+        MQ.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
         |> Poison.decode()
         |> IO.inspect(label: "the driver answered")
       end)

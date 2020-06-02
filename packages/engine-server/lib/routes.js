@@ -1,5 +1,5 @@
 const _ = require('highland')
-const { bookings, cars, createBooking } = require('./engineConnector')
+const { bookings, cars, createBooking, dispatchOffers } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const movingCarsCache = new Map()
@@ -54,6 +54,10 @@ function register(io) {
       }
 
       createBooking(booking)
+    })
+
+    socket.on('dispatch-offers', () => {
+      dispatchOffers()
     })
   })
 }

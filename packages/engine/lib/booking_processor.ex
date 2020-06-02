@@ -38,8 +38,6 @@ defmodule Engine.BookingProcessor do
     end)
     |> CandidatesStore.put_candidates()
 
-    Dispatcher.dispatch_offers()
-
     %Broadway.Message{
       data: {vehicles, bookings},
       acknowledger: acknowledger

@@ -49,8 +49,13 @@ const createBooking = (booking) => {
     )
 }
 
+const dispatchOffers = () => {
+  return amqp.queue('dispatch_offers', { durable: false }).publish('just do it!')
+}
+
 module.exports = {
   bookings,
   cars,
   createBooking,
+  dispatchOffers
 }

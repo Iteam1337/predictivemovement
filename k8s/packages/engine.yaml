@@ -21,6 +21,6 @@ spec:
           imagePullPolicy: Always
           env:
             - name: AMQP_HOST
-              value: amqp://rabbitmq
+              value: rabbitmq
           resources: {}
       restartPolicy: Always

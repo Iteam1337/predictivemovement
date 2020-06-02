@@ -16,7 +16,7 @@ defmodule Engine.MixProject do
   def application do
     [
       env: [
-        amqp_host: "amqp://localhost",
+        amqp_host: "localhost",
         bookings_exchange: "bookings",
         cars_exchange: "cars",
         candidates_exchange: "candidates",
@@ -36,6 +36,7 @@ defmodule Engine.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:amqp, "~> 1.0"},
       {:flow, "~> 1.0.0"},
       {:broadway, "~> 0.6.0"},
       {:broadway_rabbitmq, "~> 0.6.0"},

@@ -8,7 +8,8 @@ defmodule Engine.Application do
   def start(_type, _args) do
     children = [
       Engine.BookingProcessor,
-      CandidatesStore
+      CandidatesStore,
+      Engine.AdminProcessor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

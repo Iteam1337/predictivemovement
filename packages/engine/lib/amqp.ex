@@ -7,7 +7,9 @@ defmodule MQ do
   end
 
   def call(data, queue, reply_queue) do
-    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+    {:ok, connection} =
+      AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
+
     {:ok, channel} = AMQP.Channel.open(connection)
 
     {:ok, %{queue: _queue_name}} =
@@ -40,7 +42,9 @@ defmodule MQ do
   ## TODO: @mikael- where should we place these?
 
   def publish(data, exchange_name) do
-    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+    {:ok, connection} =
+      AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
+
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Exchange.declare(channel, exchange_name, :fanout)
 
@@ -53,7 +57,9 @@ defmodule MQ do
   end
 
   def publish(data, exchange_name, routing_key) do
-    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+    {:ok, connection} =
+      AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
+
     {:ok, channel} = AMQP.Channel.open(connection)
 
     AMQP.Exchange.declare(channel, exchange_name, :topic)
@@ -65,5 +71,13 @@ defmodule MQ do
     AMQP.Connection.close(connection)
 
     data
+  end
+
+  def declare_queue(queue) do
+    {:ok, connection} =
+      AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
+
+    {:ok, channel} = AMQP.Channel.open(connection)
+    AMQP.Queue.declare(channel, queue, durable: false)
   end
 end

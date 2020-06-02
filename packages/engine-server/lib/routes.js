@@ -35,21 +35,21 @@ function register(io) {
       .errors(console.error)
       .each((cars) => socket.emit('cars', cars))
 
-    socket.on('new-booking', ({ pickup, dropoff }) => {
+    socket.on('new-booking', ({ pickup, delivery }) => {
       const [pickupLat, pickupLon] = pickup
-      const [dropoffLat, dropoffLon] = dropoff
+      const [deliveryLat, deliveryLon] = delivery
 
       const booking = {
         id: id62(),
         senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
         bookingDate: new Date().toISOString(),
-        departure: {
+        pickup: {
           lat: pickupLat,
           lon: pickupLon,
         },
-        destination: {
-          lat: dropoffLat,
-          lon: dropoffLon,
+        delivery: {
+          lat: deliveryLat,
+          lon: deliveryLon,
         },
       }
 

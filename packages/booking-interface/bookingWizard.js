@@ -14,11 +14,11 @@ stepHandler.action('confirm', (ctx) => {
     id: uuidv4(),
     senderId,
     bookingDate: new Date().toISOString(),
-    departure: {
+    pickup: {
       lon: ctx.wizard.state.data.from.lon,
       lat: ctx.wizard.state.data.from.lat,
     },
-    destination: {
+    delivery: {
       lon: ctx.wizard.state.data.to.lon,
       lat: ctx.wizard.state.data.to.lat,
     },

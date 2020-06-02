@@ -85,8 +85,8 @@ defmodule Engine.MatchProducer do
     decoded = Poison.decode!(booking_string, keys: :atoms)
 
     %Booking{}
-    |> Map.put(:pickup, decoded.departure)
-    |> Map.put(:delivery, decoded.destination)
+    |> Map.put(:pickup, decoded.pickup)
+    |> Map.put(:delivery, decoded.delivery)
     |> Map.put(:id, decoded.id)
     |> Map.put(:senderId, decoded.senderId)
   end

@@ -20,6 +20,6 @@
       -> 5 cars + 10 bookings -> candidate_request[5, 10] -> candidate_response[5, 10] -> offer -> accept[3, 5] + remainder[2, 5] -> candidate_request[2, 5] + new
 - [ ] If some producer needs to send metadata they should include it in a meta property
 - [ ] Offer the vehicles the bookings and gather the response
-- [ ] Dockerfile + yaml for running in test environment
+- [x] Dockerfile + yaml for running in test environment
 - [ ] Remove unused code from car (route_score, permutations etc)
 - [ ] Profit!

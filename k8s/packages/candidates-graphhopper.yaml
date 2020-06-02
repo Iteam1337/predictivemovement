@@ -21,3 +21,8 @@ spec:
           env:
             - name: AMQP_HOST
               value: amqp://rabbitmq
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: GRAPHHOPPER_API_KEY
+                  name: api-key

@@ -5,3 +5,10 @@ services:
     build: ./packages/engine-elixir
     environment:
       AMQP_HOST: amqp://rabbitmq
+    networks:
+      - predictivemovement
+
+networks:
+  predictivemovement:
+    driver: bridge
+    name: predictivemovement

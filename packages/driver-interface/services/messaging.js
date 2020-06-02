@@ -22,7 +22,7 @@ const sendPickupOffer = (
   { pickupAddress, deliveryAddress, booking }
 ) => {
   bot.telegram.sendMessage(
-    parseInt(chatId),
+    parseInt(chatId, 10),
     `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Har du möjlighet att hämta detta?
     [Se på kartan](https://www.google.com/maps/dir/${booking.pickup.lat},${booking.pickup.lon}/${booking.delivery.lat},${booking.delivery.lon})`,
     {

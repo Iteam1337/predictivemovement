@@ -27,6 +27,7 @@ const pickupOffers = () => {
                 vehicle,
                 booking: {
                   ...booking,
+                  assigned_to: vehicle,
                   pickupAddress,
                   deliveryAddress,
                 },

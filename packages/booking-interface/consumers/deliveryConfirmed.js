@@ -18,7 +18,7 @@ const deliveryConfirmed = () =>
           ch.bindQueue(
             queues.DELIVERY_CONFIRMED,
             exchanges.BOOKINGS,
-            routingKeys.DELIVERY
+            routingKeys.DELIVERED
           )
         )
         .then(

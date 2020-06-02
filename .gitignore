@@ -7,3 +7,4 @@ node_modules
 .env
 data/
 .vscode/
+docker-compose.dev.yml

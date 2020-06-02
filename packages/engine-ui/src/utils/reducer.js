@@ -3,67 +3,31 @@ export const reducer = (state, action) => {
     case 'setCars':
       return {
         ...state,
-        carCollection: {
-          ...state.carCollection,
-          features: action.payload,
-        },
-      }
-    case 'setMovingCars':
-      return {
-        ...state,
-        movingCarsCollection: action.payload,
+        cars: [
+          ...state.cars.filter(
+            (c) => !action.payload.find((p) => p.id === c.id)
+          ),
+          ...action.payload,
+        ],
       }
     case 'setBookings':
-      const newState = state.bookingCollection.features.concat(action.payload)
-
       return {
         ...state,
-        bookingCollection: {
-          ...state.bookingCollection,
-          features: newState,
-        },
-      }
-    case 'removeBookings':
-      const filtered = state.bookingCollection.features.filter(
-        (x) => !action.payload.some((i) => i.id === x.id)
-      )
-
-      return {
-        ...state,
-        bookingCollection: {
-          ...state.bookingCollection,
-          features: filtered,
-        },
-      }
-    case 'setCarsLines':
-      return {
-        ...state,
-        carLineCollection: {
-          ...state.carLineCollection,
-          features: action.payload,
-        },
-      }
-    case 'setCarInfo':
-      return {
-        ...state,
-        carInfo: {
+        bookings: [
+          ...state.bookings.filter(
+            (b) => !action.payload.find((p) => p.id === b.id)
+          ),
           ...action.payload,
-        },
+        ],
       }
     default:
       return state
   }
 }
 
-const featureCollection = {
-  type: 'FeatureCollection',
-  features: [],
-}
-
 export const initState = {
-  carCollection: featureCollection,
-  movingCarsCollection: featureCollection,
-  carLineCollection: featureCollection,
-  bookingCollection: featureCollection,
-  carInfo: {},
+  carBookingLineCollection: [],
+  bookings: [],
+  assignedBookings: [],
+  cars: [],
 }

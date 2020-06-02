@@ -55,8 +55,11 @@ const findRoutes = async (vehicles, bookings) => {
     vehicle_types: vehicleTypes,
     shipments: bookings.map(toShipment),
   }
-
-  const response = await axios.post(URL, payload)
+  try {
+    const response = await axios.post(URL, payload)
+  } catch (e) {
+    console.log("herro", e)
+  }
 
   return response.data
 }

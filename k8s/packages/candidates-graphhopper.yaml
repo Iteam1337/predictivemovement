@@ -25,4 +25,4 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: GRAPHHOPPER_API_KEY
-                  name: api-key
+                  name: graphhopper-api-key

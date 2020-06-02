@@ -13,7 +13,7 @@ build:
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine
-      context: packages/engine-elixir
+      context: packages/engine
       sync:
         infer:
           - "**/*.ex"
@@ -26,6 +26,8 @@ build:
         buildArgs:
           REACT_APP_MAPBOX_ACCESS_TOKEN: "{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}"
           REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
+    - image: iteam1337/pm-candidates-graphhoper
+      context: packages/candidates-graphhoper
 deploy:
   kubectl:
     manifests:
@@ -39,6 +41,7 @@ deploy:
       - k8s/cicd-rbac.yaml
       - k8s/packages/engine-server.yaml
       - k8s/packages/engine-ui.yaml
+      - k8s/packages/candidates-graphhoper.yaml
       # TODO: Disabled because this should be done once and not redeployed every time
       # - k8s/rabbitmq.yaml
 #    - k8s/osrm.yaml

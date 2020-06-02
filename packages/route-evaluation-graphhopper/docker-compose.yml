@@ -8,8 +8,9 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
     networks:
-      - pm-mapbox-test_default
+      - predictivemovement
 
 networks:
-  pm-mapbox-test_default:
-    external: true
+  predictivemovement:
+    driver: bridge
+    name: predictivemovement

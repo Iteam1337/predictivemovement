@@ -89,19 +89,19 @@ export const carToFeature = (cars) => {
 }
 
 export const bookingToFeature = (bookings) =>
-  bookings.flatMap(({ id, departure, destination, status, assigned_to }) => {
+  bookings.flatMap(({ id, pickup, delivery, status, assigned_to }) => {
     switch (status) {
       case 'new':
         return [
-          point([departure.lon, departure.lat], {
+          point([pickup.lon, pickup.lat], {
             id,
             properties: {
               status,
               color: '#ffff00', // yellow
             },
           }),
-          point([destination.lon, destination.lat], {
-            id,
+          point([delivery.lon, delivery.lat], {
+            id, 
             properties: {
               color: '#455DF7', // blue
               status,
@@ -109,8 +109,8 @@ export const bookingToFeature = (bookings) =>
           }),
           line(
             [
-              [destination.lon, destination.lat],
-              [departure.lon, departure.lat],
+              [delivery.lon, delivery.lat],
+              [pickup.lon, pickup.lat],
             ],
             {
               id,
@@ -123,14 +123,14 @@ export const bookingToFeature = (bookings) =>
         ]
       default:
         return [
-          point([departure.lon, departure.lat], {
+          point([pickup.lon, pickup.lat], {
             id,
             properties: {
               status,
               color: '#ffff00', // yellow
             },
           }),
-          point([destination.lon, destination.lat], {
+          point([delivery.lon, delivery.lat], {
             id,
             properties: {
               color: '#455DF7', // blue
@@ -139,8 +139,8 @@ export const bookingToFeature = (bookings) =>
           }),
           line(
             [
-              [destination.lon, destination.lat],
-              [departure.lon, departure.lat],
+              [delivery.lon, delivery.lat],
+              [pickup.lon, pickup.lat],
             ],
             {
               id,

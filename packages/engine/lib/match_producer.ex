@@ -95,7 +95,9 @@ defmodule Engine.MatchProducer do
 
   defp create_rmq_resources do
     # Setup RabbitMQ connection
-    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+    {:ok, connection} =
+      AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
+
     {:ok, channel} = AMQP.Channel.open(connection)
 
     # Create exchange

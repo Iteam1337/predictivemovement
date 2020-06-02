@@ -7,7 +7,10 @@ defmodule Engine.AdminProcessor do
     Broadway.start_link(__MODULE__,
       name: __MODULE__,
       producer: [
-        module: {BroadwayRabbitMQ.Producer, queue: "dispatch_offers"}
+        module: {BroadwayRabbitMQ.Producer, queue: "dispatch_offers"},
+        connection: [
+          host: Application.fetch_env!(:engine, :amqp_host)
+        ]
       ],
       processors: [
         default: [

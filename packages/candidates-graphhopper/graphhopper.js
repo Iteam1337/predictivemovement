@@ -1,6 +1,10 @@
 const axios = require('axios')
+if (!process.env.API_KEY) {
+  console.error("Graphhopper API key not specified")
+  process.exit(1)
+}
 const URL =
-  'https://graphhopper.com/api/1/vrp?key=85344d1b-4454-42df-b521-1be0f4fd2868'
+  `https://graphhopper.com/api/1/vrp?key=${process.env.API_KEY}`
 
 const CAR = {
   type_id: 'car',

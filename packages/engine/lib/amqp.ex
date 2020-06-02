@@ -66,4 +66,10 @@ defmodule MQ do
 
     data
   end
+
+  def declare_queue(queue) do
+    {:ok, connection} = AMQP.Connection.open(Application.fetch_env!(:engine, :amqp_host))
+    {:ok, channel} = AMQP.Channel.open(connection)
+    AMQP.Queue.declare(channel, queue, durable: false)
+  end
 end

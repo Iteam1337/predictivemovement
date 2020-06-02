@@ -9,7 +9,7 @@ defmodule CandidatesStore do
     {:ok, []}
   end
 
-  def handle_call({:put, new_candidates}, _from, state) do
+  def handle_call({:put, new_candidates}, _from, _state) do
     {:reply, :ok, new_candidates}
   end
 
@@ -18,7 +18,6 @@ defmodule CandidatesStore do
   end
 
   def put_candidates(candidates) do
-    IO.inspect(candidates)
     GenServer.call(__MODULE__, {:put, candidates})
   end
 

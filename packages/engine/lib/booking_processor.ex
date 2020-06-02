@@ -2,7 +2,6 @@ defmodule Engine.BookingProcessor do
   use Broadway
 
   @candidates Application.get_env(:engine, :candidates)
-  @vehicle Application.get_env(:engine, :vehicle)
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
@@ -38,8 +37,6 @@ defmodule Engine.BookingProcessor do
       %Vehicle{instructions: activities, id: id, booking_ids: booking_ids}
     end)
     |> CandidatesStore.put_candidates()
-
-    Dispatcher.dispatch_offers()
 
     %Broadway.Message{
       data: {vehicles, bookings},

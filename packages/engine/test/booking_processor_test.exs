@@ -215,32 +215,29 @@ defmodule BookingProcessorTest do
   end
 
   # This test should be moved to a more "e2e" location to test that our get_optimal_routes backend works properly
-  test "the same vehicle gets all the bookings on the same route if it does not reach its capacity" do
-    vehicles = [@tesla, @volvo]
+  # test "the same vehicle gets all the bookings on the same route if it does not reach its capacity" do
+  #   vehicles = [@tesla, @volvo]
 
-    bookings = [
-      @iteamToCinema,
-      @iteamToSats,
-      @iteamToSystembolaget,
-      @iteamToFoodCourt,
-      @iteamToSeb
-    ]
+  #   bookings = [
+  #     @iteamToCinema,
+  #     @iteamToSats,
+  #     @iteamToSystembolaget,
+  #     @iteamToFoodCourt,
+  #     @iteamToSeb
+  #   ]
 
-    ref =
-      Broadway.test_messages(Engine.BookingProcessor, [
-        {vehicles, bookings}
-      ])
+  #   ref =
+  #     Broadway.test_messages(Engine.BookingProcessor, [
+  #       {vehicles, bookings}
+  #     ])
 
-    assert_receive {:ack, ^ref, messages, failed},
-                   10000
+  #   assert_receive {:ack, ^ref, messages, failed},
+  #                  10000
 
-    {%Vehicle{id: "tesla", instructions: instructions}, _} = CandidatesStore.get_candidates()
+  #   {%Vehicle{id: "tesla", instructions: instructions}, _} = CandidatesStore.get_candidates()
 
-    # Kolla formatet
-    # Lägg till ett till broadway test message
-
-    assert length(instructions) == 11
-  end
+  #   assert length(instructions) == 11
+  # end
 
   # test "it can get another order that is on the same route" do
   #   vehicles = [@tesla, @volvo]

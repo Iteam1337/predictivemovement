@@ -6,6 +6,16 @@ const format = require('date-fns/format')
 const setYear = require('date-fns/setYear')
 const fetch = require('node-fetch')
 
+// from telegram booking
+// {
+//   id: 'ccddf1aa-e104-4b6a-92ab-c75fd184f6d3',
+//   senderId: 987557478,
+//   bookingDate: '2020-06-02T09:25:36.348Z',
+//   departure: { lon: 12.123993, lat: 58.120939 },
+//   destination: { lon: 12.016714, lat: 57.719823 }
+const wait = (time) =>
+new Promise(resolve => setTimeout(() => resolve(), time))
+
 const bookingDispatcher = async () => {
   if (!process.env.file) {
     console.error('No file specified')
@@ -15,6 +25,7 @@ const bookingDispatcher = async () => {
   const buf = fs.readFileSync(`${process.cwd()}/data/${process.env.file}`)
   const wb = XLSX.read(buf, { type: 'buffer' })
 
+ 
   const debugDate = new Date('2020-09-13')
 
   const packages = XLSX.utils
@@ -25,14 +36,55 @@ const bookingDispatcher = async () => {
         format(debugDate, 'yyyy-MM-dd'),
     )
 
-  const withGeoCodes = packages.map(async (p) => {
-    const to = await fetch(
-      `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${p['Till Postnummer']}&format=json`,
-    ).then((res) => res.json())
 
-    const from = await fetch(
-      `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${p['Från Postnummer']}&format=json`,
-    ).then((res) => res.json())
-  })
+    // const changedData = {departure: {lon: 57.7213783, lat: 12.0173562}, destination: {lon: 57.7213783, lat: 12.1173562}, id: id62(), bookingDate: withGeoCodes.ShipmentDate, ...withGeoCodes}
+    //   // withGeoCodes['Till Postnummer'] = {departure: {lon: 57.7213783, lat: 12.0173562}}
+
+    // const withGeoCodes = packages.map(async (p) => {
+    //   const to = await fetch(
+    //     `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${p['Till Postnummer']}&format=json`,
+    //   ).then((res) => res.json())
+  
+    //   const from = await fetch(
+    //     `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${p['Från Postnummer']}&format=json`,
+    //   ).then((res) => res.json())
+    // }) 
+    
+    const fetchGeoCodes = async(postalcode) => {
+      const geoCode = await fetch(`https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${postalcode}&format=json`).then((res => res.json()))
+      console.log(geoCode)
+    }
+
+
+
+    for (let package of packages) {
+      // console.log('to', package['Till Postnummer'])
+      await fetchGeoCodes('41671');
+      await wait(5000);
+      // console.log('from', package['Från Postnummer'])
+      // await wait(5000)
+  }
+
+
 }
+
+
+
+// const connect = async (attemptNo = 0): Promise<Client> => {
+//   try {
+//     const client = new Client(databaseUrl)
+//     await client.connect()
+//     return client
+//   } catch (error) {
+//     console.warn(error)
+
+//     if (attemptNo >= 10) {
+//       throw error
+//     }
+
+//     const delay = Math.min(1000 * attemptNo, 7000)
+//     await wait(delay)
+//     return connect(++attemptNo)
+//   }
+// }
 bookingDispatcher()

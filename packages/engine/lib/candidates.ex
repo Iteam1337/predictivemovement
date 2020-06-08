@@ -1,11 +1,15 @@
 defmodule Candidates do
   @behaviour CandidatesBehavior
 
-  def find_optimal_routes(cars, bookings) do
+  def find_optimal_routes(vehicle_ids, bookings) do
     IO.puts("call candidates_request")
 
+    vehicles =
+      vehicle_ids
+      |> Enum.map(&Vehicle.get/1)
+
     MQ.call(
-      %{vehicles: cars, bookings: bookings},
+      %{vehicles: vehicles, bookings: bookings},
       "candidates_request",
       "candidates_response"
     )

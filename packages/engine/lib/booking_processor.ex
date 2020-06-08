@@ -34,7 +34,9 @@ defmodule Engine.BookingProcessor do
       booking_ids =
         activities |> Enum.filter(&Map.has_key?(&1, :id)) |> Enum.map(& &1.id) |> Enum.uniq()
 
-      %Vehicle{instructions: activities, id: id, booking_ids: booking_ids}
+      Vehicle.get(id)
+      |> Map.put(:instructions, activities)
+      |> Map.put(:booking_ids, booking_ids)
     end)
     |> CandidatesStore.put_candidates()
 

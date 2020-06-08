@@ -77,8 +77,8 @@ defmodule Engine.MatchProducer do
   ## helpers
 
   def string_to_vehicle_transform(vehicle_string) do
-    %{position: position, id: id} = vehicle_string |> Poison.decode!(keys: :atoms!)
-    Vehicle.make(id, position)
+    %{position: position, id: external_id} = vehicle_string |> Poison.decode!(keys: :atoms!)
+    Vehicle.make(external_id, position)
   end
 
   def string_to_booking_transform(booking_string) do

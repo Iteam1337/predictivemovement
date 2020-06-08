@@ -17,11 +17,19 @@ const bookings = amqp
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, [
-    routingKeys.NEW,
-    routingKeys.ASSIGNED,
-    routingKeys.DELIVERED,
-  ])
+  .subscribe({ noAck: true }, [routingKeys.ASSIGNED, routingKeys.DELIVERED])
+  .map((bookings) => {
+    return { ...bookings.json(), status: bookings.fields.routingKey }
+  })
+
+const bookingsNewWithRoutes = amqp
+  .exchange('bookings_with_routes', 'topic', {
+    durable: false,
+  })
+  .queue('bookings_to_map', {
+    durable: false,
+  })
+  .subscribe({ noAck: true }, [routingKeys.NEW])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
@@ -55,6 +63,7 @@ const dispatchOffers = () => {
 
 module.exports = {
   bookings,
+  bookingsNewWithRoutes,
   cars,
   createBooking,
   dispatchOffers

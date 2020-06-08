@@ -89,70 +89,28 @@ export const carToFeature = (cars) => {
 }
 
 export const bookingToFeature = (bookings) =>
-  bookings.flatMap(({ id, pickup, delivery, status, assigned_to }) => {
-    switch (status) {
-      case 'new':
-        return [
-          point([pickup.lon, pickup.lat], {
-            id,
-            properties: {
-              status,
-              color: '#ffff00', // yellow
-            },
-          }),
-          point([delivery.lon, delivery.lat], {
-            id, 
-            properties: {
-              color: '#455DF7', // blue
-              status,
-            },
-          }),
-          line(
-            [
-              [delivery.lon, delivery.lat],
-              [pickup.lon, pickup.lat],
-            ],
-            {
-              id,
-              properties: {
-                status,
-                color: '#dd0000',
-              },
-            }
-          ),
-        ]
-      default:
-        return [
-          point([pickup.lon, pickup.lat], {
-            id,
-            properties: {
-              status,
-              color: '#ffff00', // yellow
-            },
-          }),
-          point([delivery.lon, delivery.lat], {
-            id,
-            properties: {
-              color: '#455DF7', // blue
-              status,
-            },
-          }),
-          line(
-            [
-              [delivery.lon, delivery.lat],
-              [pickup.lon, pickup.lat],
-            ],
-            {
-              id,
-              properties: {
-                status,
-                color: '#dd0000',
-              },
-            }
-          ),
-          routeAssignedToBooking(assigned_to),
-        ]
-    }
+  bookings.flatMap(({ id, pickup, delivery, status, route, assigned_to }) => {
+    return [
+      point([pickup.lon, pickup.lat], {
+        id,
+        properties: {
+          status,
+          color: '#ffff00', // yellow
+        },
+      }),
+      point([delivery.lon, delivery.lat], {
+        id,
+        properties: {
+          color: '#455DF7', // blue
+          status,
+        },
+      }),
+      routeAssignedToBooking(
+        assigned_to
+          ? { id: assigned_to.id, route: assigned_to.route }
+          : { id, route }
+      ),
+    ]
   })
 
 export const toGeoJsonLayer = (id, data) =>

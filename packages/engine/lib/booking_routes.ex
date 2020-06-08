@@ -33,7 +33,7 @@ defmodule BookingRoutes do
 
   def handle_message(_, message, _) do
     payload = message.data |> Poison.decode!(%{keys: :atoms})
-    route = Osrm.route(payload |> Map.get(:departure), payload |> Map.get(:destination))
+    route = Osrm.route(payload |> Map.get(:pickup), payload |> Map.get(:delivery))
     channel = elem(message.acknowledger, 1)
     Exchange.declare(channel, @exchange_bookings_with_routes, :topic)
 

@@ -54,8 +54,8 @@ defmodule MessageGenerator do
 
   def add_addresses(map) do
     map
-    |> Map.put(:departure, Address.random(@center))
-    |> Map.put(:destination, Address.random(@center))
+    |> Map.put(:pickup, Address.random(@center))
+    |> Map.put(:delivery, Address.random(@center))
   end
 
   def add_random_id_and_time(map) do

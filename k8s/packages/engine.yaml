@@ -22,5 +22,7 @@ spec:
           env:
             - name: AMQP_HOST
               value: rabbitmq
+            - name: OSRM_URL
+              value: http://osrm
           resources: {}
       restartPolicy: Always

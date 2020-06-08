@@ -10,13 +10,6 @@ const amqp = require('amqplib').connect(
 )
 const id62 = require('id62').default
 
-// from telegram booking
-// {
-//   id: 'ccddf1aa-e104-4b6a-92ab-c75fd184f6d3',
-//   senderId: 987557478,
-//   bookingDate: '2020-06-02T09:25:36.348Z',
-//   departure: { lon: 12.123993, lat: 58.120939 },
-//   destination: { lon: 12.016714, lat: 57.719823 }
 const wait = (time) =>
   new Promise((resolve) => setTimeout(() => resolve(), time))
 
@@ -39,19 +32,6 @@ const bookingDispatcher = async () => {
         format(debugDate, 'yyyy-MM-dd')
     )
 
-  // const changedData = {departure: {lon: 57.7213783, lat: 12.0173562}, destination: {lon: 57.7213783, lat: 12.1173562}, id: id62(), bookingDate: withGeoCodes.ShipmentDate, ...withGeoCodes}
-  //   // withGeoCodes['Till Postnummer'] = {departure: {lon: 57.7213783, lat: 12.0173562}}
-
-  // const withGeoCodes = packages.map(async (p) => {
-  //   const to = await fetch(
-  //     `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${p['Till Postnummer']}&format=json`,
-  //   ).then((res) => res.json())
-
-  //   const from = await fetch(
-  //     `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${p['Från Postnummer']}&format=json`,
-  //   ).then((res) => res.json())
-  // })
-
   const fetchGeoCodes = async (postalcode) => {
     const geoCode = await fetch(
       `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${postalcode}&format=json`
@@ -62,7 +42,6 @@ const bookingDispatcher = async () => {
   }
 
   for (let package of packages) {
-    // console.log('to', package['Till Postnummer'])
     const to = await fetchGeoCodes(package['Till Postnummer'])
     bookingTo = {
       pickup: { lon: parseFloat(to[0].lon), lat: parseFloat(to[0].lat) },
@@ -88,7 +67,6 @@ const bookingDispatcher = async () => {
 }
 
 const createBooking = (booking) => {
-  console.log(booking)
   return amqp
     .then((conn) => conn.createChannel())
     .then((ch) =>

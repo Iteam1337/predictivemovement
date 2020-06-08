@@ -65,7 +65,7 @@ const bookingDispatcher = async () => {
     // console.log('to', package['Till Postnummer'])
     const to = await fetchGeoCodes(package['Till Postnummer'])
     bookingTo = {
-      departure: { lon: parseFloat(to[0].lon), lat: parseFloat(to[0].lat) },
+      pickup: { lon: parseFloat(to[0].lon), lat: parseFloat(to[0].lat) },
     }
     await wait(5000)
 
@@ -73,7 +73,7 @@ const bookingDispatcher = async () => {
 
     await wait(5000)
     package = {
-      destination: {
+      delivery: {
         lon: parseFloat(from[0].lon),
         lat: parseFloat(from[0].lat),
       },

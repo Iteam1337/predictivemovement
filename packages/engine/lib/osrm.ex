@@ -1,5 +1,5 @@
 defmodule Osrm do
-  @osrmBase "http://osrm.pm.iteamdev.se/"
+  @osrmBase "https://osrm.iteamdev.io/"
 
   def nearest(%{lon: lon, lat: lat}) do
     Fetch.json("#{@osrmBase}nearest/v1/driving/#{lon},#{lat}")

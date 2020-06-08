@@ -10,10 +10,10 @@ const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
   const { socket } = useSocket()
 
-  const createBooking = ({ pickup, dropoff }) => {
+  const createBooking = ({ pickup, delivery }) => {
     socket.emit('new-booking', {
       pickup,
-      dropoff,
+      delivery,
     })
   }
 
@@ -38,9 +38,9 @@ const App = () => {
   return (
     <>
       <Router>
-        <Sidebar 
-          {...state} 
-          createBooking={createBooking} 
+        <Sidebar
+          {...state}
+          createBooking={createBooking}
           dispatchOffers={dispatchOffers}
         />
         <Route path="/">

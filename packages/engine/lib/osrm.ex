@@ -1,8 +1,6 @@
 defmodule Osrm do
-  @osrmBase "http://osrm.pm.iteamdev.se/"
-
   def nearest(%{lon: lon, lat: lat}) do
-    Fetch.json("#{@osrmBase}nearest/v1/driving/#{lon},#{lat}")
+    Fetch.json("#{Application.fetch_env!(:engine, :osrm_url)}/nearest/v1/driving/#{lon},#{lat}")
   end
 
   def route(from, to), do: route([from, to])
@@ -14,7 +12,7 @@ defmodule Osrm do
       |> Enum.join(";")
 
     url =
-      "#{@osrmBase}route/v1/driving/#{coordinates}?steps=true&alternatives=false&overview=full&annotations=true"
+      "#{Application.fetch_env!(:engine, :osrm_url)}/route/v1/driving/#{coordinates}?steps=true&alternatives=false&overview=full&annotations=true"
 
     Fetch.json(url)
     |> Map.get(:routes)

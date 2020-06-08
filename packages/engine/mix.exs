@@ -26,7 +26,8 @@ defmodule Engine.MixProject do
         # TODO: Rename when we update message size in Telegram
         pickup_response_queue: "p_response",
         booking_assignments_exchange: "booking_assignments",
-        booking_updates_queue: "booking_updates"
+        booking_updates_queue: "booking_updates",
+        osrm_url: "https://osrm.iteamdev.io"
       ],
       extra_applications: [:logger],
       mod: {Engine.Application, []}

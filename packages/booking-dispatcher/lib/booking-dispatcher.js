@@ -68,23 +68,4 @@ const bookingDispatcher = async () => {
 
 }
 
-
-
-// const connect = async (attemptNo = 0): Promise<Client> => {
-//   try {
-//     const client = new Client(databaseUrl)
-//     await client.connect()
-//     return client
-//   } catch (error) {
-//     console.warn(error)
-
-//     if (attemptNo >= 10) {
-//       throw error
-//     }
-
-//     const delay = Math.min(1000 * attemptNo, 7000)
-//     await wait(delay)
-//     return connect(++attemptNo)
-//   }
-// }
 bookingDispatcher()

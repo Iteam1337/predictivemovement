@@ -10,7 +10,7 @@ const amqp = require('amqplib').connect(
 )
 const id62 = require('id62').default
 
-const wait = (time) =>
+const waitForRequestLimit = (time) =>
   new Promise((resolve) => setTimeout(() => resolve(), time))
 
 const bookingDispatcher = async () => {
@@ -32,34 +32,36 @@ const bookingDispatcher = async () => {
         format(debugDate, 'yyyy-MM-dd')
     )
 
-  const fetchGeoCodes = async (postalcode) => {
-    const geoCode = await fetch(
+  const fetchGeoCodes = (postalcode) => {
+    const geoCode = fetch(
       `https://nominatim.openstreetmap.org/search?country=sweden&postalcode=${postalcode}&format=json`
-    )
-      .then((res) => res.json())
-      .catch((error) => console.log(error))
+    ).then((res) => res.json())
     return geoCode
   }
 
   for (let package of packages) {
-    const to = await fetchGeoCodes(package['Till Postnummer'])
-    const bookingTo = {
-      pickup: { lon: parseFloat(to[0].lon), lat: parseFloat(to[0].lat) },
-    }
-    await wait(5000)
+    try {
+      const to = await fetchGeoCodes(package['Till Postnummer'])
+      const bookingTo = {
+        pickup: { lon: parseFloat(to[0].lon), lat: parseFloat(to[0].lat) },
+      }
+      await waitForRequestLimit(1500)
 
-    const from = await fetchGeoCodes(package['Från Postnummer'])
+      const from = await fetchGeoCodes(package['Från Postnummer'])
 
-    await wait(5000)
-    package = {
-      delivery: {
-        lon: parseFloat(from[0].lon),
-        lat: parseFloat(from[0].lat),
-      },
-      id: id62(),
-      senderId: 'the-past',
-      bookingDate: package.ShipmentDate,
-      ...bookingTo,
+      await waitForRequestLimit(1500)
+      package = {
+        delivery: {
+          lon: parseFloat(from[0].lon),
+          lat: parseFloat(from[0].lat),
+        },
+        id: id62(),
+        senderId: 'the-past',
+        bookingDate: package.ShipmentDate,
+        ...bookingTo,
+      }
+    } catch (error) {
+      throw new Error(error)
     }
 
     createBooking(package)

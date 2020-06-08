@@ -43,7 +43,7 @@ const bookingDispatcher = async () => {
 
   for (let package of packages) {
     const to = await fetchGeoCodes(package['Till Postnummer'])
-    bookingTo = {
+    const bookingTo = {
       pickup: { lon: parseFloat(to[0].lon), lat: parseFloat(to[0].lat) },
     }
     await wait(5000)

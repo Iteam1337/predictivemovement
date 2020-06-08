@@ -17,6 +17,10 @@ const App = () => {
     })
   }
 
+  const dispatchOffers = () => {
+    socket.emit('dispatch-offers')
+  }
+
   useSocket('bookings', (bookings) => {
     dispatch({
       type: 'setBookings',
@@ -34,7 +38,11 @@ const App = () => {
   return (
     <>
       <Router>
-        <Sidebar {...state} createBooking={createBooking} />
+        <Sidebar 
+          {...state} 
+          createBooking={createBooking} 
+          dispatchOffers={dispatchOffers}
+        />
         <Route path="/">
           <Start state={state} />
         </Route>

@@ -13,27 +13,28 @@ const pickupOffers = () => {
         })
         .then(() =>
           ch.consume(queues.PICKUP_OFFERS, async (message) => {
-            const { car, booking } = JSON.parse(message.content.toString())
+            const { vehicle, booking } = JSON.parse(message.content.toString())
             try {
               const pickupAddress = await google.getAddressFromCoordinate(
-                booking.departure
+                booking.pickup
               )
 
               const deliveryAddress = await google.getAddressFromCoordinate(
-                booking.destination
+                booking.delivery
               )
 
               addBooking(booking.id, {
+                vehicle,
                 booking: {
                   ...booking,
-                  assigned_to: car,
+                  assigned_to: vehicle,
                   pickupAddress,
                   deliveryAddress,
                 },
               })
 
               messaging.sendPickupOffer(
-                car.id,
+                vehicle.id,
                 {
                   replyQueue: message.properties.replyTo,
                   correlationId: message.properties.correlationId,
@@ -44,7 +45,7 @@ const pickupOffers = () => {
             } catch (error) {
               console.warn(
                 'something went wrong with getting address from google: ',
-                error.message
+                error
               )
             }
           })

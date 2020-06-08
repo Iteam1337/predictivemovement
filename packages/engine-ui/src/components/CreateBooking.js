@@ -58,7 +58,7 @@ const LocationIcon = styled.img`
 const CreateBooking = ({ createBooking }) => {
   const [formState, setState] = React.useState({
     pickup: '',
-    dropoff: '',
+    delivery: '',
   })
 
   const create = (event) => {
@@ -69,13 +69,13 @@ const CreateBooking = ({ createBooking }) => {
       .map(parseFloat)
       .filter((x) => !!x)
 
-    const dropoff = formState.dropoff
+    const delivery = formState.delivery
       .split(',')
       .map(parseFloat)
       .filter((x) => !!x)
 
-    if (!pickup.length || !dropoff.length) return false
-    createBooking({ pickup, dropoff })
+    if (!pickup.length || !delivery.length) return false
+    createBooking({ pickup, delivery })
   }
 
   return (
@@ -98,7 +98,7 @@ const CreateBooking = ({ createBooking }) => {
                 onChange={(e) =>
                   setState({
                     pickup: e.target.value,
-                    dropoff: formState.dropoff,
+                    delivery: formState.delivery,
                   })
                 }
               />
@@ -107,21 +107,21 @@ const CreateBooking = ({ createBooking }) => {
         </div>
         <div>
           <InputContainer>
-            <Label htmlFor="dropoff">Destination</Label>
+            <Label htmlFor="delivery">Delivery</Label>
             <InputInnerContainer>
               <LocationIcon
-                alt="Location dropoff icon"
+                alt="Location delivery icon"
                 src={`${locationIcon}`}
               />
               <TextInput
-                name="dropoff"
+                name="delivery"
                 type="text"
-                value={formState.dropoff}
+                value={formState.delivery}
                 placeholder="61.8644045,16.001133"
                 onChange={(e) =>
                   setState({
                     pickup: formState.pickup,
-                    dropoff: e.target.value,
+                    delivery: e.target.value,
                   })
                 }
               />

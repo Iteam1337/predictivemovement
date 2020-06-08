@@ -21,6 +21,8 @@ spec:
           imagePullPolicy: Always
           env:
             - name: AMQP_HOST
-              value: amqp://rabbitmq
+              value: rabbitmq
+            - name: OSRM_URL
+              value: http://osrm
           resources: {}
       restartPolicy: Always

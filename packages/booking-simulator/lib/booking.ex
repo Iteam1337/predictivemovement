@@ -7,7 +7,8 @@ defmodule Bookings do
       id: id,
       bookingDate: DateTime.utc_now(),
       departure: departure,
-      destination: destination
+      destination: destination,
+      senderId: DateTime.utc_now()
     }
   end
 

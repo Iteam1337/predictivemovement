@@ -86,6 +86,10 @@ const Sidebar = (state) => {
             <Cars cars={data.cars} />
           </>
         )
+      case 'dispatch':
+        return (
+          <button onClick={state.dispatchOffers}>Dispatch Offers</button>
+        )
       default:
         return null
     }
@@ -106,6 +110,12 @@ const Sidebar = (state) => {
             onClick={() => setNavigationCurrentView('cars')}
             src={ShippingIcon}
             alt="shipping icon"
+          />
+        </Link>
+        <Link>
+          <img
+            onClick={() => setNavigationCurrentView('dispatch')}
+            alt="DISPATCH"
           />
         </Link>
       </NavigationBar>

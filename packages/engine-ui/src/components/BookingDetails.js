@@ -10,13 +10,13 @@ const BookingDetails = ({ booking }) => {
       <Elements.StrongParagraph>ID:</Elements.StrongParagraph>
       <span>{booking.id}</span>
 
-      <Elements.StrongParagraph>Departure:</Elements.StrongParagraph>
-      <span>{booking.departure.lat}</span>
+      <Elements.StrongParagraph>Pickup:</Elements.StrongParagraph>
+      <span>{booking.pickup.lat}</span>
       {', '}
-      <span>{booking.departure.lon}</span>
-      <Elements.StrongParagraph>Destination:</Elements.StrongParagraph>
-      <span>{booking.destination.lat}</span>
-      <span>{booking.destination.lon}</span>
+      <span>{booking.pickup.lon}</span>
+      <Elements.StrongParagraph>Delivery:</Elements.StrongParagraph>
+      <span>{booking.delivery.lat}</span>
+      <span>{booking.delivery.lon}</span>
       <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
       <span>{booking.status}</span>
 

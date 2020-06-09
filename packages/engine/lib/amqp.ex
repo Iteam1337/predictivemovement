@@ -1,8 +1,11 @@
 defmodule MQ do
-  def wait_for_messages(_channel, correlation_id) do
+  def wait_for_messages(channel, correlation_id) do
     receive do
       {:basic_deliver, payload, %{correlation_id: ^correlation_id}} ->
         payload
+
+      _ ->
+        wait_for_messages(channel, correlation_id)
     end
   end
 

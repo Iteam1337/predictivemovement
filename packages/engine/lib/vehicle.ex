@@ -76,44 +76,45 @@ defmodule Vehicle do
     IO.inspect(vehicle, label: "offer to vehicle")
     instructions_without_start = Enum.filter(instructions, &Map.has_key?(&1, :id))
 
-    accepted_bookings =
-      booking_ids
-      |> Enum.map(fn id ->
-        Enum.filter(instructions_without_start, fn instruction -> instruction.id == id end)
-      end)
-      |> IO.inspect(label: "instructions for booking")
-      |> Enum.map(fn instructions_for_booking ->
-        instruction_from_graphhopper =
-          instructions_for_booking
-          |> Enum.map(fn %{address: address, type: type} -> {address, type} end)
+    booking_ids
+    |> Enum.map(fn id ->
+      Enum.filter(instructions_without_start, fn instruction -> instruction.id == id end)
+    end)
+    |> IO.inspect(label: "instructions for booking")
+    |> Enum.map(fn instructions_for_booking ->
+      instruction_from_graphhopper =
+        instructions_for_booking
+        |> Enum.map(fn %{address: address, type: type} -> {address, type} end)
 
-        instruction =
-          Map.new()
-          |> Map.put(
-            :pickup,
-            Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "pickupShipment" end)
-            |> elem(0)
-          )
-          |> Map.put(
-            :delivery,
-            Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "deliverShipment" end)
-            |> elem(0)
-          )
-          |> IO.inspect(label: "instruction")
+      instruction =
+        Map.new()
+        |> Map.put(
+          :pickup,
+          Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "pickupShipment" end)
+          |> elem(0)
+        )
+        |> Map.put(
+          :delivery,
+          Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "deliverShipment" end)
+          |> elem(0)
+        )
+        |> IO.inspect(label: "instruction")
 
-        {:ok, accepted} =
-          MQ.call(%{vehicle: %{id: id}, booking: instruction}, "pickup_offers", "p_response")
-          |> Poison.decode()
-          |> IO.inspect(label: "the driver answered")
-
-        %{vehicle: vehicle, booking: instruction, accepted: accepted}
-      end)
-      |> Enum.filter(fn %{accepted: accepted} -> accepted end)
-
-    handle_accepted_offer(accepted_bookings)
+      MQ.call(%{vehicle: %{id: id}, booking: instruction}, "pickup_offers", "p_response")
+      |> Poison.decode()
+      |> IO.inspect(label: "the driver answered")
+      |> handle_driver_response(%{id: id}, instruction)
+    end)
 
     {:reply, nil, state}
   end
+
+  def handle_driver_response({:ok, true}, vehicle, instruction) do
+    struct(Booking, Map.put(instruction, :assigned_to, vehicle))
+    |> Booking.assign()
+  end
+
+  def handle_driver_response({:ok, false}, _, _), do: IO.puts("Driver didnt want the booking :(")
 
   def handle_accepted_offer(accepted_bookings) do
     accepted_bookings

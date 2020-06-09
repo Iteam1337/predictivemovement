@@ -127,17 +127,24 @@ defmodule Vehicle do
         position: position,
         busy: busy
       },
-      name: :"#{id}"
+      name: via_tuple(id)
     )
 
     id
   end
 
+  defp via_tuple(id) when is_binary(id), do: via_tuple(String.to_integer(id))
+
+  defp via_tuple(id) when is_integer(id) do
+    IO.inspect(id, label: "via tuple")
+    {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
+  end
+
   def get(id) do
-    GenServer.call(:"#{id}", :get)
+    GenServer.call(via_tuple(id), :get)
   end
 
   def offer(%Vehicle{id: id, instructions: instructions, booking_ids: booking_ids} = vehicle) do
-    GenServer.call(:"#{id}", {:offer, vehicle}, :infinity)
+    GenServer.call(via_tuple(id), {:offer, vehicle}, :infinity)
   end
 end

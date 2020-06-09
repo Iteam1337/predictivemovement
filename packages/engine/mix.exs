@@ -29,7 +29,7 @@ defmodule Engine.MixProject do
         booking_updates_queue: "booking_updates",
         osrm_url: "https://osrm.iteamdev.io"
       ],
-      extra_applications: [:logger],
+      extra_applications: [:logger, :gproc],
       mod: {Engine.Application, []}
     ]
   end
@@ -49,7 +49,8 @@ defmodule Engine.MixProject do
       {:mox, "~> 0.5"},
       {:poison, "~> 3.1"},
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
-      {:uuid, "~> 1.1"}
+      {:uuid, "~> 1.1"},
+      {:gproc, "~> 0.8.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

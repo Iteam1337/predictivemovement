@@ -2,6 +2,8 @@ const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
 
+const replyQueues = new Map()
+
 const onBotStart = (ctx) => {
   const {
     first_name,
@@ -21,6 +23,10 @@ const sendPickupOffer = (
   msgOptions,
   { pickupAddress, deliveryAddress, booking }
 ) => {
+
+  replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
+  
+
   bot.telegram.sendMessage(
     parseInt(chatId, 10),
     `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Har du möjlighet att hämta detta?
@@ -35,7 +41,7 @@ const sendPickupOffer = (
               callback_data: JSON.stringify({
                 a: false,
                 id: msgOptions.correlationId,
-                r: msgOptions.replyQueue,
+                r: 'why?'
               }),
             },
             {
@@ -43,7 +49,7 @@ const sendPickupOffer = (
               callback_data: JSON.stringify({
                 a: true,
                 id: msgOptions.correlationId,
-                r: msgOptions.replyQueue,
+                r: 'why?'
               }),
             },
           ],
@@ -68,14 +74,22 @@ const onPickupConfirm = (ctx) => {
 }
 
 const onPickupOfferResponse = (isAccepted, options, msg) => {
+  console.log('DO WE GET HERE', options)
   msg.editMessageReplyMarkup()
   msg.answerCbQuery()
   msg.reply(isAccepted ? 'Kul!' : 'Tråkigt, kanske nästa gång!')
 
+  const replyQueue = replyQueues.get(options.id)
+  console.log('reply queue', replyQueue)
+  console.log('all values', replyQueues.entries())
+  console.log('all keys', replyQueues.keys())
+
+  if (!replyQueue) return Promise.reject(`missing reply queue for ${options.id}`)
+
   return open
     .then((conn) => conn.createChannel())
     .then((ch) => {
-      ch.sendToQueue(options.r, Buffer.from(isAccepted.toString()), {
+      ch.sendToQueue(replyQueue, Buffer.from(isAccepted.toString()), {
         correlationId: options.id,
       })
     })

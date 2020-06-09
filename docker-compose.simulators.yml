@@ -5,8 +5,17 @@ services:
     build: ./packages/car-simulator
     environment:
       AMQP_HOST: amqp://rabbitmq
+    networks:
+      - predictivemovement
 
   booking-simulator:
     build: ./packages/booking-simulator
     environment:
       AMQP_HOST: amqp://rabbitmq
+    networks:
+      - predictivemovement
+
+networks:
+  predictivemovement:
+    driver: bridge
+    name: predictivemovement

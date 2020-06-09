@@ -1,53 +1,52 @@
 import React from 'react'
-import Map from './components/Map'
 import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import mapUtils from './utils/mapUtils'
 import { reducer, initState } from './utils/reducer'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import Start from './Start'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
+  const { socket } = useSocket()
 
-  useSocket('bookings', newBookings => {
-    const features = mapUtils.bookingToFeature(newBookings)
+  const createBooking = ({ pickup, delivery }) => {
+    socket.emit('new-booking', {
+      pickup,
+      delivery,
+    })
+  }
+
+  const dispatchOffers = () => {
+    socket.emit('dispatch-offers')
+  }
+
+  useSocket('bookings', (bookings) => {
     dispatch({
       type: 'setBookings',
-      payload: features,
+      payload: bookings,
     })
   })
 
-  useSocket('cars', newCars => {
-    const { carLineFeatures, carFeatures } = mapUtils.carToFeature(
-      newCars,
-      state.carCollection,
-      state.carLineCollection
-    )
+  useSocket('cars', (newCars) => {
     dispatch({
       type: 'setCars',
-      payload: carFeatures,
-    })
-    dispatch({
-      type: 'setCarsLines',
-      payload: carLineFeatures,
-    })
-  })
-
-  useSocket('moving-cars', newCars => {
-    const movingCarsFeatures = mapUtils.movingCarToFeature(
-      newCars,
-      state.movingCarsCollection
-    )
-    dispatch({
-      type: 'setMovingCars',
-      payload: { ...state.movingCarsCollection, features: movingCarsFeatures },
+      payload: newCars,
     })
   })
 
   return (
     <>
-      <Sidebar {...state.carInfo} />
-      <Map dispatch={dispatch} state={state} />
+      <Router>
+        <Sidebar
+          {...state}
+          createBooking={createBooking}
+          dispatchOffers={dispatchOffers}
+        />
+        <Route path="/">
+          <Start state={state} />
+        </Route>
+      </Router>
     </>
   )
 }

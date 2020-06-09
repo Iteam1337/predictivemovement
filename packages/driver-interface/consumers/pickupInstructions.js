@@ -4,6 +4,8 @@ const {
   exchanges: { BOOKINGS },
 } = require('../adapters/amqp')
 
+const { addBooking } = require('../services/cache')
+
 const { sendPickupInstructions } = require('../services/messaging')
 
 const pickupInstructions = () => {
@@ -20,10 +22,11 @@ const pickupInstructions = () => {
           })
         )
         .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, BOOKINGS, 'assigned'))
-        // AMQP.Queue.bind(channel, queue_name, bookings_exchange, routing_key: "new")
         .then(() =>
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
-            sendPickupInstructions(JSON.parse(msg.content.toString()))
+            const booking = JSON.parse(msg.content.toString())
+            addBooking(booking.id, booking)
+            sendPickupInstructions(booking)
             ch.ack(msg)
           })
         )

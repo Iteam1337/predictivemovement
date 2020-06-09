@@ -32,7 +32,9 @@ const pickupConfirmed = () =>
               })
             })
         )
-        .then((senderId) => messaging.onPickupConfirmed(senderId))
+        .then(({ booking: { senderId } }) =>
+          messaging.onPickupConfirmed(senderId)
+        )
     )
 
 module.exports = { pickupConfirmed }

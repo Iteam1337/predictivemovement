@@ -1,5 +1,4 @@
 const { open, queues, exchanges, routingKeys } = require('../adapters/amqp')
-
 const messaging = require('../services/messaging')
 
 const deliveryConfirmed = () =>
@@ -19,20 +18,20 @@ const deliveryConfirmed = () =>
           ch.bindQueue(
             queues.DELIVERY_CONFIRMED,
             exchanges.BOOKINGS,
-            routingKeys.DELIVERY
+            routingKeys.DELIVERED
           )
         )
         .then(
           () =>
             new Promise((resolve) => {
               ch.consume(queues.DELIVERY_CONFIRMED, (msg) => {
-                const senderId = JSON.parse(msg.content.toString())
+                const message = JSON.parse(msg.content.toString())
                 ch.ack(msg)
-                resolve(senderId)
+                resolve(message)
               })
             })
         )
-        .then((senderId) => {
+        .then(({ booking: { senderId } }) => {
           return messaging.onDeliveryConfirmed(senderId)
         })
     )

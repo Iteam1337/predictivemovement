@@ -14,23 +14,25 @@ stepHandler.action('confirm', (ctx) => {
     id: uuidv4(),
     senderId,
     bookingDate: new Date().toISOString(),
-    departure: {
+    pickup: {
       lon: ctx.wizard.state.data.from.lon,
       lat: ctx.wizard.state.data.from.lat,
     },
-    destination: {
+    delivery: {
       lon: ctx.wizard.state.data.to.lon,
       lat: ctx.wizard.state.data.to.lat,
     },
   }
 
   createBooking(booking)
-  return ctx.wizard.next()
+  ctx.wizard.next()
+  ctx.wizard.steps[ctx.wizard.cursor](ctx)
 })
 
 stepHandler.action('cancel', (ctx) => {
   ctx.reply('Din bokning är avbruten')
-  return ctx.wizard.next()
+  ctx.wizard.next()
+  ctx.wizard.steps[ctx.wizard.cursor](ctx)
 })
 
 const bookingWizard = new WizardScene(
@@ -80,10 +82,7 @@ const bookingWizard = new WizardScene(
     return ctx.wizard.next()
   },
   stepHandler,
-  (ctx) => {
-    console.log('leaving booking request scene')
-    return ctx.scene.leave()
-  }
+  (ctx) => ctx.scene.leave()
 )
 
 module.exports = { bookingWizard }

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engine
+  namespace: predictivemovement
+  labels:
+    app: engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: engine
+  template:
+    metadata:
+      labels:
+        app: engine
+    spec:
+      containers:
+        - name: engine
+          image: iteam1337/pm-engine
+          imagePullPolicy: Always
+          env:
+            - name: AMQP_HOST
+              value: rabbitmq
+            - name: OSRM_URL
+              value: http://osrm
+          resources: {}
+      restartPolicy: Always

@@ -18,16 +18,17 @@
     "url": "git+https://github.com/Iteam1337/pm-mapbox-test.git"
   },
   "scripts": {
-    "start": "nodemon lib/index.js",
+    "dev": "nodemon lib/index.js",
+    "start": "node lib/index.js",
     "test": "jest --watch"
   },
   "bugs": {
     "url": "https://github.com/Iteam1337/pm-mapbox-test/issues"
   },
   "dependencies": {
-    "@iteam1337/engine": "file:../engine",
     "fluent-amqp": "^0.4.1",
     "highland": "^2.13.5",
+    "id62": "^1.0.0",
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
     "socket.io": "^2.3.0"

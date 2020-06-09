@@ -83,37 +83,44 @@ defmodule Vehicle do
       end)
       |> IO.inspect(label: "instructions for booking")
       |> Enum.map(fn instructions_for_booking ->
-        instruction =
+        instruction_from_graphhopper =
           instructions_for_booking
           |> Enum.map(fn %{address: address, type: type} -> {address, type} end)
 
-        booking =
+        instruction =
           Map.new()
           |> Map.put(
             :pickup,
-            Enum.find(instruction, fn {_, type} -> type == "pickupShipment" end)
+            Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "pickupShipment" end)
             |> elem(0)
           )
           |> Map.put(
             :delivery,
-            Enum.find(instruction, fn {_, type} -> type == "deliverShipment" end)
+            Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "deliverShipment" end)
             |> elem(0)
           )
-          |> IO.inspect(label: "booking")
+          |> IO.inspect(label: "instruction")
 
         {:ok, accepted} =
-          MQ.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers", "p_response")
+          MQ.call(%{vehicle: %{id: id}, booking: instruction}, "pickup_offers", "p_response")
           |> Poison.decode()
           |> IO.inspect(label: "the driver answered")
 
-        %{vehicle: vehicle, booking: booking, accepted: accepted}
+        %{vehicle: vehicle, booking: instruction, accepted: accepted}
       end)
       |> Enum.filter(fn %{accepted: accepted} -> accepted end)
 
-    {:reply, %{vehicle: vehicle, booking_ids: booking_ids, accepted_bookings: accepted_bookings},
-     state
-     |> Map.put(:instructions, instructions)
-     |> Map.put(:booking_ids, booking_ids)}
+    handle_accepted_offer(accepted_bookings)
+
+    {:reply, nil, state}
+  end
+
+  def handle_accepted_offer(accepted_bookings) do
+    accepted_bookings
+    |> Enum.map(fn %{booking: booking, vehicle: vehicle} ->
+      struct(Booking, Map.put(booking, :assigned_to, vehicle))
+    end)
+    |> Enum.map(&Booking.assign/1)
   end
 
   def make(external_id, position, busy \\ false) do

@@ -9,19 +9,20 @@ defmodule MQ do
     end
   end
 
-  def call(data, queue, reply_queue) do
+  def call(data, queue) do
     {:ok, connection} =
       AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
 
     {:ok, channel} = AMQP.Channel.open(connection)
 
-    {:ok, %{queue: _queue_name}} =
+    {:ok, %{queue: queue_name}} =
       AMQP.Queue.declare(
         channel,
-        reply_queue
+        "",
+        exclusive: true
       )
 
-    AMQP.Basic.consume(channel, reply_queue, nil, no_ack: true)
+    AMQP.Basic.consume(channel, queue_name, nil, no_ack: false)
 
     correlation_id =
       :erlang.unique_integer()
@@ -35,7 +36,7 @@ defmodule MQ do
       "",
       queue,
       request,
-      reply_to: reply_queue,
+      reply_to: queue_name,
       correlation_id: correlation_id
     )
 

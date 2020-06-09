@@ -10,8 +10,7 @@ defmodule Candidates do
 
     MQ.call(
       %{vehicles: vehicles, bookings: bookings},
-      "candidates_request",
-      "candidates_response"
+      "candidates_request"
     )
     |> Poison.decode!(keys: :atoms)
   end

@@ -100,7 +100,7 @@ defmodule Vehicle do
         )
         |> IO.inspect(label: "instruction")
 
-      MQ.call(%{vehicle: %{id: id}, booking: instruction}, "pickup_offers", "p_response")
+      MQ.call(%{vehicle: %{id: id}, booking: instruction}, "pickup_offers")
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
       |> handle_driver_response(%{id: id}, instruction)
@@ -115,14 +115,6 @@ defmodule Vehicle do
   end
 
   def handle_driver_response({:ok, false}, _, _), do: IO.puts("Driver didnt want the booking :(")
-
-  def handle_accepted_offer(accepted_bookings) do
-    accepted_bookings
-    |> Enum.map(fn %{booking: booking, vehicle: vehicle} ->
-      struct(Booking, Map.put(booking, :assigned_to, vehicle))
-    end)
-    |> Enum.map(&Booking.assign/1)
-  end
 
   def make(external_id, position, busy \\ false) do
     id = external_id

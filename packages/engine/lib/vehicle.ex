@@ -67,10 +67,9 @@ defmodule Vehicle do
     {:reply, state, state}
   end
 
-  def handle_call(
+  def handle_cast(
         {:offer,
          %Vehicle{id: id, instructions: instructions, booking_ids: booking_ids} = vehicle},
-        _from,
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
@@ -145,6 +144,6 @@ defmodule Vehicle do
   end
 
   def offer(%Vehicle{id: id, instructions: instructions, booking_ids: booking_ids} = vehicle) do
-    GenServer.call(via_tuple(id), {:offer, vehicle}, :infinity)
+    GenServer.cast(via_tuple(id), {:offer, vehicle})
   end
 end

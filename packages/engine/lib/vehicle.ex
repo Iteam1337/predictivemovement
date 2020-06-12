@@ -32,16 +32,19 @@ defmodule Vehicle do
 
     booking_ids
     |> Enum.map(fn id ->
-      Enum.filter(instructions_without_start, fn instruction -> instruction.id == id end)
+      instructions_for_id =
+        Enum.filter(instructions_without_start, fn instruction -> instruction.id == id end)
+
+      {id, instructions_for_id}
     end)
     |> IO.inspect(label: "instructions for booking")
-    |> Enum.map(fn instructions_for_booking ->
+    |> Enum.map(fn {booking_id, instructions_for_booking} ->
       instruction_from_graphhopper =
         instructions_for_booking
         |> Enum.map(fn %{address: address, type: type} -> {address, type} end)
 
-      instruction =
-        Map.new()
+      booking =
+        Map.new(id: booking_id)
         |> Map.put(
           :pickup,
           Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "pickupShipment" end)
@@ -52,19 +55,19 @@ defmodule Vehicle do
           Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "deliverShipment" end)
           |> elem(0)
         )
-        |> IO.inspect(label: "instruction")
+        |> IO.inspect(label: "booking")
 
-      MQ.call(%{vehicle: %{id: id}, booking: instruction}, "pickup_offers")
+      MQ.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers")
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
-      |> handle_driver_response(%{id: id}, instruction)
+      |> handle_driver_response(%{id: id}, booking)
     end)
 
     {:reply, nil, state}
   end
 
-  def handle_driver_response({:ok, true}, vehicle, instruction) do
-    struct(Booking, Map.put(instruction, :assigned_to, vehicle))
+  def handle_driver_response({:ok, true}, vehicle, booking) do
+    struct(Booking, Map.put(booking, :assigned_to, vehicle))
     |> Booking.assign()
   end
 

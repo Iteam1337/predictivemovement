@@ -11,4 +11,7 @@ module.exports = {
       ...update,
     })
   },
+  getAllBookings: () => Array.from(bookingsCache.values())
+  // getBookingFromVehicleId: id => Array.from(bookingsCache.values())
+
 }

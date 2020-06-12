@@ -1,6 +1,11 @@
 const botServices = require('./services/bot')
 const messaging = require('./services/messaging')
-const { getBooking, updateBooking } = require('./services/cache')
+const {
+  getBooking,
+  updateBooking,
+  getAllBookings,
+} = require('./services/cache')
+
 const {
   open,
   exchanges: { BOOKINGS },
@@ -8,6 +13,14 @@ const {
 
 const init = (bot) => {
   bot.start(messaging.onBotStart)
+
+  bot.command('/lista', (ctx) => {
+    const id = ctx.update.message.from.id
+    console.log(id)
+    console.log(getAllBookings())
+
+    ctx.reply('Hej hej här kommer listan.')
+  })
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
@@ -37,6 +50,7 @@ const init = (bot) => {
             durable: false,
           }).then(() => {
             const { id } = callbackPayload
+            console.log('bokning: ', getBooking(id))
             ch.publish(
               BOOKINGS,
               'pickup',

@@ -63,7 +63,7 @@ defmodule Vehicle do
       |> handle_driver_response(%{id: id}, booking)
     end)
 
-    {:reply, nil, state}
+    {:noreply, nil, state}
   end
 
   def handle_driver_response({:ok, true}, vehicle, booking) do
@@ -93,7 +93,6 @@ defmodule Vehicle do
   defp via_tuple(id) when is_binary(id), do: via_tuple(String.to_integer(id))
 
   defp via_tuple(id) when is_integer(id) do
-    IO.inspect(id, label: "via tuple")
     {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
   end
 

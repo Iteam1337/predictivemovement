@@ -24,51 +24,25 @@ defmodule Vehicle do
 
   def handle_cast(
         {:offer,
-         %Vehicle{id: id, instructions: instructions, booking_ids: booking_ids} = vehicle},
+         %Vehicle{id: vehicle_id, instructions: _instructions, booking_ids: booking_ids} = vehicle},
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
-    instructions_without_start = Enum.filter(instructions, &Map.has_key?(&1, :id))
 
     booking_ids
-    |> Enum.map(fn id ->
-      instructions_for_id =
-        Enum.filter(instructions_without_start, fn instruction -> instruction.id == id end)
-
-      {id, instructions_for_id}
-    end)
-    |> IO.inspect(label: "instructions for booking")
-    |> Enum.map(fn {booking_id, instructions_for_booking} ->
-      instruction_from_graphhopper =
-        instructions_for_booking
-        |> Enum.map(fn %{address: address, type: type} -> {address, type} end)
-
-      booking =
-        Map.new(id: booking_id)
-        |> Map.put(
-          :pickup,
-          Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "pickupShipment" end)
-          |> elem(0)
-        )
-        |> Map.put(
-          :delivery,
-          Enum.find(instruction_from_graphhopper, fn {_, type} -> type == "deliverShipment" end)
-          |> elem(0)
-        )
-        |> IO.inspect(label: "booking")
-
-      MQ.call(%{vehicle: %{id: id}, booking: booking}, "pickup_offers")
+    |> Enum.map(fn booking_id ->
+      MQ.call(%{vehicle: %{id: vehicle_id}, booking: Booking.get(booking_id)}, "pickup_offers")
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
-      |> handle_driver_response(%{id: id}, booking)
+      |> handle_driver_response(vehicle_id, booking_id)
     end)
 
     {:noreply, nil, state}
   end
 
-  def handle_driver_response({:ok, true}, vehicle, booking) do
-    struct(Booking, Map.put(booking, :assigned_to, vehicle))
-    |> Booking.assign()
+  def handle_driver_response({:ok, true}, vehicle_id, booking_id) do
+    Booking.assign(booking_id, vehicle_id)
+    |> IO.inspect(label: "booking was assigned")
   end
 
   def handle_driver_response({:ok, false}, _, _), do: IO.puts("Driver didnt want the booking :(")

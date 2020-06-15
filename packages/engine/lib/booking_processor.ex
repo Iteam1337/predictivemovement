@@ -20,13 +20,13 @@ defmodule Engine.BookingProcessor do
 
   def handle_message(
         _processor,
-        %Broadway.Message{acknowledger: acknowledger, data: {vehicles, bookings}},
+        %Broadway.Message{acknowledger: acknowledger, data: {vehicle_ids, booking_ids}},
         _context
       ) do
-    IO.inspect({vehicles, bookings}, label: "oh a message")
+    IO.inspect({vehicle_ids, booking_ids}, label: "oh a message")
 
     %{solution: %{routes: routes}} =
-      @candidates.find_optimal_routes(vehicles, bookings)
+      @candidates.find_optimal_routes(vehicle_ids, booking_ids)
       |> IO.inspect(label: "optimal routes")
 
     routes
@@ -41,7 +41,7 @@ defmodule Engine.BookingProcessor do
     |> CandidatesStore.put_candidates()
 
     %Broadway.Message{
-      data: {vehicles, bookings},
+      data: {vehicle_ids, booking_ids},
       acknowledger: acknowledger
     }
   end

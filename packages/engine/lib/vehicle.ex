@@ -24,7 +24,12 @@ defmodule Vehicle do
 
   def handle_cast(
         {:offer,
-         %Vehicle{id: vehicle_id, instructions: _instructions, booking_ids: booking_ids} = vehicle},
+         %Vehicle{
+           id: vehicle_id,
+           instructions: _instructions,
+           booking_ids: booking_ids,
+           position: position
+         } = vehicle},
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
@@ -37,7 +42,7 @@ defmodule Vehicle do
         %{
           vehicle: %{id: vehicle_id},
           booking: booking,
-          route: Osrm.route(booking.pickup, booking.delivery)
+          route: Osrm.route([vehicle.position, booking.pickup, booking.delivery])
         },
         "pickup_offers"
       )

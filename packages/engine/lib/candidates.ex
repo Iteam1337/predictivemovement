@@ -1,13 +1,18 @@
 defmodule Candidates do
   @behaviour CandidatesBehavior
 
-  def find_optimal_routes(cars, bookings) do
+  def find_optimal_routes(vehicle_ids, booking_ids) do
     IO.puts("call candidates_request")
 
+    vehicles =
+      vehicle_ids
+      |> Enum.map(&Vehicle.get/1)
+
+    bookings = booking_ids |> Enum.map(&Booking.get/1)
+
     MQ.call(
-      %{vehicles: cars, bookings: bookings},
-      "candidates_request",
-      "candidates_response"
+      %{vehicles: vehicles, bookings: bookings},
+      "candidates_request"
     )
     |> Poison.decode!(keys: :atoms)
   end

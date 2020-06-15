@@ -28,6 +28,7 @@ const App = () => {
   }
 
   useSocket('bookings', (bookings) => {
+    console.log(bookings)
     dispatch({
       type: 'setBookings',
       payload: bookings,

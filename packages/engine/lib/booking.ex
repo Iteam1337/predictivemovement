@@ -33,7 +33,7 @@ defmodule Booking do
   defp via_tuple(id) when is_binary(id), do: via_tuple(String.to_integer(id))
 
   defp via_tuple(id) when is_integer(id) do
-    {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
+    {:via, :gproc, {:n, :l, {:booking_id, id}}}
   end
 
   def init(init_arg) do

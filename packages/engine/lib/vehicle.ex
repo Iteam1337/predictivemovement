@@ -37,7 +37,7 @@ defmodule Vehicle do
       |> handle_driver_response(vehicle_id, booking_id)
     end)
 
-    {:noreply, nil, state}
+    {:noreply, state}
   end
 
   def handle_driver_response({:ok, true}, vehicle_id, booking_id) do

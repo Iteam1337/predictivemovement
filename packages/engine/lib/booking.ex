@@ -30,9 +30,9 @@ defmodule Booking do
     GenServer.call(via_tuple(booking_id), {:assign, vehicle_id})
   end
 
-  defp via_tuple(id) when is_binary(id), do: via_tuple(String.to_integer(id))
+  defp via_tuple(id) when is_integer(id), do: via_tuple(Integer.to_string(id))
 
-  defp via_tuple(id) when is_integer(id) do
+  defp via_tuple(id) when is_binary(id) do
     {:via, :gproc, {:n, :l, {:booking_id, id}}}
   end
 
@@ -45,10 +45,12 @@ defmodule Booking do
   end
 
   def handle_call({:assign, vehicle_id}, _from, state) do
+    route = Osrm.route(state.pickup, state.delivery)
+
     updated_state =
       state
-      |> Map.put(:route, Osrm.route(state.pickup, state.delivery))
-      |> Map.put(:assigned_to, %{id: vehicle_id})
+      |> Map.put(:route, route)
+      |> Map.put(:assigned_to, %{id: vehicle_id, route: route})
 
     updated_state
     |> MQ.publish(

@@ -10,6 +10,7 @@ import BookingDetails from './BookingDetails'
 import Hooks from '../Hooks'
 import CarDetails from './CarDetails'
 import Filters from './Filters'
+import AddVehicle from './AddVehicle'
 
 const Container = styled.div`
   position: absolute;
@@ -82,14 +83,13 @@ const Sidebar = (state) => {
       case 'cars':
         return (
           <>
-            <h3>Aktuella bilar</h3>
+            <AddVehicle addVehicle={state.addVehicle} />
+            <h3>Aktuella fordon</h3>
             <Cars cars={data.cars} />
           </>
         )
       case 'dispatch':
-        return (
-          <button onClick={state.dispatchOffers}>Dispatch Offers</button>
-        )
+        return <button onClick={state.dispatchOffers}>Dispatch Offers</button>
       default:
         return null
     }

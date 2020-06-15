@@ -26,11 +26,26 @@ const pickupInstructions = () => {
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
             const booking = JSON.parse(msg.content.toString())
             addBooking(booking.id, booking)
+            getEstimatedTime(booking)
             sendPickupInstructions(booking)
             ch.ack(msg)
           })
         )
     )
+}
+
+const getEstimatedTime = ({ pickup, delivery, assigned_to }) => {
+  /**
+   * TODO:
+   * [] get postion from vehakle
+   * [] get pickup and delivery from booking
+   * [] count time from vehakle position to delivery postition.
+   */
+  console.log(
+    booking,
+    `https://www.google.com/maps/dir/${assigned_to.lat},${assigned_to.lon}/${booking.pickup.lat},${booking.pickup.lon})`
+  )
+  const carPosition = assigned_to.position
 }
 
 module.exports = pickupInstructions

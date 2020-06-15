@@ -1,7 +1,7 @@
 const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
-const secondsToHm = require('./secondsToHm')
+const { secondsToHm } = require('./secondsToHm')
 
 const replyQueues = new Map()
 

@@ -68,7 +68,6 @@ const Sidebar = (state) => {
   )
 
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
-
   const currentViewToElement = () => {
     switch (navigationCurrentView) {
       case 'bookings':
@@ -83,7 +82,10 @@ const Sidebar = (state) => {
       case 'cars':
         return (
           <>
-            <AddVehicle addVehicle={state.addVehicle} />
+            <AddVehicle
+              currentPosition={state.currentPosition}
+              addVehicle={state.addVehicle}
+            />
             <h3>Aktuella fordon</h3>
             <Cars cars={data.cars} />
           </>

@@ -65,7 +65,6 @@ const dispatchOffers = () => {
 }
 
 const addVehicle = (position) => {
-  console.log('position', position)
   return amqp.exchange('cars', 'fanout', { durable: false }).publish({
     id: id62(),
     position,

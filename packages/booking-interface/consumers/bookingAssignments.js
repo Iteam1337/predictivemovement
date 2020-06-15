@@ -30,7 +30,11 @@ const bookingAssignments = () => {
             })
         )
         .then((booking) =>
-          messaging.onBookingConfirmed(booking.senderId, booking.assigned_to.id)
+          messaging.onBookingConfirmed(
+            booking.senderId,
+            booking.assigned_to.id,
+            booking.route.duration
+          )
         )
     )
 }

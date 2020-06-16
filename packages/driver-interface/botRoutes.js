@@ -3,7 +3,7 @@ const messaging = require('./services/messaging')
 const {
   getBooking,
   updateBooking,
-  getAllBookings,
+  getBookingFromVehicleId,
 } = require('./services/cache')
 
 const {
@@ -63,10 +63,15 @@ const init = (bot) => {
 
   bot.command('/lista', (ctx) => {
     const id = ctx.update.message.from.id
-    console.log(id)
-    console.log(getAllBookings())
 
-    ctx.reply('Hej hej här kommer listan.')
+    const bookingAssignedToVehicle = getBookingFromVehicleId(id)
+
+    if (!bookingAssignedToVehicle)
+      return messaging.onNoInstructionsForVehicle(ctx)
+    console.log(bookingAssignedToVehicle)
+
+    const instructions = bookingAssignedToVehicle.instructions
+    console.log('instructions: ', instructions)
   })
 
   bot.on('message', (ctx) => {

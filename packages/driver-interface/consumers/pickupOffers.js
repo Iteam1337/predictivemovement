@@ -32,6 +32,7 @@ const pickupOffers = () => {
                   deliveryAddress,
                 },
               })
+              console.log({ booking })
 
               messaging.sendPickupOffer(
                 vehicle.id,

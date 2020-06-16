@@ -11,7 +11,8 @@ module.exports = {
       ...update,
     })
   },
-  getAllBookings: () => Array.from(bookingsCache.values())
-  // getBookingFromVehicleId: id => Array.from(bookingsCache.values())
-
+  getBookingFromVehicleId: (vehicleId) =>
+    Array.from(bookingsCache.values()).find(
+      (booking) => booking.assigned_to.id === vehicleId
+    ),
 }

@@ -1,5 +1,5 @@
-const { open, queues } = require("./amqp");
-const { findRoutes } = require("./graphhopper");
+const { open, queues } = require('./amqp')
+const { findRoutes } = require('./graphhopper')
 
 open
   .then((conn) => conn.createChannel())
@@ -10,21 +10,19 @@ open
       })
       .then(() =>
         ch.consume(queues.CANDIDATES_REQUEST, async (message) => {
-          const { vehicles, bookings } = JSON.parse(message.content.toString());
-          const { replyTo, correlationId } = message.properties;
+          const { vehicles, bookings } = JSON.parse(message.content.toString())
+          const { replyTo, correlationId } = message.properties
 
           try {
-            const routes = await findRoutes(vehicles, bookings);
+            const routes = await findRoutes(vehicles, bookings)
             ch.sendToQueue(replyTo, Buffer.from(JSON.stringify(routes)), {
               correlationId,
-            });
-
-            ch.ack(message);
+            })
           } catch (error) {
-            ch.ack(message);
-            console.warn("something borked: ", error);
+            console.warn('something borked: ', error)
           }
+          ch.ack(message)
         })
       )
       .catch(console.warn)
-  );
+  )

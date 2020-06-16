@@ -14,8 +14,6 @@ defmodule Osrm do
     url =
       "#{Application.fetch_env!(:engine, :osrm_url)}/route/v1/driving/#{coordinates}?steps=true&alternatives=false&overview=full&annotations=true"
 
-    IO.inspect(url, label: "this is the url")
-
     Fetch.json(url)
     |> Map.get(:routes)
     |> Enum.sort(fn a, b -> a.duration < b.duration end)

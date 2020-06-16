@@ -91,6 +91,8 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
     .catch(console.warn)
 }
 
+const onNoInstructionsForVehicle = (ctx) => ctx.reply('Vi kunde inte hitta några instruktioner...')
+
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
     message.assigned_to.id,
@@ -115,6 +117,7 @@ const sendPickupInstructions = (message) => {
 }
 
 module.exports = {
+  onNoInstructionsForVehicle,
   onBotStart,
   sendPickupOffer,
   sendPickupInstructions,

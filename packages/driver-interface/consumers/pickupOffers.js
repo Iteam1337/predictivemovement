@@ -34,7 +34,7 @@ const pickupOffers = () => {
               })
 
               messaging.sendPickupOffer(
-                vehicle.id,
+                vehicle.metadata.telegram.senderId,
                 {
                   replyQueue: message.properties.replyTo,
                   correlationId: message.properties.correlationId,

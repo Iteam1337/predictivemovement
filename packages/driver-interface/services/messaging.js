@@ -93,7 +93,7 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
 
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
-    message.assigned_to.id,
+    message.assigned_to.metadata.telegram.senderId,
     `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.pickup.lat},${message.pickup.lon})!`,
     {
       parse_mode: 'markdown',

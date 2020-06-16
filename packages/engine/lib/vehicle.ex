@@ -30,17 +30,20 @@ defmodule Vehicle do
 
     booking_ids
     |> Enum.map(fn booking_id ->
-      MQ.call(%{vehicle: %{id: vehicle_id}, booking: Booking.get(booking_id)}, "pickup_offers")
+      MQ.call(
+        %{vehicle: %{id: vehicle_id, metadata: state.metadata}, booking: Booking.get(booking_id)},
+        "pickup_offers"
+      )
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
-      |> handle_driver_response(vehicle_id, booking_id)
+      |> handle_driver_response(%{id: vehicle_id, metadata: state.metadata}, booking_id)
     end)
 
     {:noreply, state}
   end
 
-  def handle_driver_response({:ok, true}, vehicle_id, booking_id) do
-    Booking.assign(booking_id, vehicle_id)
+  def handle_driver_response({:ok, true}, vehicle, booking_id) do
+    Booking.assign(booking_id, vehicle)
     |> IO.inspect(label: "booking was assigned")
   end
 

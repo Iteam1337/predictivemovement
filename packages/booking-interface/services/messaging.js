@@ -1,5 +1,5 @@
 const bot = require('../adapters/bot')
-const { secondsToHm } = require('./secondsToHm')
+const moment = require('moment')
 
 const onBotStart = (ctx) => {
   const {
@@ -15,12 +15,12 @@ const onBotStart = (ctx) => {
   )
 }
 
-const onBookingConfirmed = (senderId, carId, duration) => {
+const onBookingConfirmed = (senderId, carId, events) => {
   bot.telegram.sendMessage(
     senderId,
-    `Din bokning har accepterats av förare ${carId}, det kommer att ta cirka ${secondsToHm(
-      duration
-    )} från hämtning till leverans.`
+    `Din bokning har accepterades av förare ${carId}, ${moment(events.timestamp)
+      .local()
+      .format('ddd, MMM DD YYYY, h:mm')}`
   )
 }
 

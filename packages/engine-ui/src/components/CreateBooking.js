@@ -16,7 +16,7 @@ const InputInnerContainer = styled.div`
 
 const TextInput = styled.input`
   border: none;
-  background-color: #f0f3f5;
+  background-color: #f1f3f5;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
   border-radius: 0.25rem;
@@ -31,11 +31,13 @@ const Label = styled.label`
   font-weight: bold;
   font-size: 0.875rem;
 `
-
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`
 const SubmitButton = styled.button`
   padding: 0.75rem 1rem;
-  background: #e6f5ff;
-  border-radius: 0.75rem;
+  background: #ccffcc;
   font-weight: 600;
   color: inherit;
   font-size: 0.875rem;
@@ -43,7 +45,8 @@ const SubmitButton = styled.button`
   cursor: pointer;
 
   :hover {
-    background: #abd4ed;
+    background: #ccffcc;
+    color: #666666;
   }
 `
 
@@ -128,9 +131,9 @@ const CreateBooking = ({ createBooking }) => {
             </InputInnerContainer>
           </InputContainer>
         </div>
-        <div>
+        <ButtonContainer>
           <SubmitButton type="submit">Skapa bokning</SubmitButton>
-        </div>
+        </ButtonContainer>
       </form>
     </Container>
   )

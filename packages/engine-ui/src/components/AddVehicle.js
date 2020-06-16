@@ -16,7 +16,7 @@ const InputInnerContainer = styled.div`
 
 const TextInput = styled.input`
   border: none;
-  background-color: #f0f3f5;
+  background-color: #f1f3f5;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
   border-radius: 0.25rem;
@@ -34,7 +34,7 @@ const Label = styled.label`
 
 const SubmitButton = styled.button`
   padding: 0.75rem 1rem;
-  background: #e6f5ff;
+  background: #e6ffe6;
   border-radius: 0.75rem;
   font-weight: 600;
   color: inherit;
@@ -43,7 +43,7 @@ const SubmitButton = styled.button`
   cursor: pointer;
 
   :hover {
-    background: #abd4ed;
+    background: #ccffcc;
   }
 `
 

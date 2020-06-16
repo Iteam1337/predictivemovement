@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import ParcelIcon from '../assets/parcel.svg'
-import ShippingIcon from '../assets/shipping-fast.svg'
+import ShippingIcon from '../assets/shippingIcon.svg'
 import Bookings from './Bookings'
 import Cars from './Cars'
 import CreateBooking from './CreateBooking'
@@ -23,9 +23,9 @@ const Container = styled.div`
 `
 
 const NavigationBar = styled.div`
-  padding: 2rem 1rem;
+  padding: 3rem 1rem;
   height: 100vh;
-  background: #64b5f6;
+  background: #13c57b;
   color: white;
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@ const NavigationBar = styled.div`
     width: 30px;
     height: 30px;
     cursor: pointer;
-    margin-bottom: 2rem;
+    margin-bottom: 5rem;
   }
 `
 

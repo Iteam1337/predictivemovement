@@ -18,7 +18,9 @@ const onBotStart = (ctx) => {
 const onBookingConfirmed = (senderId, carId, events) => {
   bot.telegram.sendMessage(
     senderId,
-    `Din bokning har accepterades av förare ${carId}, ${moment(events.timestamp)
+    `Din bokning har accepterades av förare ${carId}, ${moment(
+      events[0].timestamp
+    )
       .local()
       .format('ddd, MMM DD YYYY, h:mm')}`
   )

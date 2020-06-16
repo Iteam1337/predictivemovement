@@ -7,6 +7,7 @@ const fetchGeoCodes = (postalcode) =>
     .then((res) => res.json())
     .then(({ results }) => results[0].geometry.location)
     .then(({ lat, lng: lon }) => ({ coordinates: { lat, lon } }))
+    .catch(() => null)
 
 module.exports = {
   fetchGeoCodes,

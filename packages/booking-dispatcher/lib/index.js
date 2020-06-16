@@ -45,7 +45,6 @@ const bookingDispatcher = async () => {
     return
   }
 
-
   const packages = jsonPackages.filter(
     (x) =>
       format(setYear(new Date(x.ShipmentDate), 2020), 'yyyy-MM-dd') ===
@@ -57,14 +56,18 @@ const bookingDispatcher = async () => {
       getRandomAddress(package['Till Postnummer']) ||
       (await fetchGeoCodes(package['Till Postnummer']))
 
-    const { coordinates } = await fetchGeoCodes(package['Från Postnummer'])
+    const packagePickupAddress = await fetchGeoCodes(package['Från Postnummer'])
+
+    if (!packageDeliveryAddress || !packagePickupAddress) {
+      continue
+    }
 
     const booking = {
       delivery: packageDeliveryAddress.coordinates,
       id: id62(),
       senderId: 'the-past',
       bookingDate: package.ShipmentDate,
-      pickup: coordinates,
+      pickup: packagePickupAddress.coordinates,
     }
 
     publish(exchanges.bookings, exchanges.bookings.routingKeys.NEW, {

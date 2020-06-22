@@ -11,6 +11,7 @@ import Hooks from '../Hooks'
 import CarDetails from './CarDetails'
 import Filters from './Filters'
 import AddVehicle from './AddVehicle'
+import Dispatch from '../assets/dispatch.svg'
 
 const Container = styled.div`
   position: absolute;
@@ -121,12 +122,11 @@ const Sidebar = (state) => {
           />
         </Link>
         <Link to="/">
-          <button
+          <img
             onClick={() => setNavigationCurrentView('dispatch')}
-            alt="DISPATCH"
-          >
-            Dispatch
-          </button>
+            src={Dispatch}
+            alt="Dispatch icon"
+          />
         </Link>
       </NavigationBar>
 

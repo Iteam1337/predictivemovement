@@ -45,15 +45,11 @@ defmodule Booking do
   end
 
   def handle_call({:assign, vehicle}, _from, state) do
-    route = Osrm.route(state.pickup, state.delivery)
-
     updated_state =
       state
-      |> Map.put(:route, route)
       |> Map.put(:assigned_to, %{
         id: vehicle.id,
-        metadata: vehicle.metadata,
-        route: route
+        metadata: vehicle.metadata
       })
       |> Map.put(:events, [%{timestamp: DateTime.utc_now(), type: :assigned} | state.events])
 

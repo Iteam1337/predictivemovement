@@ -139,7 +139,10 @@ const Sidebar = (state) => {
             <Details state={data} />
           </Route>
           <Route path="/addVehicle">
-            <AddVehicle state={data} />
+            <AddVehicle
+              currentPosition={state.currentPosition}
+              addVehicle={state.addVehicle}
+            />
           </Route>
           <Route path="/addBooking">
             <CreateBooking createBooking={state.createBooking} />

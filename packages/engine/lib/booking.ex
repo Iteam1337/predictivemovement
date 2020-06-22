@@ -1,7 +1,7 @@
 defmodule Booking do
   use GenServer
 
-  defstruct [:id, :pickup, :delivery, :assigned_to, :senderId, :external_id]
+  defstruct [:id, :pickup, :delivery, :assigned_to, :senderId, :external_id, :events]
 
   def make(pickup, delivery, external_id, senderId) do
     id = external_id
@@ -13,7 +13,8 @@ defmodule Booking do
         external_id: external_id,
         pickup: pickup,
         delivery: delivery,
-        senderId: senderId
+        senderId: senderId,
+        events: []
       },
       name: via_tuple(id)
     )
@@ -55,6 +56,7 @@ defmodule Booking do
         metadata: vehicle.metadata,
         route: route
       })
+      |> Map.put(:events, [%{timestamp: DateTime.utc_now(), type: :assigned} | state.events])
 
     updated_state
     |> MQ.publish(

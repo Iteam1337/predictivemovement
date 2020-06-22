@@ -30,8 +30,14 @@ defmodule Vehicle do
 
     booking_ids
     |> Enum.map(fn booking_id ->
+      booking = Booking.get(booking_id)
+
       MQ.call(
-        %{vehicle: %{id: vehicle_id, metadata: state.metadata}, booking: Booking.get(booking_id)},
+        %{
+          vehicle: %{id: vehicle_id, metadata: state.metadata},
+          booking: booking,
+          route: Osrm.route([vehicle.position, booking.pickup, booking.delivery])
+        },
         "pickup_offers"
       )
       |> Poison.decode()

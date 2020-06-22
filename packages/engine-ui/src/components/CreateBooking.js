@@ -1,77 +1,7 @@
 import React from 'react'
-import styled from 'styled-components'
-import locationIcon from '../assets/location.svg'
 import { useHistory } from 'react-router-dom'
-
-const Container = styled.div`
-  margin-bottom: 2rem;
-`
-
-const InputContainer = styled.div`
-  margin-bottom: 1rem;
-`
-
-const InputInnerContainer = styled.div`
-  position: relative;
-`
-
-const TextInput = styled.input`
-  border: none;
-  background-color: #f1f3f5;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  border-radius: 0.25rem;
-  width: 100%;
-  font-size: 0.875rem;
-  padding-left: 2.5rem;
-`
-
-const Label = styled.label`
-  margin-bottom: 0.5rem;
-  display: block;
-  font-weight: bold;
-  font-size: 0.875rem;
-`
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
-
-const SubmitButton = styled.button`
-  padding: 0.75rem 2.3rem;
-  background: #ccffcc;
-  font-weight: 600;
-  color: inherit;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-
-  :hover {
-    background: #ccffcc;
-    color: #666666;
-  }
-`
-const CancelButton = styled.button`
-  padding: 0.75rem 2.3rem;
-  background: #fff;
-  font-weight: 600;
-  color: inherit;
-  font-size: 0.875rem;
-  border: 1px solid #c4c4c4;
-  cursor: pointer;
-
-  :hover {
-    color: #666666;
-  }
-`
-
-const LocationIcon = styled.img`
-  width: 16px;
-  height: 18px;
-  position: absolute;
-  top: 12px;
-  left: 12.5px;
-`
+import locationIcon from '../assets/location.svg'
+import Elements from './Elements'
 
 const CreateBooking = ({ createBooking }) => {
   const history = useHistory()
@@ -100,18 +30,18 @@ const CreateBooking = ({ createBooking }) => {
   }
 
   return (
-    <Container>
+    <Elements.Container>
       <h3>Skapa en ny bokning</h3>
       <form onSubmit={create} autoComplete="on">
         <div>
-          <InputContainer>
-            <Label htmlFor="pickup">Startpunkt</Label>
-            <InputInnerContainer>
-              <LocationIcon
+          <Elements.InputContainer>
+            <Elements.Label htmlFor="pickup">Startpunkt</Elements.Label>
+            <Elements.InputInnerContainer>
+              <Elements.LocationIcon
                 alt="Location pickup icon"
                 src={`${locationIcon}`}
               />
-              <TextInput
+              <Elements.TextInput
                 name="pickup"
                 type="text"
                 value={formState.pickup}
@@ -123,18 +53,18 @@ const CreateBooking = ({ createBooking }) => {
                   })
                 }
               />
-            </InputInnerContainer>
-          </InputContainer>
+            </Elements.InputInnerContainer>
+          </Elements.InputContainer>
         </div>
         <div>
-          <InputContainer>
-            <Label htmlFor="delivery">Delivery</Label>
-            <InputInnerContainer>
-              <LocationIcon
+          <Elements.InputContainer>
+            <Elements.Label htmlFor="delivery">Delivery</Elements.Label>
+            <Elements.InputInnerContainer>
+              <Elements.LocationIcon
                 alt="Location delivery icon"
                 src={`${locationIcon}`}
               />
-              <TextInput
+              <Elements.TextInput
                 name="delivery"
                 type="text"
                 value={formState.delivery}
@@ -146,17 +76,20 @@ const CreateBooking = ({ createBooking }) => {
                   })
                 }
               />
-            </InputInnerContainer>
-          </InputContainer>
+            </Elements.InputInnerContainer>
+          </Elements.InputContainer>
         </div>
-        <ButtonWrapper>
-          <CancelButton type="button" onClick={() => history.push('/')}>
+        <Elements.ButtonWrapper>
+          <Elements.CancelButton
+            type="button"
+            onClick={() => history.push('/')}
+          >
             Avbryt
-          </CancelButton>
-          <SubmitButton type="submit">Lägg till</SubmitButton>
-        </ButtonWrapper>
+          </Elements.CancelButton>
+          <Elements.SubmitButton type="submit">Lägg till</Elements.SubmitButton>
+        </Elements.ButtonWrapper>
       </form>
-    </Container>
+    </Elements.Container>
   )
 }
 export default CreateBooking

@@ -6,13 +6,16 @@ const onMessage = (msg, ctx) => {
     lat: msg.location.latitude,
   }
 
-  const username = msg.from.username
+  const telegramMetadata = {
+    username: msg.from.username,
+    senderId: msg.from.id,
+  }
+
   const message = {
-    username,
-    id: msg.from.id,
-    // chatId: msg.chat.id, // this borks engine-elixir
     position,
-    // date: Date(msg.edit_date),
+    metadata: {
+      telegram: telegramMetadata,
+    },
   }
 
   amqp.updateLocation(message, ctx)

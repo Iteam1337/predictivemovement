@@ -77,15 +77,18 @@ defmodule Engine.MatchProducer do
   ## helpers
 
   def string_to_vehicle_transform(vehicle_string) do
-    %{position: position, id: external_id} = vehicle_string |> Poison.decode!(keys: :atoms!)
-    Vehicle.make(external_id, position)
+    %{position: position, metadata: metadata} =
+      vehicle_string |> Poison.decode!(keys: :atoms) |> Map.put_new(:metadata, %{})
+
+    Vehicle.make(position, metadata)
   end
 
   def string_to_booking_transform(booking_string) do
-    %{pickup: pickup, delivery: delivery, id: id, senderId: senderId} =
+    %{pickup: pickup, delivery: delivery, id: external_id, metadata: metadata} =
       Poison.decode!(booking_string, keys: :atoms)
+      |> Map.put_new(:metadata, %{})
 
-    Booking.make(pickup, delivery, id, senderId)
+    Booking.make(pickup, delivery, external_id, metadata)
   end
 
   ## set up queues

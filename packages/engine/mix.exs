@@ -49,8 +49,8 @@ defmodule Engine.MixProject do
       {:mox, "~> 0.5"},
       {:poison, "~> 3.1"},
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
-      {:uuid, "~> 1.1"},
-      {:gproc, "~> 0.8.0"}
+      {:gproc, "~> 0.8.0"},
+      {:base62_uuid, "~> 2.0.2"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]

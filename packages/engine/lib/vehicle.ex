@@ -2,13 +2,12 @@ defmodule Vehicle do
   use GenServer
 
   defstruct id: 0,
-            external_id: 0,
             position: %{lon: 53, lat: 14},
-            heading: nil,
             busy: false,
-            instructions: [],
-            orsm_route: nil,
-            booking_ids: []
+            activities: [],
+            current_route: nil,
+            booking_ids: [],
+            metadata: %{}
 
   def init(init_arg) do
     {:ok, init_arg}
@@ -24,12 +23,7 @@ defmodule Vehicle do
 
   def handle_cast(
         {:offer,
-         %Vehicle{
-           id: vehicle_id,
-           instructions: _instructions,
-           booking_ids: booking_ids,
-           position: position
-         } = vehicle},
+         %Vehicle{id: vehicle_id, activities: _activities, booking_ids: booking_ids} = vehicle},
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
@@ -40,7 +34,7 @@ defmodule Vehicle do
 
       MQ.call(
         %{
-          vehicle: %{id: vehicle_id},
+          vehicle: %{id: vehicle_id, metadata: state.metadata},
           booking: booking,
           route: Osrm.route([vehicle.position, booking.pickup, booking.delivery])
         },
@@ -48,29 +42,29 @@ defmodule Vehicle do
       )
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
-      |> handle_driver_response(vehicle_id, booking_id)
+      |> handle_driver_response(%{id: vehicle_id, metadata: state.metadata}, booking_id)
     end)
 
     {:noreply, state}
   end
 
-  def handle_driver_response({:ok, true}, vehicle_id, booking_id) do
-    Booking.assign(booking_id, vehicle_id)
+  def handle_driver_response({:ok, true}, vehicle, booking_id) do
+    Booking.assign(booking_id, vehicle)
     |> IO.inspect(label: "booking was assigned")
   end
 
   def handle_driver_response({:ok, false}, _, _), do: IO.puts("Driver didnt want the booking :(")
 
-  def make(external_id, position, busy \\ false) do
-    id = external_id
+  def make(position, metadata, busy \\ false) do
+    id = "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
     GenServer.start_link(
       __MODULE__,
       %Vehicle{
         id: id,
-        external_id: external_id,
         position: position,
-        busy: busy
+        busy: busy,
+        metadata: metadata
       },
       name: via_tuple(id)
     )
@@ -78,9 +72,7 @@ defmodule Vehicle do
     id
   end
 
-  defp via_tuple(id) when is_binary(id), do: via_tuple(String.to_integer(id))
-
-  defp via_tuple(id) when is_integer(id) do
+  defp via_tuple(id) do
     {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
   end
 
@@ -88,7 +80,7 @@ defmodule Vehicle do
     GenServer.call(via_tuple(id), :get)
   end
 
-  def offer(%Vehicle{id: id, instructions: instructions, booking_ids: booking_ids} = vehicle) do
+  def offer(%Vehicle{id: id, activities: activities, booking_ids: booking_ids} = vehicle) do
     GenServer.cast(via_tuple(id), {:offer, vehicle})
   end
 end

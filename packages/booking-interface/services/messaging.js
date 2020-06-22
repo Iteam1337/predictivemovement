@@ -1,4 +1,5 @@
 const bot = require('../adapters/bot')
+const moment = require('moment')
 
 const onBotStart = (ctx) => {
   const {
@@ -14,10 +15,14 @@ const onBotStart = (ctx) => {
   )
 }
 
-const onBookingConfirmed = (senderId, carId) => {
+const onBookingConfirmed = (senderId, carId, events) => {
   bot.telegram.sendMessage(
     senderId,
-    `Din bokning har accepterats av förare ${carId}`
+    `Din bokning har accepterades av förare ${carId}, ${moment(
+      events[0].timestamp
+    )
+      .local()
+      .format('ddd, MMM DD YYYY, h:mm')}`
   )
 }
 

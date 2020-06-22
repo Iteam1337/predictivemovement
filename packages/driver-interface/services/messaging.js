@@ -1,6 +1,7 @@
 const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
+const moment = require('moment')
 
 const replyQueues = new Map()
 
@@ -21,14 +22,18 @@ const onBotStart = (ctx) => {
 const sendPickupOffer = (
   chatId,
   msgOptions,
-  { pickupAddress, deliveryAddress, booking }
+  { pickupAddress, deliveryAddress, booking, route }
 ) => {
   replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
 
   bot.telegram.sendMessage(
     parseInt(chatId, 10),
-    `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Har du möjlighet att hämta detta?
-    [Se på kartan](https://www.google.com/maps/dir/${booking.pickup.lat},${booking.pickup.lon}/${booking.delivery.lat},${booking.delivery.lon})`,
+    `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Turen kommer att ta cirka ${moment
+      .duration({ seconds: route.duration })
+      .humanize()}. Har du möjlighet att hämta detta?
+    [Se på kartan](https://www.google.com/maps/dir/${booking.pickup.lat},${
+      booking.pickup.lon
+    }/${booking.delivery.lat},${booking.delivery.lon})`,
     {
       parse_mode: 'markdown',
       reply_markup: {

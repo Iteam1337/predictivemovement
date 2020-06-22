@@ -24,14 +24,28 @@ defmodule Vehicle do
 
   def handle_cast(
         {:offer,
-         %Vehicle{id: vehicle_id, instructions: _instructions, booking_ids: booking_ids} = vehicle},
+         %Vehicle{
+           id: vehicle_id,
+           instructions: _instructions,
+           booking_ids: booking_ids,
+           position: position
+         } = vehicle},
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
 
     booking_ids
     |> Enum.map(fn booking_id ->
-      MQ.call(%{vehicle: %{id: vehicle_id}, booking: Booking.get(booking_id)}, "pickup_offers")
+      booking = Booking.get(booking_id)
+
+      MQ.call(
+        %{
+          vehicle: %{id: vehicle_id},
+          booking: booking,
+          route: Osrm.route([vehicle.position, booking.pickup, booking.delivery])
+        },
+        "pickup_offers"
+      )
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
       |> handle_driver_response(vehicle_id, booking_id)

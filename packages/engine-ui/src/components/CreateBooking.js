@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import locationIcon from '../assets/location.svg'
+import { useHistory } from 'react-router-dom'
 
 const Container = styled.div`
   margin-bottom: 2rem;
@@ -31,12 +32,13 @@ const Label = styled.label`
   font-weight: bold;
   font-size: 0.875rem;
 `
-const ButtonContainer = styled.div`
+const ButtonWrapper = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 `
+
 const SubmitButton = styled.button`
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 2.3rem;
   background: #ccffcc;
   font-weight: 600;
   color: inherit;
@@ -46,6 +48,19 @@ const SubmitButton = styled.button`
 
   :hover {
     background: #ccffcc;
+    color: #666666;
+  }
+`
+const CancelButton = styled.button`
+  padding: 0.75rem 2.3rem;
+  background: #fff;
+  font-weight: 600;
+  color: inherit;
+  font-size: 0.875rem;
+  border: 1px solid #c4c4c4;
+  cursor: pointer;
+
+  :hover {
     color: #666666;
   }
 `
@@ -59,6 +74,7 @@ const LocationIcon = styled.img`
 `
 
 const CreateBooking = ({ createBooking }) => {
+  const history = useHistory()
   const [formState, setState] = React.useState({
     pickup: '',
     delivery: '',
@@ -79,6 +95,8 @@ const CreateBooking = ({ createBooking }) => {
 
     if (!pickup.length || !delivery.length) return false
     createBooking({ pickup, delivery })
+
+    history.push('/')
   }
 
   return (
@@ -131,9 +149,12 @@ const CreateBooking = ({ createBooking }) => {
             </InputInnerContainer>
           </InputContainer>
         </div>
-        <ButtonContainer>
-          <SubmitButton type="submit">Skapa bokning</SubmitButton>
-        </ButtonContainer>
+        <ButtonWrapper>
+          <CancelButton type="button" onClick={() => history.push('/')}>
+            Avbryt
+          </CancelButton>
+          <SubmitButton type="submit">Lägg till</SubmitButton>
+        </ButtonWrapper>
       </form>
     </Container>
   )

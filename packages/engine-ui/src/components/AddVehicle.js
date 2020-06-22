@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import locationIcon from '../assets/location.svg'
+import { useHistory } from 'react-router-dom'
 
 const Container = styled.div`
   margin-bottom: 2rem;
@@ -32,10 +33,14 @@ const Label = styled.label`
   font-size: 0.875rem;
 `
 
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
 const SubmitButton = styled.button`
-  padding: 0.75rem 1rem;
-  background: #e6ffe6;
-  border-radius: 0.75rem;
+  padding: 0.75rem 2.3rem;
+  background: #ccffcc;
   font-weight: 600;
   color: inherit;
   font-size: 0.875rem;
@@ -44,6 +49,20 @@ const SubmitButton = styled.button`
 
   :hover {
     background: #ccffcc;
+    color: #666666;
+  }
+`
+const CancelButton = styled.button`
+  padding: 0.75rem 2.3rem;
+  background: #fff;
+  font-weight: 600;
+  color: inherit;
+  font-size: 0.875rem;
+  border: 1px solid #c4c4c4;
+  cursor: pointer;
+
+  :hover {
+    color: #666666;
   }
 `
 
@@ -56,6 +75,7 @@ const LocationIcon = styled.img`
 `
 
 const AddVehicle = ({ addVehicle, currentPosition }) => {
+  const history = useHistory()
   const [formState, setState] = React.useState('')
   const [position, setPosition] = React.useState({})
   const [isActive, setActive] = React.useState(false)
@@ -80,7 +100,6 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
 
   const create = (event) => {
     event.preventDefault()
-
     const position = formState
       .split(',')
       .map(parseFloat)
@@ -88,6 +107,8 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
 
     if (!position.length) return false
     addVehicle({ lat: position[0], lon: position[1] })
+
+    history.push('/')
   }
 
   return (
@@ -109,9 +130,12 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
             </InputInnerContainer>
           </InputContainer>
         </div>
-        <div>
-          <SubmitButton type="submit">Lägg till fordon</SubmitButton>
-        </div>
+        <ButtonWrapper>
+          <CancelButton type="button" onClick={() => history.push('/')}>
+            Avbryt
+          </CancelButton>
+          <SubmitButton type="submit">Lägg till</SubmitButton>
+        </ButtonWrapper>
       </form>
     </Container>
   )

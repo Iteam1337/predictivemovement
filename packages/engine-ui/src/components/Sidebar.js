@@ -40,6 +40,11 @@ const NavigationBar = styled.div`
   }
 `
 
+const TextLink = styled(Link)`
+  text-decoration: none;
+  color: #666666;
+`
+
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
 
@@ -73,21 +78,22 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <CreateBooking createBooking={state.createBooking} />
             <Filters />
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={data.bookings} />
+            <TextLink to="/addBooking">
+              <h3>+ Lägg till bokning</h3>
+            </TextLink>
           </>
         )
       case 'cars':
         return (
           <>
-            <AddVehicle
-              currentPosition={state.currentPosition}
-              addVehicle={state.addVehicle}
-            />
             <h3>Aktuella fordon</h3>
             <Cars cars={data.cars} />
+            <TextLink to="/addVehicle">
+              <h3>+ Lägg till bil</h3>
+            </TextLink>
           </>
         )
       case 'dispatch':
@@ -114,11 +120,13 @@ const Sidebar = (state) => {
             alt="shipping icon"
           />
         </Link>
-        <Link>
-          <img
+        <Link to="/">
+          <button
             onClick={() => setNavigationCurrentView('dispatch')}
             alt="DISPATCH"
-          />
+          >
+            Dispatch
+          </button>
         </Link>
       </NavigationBar>
 
@@ -129,6 +137,12 @@ const Sidebar = (state) => {
           </Route>
           <Route path="/details">
             <Details state={data} />
+          </Route>
+          <Route path="/addVehicle">
+            <AddVehicle state={data} />
+          </Route>
+          <Route path="/addBooking">
+            <CreateBooking createBooking={state.createBooking} />
           </Route>
         </RouterSwitch>
       </Content>

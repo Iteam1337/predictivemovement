@@ -13,7 +13,9 @@ const pickupOffers = () => {
         })
         .then(() =>
           ch.consume(queues.PICKUP_OFFERS, async (message) => {
-            const { vehicle, booking } = JSON.parse(message.content.toString())
+            const { vehicle, booking, route } = JSON.parse(
+              message.content.toString()
+            )
             try {
               const pickupAddress = await google.getAddressFromCoordinate(
                 booking.pickup
@@ -39,7 +41,7 @@ const pickupOffers = () => {
                   replyQueue: message.properties.replyTo,
                   correlationId: message.properties.correlationId,
                 },
-                { pickupAddress, deliveryAddress, booking }
+                { pickupAddress, deliveryAddress, booking, route }
               )
               ch.ack(message)
             } catch (error) {

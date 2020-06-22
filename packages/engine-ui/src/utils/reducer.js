@@ -20,6 +20,12 @@ export const reducer = (state, action) => {
           ...action.payload,
         ],
       }
+
+    case 'setPosition':
+      return {
+        ...state,
+        currentPosition: action.payload,
+      }
     default:
       return state
   }
@@ -30,4 +36,5 @@ export const initState = {
   bookings: [],
   assignedBookings: [],
   cars: [],
+  currentPosition: { lat: null, lon: null },
 }

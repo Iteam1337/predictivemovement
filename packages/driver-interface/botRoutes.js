@@ -6,6 +6,53 @@ const {
   exchanges: { BOOKINGS },
 } = require('./adapters/amqp')
 
+function onPickup(msg) {
+  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  updateBooking(callbackPayload.id, { status: callbackPayload.e })
+  open
+    .then((conn) => conn.createChannel())
+    .then((ch) => {
+      ch.assertExchange(BOOKINGS, 'topic', {
+        durable: false,
+      }).then(() => {
+        const { id } = callbackPayload
+        ch.publish(
+          BOOKINGS,
+          'pickup',
+          Buffer.from(JSON.stringify(getBooking(id)))
+        )
+      })
+    })
+
+  return messaging.onPickupConfirm(msg)
+}
+
+function onDelivered(msg) {
+  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  updateBooking(callbackPayload.id, { status: callbackPayload.e })
+  return open
+    .then((conn) => conn.createChannel())
+    .then((ch) => {
+      ch.assertExchange(BOOKINGS, 'topic', {
+        durable: false,
+      }).then(() => {
+        const { id } = callbackPayload
+        ch.publish(
+          BOOKINGS,
+          'delivered',
+          Buffer.from(JSON.stringify(getBooking(id)))
+        )
+      })
+    })
+    .catch(console.warn)
+}
+
+function onOffer(msg) {
+  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  const { a: isAccepted, ...options } = callbackPayload
+  return messaging.onPickupOfferResponse(isAccepted, options, msg)
+}
+
 const init = (bot) => {
   bot.start(messaging.onBotStart)
 
@@ -28,55 +75,19 @@ const init = (bot) => {
 
   bot.on('callback_query', (msg) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
-    if (callbackPayload.e === 'pickup') {
-      updateBooking(callbackPayload.id, { status: callbackPayload.e })
-      open
-        .then((conn) => conn.createChannel())
-        .then((ch) => {
-          ch.assertExchange(BOOKINGS, 'topic', {
-            durable: false,
-          }).then(() => {
-            const { id } = callbackPayload
-            ch.publish(
-              BOOKINGS,
-              'pickup',
-              Buffer.from(JSON.stringify(getBooking(id)))
-            )
-          })
-        })
 
-      return messaging.onPickupConfirm(msg)
-    }
+    switch (callbackPayload.e) {
+      case 'pickup':
+        return onPickup(msg)
 
-    if (callbackPayload.e === 'delivered') {
-      updateBooking(callbackPayload.id, { status: callbackPayload.e })
-      return open
-        .then((conn) => conn.createChannel())
-        .then((ch) => {
-          ch.assertExchange(BOOKINGS, 'topic', {
-            durable: false,
-          }).then(() => {
-            const { id } = callbackPayload
-            ch.publish(
-              BOOKINGS,
-              'delivered',
-              Buffer.from(JSON.stringify(getBooking(id)))
-            )
-          })
-        })
-        .catch(console.warn)
-    }
+      case 'delivered':
+        return onDelivered(msg)
 
-    try {
-      const { a: isAccepted, ...options } = JSON.parse(
-        msg.update.callback_query.data
-      )
+      case 'offer':
+        return onOffer(msg)
 
-      if (options && options.r && options.id) {
-        messaging.onPickupOfferResponse(isAccepted, options, msg)
-      }
-    } catch (error) {
-      return
+      default:
+        throw new Error(`unhandled event ${callbackPayload.e}`)
     }
   })
 }

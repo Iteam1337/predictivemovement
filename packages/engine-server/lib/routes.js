@@ -1,5 +1,12 @@
 const _ = require('highland')
-const { bookings, cars, createBooking, dispatchOffers } = require('./engineConnector')
+const {
+  addVehicle,
+  bookings,
+  bookingsNewWithRoutes,
+  cars,
+  createBooking,
+  dispatchOffers,
+} = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const movingCarsCache = new Map()
@@ -7,7 +14,11 @@ const bookingsCache = new Map()
 
 function register(io) {
   io.on('connection', function (socket) {
-    _.merge([_(bookingsCache.values()), bookings.fork()])
+    _.merge([
+      _(bookingsCache.values()),
+      bookings.fork(),
+      bookingsNewWithRoutes.fork(),
+    ])
       .doto((booking) => bookingsCache.set(booking.id, booking))
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
@@ -58,6 +69,10 @@ function register(io) {
 
     socket.on('dispatch-offers', () => {
       dispatchOffers()
+    })
+
+    socket.on('add-vehicle', ({ position }) => {
+      addVehicle(position)
     })
   })
 }

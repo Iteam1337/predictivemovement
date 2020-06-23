@@ -1,122 +1,211 @@
 package com.predictivemovement.route.optimization;
 
-import com.graphhopper.jsprit.analysis.toolbox.GraphStreamViewer;
-import com.graphhopper.jsprit.analysis.toolbox.GraphStreamViewer.Label;
-import com.graphhopper.jsprit.analysis.toolbox.Plotter;
 import com.graphhopper.jsprit.core.algorithm.VehicleRoutingAlgorithm;
-import com.graphhopper.jsprit.core.algorithm.box.Jsprit;
+import com.graphhopper.jsprit.core.algorithm.box.SchrimpfFactory;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
-import com.graphhopper.jsprit.core.problem.job.Service;
+import com.graphhopper.jsprit.core.problem.job.Shipment;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
+import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
-import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl.Builder;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleTypeImpl;
-import com.graphhopper.jsprit.core.reporting.SolutionPrinter;
 import com.graphhopper.jsprit.core.util.Solutions;
-import com.graphhopper.jsprit.io.problem.VrpXMLWriter;
 
-import java.io.File;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Collection;
-
-/**
-{"vehicles":[{"position":{"lon":16.225352,"lat":61.736082},"metadata":{},"id":"pmv-1zuURKyc","current_route":null,"busy":false,"booking_ids":[],"activities":[]}],
-"bookings":[{"pickup":{"lon":16.02416,"lat":61.789304},"metadata":{},"id":"pmb-4FbTaQFr","external_id":94107,"events":[],"delivery":{"lon":15.99835,"lat":61.898623},"assigned_to":null}],
-"matrix": {}}
- */
-
-/**
- * output %{ copyrights: ["GraphHopper", "OpenStreetMap contributors"], job_id:
- * "da48bfe5-07ff-4e0e-b31b-1c452e576bd3", processing_time: 39, solution: %{
- * completion_time: 2737, costs: 232, distance: 37259, max_operation_time: 2737,
- * no_unassigned: 0, no_vehicles: 1, preparation_time: 0, routes: [ %{
- * activities: [ %{ address: %{lat: 61.842302, location_id: "521537", lon:
- * 15.914518}, distance: 0, driving_time: 0, end_date_time: nil, end_time: 0,
- * load_after: [0], location_id: "521537", preparation_time: 0, type: "start",
- * waiting_time: 0 }, %{ address: %{lat: 61.918197, location_id: "486284", lon:
- * 16.138}, arr_date_time: nil, arr_time: 1617, distance: 22251, driving_time:
- * 1617, end_date_time: nil, end_time: 1617, id: "pmb-6QYMNJ9e", load_after:
- * [1], load_before: [0], location_id: "486284", preparation_time: 0, type:
- * "pickupShipment", waiting_time: 0 }, %{ address: %{lat: 61.815127,
- * location_id: "83908", lon: 16.079536}, arr_date_time: nil, arr_time: 2737,
- * distance: 37259, driving_time: 2737, end_date_time: nil, end_time: 2737, id:
- * "pmb-6QYMNJ9e", load_after: [0], load_before: [1], location_id: "83908",
- * preparation_time: 0, type: "deliverShipment", waiting_time: 0 } ],
- * completion_time: 2737, distance: 37259, preparation_time: 0,
- * service_duration: 0, transport_time: 2737, vehicle_id: "pmv-2WOyjwGP",
- * waiting_time: 0 } ], service_duration: 0, time: 2737, transport_time: 2737,
- * unassigned: %{breaks: [], details: [], services: [], shipments: []},
- * waiting_time: 0 }, status: "finished", waiting_time_in_queue: 0 }
- * 
- */
+import java.util.List;
 
 public class RouteOptimization {
 
+  // added to get access in tests for plotting
+  public VehicleRoutingProblem problem;
+  public Collection<VehicleRoutingProblemSolution> solutions;
+
   public String calculate(String msg) {
-    /*
-     * const cars = msg.cars for (car in cars) {
-     * vehicleBuilder.setStartLocation(Location.newInstance(car.lon, car.lat)); } //
-     * random // nearest final int WEIGHT_INDEX = 0;
-     * 
-     * VehicleTypeImpl.Builder vehicleTypeBuilder =
-     * VehicleTypeImpl.Builder.newInstance("vehicleType")
-     * .addCapacityDimension(WEIGHT_INDEX, 2);
-     * 
-     * VehicleType vehicleType = vehicleTypeBuilder.build();
-     * 
-     * /* get a vehicle-builder and build a vehicle located at (10,10) with type
-     * "vehicleType"
-     */
-    // Builder vehicleBuilder = VehicleImpl.Builder.newInstance("vehicle");
-    // start location of the car/truck ... package hub
-    // vehicleBuilder.setStartLocation(Location.newInstance(10, 10));
-    // vehicleBuilder.setType(vehicleType);
-    // VehicleImpl vehicle = vehicleBuilder.build();
+    JSONObject jsonMsg = new JSONObject(msg);
 
-    // destionation
-    /*
-     * Service service1 =
-     * Service.Builder.newInstance("1").addSizeDimension(WEIGHT_INDEX, 1)
-     * .setLocation(Location.newInstance(5, 7)).build();
-     * 
-     * Service service2 =
-     * Service.Builder.newInstance("2").addSizeDimension(WEIGHT_INDEX, 1)
-     * .setLocation(Location.newInstance(5, 13)).build();
-     * 
-     * Service service3 =
-     * Service.Builder.newInstance("3").addSizeDimension(WEIGHT_INDEX, 1)
-     * .setLocation(Location.newInstance(15, 7)).build();
-     * 
-     * Service service4 =
-     * Service.Builder.newInstance("4").addSizeDimension(WEIGHT_INDEX, 1)
-     * .setLocation(Location.newInstance(15, 13)).build();
-     * 
-     * Service service5 =
-     * Service.Builder.newInstance("5").addSizeDimension(WEIGHT_INDEX, 2)
-     * .setLocation(Location.newInstance(1, 13)).build();
-     */
+    // --- define vehicle types in general
+    // should only be done once
+    final int WEIGHT_INDEX = 0;
 
-    // boilder plate
-    /*
-     * VehicleRoutingProblem.Builder vrpBuilder =
-     * VehicleRoutingProblem.Builder.newInstance(); vrpBuilder.addVehicle(vehicle);
-     * vrpBuilder.addJob(service1).addJob(service2).addJob(service3).addJob(service4
-     * ).addJob(service5);
-     * 
-     * VehicleRoutingProblem problem = vrpBuilder.build();
-     * 
-     * VehicleRoutingAlgorithm algorithm = Jsprit.createAlgorithm(problem);
-     * 
-     * Collection<VehicleRoutingProblemSolution> solutions =
-     * algorithm.searchSolutions();
-     * 
-     * VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
-     */
-    // TODO convert to 'engine' output
-    // new VrpXMLWriter(problem,
-    // solutions).write("output/problem-with-solution.xml");
+    VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance("vehicleTypeDummy");
+    vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, 3);
+    vehicleTypeBuilder.setCostPerDistance(1);
+    VehicleType vehicleTypeDummy = vehicleTypeBuilder.build();
 
-    return msg;
+    // --- create vehicles
+    List<VehicleImpl> vehicles = new ArrayList<>();
+
+    JSONArray jsonVehicles = jsonMsg.getJSONArray("vehicles");
+    for (Object jsonVehicle : jsonVehicles) {
+      JSONObject jsonObjVehicle = (JSONObject) jsonVehicle;
+
+      String vehicleId = jsonObjVehicle.getString("id");
+
+      JSONObject jsonPosition = jsonObjVehicle.getJSONObject("position");
+      float lon = jsonPosition.getFloat("lon");
+      float lat = jsonPosition.getFloat("lat");
+
+      VehicleImpl.Builder vehicleBuilder = VehicleImpl.Builder.newInstance(vehicleId);
+      vehicleBuilder.setType(vehicleTypeDummy);
+      vehicleBuilder.setStartLocation(Location.newInstance(lon, lat));
+      VehicleImpl vehicle = vehicleBuilder.build();
+
+      vehicles.add(vehicle);
+    }
+
+    // --- create shipments
+    List<Shipment> shipments = new ArrayList<>();
+
+    JSONArray jsonBookings = jsonMsg.getJSONArray("bookings");
+    for (Object jsonBooking : jsonBookings) {
+      JSONObject jsonObjBooking = (JSONObject) jsonBooking;
+
+      String shipmentId = jsonObjBooking.getString("id");
+
+      JSONObject jsonPickup = jsonObjBooking.getJSONObject("pickup");
+      float pickupLon = jsonPickup.getFloat("lon");
+      float pickupLat = jsonPickup.getFloat("lat");
+
+      JSONObject jsonDelivery = jsonObjBooking.getJSONObject("delivery");
+      float deliveryLon = jsonDelivery.getFloat("lon");
+      float deliveryLat = jsonDelivery.getFloat("lat");
+
+      Shipment.Builder shipmentBuilder = Shipment.Builder.newInstance(shipmentId);
+      shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);
+      shipmentBuilder.setPickupLocation(Location.newInstance(pickupLon, pickupLat));
+      shipmentBuilder.setDeliveryLocation(Location.newInstance(deliveryLon, deliveryLat));
+      Shipment shipment = shipmentBuilder.build();
+
+      shipments.add(shipment);
+    }
+
+    // --- VRP config
+
+    VehicleRoutingProblem.Builder vrpBuilder = VehicleRoutingProblem.Builder.newInstance();
+
+    for (VehicleImpl vehicle : vehicles) {
+      vrpBuilder.addVehicle(vehicle);
+    }
+
+    for (Shipment shipment : shipments) {
+      vrpBuilder.addJob(shipment);
+    }
+
+    problem = vrpBuilder.build();
+
+    // --- VRP run
+
+    VehicleRoutingAlgorithm algorithm = new SchrimpfFactory().createAlgorithm(problem);
+    solutions = algorithm.searchSolutions();
+    VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
+
+    // --- create response
+    // SolutionPrinter.print(bestSolution);
+    // System.out.println(bestSolution.getUnassignedJobs().size());
+    // System.out.println(bestSolution.getRoutes().size());
+
+    JSONArray jsonRoutes = new JSONArray();
+
+    int i = 0;
+    for (VehicleRoute vehicleRoute : bestSolution.getRoutes()) {
+      i++;
+      // System.out.println("---" + i);
+      // System.out.println(vehicleRoute);
+
+      JSONObject jsonRoute = new JSONObject();
+      jsonRoutes.put(jsonRoute);
+
+      jsonRoute.put("number", i);
+
+      // -- vehicle
+      JSONObject jsonVehicle = new JSONObject();
+      jsonRoute.put("vehicle", jsonVehicle);
+
+      jsonVehicle.put("id", vehicleRoute.getVehicle().getId());
+
+      JSONObject jsonVehiclePosition = new JSONObject();
+      jsonVehicle.put("position", jsonVehiclePosition);
+
+      jsonVehiclePosition.put("lon", vehicleRoute.getVehicle().getStartLocation().getCoordinate().getX());
+      jsonVehiclePosition.put("lat", vehicleRoute.getVehicle().getStartLocation().getCoordinate().getY());
+
+      // --- activities
+      JSONArray jsonActivities = new JSONArray();
+      jsonRoute.put("activities", jsonActivities);
+
+      // --- start
+      {
+        JSONObject jsonActivity = new JSONObject();
+        jsonActivities.put(jsonActivity);
+
+        jsonActivity.put("type", vehicleRoute.getStart().getName());
+        jsonActivity.put("index", vehicleRoute.getStart().getIndex());
+
+        JSONObject jsonActivityAddress = new JSONObject();
+        jsonActivity.put("address", jsonActivityAddress);
+
+        jsonActivityAddress.put("lon", vehicleRoute.getStart().getLocation().getCoordinate().getX());
+        jsonActivityAddress.put("lat", vehicleRoute.getStart().getLocation().getCoordinate().getY());
+      }
+
+      // --- activities
+      // System.out.println(vehicleRoute.getActivities().size());
+      for (TourActivity activity : vehicleRoute.getActivities()) {
+        JSONObject jsonActivity = new JSONObject();
+        jsonActivities.put(jsonActivity);
+
+        jsonActivity.put("type", activity.getName());
+        jsonActivity.put("index", activity.getIndex());
+
+        JSONObject jsonActivityAddress = new JSONObject();
+        jsonActivity.put("address", jsonActivityAddress);
+
+        jsonActivityAddress.put("lon", activity.getLocation().getCoordinate().getX());
+        jsonActivityAddress.put("lat", activity.getLocation().getCoordinate().getY());
+      }
+
+      // System.out.println(vehicleRoute.getTourActivities().getActivities());
+      // for (TourActivity activity :
+      // vehicleRoute.getTourActivities().getActivities()) {
+      // System.out.println("---");
+      // System.out.println(activity);
+      // }
+
+      // System.out.println(vehicleRoute.getTourActivities().getJobs());
+      // vehicleRoute.getTourActivities().getJobs().forEach(job -> {
+      // System.out.println(job);
+      // System.out.println(job.getId());
+      // System.out.println(job.getIndex());
+      // System.out.println(job.getName());
+      // System.out.println(job.getActivities());
+      // });
+
+      // --- end
+      {
+        JSONObject jsonActivity = new JSONObject();
+        jsonActivities.put(jsonActivity);
+
+        jsonActivity.put("type", vehicleRoute.getEnd().getName());
+        jsonActivity.put("index", vehicleRoute.getEnd().getIndex());
+
+        JSONObject jsonActivityAddress = new JSONObject();
+        jsonActivity.put("address", jsonActivityAddress);
+
+        jsonActivityAddress.put("lon", vehicleRoute.getEnd().getLocation().getCoordinate().getX());
+        jsonActivityAddress.put("lat", vehicleRoute.getEnd().getLocation().getCoordinate().getY());
+      }
+    }
+
+    // JSONObject jsonResponse = jsonMsg;
+    JSONObject jsonResponse = new JSONObject();
+    jsonResponse.put("routes", jsonRoutes);
+
+    return jsonResponse.toString();
   }
 }

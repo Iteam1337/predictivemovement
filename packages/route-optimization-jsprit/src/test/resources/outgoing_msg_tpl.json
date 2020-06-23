@@ -1,0 +1,24 @@
+{
+    "routes": [
+        {
+            "number": 1,
+            "vehicle": {
+                "id": "pmv-1zuURKyc",
+                "position": {
+                    "lon": 16.225352,
+                    "lat": 61.736082
+                }
+            },
+            "activities": [
+                {
+                    "type": "start",
+                    "index": 1,
+                    "address": {
+                        "lat": 61.842302,
+                        "lon": 15.914518
+                    }
+                }
+            ]
+        }
+    ]
+}

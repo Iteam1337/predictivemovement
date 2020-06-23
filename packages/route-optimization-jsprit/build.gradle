@@ -19,6 +19,8 @@ dependencies {
 	compile group: 'com.graphhopper', name: 'jsprit-io', version: '1.8'
 	compile group: 'com.graphhopper', name: 'jsprit-analysis', version: '1.8'
 
+	compile group: 'org.json', name: 'json', version: '20200518'
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

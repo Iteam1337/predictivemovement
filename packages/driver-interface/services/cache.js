@@ -1,4 +1,5 @@
 const bookingsCache = new Map()
+const vehiclesCache = new Map()
 
 module.exports = {
   getBooking: (id) => bookingsCache.get(id),
@@ -11,8 +12,7 @@ module.exports = {
       ...update,
     })
   },
-  getBookingFromVehicleId: (vehicleId) =>
-    Array.from(bookingsCache.values()).find(
-      (booking) => booking.assigned_to.id === vehicleId
-    ),
+
+  addVehicle: (id, vehicle) => vehiclesCache.set(id, vehicle),
+  getVehicle: (id) => vehiclesCache.get(id),
 }

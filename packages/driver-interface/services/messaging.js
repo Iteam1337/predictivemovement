@@ -22,11 +22,11 @@ const onBotStart = (ctx) => {
 const sendPickupOffer = (
   chatId,
   msgOptions,
-  { startingAddress, route, plan, bookingIds }
+  { startingAddress, route, activities, bookingIds }
 ) => {
   replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
 
-  const directions = plan.reduce((result, { address }) => {
+  const directions = activities.reduce((result, { address }) => {
     return result.concat(`/${address.lat}, ${address.lon}`)
   }, 'https://www.google.com/maps/dir')
 
@@ -98,7 +98,8 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
     .catch(console.warn)
 }
 
-const onNoInstructionsForVehicle = (ctx) => ctx.reply('Vi kunde inte hitta några instruktioner...')
+const onNoInstructionsForVehicle = (ctx) =>
+  ctx.reply('Vi kunde inte hitta några instruktioner...')
 
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(

@@ -14,6 +14,8 @@ You can test the running project with:
 ./gradlew test --rerun-tasks --tests com.predictivemovement.evaluation.SendReceiveMessageTest
 ```
 
+**The test was removed, because it blocked the build process!**
+
 A log output can be seen when a message is received.
 
 Alternative you can start the project with: `docker-compose build` and `docker-compose up`

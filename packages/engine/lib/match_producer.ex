@@ -84,10 +84,11 @@ defmodule Engine.MatchProducer do
   end
 
   def string_to_booking_transform(booking_string) do
-    %{pickup: pickup, delivery: delivery, id: id, senderId: senderId} =
+    %{pickup: pickup, delivery: delivery, id: external_id, metadata: metadata} =
       Poison.decode!(booking_string, keys: :atoms)
+      |> Map.put_new(:metadata, %{})
 
-    Booking.make(pickup, delivery, id, senderId)
+    Booking.make(pickup, delivery, external_id, metadata)
   end
 
   ## set up queues

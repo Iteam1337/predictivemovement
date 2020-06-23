@@ -8,11 +8,15 @@ const stepHandler = new Composer()
 
 stepHandler.action('confirm', (ctx) => {
   const senderId = ctx.update.callback_query.from.id
-
+  const metadata = {
+    telegram: {
+      senderId,
+    },
+  }
   ctx.reply('Perfekt! Din bokning är registrerad')
   const booking = {
     id: uuidv4(),
-    senderId,
+    metadata,
     bookingDate: new Date().toISOString(),
     pickup: {
       lon: ctx.wizard.state.data.from.lon,

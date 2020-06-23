@@ -23,33 +23,37 @@ defmodule Vehicle do
 
   def handle_cast(
         {:offer,
-         %Vehicle{id: vehicle_id, activities: _activities, booking_ids: booking_ids} = vehicle},
+         %Vehicle{id: vehicle_id, activities: activities, booking_ids: booking_ids} = vehicle},
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
 
-    booking_ids
-    |> Enum.map(fn booking_id ->
-      booking = Booking.get(booking_id)
+    route =
+      activities
+      |> Enum.map(fn %{address: address} -> address end)
+      |> Osrm.route()
 
-      MQ.call(
-        %{
-          vehicle: %{id: vehicle_id, metadata: state.metadata},
-          booking: booking,
-          route: Osrm.route([vehicle.position, booking.pickup, booking.delivery])
-        },
-        "pickup_offers"
-      )
-      |> Poison.decode()
-      |> IO.inspect(label: "the driver answered")
-      |> handle_driver_response(%{id: vehicle_id, metadata: state.metadata}, booking_id)
-    end)
+    MQ.call(
+      %{
+        vehicle: %{id: vehicle_id, metadata: state.metadata},
+        route: route,
+        plan: activities,
+        booking_ids: booking_ids
+      },
+      "pickup_offers"
+    )
+    |> Poison.decode()
+    |> IO.inspect(label: "the driver answered")
+    |> handle_driver_response(%{id: vehicle_id, metadata: state.metadata}, booking_ids)
 
     {:noreply, state}
   end
 
-  def handle_driver_response({:ok, true}, vehicle, booking_id) do
-    Booking.assign(booking_id, vehicle)
+  def handle_driver_response({:ok, true}, vehicle, booking_ids) do
+    booking_ids
+    |> Enum.map(fn booking_id ->
+      Booking.assign(booking_id, vehicle)
+    end)
     |> IO.inspect(label: "booking was assigned")
   end
 

@@ -22,44 +22,46 @@ const onBotStart = (ctx) => {
 const sendPickupOffer = (
   chatId,
   msgOptions,
-  { pickupAddress, deliveryAddress, booking, route }
+  { startingAddress, route, plan, bookingIds }
 ) => {
   replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
 
-  bot.telegram.sendMessage(
-    parseInt(chatId, 10),
-    `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Turen kommer att ta cirka ${moment
-      .duration({ seconds: route.duration })
-      .humanize()}. Har du möjlighet att hämta detta?
-    [Se på kartan](https://www.google.com/maps/dir/${booking.pickup.lat},${
-      booking.pickup.lon
-    }/${booking.delivery.lat},${booking.delivery.lon})`,
-    {
-      parse_mode: 'markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Nej',
-              callback_data: JSON.stringify({
-                a: false,
-                id: msgOptions.correlationId,
-                e: 'offer',
-              }),
-            },
-            {
-              text: 'Ja',
-              callback_data: JSON.stringify({
-                a: true,
-                id: msgOptions.correlationId,
-                e: 'offer',
-              }),
-            },
-          ],
+  const directions = plan.reduce((result, { address }) => {
+    return result.concat(`/${address.lat}, ${address.lon}`)
+  }, 'https://www.google.com/maps/dir')
+
+  const message = `${
+    bookingIds.length
+  } paket finns att hämta. Rutten börjar på ${startingAddress}. Turen beräknas att ta cirka ${moment
+    .duration({ seconds: route.duration })
+    .humanize()}. Vill du ha denna order?
+  [Se på kartan](${directions})`
+
+  bot.telegram.sendMessage(parseInt(chatId, 10), message, {
+    parse_mode: 'markdown',
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Nej',
+            callback_data: JSON.stringify({
+              a: false,
+              id: msgOptions.correlationId,
+              e: 'offer',
+            }),
+          },
+          {
+            text: 'Ja',
+            callback_data: JSON.stringify({
+              a: true,
+              id: msgOptions.correlationId,
+              e: 'offer',
+            }),
+          },
         ],
-      },
-    }
-  )
+      ],
+    },
+  })
 }
 
 const onPickupConfirm = (ctx) => {

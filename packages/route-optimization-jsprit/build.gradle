@@ -14,7 +14,11 @@ repositories {
 
 dependencies {
   	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-	implementation group: 'com.graphhopper', name: 'jsprit', version: '1.8', ext: 'pom'
+
+	compile group: 'com.graphhopper', name: 'jsprit-core', version: '1.8'
+	compile group: 'com.graphhopper', name: 'jsprit-io', version: '1.8'
+	compile group: 'com.graphhopper', name: 'jsprit-analysis', version: '1.8'
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}

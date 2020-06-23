@@ -1,4 +1,5 @@
 const bookingsCache = new Map()
+const vehiclesCache = new Map()
 
 module.exports = {
   getBooking: (id) => bookingsCache.get(id),
@@ -11,4 +12,7 @@ module.exports = {
       ...update,
     })
   },
+
+  addVehicle: (id, vehicle) => vehiclesCache.set(id, vehicle),
+  getVehicle: (id) => vehiclesCache.get(id),
 }

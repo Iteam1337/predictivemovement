@@ -1,5 +1,6 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
 // const { generate } = require('@iteam1337/engine/simulator/cars')
+const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const routingKeys = {
   NEW: 'new',
@@ -58,13 +59,23 @@ const createBooking = (booking) => {
 }
 
 const dispatchOffers = () => {
-  return amqp.queue('dispatch_offers', { durable: false }).publish('just do it!')
+  return amqp
+    .queue('dispatch_offers', { durable: false })
+    .publish('just do it!')
+}
+
+const addVehicle = (position) => {
+  return amqp.exchange('cars', 'fanout', { durable: false }).publish({
+    id: id62(),
+    position,
+  })
 }
 
 module.exports = {
+  addVehicle,
   bookings,
   bookingsNewWithRoutes,
   cars,
   createBooking,
-  dispatchOffers
+  dispatchOffers,
 }

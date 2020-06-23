@@ -28,6 +28,7 @@ const NoCarsInfo = styled.p`
   font-style: italic;
   font-size: 0.875rem;
 `
+
 const Cars = ({ cars }) => {
   if (!cars.length)
     return <NoCarsInfo>Det finns inga aktuella bilar...</NoCarsInfo>
@@ -36,10 +37,7 @@ const Cars = ({ cars }) => {
     <CarsContainer>
       {cars.map((car) => {
         return (
-          <CarListItem
-            to={`/details?type=car&id=${car.id}`}
-            key={car.id}
-          >
+          <CarListItem to={`/details?type=car&id=${car.id}`} key={car.id}>
             {car.id}
           </CarListItem>
         )

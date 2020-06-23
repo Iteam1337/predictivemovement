@@ -32,7 +32,7 @@ const pickupConfirmed = () =>
               })
             })
         )
-        .then(({ booking: { senderId } }) =>
+        .then(({ metadata: { telegram: { senderId } } }) =>
           messaging.onPickupConfirmed(senderId)
         )
     )

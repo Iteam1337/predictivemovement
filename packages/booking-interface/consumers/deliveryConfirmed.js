@@ -31,9 +31,15 @@ const deliveryConfirmed = () =>
               })
             })
         )
-        .then(({ booking: { senderId } }) => {
-          return messaging.onDeliveryConfirmed(senderId)
-        })
+        .then(
+          ({
+            metadata: {
+              telegram: { senderId },
+            },
+          }) => {
+            return messaging.onDeliveryConfirmed(senderId)
+          }
+        )
     )
 
 module.exports = { deliveryConfirmed }

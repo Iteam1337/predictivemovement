@@ -4,11 +4,24 @@ import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-import Start from './Start'
+import Map from './components/Map'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
   const { socket } = useSocket()
+
+  const onMapClick = ({ lngLat }) => {
+    dispatch({
+      type: 'setPosition',
+      payload: { lat: lngLat[1], lon: lngLat[0] },
+    })
+  }
+
+  const addVehicle = (position) => {
+    socket.emit('add-vehicle', {
+      position,
+    })
+  }
 
   const createBooking = ({ pickup, delivery }) => {
     socket.emit('new-booking', {
@@ -42,9 +55,10 @@ const App = () => {
           {...state}
           createBooking={createBooking}
           dispatchOffers={dispatchOffers}
+          addVehicle={addVehicle}
         />
         <Route path="/">
-          <Start state={state} />
+          <Map onMapClick={onMapClick} state={state} />
         </Route>
       </Router>
     </>

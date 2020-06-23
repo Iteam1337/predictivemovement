@@ -1,5 +1,6 @@
 const _ = require('highland')
 const {
+  addVehicle,
   bookings,
   bookingsNewWithRoutes,
   cars,
@@ -68,6 +69,10 @@ function register(io) {
 
     socket.on('dispatch-offers', () => {
       dispatchOffers()
+    })
+
+    socket.on('add-vehicle', ({ position }) => {
+      addVehicle(position)
     })
   })
 }

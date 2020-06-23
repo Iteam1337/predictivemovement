@@ -1,6 +1,6 @@
 const { open, exchanges } = require('../adapters/amqp')
 
-const updateLocation = (msg, ctx) => {
+const updateLocation = (msg, _ctx) => {
   // Publisher
   open
     .then((conn) => conn.createChannel())

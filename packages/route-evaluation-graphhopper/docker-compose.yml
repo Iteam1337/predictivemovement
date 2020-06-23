@@ -1,8 +1,7 @@
 version: "3.5"
 services:
-  routeEvaluationGraphhopper:
+  route-evaluation-graphhopper:
     build: .
-    image: pm_route_evaluation/graphhopper:0.0.1-SNAPSHOT
     container_name: "pm_route_evaluation_graphhopper"
     environment:
       - RABBITMQ_HOST=rabbitmq

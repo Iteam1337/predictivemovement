@@ -1,4 +1,13 @@
 FROM openjdk:14-jdk-alpine
-COPY ./build/libs/route-evaluation-graphhopper-0.0.1-SNAPSHOT.jar /usr/app/
-WORKDIR /usr/app
-ENTRYPOINT ["java", "-jar", "route-evaluation-graphhopper-0.0.1-SNAPSHOT.jar"]
+WORKDIR /app
+
+COPY gradlew /app/gradlew
+COPY gradle/wrapper /app/gradle/wrapper
+COPY src /app/src
+COPY settings.gradle /app/settings.gradle
+COPY build.gradle /app/build.gradle
+COPY gradlew.bat /app/gradlew.bat
+
+RUN ./gradlew clean build
+
+ENTRYPOINT ["java", "-jar", "/app/build/libs/route-evaluation-graphhopper-0.0.1-SNAPSHOT.jar"] 

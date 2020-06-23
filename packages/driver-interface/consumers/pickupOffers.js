@@ -16,7 +16,7 @@ const pickupOffers = () => {
             const {
               vehicle,
               activities,
-              route,
+              current_route: route,
               booking_ids: bookingIds,
             } = JSON.parse(message.content.toString())
             try {

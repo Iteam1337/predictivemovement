@@ -28,33 +28,55 @@ defmodule Vehicle do
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
 
-    route =
+    current_route =
       activities
       |> Enum.map(fn %{address: address} -> address end)
       |> Osrm.route()
 
-    MQ.call(
-      %{
-        vehicle: %{id: vehicle_id, metadata: state.metadata},
-        route: route,
-        activities: activities,
-        booking_ids: booking_ids
-      },
-      "pickup_offers"
-    )
-    |> Poison.decode()
-    |> IO.inspect(label: "the driver answered")
-    |> handle_driver_response(%{id: vehicle_id, metadata: state.metadata}, booking_ids)
+    updated_state =
+      MQ.call(
+        %{
+          vehicle: %{id: vehicle_id, metadata: state.metadata},
+          current_route: current_route,
+          activities: activities,
+          booking_ids: booking_ids
+        },
+        "pickup_offers"
+      )
+      |> Poison.decode()
+      |> IO.inspect(label: "the driver answered")
+      |> handle_driver_response(
+        %Vehicle{
+          booking_ids: booking_ids,
+          activities: activities,
+          current_route: current_route
+        },
+        state
+      )
 
-    {:noreply, state}
+    {:noreply, updated_state}
   end
 
-  def handle_driver_response({:ok, true}, vehicle, booking_ids) do
+  def handle_driver_response(
+        {:ok, true},
+        %Vehicle{
+          booking_ids: booking_ids,
+          activities: activities,
+          current_route: current_route
+        },
+        current_state
+      ) do
     booking_ids
     |> Enum.map(fn booking_id ->
-      Booking.assign(booking_id, vehicle)
+      Booking.assign(booking_id, %{id: current_state.id, metadata: current_state.metadata})
     end)
     |> IO.inspect(label: "booking was assigned")
+
+    current_state
+    |> Map.put(:activities, activities)
+    |> Map.put(:booking_ids, booking_ids)
+    |> Map.put(:current_route, current_route)
+    |> MQ.publish(Application.fetch_env!(:engine, :vehicles_exchange), "planned")
   end
 
   def handle_driver_response({:ok, false}, _, _), do: IO.puts("Driver didnt want the booking :(")

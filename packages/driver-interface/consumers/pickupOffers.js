@@ -13,30 +13,15 @@ const pickupOffers = () => {
         })
         .then(() =>
           ch.consume(queues.PICKUP_OFFERS, async (message) => {
-            const { vehicle, plan, route } = JSON.parse(
-              message.content.toString()
-            )
+            const {
+              vehicle,
+              plan,
+              route,
+              booking_ids: bookingIds,
+            } = JSON.parse(message.content.toString())
             try {
-              // const pickupAddress = await google.getAddressFromCoordinate(
-              //   booking.pickup
-              // )
-
-              // const deliveryAddress = await google.getAddressFromCoordinate(
-              //   booking.delivery
-              // )
-
-              // addBooking(booking.id, {
-              //   vehicle,
-              //   booking: {
-              //     ...booking,
-              //     assigned_to: vehicle,
-              //     pickupAddress,
-              //     deliveryAddress,
-              //   },
-              // })
-
               const startingAddress = await google.getAddressFromCoordinate(
-                plan[0].address
+                plan[1].address
               )
 
               messaging.sendPickupOffer(
@@ -45,8 +30,8 @@ const pickupOffers = () => {
                   replyQueue: message.properties.replyTo,
                   correlationId: message.properties.correlationId,
                 },
-                // { pickupAddress, deliveryAddress, booking, route }
-                { startingAddress, route, plan }
+
+                { startingAddress, route, plan, bookingIds }
               )
               ch.ack(message)
             } catch (error) {

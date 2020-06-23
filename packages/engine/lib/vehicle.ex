@@ -27,22 +27,6 @@ defmodule Vehicle do
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
-    # booking_ids
-    # |> Enum.map(fn booking_id ->
-    #   booking = Booking.get(booking_id)
-
-    #   MQ.call(
-    #     %{
-    #       vehicle: %{id: vehicle_id, metadata: state.metadata},
-    #       booking: booking,
-    #       route: Osrm.route([vehicle.position, booking.pickup, booking.delivery])
-    #     },
-    #     "pickup_offers"
-    #   )
-    #   |> Poison.decode()
-    #   |> IO.inspect(label: "the driver answered")
-    #   |> handle_driver_response(%{id: vehicle_id, metadata: state.metadata}, booking_id)
-    # end)
 
     route =
       activities
@@ -53,7 +37,8 @@ defmodule Vehicle do
       %{
         vehicle: %{id: vehicle_id, metadata: state.metadata},
         route: route,
-        plan: List.delete_at(activities, 0)
+        plan: activities,
+        booking_ids: booking_ids
       },
       "pickup_offers"
     )

@@ -22,7 +22,7 @@ const onBotStart = (ctx) => {
 const sendPickupOffer = (
   chatId,
   msgOptions,
-  { startingAddress, route, plan }
+  { startingAddress, route, plan, bookingIds }
 ) => {
   replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
 
@@ -31,10 +31,10 @@ const sendPickupOffer = (
   }, 'https://www.google.com/maps/dir')
 
   const message = `${
-    plan.length / 2
-  } paket finns att hämta. Rutten börjar på ${startingAddress}. Turen beräknas att ta cirka ${moment.duration(
-    { minutes: route.duration }
-  )} minuter. Vill du ha denna order?
+    bookingIds.length
+  } paket finns att hämta. Rutten börjar på ${startingAddress}. Turen beräknas att ta cirka ${moment
+    .duration({ seconds: route.duration })
+    .humanize()}. Vill du ha denna order?
   [Se på kartan](${directions})`
 
   bot.telegram.sendMessage(parseInt(chatId, 10), message, {

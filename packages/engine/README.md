@@ -52,8 +52,8 @@
 
 - [ ] Rename candidates to plan
 - [ ] Plan currently should just be a dump from graphhopper api
-- [ ] Offer all bookings to a vehicle in 1 request
-- [ ] On a vehicle after the driver accepted all the bookings, current_route is a route calculated by using all activities
+- [x] Offer all bookings to a vehicle in 1 request
+- [x] On a vehicle after the driver accepted all the bookings, current_route is a route calculated by using all activities
 - [ ] Add events on Vehicle
 
 # Outcome:

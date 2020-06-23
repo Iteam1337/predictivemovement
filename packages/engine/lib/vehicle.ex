@@ -23,37 +23,60 @@ defmodule Vehicle do
 
   def handle_cast(
         {:offer,
-         %Vehicle{id: vehicle_id, activities: _activities, booking_ids: booking_ids} = vehicle},
+         %Vehicle{id: vehicle_id, activities: activities, booking_ids: booking_ids} = vehicle},
         state
       ) do
     IO.inspect(vehicle, label: "offer to vehicle")
 
-    booking_ids
-    |> Enum.map(fn booking_id ->
-      booking = Booking.get(booking_id)
+    current_route =
+      activities
+      |> Enum.map(fn %{address: address} -> address end)
+      |> Osrm.route()
 
+    updated_state =
       MQ.call(
         %{
           vehicle: %{id: vehicle_id, metadata: state.metadata},
-          booking: booking,
-          route: Osrm.route([vehicle.position, booking.pickup, booking.delivery])
+          current_route: current_route,
+          activities: activities,
+          booking_ids: booking_ids
         },
         "pickup_offers"
       )
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
-      |> handle_driver_response(%{id: vehicle_id, metadata: state.metadata}, booking_id)
+      |> handle_driver_response(
+        %Vehicle{
+          booking_ids: booking_ids,
+          activities: activities,
+          current_route: current_route
+        },
+        state
+      )
+
+    {:noreply, updated_state}
+  end
+
+  def handle_driver_response(
+        {:ok, true},
+        %Vehicle{} = proposed_state,
+        current_state
+      ) do
+    proposed_state.booking_ids
+    |> Enum.map(fn booking_id ->
+      Booking.assign(booking_id, current_state)
     end)
-
-    {:noreply, state}
-  end
-
-  def handle_driver_response({:ok, true}, vehicle, booking_id) do
-    Booking.assign(booking_id, vehicle)
     |> IO.inspect(label: "booking was assigned")
+
+    current_state
+    |> Map.merge(proposed_state)
+    |> MQ.publish(Application.fetch_env!(:engine, :vehicles_exchange), "planned")
   end
 
-  def handle_driver_response({:ok, false}, _, _), do: IO.puts("Driver didnt want the booking :(")
+  def handle_driver_response({:ok, false}, _, state) do
+    state
+    |> IO.inspect(label: "Driver didnt want the booking :(")
+  end
 
   def make(position, metadata, busy \\ false) do
     id = "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))

@@ -13,27 +13,16 @@ const pickupOffers = () => {
         })
         .then(() =>
           ch.consume(queues.PICKUP_OFFERS, async (message) => {
-            const { vehicle, booking, route } = JSON.parse(
-              message.content.toString()
-            )
+            const {
+              vehicle,
+              activities,
+              current_route: route,
+              booking_ids: bookingIds,
+            } = JSON.parse(message.content.toString())
             try {
-              const pickupAddress = await google.getAddressFromCoordinate(
-                booking.pickup
+              const startingAddress = await google.getAddressFromCoordinate(
+                activities[1].address
               )
-
-              const deliveryAddress = await google.getAddressFromCoordinate(
-                booking.delivery
-              )
-
-              addBooking(booking.id, {
-                vehicle,
-                booking: {
-                  ...booking,
-                  assigned_to: vehicle,
-                  pickupAddress,
-                  deliveryAddress,
-                },
-              })
 
               messaging.sendPickupOffer(
                 vehicle.metadata.telegram.senderId,
@@ -41,7 +30,8 @@ const pickupOffers = () => {
                   replyQueue: message.properties.replyTo,
                   correlationId: message.properties.correlationId,
                 },
-                { pickupAddress, deliveryAddress, booking, route }
+
+                { startingAddress, route, activities, bookingIds }
               )
               ch.ack(message)
             } catch (error) {

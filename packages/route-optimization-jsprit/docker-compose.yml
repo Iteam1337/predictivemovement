@@ -1,8 +1,9 @@
 version: "3.5"
 services:
-  route-evaluation-graphhopper:
+  predictivemovement-route-optimization-jsprit:
     build: .
-    container_name: "pm_route_evaluation_graphhopper"
+    image: predictivemovement-route-optimization/jsprit:latest
+    container_name: "predictivemovement_route-optimization-jsprit"
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672

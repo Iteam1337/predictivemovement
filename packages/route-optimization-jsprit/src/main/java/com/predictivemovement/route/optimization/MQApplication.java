@@ -1,32 +1,30 @@
-package com.predictivemovement.evaluation;
+package com.predictivemovement.route.optimization;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class EvaluationApplication {
+public class MQApplication {
 
-	private static final boolean NON_DURABLE = false;
+	static final Logger log = LoggerFactory.getLogger(MQApplication.class);
+
 	private static final String QUEUE_NAME = "route_optimization_jsprit";
 
-	Logger log = LoggerFactory.getLogger(EvaluationApplication.class);
-
-	public static void main(String[] args) {
-		SpringApplication.run(EvaluationApplication.class, args);
+	public static void main(final String[] args) {
+		SpringApplication.run(MQApplication.class, args);
 	}
 
 	@Bean
-	public Queue graphhopperQueue() {
-		return new Queue(QUEUE_NAME, NON_DURABLE);
+	public Queue queue() {
+		return new Queue(QUEUE_NAME, false);
 	}
 
 	@Bean
@@ -36,18 +34,17 @@ public class EvaluationApplication {
 
 	@Bean
 	public Binding binding(DirectExchange exchange, Queue queue) {
-		return BindingBuilder.bind(queue)
-                .to(exchange)
-                .with("rpc");
+		return BindingBuilder.bind(queue).to(exchange).with("rpc");
 	}
 
 	@RabbitListener(queues = QUEUE_NAME)
-	public String listen(String msg) {
-		log.info("Message read from queue: " + msg);
+	public String listen(final String msg) {
+		log.info("Message read from queue: {}", msg);
 
 		RouteOptimization routeOptimization = new RouteOptimization();
-		msg = routeOptimization.calculate(msg);
+		String response = routeOptimization.calculate(msg);
 
-		return msg;
+		log.info("Publishing result: {}", response);
+		return response;
 	}
 }

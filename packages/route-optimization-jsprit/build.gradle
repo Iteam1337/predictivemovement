@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
   	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-
+	  
 	compile group: 'com.graphhopper', name: 'jsprit-core', version: '1.8'
 	compile group: 'com.graphhopper', name: 'jsprit-io', version: '1.8'
 	compile group: 'com.graphhopper', name: 'jsprit-analysis', version: '1.8'

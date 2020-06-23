@@ -1,14 +1,18 @@
-const open = require('amqplib').connect(process.env.AMQP_HOST || 'amqp://localhost')
+const open = require('amqplib').connect(
+  process.env.AMQP_HOST || 'amqp://localhost'
+)
 
 const exchanges = {
   BOOKINGS: 'bookings',
   BOOKING_ASSIGNMENTS: 'booking_assignments',
   CARS: 'cars',
+  VEHICLES: 'vehicles',
 }
 
 const queues = {
   PICKUP_OFFERS: 'pickup_offers',
   PICKUP_INSTRUCTIONS: 'pickup_instructions',
+  VEHICLE_PLAN: 'vehicle_plan',
 }
 
 module.exports = {

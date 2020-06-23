@@ -32,7 +32,9 @@ const pickupConfirmed = () =>
               })
             })
         )
-        .then((senderId) => messaging.onPickupConfirmed(senderId))
+        .then(({ metadata: { telegram: { senderId } } }) =>
+          messaging.onPickupConfirmed(senderId)
+        )
     )
 
 module.exports = { pickupConfirmed }

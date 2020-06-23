@@ -3,38 +3,38 @@ export const reducer = (state, action) => {
     case 'setCars':
       return {
         ...state,
-        carCollection: { ...state.carCollection, features: action.payload },
+        cars: [
+          ...state.cars.filter(
+            (c) => !action.payload.find((p) => p.id === c.id)
+          ),
+          ...action.payload,
+        ],
       }
-    case 'setMovingCars':
-      return { ...state, movingCarsCollection: action.payload }
     case 'setBookings':
       return {
         ...state,
-        bookingCollection: {
-          ...state.bookingCollection,
-          features: action.payload,
-        },
+        bookings: [
+          ...state.bookings.filter(
+            (b) => !action.payload.find((p) => p.id === b.id)
+          ),
+          ...action.payload,
+        ],
       }
-    case 'setCarsLines':
+
+    case 'setPosition':
       return {
         ...state,
-        carLineCollection: {
-          ...state.carLineCollection,
-          features: action.payload,
-        },
+        currentPosition: action.payload,
       }
-    case 'setCarInfo':
-      return { ...state, carInfo: { ...action.payload } }
     default:
       return state
   }
 }
-const featureCollection = { type: 'FeatureCollection', features: [] }
 
 export const initState = {
-  carCollection: featureCollection,
-  movingCarsCollection: featureCollection,
-  carLineCollection: featureCollection,
-  bookingCollection: featureCollection,
-  carInfo: {},
+  carBookingLineCollection: [],
+  bookings: [],
+  assignedBookings: [],
+  cars: [],
+  currentPosition: { lat: null, lon: null },
 }

@@ -8,29 +8,35 @@ const stepHandler = new Composer()
 
 stepHandler.action('confirm', (ctx) => {
   const senderId = ctx.update.callback_query.from.id
-
+  const metadata = {
+    telegram: {
+      senderId,
+    },
+  }
   ctx.reply('Perfekt! Din bokning är registrerad')
   const booking = {
     id: uuidv4(),
-    senderId,
+    metadata,
     bookingDate: new Date().toISOString(),
-    departure: {
+    pickup: {
       lon: ctx.wizard.state.data.from.lon,
       lat: ctx.wizard.state.data.from.lat,
     },
-    destination: {
+    delivery: {
       lon: ctx.wizard.state.data.to.lon,
       lat: ctx.wizard.state.data.to.lat,
     },
   }
 
   createBooking(booking)
-  return ctx.wizard.next()
+  ctx.wizard.next()
+  ctx.wizard.steps[ctx.wizard.cursor](ctx)
 })
 
 stepHandler.action('cancel', (ctx) => {
   ctx.reply('Din bokning är avbruten')
-  return ctx.wizard.next()
+  ctx.wizard.next()
+  ctx.wizard.steps[ctx.wizard.cursor](ctx)
 })
 
 const bookingWizard = new WizardScene(
@@ -80,10 +86,7 @@ const bookingWizard = new WizardScene(
     return ctx.wizard.next()
   },
   stepHandler,
-  (ctx) => {
-    console.log('leaving booking request scene')
-    return ctx.scene.leave()
-  }
+  (ctx) => ctx.scene.leave()
 )
 
 module.exports = { bookingWizard }

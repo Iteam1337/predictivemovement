@@ -1,15 +1,66 @@
 const botServices = require('./services/bot')
 const messaging = require('./services/messaging')
+const { getBooking, updateBooking } = require('./services/cache')
 const {
   open,
   exchanges: { BOOKINGS },
 } = require('./adapters/amqp')
+
+function onPickup(msg) {
+  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  updateBooking(callbackPayload.id, { status: callbackPayload.e })
+  open
+    .then((conn) => conn.createChannel())
+    .then((ch) => {
+      ch.assertExchange(BOOKINGS, 'topic', {
+        durable: false,
+      }).then(() => {
+        const { id } = callbackPayload
+        ch.publish(
+          BOOKINGS,
+          'pickup',
+          Buffer.from(JSON.stringify(getBooking(id)))
+        )
+      })
+    })
+
+  return messaging.onPickupConfirm(msg)
+}
+
+function onDelivered(msg) {
+  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  updateBooking(callbackPayload.id, { status: callbackPayload.e })
+  return open
+    .then((conn) => conn.createChannel())
+    .then((ch) => {
+      ch.assertExchange(BOOKINGS, 'topic', {
+        durable: false,
+      }).then(() => {
+        const { id } = callbackPayload
+        ch.publish(
+          BOOKINGS,
+          'delivered',
+          Buffer.from(JSON.stringify(getBooking(id)))
+        )
+      })
+    })
+    .catch(console.warn)
+}
+
+function onOffer(msg) {
+  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  const { a: isAccepted, ...options } = callbackPayload
+  return messaging.onPickupOfferResponse(isAccepted, options, msg)
+}
 
 const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
+
+    if (!msg.location) return
+
     ctx.reply('Du finns nu tillgänglig för bokningar')
 
     botServices.onMessage(msg, ctx)
@@ -17,52 +68,26 @@ const init = (bot) => {
 
   bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
+    if (!msg.location) return
+
     botServices.onMessage(msg, ctx)
   })
 
   bot.on('callback_query', (msg) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
-    if (callbackPayload.e === 'pickup') {
-      open
-        .then((conn) => conn.createChannel())
-        .then((ch) => {
-          ch.assertExchange(BOOKINGS, 'topic', {
-            durable: false,
-          }).then(() => {
-            const { id } = callbackPayload
-            ch.publish(BOOKINGS, 'pickup', Buffer.from(JSON.stringify(id)))
-          })
-        })
+    switch (callbackPayload.e) {
+      case 'pickup':
+        return onPickup(msg)
 
-      return messaging.onPickupConfirm(msg)
-    }
+      case 'delivered':
+        return onDelivered(msg)
 
-    if (callbackPayload.e === 'delivered') {
-      return open
-        .then((conn) => conn.createChannel())
-        .then((ch) => {
-          ch.assertExchange(BOOKINGS, 'topic', {
-            durable: false,
-          }).then(() => {
-            const { id } = callbackPayload
-            ch.publish(BOOKINGS, 'delivery', Buffer.from(JSON.stringify(id)))
-          })
-        })
+      case 'offer':
+        return onOffer(msg)
 
-        .catch(console.warn)
-    }
-
-    try {
-      const { a: isAccepted, ...options } = JSON.parse(
-        msg.update.callback_query.data
-      )
-
-      if (options && options.r && options.id) {
-        messaging.onPickupOfferResponse(isAccepted, options, msg)
-      }
-    } catch (error) {
-      return
+      default:
+        throw new Error(`unhandled event ${callbackPayload.e}`)
     }
   })
 }

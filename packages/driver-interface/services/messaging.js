@@ -1,6 +1,9 @@
 const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
+const moment = require('moment')
+
+const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
   const {
@@ -19,12 +22,18 @@ const onBotStart = (ctx) => {
 const sendPickupOffer = (
   chatId,
   msgOptions,
-  { pickupAddress, deliveryAddress, booking }
+  { pickupAddress, deliveryAddress, booking, route }
 ) => {
+  replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
+
   bot.telegram.sendMessage(
-    chatId,
-    `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Har du möjlighet att hämta detta?
-    [Se på kartan](https://www.google.com/maps/dir/${booking.departure.lat},${booking.departure.lon}/${booking.destination.lat},${booking.destination.lon})`,
+    parseInt(chatId, 10),
+    `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Turen kommer att ta cirka ${moment
+      .duration({ seconds: route.duration })
+      .humanize()}. Har du möjlighet att hämta detta?
+    [Se på kartan](https://www.google.com/maps/dir/${booking.pickup.lat},${
+      booking.pickup.lon
+    }/${booking.delivery.lat},${booking.delivery.lon})`,
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -35,7 +44,7 @@ const sendPickupOffer = (
               callback_data: JSON.stringify({
                 a: false,
                 id: msgOptions.correlationId,
-                r: msgOptions.replyQueue,
+                e: 'offer',
               }),
             },
             {
@@ -43,7 +52,7 @@ const sendPickupOffer = (
               callback_data: JSON.stringify({
                 a: true,
                 id: msgOptions.correlationId,
-                r: msgOptions.replyQueue,
+                e: 'offer',
               }),
             },
           ],
@@ -72,10 +81,15 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
   msg.answerCbQuery()
   msg.reply(isAccepted ? 'Kul!' : 'Tråkigt, kanske nästa gång!')
 
+  const replyQueue = replyQueues.get(options.id)
+
+  if (!replyQueue)
+    return Promise.reject(`missing reply queue for ${options.id}`)
+
   return open
     .then((conn) => conn.createChannel())
     .then((ch) => {
-      ch.sendToQueue(options.r, Buffer.from(isAccepted.toString()), {
+      ch.sendToQueue(replyQueue, Buffer.from(isAccepted.toString()), {
         correlationId: options.id,
       })
     })
@@ -84,8 +98,8 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
 
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
-    message.car.id,
-    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.booking.departure.lat},${message.booking.departure.lon})!`,
+    message.assigned_to.metadata.telegram.senderId,
+    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.pickup.lat},${message.pickup.lon})!`,
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -95,7 +109,7 @@ const sendPickupInstructions = (message) => {
               text: 'Hämtat',
               callback_data: JSON.stringify({
                 e: 'pickup',
-                id: message.booking.senderId,
+                id: message.id,
               }),
             },
           ],

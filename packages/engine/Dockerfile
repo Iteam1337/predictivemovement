@@ -1,8 +1,25 @@
-FROM node
+FROM elixir as build
+
 WORKDIR /app
-COPY ./package.json .
-RUN npm install --production
-COPY ./lib ./lib
-COPY ./simulator ./simulator
-COPY ./index.js .
-CMD npm start
+
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+COPY lib ./lib
+COPY config ./config
+COPY mix.exs .
+COPY mix.lock .
+
+#Install dependencies and build Release
+RUN export MIX_ENV=prod && \
+    rm -Rf _build && \
+    mix do deps.get, release
+
+FROM elixir
+
+WORKDIR /app
+COPY --from=build /app/_build/prod/rel/engine .
+
+#Set default entrypoint and command
+ENTRYPOINT ["/app/bin/engine"]
+CMD ["start"]

@@ -1,20 +1,21 @@
 const amqp = require('./amqp')
 
 const onMessage = (msg, ctx) => {
-  if (!msg.location) return
-
   const position = {
     lon: msg.location.longitude,
     lat: msg.location.latitude,
   }
 
-  const username = msg.from.username
+  const telegramMetadata = {
+    username: msg.from.username,
+    senderId: msg.from.id,
+  }
+
   const message = {
-    username,
-    id: msg.from.id,
-    // chatId: msg.chat.id, // this borks engine-elixir
     position,
-    // date: Date(msg.edit_date),
+    metadata: {
+      telegram: telegramMetadata,
+    },
   }
 
   amqp.updateLocation(message, ctx)

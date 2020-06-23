@@ -29,8 +29,12 @@ const bookingAssignments = () => {
               })
             })
         )
-        .then(({ booking, car }) =>
-          messaging.onBookingConfirmed(booking.senderId, car.id)
+        .then((booking) =>
+          messaging.onBookingConfirmed(
+            booking.metadata.telegram.senderId,
+            booking.assigned_to.id,
+            booking.events
+          )
         )
     )
 }

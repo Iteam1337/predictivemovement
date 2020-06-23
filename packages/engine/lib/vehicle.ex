@@ -59,27 +59,24 @@ defmodule Vehicle do
 
   def handle_driver_response(
         {:ok, true},
-        %Vehicle{
-          booking_ids: booking_ids,
-          activities: activities,
-          current_route: current_route
-        },
+        %Vehicle{} = proposed_state,
         current_state
       ) do
-    booking_ids
+    proposed_state.booking_ids
     |> Enum.map(fn booking_id ->
-      Booking.assign(booking_id, %{id: current_state.id, metadata: current_state.metadata})
+      Booking.assign(booking_id, current_state)
     end)
     |> IO.inspect(label: "booking was assigned")
 
     current_state
-    |> Map.put(:activities, activities)
-    |> Map.put(:booking_ids, booking_ids)
-    |> Map.put(:current_route, current_route)
+    |> Map.merge(proposed_state)
     |> MQ.publish(Application.fetch_env!(:engine, :vehicles_exchange), "planned")
   end
 
-  def handle_driver_response({:ok, false}, _, _), do: IO.puts("Driver didnt want the booking :(")
+  def handle_driver_response({:ok, false}, _, state) do
+    state
+    |> IO.inspect(label: "Driver didnt want the booking :(")
+  end
 
   def make(position, metadata, busy \\ false) do
     id = "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))

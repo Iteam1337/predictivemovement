@@ -37,7 +37,7 @@ defmodule Vehicle do
       %{
         vehicle: %{id: vehicle_id, metadata: state.metadata},
         route: route,
-        plan: activities,
+        activities: activities,
         booking_ids: booking_ids
       },
       "pickup_offers"

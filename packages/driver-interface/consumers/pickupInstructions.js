@@ -25,7 +25,9 @@ const pickupInstructions = () => {
         .then(() =>
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
             const booking = JSON.parse(msg.content.toString())
+            console.log('booking with instructions: ', booking)
             addBooking(booking.id, booking)
+
             sendPickupInstructions(booking)
             ch.ack(msg)
           })

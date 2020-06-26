@@ -1,7 +1,7 @@
 defmodule Engine.BookingProcessor do
   use Broadway
 
-  @candidates Application.get_env(:engine, :candidates)
+  @plan Application.get_env(:engine, :plan)
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
@@ -26,7 +26,7 @@ defmodule Engine.BookingProcessor do
     IO.inspect({vehicle_ids, booking_ids}, label: "oh a message")
 
     %{solution: %{routes: routes}} =
-      @candidates.find_optimal_routes(vehicle_ids, booking_ids)
+      @plan.find_optimal_routes(vehicle_ids, booking_ids)
       |> IO.inspect(label: "optimal routes")
 
     routes
@@ -38,7 +38,7 @@ defmodule Engine.BookingProcessor do
       |> Map.put(:activities, activities)
       |> Map.put(:booking_ids, booking_ids)
     end)
-    |> CandidatesStore.put_candidates()
+    |> PlanStore.put_plan()
 
     %Broadway.Message{
       data: {vehicle_ids, booking_ids},

@@ -1,4 +1,4 @@
-defmodule CandidatesMock do
+defmodule PlanMock do
   def find_optimal_routes(_, _),
     do: %{
       copyrights: ["GraphHopper", "OpenStreetMap contributors"],

@@ -84,16 +84,20 @@ defmodule Vehicle do
   def make(position, metadata, busy \\ false) do
     id = "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
+    vehicle = %Vehicle{
+      id: id,
+      position: position,
+      busy: busy,
+      metadata: metadata
+    }
+
     GenServer.start_link(
       __MODULE__,
-      %Vehicle{
-        id: id,
-        position: position,
-        busy: busy,
-        metadata: metadata
-      },
+      vehicle,
       name: via_tuple(id)
     )
+
+    MQ.publish(vehicle, Application.fetch_env!(:engine, :vehicles_exchange), "new")
 
     id
   end

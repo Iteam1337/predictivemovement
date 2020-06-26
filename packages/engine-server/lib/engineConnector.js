@@ -6,6 +6,7 @@ const routingKeys = {
   NEW: 'new',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
+  PLANNED: 'planned',
 }
 
 const bookings = amqp
@@ -36,13 +37,13 @@ const bookingsNewWithRoutes = amqp
   })
 
 const cars = amqp
-  .exchange('cars', 'fanout', {
+  .exchange('vehicles', 'topic', {
     durable: false,
   })
   .queue('cars_to_map', {
     durable: false,
   })
-  .subscribe({ noAck: true })
+  .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.PLANNED])
   .map((cars) => {
     return cars.json()
   })

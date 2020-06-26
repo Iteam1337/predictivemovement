@@ -31,16 +31,7 @@ function register(io) {
       .doto((car) => {
         movingCarsCache.set(car.id, car)
       })
-      .pick([
-        'position',
-        'status',
-        'id',
-        'tail',
-        'zone',
-        'speed',
-        'bearing',
-        'heading',
-      ])
+      .pick(['position', 'status', 'id', 'activities', 'current_route'])
       // .tap(updatePosition)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)

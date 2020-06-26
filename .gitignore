@@ -8,3 +8,5 @@ node_modules
 data/
 .vscode/
 docker-compose.dev.yml
+*.xlsx
+*.csv

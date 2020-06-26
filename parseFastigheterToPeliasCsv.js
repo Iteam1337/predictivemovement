@@ -1,6 +1,5 @@
 const readXlsx = require("./packages/booking-dispatcher/lib/helpers/readXlsx");
 const grid_to_geodetic = require("./packages/booking-dispatcher/lib/helpers/swerefConverter");
-// const { id } = require("date-fns/locale");
 
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const csvWriter = createCsvWriter({
@@ -41,8 +40,6 @@ const jsonPackages = readXlsx(
     lat: row["lat"],
     lon: row["lon"],
   }));
-//   .find((e) => e);
-console.log(jsonPackages);
 function getHouseNr(address) {
   const re = /\d+-*\s?.?/g;
   const nrMatch = address.match(re);
@@ -51,6 +48,7 @@ function getHouseNr(address) {
   }
   return null;
 }
+
 function getStreet(address) {
   const re = /\d+-*\s?.?/g;
   return address.replace(re, "").trim();
@@ -59,18 +57,3 @@ function getStreet(address) {
 csvWriter
   .writeRecords(jsonPackages)
   .then(() => console.log("The CSV file was written successfully"));
-// {
-//   id: row.id,
-//   source = "iteam",
-//   street: row.UTDELNINGSADRESS
-//   postcode: row.POSTNR
-//   lat
-//   lon
-
-// }
-
-// id,source,layer,name,housenumber,street,postcode,lat,lon,addendum_json_pelias
-// 1,pelias,example_layer,Example Location,,,,5,5
-// 2,pelias,address,123 Main St,123,Main St,90210,57.698746,11.958071
-// 3,pelias,invalid,123 Main St,,,,,
-// 4,pelias,with_custom_data,501 Broadway,,,,10,11,"{ ""your_custom_data"":""goes here"", ""year"": 2019, ""nested"": { ""supported"": true } }"

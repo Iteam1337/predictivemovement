@@ -2,7 +2,7 @@ const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
 const moment = require('moment')
-
+const { getDirectionsFromActivities } = require('./google')
 const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
@@ -26,9 +26,7 @@ const sendPickupOffer = (
 ) => {
   replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
 
-  const directions = activities.reduce((result, { address }) => {
-    return result.concat(`/${address.lat}, ${address.lon}`)
-  }, 'https://www.google.com/maps/dir')
+  const directions = getDirectionsFromActivities(activities)
 
   const message = `${
     bookingIds.length
@@ -102,9 +100,7 @@ const onNoInstructionsForVehicle = (ctx) =>
   ctx.reply('Vi kunde inte hitta några instruktioner...')
 
 const onInstructionsForVehicle = (activities, bookingIds, id) => {
-  const directions = activities.reduce((result, { address }) => {
-    return result.concat(`/${address.lat},${address.lon}`)
-  }, 'https://www.google.com/maps/dir')
+  const directions = getDirectionsFromActivities(activities)
 
   return bot.telegram.sendMessage(
     id,

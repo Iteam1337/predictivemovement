@@ -101,6 +101,17 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
 const onNoInstructionsForVehicle = (ctx) =>
   ctx.reply('Vi kunde inte hitta några instruktioner...')
 
+const onInstructionsForVehicle = (activities, bookingIds, id) => {
+  const directions = activities.reduce((result, { address }) => {
+    return result.concat(`/${address.lat},${address.lon}`)
+  }, 'https://www.google.com/maps/dir')
+
+  return bot.telegram.sendMessage(
+    id,
+    `${bookingIds.length} paket finns att hämta.[Se på kartan](${directions}).`,
+    { parse_mode: 'markdown' }
+  )
+}
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
     message.assigned_to.metadata.telegram.senderId,
@@ -126,6 +137,7 @@ const sendPickupInstructions = (message) => {
 
 module.exports = {
   onNoInstructionsForVehicle,
+  onInstructionsForVehicle,
   onBotStart,
   sendPickupOffer,
   sendPickupInstructions,

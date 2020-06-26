@@ -1,10 +1,6 @@
 const botServices = require('./services/bot')
 const messaging = require('./services/messaging')
-const {
-  getBooking,
-  updateBooking,
-  getBookingFromVehicleId,
-} = require('./services/cache')
+const { getBooking, updateBooking, getVehicle } = require('./services/cache')
 
 const {
   open,
@@ -64,14 +60,13 @@ const init = (bot) => {
   bot.command('/lista', (ctx) => {
     const id = ctx.update.message.from.id
 
-    const bookingAssignedToVehicle = getBookingFromVehicleId(id)
+    const vehicleWithPlan = getVehicle(id)
+    if (!vehicleWithPlan) return messaging.onNoInstructionsForVehicle(ctx)
 
-    if (!bookingAssignedToVehicle)
-      return messaging.onNoInstructionsForVehicle(ctx)
-    console.log(bookingAssignedToVehicle)
+    const activities = vehicleWithPlan.activities
+    const bookingIds = vehicleWithPlan.booking_ids
 
-    const instructions = bookingAssignedToVehicle.instructions
-    console.log('instructions: ', instructions)
+    messaging.onInstructionsForVehicle(activities, bookingIds, id)
   })
 
   bot.on('message', (ctx) => {

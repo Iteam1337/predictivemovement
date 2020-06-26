@@ -1,0 +1,11 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.10.6"
+  },
+  "dependencies": {
+    "csv-writer": "^1.6.0",
+    "xlsx": "^0.16.2"
+  }
+}

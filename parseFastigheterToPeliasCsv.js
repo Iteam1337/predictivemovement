@@ -3,10 +3,12 @@ const grid_to_geodetic = require("./packages/booking-dispatcher/lib/helpers/swer
 
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 const csvWriter = createCsvWriter({
-  path: "paketdata2019A.csv",
+  path: "paketdata2019.csv",
   header: [
     { id: "id", title: "id" },
     { id: "source", title: "source" },
+    { id: "layer", title: "layer" },
+    { id: "name", title: "name" },
     { id: "housenumber", title: "housenumber" },
     { id: "street", title: "street" },
     { id: "postcode", title: "postcode" },
@@ -34,6 +36,7 @@ const jsonPackages = readXlsx(
     id: row["ID"],
     source: "fastighetsregister-2019",
     layer: "address",
+    name: row["UTDELNINGSADRESS"],
     housenumber: getHouseNr(row["UTDELNINGSADRESS"]),
     street: getStreet(row["UTDELNINGSADRESS"]),
     postcode: row["POSTNR"],

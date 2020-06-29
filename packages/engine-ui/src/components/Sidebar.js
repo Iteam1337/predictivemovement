@@ -82,7 +82,7 @@ const Sidebar = (state) => {
             <Filters />
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={data.bookings} />
-            <TextLink to="/addBooking">
+            <TextLink to="/add-booking">
               <h3>+ Lägg till bokning</h3>
             </TextLink>
           </>
@@ -92,7 +92,7 @@ const Sidebar = (state) => {
           <>
             <h3>Aktuella fordon</h3>
             <Cars cars={data.cars} />
-            <TextLink to="/addVehicle">
+            <TextLink to="/add-vehicle">
               <h3>+ Lägg till bil</h3>
             </TextLink>
           </>
@@ -138,13 +138,13 @@ const Sidebar = (state) => {
           <Route path="/details">
             <Details state={data} />
           </Route>
-          <Route path="/addVehicle">
+          <Route path="/add-vehicle">
             <AddVehicle
               currentPosition={state.currentPosition}
               addVehicle={state.addVehicle}
             />
           </Route>
-          <Route path="/addBooking">
+          <Route path="/add-booking">
             <CreateBooking createBooking={state.createBooking} />
           </Route>
         </RouterSwitch>

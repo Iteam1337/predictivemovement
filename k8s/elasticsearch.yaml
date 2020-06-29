@@ -56,9 +56,16 @@ spec:
             - ulimit -n 65536
           securityContext:
             privileged: true
+        # - name: install-plugins
+        #   image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+        #   command:
+        #     - sh
+        #     - -c
+        #     - |
+        #       bin/elasticsearch-plugin install --batch analysis-icu
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+          image: pelias/elasticsearch:7.5.1 # docker.elastic.co/elasticsearch/elasticsearch:7.8.0
           imagePullPolicy: Always
           volumeMounts:
             - name: elasticsearch-data
@@ -69,8 +76,8 @@ spec:
               value: /data/elasticsearch
             - name: cluster.name
               value: predictivemovement
-            - name: cluster.initial_master_nodes
-              value: "elasticsearch-0"
+            # - name: cluster.initial_master_nodes
+            #   value: "elasticsearch-0"
             - name: ES_JAVA_OPTS
               value: -Xms2g -Xmx2g
           ports:

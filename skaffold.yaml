@@ -38,15 +38,15 @@ deploy:
       - k8s/packages/booking-interface.yaml
       - k8s/packages/driver-interface.yaml
       - k8s/packages/engine.yaml
-      - k8s/cicd-rbac.yaml
       - k8s/packages/engine-server.yaml
       - k8s/packages/engine-ui.yaml
       - k8s/packages/candidates-graphhopper.yaml
       # TODO: Disabled because this should be done once and not redeployed every time
+      # - k8s/cicd-rbac.yaml
       # - k8s/rabbitmq.yaml
-#    - k8s/osrm.yaml
-#    - k8s/redis.yaml
-#    - k8s/cert-manager/issuer.yaml
-#    - k8s/cert-manager/map-certificate.yaml
-#    - k8s/cert-manager/match-route-certificate.yaml
-#    - k8s/traefik/traefik.yaml
+      # - k8s/osrm.yaml
+      # - k8s/redis.yaml
+      # - k8s/cert-manager/issuer.yaml
+      # - k8s/cert-manager/map-certificate.yaml
+      # - k8s/cert-manager/match-route-certificate.yaml
+      # - k8s/traefik/traefik.yaml

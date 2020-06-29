@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Map from './components/Map'
+import Logotype from './components/Logotype'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
@@ -51,6 +52,7 @@ const App = () => {
   return (
     <>
       <Router>
+        <Logotype />
         <Sidebar
           {...state}
           createBooking={createBooking}

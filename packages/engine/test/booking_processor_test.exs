@@ -69,7 +69,7 @@ defmodule BookingProcessorTest do
     position: @ralis,
     orsm_route: nil
   }
-  @candidates_response_with_one_booking_for_tesla %{
+  @plan_response_with_one_booking_for_tesla %{
     copyrights: ["GraphHopper", "OpenStreetMap contributors"],
     job_id: "f7e0a92a-8dc1-4b4c-b8c1-7365e4eb90ad",
     processing_time: 69,
@@ -157,12 +157,12 @@ defmodule BookingProcessorTest do
   }
 
   @tag :only
-  test "it stores candidates made by Candidates Module" do
+  test "it stores plan made by Plan Module" do
     vehicles = [@tesla, @volvo]
     bookings = [@iteamToRadu]
 
-    CandidatesBehaviorMock
-    |> stub(:find_optimal_routes, fn _, _ -> @candidates_response_with_one_booking_for_tesla end)
+    PlanBehaviourMock
+    |> stub(:find_optimal_routes, fn _, _ -> @plan_response_with_one_booking_for_tesla end)
 
     ref =
       Broadway.test_messages(Engine.BookingProcessor, [
@@ -172,18 +172,18 @@ defmodule BookingProcessorTest do
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    [%Vehicle{id: "tesla", instructions: instructions}] = CandidatesStore.get_candidates()
+    [%Vehicle{id: "tesla", instructions: instructions}] = PlanStore.get_plan()
 
     assert length(instructions) == 3
   end
 
   @tag :only
-  test "it only stores latest candidates response" do
+  test "it only stores latest plan response" do
     vehicles = [@tesla, @volvo]
     bookings = [@iteamToRadu]
 
-    stub(CandidatesBehaviorMock, :find_optimal_routes, fn _, _ ->
-      @candidates_response_with_one_booking_for_tesla
+    stub(PlanBehaviourMock, :find_optimal_routes, fn _, _ ->
+      @plan_response_with_one_booking_for_tesla
     end)
 
     ref =
@@ -195,11 +195,11 @@ defmodule BookingProcessorTest do
                    10000
 
     volvo_is_best_match =
-      update_in(@candidates_response_with_one_booking_for_tesla, [:solution, :routes], fn [routes] ->
+      update_in(@plan_response_with_one_booking_for_tesla, [:solution, :routes], fn [routes] ->
         [Map.put(routes, :vehicle_id, "volvo")]
       end)
 
-    stub(CandidatesBehaviorMock, :find_optimal_routes, fn _, _ -> volvo_is_best_match end)
+    stub(PlanBehaviourMock, :find_optimal_routes, fn _, _ -> volvo_is_best_match end)
 
     ref =
       Broadway.test_messages(Engine.BookingProcessor, [
@@ -209,7 +209,7 @@ defmodule BookingProcessorTest do
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    [%Vehicle{id: "volvo", instructions: instructions}] = CandidatesStore.get_candidates()
+    [%Vehicle{id: "volvo", instructions: instructions}] = PlanStore.get_plan()
 
     assert length(instructions) == 3
   end
@@ -234,7 +234,7 @@ defmodule BookingProcessorTest do
   #   assert_receive {:ack, ^ref, messages, failed},
   #                  10000
 
-  #   {%Vehicle{id: "tesla", instructions: instructions}, _} = CandidatesStore.get_candidates()
+  #   {%Vehicle{id: "tesla", instructions: instructions}, _} = PlanStore.get_plan()
 
   #   assert length(instructions) == 11
   # end
@@ -283,15 +283,3 @@ defmodule BookingProcessorTest do
   # result = process.message(booking2, updated_vehicles)
   # a test case where you send 1 booking and 2 vehicles and then mock the offer acceptance and the updated state as vehicle input for another message
 end
-
-# test "bookings with two vehicles" do
-#   vehicles = [@tesla, @volvo]
-
-#   route =
-#     [@iteamToRadu, @iteamToChristian]
-#     |> Dispatch.find_candidates(vehicles)
-#     |> pretty()
-#     |> Enum.join(" -> ")
-
-#   assert route == "(volvo) iteamToRadu -> (tesla) iteamToChristian"
-# end

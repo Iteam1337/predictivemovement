@@ -1,8 +1,8 @@
-defmodule Candidates do
-  @behaviour CandidatesBehavior
+defmodule Plan do
+  @behaviour PlanBehaviour
 
   def find_optimal_routes(vehicle_ids, booking_ids) do
-    IO.puts("call candidates_request")
+    IO.puts("call plan_request")
 
     vehicles =
       vehicle_ids

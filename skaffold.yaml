@@ -30,6 +30,10 @@ build:
       context: packages/candidates-graphhopper
     - image: iteam1337/pm-route-optimization-jsprit
       context: packages/route-optimization-jsprit
+    - image: iteam1337/pm-vehicle-offer
+      context: packages/vehicle-offer
+    - image: iteam1337/pm-auto-accept-offer
+      context: packages/auto-accept-offer
 deploy:
   kubectl:
     manifests:
@@ -44,6 +48,8 @@ deploy:
       - k8s/packages/engine-ui.yaml
       - k8s/packages/candidates-graphhopper.yaml
       - k8s/packages/route-optimization-jsprit.yaml
+      - k8s/packages/vehicle-offer.yaml
+      - k8s/packages/auto-accept-offer.yaml
       # TODO: Disabled because this should be done once and not redeployed every time
       # - k8s/cicd-rbac.yaml
       # - k8s/rabbitmq.yaml

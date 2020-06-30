@@ -1,5 +1,5 @@
 import Config
 
-config :engine, :candidates, Candidates
+config :engine, :plan, Plan
 config :engine, :vehicle, Vehicle
 import_config "#{Mix.env()}.exs"

@@ -71,7 +71,7 @@ export const carToFeature = (cars) => {
     return [
       ...cars.flatMap(({ id, activities, current_route: currentRoute }, i) => {
         index = i
-        if (activities.length) {
+        if (activities && activities.length) {
           const route = line(
             currentRoute.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
             {

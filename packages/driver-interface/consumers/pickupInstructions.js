@@ -25,10 +25,15 @@ const pickupInstructions = () => {
         .then(() =>
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
             const booking = JSON.parse(msg.content.toString())
-            console.log('booking with instructions: ', booking)
-            addBooking(booking.id, booking)
+            const fromTelegram =
+              booking.assigned_to.metadata &&
+              booking.assigned_to.metadata.telegram
+            if (fromTelegram) {
+              console.log('booking with instructions: ', booking)
+              addBooking(booking.id, booking)
 
-            sendPickupInstructions(booking)
+              sendPickupInstructions(booking)
+            }
             ch.ack(msg)
           })
         )

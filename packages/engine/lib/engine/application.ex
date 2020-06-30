@@ -8,7 +8,7 @@ defmodule Engine.Application do
   def start(_type, _args) do
     children = [
       Engine.BookingProcessor,
-      CandidatesStore,
+      PlanStore,
       Engine.AdminProcessor,
       BookingRoutes
     ]

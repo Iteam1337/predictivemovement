@@ -1,1 +1,1 @@
-Mox.defmock(CandidatesBehaviorMock, for: CandidatesBehavior)
+Mox.defmock(PlanBehaviourMock, for: PlanBehaviour)

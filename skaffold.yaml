@@ -28,6 +28,8 @@ build:
           REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
     - image: iteam1337/pm-candidates-graphhopper
       context: packages/candidates-graphhopper
+    - image: iteam1337/pm-route-optimization-jsprit
+      context: packages/route-optimization-jsprit
 deploy:
   kubectl:
     manifests:
@@ -41,6 +43,7 @@ deploy:
       - k8s/packages/engine-server.yaml
       - k8s/packages/engine-ui.yaml
       - k8s/packages/candidates-graphhopper.yaml
+      - k8s/packages/route-optimization-jsprit.yaml
       # TODO: Disabled because this should be done once and not redeployed every time
       # - k8s/cicd-rbac.yaml
       # - k8s/rabbitmq.yaml

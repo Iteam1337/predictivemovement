@@ -10,7 +10,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 35Gi
+      storage: 50Gi
 ---
 # Source: pelias/templates/pip-service.tpl
 apiVersion: v1
@@ -48,38 +48,39 @@ spec:
         app: pelias-pip
     spec:
       initContainers:
-        - name: fix-the-volume-permission
-          image: busybox
-          command:
-            - sh
-            - -c
-            - chown -R 1000:1000 /data
-          securityContext:
-            privileged: true
-          volumeMounts:
-            - name: data-volume
-              mountPath: /data
-        - name: make-directories-1
-          image: busybox
-          command:
-            - mkdir
-            - -p
-            - /data/whosonfirst
-          volumeMounts:
-            - name: data-volume
-              mountPath: /data
-        - name: make-directories-2
+        # NOTE:
+        # This is to create the directory needed by the download as the root user
+        # The download runs as non root user so it cannot create the directory
+        - name: make-directory
           image: busybox
           command:
             - mkdir
             - -p
             - /data/whosonfirst/sqlite
+          securityContext:
+            privileged: true
           volumeMounts:
             - name: data-volume
               mountPath: /data
+        # NOTE:
+        # This is to fix the permission on the download directory for the pelias user
+        - name: fix-the-volume-permission
+          image: busybox
+          command:
+            - sh
+            - -c
+            - chown -R 1000:1000 /data/whosonfirst/sqlite
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+        # NOTE:
+        # The download checks the presence of the file before running the download script
+        # The reason for it is that it takes a long time since it is a lot of data
         - name: download
           image: pelias/pip-service:master
-          command: ["sh", "-c", "./bin/download --admin-only"]
+          command: ["sh", "-c", "[ ! -e /data/whosonfirst/sqlite/whosonfirst-data-admin-latest.db ] && ./bin/download || exit 0"]
           volumeMounts:
             - name: config-volume
               mountPath: /etc/config
@@ -88,15 +89,6 @@ spec:
           env:
             - name: PELIAS_CONFIG
               value: "/etc/config/pelias.json"
-          resources:
-            limits:
-              memory: 3Gi
-              cpu: "4"
-              ephemeral-storage: 35Gi
-            requests:
-              memory: 1Gi
-              cpu: "0.1"
-              ephemeral-storage: 35Gi
       containers:
         - name: pelias-pip
           image: pelias/pip-service:master
@@ -108,20 +100,12 @@ spec:
           env:
             - name: PELIAS_CONFIG
               value: "/etc/config/pelias.json"
-          resources:
-            limits:
-              memory: 10Gi
-              cpu: "3"
-              ephemeral-storage: 35Gi
-            requests:
-              memory: "5Gi"
-              cpu: "0.1"
-              ephemeral-storage: 35Gi
           readinessProbe:
             httpGet:
               path: /12/12
               port: 3102
             initialDelaySeconds: 300
+            periodSeconds: 60
       volumes:
         - name: config-volume
           configMap:

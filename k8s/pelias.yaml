@@ -32,7 +32,7 @@ data:
         "attributionURL": "http://api.yourpelias.com/attribution",
         "indexName": "pelias",
         "services": {
-          
+
           "placeholder": {
             "url": "http://pelias-placeholder-service:3000/",
             "retries": 1,
@@ -93,7 +93,7 @@ data:
           "files": ["extract.0sv"]
         },
         "whosonfirst": {
-          "sqlite": false,   
+          "sqlite": false,
           "importVenues": false,
           "importPostalcodes": true,
           "datapath": "/data/whosonfirst"
@@ -191,7 +191,6 @@ metadata:
   namespace: predictivemovement
 spec:
   replicas: 1
-  minReadySeconds: 10
   selector:
     matchLabels:
       app: pelias-api
@@ -231,7 +230,7 @@ spec:
           resources:
             limits:
               memory: 0.5Gi
-              cpu: 1.5
+              cpu: "1.5"
             requests:
               memory: "0.25Gi"
               cpu: "0.1"
@@ -276,10 +275,10 @@ spec:
           resources:
             limits:
               memory: 0.2Gi
-              cpu: 0.25
+              cpu: "0.25"
             requests:
               memory: 0.2Gi
-              cpu: 0.01
+              cpu: "0.01"
       nodeSelector: {}
 ---
 # Source: pelias/templates/health-logger-deployment.tpl
@@ -312,7 +311,7 @@ spec:
           resources:
             limits:
               memory: 0.5Gi
-              cpu: 0.5
+              cpu: "0.5"
             requests:
               memory: "100Mi"
               cpu: "0.1"
@@ -343,7 +342,6 @@ spec:
     metadata:
       labels:
         app: pelias-interpolation
-      annotations:
     spec:
       initContainers:
         - name: download
@@ -363,11 +361,11 @@ spec:
           resources:
             limits:
               memory: 3Gi
-              cpu: 2
+              cpu: "2"
               ephemeral-storage: 5Gi
             requests:
               memory: 512Mi
-              cpu: 0.1
+              cpu: "0.1"
               ephemeral-storage: 5Gi
       containers:
         - name: pelias-interpolation
@@ -383,10 +381,10 @@ spec:
           resources:
             limits:
               memory: 3Gi
-              cpu: 2
+              cpu: "2"
               ephemeral-storage: 5Gi
             requests:
-              memory: "2Gi"
+              memory: 2Gi
               cpu: "0.1"
               ephemeral-storage: 5Gi
       volumes:
@@ -420,7 +418,6 @@ spec:
     metadata:
       labels:
         app: pelias-libpostal
-      annotations:
     spec:
       containers:
         - name: pelias-libpostal
@@ -428,10 +425,10 @@ spec:
           resources:
             limits:
               memory: 3Gi
-              cpu: 1.5
+              cpu: "1.5"
             requests:
               memory: 2Gi
-              cpu: 0.1
+              cpu: "0.1"
           livenessProbe:
             httpGet:
               path: /parse?address=readiness
@@ -462,7 +459,6 @@ spec:
     metadata:
       labels:
         app: pelias-pip
-      annotations:
     spec:
       initContainers:
         - name: fix-the-volume-permission
@@ -482,8 +478,6 @@ spec:
             - mkdir
             - -p
             - /data/whosonfirst
-          # securityContext:
-          #   privileged: true
           volumeMounts:
             - name: data-volume
               mountPath: /data
@@ -493,8 +487,6 @@ spec:
             - mkdir
             - -p
             - /data/whosonfirst/sqlite
-          # securityContext:
-          #   privileged: true
           volumeMounts:
             - name: data-volume
               mountPath: /data
@@ -512,11 +504,11 @@ spec:
           resources:
             limits:
               memory: 3Gi
-              cpu: 4
+              cpu: "4"
               ephemeral-storage: 35Gi
             requests:
               memory: 1Gi
-              cpu: 0.1
+              cpu: "0.1"
               ephemeral-storage: 35Gi
       containers:
         - name: pelias-pip
@@ -532,7 +524,7 @@ spec:
           resources:
             limits:
               memory: 10Gi
-              cpu: 3
+              cpu: "3"
               ephemeral-storage: 35Gi
             requests:
               memory: "5Gi"
@@ -575,7 +567,6 @@ spec:
     metadata:
       labels:
         app: pelias-placeholder
-      annotations:
     spec:
       initContainers:
         - name: download
@@ -595,11 +586,11 @@ spec:
           resources:
             limits:
               memory: 1Gi
-              cpu: 1.1
+              cpu: "1.1"
               ephemeral-storage: 5Gi
             requests:
               memory: 100Mi
-              cpu: 0.2
+              cpu: "0.2"
               ephemeral-storage: 5Gi
       containers:
         - name: pelias-placeholder
@@ -615,7 +606,7 @@ spec:
           resources:
             limits:
               memory: 1Gi
-              cpu: 2
+              cpu: "2"
               ephemeral-storage: 5Gi
             requests:
               memory: "512Mi"

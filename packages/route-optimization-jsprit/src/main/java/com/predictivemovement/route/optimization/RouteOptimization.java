@@ -4,10 +4,11 @@ import com.graphhopper.jsprit.core.algorithm.VehicleRoutingAlgorithm;
 import com.graphhopper.jsprit.core.algorithm.box.SchrimpfFactory;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
+import com.graphhopper.jsprit.core.problem.job.Activity;
+import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.problem.job.Shipment;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
-import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleTypeImpl;
@@ -159,20 +160,31 @@ public class RouteOptimization {
         jsonActivityAddress.put("lat", vehicleRoute.getStart().getLocation().getCoordinate().getY());
       }
 
-      // --- activities
-      // System.out.println(vehicleRoute.getActivities().size());
-      for (TourActivity activity : vehicleRoute.getActivities()) {
-        JSONObject jsonActivity = new JSONObject();
-        jsonActivities.put(jsonActivity);
+      /*
+       * // System.out.println(vehicleRoute.getActivities().size()); for (TourActivity
+       * activity : vehicleRoute.getActivities()) { System.out.println(activity); }
+       * System.out.println("----"); TourActivities tourActivity =
+       * vehicleRoute.getTourActivities(); for (TourActivity activity :
+       * tourActivity.getActivities()) { System.out.println(activity); }
+       * System.out.println("----");
+       */
 
-        jsonActivity.put("type", activity.getName());
-        jsonActivity.put("index", activity.getIndex());
+      for (Job job : vehicleRoute.getTourActivities().getJobs()) {
+        for (Activity activity : job.getActivities()) {
+          // System.out.println(activity);
+          JSONObject jsonActivity = new JSONObject();
+          jsonActivities.put(jsonActivity);
 
-        JSONObject jsonActivityAddress = new JSONObject();
-        jsonActivity.put("address", jsonActivityAddress);
+          jsonActivity.put("type", activity.getActivityType());
+          // jsonActivity.put("index", job.getIndex());
+          jsonActivity.put("id", job.getId());
 
-        jsonActivityAddress.put("lon", activity.getLocation().getCoordinate().getX());
-        jsonActivityAddress.put("lat", activity.getLocation().getCoordinate().getY());
+          JSONObject jsonActivityAddress = new JSONObject();
+          jsonActivity.put("address", jsonActivityAddress);
+
+          jsonActivityAddress.put("lon", activity.getLocation().getCoordinate().getX());
+          jsonActivityAddress.put("lat", activity.getLocation().getCoordinate().getY());
+        }
       }
 
       // System.out.println(vehicleRoute.getTourActivities().getActivities());
@@ -182,6 +194,7 @@ public class RouteOptimization {
       // System.out.println(activity);
       // }
 
+      // System.out.println("-----");
       // System.out.println(vehicleRoute.getTourActivities().getJobs());
       // vehicleRoute.getTourActivities().getJobs().forEach(job -> {
       // System.out.println(job);
@@ -190,14 +203,19 @@ public class RouteOptimization {
       // System.out.println(job.getName());
       // System.out.println(job.getActivities());
       // });
+      // System.out.println("-----");
 
       // --- end
       {
         JSONObject jsonActivity = new JSONObject();
+
         jsonActivities.put(jsonActivity);
 
         jsonActivity.put("type", vehicleRoute.getEnd().getName());
         jsonActivity.put("index", vehicleRoute.getEnd().getIndex());
+        jsonActivity.put("index", vehicleRoute.getEnd().getIndex());
+        // booking id ... is just called id here
+        // jsonActivity.put("id", "where do get?");
 
         JSONObject jsonActivityAddress = new JSONObject();
         jsonActivity.put("address", jsonActivityAddress);

@@ -25,4 +25,12 @@ const getAddressFromCoordinate = (coordinate) =>
       console.log('Error getting google geocode data: ', err.message)
     )
 
-module.exports = { getAddressFromCoordinate }
+const getDirectionsFromActivities = (activities) => {
+  const directions = activities.reduce((result, { address }) => {
+    return result.concat(`/${address.lat},${address.lon}`)
+  }, 'https://www.google.com/maps/dir')
+
+  return directions
+}
+
+module.exports = { getAddressFromCoordinate, getDirectionsFromActivities }

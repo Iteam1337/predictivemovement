@@ -18,6 +18,8 @@ Locations will be sent to the "cars"-exchange on RabbitMQ.
 
 Start bot backend with
 
+When a driver has accepted a booking/plan you can use `/lista` to get the planned route for the driver. This data is saved in the telegram cache.
+
 ```
 npm run dev
 ```

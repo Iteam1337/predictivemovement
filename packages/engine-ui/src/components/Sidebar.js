@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import ParcelIcon from '../assets/parcel.svg'
-import ShippingIcon from '../assets/shipping-fast.svg'
+import ShippingIcon from '../assets/shippingIcon.svg'
 import Bookings from './Bookings'
 import Cars from './Cars'
 import CreateBooking from './CreateBooking'
@@ -11,6 +11,7 @@ import Hooks from '../Hooks'
 import CarDetails from './CarDetails'
 import Filters from './Filters'
 import AddVehicle from './AddVehicle'
+import Dispatch from '../assets/dispatch.svg'
 
 const Container = styled.div`
   position: absolute;
@@ -23,9 +24,9 @@ const Container = styled.div`
 `
 
 const NavigationBar = styled.div`
-  padding: 2rem 1rem;
+  padding: 3rem 1rem;
   height: 100vh;
-  background: #64b5f6;
+  background: #13c57b;
   color: white;
   display: flex;
   flex-direction: column;
@@ -36,8 +37,13 @@ const NavigationBar = styled.div`
     width: 30px;
     height: 30px;
     cursor: pointer;
-    margin-bottom: 2rem;
+    margin-bottom: 5rem;
   }
+`
+
+const TextLink = styled(Link)`
+  text-decoration: none;
+  color: #666666;
 `
 
 const Details = ({ state }) => {
@@ -73,21 +79,22 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <CreateBooking createBooking={state.createBooking} />
             <Filters />
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={data.bookings} />
+            <TextLink to="/add-booking">
+              <h3>+ Lägg till bokning</h3>
+            </TextLink>
           </>
         )
       case 'cars':
         return (
           <>
-            <AddVehicle
-              currentPosition={state.currentPosition}
-              addVehicle={state.addVehicle}
-            />
             <h3>Aktuella fordon</h3>
             <Cars cars={data.cars} />
+            <TextLink to="/add-vehicle">
+              <h3>+ Lägg till bil</h3>
+            </TextLink>
           </>
         )
       case 'dispatch':
@@ -114,10 +121,11 @@ const Sidebar = (state) => {
             alt="shipping icon"
           />
         </Link>
-        <Link>
+        <Link to="/">
           <img
             onClick={() => setNavigationCurrentView('dispatch')}
-            alt="DISPATCH"
+            src={Dispatch}
+            alt="Dispatch icon"
           />
         </Link>
       </NavigationBar>
@@ -129,6 +137,15 @@ const Sidebar = (state) => {
           </Route>
           <Route path="/details">
             <Details state={data} />
+          </Route>
+          <Route path="/add-vehicle">
+            <AddVehicle
+              currentPosition={state.currentPosition}
+              addVehicle={state.addVehicle}
+            />
+          </Route>
+          <Route path="/add-booking">
+            <CreateBooking createBooking={state.createBooking} />
           </Route>
         </RouterSwitch>
       </Content>

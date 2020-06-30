@@ -2,7 +2,7 @@ const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
 const moment = require('moment')
-
+const { getDirectionsFromActivities } = require('./google')
 const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
@@ -22,44 +22,44 @@ const onBotStart = (ctx) => {
 const sendPickupOffer = (
   chatId,
   msgOptions,
-  { pickupAddress, deliveryAddress, booking, route }
+  { startingAddress, route, activities, bookingIds }
 ) => {
   replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
 
-  bot.telegram.sendMessage(
-    parseInt(chatId, 10),
-    `Ett paket finns att hämta på ${pickupAddress}. Det ska levereras till ${deliveryAddress}. Turen kommer att ta cirka ${moment
-      .duration({ seconds: route.duration })
-      .humanize()}. Har du möjlighet att hämta detta?
-    [Se på kartan](https://www.google.com/maps/dir/${booking.pickup.lat},${
-      booking.pickup.lon
-    }/${booking.delivery.lat},${booking.delivery.lon})`,
-    {
-      parse_mode: 'markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Nej',
-              callback_data: JSON.stringify({
-                a: false,
-                id: msgOptions.correlationId,
-                e: 'offer',
-              }),
-            },
-            {
-              text: 'Ja',
-              callback_data: JSON.stringify({
-                a: true,
-                id: msgOptions.correlationId,
-                e: 'offer',
-              }),
-            },
-          ],
+  const directions = getDirectionsFromActivities(activities)
+
+  const message = `${
+    bookingIds.length
+  } paket finns att hämta. Rutten börjar på ${startingAddress}. Turen beräknas att ta cirka ${moment
+    .duration({ seconds: route.duration })
+    .humanize()}. Vill du ha denna order?
+  [Se på kartan](${directions})`
+
+  bot.telegram.sendMessage(parseInt(chatId, 10), message, {
+    parse_mode: 'markdown',
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Nej',
+            callback_data: JSON.stringify({
+              a: false,
+              id: msgOptions.correlationId,
+              e: 'offer',
+            }),
+          },
+          {
+            text: 'Ja',
+            callback_data: JSON.stringify({
+              a: true,
+              id: msgOptions.correlationId,
+              e: 'offer',
+            }),
+          },
         ],
-      },
-    }
-  )
+      ],
+    },
+  })
 }
 
 const onPickupConfirm = (ctx) => {
@@ -96,6 +96,18 @@ const onPickupOfferResponse = (isAccepted, options, msg) => {
     .catch(console.warn)
 }
 
+const onNoInstructionsForVehicle = (ctx) =>
+  ctx.reply('Vi kunde inte hitta några instruktioner...')
+
+const onInstructionsForVehicle = (activities, bookingIds, id) => {
+  const directions = getDirectionsFromActivities(activities)
+
+  return bot.telegram.sendMessage(
+    id,
+    `${bookingIds.length} paket finns att hämta.[Se på kartan](${directions}).`,
+    { parse_mode: 'markdown' }
+  )
+}
 const sendPickupInstructions = (message) => {
   return bot.telegram.sendMessage(
     message.assigned_to.metadata.telegram.senderId,
@@ -120,6 +132,8 @@ const sendPickupInstructions = (message) => {
 }
 
 module.exports = {
+  onNoInstructionsForVehicle,
+  onInstructionsForVehicle,
   onBotStart,
   sendPickupOffer,
   sendPickupInstructions,

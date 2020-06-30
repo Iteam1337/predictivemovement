@@ -117,19 +117,6 @@ spec:
     requests:
       storage: 35Gi
 ---
-# Source: pelias/templates/api-service.tpl
-apiVersion: v1
-kind: Service
-metadata:
-  name: pelias-api-service
-spec:
-  selector:
-    app-group: pelias-api
-  ports:
-    - protocol: TCP
-      port: 3100
-  type: ClusterIP
----
 # Source: pelias/templates/dashboard-service.yaml
 apiVersion: v1
 kind: Service
@@ -183,66 +170,6 @@ spec:
       port: 3000
   type: ClusterIP
 ---
-# Source: pelias/templates/api-deployment.tpl
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: pelias-api
-  namespace: predictivemovement
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: pelias-api
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  template:
-    metadata:
-      labels:
-        app: pelias-api
-        app-group: pelias-api
-      annotations:
-        image: pelias/api:master
-        checksum/config: 1faf321dba4e575e57fd4a89cfcd6c58cb0457befa55a1278cb666a6f23837f7
-        elasticsearch: elasticsearch
-    spec:
-      initContainers:
-        - name: create-schema
-          image: pelias/schema:master
-          command: ["sh", "-c", "./bin/create_index || true"]
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/config
-          env:
-            - name: PELIAS_CONFIG
-              value: "/etc/config/pelias.json"
-      containers:
-        - name: pelias-api
-          image: pelias/api:master
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/config
-          env:
-            - name: PELIAS_CONFIG
-              value: "/etc/config/pelias.json"
-          resources:
-            limits:
-              memory: 0.5Gi
-              cpu: "1.5"
-            requests:
-              memory: "0.25Gi"
-              cpu: "0.1"
-      volumes:
-        - name: config-volume
-          configMap:
-            name: pelias-json-configmap
-            items:
-              - key: pelias.json
-                path: pelias.json
-      nodeSelector: {}
----
 # Source: pelias/templates/dashboard-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -279,7 +206,6 @@ spec:
             requests:
               memory: 0.2Gi
               cpu: "0.01"
-      nodeSelector: {}
 ---
 # Source: pelias/templates/health-logger-deployment.tpl
 apiVersion: apps/v1
@@ -320,7 +246,6 @@ spec:
               value: "elasticsearch:9200"
             - name: WATCH_INTERVAL
               value: "60"
-      nodeSelector: {}
 ---
 # Source: pelias/templates/interpolation-deployment.tpl
 apiVersion: apps/v1
@@ -396,7 +321,6 @@ spec:
             items:
               - key: pelias.json
                 path: pelias.json
-      nodeSelector: {}
 ---
 # Source: pelias/templates/libpostal-deployment.tpl
 apiVersion: apps/v1
@@ -437,7 +361,6 @@ spec:
             httpGet:
               path: /parse?address=readiness
               port: 4400
-      nodeSelector: {}
 ---
 # Source: pelias/templates/pip-deployment.tpl
 apiVersion: apps/v1
@@ -545,7 +468,6 @@ spec:
         - name: data-volume
           persistentVolumeClaim:
             claimName: pip-pvc
-      nodeSelector: {}
 ---
 # Source: pelias/templates/placeholder-deployment.tpl
 apiVersion: apps/v1
@@ -615,20 +537,18 @@ spec:
       volumes:
         - name: data-volume
           emptyDir: {}
-      nodeSelector: {}
 ---
-# Source: pelias/templates/pip-deployment.tpl
+# Source: pelias/templates/api-deployment.tpl
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pelias-csv-importer
+  name: pelias-api
   namespace: predictivemovement
 spec:
   replicas: 1
-  minReadySeconds: 5
   selector:
     matchLabels:
-      app: pelias-csv-importer
+      app: pelias-api
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -636,12 +556,26 @@ spec:
   template:
     metadata:
       labels:
-        app: pelias-csv-importer
+        app: pelias-api
+        app-group: pelias-api
+      annotations:
+        image: pelias/api:master
+        checksum/config: 1faf321dba4e575e57fd4a89cfcd6c58cb0457befa55a1278cb666a6f23837f7
+        elasticsearch: elasticsearch
     spec:
-      containers:
-        - name: pelias-csv-importer
+      initContainers:
+        - name: create-schema
+          image: pelias/schema:master
+          command: ["sh", "-c", "./bin/create_index || true"]
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          env:
+            - name: PELIAS_CONFIG
+              value: "/etc/config/pelias.json"
+        - name: csv-importer
           image: pelias/csv-importer:master
-          command: ["sh", "-c", "tail -f /dev/null"]
+          command: ["sh", "-c", "./bin/parallel || true"]
           volumeMounts:
             - name: config-volume
               mountPath: /etc/config
@@ -650,6 +584,22 @@ spec:
           env:
             - name: PELIAS_CONFIG
               value: "/etc/config/pelias.json"
+      containers:
+        - name: pelias-api
+          image: pelias/api:master
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          env:
+            - name: PELIAS_CONFIG
+              value: "/etc/config/pelias.json"
+          resources:
+            limits:
+              memory: 0.5Gi
+              cpu: "1.5"
+            requests:
+              memory: "0.25Gi"
+              cpu: "0.1"
       volumes:
         - name: config-volume
           configMap:
@@ -659,4 +609,40 @@ spec:
                 path: pelias.json
         - name: data-volume
           configMap:
-            name: pelias-data
+            name: pelias-data      
+---
+# Source: pelias/templates/api-service.tpl
+apiVersion: v1
+kind: Service
+metadata:
+  name: pelias-api-service
+spec:
+  selector:
+    app-group: pelias-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3100
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pelias-api
+  namespace: predictivemovement
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts:
+        - pelias.iteamdev.io
+      secretName: pelias-prod-tls
+  rules:
+    - host: "pelias.iteamdev.io"
+      http:
+        paths:
+          - path: "/"
+            backend:
+              serviceName: pelias-api-service
+              servicePort: http

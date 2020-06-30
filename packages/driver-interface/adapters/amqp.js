@@ -10,7 +10,7 @@ const exchanges = {
 }
 
 const queues = {
-  PICKUP_OFFERS: 'pickup_offers',
+  PICKUP_OFFERS: 'telegram_pickup_offers',
   PICKUP_INSTRUCTIONS: 'pickup_instructions',
   VEHICLE_PLAN: 'vehicle_plan',
 }

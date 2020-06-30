@@ -1,0 +1,96 @@
+---
+# Source: pelias/templates/api-deployment.tpl
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pelias-api
+  namespace: pelias
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pelias-api
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: pelias-api
+        app-group: pelias-api
+      annotations:
+        image: pelias/api:master
+        checksum/config: 1faf321dba4e575e57fd4a89cfcd6c58cb0457befa55a1278cb666a6f23837f7
+        elasticsearch: elasticsearch
+    spec:
+      initContainers:
+        - name: create-schema
+          image: pelias/schema:master
+          command: ["sh", "-c", "./bin/create_index || true"]
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          env:
+            - name: PELIAS_CONFIG
+              value: "/etc/config/pelias.json"
+      containers:
+        - name: pelias-api
+          image: pelias/api:master
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+          env:
+            - name: PELIAS_CONFIG
+              value: "/etc/config/pelias.json"
+          resources:
+            limits:
+              memory: 0.5Gi
+              cpu: "1.5"
+            requests:
+              memory: "0.25Gi"
+              cpu: "0.1"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: pelias-json-configmap
+            items:
+              - key: pelias.json
+                path: pelias.json
+---
+# Source: pelias/templates/api-service.tpl
+apiVersion: v1
+kind: Service
+metadata:
+  name: pelias-api
+  namespace: pelias
+spec:
+  selector:
+    app-group: pelias-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3100
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pelias-api
+  namespace: pelias
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts:
+        - pelias.iteamdev.io
+      secretName: pelias-prod-tls
+  rules:
+    - host: "pelias.iteamdev.io"
+      http:
+        paths:
+          - path: "/"
+            backend:
+              serviceName: pelias-api
+              servicePort: http

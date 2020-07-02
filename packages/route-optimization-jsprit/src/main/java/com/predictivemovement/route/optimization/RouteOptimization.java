@@ -123,18 +123,23 @@ public class RouteOptimization {
 
       jsonRoute.put("number", i);
 
+      jsonRoute.put("vehicle_id", vehicleRoute.getVehicle().getId());
+
       // -- vehicle
-      JSONObject jsonVehicle = new JSONObject();
-      jsonRoute.put("vehicle", jsonVehicle);
-
-      jsonVehicle.put("id", vehicleRoute.getVehicle().getId());
-
-      JSONObject jsonVehiclePosition = new JSONObject();
-      jsonVehicle.put("position", jsonVehiclePosition);
-
-      jsonVehiclePosition.put("lon", vehicleRoute.getVehicle().getStartLocation().getCoordinate().getX());
-      jsonVehiclePosition.put("lat", vehicleRoute.getVehicle().getStartLocation().getCoordinate().getY());
-
+      /*
+       * JSONObject jsonVehicle = new JSONObject(); jsonRoute.put("vehicle",
+       * jsonVehicle);
+       * 
+       * jsonVehicle.put("id", vehicleRoute.getVehicle().getId());
+       * 
+       * JSONObject jsonVehiclePosition = new JSONObject();
+       * jsonVehicle.put("position", jsonVehiclePosition);
+       * 
+       * jsonVehiclePosition.put("lon",
+       * vehicleRoute.getVehicle().getStartLocation().getCoordinate().getX());
+       * jsonVehiclePosition.put("lat",
+       * vehicleRoute.getVehicle().getStartLocation().getCoordinate().getY());
+       */
       // --- activities
       JSONArray jsonActivities = new JSONArray();
       jsonRoute.put("activities", jsonActivities);
@@ -203,8 +208,11 @@ public class RouteOptimization {
     }
 
     // JSONObject jsonResponse = jsonMsg;
+    JSONObject jsonSolution = new JSONObject();
+    jsonSolution.put("routes", jsonRoutes);
+
     JSONObject jsonResponse = new JSONObject();
-    jsonResponse.put("routes", jsonRoutes);
+    jsonResponse.put("solution", jsonSolution);
 
     return jsonResponse.toString();
   }

@@ -46,7 +46,7 @@ defmodule Vehicle do
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
       |> handle_driver_response(
-        %Vehicle{
+        %{
           booking_ids: booking_ids,
           activities: activities,
           current_route: current_route
@@ -59,7 +59,7 @@ defmodule Vehicle do
 
   def handle_driver_response(
         {:ok, true},
-        %Vehicle{} = proposed_state,
+        proposed_state,
         current_state
       ) do
     proposed_state.booking_ids
@@ -68,9 +68,12 @@ defmodule Vehicle do
     end)
     |> IO.inspect(label: "booking was assigned")
 
-    current_state
-    |> Map.merge(proposed_state)
-    |> MQ.publish(Application.fetch_env!(:engine, :vehicles_exchange), "planned")
+    updated_state =
+      current_state
+      |> Map.merge(proposed_state)
+      |> MQ.publish(Application.fetch_env!(:engine, :vehicles_exchange), "planned")
+
+    updated_state
   end
 
   def handle_driver_response({:ok, false}, _, state) do
@@ -81,16 +84,20 @@ defmodule Vehicle do
   def make(position, metadata, busy \\ false) do
     id = "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
+    vehicle = %Vehicle{
+      id: id,
+      position: position,
+      busy: busy,
+      metadata: metadata
+    }
+
     GenServer.start_link(
       __MODULE__,
-      %Vehicle{
-        id: id,
-        position: position,
-        busy: busy,
-        metadata: metadata
-      },
+      vehicle,
       name: via_tuple(id)
     )
+
+    MQ.publish(vehicle, Application.fetch_env!(:engine, :vehicles_exchange), "new")
 
     id
   end

@@ -5,24 +5,23 @@ open
   .then((conn) => conn.createChannel())
   .then((ch) =>
     ch
-      .assertQueue(queues.CANDIDATES_REQUEST, {
+      .assertQueue(queues.PLAN_REQUEST, {
         durable: false,
       })
       .then(() =>
-        ch.consume(queues.CANDIDATES_REQUEST, async (message) => {
+        ch.consume(queues.PLAN_REQUEST, async (message) => {
           const { vehicles, bookings } = JSON.parse(message.content.toString())
           const { replyTo, correlationId } = message.properties
-          const routes = await findRoutes(vehicles, bookings)
 
           try {
+            const routes = await findRoutes(vehicles, bookings)
             ch.sendToQueue(replyTo, Buffer.from(JSON.stringify(routes)), {
               correlationId,
             })
-
-            ch.ack(message)
           } catch (error) {
             console.warn('something borked: ', error)
           }
+          ch.ack(message)
         })
       )
       .catch(console.warn)

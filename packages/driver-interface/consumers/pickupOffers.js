@@ -1,7 +1,6 @@
 const { open, queues } = require('../adapters/amqp')
 const messaging = require('../services/messaging')
 const google = require('../services/google')
-const { addBooking } = require('../services/cache')
 
 const pickupOffers = () => {
   return open

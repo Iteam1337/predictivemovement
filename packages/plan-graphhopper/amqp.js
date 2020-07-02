@@ -5,7 +5,7 @@ const open = require('amqplib').connect(
 const exchanges = {}
 
 const queues = {
-  PICKUP_OFFERS: 'pickup_offers'
+  PLAN_REQUEST: 'plan_request',
 }
 
 module.exports = {

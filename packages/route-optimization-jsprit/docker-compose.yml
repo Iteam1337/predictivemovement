@@ -2,7 +2,7 @@ version: "3.5"
 services:
   predictivemovement-route-optimization-jsprit:
     build: .
-    image: predictivemovement-route-optimization/jsprit:latest
+    # image: iteam1337/pm-route-optimization-jsprit:latest
     container_name: "predictivemovement_route-optimization-jsprit"
     environment:
       - RABBITMQ_HOST=rabbitmq

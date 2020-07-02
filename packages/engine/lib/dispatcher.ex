@@ -2,7 +2,7 @@ defmodule Dispatcher do
   def dispatch_offers() do
     IO.puts("Dispatching!")
 
-    CandidatesStore.get_candidates()
+    PlanStore.get_plan()
     |> Enum.map(&Vehicle.offer/1)
     |> IO.inspect(label: "result from offer")
 

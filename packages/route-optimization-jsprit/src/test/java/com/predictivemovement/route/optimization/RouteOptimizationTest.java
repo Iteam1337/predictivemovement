@@ -16,7 +16,7 @@ public class RouteOptimizationTest {
     private JSONObject response;
 
     @Test
-    public void jsprit() throws IOException {
+    public void one_booking_route_is_right() throws IOException {
 
         // given
         JSONObject routeRequest = readJsonFromFile("src/test/resources/tests/route_request_01.json");
@@ -26,7 +26,7 @@ public class RouteOptimizationTest {
         response = routeOptimization.calculate(routeRequest);
 
         // then
-        JSONObject responseExpected = readJsonFromFile("src/test/resources/tests/route_response_02.json");
+        JSONObject responseExpected = readJsonFromFile("src/test/resources/tests/route_response_01.json");
         assertEquals(responseExpected.toString(), response.toString());
     }
 

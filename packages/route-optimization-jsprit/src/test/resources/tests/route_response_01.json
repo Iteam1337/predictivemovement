@@ -9,6 +9,7 @@
                             "lon": 16.225351333618164,
                             "lat": 61.736080169677734
                         },
+                        "index": -1,
                         "type": "start"
                     },
                     {
@@ -16,22 +17,25 @@
                             "lon": 16.024160385131836,
                             "lat": 61.789302825927734
                         },
+                        "index": 1,
                         "id": "pmb-4FbTaQFr",
-                        "type": "PICKUP"
+                        "type": "pickupShipment"
                     },
                     {
                         "address": {
                             "lon": 15.998350143432617,
                             "lat": 61.898624420166016
                         },
+                        "index": 2,
                         "id": "pmb-4FbTaQFr",
-                        "type": "DELIVERY"
+                        "type": "deliverShipment"
                     },
                     {
                         "address": {
                             "lon": 16.225351333618164,
                             "lat": 61.736080169677734
                         },
+                        "index": -2,
                         "type": "end"
                     }
                 ],

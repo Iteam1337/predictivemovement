@@ -1,10 +1,11 @@
 package com.predictivemovement.route.optimization;
 
 import com.graphhopper.jsprit.core.problem.Location;
-import com.graphhopper.jsprit.core.problem.job.Activity;
-import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.DeliverShipment;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.PickupShipment;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 public class RouteOptimizationResponse {
 
     private int routeCounter;
+    private int activityCounter;
 
     private VehicleRoutingProblemSolution solution;
 
@@ -61,12 +63,10 @@ public class RouteOptimizationResponse {
 
         activities.put(activityStart(vehicleRoute));
 
-        for (Job job : vehicleRoute.getTourActivities().getJobs()) {
-            for (Activity activity : job.getActivities()) {
-                activities.put(activity(job, activity));
-            }
+        activityCounter = 0;
+        for (TourActivity activity : vehicleRoute.getActivities()) {
+            activities.put(activity(activity));
         }
-
         activities.put(activityEnd(vehicleRoute));
 
         return activities;
@@ -75,14 +75,26 @@ public class RouteOptimizationResponse {
     private JSONObject activityStart(VehicleRoute vehicleRoute) {
         JSONObject activity = new JSONObject();
         activity.put("type", vehicleRoute.getStart().getName());
+        activity.put("index", vehicleRoute.getStart().getIndex());
         activity.put("address", getAddress(vehicleRoute.getStart().getLocation()));
         return activity;
     }
 
-    private JSONObject activity(Job job, Activity activity) {
+    private JSONObject activity(TourActivity activity) {
+        activityCounter++;
+
         JSONObject jsonActivity = new JSONObject();
-        jsonActivity.put("type", activity.getActivityType());
-        jsonActivity.put("id", job.getId());
+        jsonActivity.put("type", activity.getName());
+        jsonActivity.put("index", activityCounter);
+
+        if (activity instanceof PickupShipment) {
+            PickupShipment pickup = (PickupShipment) activity;
+            jsonActivity.put("id", pickup.getJob().getId());
+        } else if (activity instanceof DeliverShipment) {
+            DeliverShipment delivery = (DeliverShipment) activity;
+            jsonActivity.put("id", delivery.getJob().getId());
+        }
+
         jsonActivity.put("address", getAddress(activity.getLocation()));
         return jsonActivity;
     }
@@ -90,6 +102,7 @@ public class RouteOptimizationResponse {
     private JSONObject activityEnd(VehicleRoute vehicleRoute) {
         JSONObject activity = new JSONObject();
         activity.put("type", vehicleRoute.getEnd().getName());
+        activity.put("index", vehicleRoute.getEnd().getIndex());
         activity.put("address", getAddress(vehicleRoute.getEnd().getLocation()));
         return activity;
     }

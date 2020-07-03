@@ -1,5 +1,6 @@
 package com.predictivemovement.route.optimization;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
@@ -11,6 +12,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * This class listens for incoming route requests.
+ */
 @SpringBootApplication
 public class MQApplication {
 
@@ -41,8 +45,10 @@ public class MQApplication {
 	public String listen(final String msg) {
 		log.info("Message read from queue: {}", msg);
 
+		JSONObject routeRequest = new JSONObject(msg);
 		RouteOptimization routeOptimization = new RouteOptimization();
-		String response = routeOptimization.calculate(msg);
+		JSONObject routeSolution = routeOptimization.calculate(routeRequest);
+		String response = routeSolution.toString();
 
 		log.info("Publishing result: {}", response);
 		return response;

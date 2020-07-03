@@ -28,7 +28,7 @@ public class TryRouteOptimization {
     public void jsprit() throws IOException {
 
         // given
-        Path fileName = Path.of("src/test/resources/incoming_msg_01.json");
+        Path fileName = Path.of("src/test/resources/route_request_02.json");
         String msg = Files.readString(fileName);
         JSONObject routeRequest = new JSONObject(msg);
 

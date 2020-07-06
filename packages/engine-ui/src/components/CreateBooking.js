@@ -124,7 +124,7 @@ const CreateBooking = ({ createBooking }) => {
                 name="pickup"
                 type="text"
                 value={formState.pickup.name}
-                placeholder="61.8294925,16.0565493"
+                placeholder="T.ex. BARNSTUGEVÄGEN 9"
                 onChange={handleInputChange}
               />
               <div
@@ -157,7 +157,7 @@ const CreateBooking = ({ createBooking }) => {
                 name="delivery"
                 type="text"
                 value={formState.delivery.name}
-                placeholder="61.8644045,16.001133"
+                placeholder="T.ex. BARNSTUGEVÄGEN 7"
                 onChange={handleInputChange}
               />
               <div

@@ -20,7 +20,6 @@ defmodule Engine.MixProject do
         bookings_exchange: "bookings",
         cars_exchange: "cars",
         vehicles_exchange: "vehicles",
-        candidates_exchange: "candidates",
         booking_requests_queue: "booking_requests",
         routes_queue: "routes",
         pickup_offers_queue: "pickup_offers",

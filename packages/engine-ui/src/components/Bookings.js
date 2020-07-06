@@ -9,7 +9,7 @@ const BookingsContainer = styled.div`
 `
 
 const BookingListItem = styled(Link)`
-  background: #e6f5ff;
+  background: #e6ffe6;
   border-radius: 0.75rem;
   padding: 0.5rem 1rem;
   text-decoration: none;
@@ -20,7 +20,7 @@ const BookingListItem = styled(Link)`
     color: black;
   }
   :hover {
-    background: #abd4ed;
+    background: #ccffcc;
   }
 `
 

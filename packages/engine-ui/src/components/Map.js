@@ -12,7 +12,12 @@ const Map = ({ state, onMapClick }) => {
       'geojson-bookings-layer',
       mapUtils.bookingToFeature(data.bookings)
     ),
-    mapUtils.toIconLayer(mapUtils.carToFeature(state.cars)),
+
+    mapUtils.toGeoJsonLayer(
+      'geojson-cars-layer',
+      mapUtils.carToFeature(state.cars)
+    ),
+    mapUtils.toIconLayer(mapUtils.carIcon(state.cars)),
   ]
 
   const [mapState] = useState({

@@ -1,4 +1,4 @@
 import Config
 
-config :engine, :candidates, CandidatesBehaviorMock
+config :engine, :plan, PlanBehaviourMock
 config :engine, :vehicle, VehicleMock

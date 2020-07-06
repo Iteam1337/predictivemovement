@@ -1,62 +1,10 @@
 import React from 'react'
-import styled from 'styled-components'
+import { useHistory } from 'react-router-dom'
 import locationIcon from '../assets/location.svg'
-
-const Container = styled.div`
-  margin-bottom: 2rem;
-`
-
-const InputContainer = styled.div`
-  margin-bottom: 1rem;
-`
-
-const InputInnerContainer = styled.div`
-  position: relative;
-  display: inline-block;
-`
-
-const TextInput = styled.input`
-  border: none;
-  background-color: #f0f3f5;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  border-radius: 0.25rem;
-  width: 100%;
-  font-size: 0.875rem;
-  padding-left: 2.5rem;
-`
-
-const Label = styled.label`
-  margin-bottom: 0.5rem;
-  display: block;
-  font-weight: bold;
-  font-size: 0.875rem;
-`
-
-const SubmitButton = styled.button`
-  padding: 0.75rem 1rem;
-  background: #e6f5ff;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  color: inherit;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-
-  :hover {
-    background: #abd4ed;
-  }
-`
-
-const LocationIcon = styled.img`
-  width: 16px;
-  height: 18px;
-  position: absolute;
-  top: 12px;
-  left: 12.5px;
-`
+import Elements from './Elements'
 
 const CreateBooking = ({ createBooking }) => {
+  const history = useHistory()
   const [formState, setState] = React.useState({
     pickup: { name: '', coordinates: [] },
     delivery: { name: '', coordinates: [] },
@@ -69,12 +17,19 @@ const CreateBooking = ({ createBooking }) => {
 
   const create = (event) => {
     event.preventDefault()
+    if (
+      !formState.pickup.coordinates.length ||
+      !formState.delivery.coordinates.length
+    )
+      return false
     const [pickupLng, pickupLat] = formState.pickup.coordinates
     const [deliveryLng, deliveryLat] = formState.delivery.coordinates
+
     createBooking({
       pickup: [pickupLat, pickupLng],
       delivery: [deliveryLat, deliveryLng],
     })
+    history.push('/')
   }
 
   const selectFromDropdown = (event, address) => {
@@ -148,25 +103,24 @@ const CreateBooking = ({ createBooking }) => {
           delivery: { name: event.target.value, coordinates: [] },
         })
         break
-
       default:
         break
     }
   }
 
   return (
-    <Container>
+    <Elements.Container>
       <h3>Skapa en ny bokning</h3>
       <form onSubmit={create} autoComplete="off">
         <div>
-          <InputContainer>
-            <Label htmlFor="pickup">Startpunkt</Label>
-            <InputInnerContainer>
-              <LocationIcon
+          <Elements.InputContainer>
+            <Elements.Label htmlFor="pickup">Startpunkt</Elements.Label>
+            <Elements.InputInnerContainer>
+              <Elements.LocationIcon
                 alt="Location pickup icon"
                 src={`${locationIcon}`}
               />
-              <TextInput
+              <Elements.TextInput
                 name="pickup"
                 type="text"
                 value={formState.pickup.name}
@@ -188,18 +142,18 @@ const CreateBooking = ({ createBooking }) => {
                   </button>
                 ))}
               </div>
-            </InputInnerContainer>
-          </InputContainer>
+            </Elements.InputInnerContainer>
+          </Elements.InputContainer>
         </div>
         <div>
-          <InputContainer>
-            <Label htmlFor="delivery">Delivery</Label>
-            <InputInnerContainer>
-              <LocationIcon
+          <Elements.InputContainer>
+            <Elements.Label htmlFor="delivery">Delivery</Elements.Label>
+            <Elements.InputInnerContainer>
+              <Elements.LocationIcon
                 alt="Location delivery icon"
                 src={`${locationIcon}`}
               />
-              <TextInput
+              <Elements.TextInput
                 name="delivery"
                 type="text"
                 value={formState.delivery.name}
@@ -221,14 +175,21 @@ const CreateBooking = ({ createBooking }) => {
                   </button>
                 ))}
               </div>
-            </InputInnerContainer>
-          </InputContainer>
+            </Elements.InputInnerContainer>
+          </Elements.InputContainer>
         </div>
-        <div>
-          <SubmitButton type="submit">Skapa bokning</SubmitButton>
-        </div>
+
+        <Elements.ButtonWrapper>
+          <Elements.CancelButton
+            type="button"
+            onClick={() => history.push('/')}
+          >
+            Avbryt
+          </Elements.CancelButton>
+          <Elements.SubmitButton type="submit">Lägg till</Elements.SubmitButton>
+        </Elements.ButtonWrapper>
       </form>
-    </Container>
+    </Elements.Container>
   )
 }
 export default CreateBooking

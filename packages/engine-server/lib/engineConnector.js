@@ -72,6 +72,10 @@ const addVehicle = (position) => {
   })
 }
 
+const createBookingsFromHistory = (total) => {
+  return amqp.queue('historical_bookings', { durable: false }).publish(total)
+}
+
 module.exports = {
   addVehicle,
   bookings,
@@ -79,4 +83,5 @@ module.exports = {
   cars,
   createBooking,
   dispatchOffers,
+  createBookingsFromHistory,
 }

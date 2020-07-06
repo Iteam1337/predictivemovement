@@ -35,6 +35,12 @@ const App = () => {
     socket.emit('dispatch-offers')
   }
 
+  const createBookings = (total) => {
+    socket.emit('new-bookings', {
+      total,
+    })
+  }
+
   useSocket('bookings', (bookings) => {
     dispatch({
       type: 'setBookings',
@@ -58,6 +64,7 @@ const App = () => {
           createBooking={createBooking}
           dispatchOffers={dispatchOffers}
           addVehicle={addVehicle}
+          createBookings={createBookings}
         />
         <Route path="/">
           <Map onMapClick={onMapClick} state={state} />

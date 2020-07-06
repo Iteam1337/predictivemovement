@@ -102,7 +102,12 @@ const Sidebar = (state) => {
           </>
         )
       case 'dispatch':
-        return <button onClick={state.dispatchOffers}>Dispatch Offers</button>
+        return (
+          <>
+            <button onClick={state.dispatchOffers}>Dispatch Offers</button>
+            <button onClick={state.resetState}>Reset state</button>
+          </>
+        )
       default:
         return null
     }

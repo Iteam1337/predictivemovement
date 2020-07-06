@@ -7,6 +7,7 @@ const {
   createBooking,
   dispatchOffers,
   createBookingsFromHistory,
+  resetState,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
@@ -70,6 +71,14 @@ function register(io) {
     socket.on('new-bookings', ({ total }) => {
       console.log('will create ', total, 'bookings')
       createBookingsFromHistory(total)
+    })
+
+    socket.on('reset-state', () => {
+      bookingsCache.clear()
+      movingCarsCache.clear()
+      resetState()
+      socket.emit('cars', [])
+      socket.emit('bookings', [])
     })
   })
 }

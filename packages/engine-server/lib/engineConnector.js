@@ -9,6 +9,8 @@ const routingKeys = {
   PLANNED: 'planned',
 }
 
+const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
+
 const bookings = amqp
   .exchange('bookings', 'topic', {
     durable: false,
@@ -62,7 +64,7 @@ const createBooking = (booking) => {
 const dispatchOffers = () => {
   return amqp
     .queue('dispatch_offers', { durable: false })
-    .publish('just do it!')
+    .publish(JUST_DO_IT_MESSAGE)
 }
 
 const addVehicle = (position) => {
@@ -76,6 +78,9 @@ const createBookingsFromHistory = (total) => {
   return amqp.queue('historical_bookings', { durable: false }).publish(total)
 }
 
+const resetState = () =>
+  amqp.queue('reset_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
+
 module.exports = {
   addVehicle,
   bookings,
@@ -84,4 +89,5 @@ module.exports = {
   createBooking,
   dispatchOffers,
   createBookingsFromHistory,
+  resetState,
 }

@@ -33,7 +33,9 @@ const jsonAddresses = readXlsx(
 
 const getRandomAddress = (postalNumber) => {
   const addresses = jsonAddresses.filter(
-    (a) => parseFloat(a.POSTNR) === postalNumber
+    (a) =>
+      a.POSTNR.toString().split(' ').join('') ===
+      postalNumber.toString().split(' ').join('')
   )
 
   return addresses[Math.floor(Math.random() * addresses.length)]
@@ -45,36 +47,35 @@ const bookingDispatcher = async () => {
     return
   }
 
-  const packages = jsonPackages.filter(
-    (x) =>
-      format(setYear(new Date(x.ShipmentDate), 2020), 'yyyy-MM-dd') ===
-      format(new Date(), 'yyyy-MM-dd')
-  )
-
-  for (const package of packages) {
-    const packageDeliveryAddress =
-      getRandomAddress(package['Till Postnummer']) ||
-      (await fetchGeoCodes(package['Till Postnummer']))
-
-    const packagePickupAddress = await fetchGeoCodes(package['Från Postnummer'])
-
-    if (!packageDeliveryAddress || !packagePickupAddress) {
-      continue
-    }
-
-    const booking = {
-      delivery: packageDeliveryAddress.coordinates,
-      id: id62(),
-      senderId: 'the-past',
-      bookingDate: package.ShipmentDate,
-      pickup: packagePickupAddress.coordinates,
-    }
-
-    publish(exchanges.bookings, exchanges.bookings.routingKeys.NEW, {
-      ...booking,
-      assigned_to: null,
+  const packages = jsonPackages
+    .map((package) => {
+      return {
+        ...package,
+        packageDeliveryAddress: getRandomAddress(package['Till Postnummer']),
+        packagePickupAddress: getRandomAddress(package['Från Postnummer']),
+      }
     })
-  }
+    .filter(
+      ({ packageDeliveryAddress, packagePickupAddress }) =>
+        packageDeliveryAddress && packagePickupAddress
+    )
+    .slice(0, 500)
+    .forEach(
+      ({ ShipmentDate, packageDeliveryAddress, packagePickupAddress }) => {
+        const booking = {
+          delivery: packageDeliveryAddress.coordinates,
+          id: id62(),
+          senderId: 'the-past',
+          bookingDate: ShipmentDate,
+          pickup: packagePickupAddress.coordinates,
+        }
+
+        publish(exchanges.bookings, exchanges.bookings.routingKeys.NEW, {
+          ...booking,
+          assigned_to: null,
+        })
+      }
+    )
 }
 
 bookingDispatcher()

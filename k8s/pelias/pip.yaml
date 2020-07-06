@@ -119,3 +119,4 @@ spec:
         - name: data-volume
           persistentVolumeClaim:
             claimName: pip-pvc
+            

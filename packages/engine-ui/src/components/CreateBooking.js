@@ -29,8 +29,6 @@ const CreateBooking = ({ createBooking }) => {
     delivery: [],
   })
 
-  console.log(showDropdown)
-
   const create = (event) => {
     event.preventDefault()
     if (
@@ -82,7 +80,7 @@ const CreateBooking = ({ createBooking }) => {
 
   const handleInputChange = (event) => {
     const name = event.target.name
-    console.log('target', event.target.name)
+
     if (event.target.value.length > 1) {
       findAddress(event.target.value).then(({ features }) => {
         switch (name) {

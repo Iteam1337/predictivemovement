@@ -12,6 +12,7 @@ const InputContainer = styled.div`
 
 const InputInnerContainer = styled.div`
   position: relative;
+  display: inline-block;
 `
 
 const TextInput = styled.input`
@@ -57,31 +58,106 @@ const LocationIcon = styled.img`
 
 const CreateBooking = ({ createBooking }) => {
   const [formState, setState] = React.useState({
-    pickup: '',
-    delivery: '',
+    pickup: { name: '', coordinates: [] },
+    delivery: { name: '', coordinates: [] },
+  })
+
+  const [suggestedAddresses, setSuggestedAddresses] = React.useState({
+    pickup: [],
+    delivery: [],
   })
 
   const create = (event) => {
     event.preventDefault()
+    const [pickupLng, pickupLat] = formState.pickup.coordinates
+    const [deliveryLng, deliveryLat] = formState.delivery.coordinates
+    createBooking({
+      pickup: [pickupLat, pickupLng],
+      delivery: [deliveryLat, deliveryLng],
+    })
+  }
 
-    const pickup = formState.pickup
-      .split(',')
-      .map(parseFloat)
-      .filter((x) => !!x)
+  const selectFromDropdown = (event, address) => {
+    event.preventDefault()
+    switch (event.target.name) {
+      case 'pickup':
+        setState({
+          pickup: { name: address.name, coordinates: address.coordinates },
+          delivery: formState.delivery,
+        })
+        break
 
-    const delivery = formState.delivery
-      .split(',')
-      .map(parseFloat)
-      .filter((x) => !!x)
+      case 'delivery':
+        setState({
+          pickup: formState.pickup,
+          delivery: { name: address.name, coordinates: address.coordinates },
+        })
+        break
 
-    if (!pickup.length || !delivery.length) return false
-    createBooking({ pickup, delivery })
+      default:
+        break
+    }
+  }
+
+  const findAddress = async (query) => {
+    const res = await fetch(
+      `https://pelias.iteamdev.io/v1/autocomplete?text=${query}&layers=address`
+    )
+    const data = await res.json()
+    return data
+  }
+
+  const handleInputChange = (event) => {
+    const name = event.target.name
+    console.log('target', event.target.name)
+    if (event.target.value.length > 1) {
+      findAddress(event.target.value).then(({ features }) => {
+        switch (name) {
+          case 'pickup':
+            setSuggestedAddresses({
+              pickup: features.map(({ geometry, properties: { name } }) => ({
+                name,
+                coordinates: geometry.coordinates,
+              })),
+              delivery: suggestedAddresses.delivery,
+            })
+            break
+          case 'delivery':
+            setSuggestedAddresses({
+              delivery: features.map(({ geometry, properties: { name } }) => ({
+                name,
+                coordinates: geometry.coordinates,
+              })),
+              pickup: suggestedAddresses.pickup,
+            })
+            break
+        }
+      })
+    }
+    switch (event.target.name) {
+      case 'pickup':
+        setState({
+          pickup: { name: event.target.value, coordinates: [] },
+          delivery: formState.delivery,
+        })
+        break
+
+      case 'delivery':
+        setState({
+          pickup: formState.pickup,
+          delivery: { name: event.target.value, coordinates: [] },
+        })
+        break
+
+      default:
+        break
+    }
   }
 
   return (
     <Container>
       <h3>Skapa en ny bokning</h3>
-      <form onSubmit={create} autoComplete="on">
+      <form onSubmit={create} autoComplete="off">
         <div>
           <InputContainer>
             <Label htmlFor="pickup">Startpunkt</Label>
@@ -93,15 +169,25 @@ const CreateBooking = ({ createBooking }) => {
               <TextInput
                 name="pickup"
                 type="text"
-                value={formState.pickup}
+                value={formState.pickup.name}
                 placeholder="61.8294925,16.0565493"
-                onChange={(e) =>
-                  setState({
-                    pickup: e.target.value,
-                    delivery: formState.delivery,
-                  })
-                }
+                onChange={handleInputChange}
               />
+              <div
+                style={{
+                  display: suggestedAddresses.pickup ? 'block' : 'hidden',
+                }}
+              >
+                {suggestedAddresses.pickup.map((address, index) => (
+                  <button
+                    key={index}
+                    name="pickup"
+                    onClick={(e) => selectFromDropdown(e, address)}
+                  >
+                    {address.name}
+                  </button>
+                ))}
+              </div>
             </InputInnerContainer>
           </InputContainer>
         </div>
@@ -116,15 +202,25 @@ const CreateBooking = ({ createBooking }) => {
               <TextInput
                 name="delivery"
                 type="text"
-                value={formState.delivery}
+                value={formState.delivery.name}
                 placeholder="61.8644045,16.001133"
-                onChange={(e) =>
-                  setState({
-                    pickup: formState.pickup,
-                    delivery: e.target.value,
-                  })
-                }
+                onChange={handleInputChange}
               />
+              <div
+                style={{
+                  display: suggestedAddresses.delivery ? 'block' : 'hidden',
+                }}
+              >
+                {suggestedAddresses.delivery.map((address, index) => (
+                  <button
+                    key={index}
+                    name="delivery"
+                    onClick={(e) => selectFromDropdown(e, address)}
+                  >
+                    {address.name}
+                  </button>
+                ))}
+              </div>
             </InputInnerContainer>
           </InputContainer>
         </div>

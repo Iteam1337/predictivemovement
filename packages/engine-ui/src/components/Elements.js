@@ -14,6 +14,7 @@ const InputContainer = styled.div`
 const InputInnerContainer = styled.div`
   position: relative;
   display: inline-block;
+  width: 100%;
 `
 
 const TextInput = styled.input`

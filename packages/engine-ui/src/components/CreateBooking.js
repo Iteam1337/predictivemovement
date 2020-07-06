@@ -2,18 +2,34 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import locationIcon from '../assets/location.svg'
 import Elements from './Elements'
+import styled from 'styled-components'
 
+const DropdownWrapper = styled.div`
+  width: 100%;
+`
+const DropdownButton = styled.button`
+  width: inherit;
+  text-align: left;
+  padding: 0.5rem;
+  border: 1px solid grey;
+`
 const CreateBooking = ({ createBooking }) => {
   const history = useHistory()
   const [formState, setState] = React.useState({
     pickup: { name: '', coordinates: [] },
     delivery: { name: '', coordinates: [] },
   })
+  const [showDropdown, setShowDropdown] = React.useState({
+    pickup: false,
+    delivery: false,
+  })
 
   const [suggestedAddresses, setSuggestedAddresses] = React.useState({
     pickup: [],
     delivery: [],
   })
+
+  console.log(showDropdown)
 
   const create = (event) => {
     event.preventDefault()
@@ -40,6 +56,7 @@ const CreateBooking = ({ createBooking }) => {
           pickup: { name: address.name, coordinates: address.coordinates },
           delivery: formState.delivery,
         })
+        setShowDropdown({ ...showDropdown, pickup: false })
         break
 
       case 'delivery':
@@ -47,6 +64,7 @@ const CreateBooking = ({ createBooking }) => {
           pickup: formState.pickup,
           delivery: { name: address.name, coordinates: address.coordinates },
         })
+        setShowDropdown({ ...showDropdown, delivery: false })
         break
 
       default:
@@ -76,6 +94,7 @@ const CreateBooking = ({ createBooking }) => {
               })),
               delivery: suggestedAddresses.delivery,
             })
+            setShowDropdown({ ...showDropdown, pickup: true })
             break
           case 'delivery':
             setSuggestedAddresses({
@@ -85,9 +104,12 @@ const CreateBooking = ({ createBooking }) => {
               })),
               pickup: suggestedAddresses.pickup,
             })
+            setShowDropdown({ ...showDropdown, delivery: true })
             break
         }
       })
+    } else {
+      setShowDropdown({ delivery: false, pickup: false })
     }
     switch (event.target.name) {
       case 'pickup':
@@ -127,21 +149,20 @@ const CreateBooking = ({ createBooking }) => {
                 placeholder="T.ex. BARNSTUGEVÄGEN 9"
                 onChange={handleInputChange}
               />
-              <div
-                style={{
-                  display: suggestedAddresses.pickup ? 'block' : 'hidden',
-                }}
-              >
-                {suggestedAddresses.pickup.map((address, index) => (
-                  <button
-                    key={index}
-                    name="pickup"
-                    onClick={(e) => selectFromDropdown(e, address)}
-                  >
-                    {address.name}
-                  </button>
-                ))}
-              </div>
+
+              {showDropdown.pickup && (
+                <DropdownWrapper>
+                  {suggestedAddresses.pickup.map((address, index) => (
+                    <DropdownButton
+                      key={index}
+                      name="pickup"
+                      onClick={(e) => selectFromDropdown(e, address)}
+                    >
+                      {address.name}
+                    </DropdownButton>
+                  ))}
+                </DropdownWrapper>
+              )}
             </Elements.InputInnerContainer>
           </Elements.InputContainer>
         </div>
@@ -160,21 +181,19 @@ const CreateBooking = ({ createBooking }) => {
                 placeholder="T.ex. BARNSTUGEVÄGEN 7"
                 onChange={handleInputChange}
               />
-              <div
-                style={{
-                  display: suggestedAddresses.delivery ? 'block' : 'hidden',
-                }}
-              >
-                {suggestedAddresses.delivery.map((address, index) => (
-                  <button
-                    key={index}
-                    name="delivery"
-                    onClick={(e) => selectFromDropdown(e, address)}
-                  >
-                    {address.name}
-                  </button>
-                ))}
-              </div>
+              {showDropdown.delivery && (
+                <DropdownWrapper>
+                  {suggestedAddresses.delivery.map((address, index) => (
+                    <DropdownButton
+                      key={index}
+                      name="delivery"
+                      onClick={(e) => selectFromDropdown(e, address)}
+                    >
+                      {address.name}
+                    </DropdownButton>
+                  ))}
+                </DropdownWrapper>
+              )}
             </Elements.InputInnerContainer>
           </Elements.InputContainer>
         </div>

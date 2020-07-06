@@ -80,7 +80,10 @@ spec:
         # The reason for it is that it takes a long time since it is a lot of data
         - name: download
           image: pelias/pip-service:master
-          command: ["sh", "-c", "[ ! -e /data/whosonfirst/sqlite/whosonfirst-data-admin-latest.db ] && ./bin/download || exit 0"]
+          command:
+            - sh
+            - -c
+            - ./bin/download --admin-only
           volumeMounts:
             - name: config-volume
               mountPath: /etc/config

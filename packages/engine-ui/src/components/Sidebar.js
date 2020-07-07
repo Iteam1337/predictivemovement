@@ -94,7 +94,7 @@ const Sidebar = (state) => {
         return (
           <>
             <h3>Aktuella bokningar</h3>
-            <Bookings bookings={data.bookings} />
+            <Bookings bookings={state.bookings} />
             <Filters />
             <TextLink to="/add-booking">
               <h3>+ Lägg till bokning</h3>

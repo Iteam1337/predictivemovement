@@ -1,22 +1,52 @@
 import React from 'react'
 
 import Elements from './Elements'
+import styled from 'styled-components'
 
+const Paragraph = styled.p`
+  margin: 0;
+  margin-bottom: 2.5rem;
+  text-transform: capitalize;
+`
 const BookingDetails = ({ booking }) => {
+  const [address, setAddress] = React.useState({
+    pickup: '',
+    delivery: '',
+  })
+
+  const getAddressFromCoordinates = async ({ lon, lat }) => {
+    return await fetch(
+      `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
+    )
+      .then((res) => res.json())
+      .then(({ features }) => features[0].properties.label)
+  }
+
+  const getAddress = async ({ pickup, delivery }) => {
+    const pickupAddress = await getAddressFromCoordinates(pickup)
+    const deliveryAddress = await getAddressFromCoordinates(delivery)
+    setAddress({
+      pickup: pickupAddress,
+      delivery: deliveryAddress,
+    })
+  }
+
+  React.useEffect(() => {
+    if (!booking) return
+    getAddress(booking)
+  }, [booking])
+
   if (!booking) return <p>Loading...</p>
 
   return (
     <div>
-      <Elements.StrongParagraph>ID:</Elements.StrongParagraph>
-      <span>{booking.id}</span>
+      <Elements.StrongParagraph>Bokning</Elements.StrongParagraph>
+      <Paragraph>{booking.id}</Paragraph>
 
-      <Elements.StrongParagraph>Pickup:</Elements.StrongParagraph>
-      <span>{booking.pickup.lat}</span>
-      {', '}
-      <span>{booking.pickup.lon}</span>
-      <Elements.StrongParagraph>Delivery:</Elements.StrongParagraph>
-      <span>{booking.delivery.lat}</span>
-      <span>{booking.delivery.lon}</span>
+      <Elements.StrongParagraph>Upphämtning</Elements.StrongParagraph>
+      <Paragraph>{address.pickup}</Paragraph>
+      <Elements.StrongParagraph>Avlämning</Elements.StrongParagraph>
+      <Paragraph>{address.delivery}</Paragraph>
       <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
       <span>{booking.status}</span>
 

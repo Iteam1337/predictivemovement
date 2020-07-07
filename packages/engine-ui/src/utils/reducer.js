@@ -26,6 +26,10 @@ export const reducer = (state, action) => {
         ...state,
         currentPosition: action.payload,
       }
+
+    case 'clearState':
+      return initState
+
     default:
       return state
   }

@@ -5,6 +5,7 @@ import ShippingIcon from '../assets/shippingIcon.svg'
 import Bookings from './Bookings'
 import Cars from './Cars'
 import CreateBooking from './CreateBooking'
+import CreateBookings from './CreateBookings'
 import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../Hooks'
@@ -85,6 +86,9 @@ const Sidebar = (state) => {
             <TextLink to="/add-booking">
               <h3>+ Lägg till bokning</h3>
             </TextLink>
+            <TextLink to="/add-bookings">
+              <h3>+ Generera historiska bokningar</h3>
+            </TextLink>
           </>
         )
       case 'cars':
@@ -98,7 +102,12 @@ const Sidebar = (state) => {
           </>
         )
       case 'dispatch':
-        return <button onClick={state.dispatchOffers}>Dispatch Offers</button>
+        return (
+          <>
+            <button onClick={state.dispatchOffers}>Dispatch Offers</button>
+            <button onClick={state.resetState}>Reset state</button>
+          </>
+        )
       default:
         return null
     }
@@ -146,6 +155,9 @@ const Sidebar = (state) => {
           </Route>
           <Route path="/add-booking">
             <CreateBooking createBooking={state.createBooking} />
+          </Route>
+          <Route path="/add-bookings">
+            <CreateBookings createBookings={state.createBookings} />
           </Route>
         </RouterSwitch>
       </Content>

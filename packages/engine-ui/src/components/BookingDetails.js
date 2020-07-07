@@ -9,10 +9,7 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 const BookingDetails = ({ booking }) => {
-  const [address, setAddress] = React.useState({
-    pickup: '',
-    delivery: '',
-  })
+  const [address, setAddress] = React.useState()
 
   const getAddressFromCoordinates = async ({ lon, lat }) => {
     return await fetch(
@@ -36,7 +33,7 @@ const BookingDetails = ({ booking }) => {
     getAddress(booking)
   }, [booking])
 
-  if (!booking) return <p>Loading...</p>
+  if (!booking || !address) return <p>Loading...</p>
 
   return (
     <div>

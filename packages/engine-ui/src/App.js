@@ -42,6 +42,9 @@ const App = () => {
   }
 
   const resetState = () => {
+    dispatch({
+      type: 'clearState',
+    })
     socket.emit('reset-state')
   }
 

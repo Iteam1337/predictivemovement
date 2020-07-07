@@ -29,7 +29,7 @@ build:
     - image: iteam1337/pm-plan-graphhopper
       context: packages/plan-graphhopper
     - image: iteam1337/pm-route-optimization-jsprit
-    context: packages/route-optimization-jsprit
+      context: packages/route-optimization-jsprit
     - image: iteam1337/pm-vehicle-offer
       context: packages/vehicle-offer
     - image: iteam1337/pm-auto-accept-offer

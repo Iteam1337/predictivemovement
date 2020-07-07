@@ -11,6 +11,9 @@ bin/
 ### Mac OSX
 .DS_Store
 
+### Python
+venv
+
 ### Misc
 tmp/
 output/

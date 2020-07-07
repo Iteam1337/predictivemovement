@@ -1,9 +1,12 @@
 package com.predictivemovement.route.optimization;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.graphhopper.jsprit.core.problem.Location;
+import com.graphhopper.jsprit.core.problem.cost.VehicleRoutingTransportCosts;
 import com.graphhopper.jsprit.core.problem.job.Shipment;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
@@ -24,22 +27,29 @@ public class VRPSetting {
         VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance("vehicleDummyType");
         vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, 3);
         vehicleTypeBuilder.setCostPerDistance(1);
+        vehicleTypeBuilder.setCostPerTransportTime(1);
 
         vehicleDummyType = vehicleTypeBuilder.build();
     }
 
     List<VehicleImpl> vehicles;
     List<Shipment> shipments;
+    VehicleRoutingTransportCosts routingCosts;
 
     private JSONObject routeRequest;
+
+    private Map<String, Location> locations;
 
     VRPSetting(JSONObject routeRequest) {
         this.routeRequest = routeRequest;
     }
 
     VRPSetting set() {
+        locations = new HashMap<>();
+
         createVehicles();
         createShipments();
+        createCostMatrix();
         return this;
     }
 
@@ -61,6 +71,7 @@ public class VRPSetting {
             JSONObject jsonPosition = jsonVehicle.getJSONObject("position");
             Location vehicleLocation = getLocation(jsonPosition);
             vehicleBuilder.setStartLocation(vehicleLocation);
+            locations.put(jsonPosition.getString("hint"), vehicleLocation);
 
             VehicleImpl vehicle = vehicleBuilder.build();
             vehicles.add(vehicle);
@@ -82,11 +93,13 @@ public class VRPSetting {
             JSONObject jsonPickup = jsonBooking.getJSONObject("pickup");
             Location pickupLocation = getLocation(jsonPickup);
             shipmentBuilder.setPickupLocation(pickupLocation);
+            locations.put(jsonPickup.getString("hint"), pickupLocation);
 
             // delivery
             JSONObject jsonDelivery = jsonBooking.getJSONObject("delivery");
             Location deliveryLocation = getLocation(jsonDelivery);
             shipmentBuilder.setDeliveryLocation(deliveryLocation);
+            locations.put(jsonDelivery.getString("hint"), deliveryLocation);
 
             // package capacity
             shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);
@@ -101,5 +114,9 @@ public class VRPSetting {
         float latitude = jsonLocation.getFloat("lat");
         Location location = Location.newInstance(longitude, latitude);
         return location;
+    }
+
+    private void createCostMatrix() {
+        routingCosts = new VRPCostMatrix().set(routeRequest, locations);
     }
 }

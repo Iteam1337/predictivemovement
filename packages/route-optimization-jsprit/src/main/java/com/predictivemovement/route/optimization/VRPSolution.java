@@ -44,6 +44,10 @@ public class VRPSolution {
             vrpBuilder.addJob(shipment);
         }
 
+        if (vrpSetting.routingCosts != null) {
+            vrpBuilder.setRoutingCost(vrpSetting.routingCosts);
+        }
+
         problem = vrpBuilder.build();
     }
 

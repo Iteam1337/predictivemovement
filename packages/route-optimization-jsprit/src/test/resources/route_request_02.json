@@ -2,8 +2,9 @@
     "vehicles": [
         {
             "position": {
-                "lon": 21.928603,
-                "lat": 65.630583
+                "lon": 21.928713,
+                "lat": 65.630700,
+                "hint": ""
             },
             "metadata": {
                 "start": "Bällinge (65.630583, 21.928603)"
@@ -19,7 +20,8 @@
         {
             "pickup": {
                 "lon": 22.015716,
-                "lat": 65.641479
+                "lat": 65.641479,
+                "hint": ""
             },
             "metadata": {
                 "start": "Gammelstads ICA (65.641479, 22.015716) -> LTU (65.613636, 22.136855) (no river crossing possible!)"
@@ -29,14 +31,16 @@
             "events": [],
             "delivery": {
                 "lon": 22.136855,
-                "lat": 65.613636
+                "lat": 65.613636,
+                "hint": ""
             },
             "assigned_to": null
         },
         {
             "pickup": {
                 "lon": 22.051738,
-                "lat": 65.581615
+                "lat": 65.581615,
+                "hint": ""
             },
             "metadata": {
                 "start": "Gäddvik (65.581615, 22.051738) -> LTU (65.613636, 22.136855) (no river crossing possible!)"
@@ -46,7 +50,8 @@
             "events": [],
             "delivery": {
                 "lon": 22.136855,
-                "lat": 65.613636
+                "lat": 65.613636,
+                "hint": ""
             },
             "assigned_to": null
         }

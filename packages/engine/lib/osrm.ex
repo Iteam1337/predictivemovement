@@ -1,4 +1,12 @@
 defmodule Osrm do
+  def get_time_between_coordinates(coordinates) do
+    Application.fetch_env!(:engine, :osrm_url)
+    |> Kernel.<>("/table/v1/driving/")
+    |> Kernel.<>(Enum.map_join(coordinates, ";", fn %{lat: lat, lon: lon} -> "#{lon},#{lat}" end))
+    |> Kernel.<>("?annotations=distance,duration")
+    |> Fetch.json()
+  end
+
   def nearest(%{lon: lon, lat: lat}) do
     Fetch.json("#{Application.fetch_env!(:engine, :osrm_url)}/nearest/v1/driving/#{lon},#{lat}")
   end

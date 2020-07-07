@@ -1,0 +1,16 @@
+version: "3.5"
+services:
+  predictivemovement-route-optimization-jsprit:
+    build: .
+    # image: iteam1337/pm-route-optimization-jsprit:latest
+    container_name: "predictivemovement_route-optimization-jsprit"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    networks:
+      - predictivemovement
+
+networks:
+  predictivemovement:
+    driver: bridge
+    name: predictivemovement

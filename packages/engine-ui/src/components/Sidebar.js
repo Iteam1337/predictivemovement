@@ -57,6 +57,13 @@ const Content = styled.div`
   width: 325px;
 `
 
+const Line = styled.div`
+  background: transparent;
+  border-left: 1px solid #e5e5e5;
+  height: 87vh;
+  align-self: center;
+`
+
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
 
@@ -86,9 +93,9 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <Filters />
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={data.bookings} />
+            <Filters />
             <TextLink to="/add-booking">
               <h3>+ Lägg till bokning</h3>
             </TextLink>
@@ -154,25 +161,28 @@ const Sidebar = (state) => {
       </Content>
 
       {pathname !== '/' && (
-        <Content>
-          <RouterSwitch>
-            <Route path="/details">
-              <Details state={data} />
-            </Route>
-            <Route path="/add-vehicle">
-              <AddVehicle
-                currentPosition={state.currentPosition}
-                addVehicle={state.addVehicle}
-              />
-            </Route>
-            <Route path="/add-booking">
-              <CreateBooking createBooking={state.createBooking} />
-            </Route>
-            <Route path="/add-bookings">
-              <CreateBookings createBookings={state.createBookings} />
-            </Route>
-          </RouterSwitch>
-        </Content>
+        <>
+          <Line />
+          <Content>
+            <RouterSwitch>
+              <Route path="/details">
+                <Details state={data} />
+              </Route>
+              <Route path="/add-vehicle">
+                <AddVehicle
+                  currentPosition={state.currentPosition}
+                  addVehicle={state.addVehicle}
+                />
+              </Route>
+              <Route path="/add-booking">
+                <CreateBooking createBooking={state.createBooking} />
+              </Route>
+              <Route path="/add-bookings">
+                <CreateBookings createBookings={state.createBookings} />
+              </Route>
+            </RouterSwitch>
+          </Content>
+        </>
       )}
     </Container>
   )

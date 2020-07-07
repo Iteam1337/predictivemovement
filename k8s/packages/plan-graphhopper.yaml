@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: candidates-graphhopper
+  name: plan-graphhopper
   namespace: predictivemovement
   labels:
-    app: candidates-graphhopper
+    app: plan-graphhopper
 spec:
   selector:
     matchLabels:
-      app: candidates-graphhopper
+      app: plan-graphhopper
   template:
     metadata:
       labels:
-        app: candidates-graphhopper
+        app: plan-graphhopper
     spec:
       containers:
-        - name: candidates-graphhopper
-          image: iteam1337/pm-candidates-graphhopper
+        - name: plan-graphhopper
+          image: iteam1337/pm-plan-graphhopper
           env:
             - name: AMQP_HOST
               value: amqp://rabbitmq

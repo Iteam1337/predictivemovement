@@ -16,24 +16,26 @@ build:
       context: packages/engine
       sync:
         infer:
-          - '**/*.ex'
-          - '**/*.exs'
+          - "**/*.ex"
+          - "**/*.exs"
     - image: iteam1337/pm-engine-server
       context: packages/engine-server
     - image: iteam1337/pm-engine-ui
       context: packages/engine-ui
       docker:
         buildArgs:
-          REACT_APP_MAPBOX_ACCESS_TOKEN: '{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}'
-          REACT_APP_ENGINE_SERVER: '{{.REACT_APP_ENGINE_SERVER}}'
-    - image: iteam1337/pm-candidates-graphhopper
-      context: packages/candidates-graphhopper
+          REACT_APP_MAPBOX_ACCESS_TOKEN: "{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}"
+          REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
+    - image: iteam1337/pm-plan-graphhopper
+      context: packages/plan-graphhopper
     - image: iteam1337/pm-route-optimization-jsprit
-      context: packages/route-optimization-jsprit
+    context: packages/route-optimization-jsprit
     - image: iteam1337/pm-vehicle-offer
       context: packages/vehicle-offer
     - image: iteam1337/pm-auto-accept-offer
       context: packages/auto-accept-offer
+    - image: iteam1337/pm-booking-dispatcher
+      context: packages/booking-dispatcher
 deploy:
   kubectl:
     manifests:
@@ -46,10 +48,11 @@ deploy:
       - k8s/packages/engine.yaml
       - k8s/packages/engine-server.yaml
       - k8s/packages/engine-ui.yaml
-      - k8s/packages/candidates-graphhopper.yaml
+      - k8s/packages/plan-graphhopper.yaml
       - k8s/packages/route-optimization-jsprit.yaml
       - k8s/packages/vehicle-offer.yaml
       - k8s/packages/auto-accept-offer.yaml
+      - k8s/packages/booking-dispatcher.yaml
       # TODO: Disabled because this should be done once and not redeployed every time
       # - k8s/cicd-rbac.yaml
       # - k8s/rabbitmq.yaml

@@ -6,6 +6,8 @@ import styled from 'styled-components'
 
 const DropdownWrapper = styled.div`
   width: 100%;
+  z-index: 1;
+  position: absolute;
 `
 const DropdownButton = styled.button`
   width: inherit;

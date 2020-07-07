@@ -2,15 +2,22 @@ require('dotenv').config()
 
 const format = require('date-fns/format')
 const setYear = require('date-fns/setYear')
-const { exchanges, publish } = require('./adapters/amqp')
+const { exchanges, publish, amqp, queues } = require('./adapters/amqp')
 const { fetchGeoCodes } = require('./adapters/google')
 const { readXlsx, swerefConverter } = require('./helpers')
 
 const id62 = require('id62').default
+const codes = [2180, 3875, 4500]
+
+const inArea = (code) => {
+  return codes.includes(parseInt(code, 10))
+}
 
 const jsonPackages = readXlsx(
   `${process.cwd()}/data/${process.env.file}`,
   'Paket 2019 Till Ljusdals kommun'
+).filter(
+  ({ FromCityCode, ToCityCode }) => inArea(FromCityCode) && inArea(ToCityCode)
 )
 
 const jsonAddresses = readXlsx(
@@ -41,13 +48,13 @@ const getRandomAddress = (postalNumber) => {
   return addresses[Math.floor(Math.random() * addresses.length)]
 }
 
-const bookingDispatcher = async () => {
+const bookingDispatcher = async (total) => {
   if (!process.env.file) {
     console.error('No file specified')
     return
   }
 
-  const packages = jsonPackages
+  jsonPackages
     .map((package) => {
       return {
         ...package,
@@ -59,7 +66,7 @@ const bookingDispatcher = async () => {
       ({ packageDeliveryAddress, packagePickupAddress }) =>
         packageDeliveryAddress && packagePickupAddress
     )
-    .slice(0, 500)
+    .slice(0, total)
     .forEach(
       ({ ShipmentDate, packageDeliveryAddress, packagePickupAddress }) => {
         const booking = {
@@ -78,4 +85,24 @@ const bookingDispatcher = async () => {
     )
 }
 
-bookingDispatcher()
+amqp
+  .then((conn) => conn.createChannel())
+  .then((ch) =>
+    ch
+      .assertQueue(queues.HISTORICAL_BOOKINGS, {
+        durable: false,
+      })
+      .then(() =>
+        ch.consume(queues.HISTORICAL_BOOKINGS, async (message) => {
+          const total = parseInt(message.content.toString(), 10)
+
+          try {
+            bookingDispatcher(total)
+          } catch (error) {
+            console.warn('something borked: ', error)
+          }
+          ch.ack(message)
+        })
+      )
+      .catch(console.warn)
+  )

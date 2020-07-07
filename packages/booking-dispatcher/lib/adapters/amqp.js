@@ -13,6 +13,10 @@ const exchanges = {
   },
 }
 
+const queues = {
+  HISTORICAL_BOOKINGS: 'historical_bookings',
+}
+
 const publish = (exchange, routingKey, data) => {
   return amqp
     .then((conn) => conn.createChannel())
@@ -30,4 +34,4 @@ const publish = (exchange, routingKey, data) => {
     .catch(console.warn)
 }
 
-module.exports = { exchanges, publish }
+module.exports = { exchanges, publish, amqp, queues }

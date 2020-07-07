@@ -7,12 +7,15 @@ defmodule Engine.MatchProducer do
 
   @available_vehicles_queue_name "routes"
   @available_bookings_queue_name "booking_requests"
+  @clear_queue "clear_state"
 
-  def start_link() do
-    GenStage.start_link(Engine.MatchProducer, %{})
+  def start_link(_) do
+    IO.puts("\n\n\n ===> WHO CALLS STARTING LINK <========\n\n")
+    GenStage.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
+    IO.puts("\n\n ====> SOMEONE CALLS INIT <")
     create_rmq_resources()
     {:producer, %{vehicles: [], bookings: []}}
   end
@@ -43,7 +46,16 @@ defmodule Engine.MatchProducer do
       ) do
     IO.puts("new booking!")
     booking = string_to_booking_transform(booking)
+    IO.inspect(bookings, label: "current bookings state")
     dispatch_events(vehicles, [booking | bookings])
+  end
+
+  def handle_info(
+        {:basic_deliver, _, %{routing_key: @clear_queue}},
+        _
+      ) do
+    IO.puts("Clearing MatchProducer state")
+    {:noreply, [], %{vehicles: [], bookings: []}}
   end
 
   ## send messages to broadway and update state
@@ -119,5 +131,6 @@ defmodule Engine.MatchProducer do
 
     AMQP.Basic.consume(channel, @available_vehicles_queue_name, nil, no_ack: true)
     AMQP.Basic.consume(channel, @available_bookings_queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, @clear_queue, nil, no_ack: true)
   end
 end

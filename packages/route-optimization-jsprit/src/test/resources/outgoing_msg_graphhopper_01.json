@@ -1,0 +1,108 @@
+{
+    "copyrights": [
+        "GraphHopper",
+        "OpenStreetMap contributors"
+    ],
+    "job_id": "da48bfe5-07ff-4e0e-b31b-1c452e576bd3",
+    "processing_time": 39,
+    "solution": {
+        "completion_time": 2737,
+        "costs": 232,
+        "distance": 37259,
+        "max_operation_time": 2737,
+        "no_unassigned": 0,
+        "no_vehicles": 1,
+        "preparation_time": 0,
+        "routes": [
+            {
+                "activities": [
+                    {
+                        "address": {
+                            "lat": 61.842302,
+                            "location_id": "521537",
+                            "lon": 15.914518
+                        },
+                        "distance": 0,
+                        "driving_time": 0,
+                        "end_date_time": "nil",
+                        "end_time": 0,
+                        "load_after": [
+                            0
+                        ],
+                        "location_id": "521537",
+                        "preparation_time": 0,
+                        "type": "start",
+                        "waiting_time": 0
+                    },
+                    {
+                        "address": {
+                            "lat": 61.918197,
+                            "location_id": "486284",
+                            "lon": 16.138
+                        },
+                        "arr_date_time": "nil",
+                        "arr_time": 1617,
+                        "distance": 22251,
+                        "driving_time": 1617,
+                        "end_date_time": "nil",
+                        "end_time": 1617,
+                        "id": "pmb-6QYMNJ9e",
+                        "load_after": [
+                            1
+                        ],
+                        "load_before": [
+                            0
+                        ],
+                        "location_id": "486284",
+                        "preparation_time": 0,
+                        "type": "pickupShipment",
+                        "waiting_time": 0
+                    },
+                    {
+                        "address": {
+                            "lat": 61.815127,
+                            "location_id": "83908",
+                            "lon": 16.079536
+                        },
+                        "arr_date_time": "nil",
+                        "arr_time": 2737,
+                        "distance": 37259,
+                        "driving_time": 2737,
+                        "end_date_time": "nil",
+                        "end_time": 2737,
+                        "id": "pmb-6QYMNJ9e",
+                        "load_after": [
+                            0
+                        ],
+                        "load_before": [
+                            1
+                        ],
+                        "location_id": "83908",
+                        "preparation_time": 0,
+                        "type": "deliverShipment",
+                        "waiting_time": 0
+                    }
+                ],
+                "completion_time": 2737,
+                "distance": 37259,
+                "preparation_time": 0,
+                "service_duration": 0,
+                "transport_time": 2737,
+                "vehicle_id": "pmv-2WOyjwGP",
+                "waiting_time": 0
+            }
+        ],
+        "service_duration": 0,
+        "time": 2737,
+        "transport_time": 2737,
+        "unassigned": {
+            "breaks": [],
+            "details": [],
+            "services": [],
+            "shipments": []
+        },
+        "waiting_time": 0
+    },
+    "status": "finished",
+    "waiting_time_in_queue": 0
+}

@@ -21,22 +21,17 @@ spec:
           args:
             - -c
             - |
-              test ! -f "/data/${FILE_NAME}.osrm" && \
-                apt-get update && apt-get install -y --no-install-recommends wget tar && \
-                wget --no-check-certificate --debug "${DOWNLOAD_URL}/${OSRM_VERSION}/${TAR_FOLDER}" -O "/data/${TAR_FOLDER}" && \
-                tar -C / -xvf "/data/${TAR_FOLDER}" && \
-                rm -rf /var/lib/apt/lists/* && \
-                rm -f "/data/${TAR_FOLDER}"
-              osrm-routed --algorithm mld "/data/${FILE_NAME}.osrm"
+              apt-get update && apt-get install -y --no-install-recommends wget tar && \
+              wget --no-check-certificate --debug "${DOWNLOAD_URL}" -O /data/sweden-latest.osm.pbf && \
+              rm -rf /var/lib/apt/lists/* && \
+              osrm-extract -p /opt/car.lua /data/sweden-latest.osm.pbf && \
+              osrm-partition /data/sweden-latest.osrm && \
+              osrm-customize /data/sweden-latest.osrm && \
+              osrm-routed --algorithm mld /data/sweden-latest.osrm
           env:
-            - name: FILE_NAME
-              value: data
-            - name: OSRM_VERSION
-              value: v5.22.0
-            - name: TAR_FOLDER
-              value: data.tar.gz
             - name: DOWNLOAD_URL
-              value: https://s3.eu-north-1.amazonaws.com/pm-mapbox-test.iteam.se
+              value: https://download.geofabrik.de/europe/sweden-latest.osm.pbf
+
           ports:
             - containerPort: 5000
               protocol: TCP

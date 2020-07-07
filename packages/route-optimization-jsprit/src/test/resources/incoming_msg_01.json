@@ -1,0 +1,34 @@
+{
+    "vehicles": [
+        {
+            "position": {
+                "lon": 16.225352,
+                "lat": 61.736082
+            },
+            "metadata": {},
+            "id": "pmv-1zuURKyc",
+            "current_route": null,
+            "busy": false,
+            "booking_ids": [],
+            "activities": []
+        }
+    ],
+    "bookings": [
+        {
+            "pickup": {
+                "lon": 16.02416,
+                "lat": 61.789304
+            },
+            "metadata": {},
+            "id": "pmb-4FbTaQFr",
+            "external_id": 94107,
+            "events": [],
+            "delivery": {
+                "lon": 15.99835,
+                "lat": 61.898623
+            },
+            "assigned_to": null
+        }
+    ],
+    "matrix": {}
+}

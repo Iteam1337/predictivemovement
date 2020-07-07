@@ -12,7 +12,7 @@ defmodule Plan do
 
     MQ.call(
       %{vehicles: vehicles, bookings: bookings},
-      "plan_request"
+      "route_optimization_jsprit"
     )
     |> Poison.decode!(keys: :atoms)
   end

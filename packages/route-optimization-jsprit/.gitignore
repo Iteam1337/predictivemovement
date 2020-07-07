@@ -1,0 +1,16 @@
+### Gradle
+.gradle
+build/
+
+### STS
+.classpath
+.project
+.settings
+bin/
+
+### Mac OSX
+.DS_Store
+
+### Misc
+tmp/
+output/

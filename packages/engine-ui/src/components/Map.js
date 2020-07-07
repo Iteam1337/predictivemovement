@@ -22,7 +22,7 @@ const Map = ({ state, onMapClick }) => {
 
   const [mapState] = useState({
     viewport: {
-      latitude: 61.8295161,
+      latitude: 61.8294959,
       longitude: 16.0740589,
       zoom: 10,
     },

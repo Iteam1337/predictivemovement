@@ -119,6 +119,7 @@ defmodule Engine.MatchProducer do
     # Create queues
     AMQP.Queue.declare(channel, @available_vehicles_queue_name, durable: false)
     AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: false)
+    AMQP.Queue.declare(channel, @clear_queue, durable: false)
 
     # Bind queues to exchange
     AMQP.Queue.bind(channel, @available_vehicles_queue_name, @vehicles_exchange,

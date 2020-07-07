@@ -79,7 +79,7 @@ const createBookingsFromHistory = (total) => {
 }
 
 const resetState = () =>
-  amqp.queue('reset_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
+  amqp.queue('clear_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
 
 module.exports = {
   addVehicle,

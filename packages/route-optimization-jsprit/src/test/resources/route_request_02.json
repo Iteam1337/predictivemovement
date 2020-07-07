@@ -1,0 +1,55 @@
+{
+    "vehicles": [
+        {
+            "position": {
+                "lon": 21.928603,
+                "lat": 65.630583
+            },
+            "metadata": {
+                "start": "Bällinge (65.630583, 21.928603)"
+            },
+            "id": "pmv-1zuURKyc",
+            "current_route": null,
+            "busy": false,
+            "booking_ids": [],
+            "activities": []
+        }
+    ],
+    "bookings": [
+        {
+            "pickup": {
+                "lon": 22.015716,
+                "lat": 65.641479
+            },
+            "metadata": {
+                "start": "Gammelstads ICA (65.641479, 22.015716) -> LTU (65.613636, 22.136855) (no river crossing possible!)"
+            },
+            "id": "pmv-1zuURKyc-1",
+            "external_id": 94107,
+            "events": [],
+            "delivery": {
+                "lon": 22.136855,
+                "lat": 65.613636
+            },
+            "assigned_to": null
+        },
+        {
+            "pickup": {
+                "lon": 22.051738,
+                "lat": 65.581615
+            },
+            "metadata": {
+                "start": "Gäddvik (65.581615, 22.051738) -> LTU (65.613636, 22.136855) (no river crossing possible!)"
+            },
+            "id": "pmb-4FbTaQFr-2",
+            "external_id": 94107,
+            "events": [],
+            "delivery": {
+                "lon": 22.136855,
+                "lat": 65.613636
+            },
+            "assigned_to": null
+        }
+    ],
+    "matrix": {}
+}

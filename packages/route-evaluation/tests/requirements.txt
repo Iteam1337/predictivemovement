@@ -1,4 +1,0 @@
-pytest
-docker-compose
-pytest-docker
-requests

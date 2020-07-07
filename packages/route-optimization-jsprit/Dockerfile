@@ -10,4 +10,4 @@ COPY gradlew.bat /app/gradlew.bat
 
 RUN ./gradlew clean build
 
-ENTRYPOINT ["java", "-jar", "/app/build/libs/route-evaluation-graphhopper-0.0.1-SNAPSHOT.jar"] 
+ENTRYPOINT ["java", "-jar", "/app/build/libs/route-optimization-jsprit-0.0.1-SNAPSHOT.jar"] 

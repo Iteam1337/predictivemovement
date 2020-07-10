@@ -3,7 +3,8 @@
         {
             "position": {
                 "lon": 16.225352,
-                "lat": 61.736082
+                "lat": 61.736082,
+                "hint": ""
             },
             "metadata": {},
             "id": "pmv-1zuURKyc",
@@ -17,7 +18,8 @@
         {
             "pickup": {
                 "lon": 16.02416,
-                "lat": 61.789304
+                "lat": 61.789304,
+                "hint": ""
             },
             "metadata": {},
             "id": "pmb-4FbTaQFr",
@@ -25,7 +27,8 @@
             "events": [],
             "delivery": {
                 "lon": 15.99835,
-                "lat": 61.898623
+                "lat": 61.898623,
+                "hint": ""
             },
             "assigned_to": null
         }

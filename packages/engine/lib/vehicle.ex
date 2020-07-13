@@ -41,7 +41,7 @@ defmodule Vehicle do
           activities: activities,
           booking_ids: booking_ids
         },
-        "pickup_offers"
+        Application.fetch_env!(:engine, :pickup_offers_queue)
       )
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")

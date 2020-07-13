@@ -6,7 +6,12 @@ import Bookings from './Bookings'
 import Cars from './Cars'
 import CreateBooking from './CreateBooking'
 import CreateBookings from './CreateBookings'
-import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
+import {
+  Switch as RouterSwitch,
+  Route,
+  Link,
+  useLocation,
+} from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../Hooks'
 import CarDetails from './CarDetails'
@@ -47,6 +52,18 @@ const TextLink = styled(Link)`
   color: #666666;
 `
 
+const Content = styled.div`
+  padding: 2rem;
+  width: 325px;
+`
+
+const Line = styled.div`
+  background: transparent;
+  border-left: 1px solid #e5e5e5;
+  height: 87vh;
+  align-self: center;
+`
+
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
 
@@ -64,25 +81,21 @@ const Details = ({ state }) => {
   return componentFromType()
 }
 
-const Content = styled.div`
-  padding: 2rem;
-  width: 325px;
-`
-
 const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
     'bookings'
   )
-
+  const { pathname } = useLocation()
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
+
   const currentViewToElement = () => {
     switch (navigationCurrentView) {
       case 'bookings':
         return (
           <>
-            <Filters />
             <h3>Aktuella bokningar</h3>
-            <Bookings bookings={data.bookings} />
+            <Bookings bookings={state.bookings} />
+            <Filters />
             <TextLink to="/add-booking">
               <h3>+ Lägg till bokning</h3>
             </TextLink>
@@ -141,26 +154,36 @@ const Sidebar = (state) => {
 
       <Content>
         <RouterSwitch>
-          <Route exact path="/">
+          <Route path="/">
             <>{currentViewToElement()}</>
-          </Route>
-          <Route path="/details">
-            <Details state={data} />
-          </Route>
-          <Route path="/add-vehicle">
-            <AddVehicle
-              currentPosition={state.currentPosition}
-              addVehicle={state.addVehicle}
-            />
-          </Route>
-          <Route path="/add-booking">
-            <CreateBooking createBooking={state.createBooking} />
-          </Route>
-          <Route path="/add-bookings">
-            <CreateBookings createBookings={state.createBookings} />
           </Route>
         </RouterSwitch>
       </Content>
+
+      {pathname !== '/' && (
+        <>
+          <Line />
+          <Content>
+            <RouterSwitch>
+              <Route path="/details">
+                <Details state={data} />
+              </Route>
+              <Route path="/add-vehicle">
+                <AddVehicle
+                  currentPosition={state.currentPosition}
+                  addVehicle={state.addVehicle}
+                />
+              </Route>
+              <Route path="/add-booking">
+                <CreateBooking createBooking={state.createBooking} />
+              </Route>
+              <Route path="/add-bookings">
+                <CreateBookings createBookings={state.createBookings} />
+              </Route>
+            </RouterSwitch>
+          </Content>
+        </>
+      )}
     </Container>
   )
 }

@@ -19,7 +19,7 @@ const BookingDetails = ({ booking }) => {
       .then(({ features }) => features[0].properties.label)
   }
 
-  const getAddress = async ({ pickup, delivery }) => {
+  const setAddress = async ({ pickup, delivery }) => {
     const pickupAddress = await getAddressFromCoordinates(pickup)
     const deliveryAddress = await getAddressFromCoordinates(delivery)
     setAddress({
@@ -30,7 +30,7 @@ const BookingDetails = ({ booking }) => {
 
   React.useEffect(() => {
     if (!booking) return
-    getAddress(booking)
+    setAddress(booking)
   }, [booking])
 
   if (!booking || !address) return <p>Loading...</p>

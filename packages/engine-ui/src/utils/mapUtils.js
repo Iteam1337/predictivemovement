@@ -53,7 +53,7 @@ export const hexToRGB = (hex) => {
   return [r, g, b]
 }
 
-export const routeAssignedToBooking = (assignedTo) =>
+export const routeAssignedToBooking = (assignedTo) => 
   line(
     assignedTo.route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
     {
@@ -65,11 +65,20 @@ export const routeAssignedToBooking = (assignedTo) =>
     }
   )
 
+const hashCode = function(s) {
+  var h = 0, l = s.length, i = 0;
+  if ( l > 0 )
+    while (i < l)
+      h = (h << 5) - h + s.charCodeAt(i++) | 0;
+  return h;
+}
+  
 export const carToFeature = (cars) => {
   let index = 0
   try {
     return [
       ...cars.flatMap(({ id, activities, current_route: currentRoute }, i) => {
+        const hashcode = hashCode(id.replace("pmv-", "").slice(0,5))
         index = i
         if (activities && activities.length) {
           const route = line(
@@ -77,8 +86,8 @@ export const carToFeature = (cars) => {
             {
               id,
               properties: {
-                color: palette[0][0],
-                offset: 0,
+              color: palette[hashcode % 100][2],
+              offset: 0,
               },
             }
           )

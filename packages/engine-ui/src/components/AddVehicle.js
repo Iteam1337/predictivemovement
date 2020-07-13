@@ -29,17 +29,15 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
 
   const create = (event) => {
     event.preventDefault()
-    let position
-    if (formState === '') {
-      console.log('creating vehicle in middle of ljusdal')
-      formState = '61.8294925,16.0565493'
-    }
-    position = formState
+    let position = formState
       .split(',')
       .map(parseFloat)
       .filter((x) => !!x)
-
-    if (!position.length) return false
+    
+    if (!position.length) {
+      console.log('creating vehicle in middle of ljusdal')
+      position = [61.8294925,16.0565493]
+    }
     addVehicle({ lat: position[0], lon: position[1] })
 
     history.push('/')

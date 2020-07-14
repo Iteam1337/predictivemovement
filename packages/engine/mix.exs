@@ -18,15 +18,10 @@ defmodule Engine.MixProject do
       env: [
         amqp_host: "localhost",
         bookings_exchange: "bookings",
-        cars_exchange: "cars",
-        vehicles_exchange: "vehicles",
-        booking_requests_queue: "booking_requests",
-        routes_queue: "routes",
-        pickup_offers_queue: "pickup_offers",
-        # TODO: Rename when we update message size in Telegram
-        pickup_response_queue: "p_response",
-        booking_assignments_exchange: "booking_assignments",
-        booking_updates_queue: "booking_updates",
+        vehicles_exchange: "cars",
+        available_bookings_queue_name: "booking_requests",
+        available_vehicles_queue_name: "routes",
+        clear_state_queue: "clear_state",
         osrm_url: "https://osrm.iteamdev.io"
       ],
       extra_applications: [:logger, :gproc],

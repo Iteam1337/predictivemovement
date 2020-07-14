@@ -7,25 +7,23 @@ defmodule Plan do
     %{}
     |> Map.put(:vehicles, Enum.map(vehicle_ids, &Vehicle.get/1))
     |> Map.put(:bookings, Enum.map(booking_ids, &Booking.get/1))
-    |> Plan.insert_time_matrix()
+    |> insert_time_matrix()
     |> IO.inspect(label: "this is sent to jsprit")
     |> MQ.call("route_optimization_jsprit")
     |> Poison.decode!(keys: :atoms)
   end
 
-  def insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do
-    matrix =
-      bookings
-      |> Enum.flat_map(fn %{pickup: pickup, delivery: delivery} -> [pickup, delivery] end)
-      |> Enum.concat(Enum.map(vehicles, fn %{position: position} -> position end))
-      |> Osrm.get_time_between_coordinates()
-      |> Map.delete(:code)
-
-    Map.put(items, :matrix, matrix)
+  defp insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do
+    bookings
+    |> Enum.flat_map(fn %{pickup: pickup, delivery: delivery} -> [pickup, delivery] end)
+    |> Enum.concat(Enum.map(vehicles, fn %{position: position} -> position end))
+    |> Osrm.get_time_between_coordinates()
+    |> Map.delete(:code)
+    |> (&Map.put(items, :matrix, &1)).()
     |> add_hints_from_matrix()
   end
 
-  def add_hints_from_matrix(%{bookings: bookings} = map) do
+  defp add_hints_from_matrix(%{bookings: bookings} = map) do
     {booking_hints, vehicle_hints} =
       map
       |> get_in([:matrix, :sources])
@@ -50,7 +48,7 @@ defmodule Plan do
     |> elem(0)
   end
 
-  def add_vehicle_hints(vehicles, hints) do
+  defp add_vehicle_hints(vehicles, hints) do
     vehicles
     |> Enum.zip(hints)
     |> Enum.map(fn {vehicle, hint} ->

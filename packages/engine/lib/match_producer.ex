@@ -10,13 +10,11 @@ defmodule Engine.MatchProducer do
   @clear_queue "clear_state"
 
   def start_link(_) do
-    IO.puts("\n\n\n ===> WHO CALLS STARTING LINK <========\n\n")
     GenStage.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
-    IO.puts("\n\n ====> SOMEONE CALLS INIT <")
-    create_rmq_resources()
+    MQ.create_rmq_resources()
     {:producer, %{vehicles: [], bookings: []}}
   end
 
@@ -101,37 +99,5 @@ defmodule Engine.MatchProducer do
       |> Map.put_new(:metadata, %{})
 
     Booking.make(pickup, delivery, external_id, metadata)
-  end
-
-  ## set up queues
-
-  defp create_rmq_resources do
-    # Setup RabbitMQ connection
-    {:ok, connection} =
-      AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
-
-    {:ok, channel} = AMQP.Channel.open(connection)
-
-    # Create exchange
-    AMQP.Exchange.fanout(channel, @vehicles_exchange, durable: false)
-    AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: false)
-
-    # Create queues
-    AMQP.Queue.declare(channel, @available_vehicles_queue_name, durable: false)
-    AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: false)
-    AMQP.Queue.declare(channel, @clear_queue, durable: false)
-
-    # Bind queues to exchange
-    AMQP.Queue.bind(channel, @available_vehicles_queue_name, @vehicles_exchange,
-      routing_key: @available_vehicles_queue_name
-    )
-
-    AMQP.Queue.bind(channel, @available_bookings_queue_name, @bookings_exchange,
-      routing_key: "new"
-    )
-
-    AMQP.Basic.consume(channel, @available_vehicles_queue_name, nil, no_ack: true)
-    AMQP.Basic.consume(channel, @available_bookings_queue_name, nil, no_ack: true)
-    AMQP.Basic.consume(channel, @clear_queue, nil, no_ack: true)
   end
 end

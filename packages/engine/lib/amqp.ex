@@ -1,16 +1,18 @@
 defmodule MQ do
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
-  def available_bookings_queue_name,
-    do: Application.fetch_env!(:engine, :available_bookings_queue_name)
+  @available_bookings_queue_name Application.compile_env!(:engine, :available_bookings_queue_name)
+  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
+  @available_vehicles_queue_name Application.compile_env!(:engine, :available_vehicles_queue_name)
 
-  def vehicles_exchange, do: Application.fetch_env!(:engine, :vehicles_exchange)
-  def bookings_exchange, do: Application.fetch_env!(:engine, :bookings_exchange)
+  @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
+  @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
+  @outgoing_vehicle_exchange Application.compile_env!(:engine, :outgoing_vehicle_exchange)
+  @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
 
-  def available_vehicles_queue_name,
-    do: Application.fetch_env!(:engine, :available_vehicles_queue_name)
-
-  def clear_queue, do: Application.fetch_env!(:engine, :clear_queue)
+  def init() do
+    create_outgoing_exchanges()
+  end
 
   def wait_for_messages(channel, correlation_id) do
     receive do
@@ -92,34 +94,41 @@ defmodule MQ do
     AMQP.Queue.declare(channel, queue, durable: false)
   end
 
-  ## set up queues
-
-  def create_rmq_resources do
-    # Setup RabbitMQ connection
+  defp open_channel() do
     {:ok, connection} = AMQP.Connection.open(amqp_url())
-
     {:ok, channel} = AMQP.Channel.open(connection)
+    channel
+  end
 
-    # Create exchange
-    AMQP.Exchange.fanout(channel, vehicles_exchange(), durable: false)
-    AMQP.Exchange.declare(channel, bookings_exchange(), :topic, durable: false)
+  defp create_outgoing_exchanges() do
+    channel = open_channel()
+    AMQP.Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
+    AMQP.Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
+  end
+
+  def create_match_producer_resources do
+    channel = open_channel()
+
+    # Ensure that exchanges are created
+    AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
+    AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
 
     # Create queues
-    AMQP.Queue.declare(channel, available_vehicles_queue_name(), durable: false)
-    AMQP.Queue.declare(channel, available_bookings_queue_name(), durable: false)
-    AMQP.Queue.declare(channel, clear_queue(), durable: false)
+    AMQP.Queue.declare(channel, @available_vehicles_queue_name, durable: false)
+    AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: false)
+    AMQP.Queue.declare(channel, @clear_queue, durable: false)
 
     # Bind queues to exchange
-    AMQP.Queue.bind(channel, available_vehicles_queue_name(), vehicles_exchange(),
-      routing_key: available_vehicles_queue_name()
+    AMQP.Queue.bind(channel, @available_vehicles_queue_name, @incoming_vehicle_exchange(),
+      routing_key: "register"
     )
 
-    AMQP.Queue.bind(channel, available_bookings_queue_name(), bookings_exchange(),
-      routing_key: "new"
+    AMQP.Queue.bind(channel, @available_bookings_queue_name, @incoming_booking_exchange,
+      routing_key: "register"
     )
 
-    AMQP.Basic.consume(channel, available_vehicles_queue_name(), nil, no_ack: true)
-    AMQP.Basic.consume(channel, available_bookings_queue_name(), nil, no_ack: true)
-    AMQP.Basic.consume(channel, clear_queue(), nil, no_ack: true)
+    AMQP.Basic.consume(channel, @available_vehicles_queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, @available_bookings_queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, @clear_queue, nil, no_ack: true)
   end
 end

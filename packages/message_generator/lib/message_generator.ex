@@ -1,8 +1,8 @@
 defmodule MessageGenerator do
   use GenServer
   @rmq_uri "amqp://localhost"
-  @cars_exchange "cars"
-  @bookings_exchange "bookings"
+  @cars_exchange "incoming_vehicle_updates"
+  @bookings_exchange "incoming_booking_updates"
   @stockholm %{lat: 59.3414072, lon: 18.0470482}
 
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
@@ -23,7 +23,7 @@ defmodule MessageGenerator do
     {:ok, channel} = AMQP.Channel.open(connection)
 
     AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: false)
-    AMQP.Exchange.fanout(channel, @cars_exchange, durable: false)
+    AMQP.Exchange.declare(channel, @cars_exchange, :topic, durable: false)
 
     {:ok, channel}
   end
@@ -47,7 +47,7 @@ defmodule MessageGenerator do
       |> add_random_id_and_time()
       |> Poison.encode!()
 
-    AMQP.Basic.publish(channel, @bookings_exchange, "new", payload)
+    AMQP.Basic.publish(channel, @bookings_exchange, "register", payload)
 
     {:reply, :ok, state}
   end
@@ -59,7 +59,7 @@ defmodule MessageGenerator do
       |> add_random_id_and_time()
       |> Poison.encode!()
 
-    AMQP.Basic.publish(channel, @bookings_exchange, "new", payload)
+    AMQP.Basic.publish(channel, @bookings_exchange, "register", payload)
 
     {:reply, :ok, state}
   end
@@ -71,7 +71,7 @@ defmodule MessageGenerator do
       |> Map.put(:id, Enum.random(0..100_000))
       |> Poison.encode!()
 
-    AMQP.Basic.publish(channel, @cars_exchange, "", payload)
+    AMQP.Basic.publish(channel, @cars_exchange, "register", payload)
 
     {:reply, :ok, state}
   end

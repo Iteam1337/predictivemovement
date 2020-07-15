@@ -71,7 +71,7 @@ defmodule Vehicle do
     updated_state =
       current_state
       |> Map.merge(proposed_state)
-      |> MQ.publish(Application.fetch_env!(:engine, :vehicles_exchange), "planned")
+      |> MQ.publish(Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "planned")
 
     updated_state
   end
@@ -97,7 +97,7 @@ defmodule Vehicle do
       name: via_tuple(id)
     )
 
-    MQ.publish(vehicle, Application.fetch_env!(:engine, :vehicles_exchange), "new")
+    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
 
     id
   end

@@ -17,11 +17,6 @@ defmodule Engine.MixProject do
     [
       env: [
         amqp_host: "localhost",
-        bookings_exchange: "bookings",
-        vehicles_exchange: "cars",
-        available_bookings_queue_name: "booking_requests",
-        available_vehicles_queue_name: "routes",
-        clear_state_queue: "clear_state",
         osrm_url: "https://osrm.iteamdev.io"
       ],
       extra_applications: [:logger, :gproc],

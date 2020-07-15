@@ -2,41 +2,36 @@ defmodule Engine.MatchProducer do
   use GenStage
   alias Broadway.Message
 
-  @vehicles_exchange "cars"
-  @bookings_exchange "bookings"
+  @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
+  @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
 
-  @available_vehicles_queue_name "routes"
-  @available_bookings_queue_name "booking_requests"
-  @clear_queue "clear_state"
-
+  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
   def start_link(_) do
     GenStage.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
-    MQ.create_rmq_resources()
+    MQ.create_match_producer_resources()
     {:producer, %{vehicles: [], bookings: []}}
   end
 
-  ## Select events -> dispatch
+  def handle_info({:basic_consume_ok, _}, state), do: {:noreply, [], state}
 
-  def handle_info({:basic_consume_ok, _}, state) do
-    {:noreply, [], state}
-  end
-
-  def handle_info({:basic_deliver, vehicle, %{exchange: @vehicles_exchange}}, %{
-        vehicles: vehicles,
-        bookings: bookings
-      }) do
+  def handle_info(
+        {:basic_deliver, vehicle, %{exchange: @incoming_vehicle_exchange}},
+        %{
+          vehicles: vehicles,
+          bookings: bookings
+        }
+      ) do
     IO.puts("new vehicle!")
-
     vehicle = string_to_vehicle_transform(vehicle)
 
     dispatch_events([vehicle | vehicles], bookings)
   end
 
   def handle_info(
-        {:basic_deliver, booking, %{exchange: @bookings_exchange, routing_key: "new"}},
+        {:basic_deliver, booking, %{exchange: @incoming_booking_exchange}},
         %{
           vehicles: vehicles,
           bookings: bookings

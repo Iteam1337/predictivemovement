@@ -6,7 +6,7 @@ const routingKeys = {
   NEW: 'new',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
-  PLANNED: 'planned',
+  PLANNED: 'plan_updated',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'

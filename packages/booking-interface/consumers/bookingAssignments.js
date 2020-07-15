@@ -1,7 +1,7 @@
 const {
   open,
   queues: { BOOKING_ASSIGNED },
-  exchanges: { BOOKINGS },
+  exchanges: { OUTGOING_BOOKING_UPDATES },
 } = require('../adapters/amqp')
 const messaging = require('../services/messaging')
 
@@ -14,11 +14,11 @@ const bookingAssignments = () => {
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(BOOKINGS, 'topic', {
+          ch.assertExchange(OUTGOING_BOOKING_UPDATES, 'topic', {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(BOOKING_ASSIGNED, BOOKINGS, 'assigned'))
+        .then(() => ch.bindQueue(BOOKING_ASSIGNED, OUTGOING_BOOKING_UPDATES, 'assigned'))
         .then(
           () =>
             new Promise((resolve) => {

@@ -3,7 +3,7 @@ const { addVehicle } = require('../services/cache')
 const {
   open,
   queues: { VEHICLE_PLAN },
-  exchanges: { VEHICLES },
+  exchanges: { OUTGOING_VEHICLE_UPDATES },
 } = require('../adapters/amqp')
 
 const vehiclePlan = () => {
@@ -15,11 +15,11 @@ const vehiclePlan = () => {
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(VEHICLES, 'topic', {
+          ch.assertExchange(OUTGOING_VEHICLE_UPDATES, 'topic', {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(VEHICLE_PLAN, VEHICLES, 'planned'))
+        .then(() => ch.bindQueue(VEHICLE_PLAN, OUTGOING_VEHICLE_UPDATES, 'plan_updated'))
         .then(() =>
           ch.consume(VEHICLE_PLAN, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())

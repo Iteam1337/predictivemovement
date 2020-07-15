@@ -3,8 +3,8 @@ const open = require('amqplib').connect(
 )
 
 const exchanges = {
-  BOOKINGS: 'bookings',
-  BOOKING_ASSIGNMENTS: 'booking_assignments',
+  INCOMING_BOOKING_UPDATES: 'incoming_booking_updates',
+  OUTGOING_BOOKING_UPDATES: 'outgoing_booking_updates',
 }
 
 const queues = {
@@ -15,8 +15,7 @@ const queues = {
 
 const routingKeys = {
   DELIVERED: 'delivered',
-  PICKUP: 'pickup',
-  NEW: 'new',
+  PICKED_UP: 'picked_up',
 }
 
 module.exports = {

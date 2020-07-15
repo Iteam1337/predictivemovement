@@ -1,4 +1,4 @@
-const { open, queues, exchanges, routingKeys } = require('../adapters/amqp')
+const { open, queues, exchanges } = require('../adapters/amqp')
 
 const messaging = require('../services/messaging')
 
@@ -11,15 +11,15 @@ const pickupConfirmed = () =>
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(exchanges.BOOKINGS, 'topic', {
+          ch.assertExchange(exchanges.INCOMING_BOOKING_UPDATES, 'topic', {
             durable: false,
           })
         )
         .then(() =>
           ch.bindQueue(
             queues.PICKUP_CONFIRMED,
-            exchanges.BOOKINGS,
-            routingKeys.PICKUP
+            exchanges.INCOMING_BOOKING_UPDATES,
+            "picked_up"
           )
         )
         .then(

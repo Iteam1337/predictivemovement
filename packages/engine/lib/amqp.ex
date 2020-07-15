@@ -1,9 +1,9 @@
 defmodule MQ do
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
-  @available_bookings_queue_name Application.compile_env!(:engine, :available_bookings_queue_name)
+  @register_new_booking_queue "register_new_booking"
+  @register_new_vehicle_queue "register_new_vehicle"
   @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
-  @available_vehicles_queue_name Application.compile_env!(:engine, :available_vehicles_queue_name)
 
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
@@ -114,21 +114,21 @@ defmodule MQ do
     AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
 
     # Create queues
-    AMQP.Queue.declare(channel, @available_vehicles_queue_name, durable: false)
-    AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: false)
+    AMQP.Queue.declare(channel, @register_new_vehicle_queue, durable: false)
+    AMQP.Queue.declare(channel, @register_new_booking_queue, durable: false)
     AMQP.Queue.declare(channel, @clear_queue, durable: false)
 
     # Bind queues to exchange
-    AMQP.Queue.bind(channel, @available_vehicles_queue_name, @incoming_vehicle_exchange(),
+    AMQP.Queue.bind(channel, @register_new_vehicle_queue, @incoming_vehicle_exchange(),
       routing_key: "register"
     )
 
-    AMQP.Queue.bind(channel, @available_bookings_queue_name, @incoming_booking_exchange,
+    AMQP.Queue.bind(channel, @register_new_booking_queue, @incoming_booking_exchange,
       routing_key: "register"
     )
 
-    AMQP.Basic.consume(channel, @available_vehicles_queue_name, nil, no_ack: true)
-    AMQP.Basic.consume(channel, @available_bookings_queue_name, nil, no_ack: true)
+    AMQP.Basic.consume(channel, @register_new_vehicle_queue, nil, no_ack: true)
+    AMQP.Basic.consume(channel, @register_new_booking_queue, nil, no_ack: true)
     AMQP.Basic.consume(channel, @clear_queue, nil, no_ack: true)
   end
 end

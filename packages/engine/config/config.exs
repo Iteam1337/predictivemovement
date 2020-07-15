@@ -6,8 +6,6 @@ config :engine, :plan, Plan
 config :engine, :vehicle, Vehicle
 
 config :engine, :clear_match_producer_state_queue, "clear_state"
-config :engine, :available_bookings_queue_name, "booking_requests"
-config :engine, :available_vehicles_queue_name, "register"
 config :engine, :outgoing_vehicle_exchange, "outgoing_vehicle_updates"
 config :engine, :incoming_vehicle_exchange, "incoming_vehicle_updates"
 config :engine, :outgoing_booking_exchange, "outgoing_booking_updates"

@@ -3,6 +3,7 @@ const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const routingKeys = {
+  REGISTERED: 'registered',
   NEW: 'new',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
@@ -12,7 +13,7 @@ const routingKeys = {
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
 const bookings = amqp
-  .exchange('bookings', 'topic', {
+  .exchange('outgoing_booking_updates', 'topic', {
     durable: false,
   })
   .queue('bookings_to_map', {
@@ -33,13 +34,13 @@ const bookingsNewWithRoutes = amqp
   .queue('bookings_to_map', {
     durable: false,
   })
-  .subscribe({ noAck: true }, [routingKeys.NEW])
+  .subscribe({ noAck: true }, [routingKeys.REGISTERED])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
 
 const cars = amqp
-  .exchange('vehicles', 'topic', {
+  .exchange('outgoing_vehicle_updates', 'topic', {
     durable: false,
   })
   .queue('cars_to_map', {
@@ -52,10 +53,10 @@ const cars = amqp
 
 const createBooking = (booking) => {
   return amqp
-    .exchange('bookings', 'topic', {
+    .exchange('incoming_booking_updates', 'topic', {
       durable: false,
     })
-    .publish({ ...booking, assigned_to: null }, routingKeys.NEW)
+    .publish({ ...booking, assigned_to: null }, routingKeys.REGISTERED)
     .then(() =>
       console.log(` [x] Created booking '${JSON.stringify(booking, null, 2)}'`)
     )
@@ -68,10 +69,10 @@ const dispatchOffers = () => {
 }
 
 const addVehicle = (position) => {
-  return amqp.exchange('cars', 'fanout', { durable: false }).publish({
+  return amqp.exchange('incoming_vehicle_updates', 'topic', { durable: false }).publish({
     id: id62(),
     position,
-  })
+  }, routingKeys.REGISTERED)
 }
 
 const createBookingsFromHistory = (total) => {

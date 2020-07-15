@@ -4,11 +4,11 @@ const amqp = require('amqplib').connect(
 
 const exchanges = {
   bookings: {
-    name: 'bookings',
+    name: 'incoming_booking_updates',
     type: 'topic',
     options: { durable: false },
     routingKeys: {
-      NEW: 'new',
+      REGISTERED: 'registered',
     },
   },
 }

@@ -77,7 +77,7 @@ const bookingDispatcher = async (total) => {
           pickup: packagePickupAddress.coordinates,
         }
 
-        publish(exchanges.bookings, exchanges.bookings.routingKeys.NEW, {
+        publish(exchanges.bookings, exchanges.bookings.routingKeys.REGISTERED, {
           ...booking,
           assigned_to: null,
         })

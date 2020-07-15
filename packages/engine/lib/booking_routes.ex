@@ -2,12 +2,12 @@ defmodule BookingRoutes do
   use Broadway
   use AMQP
 
-  @exchange_bookings "bookings"
+  @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
 
   @exchange_bookings_with_routes "bookings_with_routes"
   @queue_bookings_add_routes "booking_add_routes_worker"
 
-  @routing_key "new"
+  @routing_key "registered"
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
@@ -20,7 +20,7 @@ defmodule BookingRoutes do
              host: Application.fetch_env!(:engine, :amqp_host)
            ],
            declare: [],
-           bindings: [{@exchange_bookings, routing_key: @routing_key}]},
+           bindings: [{@incoming_booking_exchange, routing_key: @routing_key}]},
         concurrency: 1
       ],
       processors: [

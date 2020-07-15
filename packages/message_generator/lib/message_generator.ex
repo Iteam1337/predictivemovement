@@ -47,7 +47,7 @@ defmodule MessageGenerator do
       |> add_random_id_and_time()
       |> Poison.encode!()
 
-    AMQP.Basic.publish(channel, @bookings_exchange, "register", payload)
+    AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
 
     {:reply, :ok, state}
   end
@@ -59,7 +59,7 @@ defmodule MessageGenerator do
       |> add_random_id_and_time()
       |> Poison.encode!()
 
-    AMQP.Basic.publish(channel, @bookings_exchange, "register", payload)
+    AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
 
     {:reply, :ok, state}
   end
@@ -71,7 +71,7 @@ defmodule MessageGenerator do
       |> Map.put(:id, Enum.random(0..100_000))
       |> Poison.encode!()
 
-    AMQP.Basic.publish(channel, @cars_exchange, "register", payload)
+    AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
 
     {:reply, :ok, state}
   end

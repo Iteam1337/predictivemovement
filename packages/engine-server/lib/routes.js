@@ -61,6 +61,7 @@ function register(io) {
     })
 
     socket.on('dispatch-offers', () => {
+      console.log('received message to dispatch offers, from UI')
       dispatchOffers()
     })
 

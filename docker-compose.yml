@@ -8,7 +8,50 @@ services:
       - 15672:15672
     networks:
       - predictivemovement
-
+  admin-ui:
+    build:
+      context: ./packages/engine-ui
+      args:
+        - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
+        - REACT_APP_ENGINE_SERVER=http://localhost:4000
+    ports:
+      - 3000:80
+    networks:
+      - predictivemovement
+  admin-server:
+    build: ./packages/engine-server
+    environment:
+      - AMQP_HOST=amqp://rabbitmq
+    ports:
+      - 4000:4000
+    networks:
+      - predictivemovement
+  predictivemovement-route-optimization-jsprit:
+    build: ./packages/route-optimization-jsprit
+    container_name: "predictivemovement_route-optimization-jsprit"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    networks:
+      - predictivemovement
+  vehicle-offer-router:
+    build: ./packages/vehicle-offer
+    environment:
+      - AMQP_HOST=amqp://rabbitmq
+    networks:
+      - predictivemovement
+  auto-accept-offer:
+    build: ./packages/auto-accept-offer
+    environment:
+      - AMQP_HOST=amqp://rabbitmq
+    networks:
+      - predictivemovement
+  booking-dispatcher:
+    build: ./packages/booking-dispatcher
+    environment:
+      - AMQP_HOST=amqp://rabbitmq
+    networks:
+      - predictivemovement
 networks:
   predictivemovement:
     driver: bridge

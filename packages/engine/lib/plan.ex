@@ -2,14 +2,14 @@ defmodule Plan do
   @behaviour PlanBehaviour
 
   def find_optimal_routes(vehicle_ids, booking_ids) do
-    IO.puts("call route_optimization_jsprit")
+    IO.puts("call calculate_route_optimization")
 
     %{}
     |> Map.put(:vehicles, Enum.map(vehicle_ids, &Vehicle.get/1))
     |> Map.put(:bookings, Enum.map(booking_ids, &Booking.get/1))
     |> insert_time_matrix()
     |> IO.inspect(label: "this is sent to jsprit")
-    |> MQ.call("route_optimization_jsprit")
+    |> MQ.call("calculate_route_optimization")
     |> Poison.decode!(keys: :atoms)
   end
 

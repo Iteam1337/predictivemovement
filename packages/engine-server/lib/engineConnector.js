@@ -76,11 +76,11 @@ const addVehicle = (position) => {
 }
 
 const createBookingsFromHistory = (total) => {
-  return amqp.queue('historical_bookings', { durable: false }).publish(total)
+  return amqp.queue('add_nr_of_historical_bookings', { durable: false }).publish(total)
 }
 
 const resetState = () =>
-  amqp.queue('clear_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
+  amqp.queue('clear_engine_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
 
 module.exports = {
   addVehicle,

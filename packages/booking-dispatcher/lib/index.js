@@ -89,11 +89,11 @@ amqp
   .then((conn) => conn.createChannel())
   .then((ch) =>
     ch
-      .assertQueue(queues.HISTORICAL_BOOKINGS, {
+      .assertQueue(queues.ADD_NR_OF_HISTORICAL_BOOKINGS, {
         durable: false,
       })
       .then(() =>
-        ch.consume(queues.HISTORICAL_BOOKINGS, async (message) => {
+        ch.consume(queues.ADD_NR_OF_HISTORICAL_BOOKINGS, async (message) => {
           const total = parseInt(message.content.toString(), 10)
 
           try {

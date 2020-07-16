@@ -5,7 +5,7 @@ import Config
 config :engine, :plan, Plan
 config :engine, :vehicle, Vehicle
 
-config :engine, :clear_match_producer_state_queue, "clear_state"
+config :engine, :clear_match_producer_state_queue, "clear_engine_state"
 config :engine, :outgoing_vehicle_exchange, "outgoing_vehicle_updates"
 config :engine, :incoming_vehicle_exchange, "incoming_vehicle_updates"
 config :engine, :outgoing_booking_exchange, "outgoing_booking_updates"

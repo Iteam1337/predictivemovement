@@ -14,7 +14,7 @@ const exchanges = {
 }
 
 const queues = {
-  HISTORICAL_BOOKINGS: 'historical_bookings',
+  ADD_NR_OF_HISTORICAL_BOOKINGS: 'add_nr_of_historical_bookings',
 }
 
 const publish = (exchange, routingKey, data) => {

@@ -41,7 +41,7 @@ defmodule Vehicle do
           activities: activities,
           booking_ids: booking_ids
         },
-        "pickup_offers"
+        "offer_booking_to_vehicle"
       )
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")

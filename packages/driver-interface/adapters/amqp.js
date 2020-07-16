@@ -12,7 +12,7 @@ const exchanges = {
 const queues = {
   OFFER_BOOKING_TO_TELEGRAM_VEHICLE: 'offer_bookings_to_telegram_vehicles',
   PICKUP_INSTRUCTIONS: 'pickup_instructions',
-  VEHICLE_PLAN: 'vehicle_plan',
+  SEND_PLAN_TO_VEHICLE: 'send_plan_to_vehicle',
 }
 
 module.exports = {

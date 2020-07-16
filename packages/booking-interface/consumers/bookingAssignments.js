@@ -1,6 +1,6 @@
 const {
   open,
-  queues: { BOOKING_ASSIGNED },
+  queues: { SET_BOOKING_ASSIGNED },
   exchanges: { OUTGOING_BOOKING_UPDATES },
 } = require('../adapters/amqp')
 const messaging = require('../services/messaging')
@@ -10,7 +10,7 @@ const bookingAssignments = () => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(BOOKING_ASSIGNED, {
+        .assertQueue(SET_BOOKING_ASSIGNED, {
           durable: false,
         })
         .then(() =>
@@ -18,11 +18,11 @@ const bookingAssignments = () => {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(BOOKING_ASSIGNED, OUTGOING_BOOKING_UPDATES, 'assigned'))
+        .then(() => ch.bindQueue(SET_BOOKING_ASSIGNED, OUTGOING_BOOKING_UPDATES, 'assigned'))
         .then(
           () =>
             new Promise((resolve) => {
-              ch.consume(BOOKING_ASSIGNED, (msg) => {
+              ch.consume(SET_BOOKING_ASSIGNED, (msg) => {
                 const message = JSON.parse(msg.content.toString())
                 ch.ack(msg)
                 resolve(message)

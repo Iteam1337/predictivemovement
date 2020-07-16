@@ -8,9 +8,9 @@ const exchanges = {
 }
 
 const queues = {
-  BOOKING_ASSIGNED: 'booking_assigned',
-  PICKUP_CONFIRMED: 'pickup_confirmed',
-  DELIVERY_CONFIRMED: 'delivery_confirmed',
+  SET_BOOKING_ASSIGNED: 'set_booking_assigned_in_booker_interface',
+  NOTIFY_PICKUP: 'notify_booker_of_pickup',
+  NOTIFY_DELIVERY: 'notify_booker_of_delivery',
 }
 
 const routingKeys = {

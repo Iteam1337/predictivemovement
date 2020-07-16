@@ -7,7 +7,7 @@ const pickupConfirmed = () =>
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(queues.PICKUP_CONFIRMED, {
+        .assertQueue(queues.NOTIFY_PICKUP, {
           durable: false,
         })
         .then(() =>
@@ -17,7 +17,7 @@ const pickupConfirmed = () =>
         )
         .then(() =>
           ch.bindQueue(
-            queues.PICKUP_CONFIRMED,
+            queues.NOTIFY_PICKUP,
             exchanges.INCOMING_BOOKING_UPDATES,
             "picked_up"
           )
@@ -25,7 +25,7 @@ const pickupConfirmed = () =>
         .then(
           () =>
             new Promise((resolve) => {
-              ch.consume(queues.PICKUP_CONFIRMED, (msg) => {
+              ch.consume(queues.NOTIFY_PICKUP, (msg) => {
                 const message = JSON.parse(msg.content.toString())
                 ch.ack(msg)
                 resolve(message)

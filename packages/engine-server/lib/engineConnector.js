@@ -7,22 +7,23 @@ const routingKeys = {
   NEW: 'new',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
+  PICKED_UP: 'picked_up',
   PLANNED: 'plan_updated',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
 const bookings = amqp
-  .exchange('outgoing_booking_updates', 'topic', {
+  .exchange('incoming_booking_updates', 'topic', {
     durable: false,
   })
-  .queue('bookings_to_map', {
+  .queue('update_booking_in_admin_ui', {
     durable: false,
   })
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, [routingKeys.ASSIGNED, routingKeys.DELIVERED])
+  .subscribe({ noAck: true }, [routingKeys.PICKED_UP,routingKeys.DELIVERED])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
@@ -31,7 +32,7 @@ const bookingsNewWithRoutes = amqp
   .exchange('bookings_with_routes', 'topic', {
     durable: false,
   })
-  .queue('bookings_to_map', {
+  .queue('update_booking_in_admin_ui', {
     durable: false,
   })
   .subscribe({ noAck: true }, [routingKeys.REGISTERED])
@@ -43,7 +44,7 @@ const cars = amqp
   .exchange('outgoing_vehicle_updates', 'topic', {
     durable: false,
   })
-  .queue('cars_to_map', {
+  .queue('update_vehicle_in_admin_ui', {
     durable: false,
   })
   .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.PLANNED])

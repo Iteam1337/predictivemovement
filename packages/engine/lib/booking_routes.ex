@@ -5,7 +5,7 @@ defmodule BookingRoutes do
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
 
   @exchange_bookings_with_routes "bookings_with_routes"
-  @queue_bookings_add_routes "booking_add_routes_worker"
+  @queue_bookings_add_routes "add_route_to_booking_object"
 
   @routing_key "registered"
 

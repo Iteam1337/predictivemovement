@@ -24,17 +24,19 @@ const pickupConfirmed = () =>
         )
         .then(
           () =>
-            new Promise((resolve) => {
               ch.consume(queues.NOTIFY_PICKUP, (msg) => {
                 const message = JSON.parse(msg.content.toString())
                 ch.ack(msg)
-                resolve(message)
+                notifyBooker(message)
               })
-            })
-        )
-        .then(({ metadata: { telegram: { senderId } } }) =>
-          messaging.onPickupConfirmed(senderId)
         )
     )
+
+function notifyBooker(booking) {
+  console.log('PICKUP_CONFIRMED, notifing booker', booking)
+  if (booking.metadata.telegram) {
+    messaging.onPickupConfirmed(booking.metadata.telegram.senderId)
+  }
+}
 
 module.exports = { pickupConfirmed }

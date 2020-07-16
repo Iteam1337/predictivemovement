@@ -14,14 +14,14 @@ const inArea = (code) => {
 }
 
 const jsonPackages = readXlsx(
-  `${process.cwd()}/data/${process.env.file}`,
+  `${process.cwd()}/data/paketdata.xlsx`,
   'Paket 2019 Till Ljusdals kommun'
 ).filter(
   ({ FromCityCode, ToCityCode }) => inArea(FromCityCode) && inArea(ToCityCode)
 )
 
 const jsonAddresses = readXlsx(
-  `${process.cwd()}/data/${process.env.addresses}`,
+  `${process.cwd()}/data/fastigheter.xlsx`,
   'Fastigheter 2019'
 ).map((row) => {
   const [lat, lon] = swerefConverter(
@@ -49,11 +49,6 @@ const getRandomAddress = (postalNumber) => {
 }
 
 const bookingDispatcher = async (total) => {
-  if (!process.env.file) {
-    console.error('No file specified')
-    return
-  }
-
   jsonPackages
     .map((package) => {
       return {

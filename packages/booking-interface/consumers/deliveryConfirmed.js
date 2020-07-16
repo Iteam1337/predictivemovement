@@ -23,23 +23,19 @@ const deliveryConfirmed = () =>
         )
         .then(
           () =>
-            new Promise((resolve) => {
               ch.consume(queues.NOTIFY_DELIVERY, (msg) => {
                 const message = JSON.parse(msg.content.toString())
                 ch.ack(msg)
-                resolve(message)
+                notifyBooker(message)
               })
-            })
-        )
-        .then(
-          ({
-            metadata: {
-              telegram: { senderId },
-            },
-          }) => {
-            return messaging.onDeliveryConfirmed(senderId)
-          }
         )
     )
+
+function notifyBooker(booking) {
+  if (booking.metadata.telegram) {
+    console.log('Telegram DELIVERY CONFIRMED, notifying booker')
+    return messaging.onDeliveryConfirmed(booking.metadata.telegram.senderId)
+  }
+}
 
 module.exports = { deliveryConfirmed }

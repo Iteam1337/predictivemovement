@@ -32,6 +32,7 @@ const App = () => {
   }
 
   const dispatchOffers = () => {
+    console.log('user pressed the dispatch button')
     socket.emit('dispatch-offers')
   }
 

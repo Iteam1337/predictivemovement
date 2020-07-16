@@ -13,17 +13,31 @@ const routingKeys = {
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
+// Bind update_booking_in_admin_ui queue to exchanges, this is done here since fluent-amqp doesnt support 
+// binding to different exchanges.
+
+amqp.connect()
+  .then(amqpConnection => amqpConnection.createChannel())
+  .then(ch => 
+    ch.assertQueue("update_booking_in_admin_ui", {
+      durable: false,
+    }).then(() =>
+      ch.assertExchange("outgoing_booking_updates", 'topic', {
+        durable: false,
+      })
+    ).then(() => ch.bindQueue('update_booking_in_admin_ui','outgoing_booking_updates', routingKeys.ASSIGNED))
+    .then(() => ch.bindQueue('update_booking_in_admin_ui','incoming_booking_updates', routingKeys.PICKED_UP))
+    .then(() => ch.bindQueue('update_booking_in_admin_ui','incoming_booking_updates', routingKeys.DELIVERED))
+  )
+
 const bookings = amqp
-  .exchange('incoming_booking_updates', 'topic', {
-    durable: false,
-  })
   .queue('update_booking_in_admin_ui', {
     durable: false,
   })
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, [routingKeys.PICKED_UP,routingKeys.DELIVERED])
+  .subscribe({ noAck: true }, [])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })

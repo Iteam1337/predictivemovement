@@ -50,6 +50,8 @@ services:
     build: ./packages/booking-dispatcher
     environment:
       - AMQP_HOST=amqp://rabbitmq
+    volumes:
+      - ./packages/booking-dispatcher/data:/app/data
     networks:
       - predictivemovement
 networks:

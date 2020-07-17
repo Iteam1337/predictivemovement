@@ -21,10 +21,6 @@ spec:
           env:
             - name: AMQP_HOST
               value: amqp://rabbitmq
-            - name: file
-              value: paketdata.xlsx
-            - name: addresses
-              value: fastigheter.xlsx
           volumeMounts:
             - name: fastigheter
               mountPath: /app/data/fastigheter.xlsx

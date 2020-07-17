@@ -29,7 +29,12 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
 
   const create = (event) => {
     event.preventDefault()
-    let position = formState
+    let position
+    if (formState === '') {
+      console.log('creating vehicle in middle of ljusdal')
+      formState = '61.8294925,16.0565493'
+    }
+    position = formState
       .split(',')
       .map(parseFloat)
       .filter((x) => !!x)

@@ -168,7 +168,7 @@ const CreateBooking = ({ createBooking }) => {
         </div>
         <div>
           <Elements.InputContainer>
-            <Elements.Label htmlFor="delivery">Delivery</Elements.Label>
+            <Elements.Label htmlFor="delivery">Destination</Elements.Label>
             <Elements.InputInnerContainer>
               <Elements.LocationIcon
                 alt="Location delivery icon"

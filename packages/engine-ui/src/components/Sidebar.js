@@ -18,6 +18,7 @@ import CarDetails from './CarDetails'
 import Filters from './Filters'
 import AddVehicle from './AddVehicle'
 import Dispatch from '../assets/dispatch.svg'
+import Elements from './Elements'
 
 const Container = styled.div`
   position: absolute;
@@ -43,7 +44,6 @@ const NavigationBar = styled.div`
     width: 30px;
     height: 30px;
     cursor: pointer;
-    margin-bottom: 5rem;
   }
 `
 
@@ -129,27 +129,27 @@ const Sidebar = (state) => {
   return (
     <Container>
       <NavigationBar>
-        <Link to="/">
+        <Elements.NavIconLink to="/">
           <img
             onClick={() => setNavigationCurrentView('bookings')}
             src={ParcelIcon}
             alt="parcel icon"
           />
-        </Link>
-        <Link to="/">
+        </Elements.NavIconLink>
+        <Elements.NavIconLink to="/">
           <img
             onClick={() => setNavigationCurrentView('cars')}
             src={ShippingIcon}
             alt="shipping icon"
           />
-        </Link>
-        <Link to="/">
+        </Elements.NavIconLink>
+        <Elements.NavIconLink to="/">
           <img
             onClick={() => setNavigationCurrentView('dispatch')}
             src={Dispatch}
             alt="Dispatch icon"
           />
-        </Link>
+        </Elements.NavIconLink>
       </NavigationBar>
 
       <Content>

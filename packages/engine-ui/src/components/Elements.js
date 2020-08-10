@@ -2,9 +2,14 @@ import { blue, grey } from '@material-ui/core/colors'
 import { withStyles } from '@material-ui/core/styles'
 import MaterialSwitch from '@material-ui/core/Switch'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
   margin-bottom: 2rem;
+`
+
+const FormLabel = styled.span`
+  font-size: 0.875rem;
 `
 
 const InputContainer = styled.div`
@@ -97,6 +102,10 @@ const Switch = withStyles({
   },
 })(MaterialSwitch)
 
+const NavIconLink = styled(Link)`
+  margin-bottom: 5rem;
+`
+
 export default {
   StrongParagraph,
   Switch,
@@ -109,4 +118,6 @@ export default {
   SubmitButton,
   CancelButton,
   LocationIcon,
+  FormLabel,
+  NavIconLink,
 }

@@ -25,9 +25,11 @@ const BookingListItem = styled(Link)`
 `
 
 const NoBookingsInfo = styled.p`
+  margin-top: 0;
   font-style: italic;
   font-size: 0.875rem;
 `
+
 const Bookings = ({ bookings }) => {
   if (!bookings.length)
     return <NoBookingsInfo>Det finns inga aktuella bokningar...</NoBookingsInfo>

@@ -19,28 +19,42 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
     if (isActive && currentPosition.lat && currentPosition.lon) {
       setPosition(currentPosition)
     }
-  }, [currentPosition])
+  }, [currentPosition, isActive])
 
   useEffect(() => {
     setActive(true)
 
     return () => setActive(false)
-  })
+  }, [isActive])
 
-  const create = (event) => {
-    event.preventDefault()
-    let position
-    if (formState === '') {
-      console.log('creating vehicle in middle of ljusdal')
-      formState = '61.8294925,16.0565493'
-    }
-    position = formState
+  const handleCreateOnEmptyFormState = () => {
+    console.log('creating vehicle in middle of ljusdal')
+    const basePosition = '61.8294925,16.0565493' // Middle of Ljusdal
+
+    const carPosition = basePosition
       .split(',')
       .map(parseFloat)
       .filter((x) => !!x)
 
-    if (!position.length) return false
-    addVehicle({ lat: position[0], lon: position[1] })
+    addVehicle({ lat: carPosition[0], lon: carPosition[1] })
+
+    history.push('/')
+  }
+
+  const create = (event) => {
+    event.preventDefault()
+
+    if (!formState) {
+      return handleCreateOnEmptyFormState()
+    }
+
+    const carPosition = formState
+      .split(',')
+      .map(parseFloat)
+      .filter((x) => !!x)
+
+    if (!carPosition.length) return false
+    addVehicle({ lat: carPosition[0], lon: carPosition[1] })
 
     history.push('/')
   }

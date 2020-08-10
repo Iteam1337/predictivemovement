@@ -57,16 +57,20 @@ const CarDetails = ({ car }) => {
       <Elements.StrongParagraph>ID:</Elements.StrongParagraph>
       <span>{car.id}</span>
       <Line />
-      <Elements.StrongParagraph>Rutt</Elements.StrongParagraph>
-      {activities.map((activity, index) => (
-        <ActivityInfo key={index}>
-          <p>{index + 1}</p>
-          <p>{getLabelForActivities(activity.type)}</p>
-          <BookingLink to={`/details?type=booking&id=${activity.id}`}>
-            {activity.id}
-          </BookingLink>
-        </ActivityInfo>
-      ))}
+      {car.activities.length > 0 && (
+        <>
+          <Elements.StrongParagraph>Rutt</Elements.StrongParagraph>
+          {activities.map((activity, index) => (
+            <ActivityInfo key={index}>
+              <p>{index + 1}</p>
+              <p>{getLabelForActivities(activity.type)}</p>
+              <BookingLink to={`/details?type=booking&id=${activity.id}`}>
+                {activity.id}
+              </BookingLink>
+            </ActivityInfo>
+          ))}
+        </>
+      )}
     </div>
   )
 }

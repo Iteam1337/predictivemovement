@@ -13,8 +13,8 @@ const ActivityInfo = styled.div`
     margin-right: 1rem;
   }
 
-  p:last-of-type {
-    margin-right: 0.5rem;
+  a {
+    margin-left: auto;
   }
 `
 
@@ -26,7 +26,7 @@ const Line = styled.div`
 const BookingLink = styled(Link)`
   background: #e6ffe6;
   border-radius: 0.75rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.6rem;
   text-decoration: none;
   display: inline-block;
   font-size: 0.875rem;

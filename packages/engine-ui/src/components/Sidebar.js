@@ -64,6 +64,10 @@ const Line = styled.div`
   align-self: center;
 `
 
+const AddNewContainer = styled.div`
+  margin-top: 1rem;
+`
+
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
 
@@ -96,12 +100,20 @@ const Sidebar = (state) => {
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
             <Filters />
-            <TextLink to="/add-booking">
-              <h3>+ Lägg till bokning</h3>
-            </TextLink>
-            <TextLink to="/add-bookings">
-              <h3>+ Generera historiska bokningar</h3>
-            </TextLink>
+            <AddNewContainer>
+              <TextLink to="/add-booking">
+                <Elements.AddFormFieldButton>
+                  + Lägg till bokning
+                </Elements.AddFormFieldButton>
+              </TextLink>
+            </AddNewContainer>
+            <AddNewContainer>
+              <TextLink to="/add-bookings">
+                <Elements.AddFormFieldButton>
+                  + Generera historiska bokningar
+                </Elements.AddFormFieldButton>
+              </TextLink>
+            </AddNewContainer>
           </>
         )
       case 'cars':

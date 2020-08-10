@@ -24,10 +24,12 @@ const App = () => {
     })
   }
 
-  const createBooking = ({ pickup, delivery }) => {
+  const createBooking = ({ pickup, delivery, deliverAtLatest }) => {
+
     socket.emit('new-booking', {
       pickup,
       delivery,
+      deliverAtLatest
     })
   }
 

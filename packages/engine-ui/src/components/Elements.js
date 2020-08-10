@@ -1,3 +1,4 @@
+import React from 'react'
 import { blue, grey } from '@material-ui/core/colors'
 import { withStyles } from '@material-ui/core/styles'
 import MaterialSwitch from '@material-ui/core/Switch'
@@ -22,6 +23,29 @@ const InputInnerContainer = styled.div`
   width: 100%;
 `
 
+const StyledAddFormFieldButton = styled.button`
+  color: #666666;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-weight: bold;
+  padding: 0;
+  font-size: ${({ size }) => size || '1rem'};
+`
+
+const AddFormFieldButton = ({ onClickHandler, children }) => (
+  <StyledAddFormFieldButton type="button" onClick={onClickHandler}>
+    {children}
+  </StyledAddFormFieldButton>
+)
+
+const SmallInfo = styled.p`
+  font-style: italic;
+  font-size: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+`
+
 const TextInput = styled.input`
   border: none;
   background-color: #f1f3f5;
@@ -34,7 +58,7 @@ const TextInput = styled.input`
 `
 
 const Label = styled.label`
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   display: block;
   font-weight: bold;
   font-size: 0.875rem;
@@ -120,4 +144,6 @@ export default {
   LocationIcon,
   FormLabel,
   NavIconLink,
+  AddFormFieldButton,
+  SmallInfo,
 }

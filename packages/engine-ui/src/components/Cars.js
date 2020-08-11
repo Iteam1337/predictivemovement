@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import { FlyToInterpolator } from 'react-map-gl'
+import { ViewportContext } from '../utils/ViewportContext'
 
 const CarsContainer = styled.div`
   a:not(:first-child) {
@@ -30,18 +32,30 @@ const NoCarsInfo = styled.p`
 `
 
 const Cars = ({ cars }) => {
+  const { setViewport } = React.useContext(ViewportContext)
   if (!cars.length)
     return <NoCarsInfo>Det finns inga aktuella bilar...</NoCarsInfo>
 
   return (
     <CarsContainer>
-      {cars.map((car) => {
-        return (
-          <CarListItem to={`/details?type=car&id=${car.id}`} key={car.id}>
-            {car.id}
-          </CarListItem>
-        )
-      })}
+      {cars.map((car) => (
+        <CarListItem
+          to={`/details?type=car&id=${car.id}`}
+          key={car.id}
+          onClick={() =>
+            setViewport({
+              latitude: car.position.lat,
+              longitude: car.position.lon,
+              zoom: 17,
+              transitionDuration: 3000,
+              transitionInterpolator: new FlyToInterpolator(),
+              transitionEasing: (t) => t * (2 - t),
+            })
+          }
+        >
+          {car.id}
+        </CarListItem>
+      ))}
     </CarsContainer>
   )
 }

@@ -95,14 +95,38 @@ public class VRPSetting {
             Location pickupLocation = getLocation(jsonPickup);
             shipmentBuilder.setPickupLocation(pickupLocation);
             locations.put(jsonPickup.getString("hint"), pickupLocation);
-            shipmentBuilder.setPickupTimeWindow(getTimeWindow(jsonPickup));
-            
+
+
+            // pickup time windows
+            JSONArray pickupTimeWindows = jsonPickup.optJSONArray("time_windows");
+
+            if (pickupTimeWindows != null) {
+                for (Object window : pickupTimeWindows) {
+                    JSONObject jsonTimeWindow = (JSONObject) window;
+                    double earliest = jsonTimeWindow.optDouble("earliest", 0.0);
+                    double latest = jsonTimeWindow.optDouble("latest", Double.MAX_VALUE);
+                    shipmentBuilder.setPickupTimeWindow(new TimeWindow(earliest, latest));
+                }
+            }
+
+
             // delivery
             JSONObject jsonDelivery = jsonBooking.getJSONObject("delivery");
             Location deliveryLocation = getLocation(jsonDelivery);
             shipmentBuilder.setDeliveryLocation(deliveryLocation);
-            
-            shipmentBuilder.setDeliveryTimeWindow(getTimeWindow(jsonDelivery));
+
+            // delivery time windows
+            JSONArray deliveryTimeWindows = jsonDelivery.optJSONArray("time_windows");
+
+            if (deliveryTimeWindows != null) {
+                for (Object window : deliveryTimeWindows) {
+                    JSONObject jsonTimeWindow = (JSONObject) window;
+                    double earliest = jsonTimeWindow.optDouble("earliest", 0.0);
+                    double latest = jsonTimeWindow.optDouble("latest", Double.MAX_VALUE);
+                    shipmentBuilder.setDeliveryTimeWindow(new TimeWindow(earliest, latest));
+                }
+            }
+
             locations.put(jsonDelivery.getString("hint"), deliveryLocation);
 
             // package capacity
@@ -118,16 +142,6 @@ public class VRPSetting {
         float latitude = jsonLocation.getFloat("lat");
         Location location = Location.newInstance(longitude, latitude);
         return location;
-    }
-
-    private TimeWindow getTimeWindow(JSONObject jsonLocation) {
-        JSONObject jsonTimeWindow = jsonLocation.optJSONObject("time_window");
-        if (jsonTimeWindow == null) {
-            return new TimeWindow(0.0, Double.MAX_VALUE);
-        }
-        double earliest = jsonTimeWindow.optDouble("earliest", 0.0);
-        double latest = jsonTimeWindow.optDouble("latest", Double.MAX_VALUE);
-        return new TimeWindow(earliest, latest);
     }
 
     private void createCostMatrix() {

@@ -3,9 +3,11 @@ import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import Hooks from '../Hooks'
 import mapUtils from '../utils/mapUtils'
+import { ViewportContext } from '../utils/ViewportContext'
 
 const Map = ({ state, onMapClick }) => {
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
+  const { viewport, setViewport, onLoad } = React.useContext(ViewportContext)
 
   const layers = [
     mapUtils.toGeoJsonLayer(
@@ -30,10 +32,12 @@ const Map = ({ state, onMapClick }) => {
 
   return (
     <DeckGL
-      initialViewState={mapState.viewport}
       layers={layers}
       controller={true}
       onClick={onMapClick}
+      viewState={viewport}
+      onViewStateChange={({ viewState }) => setViewport(viewState)}
+      onLoad={onLoad}
     >
       <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />
     </DeckGL>

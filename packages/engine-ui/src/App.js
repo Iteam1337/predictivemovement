@@ -6,6 +6,7 @@ import { reducer, initState } from './utils/reducer'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
+import { ViewportProvider } from './utils/ViewportContext'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
@@ -64,7 +65,7 @@ const App = () => {
   })
 
   return (
-    <>
+    <ViewportProvider>
       <Router>
         <Logotype />
         <Sidebar
@@ -79,7 +80,7 @@ const App = () => {
           <Map onMapClick={onMapClick} state={state} />
         </Route>
       </Router>
-    </>
+    </ViewportProvider>
   )
 }
 

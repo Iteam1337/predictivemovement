@@ -7,28 +7,67 @@ defmodule MessageGeneratorTest do
   @cars_exchange "cars"
   @bookings_exchange "bookings"
 
+  @kungstradgarden %{lat: 59.332632, lon: 18.071692}
+  @iteam %{lat: 59.343664, lon: 18.069928}
+  @ralis %{lat: 59.330513, lon: 18.018228}
+  @alvik %{lat: 59.3312804, lon: 17.9753744}
+  @bromma %{lat: 59.3417938, lon: 17.9028741}
+  @slussen %{lat: 59.3166939, lon: 18.0669377}
+
+  @iteamToRalis %{
+    pickup: @iteam,
+    delivery: @ralis,
+    id: "iteamToRalis"
+  }
+
+  @alvikToBromma %{
+    pickup: @alvik,
+    delivery: @bromma,
+    id: "alvikToBromma"
+  }
+
+  @volvo %{
+    id: "volvo",
+    position: @slussen
+  }
+
   test "generates a booking" do
     {:ok, connection} = AMQP.Connection.open(@rmq_uri)
     {:ok, channel} = AMQP.Channel.open(connection)
 
+    # normal order
+    # pickup first -> pickup second -> deliver second -> deliver first
+
+    # add 2 days to pickup for first
+    pickupEarliest =
+      DateTime.utc_now()
+      |> DateTime.add(60 * 60 * 24 * 2)
+      |> DateTime.diff(DateTime.utc_now())
+
+    # 2 days and 2 hours in the future
+    pickupLatest = pickupEarliest + 60 * 60 * 2
+
     first_booking =
-      MessageGenerator.random_booking(@stockholm)
+      @iteamToRalis
+      |> MessageGenerator.add_random_id_and_time()
       |> Map.put(:metadata, %{external_id: "first booking"})
-      |> Map.update!(:pickup, &Map.merge(&1, %{time_windows: [%{earliest: 1000, latest: 5000}]}))
       |> Map.update!(
-        :delivery,
-        &Map.merge(&1, %{time_windows: [%{earliest: 4000, latest: 6000}]})
+        :pickup,
+        &Map.merge(&1, %{
+          time_windows: [%{earliest: pickupEarliest, latest: pickupLatest}]
+        })
       )
       |> Poison.encode!()
 
     second_booking =
-      MessageGenerator.random_booking(@stockholm)
+      @alvikToBromma
+      |> MessageGenerator.add_random_id_and_time()
       |> Map.put(:metadata, %{external_id: "second booking"})
-      |> Map.update!(:pickup, &Map.merge(&1, %{time_windows: [%{earliest: 6000, latest: 15000}]}))
+      |> Map.update!(:pickup, &Map.merge(&1, %{time_windows: [%{earliest: 0, latest: 15000}]}))
       |> Poison.encode!()
 
     car =
-      MessageGenerator.random_car(@stockholm)
+      @volvo
       |> Poison.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "new", first_booking)

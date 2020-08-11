@@ -9,9 +9,15 @@ const CreateBooking = ({ createBooking }) => {
   const history = useHistory()
 
   const [formState, setState] = React.useState({
+    id: '',
+    measurement: '',
+    weight: undefined,
+    timeRestriction: undefined,
+    cargo: '',
     pickup: { name: '', coordinates: [] },
     delivery: { name: '', coordinates: [] },
-    deliverAtLatest: undefined,
+    sender: { name: '', contact: '' },
+    recipient: { name: '', contact: '' },
   })
 
   const onSubmitHandler = (event) => {
@@ -19,15 +25,17 @@ const CreateBooking = ({ createBooking }) => {
     if (
       !formState.pickup.coordinates.length ||
       !formState.delivery.coordinates.length
-    )
+    ) {
       return false
+    }
+
     const [pickupLng, pickupLat] = formState.pickup.coordinates
     const [deliveryLng, deliveryLat] = formState.delivery.coordinates
 
     createBooking({
+      ...formState,
       pickup: [pickupLat, pickupLng],
       delivery: [deliveryLat, deliveryLng],
-      deliverAtLatest: formState.deliverAtLatest,
     })
 
     history.push('/')

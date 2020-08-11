@@ -1,7 +1,7 @@
 import React from 'react'
 import Elements from '../Elements'
 import locationIcon from '../../assets/location.svg'
-import BookingTimeRestriction from '../BookingTimeRestriction'
+import BookingTimeRestriction from './BookingTimeRestriction'
 import styled from 'styled-components'
 import helpers from '../../utils/helpers'
 
@@ -45,7 +45,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const handleBookingTimeRestrictionChange = (date) =>
     onChangeHandler((currentState) => ({
       ...currentState,
-      deliverAtLatest: new Date(date),
+      timeRestriction: new Date(date),
     }))
 
   const handleInputChange = (event) => {
@@ -65,6 +65,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           })
         ),
       }))
+
       return setShowDropdown((currentState) => ({
         ...currentState,
         [event.target.name]: true,
@@ -79,26 +80,15 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
 
   const handleDropdownSelect = (event, address) => {
     event.preventDefault()
-    switch (event.target.name) {
-      case 'pickup':
-        onChangeHandler((currentState) => ({
-          ...currentState,
-          pickup: { name: address.name, coordinates: address.coordinates },
-        }))
+    onChangeHandler((currentState) => ({
+      ...currentState,
+      [event.target.name]: {
+        name: address.name,
+        coordinates: address.coordinates,
+      },
+    }))
 
-        return setShowDropdown({ ...showDropdown, pickup: false })
-
-      case 'delivery':
-        onChangeHandler((currentState) => ({
-          ...currentState,
-          delivery: { name: address.name, coordinates: address.coordinates },
-        }))
-
-        return setShowDropdown({ ...showDropdown, delivery: false })
-
-      default:
-        return
-    }
+    return setShowDropdown({ ...showDropdown, [event.target.name]: false })
   }
 
   return (
@@ -175,7 +165,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           setShowBookingTimeRestriction((currentValue) => !currentValue)
           return onChangeHandler((currentState) => ({
             ...currentState,
-            deliverAtLatest: undefined,
+            timeRestriction: undefined,
           }))
         }}
       />
@@ -183,7 +173,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       <TimeRestrictionWrapper>
         {showBookingTimeRestriction && (
           <BookingTimeRestriction
-            deliverAtLatest={state.deliverAtLatest}
+            timeRestriction={state.timeRestriction}
             onChangeHandler={handleBookingTimeRestrictionChange}
             inputElement={
               <Elements.TimeRestrictionDateInput

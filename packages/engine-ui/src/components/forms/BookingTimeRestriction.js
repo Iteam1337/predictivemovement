@@ -2,7 +2,7 @@ import React from 'react'
 import DatePicker from 'react-datepicker'
 
 const Component = ({
-  deliverAtLatest,
+  timeRestriction,
   onChangeHandler,
   placeholderText,
   inputElement,
@@ -11,7 +11,7 @@ const Component = ({
     <div style={{ width: '100%' }}>
       <DatePicker
         id="startDate"
-        selected={deliverAtLatest}
+        selected={timeRestriction}
         onChange={onChangeHandler}
         showTimeSelect
         minDate={new Date()}

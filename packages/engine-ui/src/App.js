@@ -24,13 +24,8 @@ const App = () => {
     })
   }
 
-  const createBooking = ({ pickup, delivery, deliverAtLatest }) => {
-
-    socket.emit('new-booking', {
-      pickup,
-      delivery,
-      deliverAtLatest
-    })
+  const createBooking = (params) => {
+    socket.emit('new-booking', params)
   }
 
   const dispatchOffers = () => {

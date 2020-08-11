@@ -99,6 +99,7 @@ const SubmitButton = styled.button`
     color: #666666;
   }
 `
+
 const CancelButton = styled.button`
   padding: 0.75rem 2.3rem;
   background: #fff;

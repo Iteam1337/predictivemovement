@@ -44,7 +44,7 @@ const Filters = () => {
           />
         }
         value="top"
-        label={<Elements.FormLabel>Nya</Elements.FormLabel>}
+        label={<Elements.CheckboxLabel>Nya</Elements.CheckboxLabel>}
         labelPlacement="end"
       />
       <FormControlLabel
@@ -56,7 +56,7 @@ const Filters = () => {
           />
         }
         value="top"
-        label={<Elements.FormLabel>Tilldelade</Elements.FormLabel>}
+        label={<Elements.CheckboxLabel>Tilldelade</Elements.CheckboxLabel>}
         labelPlacement="end"
       />
       <FormControlLabel
@@ -68,7 +68,7 @@ const Filters = () => {
           />
         }
         value="top"
-        label={<Elements.FormLabel>Levererade</Elements.FormLabel>}
+        label={<Elements.CheckboxLabel>Levererade</Elements.CheckboxLabel>}
         labelPlacement="end"
       />
     </Container>

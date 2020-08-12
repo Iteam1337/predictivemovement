@@ -36,6 +36,7 @@ const RoundedLink = styled(Link)`
   :hover {
     background: #ccffcc;
   }
+  margin: ${({ margin }) => margin && margin};
 `
 
 const TextInput = styled.input`

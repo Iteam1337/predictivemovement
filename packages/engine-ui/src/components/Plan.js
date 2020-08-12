@@ -6,8 +6,11 @@ import Icons from '../assets/Icons'
 import RouteActivities from './RouteActivities'
 
 const RouteTitleWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 50% 1fr;
   align-items: baseline;
+  justify-items: flex-start;
+  width: 100%;
 
   button {
     background: none;
@@ -35,6 +38,7 @@ const Plan = ({ state }) => {
                 Rutt {index + 1}
               </Elements.StrongParagraph>
               <button
+                margin="0"
                 onClick={() => {
                   toggle(car.id)
                   history.push('/')

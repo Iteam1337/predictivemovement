@@ -57,7 +57,7 @@ const Content = styled.div`
   width: 325px;
 `
 
-const Line = styled.div`
+const VerticalLine = styled.div`
   background: transparent;
   border-left: 1px solid #e5e5e5;
   height: 87vh;
@@ -174,7 +174,7 @@ const Sidebar = (state) => {
 
       {pathname !== '/' && (
         <>
-          <Line />
+          <VerticalLine />
           <Content>
             <RouterSwitch>
               <Route path="/details">

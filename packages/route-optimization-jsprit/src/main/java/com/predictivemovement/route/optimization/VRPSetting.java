@@ -1,5 +1,7 @@
 package com.predictivemovement.route.optimization;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,8 +105,15 @@ public class VRPSetting {
             if (pickupTimeWindows != null) {
                 for (Object window : pickupTimeWindows) {
                     JSONObject jsonTimeWindow = (JSONObject) window;
-                    double earliest = jsonTimeWindow.optDouble("earliest", 0.0);
-                    double latest = jsonTimeWindow.optDouble("latest", Double.MAX_VALUE);
+                    String earliestString = jsonTimeWindow.getString("earliest");
+                    String latestString = jsonTimeWindow.getString("latest");
+                    ZonedDateTime earliestDate = ZonedDateTime.parse(earliestString);
+                    ZonedDateTime latestDate = ZonedDateTime.parse(latestString);
+                    ZonedDateTime now = ZonedDateTime.now();
+                    double earliestDiff = ChronoUnit.SECONDS.between(now, earliestDate);
+                    double latestDiff = ChronoUnit.SECONDS.between(now, latestDate);
+                    double earliest = earliestDiff > 0 ? earliestDiff: 0.0;
+                    double latest = latestDiff > 0 ? latestDiff: Double.MAX_VALUE;
                     shipmentBuilder.setPickupTimeWindow(new TimeWindow(earliest, latest));
                 }
             }
@@ -121,8 +130,15 @@ public class VRPSetting {
             if (deliveryTimeWindows != null) {
                 for (Object window : deliveryTimeWindows) {
                     JSONObject jsonTimeWindow = (JSONObject) window;
-                    double earliest = jsonTimeWindow.optDouble("earliest", 0.0);
-                    double latest = jsonTimeWindow.optDouble("latest", Double.MAX_VALUE);
+                    String earliestString = jsonTimeWindow.getString("earliest");
+                    String latestString = jsonTimeWindow.getString("latest");
+                    ZonedDateTime earliestDate = ZonedDateTime.parse(earliestString);
+                    ZonedDateTime latestDate = ZonedDateTime.parse(latestString);
+                    ZonedDateTime now = ZonedDateTime.now();
+                    double earliestDiff = ChronoUnit.SECONDS.between(now, earliestDate);
+                    double latestDiff = ChronoUnit.SECONDS.between(now, latestDate);
+                    double earliest = earliestDiff > 0 ? earliestDiff: 0.0;
+                    double latest = latestDiff > 0 ? latestDiff: Double.MAX_VALUE;
                     shipmentBuilder.setDeliveryTimeWindow(new TimeWindow(earliest, latest));
                 }
             }

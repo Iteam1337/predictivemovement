@@ -30,8 +30,6 @@ const CreateBooking = ({ createBooking }) => {
       return false
     }
 
-    console.log('this isthe formState: ', formState)
-
     createBooking({
       ...formState,
       pickup: formState.pickup,

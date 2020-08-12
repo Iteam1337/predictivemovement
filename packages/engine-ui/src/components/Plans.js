@@ -4,6 +4,8 @@ import Elements from './Elements'
 import { useHistory } from 'react-router-dom'
 import Icons from '../assets/Icons'
 import RouteActivities from './RouteActivities'
+import { ViewportContext } from '../utils/ViewportContext'
+import { FlyToInterpolator } from 'react-map-gl'
 
 const RouteTitleWrapper = styled.div`
   display: grid;
@@ -21,6 +23,7 @@ const RouteTitleWrapper = styled.div`
   }
 `
 const Plans = ({ cars }) => {
+  const { setViewport } = React.useContext(ViewportContext)
   const [showRouteInfo, setOpenRouteInfo] = React.useState(false)
   const history = useHistory()
   const driverPlanes = cars.filter((d) => d.activities.length > 0)
@@ -52,6 +55,16 @@ const Plans = ({ cars }) => {
                 <Elements.RoundedLink
                   margin="0 0.5rem"
                   to={`/details?type=car&id=${car.id}`}
+                  onClick={() =>
+                    setViewport({
+                      latitude: car.position.lat,
+                      longitude: car.position.lon,
+                      zoom: 17,
+                      transitionDuration: 3000,
+                      transitionInterpolator: new FlyToInterpolator(),
+                      transitionEasing: (t) => t * (2 - t),
+                    })
+                  }
                 >
                   {car.id}
                 </Elements.RoundedLink>

@@ -1,19 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Elements from './Elements'
-
-const ActivityInfo = styled.div`
-  display: flex;
-  align-items: center;
-
-  p:first-of-type {
-    margin-right: 1rem;
-  }
-
-  a {
-    margin-left: auto;
-  }
-`
+import RouteActivities from './RouteActivities'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -22,18 +10,7 @@ const Line = styled.div`
 
 const CarDetails = ({ car }) => {
   if (!car) return <p>Loading...</p>
-  const activities = car.activities.slice(1, -1)
 
-  const getLabelForActivities = (type) => {
-    switch (type) {
-      case 'pickupShipment':
-        return 'Upphämtning'
-      case 'deliverShipment':
-        return 'Avlämning'
-      default:
-        return
-    }
-  }
   return (
     <div>
       <Elements.StrongParagraph>ID:</Elements.StrongParagraph>
@@ -42,17 +19,7 @@ const CarDetails = ({ car }) => {
       {car.activities.length > 0 && (
         <>
           <Elements.StrongParagraph>Rutt</Elements.StrongParagraph>
-          {activities.map((activity, index) => (
-            <ActivityInfo key={index}>
-              <p>{index + 1}</p>
-              <p>{getLabelForActivities(activity.type)}</p>
-              <Elements.RoundedLink
-                to={`/details?type=booking&id=${activity.id}`}
-              >
-                {activity.id}
-              </Elements.RoundedLink>
-            </ActivityInfo>
-          ))}
+          <RouteActivities car={car} />
         </>
       )}
     </div>

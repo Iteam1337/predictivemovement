@@ -42,10 +42,11 @@ defmodule MessageGeneratorTest do
     pickupEarliest =
       DateTime.utc_now()
       |> DateTime.add(60 * 60 * 24 * 2)
-      |> DateTime.diff(DateTime.utc_now())
 
     # 2 days and 2 hours in the future
-    pickupLatest = pickupEarliest + 60 * 60 * 2
+    pickupLatest =
+      pickupEarliest
+      |> DateTime.add(60 * 60 * 2)
 
     first_booking =
       @iteamToRalis
@@ -63,7 +64,14 @@ defmodule MessageGeneratorTest do
       @alvikToBromma
       |> MessageGenerator.add_random_id_and_time()
       |> Map.put(:metadata, %{external_id: "second booking"})
-      |> Map.update!(:pickup, &Map.merge(&1, %{time_windows: [%{earliest: 0, latest: 15000}]}))
+      |> Map.update!(
+        :pickup,
+        &Map.merge(&1, %{
+          time_windows: [
+            %{earliest: DateTime.utc_now(), latest: DateTime.utc_now() |> DateTime.add(15000)}
+          ]
+        })
+      )
       |> Poison.encode!()
 
     car =

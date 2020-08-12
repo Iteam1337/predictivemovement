@@ -12,10 +12,9 @@ const CreateBooking = ({ createBooking }) => {
     id: '',
     measurement: '',
     weight: undefined,
-    timeRestriction: undefined,
     cargo: '',
-    pickup: { name: '', coordinates: [] },
-    delivery: { name: '', coordinates: [] },
+    pickup: { name: '', lat: '', lon: '', timewindows: null },
+    delivery: { name: '', lat: '', lon: '', timewindows: null },
     sender: { name: '', contact: '' },
     recipient: { name: '', contact: '' },
   })
@@ -23,19 +22,20 @@ const CreateBooking = ({ createBooking }) => {
   const onSubmitHandler = (event) => {
     event.preventDefault()
     if (
-      !formState.pickup.coordinates.length ||
-      !formState.delivery.coordinates.length
+      !formState.pickup.lat ||
+      !formState.pickup.lon ||
+      !formState.delivery.lat ||
+      !formState.delivery.lon
     ) {
       return false
     }
 
-    const [pickupLng, pickupLat] = formState.pickup.coordinates
-    const [deliveryLng, deliveryLat] = formState.delivery.coordinates
+    console.log('this isthe formState: ', formState)
 
     createBooking({
       ...formState,
-      pickup: [pickupLat, pickupLng],
-      delivery: [deliveryLat, deliveryLng],
+      pickup: formState.pickup,
+      delivery: formState.delivery,
     })
 
     history.push('/')

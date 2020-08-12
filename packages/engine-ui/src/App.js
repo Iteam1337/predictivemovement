@@ -25,6 +25,7 @@ const App = () => {
   }
 
   const createBooking = (params) => {
+    console.log('this is theparams: ', params)
     socket.emit('new-booking', params)
   }
 

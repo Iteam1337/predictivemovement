@@ -1,4 +1,6 @@
+import React from 'react'
 import { useLocation } from 'react-router-dom'
+import helpers from './utils/helpers'
 
 const useFilteredStateFromQueryParams = (state) => {
   const useQueryParams = () => new URLSearchParams(useLocation().search)
@@ -25,4 +27,30 @@ const useFilteredStateFromQueryParams = (state) => {
   }
 }
 
-export default { useFilteredStateFromQueryParams }
+const useGetSuggestedAddresses = (initialState) => {
+  const [suggested, set] = React.useState(initialState)
+  const find = (propertyName, searchTerm, callback) =>
+    helpers.findAddress(searchTerm).then(({ features }) => {
+      set((currentState) => ({
+        ...currentState,
+        [propertyName]: features.map(
+          ({
+            geometry: {
+              coordinates: [lon, lat],
+            },
+            properties: { name },
+          }) => ({
+            name,
+            lon,
+            lat,
+          })
+        ),
+      }))
+
+      return callback()
+    })
+
+  return [find, suggested]
+}
+
+export default { useFilteredStateFromQueryParams, useGetSuggestedAddresses }

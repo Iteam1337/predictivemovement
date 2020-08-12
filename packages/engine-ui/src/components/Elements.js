@@ -58,6 +58,16 @@ const TextInput = styled.input`
     iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
 `
 
+const DateInput = styled.input`
+  border: none;
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.75rem;
+  padding: ${({ iconInset }) =>
+    iconInset ? '0.5rem 0 0.5rem 2rem' : '0.5rem'};
+`
+
 const Label = styled.label`
   margin-bottom: 0.25rem;
   display: block;
@@ -122,6 +132,14 @@ const FormInputIcon = styled.img`
   left: 12.5px;
 `
 
+const DateInputIcon = styled.img`
+  width: 16px;
+  height: 18px;
+  position: absolute;
+  top: 6px;
+  left: 10px;
+`
+
 const StrongParagraph = styled.label`
   margin-bottom: 0.5rem;
   display: block;
@@ -131,25 +149,33 @@ const StrongParagraph = styled.label`
 const NavIconLink = styled(Link)`
   margin-bottom: 5rem;
 `
+const TimeRestrictionDateInputWrapper = styled.div`
+  margin-bottom: 0.25rem;
+`
 
 // eslint-disable-next-line react/display-name
 const TimeRestrictionDateInput = React.forwardRef(
-  ({ onChange, onClick, value }, ref) => (
-    <InputContainer>
-      <InputInnerContainer>
-        <FormInputIcon alt="Time restriction icon" src={`${clockIcon}`} />
-        <TextInput
-          iconInset
-          onChange={onChange}
-          onClick={onClick}
-          value={value}
-          ref={ref}
-          placeholder="T.ex 2020-11-12 13:00"
-          required
-        />
-      </InputInnerContainer>
-    </InputContainer>
-  )
+  ({ onChange, onClick, value, placeholder, withIcon = true }, ref) => {
+    return (
+      <TimeRestrictionDateInputWrapper>
+        <InputInnerContainer>
+          {withIcon && (
+            <DateInputIcon alt="Time restriction icon" src={`${clockIcon}`} />
+          )}
+
+          <DateInput
+            iconInset={withIcon}
+            onChange={onChange}
+            onClick={onClick}
+            value={value}
+            ref={ref}
+            placeholder={placeholder}
+            required
+          />
+        </InputInnerContainer>
+      </TimeRestrictionDateInputWrapper>
+    )
+  }
 )
 
 export default {

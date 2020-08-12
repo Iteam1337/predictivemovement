@@ -18,6 +18,7 @@ import CarDetails from './CarDetails'
 import Filters from './Filters'
 import AddVehicle from './AddVehicle'
 import Dispatch from '../assets/dispatch.svg'
+import Plan from './Plan'
 
 const Container = styled.div`
   position: absolute;
@@ -108,7 +109,7 @@ const Sidebar = (state) => {
         return (
           <>
             <h3>Aktuella fordon</h3>
-            <Cars cars={data.cars} />
+            <Cars cars={state.cars} />
             <TextLink to="/add-vehicle">
               <h3>+ Lägg till bil</h3>
             </TextLink>
@@ -117,6 +118,7 @@ const Sidebar = (state) => {
       case 'dispatch':
         return (
           <>
+            <Plan state={state.cars} />
             <button onClick={state.dispatchOffers}>Dispatch Offers</button>
             <button onClick={state.resetState}>Reset state</button>
           </>

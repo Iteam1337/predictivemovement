@@ -8,6 +8,7 @@ import java.util.Map;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.cost.VehicleRoutingTransportCosts;
 import com.graphhopper.jsprit.core.problem.job.Shipment;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindow;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleTypeImpl;
@@ -95,10 +96,37 @@ public class VRPSetting {
             shipmentBuilder.setPickupLocation(pickupLocation);
             locations.put(jsonPickup.getString("hint"), pickupLocation);
 
+
+            // pickup time windows
+            JSONArray pickupTimeWindows = jsonPickup.optJSONArray("time_windows");
+
+            if (pickupTimeWindows != null) {
+                for (Object window : pickupTimeWindows) {
+                    JSONObject jsonTimeWindow = (JSONObject) window;
+                    double earliest = jsonTimeWindow.optDouble("earliest", 0.0);
+                    double latest = jsonTimeWindow.optDouble("latest", Double.MAX_VALUE);
+                    shipmentBuilder.setPickupTimeWindow(new TimeWindow(earliest, latest));
+                }
+            }
+
+
             // delivery
             JSONObject jsonDelivery = jsonBooking.getJSONObject("delivery");
             Location deliveryLocation = getLocation(jsonDelivery);
             shipmentBuilder.setDeliveryLocation(deliveryLocation);
+
+            // delivery time windows
+            JSONArray deliveryTimeWindows = jsonDelivery.optJSONArray("time_windows");
+
+            if (deliveryTimeWindows != null) {
+                for (Object window : deliveryTimeWindows) {
+                    JSONObject jsonTimeWindow = (JSONObject) window;
+                    double earliest = jsonTimeWindow.optDouble("earliest", 0.0);
+                    double latest = jsonTimeWindow.optDouble("latest", Double.MAX_VALUE);
+                    shipmentBuilder.setDeliveryTimeWindow(new TimeWindow(earliest, latest));
+                }
+            }
+
             locations.put(jsonDelivery.getString("hint"), deliveryLocation);
 
             // package capacity

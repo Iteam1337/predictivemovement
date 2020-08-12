@@ -17,3 +17,4 @@ venv
 ### Misc
 tmp/
 output/
+.idea

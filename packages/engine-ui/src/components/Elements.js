@@ -1,8 +1,13 @@
 import { blue, grey } from '@material-ui/core/colors'
 import { withStyles } from '@material-ui/core/styles'
 import MaterialSwitch from '@material-ui/core/Switch'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+const FlexRowWrapper = styled.div`
+  display: flex;
+  align-items: baseline;
+`
 const Container = styled.div`
   margin-bottom: 2rem;
 `
@@ -15,6 +20,22 @@ const InputInnerContainer = styled.div`
   position: relative;
   display: inline-block;
   width: 100%;
+`
+
+const RoundedLink = styled(Link)`
+  background: #e6ffe6;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.875rem;
+  color: black;
+  :visited {
+    color: black;
+  }
+  :hover {
+    background: #ccffcc;
+  }
 `
 
 const TextInput = styled.input`
@@ -109,4 +130,6 @@ export default {
   SubmitButton,
   CancelButton,
   LocationIcon,
+  FlexRowWrapper,
+  RoundedLink,
 }

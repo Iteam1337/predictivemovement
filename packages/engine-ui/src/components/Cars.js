@@ -1,28 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { FlyToInterpolator } from 'react-map-gl'
 import { ViewportContext } from '../utils/ViewportContext'
+import Elements from './Elements'
 
 const CarsContainer = styled.div`
   a:not(:first-child) {
     margin-top: 0.5rem;
-  }
-`
-
-const CarListItem = styled(Link)`
-  background: #e6ffe6;
-  border-radius: 0.75rem;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.875rem;
-  color: black;
-  :visited {
-    color: black;
-  }
-  :hover {
-    background: #ccffcc;
   }
 `
 
@@ -39,7 +23,7 @@ const Cars = ({ cars }) => {
   return (
     <CarsContainer>
       {cars.map((car) => (
-        <CarListItem
+        <Elements.RoundedLink
           to={`/details?type=car&id=${car.id}`}
           key={car.id}
           onClick={() =>
@@ -54,7 +38,7 @@ const Cars = ({ cars }) => {
           }
         >
           {car.id}
-        </CarListItem>
+        </Elements.RoundedLink>
       ))}
     </CarsContainer>
   )

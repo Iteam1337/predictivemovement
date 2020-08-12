@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Elements from './Elements'
 
@@ -16,21 +15,6 @@ const ActivityInfo = styled.div`
   }
 `
 
-const BookingLink = styled(Link)`
-  background: #e6ffe6;
-  border-radius: 0.75rem;
-  padding: 0.5rem 0.6rem;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.875rem;
-  color: black;
-  :visited {
-    color: black;
-  }
-  :hover {
-    background: #ccffcc;
-  }
-`
 const RouteActivities = ({ car }) => {
   const activities = car.activities.slice(1, -1)
 
@@ -50,9 +34,9 @@ const RouteActivities = ({ car }) => {
         <ActivityInfo key={index}>
           <p>{index + 1}</p>
           <p>{getLabelForActivities(activity.type)}</p>
-          <BookingLink to={`/details?type=booking&id=${activity.id}`}>
+          <Elements.RoundedLink to={`/details?type=booking&id=${activity.id}`}>
             {activity.id}
-          </BookingLink>
+          </Elements.RoundedLink>
         </ActivityInfo>
       ))}
     </div>

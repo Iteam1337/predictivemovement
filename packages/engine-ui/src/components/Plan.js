@@ -1,26 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import Elements from './Elements'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import Icons from '../assets/Icons'
 import RouteActivities from './RouteActivities'
-
-const BookingLink = styled(Link)`
-  background: #e6ffe6;
-  border-radius: 0.75rem;
-  padding: 0.5rem 0.6rem;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.875rem;
-  color: black;
-  :visited {
-    color: black;
-  }
-  :hover {
-    background: #ccffcc;
-  }
-  ${({ margin }) => margin && `margin: ${margin}`};
-`
 
 const RouteTitleWrapper = styled.div`
   display: flex;
@@ -65,12 +48,12 @@ const Plan = ({ state }) => {
               <>
                 <Elements.FlexRowWrapper>
                   <Elements.StrongParagraph>Fordon</Elements.StrongParagraph>
-                  <BookingLink
+                  <Elements.RoundedLink
                     margin="0 0.5rem"
                     to={`/details?type=car&id=${car.id}`}
                   >
                     {car.id}
-                  </BookingLink>
+                  </Elements.RoundedLink>
                 </Elements.FlexRowWrapper>
                 <RouteActivities car={car} />
               </>

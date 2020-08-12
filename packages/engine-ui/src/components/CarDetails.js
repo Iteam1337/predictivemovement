@@ -1,10 +1,6 @@
 import React from 'react'
-
-import Elements from './Elements'
-import { Link } from 'react-router-dom'
-
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import Elements from './Elements'
 
 const ActivityInfo = styled.div`
   display: flex;
@@ -24,21 +20,6 @@ const Line = styled.div`
   margin: 1rem 0;
 `
 
-const BookingLink = styled(Link)`
-  background: #e6ffe6;
-  border-radius: 0.75rem;
-  padding: 0.5rem 0.6rem;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.875rem;
-  color: black;
-  :visited {
-    color: black;
-  }
-  :hover {
-    background: #ccffcc;
-  }
-`
 const CarDetails = ({ car }) => {
   if (!car) return <p>Loading...</p>
   const activities = car.activities.slice(1, -1)
@@ -65,9 +46,11 @@ const CarDetails = ({ car }) => {
             <ActivityInfo key={index}>
               <p>{index + 1}</p>
               <p>{getLabelForActivities(activity.type)}</p>
-              <BookingLink to={`/details?type=booking&id=${activity.id}`}>
+              <Elements.RoundedLink
+                to={`/details?type=booking&id=${activity.id}`}
+              >
                 {activity.id}
-              </BookingLink>
+              </Elements.RoundedLink>
             </ActivityInfo>
           ))}
         </>

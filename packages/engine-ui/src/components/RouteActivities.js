@@ -1,5 +1,7 @@
 import React from 'react'
+import { FlyToInterpolator } from 'react-map-gl'
 import styled from 'styled-components'
+import { ViewportContext } from '../utils/ViewportContext'
 import Elements from './Elements'
 
 const ActivityInfo = styled.div`
@@ -16,6 +18,7 @@ const ActivityInfo = styled.div`
 `
 
 const RouteActivities = ({ car }) => {
+  const { setViewport } = React.useContext(ViewportContext)
   const activities = car.activities.slice(1, -1)
 
   const getLabelForActivities = (type) => {
@@ -34,7 +37,19 @@ const RouteActivities = ({ car }) => {
         <ActivityInfo key={index}>
           <p>{index + 1}</p>
           <p>{getLabelForActivities(activity.type)}</p>
-          <Elements.RoundedLink to={`/details?type=booking&id=${activity.id}`}>
+          <Elements.RoundedLink
+            to={`/details?type=booking&id=${activity.id}`}
+            onClick={() =>
+              setViewport({
+                latitude: activity.address.lat,
+                longitude: activity.address.lon,
+                zoom: 17,
+                transitionDuration: 2000,
+                transitionInterpolator: new FlyToInterpolator(),
+                transitionEasing: (t) => t * (2 - t),
+              })
+            }
+          >
             {activity.id}
           </Elements.RoundedLink>
         </ActivityInfo>

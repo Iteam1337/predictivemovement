@@ -1,44 +1,21 @@
 import React from 'react'
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { ViewportContext } from '../utils/ViewportContext'
 import { FlyToInterpolator } from 'react-map-gl'
+import Elements from './Elements'
 
-const BookingsContainer = styled.div`
-  a:not(:first-child) {
-    margin-top: 0.5rem;
-  }
-`
-
-const BookingListItem = styled(Link)`
-  background: #e6ffe6;
-  border-radius: 0.75rem;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.875rem;
-  color: black;
-  :visited {
-    color: black;
-  }
-  :hover {
-    background: #ccffcc;
-  }
-`
-
-const NoBookingsInfo = styled.p`
-  font-style: italic;
-  font-size: 0.875rem;
-`
 const Bookings = ({ bookings }) => {
   const { setViewport } = React.useContext(ViewportContext)
   if (!bookings.length)
-    return <NoBookingsInfo>Det finns inga aktuella bokningar...</NoBookingsInfo>
+    return (
+      <Elements.NoInfoParagraph>
+        Det finns inga aktuella bokningar...
+      </Elements.NoInfoParagraph>
+    )
 
   return (
-    <BookingsContainer>
+    <Elements.LinkListContainer>
       {bookings.map((booking) => (
-        <BookingListItem
+        <Elements.RoundedLink
           to={`/details?type=booking&id=${booking.id}`}
           key={booking.id}
           onClick={() =>
@@ -53,9 +30,9 @@ const Bookings = ({ bookings }) => {
           }
         >
           {booking.id}
-        </BookingListItem>
+        </Elements.RoundedLink>
       ))}
-    </BookingsContainer>
+    </Elements.LinkListContainer>
   )
 }
 

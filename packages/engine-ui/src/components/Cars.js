@@ -1,27 +1,19 @@
 import React from 'react'
-import styled from 'styled-components'
 import { FlyToInterpolator } from 'react-map-gl'
 import { ViewportContext } from '../utils/ViewportContext'
 import Elements from './Elements'
 
-const CarsContainer = styled.div`
-  a:not(:first-child) {
-    margin-top: 0.5rem;
-  }
-`
-
-const NoCarsInfo = styled.p`
-  font-style: italic;
-  font-size: 0.875rem;
-`
-
 const Cars = ({ cars }) => {
   const { setViewport } = React.useContext(ViewportContext)
   if (!cars.length)
-    return <NoCarsInfo>Det finns inga aktuella bilar...</NoCarsInfo>
+    return (
+      <Elements.NoInfoParagraph>
+        Det finns inga aktuella bilar...
+      </Elements.NoInfoParagraph>
+    )
 
   return (
-    <CarsContainer>
+    <Elements.LinkListContainer>
       {cars.map((car) => (
         <Elements.RoundedLink
           to={`/details?type=car&id=${car.id}`}
@@ -40,7 +32,7 @@ const Cars = ({ cars }) => {
           {car.id}
         </Elements.RoundedLink>
       ))}
-    </CarsContainer>
+    </Elements.LinkListContainer>
   )
 }
 

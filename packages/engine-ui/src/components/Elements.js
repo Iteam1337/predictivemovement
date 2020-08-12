@@ -8,6 +8,20 @@ const FlexRowWrapper = styled.div`
   display: flex;
   align-items: baseline;
 `
+
+const LinkListContainer = styled.div`
+  a:not(:first-child) {
+    margin-top: 0.5rem;
+  }
+  display: flex;
+  flex-direction: column;
+`
+
+const NoInfoParagraph = styled.p`
+  font-style: italic;
+  font-size: 0.875rem;
+`
+
 const Container = styled.div`
   margin-bottom: 2rem;
 `
@@ -29,6 +43,7 @@ const RoundedLink = styled(Link)`
   text-decoration: none;
   display: inline-block;
   font-size: 0.875rem;
+  width: fit-content;
   color: black;
   :visited {
     color: black;
@@ -133,4 +148,6 @@ export default {
   LocationIcon,
   FlexRowWrapper,
   RoundedLink,
+  LinkListContainer,
+  NoInfoParagraph,
 }

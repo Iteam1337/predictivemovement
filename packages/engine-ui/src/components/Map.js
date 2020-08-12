@@ -20,6 +20,8 @@ const Map = ({ state, onMapClick }) => {
         return history.push(`/details?type=booking&id=${event.object.id}`)
       case 'plan':
         return history.push(`/details?type=car&id=${event.object.id}`)
+      default:
+        return
     }
   }
   const layers = [
@@ -35,14 +37,6 @@ const Map = ({ state, onMapClick }) => {
     ),
     mapUtils.toIconLayer(mapUtils.carIcon(state.cars)),
   ]
-
-  const [mapState] = useState({
-    viewport: {
-      latitude: 61.8294959,
-      longitude: 16.0740589,
-      zoom: 10,
-    },
-  })
 
   const getAddressFromCoordinates = async ({ pickup, delivery }) => {
     if (!pickup || !delivery) return

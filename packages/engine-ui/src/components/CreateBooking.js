@@ -106,6 +106,8 @@ const CreateBooking = ({ createBooking }) => {
             })
             setShowDropdown({ ...showDropdown, delivery: true })
             break
+          default:
+            break
         }
       })
     } else {

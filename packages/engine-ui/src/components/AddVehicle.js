@@ -67,7 +67,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
           <Elements.InputContainer>
             <Elements.Label htmlFor="position">Position</Elements.Label>
             <Elements.InputInnerContainer>
-              <Elements.LocationIcon
+              <Elements.FormInputIcon
                 alt="Position icon"
                 src={`${locationIcon}`}
               />

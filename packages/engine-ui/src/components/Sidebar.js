@@ -18,7 +18,8 @@ import CarDetails from './CarDetails'
 import Filters from './Filters'
 import AddVehicle from './AddVehicle'
 import Dispatch from '../assets/dispatch.svg'
-import Plan from './Plan'
+import Plans from './Plans'
+import Elements from './Elements'
 
 const Container = styled.div`
   position: absolute;
@@ -63,6 +64,12 @@ const VerticalLine = styled.div`
   border-left: 1px solid #e5e5e5;
   height: 87vh;
   align-self: center;
+`
+
+const PlanWrapper = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
 `
 
 const Details = ({ state }) => {
@@ -117,11 +124,19 @@ const Sidebar = (state) => {
         )
       case 'dispatch':
         return (
-          <>
-            <Plan state={state.cars} />
-            <button onClick={state.dispatchOffers}>Dispatch Offers</button>
-            <button onClick={state.resetState}>Reset state</button>
-          </>
+          <PlanWrapper>
+            <h3>Plan</h3>
+
+            <Plans cars={state.cars} />
+            {/* <button onClick={state.dispatchOffers}>Dispatch Offers</button>
+            <button onClick={state.resetState}>Reset state</button> */}
+            <Elements.SubmitButton
+              justifySelf="center"
+              onClick={state.dispatchOffers}
+            >
+              Bekräfta plan
+            </Elements.SubmitButton>
+          </PlanWrapper>
         )
       default:
         return null

@@ -85,6 +85,7 @@ const SubmitButton = styled.button`
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
+  justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
 
   :hover {
     background: #ccffcc;

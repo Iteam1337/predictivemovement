@@ -35,19 +35,17 @@ const BookingDetails = ({ booking }) => {
       .then(({ features }) => features[0].properties.label)
   }
 
-  const setAddressFromCoordinates = async (
-    pickupCoordinates,
-    deliveryCoordinates
-  ) => {
-    const pickupAddress = await getAddressFromCoordinates(pickupCoordinates)
-    const deliveryAddress = await getAddressFromCoordinates(deliveryCoordinates)
-    setAddress({
-      pickup: pickupAddress,
-      delivery: deliveryAddress,
-    })
-  }
-
+  
   React.useEffect(() => {
+    const setAddressFromCoordinates = async (pickupCoordinates, deliveryCoordinates ) => {
+      const pickupAddress = await getAddressFromCoordinates(pickupCoordinates)
+      const deliveryAddress = await getAddressFromCoordinates(deliveryCoordinates)
+      setAddress({
+        pickup: pickupAddress,
+        delivery: deliveryAddress,
+      })
+    }
+    
     if (!booking) return
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])

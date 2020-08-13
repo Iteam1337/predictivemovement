@@ -3,6 +3,11 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { useHistory } from 'react-router-dom'
 import Elements from './Elements'
+import styled from 'styled-components'
+
+const Container = styled.div`
+  margin-top: 1.5rem;
+`
 
 const Filters = () => {
   const [filters, setFilters] = React.useState({ status: [] })
@@ -28,8 +33,8 @@ const Filters = () => {
   }
 
   return (
-    <>
-      <Elements.StrongParagraph>Filter</Elements.StrongParagraph>
+    <Container>
+      <Elements.StrongParagraph>Filtrera</Elements.StrongParagraph>
       <FormControlLabel
         control={
           <Checkbox
@@ -39,7 +44,7 @@ const Filters = () => {
           />
         }
         value="top"
-        label="New"
+        label={<Elements.CheckboxLabel>Nya</Elements.CheckboxLabel>}
         labelPlacement="end"
       />
       <FormControlLabel
@@ -51,7 +56,7 @@ const Filters = () => {
           />
         }
         value="top"
-        label="Assigned"
+        label={<Elements.CheckboxLabel>Tilldelade</Elements.CheckboxLabel>}
         labelPlacement="end"
       />
       <FormControlLabel
@@ -63,10 +68,10 @@ const Filters = () => {
           />
         }
         value="top"
-        label="Delivered"
+        label={<Elements.CheckboxLabel>Levererade</Elements.CheckboxLabel>}
         labelPlacement="end"
       />
-    </>
+    </Container>
   )
 }
 

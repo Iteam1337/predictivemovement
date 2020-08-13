@@ -204,6 +204,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 <div style={{ width: '49%' }}>
                   <BookingTimeRestriction
                     selected={timewindow.latest}
+                    minDate={
+                      timewindow.earliest
+                        ? new Date(timewindow.earliest)
+                        : new Date()
+                    }
                     onChangeHandler={(date) =>
                       handleBookingTimeRestrictionChange(
                         'pickup',
@@ -283,49 +288,57 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <TimeRestrictionWrapper>
           {showBookingTimeRestriction.delivery &&
             state.delivery.timewindows &&
-            state.delivery.timewindows.map((timewindow, index) => (
-              <TimeRestrictionInputPairContainer key={index}>
-                <div style={{ width: '49%' }}>
-                  <BookingTimeRestriction
-                    selected={timewindow.earliest}
-                    onChangeHandler={(date) =>
-                      handleBookingTimeRestrictionChange(
-                        'delivery',
-                        'earliest',
-                        date,
-                        index
-                      )
-                    }
-                    placeholderText="Tidigast"
-                    inputElement={
-                      <Elements.TimeRestrictionDateInput
-                        ref={timeRestrictionInputRef}
-                      />
-                    }
-                  />
-                </div>
-                <div style={{ width: '49%' }}>
-                  <BookingTimeRestriction
-                    selected={timewindow.latest}
-                    onChangeHandler={(date) =>
-                      handleBookingTimeRestrictionChange(
-                        'delivery',
-                        'latest',
-                        date,
-                        index
-                      )
-                    }
-                    placeholderText="Senast"
-                    inputElement={
-                      <Elements.TimeRestrictionDateInput
-                        withIcon={false}
-                        ref={timeRestrictionInputRef}
-                      />
-                    }
-                  />
-                </div>
-              </TimeRestrictionInputPairContainer>
-            ))}
+            state.delivery.timewindows.map((timewindow, index) => {
+              console.log(timewindow)
+              return (
+                <TimeRestrictionInputPairContainer key={index}>
+                  <div style={{ width: '49%' }}>
+                    <BookingTimeRestriction
+                      selected={timewindow.earliest}
+                      onChangeHandler={(date) =>
+                        handleBookingTimeRestrictionChange(
+                          'delivery',
+                          'earliest',
+                          date,
+                          index
+                        )
+                      }
+                      placeholderText="Tidigast"
+                      inputElement={
+                        <Elements.TimeRestrictionDateInput
+                          ref={timeRestrictionInputRef}
+                        />
+                      }
+                    />
+                  </div>
+                  <div style={{ width: '49%' }}>
+                    <BookingTimeRestriction
+                      selected={timewindow.latest}
+                      minDate={
+                        timewindow.earliest
+                          ? new Date(timewindow.earliest)
+                          : new Date()
+                      }
+                      onChangeHandler={(date) =>
+                        handleBookingTimeRestrictionChange(
+                          'delivery',
+                          'latest',
+                          date,
+                          index
+                        )
+                      }
+                      placeholderText="Senast"
+                      inputElement={
+                        <Elements.TimeRestrictionDateInput
+                          withIcon={false}
+                          ref={timeRestrictionInputRef}
+                        />
+                      }
+                    />
+                  </div>
+                </TimeRestrictionInputPairContainer>
+              )
+            })}
           {showBookingTimeRestriction.delivery && state.delivery.timewindows && (
             <AddAdditionalTimeRestrictionsButton
               type="button"

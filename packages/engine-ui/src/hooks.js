@@ -29,11 +29,10 @@ const useFilteredStateFromQueryParams = (state) => {
 
 const useGetSuggestedAddresses = (initialState) => {
   const [suggested, set] = React.useState(initialState)
-  const find = (propertyName, searchTerm, callback) =>
-    helpers.findAddress(searchTerm).then(({ features }) => {
-      set((currentState) => ({
-        ...currentState,
-        [propertyName]: features.map(
+  const find = (query, callback) =>
+    helpers.findAddress(query).then(({ features }) => {
+      set(
+        features.map(
           ({
             geometry: {
               coordinates: [lon, lat],
@@ -44,8 +43,8 @@ const useGetSuggestedAddresses = (initialState) => {
             lon,
             lat,
           })
-        ),
-      }))
+        )
+      )
 
       return callback()
     })

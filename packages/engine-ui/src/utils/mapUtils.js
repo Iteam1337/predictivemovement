@@ -77,8 +77,9 @@ export const carToFeature = (cars) => {
             {
               id,
               properties: {
-                color: palette[0][0],
+                color: palette[0][3],
                 offset: 0,
+                type: 'plan',
               },
             }
           )
@@ -89,7 +90,7 @@ export const carToFeature = (cars) => {
               point([address.lon, address.lat], {
                 id,
                 properties: {
-                  color: type === 'pickupShipment' ? '#ffff00' : '#455DF7',
+                  color: palette[0][4],
                 },
               })
             )
@@ -135,27 +136,44 @@ export const bookingToFeature = (bookings) => {
           id,
           properties: {
             status,
-            color: '#ffff00', // yellow
+            color: '#ccffcc',
           },
         }),
         point([delivery.lon, delivery.lat], {
           id,
           properties: {
-            color: '#455DF7', // blue
             status,
+            color: '#ccffcc',
           },
         }),
       ]
 
-      if (route) {
+      if (status === 'assigned' && route) {
         return [...points, routeAssignedToBooking({ id, route })]
       }
 
+      if (route) {
+        return [
+          ...points,
+          line(
+            route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+            {
+              id,
+              properties: {
+                color: '#e6ffe6',
+                offset: 0,
+                address: { pickup: pickup, delivery: delivery },
+                type: 'booking',
+              },
+            }
+          ),
+        ]
+      }
       return points
     }
   )
 }
-export const toGeoJsonLayer = (id, data) =>
+export const toGeoJsonLayer = (id, data, callback) =>
   new GeoJsonLayer({
     id,
     data,
@@ -166,14 +184,15 @@ export const toGeoJsonLayer = (id, data) =>
     lineWidthScale: 1,
     lineWidthMinPixels: 2,
     getFillColor: (d) => hexToRGBA(d.properties.color, 255),
-    highlightColor: [104, 211, 245, 255],
+    highlightColor: [19, 197, 123, 255],
     autoHighlight: true,
-    getLineColor: (d) => hexToRGBA(d.properties.color, 100),
+    getLineColor: (d) => hexToRGBA(d.properties.color, 255),
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
+    onClick: callback,
   })
 
 export const toIconLayer = (data, callback) => {

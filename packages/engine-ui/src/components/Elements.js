@@ -5,6 +5,24 @@ import MaterialCheckbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import clockIcon from '../assets/schedule-24px.svg'
 
+const FlexRowWrapper = styled.div`
+  display: flex;
+  align-items: baseline;
+`
+
+const LinkListContainer = styled.div`
+  a:not(:first-child) {
+    margin-top: 0.5rem;
+  }
+  display: flex;
+  flex-direction: column;
+`
+
+const NoInfoParagraph = styled.p`
+  font-style: italic;
+  font-size: 0.875rem;
+`
+
 const Container = styled.div`
   margin-bottom: 2rem;
 `
@@ -23,6 +41,24 @@ const InputInnerContainer = styled.div`
   position: relative;
   display: inline-block;
   width: 100%;
+`
+
+const RoundedLink = styled(Link)`
+  background: #e6ffe6;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.875rem;
+  width: fit-content;
+  color: black;
+  :visited {
+    color: black;
+  }
+  :hover {
+    background: #ccffcc;
+  }
+  margin: ${({ margin }) => margin && margin};
 `
 
 const StyledAddFormFieldButton = styled.button`
@@ -103,6 +139,7 @@ const SubmitButton = styled.button`
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
+  justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
 
   :hover {
     background: #ccffcc;
@@ -189,6 +226,10 @@ export default {
   ButtonWrapper,
   SubmitButton,
   CancelButton,
+  FlexRowWrapper,
+  RoundedLink,
+  LinkListContainer,
+  NoInfoParagraph,
   FormInputIcon,
   CheckboxLabel,
   NavIconLink,

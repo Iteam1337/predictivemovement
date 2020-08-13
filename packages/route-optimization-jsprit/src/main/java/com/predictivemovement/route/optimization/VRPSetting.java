@@ -103,6 +103,7 @@ public class VRPSetting {
             JSONArray pickupTimeWindows = jsonPickup.optJSONArray("time_windows");
 
             if (pickupTimeWindows != null) {
+                ArrayList<TimeWindow> pickupTimeWindowsList = new ArrayList<TimeWindow>() ;
                 for (Object window : pickupTimeWindows) {
                     JSONObject jsonTimeWindow = (JSONObject) window;
                     String earliestString = jsonTimeWindow.getString("earliest");
@@ -114,8 +115,9 @@ public class VRPSetting {
                     double latestDiff = ChronoUnit.SECONDS.between(now, latestDate);
                     double earliest = earliestDiff > 0 ? earliestDiff: 0.0;
                     double latest = latestDiff > 0 ? latestDiff: Double.MAX_VALUE;
-                    shipmentBuilder.setPickupTimeWindow(new TimeWindow(earliest, latest));
+                    pickupTimeWindowsList.add(new TimeWindow(earliest, latest));
                 }
+                shipmentBuilder.addAllPickupTimeWindows(pickupTimeWindowsList);
             }
 
 
@@ -128,6 +130,8 @@ public class VRPSetting {
             JSONArray deliveryTimeWindows = jsonDelivery.optJSONArray("time_windows");
 
             if (deliveryTimeWindows != null) {
+                ArrayList<TimeWindow> deliveryTimeWindowsList = new ArrayList<TimeWindow>() ;
+
                 for (Object window : deliveryTimeWindows) {
                     JSONObject jsonTimeWindow = (JSONObject) window;
                     String earliestString = jsonTimeWindow.getString("earliest");
@@ -139,8 +143,9 @@ public class VRPSetting {
                     double latestDiff = ChronoUnit.SECONDS.between(now, latestDate);
                     double earliest = earliestDiff > 0 ? earliestDiff: 0.0;
                     double latest = latestDiff > 0 ? latestDiff: Double.MAX_VALUE;
-                    shipmentBuilder.setDeliveryTimeWindow(new TimeWindow(earliest, latest));
+                    deliveryTimeWindowsList.add(new TimeWindow(earliest, latest));
                 }
+                shipmentBuilder.addAllDeliveryTimeWindows(deliveryTimeWindowsList);
             }
 
             locations.put(jsonDelivery.getString("hint"), deliveryLocation);

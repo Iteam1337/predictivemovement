@@ -10,21 +10,6 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 
-const CarLink = styled(Link)`
-  background: #e6ffe6;
-  border-radius: 0.75rem;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 0.875rem;
-  color: black;
-  :visited {
-    color: black;
-  }
-  :hover {
-    background: #ccffcc;
-  }
-`
 const BookingDetails = ({ booking }) => {
   const [address, setAddress] = React.useState()
   const getAddressFromCoordinates = async ({ lon, lat }) => {
@@ -65,9 +50,9 @@ const BookingDetails = ({ booking }) => {
         <>
           <Elements.StrongParagraph>Bokad transport</Elements.StrongParagraph>
 
-          <CarLink to={`/details?type=car&id=${booking.assigned_to.id}`}>
+          <Elements.RoundedLink to={`/details?type=car&id=${booking.assigned_to.id}`}>
             {booking.id}
-          </CarLink>
+          </Elements.RoundedLink>
         </>
       )}
       <Elements.StrongParagraph>Status:</Elements.StrongParagraph>

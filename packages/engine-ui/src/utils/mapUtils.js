@@ -192,7 +192,7 @@ export const toGeoJsonLayer = (id, data, callback) =>
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
-    onClick: (event) => callback(event),
+    onClick: callback,
   })
 
 export const toIconLayer = (data, callback) => {

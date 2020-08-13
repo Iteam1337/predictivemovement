@@ -1,7 +1,5 @@
 package com.predictivemovement.route.optimization;
 
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.Map;
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.cost.VehicleRoutingTransportCosts;
 import com.graphhopper.jsprit.core.problem.job.Shipment;
-import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindow;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleTypeImpl;
@@ -98,57 +95,20 @@ public class VRPSetting {
             shipmentBuilder.setPickupLocation(pickupLocation);
             locations.put(jsonPickup.getString("hint"), pickupLocation);
 
-
-            // pickup time windows
-            JSONArray pickupTimeWindows = jsonPickup.optJSONArray("time_windows");
-
-            if (pickupTimeWindows != null) {
-                ArrayList<TimeWindow> pickupTimeWindowsList = new ArrayList<TimeWindow>() ;
-                for (Object window : pickupTimeWindows) {
-                    JSONObject jsonTimeWindow = (JSONObject) window;
-                    String earliestString = jsonTimeWindow.getString("earliest");
-                    String latestString = jsonTimeWindow.getString("latest");
-                    ZonedDateTime earliestDate = ZonedDateTime.parse(earliestString);
-                    ZonedDateTime latestDate = ZonedDateTime.parse(latestString);
-                    ZonedDateTime now = ZonedDateTime.now();
-                    double earliestDiff = ChronoUnit.SECONDS.between(now, earliestDate);
-                    double latestDiff = ChronoUnit.SECONDS.between(now, latestDate);
-                    double earliest = earliestDiff > 0 ? earliestDiff: 0.0;
-                    double latest = latestDiff > 0 ? latestDiff: Double.MAX_VALUE;
-                    pickupTimeWindowsList.add(new TimeWindow(earliest, latest));
-                }
-                shipmentBuilder.addAllPickupTimeWindows(pickupTimeWindowsList);
-            }
-
-
             // delivery
             JSONObject jsonDelivery = jsonBooking.getJSONObject("delivery");
             Location deliveryLocation = getLocation(jsonDelivery);
             shipmentBuilder.setDeliveryLocation(deliveryLocation);
-
-            // delivery time windows
-            JSONArray deliveryTimeWindows = jsonDelivery.optJSONArray("time_windows");
-
-            if (deliveryTimeWindows != null) {
-                ArrayList<TimeWindow> deliveryTimeWindowsList = new ArrayList<TimeWindow>() ;
-
-                for (Object window : deliveryTimeWindows) {
-                    JSONObject jsonTimeWindow = (JSONObject) window;
-                    String earliestString = jsonTimeWindow.getString("earliest");
-                    String latestString = jsonTimeWindow.getString("latest");
-                    ZonedDateTime earliestDate = ZonedDateTime.parse(earliestString);
-                    ZonedDateTime latestDate = ZonedDateTime.parse(latestString);
-                    ZonedDateTime now = ZonedDateTime.now();
-                    double earliestDiff = ChronoUnit.SECONDS.between(now, earliestDate);
-                    double latestDiff = ChronoUnit.SECONDS.between(now, latestDate);
-                    double earliest = earliestDiff > 0 ? earliestDiff: 0.0;
-                    double latest = latestDiff > 0 ? latestDiff: Double.MAX_VALUE;
-                    deliveryTimeWindowsList.add(new TimeWindow(earliest, latest));
-                }
-                shipmentBuilder.addAllDeliveryTimeWindows(deliveryTimeWindowsList);
-            }
-
             locations.put(jsonDelivery.getString("hint"), deliveryLocation);
+
+            // time windows
+            VRPSettingTimeWindows timeWindows = new VRPSettingTimeWindows();
+            timeWindows.add(jsonPickup, (timeWindow) -> {
+                shipmentBuilder.addPickupTimeWindow(timeWindow);
+            });
+            timeWindows.add(jsonDelivery, (timeWindow) -> {
+                shipmentBuilder.addDeliveryTimeWindow(timeWindow);
+            });
 
             // package capacity
             shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);

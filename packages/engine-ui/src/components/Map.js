@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import hooks from '../hooks'

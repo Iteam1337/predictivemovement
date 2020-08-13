@@ -22,14 +22,15 @@ const RouteTitleWrapper = styled.div`
     outline: none;
   }
 `
+
 const Plans = ({ cars }) => {
   const { setViewport } = React.useContext(ViewportContext)
   const [showRouteInfo, setOpenRouteInfo] = React.useState(false)
   const history = useHistory()
-  const driverPlanes = cars.filter((d) => d.activities.length > 0)
+  const driverPlans = cars.filter((d) => d.activities.length > 0)
   const toggle = (id) =>
     setOpenRouteInfo((showRouteInfo) => (showRouteInfo === id ? undefined : id)) // close if currently open
-  if (!driverPlanes.length)
+  if (!driverPlans.length)
     return (
       <Elements.NoInfoParagraph>
         Det finns inga planerade rutter...
@@ -38,7 +39,7 @@ const Plans = ({ cars }) => {
 
   return (
     <div>
-      {driverPlanes.map((car, index) => (
+      {driverPlans.map((car, index) => (
         <div key={car.id}>
           <RouteTitleWrapper>
             <Elements.StrongParagraph>

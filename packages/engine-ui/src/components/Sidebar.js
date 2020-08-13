@@ -136,10 +136,7 @@ const Sidebar = (state) => {
         return (
           <PlanWrapper>
             <h3>Plan</h3>
-
             <Plans cars={state.cars} />
-            {/* <button onClick={state.dispatchOffers}>Dispatch Offers</button>
-            <button onClick={state.resetState}>Reset state</button> */}
             <Elements.SubmitButton
               justifySelf="center"
               onClick={state.dispatchOffers}

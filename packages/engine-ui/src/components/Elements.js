@@ -226,7 +226,6 @@ export default {
   ButtonWrapper,
   SubmitButton,
   CancelButton,
-  LocationIcon,
   FlexRowWrapper,
   RoundedLink,
   LinkListContainer,

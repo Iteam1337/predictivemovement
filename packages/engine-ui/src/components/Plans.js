@@ -29,6 +29,12 @@ const Plans = ({ cars }) => {
   const driverPlanes = cars.filter((d) => d.activities.length > 0)
   const toggle = (id) =>
     setOpenRouteInfo((showRouteInfo) => (showRouteInfo === id ? undefined : id)) // close if currently open
+  if (!driverPlanes.length)
+    return (
+      <Elements.NoInfoParagraph>
+        Det finns inga planerade rutter...
+      </Elements.NoInfoParagraph>
+    )
 
   return (
     <div>

@@ -13,11 +13,12 @@ import {
   useLocation,
 } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
-import Hooks from '../Hooks'
+import Hooks from '../hooks'
 import CarDetails from './CarDetails'
 import Filters from './Filters'
 import AddVehicle from './AddVehicle'
 import Dispatch from '../assets/dispatch.svg'
+import Elements from './Elements'
 
 const Container = styled.div`
   position: absolute;
@@ -43,7 +44,6 @@ const NavigationBar = styled.div`
     width: 30px;
     height: 30px;
     cursor: pointer;
-    margin-bottom: 5rem;
   }
 `
 
@@ -62,6 +62,10 @@ const VerticalLine = styled.div`
   border-left: 1px solid #e5e5e5;
   height: 87vh;
   align-self: center;
+`
+
+const AddNewContainer = styled.div`
+  margin-top: 1rem;
 `
 
 const Details = ({ state }) => {
@@ -96,12 +100,20 @@ const Sidebar = (state) => {
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
             <Filters />
-            <TextLink to="/add-booking">
-              <h3>+ Lägg till bokning</h3>
-            </TextLink>
-            <TextLink to="/add-bookings">
-              <h3>+ Generera historiska bokningar</h3>
-            </TextLink>
+            <AddNewContainer>
+              <TextLink to="/add-booking">
+                <Elements.AddFormFieldButton>
+                  + Lägg till bokning
+                </Elements.AddFormFieldButton>
+              </TextLink>
+            </AddNewContainer>
+            <AddNewContainer>
+              <TextLink to="/add-bookings">
+                <Elements.AddFormFieldButton>
+                  + Generera historiska bokningar
+                </Elements.AddFormFieldButton>
+              </TextLink>
+            </AddNewContainer>
           </>
         )
       case 'cars':
@@ -129,27 +141,27 @@ const Sidebar = (state) => {
   return (
     <Container>
       <NavigationBar>
-        <Link to="/">
+        <Elements.NavIconLink to="/">
           <img
             onClick={() => setNavigationCurrentView('bookings')}
             src={ParcelIcon}
             alt="parcel icon"
           />
-        </Link>
-        <Link to="/">
+        </Elements.NavIconLink>
+        <Elements.NavIconLink to="/">
           <img
             onClick={() => setNavigationCurrentView('cars')}
             src={ShippingIcon}
             alt="shipping icon"
           />
-        </Link>
-        <Link to="/">
+        </Elements.NavIconLink>
+        <Elements.NavIconLink to="/">
           <img
             onClick={() => setNavigationCurrentView('dispatch')}
             src={Dispatch}
             alt="Dispatch icon"
           />
-        </Link>
+        </Elements.NavIconLink>
       </NavigationBar>
 
       <Content>

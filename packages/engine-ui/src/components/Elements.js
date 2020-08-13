@@ -1,10 +1,18 @@
-import { blue, grey } from '@material-ui/core/colors'
-import { withStyles } from '@material-ui/core/styles'
-import MaterialSwitch from '@material-ui/core/Switch'
+import React from 'react'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import MaterialCheckbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import clockIcon from '../assets/schedule-24px.svg'
 
 const Container = styled.div`
   margin-bottom: 2rem;
+`
+
+const CheckboxLabel = styled.span`
+  display: block;
+  font-weight: bold;
+  font-size: 0.875rem;
 `
 
 const InputContainer = styled.div`
@@ -17,19 +25,51 @@ const InputInnerContainer = styled.div`
   width: 100%;
 `
 
+const StyledAddFormFieldButton = styled.button`
+  color: #666666;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-weight: bold;
+  padding: 0;
+  font-size: ${({ size }) => size || '1rem'};
+`
+
+const AddFormFieldButton = ({ onClickHandler, children }) => (
+  <StyledAddFormFieldButton type="button" onClick={onClickHandler}>
+    {children}
+  </StyledAddFormFieldButton>
+)
+
+const SmallInfo = styled.p`
+  font-style: italic;
+  font-size: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+`
+
 const TextInput = styled.input`
   border: none;
   background-color: #f1f3f5;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
   border-radius: 0.25rem;
   width: 100%;
   font-size: 0.875rem;
-  padding-left: 2.5rem;
+  padding: ${({ iconInset }) =>
+    iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+`
+
+const DateInput = styled.input`
+  border: none;
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.75rem;
+  padding: ${({ iconInset }) =>
+    iconInset ? '0.5rem 0 0.5rem 2rem' : '0.5rem'};
 `
 
 const Label = styled.label`
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   display: block;
   font-weight: bold;
   font-size: 0.875rem;
@@ -39,6 +79,21 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 `
+
+const Checkbox = ({ label, checked, onChangeHandler }) => (
+  <FormControlLabel
+    control={
+      <MaterialCheckbox
+        checked={checked}
+        onChange={onChangeHandler}
+        inputProps={{ 'aria-label': 'primary checkbox' }}
+      />
+    }
+    value="top"
+    label={<CheckboxLabel>{label}</CheckboxLabel>}
+    labelPlacement="end"
+  />
+)
 
 const SubmitButton = styled.button`
   padding: 0.75rem 2.3rem;
@@ -54,6 +109,7 @@ const SubmitButton = styled.button`
     color: #666666;
   }
 `
+
 const CancelButton = styled.button`
   padding: 0.75rem 2.3rem;
   background: #fff;
@@ -68,39 +124,64 @@ const CancelButton = styled.button`
   }
 `
 
-const LocationIcon = styled.img`
+const FormInputIcon = styled.img`
   width: 16px;
   height: 18px;
   position: absolute;
-  top: 12px;
+  top: 11px;
   left: 12.5px;
 `
+
+const DateInputIcon = styled.img`
+  width: 16px;
+  height: 18px;
+  position: absolute;
+  top: 6px;
+  left: 10px;
+`
+
 const StrongParagraph = styled.label`
   margin-bottom: 0.5rem;
   display: block;
   font-weight: bold;
 `
 
-const Switch = withStyles({
-  switchBase: {
-    color: blue[300],
-    '&$checked': {
-      color: blue[500],
-    },
-    '&$checked + $track': {
-      backgroundColor: blue[500],
-    },
-  },
-  checked: {},
-  track: {
-    backgroundColor: grey[400],
-  },
-})(MaterialSwitch)
+const NavIconLink = styled(Link)`
+  margin-bottom: 5rem;
+`
+const TimeRestrictionDateInputWrapper = styled.div`
+  margin-bottom: 0.25rem;
+`
+
+// eslint-disable-next-line react/display-name
+const TimeRestrictionDateInput = React.forwardRef(
+  ({ onChange, onClick, value, placeholder, withIcon = true }, ref) => {
+    return (
+      <TimeRestrictionDateInputWrapper>
+        <InputInnerContainer>
+          {withIcon && (
+            <DateInputIcon alt="Time restriction icon" src={`${clockIcon}`} />
+          )}
+
+          <DateInput
+            iconInset={withIcon}
+            onChange={onChange}
+            onClick={onClick}
+            value={value}
+            ref={ref}
+            placeholder={placeholder}
+            required
+          />
+        </InputInnerContainer>
+      </TimeRestrictionDateInputWrapper>
+    )
+  }
+)
 
 export default {
   StrongParagraph,
-  Switch,
   Container,
+  TimeRestrictionDateInput,
   InputContainer,
   InputInnerContainer,
   TextInput,
@@ -108,5 +189,10 @@ export default {
   ButtonWrapper,
   SubmitButton,
   CancelButton,
-  LocationIcon,
+  FormInputIcon,
+  CheckboxLabel,
+  NavIconLink,
+  AddFormFieldButton,
+  SmallInfo,
+  Checkbox,
 }

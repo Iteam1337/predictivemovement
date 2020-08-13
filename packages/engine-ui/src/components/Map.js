@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
-import Hooks from '../Hooks'
+import hooks from '../hooks'
 import mapUtils from '../utils/mapUtils'
 import { ViewportContext } from '../utils/ViewportContext'
 import { useHistory } from 'react-router-dom'
 
 const Map = ({ state, onMapClick }) => {
-  const { data } = Hooks.useFilteredStateFromQueryParams(state)
+  const { data } = hooks.useFilteredStateFromQueryParams(state)
   const history = useHistory()
   const { viewport, setViewport, onLoad } = React.useContext(ViewportContext)
   const [tooltip, setTooltip] = React.useState('')

@@ -22,8 +22,8 @@
                 "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc",
                 "time_windows": [
                     {
-                        "earliest": 0.0,
-                        "latest": 50000.0
+                        "earliest": "2020-08-12T15:21:28.251Z",
+                        "latest": "2020-08-12T18:21:28.251Z"
                     }
                 ]
             },
@@ -37,8 +37,8 @@
                 "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc",
                 "time_windows": [
                     {
-                        "earliest": 0.0,
-                        "latest": 1500.0
+                        "earliest": "2020-08-12T15:21:28.251Z",
+                        "latest": "2020-08-12T18:21:28.251Z"
                     }
                 ]
             }

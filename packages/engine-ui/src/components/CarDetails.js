@@ -16,12 +16,23 @@ const CarDetails = ({ car }) => {
       <Elements.StrongParagraph>ID:</Elements.StrongParagraph>
       <span>{car.id}</span>
       <Line />
-      {car.activities.length > 0 && (
-        <>
-          <Elements.StrongParagraph>Rutt</Elements.StrongParagraph>
-          <RouteActivities car={car} />
-        </>
+
+      <Elements.StrongParagraph>Bokinginar på bil</Elements.StrongParagraph>
+
+      {car.activities.length > 0 ? (
+        <RouteActivities car={car} />
+      ) : (
+        <p>Inga bekräftade bokingar</p>
       )}
+      <Line />
+      <Elements.StrongParagraph>Rutt</Elements.StrongParagraph>
+
+      {car.activities.length > 0 ? (
+        <RouteActivities car={car} />
+      ) : (
+        <p>Ingen rutt planerad</p>
+      )}
+      <Line />
     </div>
   )
 }

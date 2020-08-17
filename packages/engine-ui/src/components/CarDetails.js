@@ -61,6 +61,7 @@ const CarDetails = ({ car }) => {
             {car.activities.length > 0 ? (
               car.activities.slice(1, -1).map((activity, index) => (
                 <Elements.RoundedLink
+                  key={index}
                   to={`#`}
                   onClick={() =>
                     setViewport({

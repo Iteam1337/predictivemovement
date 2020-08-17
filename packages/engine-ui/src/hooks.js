@@ -29,26 +29,33 @@ const useFilteredStateFromQueryParams = (state) => {
 
 const useGetSuggestedAddresses = (initialState) => {
   const [suggested, set] = React.useState(initialState)
-  const find = (propertyName, searchTerm, callback) =>
-    helpers.findAddress(searchTerm).then(({ features }) => {
-      set((currentState) => ({
-        ...currentState,
-        [propertyName]: features.map(
-          ({
-            geometry: {
-              coordinates: [lon, lat],
-            },
-            properties: { name },
-          }) => ({
-            name,
-            lon,
-            lat,
-          })
-        ),
-      }))
+  const find = (query, callback) =>
+    helpers
+      .findAddress(query)
+      .then(({ features }) => {
+        set(
+          features.map(
+            ({
+              geometry: {
+                coordinates: [lon, lat],
+              },
+              properties: { name },
+            }) => ({
+              name,
+              lon,
+              lat,
+            })
+          )
+        )
 
-      return callback()
-    })
+        return callback()
+      })
+      .catch((error) =>
+        console.log(
+          'something went wrong with getting suggested addresses: ',
+          error
+        )
+      )
 
   return [find, suggested]
 }

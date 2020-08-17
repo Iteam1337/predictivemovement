@@ -1,32 +1,16 @@
 import React from 'react'
 import Elements from '../Elements'
-import locationIcon from '../../assets/location.svg'
-import BookingTimeRestriction from './BookingTimeRestriction'
+import AddressSearchInput from './AddressSearchInput'
+import BookingTimeRestrictionPair from './BookingTimeRestrictionPair'
 import styled from 'styled-components'
-import hooks from '../../hooks'
-
-const DropdownWrapper = styled.div`
-  width: 100%;
-  z-index: 1;
-  position: absolute;
-`
-
-const DropdownButton = styled.button`
-  width: inherit;
-  text-align: left;
-  padding: 0.5rem;
-  border: 1px solid grey;
-`
+import TextInput from './TextInput'
+import phoneIcon from '../../assets/contact-phone.svg'
+import nameIcon from '../../assets/contact-name.svg'
 
 const TimeRestrictionWrapper = styled.div`
   .react-datepicker-wrapper {
     width: 100%;
   }
-`
-
-const TimeRestrictionInputPairContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
 `
 
 const AddAdditionalTimeRestrictionsButton = styled.button`
@@ -37,30 +21,15 @@ const AddAdditionalTimeRestrictionsButton = styled.button`
 `
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
-  const timeRestrictionInputRef = React.useRef()
-  const [
-    getSuggestedAddresses,
-    suggestedAddresses,
-  ] = hooks.useGetSuggestedAddresses({
-    pickup: [],
-    delivery: [],
-  })
-
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
 
-  const [showDropdown, setShowDropdown] = React.useState({
-    pickup: false,
-    delivery: false,
-  })
-
-  const handleBookingTimeRestrictionChange = (
-    type,
-    property,
+  const handleBookingTimeRestrictionChange = (targetIndex) => (
     date,
-    targetIndex
+    type,
+    property
   ) =>
     onChangeHandler((currentState) => {
       return {
@@ -78,6 +47,28 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       }
     })
 
+  const handleTextInputChange = (propertyName) => (event) => {
+    event.persist()
+
+    return onChangeHandler((currentState) => ({
+      ...currentState,
+      [propertyName]: event.target.value,
+    }))
+  }
+
+  const handleContactInputChange = (propertyName, nestedPropertyName) => (
+    event
+  ) => {
+    event.persist()
+    return onChangeHandler((currentState) => ({
+      ...currentState,
+      [propertyName]: {
+        ...currentState[propertyName],
+        [nestedPropertyName]: event.target.value,
+      },
+    }))
+  }
+
   const addTimeRestrictionWindow = (type) =>
     onChangeHandler((currentState) => ({
       ...currentState,
@@ -90,143 +81,96 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       },
     }))
 
-  const handleInputChange = (event) => {
-    event.persist()
-
-    if (event.target.value.length <= 1) {
-      setShowDropdown({ delivery: false, pickup: false })
-    }
-
-    getSuggestedAddresses(event.target.name, event.target.value, () =>
-      setShowDropdown((currentState) => ({
-        ...currentState,
-        [event.target.name]: true,
-      }))
-    )
-
+  const handleDropdownSelect = (propertyName) => ({ name, lon, lat }) => {
     return onChangeHandler((currentState) => ({
       ...currentState,
-      [event.target.name]: {
-        ...currentState[event.target.name],
-        name: event.target.value,
-      },
-    }))
-  }
-
-  const handleDropdownSelect = (event, { name, lon, lat }) => {
-    event.preventDefault()
-
-    onChangeHandler((currentState) => ({
-      ...currentState,
-      [event.target.name]: {
+      [propertyName]: {
         name,
         lon,
         lat,
       },
     }))
+  }
 
-    return setShowDropdown({ ...showDropdown, [event.target.name]: false })
+  const handleToggleTimeRestrictionsChange = (propertyName) => {
+    setShowBookingTimeRestriction((currentState) => ({
+      ...currentState,
+      [propertyName]: !currentState[propertyName],
+    }))
+
+    return state[propertyName].timewindows
+      ? onChangeHandler((currentState) => ({
+          ...currentState,
+          [propertyName]: { ...currentState[propertyName], timewindows: null },
+        }))
+      : addTimeRestrictionWindow(propertyName)
   }
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
-      <Elements.InputContainer className="input cotainer">
-        <Elements.Label htmlFor="pickup">Upphämtning</Elements.Label>
-        <Elements.InputInnerContainer>
-          <Elements.FormInputIcon
-            alt="Location pickup icon"
-            src={`${locationIcon}`}
+      <Elements.InputBlock>
+        <Elements.InputContainer>
+          <Elements.Label htmlFor="parceldetails" />
+          <TextInput
+            name="id"
+            value={state.id}
+            placeholder="ID"
+            onChangeHandler={handleTextInputChange('id')}
           />
-          <Elements.TextInput
-            name="pickup"
-            type="text"
-            value={state.pickup.name}
-            placeholder="T.ex. BARNSTUGEVÄGEN 9"
-            onChange={handleInputChange}
-            iconInset
-          />
+        </Elements.InputContainer>
+        <Elements.InputContainer>
+          <Elements.TextInputPairContainer>
+            <Elements.TextInputPairItem>
+              <TextInput
+                name="measurement"
+                value={state.measurement}
+                placeholder="Mått (BxHxD)"
+                onChangeHandler={handleTextInputChange('measurement')}
+              />
+            </Elements.TextInputPairItem>
+            <Elements.TextInputPairItem>
+              <TextInput
+                step={0.1}
+                name="weight"
+                value={state.weight}
+                placeholder="Vikt (kg)"
+                type="number"
+                onChangeHandler={handleTextInputChange('weight')}
+              />
+            </Elements.TextInputPairItem>
+          </Elements.TextInputPairContainer>
+        </Elements.InputContainer>
 
-          {showDropdown.pickup && (
-            <DropdownWrapper>
-              {suggestedAddresses.pickup.map((address, index) => (
-                <DropdownButton
-                  key={index}
-                  name="pickup"
-                  onClick={(e) => handleDropdownSelect(e, address)}
-                >
-                  {address.name}
-                </DropdownButton>
-              ))}
-            </DropdownWrapper>
-          )}
-        </Elements.InputInnerContainer>
+        <Elements.InputContainer>
+          <TextInput
+            name="cargo"
+            value={state.cargo}
+            onChangeHandler={handleTextInputChange('cargo')}
+            placeholder="Innehåll"
+          />
+        </Elements.InputContainer>
+      </Elements.InputBlock>
+
+      <Elements.InputContainer>
+        <Elements.Label htmlFor="pickup">Upphämtning</Elements.Label>
+        <AddressSearchInput
+          placeholder="T.ex. BARNSTUGEVÄGEN 22"
+          onChangeHandler={handleDropdownSelect('pickup')}
+        />
         <Elements.Checkbox
           label="Tidspassning"
-          onChangeHandler={() => {
-            setShowBookingTimeRestriction((currentState) => ({
-              ...currentState,
-              pickup: !currentState.pickup,
-            }))
-
-            return state.pickup.timewindows
-              ? onChangeHandler((currentState) => ({
-                  ...currentState,
-                  pickup: { ...currentState.pickup, timewindows: null },
-                }))
-              : addTimeRestrictionWindow('pickup')
-          }}
+          onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
-
         <TimeRestrictionWrapper>
           {showBookingTimeRestriction.pickup &&
             state.pickup.timewindows &&
             state.pickup.timewindows.map((timewindow, index) => (
-              <TimeRestrictionInputPairContainer key={index}>
-                <div style={{ width: '49%' }}>
-                  <BookingTimeRestriction
-                    selected={timewindow.earliest}
-                    onChangeHandler={(date) =>
-                      handleBookingTimeRestrictionChange(
-                        'pickup',
-                        'earliest',
-                        date,
-                        index
-                      )
-                    }
-                    placeholderText="Tidigast"
-                    inputElement={
-                      <Elements.TimeRestrictionDateInput
-                        ref={timeRestrictionInputRef}
-                      />
-                    }
-                  />
-                </div>
-                <div style={{ width: '49%' }}>
-                  <BookingTimeRestriction
-                    selected={timewindow.latest}
-                    minDate={
-                      timewindow.earliest
-                        ? new Date(timewindow.earliest)
-                        : new Date()
-                    }
-                    onChangeHandler={(date) =>
-                      handleBookingTimeRestrictionChange(
-                        'pickup',
-                        'latest',
-                        date,
-                        index
-                      )
-                    }
-                    placeholderText="Senast"
-                    inputElement={
-                      <Elements.TimeRestrictionDateInput
-                        withIcon={false}
-                        ref={timeRestrictionInputRef}
-                      />
-                    }
-                  />
-                </div>
-              </TimeRestrictionInputPairContainer>
+              <BookingTimeRestrictionPair
+                typeProperty="pickup"
+                key={index}
+                timewindow={timewindow}
+                onChangeHandler={handleBookingTimeRestrictionChange(index)}
+              />
             ))}
           {showBookingTimeRestriction.pickup && state.pickup.timewindows && (
             <AddAdditionalTimeRestrictionsButton
@@ -238,105 +182,65 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           )}
         </TimeRestrictionWrapper>
       </Elements.InputContainer>
+      <Elements.InputBlock>
+        <Elements.InputContainer>
+          <Elements.Label htmlFor="sender-name">Avsändare</Elements.Label>
+          <Elements.InputInnerContainer>
+            <Elements.FormInputIcon
+              alt="Contact name icon"
+              src={`${nameIcon}`}
+            />
+            <TextInput
+              name="sendername"
+              value={state.sender.name}
+              onChangeHandler={handleContactInputChange('sender', 'name')}
+              placeholder="Sportbutiken AB"
+              iconInset
+            />
+          </Elements.InputInnerContainer>
+        </Elements.InputContainer>
+      </Elements.InputBlock>
+      <Elements.InputBlock>
+        <Elements.InputContainer>
+          <Elements.Label htmlFor="sender-contact">Kontakt</Elements.Label>
+          <Elements.InputInnerContainer>
+            <Elements.FormInputIcon
+              alt="Contact phone icon"
+              src={`${phoneIcon}`}
+            />
+            <TextInput
+              iconInset
+              name="sender"
+              type="tel"
+              value={state.sender.contact}
+              onChangeHandler={handleContactInputChange('sender', 'contact')}
+              placeholder="070-123 45 67"
+            />
+          </Elements.InputInnerContainer>
+        </Elements.InputContainer>
+      </Elements.InputBlock>
 
       <Elements.InputContainer>
         <Elements.Label htmlFor="delivery">Avlämning</Elements.Label>
-        <Elements.InputInnerContainer>
-          <Elements.FormInputIcon
-            alt="Location delivery icon"
-            src={`${locationIcon}`}
-          />
-          <Elements.TextInput
-            name="delivery"
-            type="text"
-            value={state.delivery.name}
-            placeholder="T.ex. BARNSTUGEVÄGEN 7"
-            onChange={handleInputChange}
-            iconInset
-          />
-          {showDropdown.delivery && (
-            <DropdownWrapper>
-              {suggestedAddresses.delivery.map((address, index) => (
-                <DropdownButton
-                  key={index}
-                  name="delivery"
-                  onClick={(e) => handleDropdownSelect(e, address)}
-                >
-                  {address.name}
-                </DropdownButton>
-              ))}
-            </DropdownWrapper>
-          )}
-        </Elements.InputInnerContainer>
+        <AddressSearchInput
+          placeholder="T.ex. BARNSTUGEVÄGEN 7"
+          onChangeHandler={handleDropdownSelect('delivery')}
+        />
         <Elements.Checkbox
           label="Tidspassning"
-          onChangeHandler={() => {
-            setShowBookingTimeRestriction((currentState) => ({
-              ...currentState,
-              delivery: !currentState.delivery,
-            }))
-
-            return state.delivery.timewindows
-              ? onChangeHandler((currentState) => ({
-                  ...currentState,
-                  delivery: { ...currentState.delivery, timewindows: null },
-                }))
-              : addTimeRestrictionWindow('delivery')
-          }}
+          onChangeHandler={() => handleToggleTimeRestrictionsChange('delivery')}
         />
-
         <TimeRestrictionWrapper>
           {showBookingTimeRestriction.delivery &&
             state.delivery.timewindows &&
             state.delivery.timewindows.map((timewindow, index) => {
-              console.log(timewindow)
               return (
-                <TimeRestrictionInputPairContainer key={index}>
-                  <div style={{ width: '49%' }}>
-                    <BookingTimeRestriction
-                      selected={timewindow.earliest}
-                      onChangeHandler={(date) =>
-                        handleBookingTimeRestrictionChange(
-                          'delivery',
-                          'earliest',
-                          date,
-                          index
-                        )
-                      }
-                      placeholderText="Tidigast"
-                      inputElement={
-                        <Elements.TimeRestrictionDateInput
-                          ref={timeRestrictionInputRef}
-                        />
-                      }
-                    />
-                  </div>
-                  <div style={{ width: '49%' }}>
-                    <BookingTimeRestriction
-                      selected={timewindow.latest}
-                      minDate={
-                        timewindow.earliest
-                          ? new Date(timewindow.earliest)
-                          : new Date()
-                      }
-                      onChangeHandler={(date) =>
-                        handleBookingTimeRestrictionChange(
-                          'delivery',
-                          'latest',
-                          date,
-                          index
-                        )
-                      }
-                      placeholderText="Senast"
-                      inputElement={
-                        <Elements.TimeRestrictionDateInput
-                          withIcon={false}
-                          ref={timeRestrictionInputRef}
-                        />
-                      }
-                    />
-                  </div>
-                </TimeRestrictionInputPairContainer>
+                <BookingTimeRestrictionPair
+                  typeProperty="delivery"
+                  key={index}
+                  timewindow={timewindow}
+                  onChangeHandler={handleBookingTimeRestrictionChange(index)}
+                />
               )
             })}
           {showBookingTimeRestriction.delivery && state.delivery.timewindows && (
@@ -349,7 +253,43 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           )}
         </TimeRestrictionWrapper>
       </Elements.InputContainer>
-
+      <Elements.InputBlock>
+        <Elements.InputContainer>
+          <Elements.Label htmlFor="recipient-name">Mottagare</Elements.Label>
+          <Elements.InputInnerContainer>
+            <Elements.FormInputIcon
+              alt="Contact name icon"
+              src={`${nameIcon}`}
+            />
+            <TextInput
+              iconInset
+              name="recipient-name"
+              value={state.recipient.name}
+              onChangeHandler={handleContactInputChange('recipient', 'name')}
+              placeholder="Anna Andersson"
+            />
+          </Elements.InputInnerContainer>
+        </Elements.InputContainer>
+      </Elements.InputBlock>
+      <Elements.InputBlock>
+        <Elements.InputContainer>
+          <Elements.Label htmlFor="recipient-contact">Kontakt</Elements.Label>
+          <Elements.InputInnerContainer>
+            <Elements.FormInputIcon
+              alt="Contact phone icon"
+              src={`${nameIcon}`}
+            />
+            <TextInput
+              iconInset
+              name="recipient-contact"
+              type="number"
+              value={state.recipient.contact}
+              onChangeHandler={handleContactInputChange('recipient', 'contact')}
+              placeholder="070-123 45 67"
+            />
+          </Elements.InputInnerContainer>
+        </Elements.InputContainer>
+      </Elements.InputBlock>
       <Elements.ButtonWrapper>
         <Elements.CancelButton
           type="button"

@@ -2,7 +2,6 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import Elements from './Elements'
 import Form from './forms/CreateBooking'
-
 import 'react-datepicker/dist/react-datepicker.css'
 
 const CreateBooking = ({ createBooking }) => {
@@ -11,7 +10,7 @@ const CreateBooking = ({ createBooking }) => {
   const [formState, setState] = React.useState({
     id: '',
     measurement: '',
-    weight: undefined,
+    weight: '',
     cargo: '',
     pickup: { name: '', lat: '', lon: '', timewindows: null },
     delivery: { name: '', lat: '', lon: '', timewindows: null },

@@ -1,17 +1,12 @@
 import React from 'react'
-import styled from 'styled-components'
 import BookingTimeRestriction from './BookingTimeRestriction'
 import Elements from '../Elements'
 
-const TimeRestrictionInputPairContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-`
 const Component = ({ onChangeHandler, timewindow, typeProperty }) => {
   const timeRestrictionInputRef = React.useRef()
   return (
-    <TimeRestrictionInputPairContainer>
-      <div style={{ width: '49%' }}>
+    <Elements.TextInputPairContainer>
+      <Elements.TextInputPairItem>
         <BookingTimeRestriction
           selected={timewindow.earliest}
           onChangeHandler={(date) =>
@@ -22,8 +17,8 @@ const Component = ({ onChangeHandler, timewindow, typeProperty }) => {
             <Elements.TimeRestrictionDateInput ref={timeRestrictionInputRef} />
           }
         />
-      </div>
-      <div style={{ width: '49%' }}>
+      </Elements.TextInputPairItem>
+      <Elements.TextInputPairItem>
         <BookingTimeRestriction
           selected={timewindow.latest}
           minDate={
@@ -40,8 +35,8 @@ const Component = ({ onChangeHandler, timewindow, typeProperty }) => {
             />
           }
         />
-      </div>
-    </TimeRestrictionInputPairContainer>
+      </Elements.TextInputPairItem>
+    </Elements.TextInputPairContainer>
   )
 }
 

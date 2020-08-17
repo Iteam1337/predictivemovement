@@ -33,8 +33,12 @@ const CheckboxLabel = styled.span`
   font-size: 0.875rem;
 `
 
-const InputContainer = styled.div`
+const InputBlock = styled.div`
   margin-bottom: 1rem;
+`
+
+const InputContainer = styled.div`
+  margin-bottom: 0.5rem;
 `
 
 const InputInnerContainer = styled.div`
@@ -114,6 +118,7 @@ const Label = styled.label`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-top: 2rem;
 `
 
 const Checkbox = ({ label, checked, onChangeHandler }) => (
@@ -130,6 +135,15 @@ const Checkbox = ({ label, checked, onChangeHandler }) => (
     labelPlacement="end"
   />
 )
+
+const TextInputPairContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const TextInputPairItem = styled.div`
+  width: 48.5%;
+`
 
 const SubmitButton = styled.button`
   padding: 0.75rem 2.3rem;
@@ -236,4 +250,7 @@ export default {
   AddFormFieldButton,
   SmallInfo,
   Checkbox,
+  TextInputPairContainer,
+  TextInputPairItem,
+  InputBlock,
 }

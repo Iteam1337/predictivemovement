@@ -10,12 +10,10 @@ defmodule Engine.MatchProducer do
   @clear_queue "clear_state"
 
   def start_link(_) do
-    IO.puts("\n\n\n ===> WHO CALLS STARTING LINK <========\n\n")
     GenStage.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
-    IO.puts("\n\n ====> SOMEONE CALLS INIT <")
     create_rmq_resources()
     {:producer, %{vehicles: [], bookings: []}}
   end

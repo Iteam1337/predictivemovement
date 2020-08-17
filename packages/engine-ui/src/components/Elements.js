@@ -98,6 +98,10 @@ const TextInput = styled.input`
   padding: ${({ iconInset }) =>
     iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
 `
+const TextLink = styled(Link)`
+  text-decoration: none;
+  color: #666666;
+`
 
 const DateInput = styled.input`
   border: none;
@@ -254,4 +258,5 @@ export default {
   TextInputPairContainer,
   TextInputPairItem,
   InputBlock,
+  TextLink,
 }

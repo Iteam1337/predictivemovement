@@ -122,15 +122,7 @@ const Sidebar = (state) => {
           </>
         )
       case 'cars':
-        return (
-          <>
-            <h3>Aktuella fordon</h3>
-            <Cars cars={state.cars} />
-            <TextLink to="/add-vehicle">
-              <h3>+ Lägg till bil</h3>
-            </TextLink>
-          </>
-        )
+        return <Cars cars={state.cars} />
       case 'dispatch':
         return (
           <PlanWrapper>

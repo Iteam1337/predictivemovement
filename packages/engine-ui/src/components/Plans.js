@@ -51,7 +51,7 @@ const Plans = ({ cars }) => {
                 history.push('/')
               }}
             >
-              <Icons.Arrow />
+              <Icons.Arrow active={showRouteInfo} />
             </button>
           </RouteTitleWrapper>
 

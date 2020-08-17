@@ -18,6 +18,10 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
+const NoMarginParagraph = styled.p`
+  margin: 0;
+`
+
 const NoInfoParagraph = styled.p`
   font-style: italic;
   font-size: 0.875rem;
@@ -236,4 +240,5 @@ export default {
   AddFormFieldButton,
   SmallInfo,
   Checkbox,
+  NoMarginParagraph,
 }

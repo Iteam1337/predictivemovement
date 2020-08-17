@@ -178,7 +178,7 @@ const DateInputIcon = styled.img`
 `
 
 const StrongParagraph = styled.label`
-  margin-bottom: 0.5rem;
+  margin: 1rem 0;
   display: block;
   font-weight: bold;
 `

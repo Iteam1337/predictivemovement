@@ -95,9 +95,8 @@ const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
     'bookings'
   )
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
-
   const currentViewToElement = () => {
     switch (navigationCurrentView) {
       case 'bookings':
@@ -184,7 +183,7 @@ const Sidebar = (state) => {
         </RouterSwitch>
       </Content>
 
-      {pathname !== '/' && (
+      {pathname !== '/' && !search.includes('?type=car') && (
         <>
           <VerticalLine />
           <Content>
@@ -206,6 +205,12 @@ const Sidebar = (state) => {
               </Route>
             </RouterSwitch>
           </Content>
+        </>
+      )}
+      {search.includes('?type=car') && (
+        <>
+          <VerticalLine />
+          <CarDetails car={data.cars[0]} />
         </>
       )}
     </Container>

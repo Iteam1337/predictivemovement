@@ -119,16 +119,14 @@ const BookingDetails = ({ booking }) => {
       <Timeline>
         <ol>
           {statuses.map((status, index) => (
-            <>
-              <li>
-                <Elements.FlexRowWrapper>
-                  <Elements.NoMarginParagraph>15.17</Elements.NoMarginParagraph>
-                  <Elements.NoMarginParagraph>
-                    {status}
-                  </Elements.NoMarginParagraph>
-                </Elements.FlexRowWrapper>
-              </li>
-            </>
+            <li key={index}>
+              <Elements.FlexRowWrapper>
+                <Elements.NoMarginParagraph>15.17</Elements.NoMarginParagraph>
+                <Elements.NoMarginParagraph>
+                  {status}
+                </Elements.NoMarginParagraph>
+              </Elements.FlexRowWrapper>
+            </li>
           ))}
         </ol>
       </Timeline>

@@ -11,11 +11,12 @@ const FlexRowWrapper = styled.div`
 `
 
 const LinkListContainer = styled.div`
-  a:not(:first-child) {
-    margin-top: 0.5rem;
-  }
   display: flex;
   flex-direction: column;
+
+  a {
+    margin-top: 0.5rem;
+  }
 `
 
 const NoInfoParagraph = styled.p`

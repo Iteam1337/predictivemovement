@@ -2,8 +2,6 @@ import React from 'react'
 
 import Elements from './Elements'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
-
 import Dot from '../assets/dot.svg'
 
 const Paragraph = styled.p`

@@ -67,7 +67,6 @@ const App = () => {
       payload: plan.vehicles
     })
   })
-  console.log(state)
 
   return (
     <ViewportProvider>

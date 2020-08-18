@@ -56,6 +56,21 @@ defmodule Engine.MatchProducer do
     {:noreply, [], %{vehicles: [], bookings: []}}
   end
 
+  def handle_info(
+        {:basic_deliver, booking_id, %{exchange: @bookings_exchange, routing_key: "remove"}},
+        %{
+          vehicles: vehicles,
+          bookings: bookings
+        }
+      ) do
+    booking_id
+    |> IO.inspect(label: "remove booking!")
+
+    # booking = string_to_booking_transform(booking)
+    # IO.inspect(bookings, label: "current bookings state")
+    # dispatch_events(vehicles, [booking | bookings])
+  end
+
   ## send messages to broadway and update state
 
   def dispatch_events(vehicles, [] = _bookings),

@@ -6,7 +6,13 @@ defmodule Plan do
 
     %{}
     |> Map.put(:vehicles, Enum.map(vehicle_ids, &Vehicle.get/1))
-    |> Map.put(:bookings, Enum.map(booking_ids, &Booking.get/1))
+    |> Map.put(
+      :bookings,
+      Enum.map(booking_ids, &Booking.get/1)
+      |> Enum.filter(fn booking ->
+        is_nil(booking.assigned_to)
+      end)
+    )
     |> Plan.insert_time_matrix()
     |> IO.inspect(label: "this is sent to jsprit")
     |> MQ.call("route_optimization_jsprit")

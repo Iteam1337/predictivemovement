@@ -39,6 +39,15 @@ defmodule Engine.BookingProcessor do
         |> Map.put(:activities, activities)
         |> Map.put(:booking_ids, booking_ids)
       end)
+      |> Enum.map(fn vehicle ->
+        vehicle
+        |> Map.put(
+          :current_route,
+          vehicle.activities
+          |> Enum.map(fn %{address: address} -> address end)
+          |> Osrm.route()
+        )
+      end)
 
     PlanStore.put_plan(%{vehicles: vehicles, booking_ids: booking_ids})
 

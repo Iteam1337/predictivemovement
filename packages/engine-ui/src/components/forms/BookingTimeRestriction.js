@@ -34,7 +34,7 @@ const Component = ({
         timeFormat="HH:mm"
         timeIntervals={30}
         timeCaption="time"
-        dateFormat="MMMM d, yyyy H:mm"
+        dateFormat="yyyy-MM-dd, HH:mm"
         required
         placeholderText={placeholderText}
         customInput={inputElement}

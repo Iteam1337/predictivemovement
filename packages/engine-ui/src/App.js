@@ -61,6 +61,10 @@ const App = () => {
     })
   })
 
+  useSocket('plan-update', (plan) => {
+    console.log('this is the plan: ', plan)
+  })
+
   return (
     <ViewportProvider>
       <Router>

@@ -8,11 +8,13 @@ const {
   dispatchOffers,
   createBookingsFromHistory,
   resetState,
+  plan,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const movingCarsCache = new Map()
 const bookingsCache = new Map()
+const planCache = new Map()
 
 function register(io) {
   io.on('connection', function (socket) {
@@ -38,6 +40,12 @@ function register(io) {
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each((cars) => socket.emit('cars', cars))
+
+    _.merge([_(planCache.values()), plan.fork()])
+      .doto((data) => {
+        planCache.set('plan', data)
+      })
+      .each((data) => socket.emit('plan-update', data))
 
     socket.on('new-booking', (params) => {
       const booking = {

@@ -108,6 +108,16 @@ const DateInput = styled.input`
     iconInset ? '0.5rem 0 0.5rem 2rem' : '0.5rem'};
 `
 
+const TimeInput = styled.input`
+  border: none;
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.875rem;
+  padding: ${({ iconInset }) =>
+    iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+`
+
 const Label = styled.label`
   margin-bottom: 0.25rem;
   display: block;
@@ -229,10 +239,35 @@ const TimeRestrictionDateInput = React.forwardRef(
   }
 )
 
+// eslint-disable-next-line react/display-name
+const TimeRestrictionTimeInput = React.forwardRef(
+  ({ onChange, onClick, value, placeholder, withIcon = true }, ref) => {
+    return (
+      <TimeRestrictionDateInputWrapper>
+        <InputInnerContainer>
+          {withIcon && (
+            <DateInputIcon alt="Time restriction icon" src={`${clockIcon}`} />
+          )}
+
+          <TimeInput
+            iconInset={withIcon}
+            onChange={onChange}
+            onClick={onClick}
+            value={value}
+            ref={ref}
+            placeholder={placeholder}
+          />
+        </InputInnerContainer>
+      </TimeRestrictionDateInputWrapper>
+    )
+  }
+)
+
 export default {
   StrongParagraph,
   Container,
   TimeRestrictionDateInput,
+  TimeRestrictionTimeInput,
   InputContainer,
   InputInnerContainer,
   TextInput,

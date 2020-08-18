@@ -62,8 +62,12 @@ const App = () => {
   })
 
   useSocket('plan-update', (plan) => {
-    console.log('this is the plan: ', plan)
+    dispatch({
+      type: 'setPlan',
+      payload: plan.vehicles
+    })
   })
+  console.log(state)
 
   return (
     <ViewportProvider>

@@ -24,6 +24,7 @@ const Map = ({ state, onMapClick }) => {
         return
     }
   }
+
   const layers = [
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
@@ -32,7 +33,7 @@ const Map = ({ state, onMapClick }) => {
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-cars-layer',
-      mapUtils.carToFeature(state.cars),
+      mapUtils.carToFeature(state.plan),
       handleClickEvent
     ),
     mapUtils.toIconLayer(mapUtils.carIcon(state.cars)),

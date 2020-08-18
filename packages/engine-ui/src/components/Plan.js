@@ -23,13 +23,15 @@ const RouteTitleWrapper = styled.div`
   }
 `
 
-const Plans = ({ cars }) => {
+const Plan = ({ plan }) => {
   const { setViewport } = React.useContext(ViewportContext)
   const [showRouteInfo, setOpenRouteInfo] = React.useState(false)
   const history = useHistory()
-  const driverPlans = cars.filter((d) => d.activities.length > 0)
+  const driverPlans = plan.filter((d) => d.activities.length > 0)
+
   const toggle = (id) =>
     setOpenRouteInfo((showRouteInfo) => (showRouteInfo === id ? undefined : id)) // close if currently open
+
   if (!driverPlans.length)
     return (
       <Elements.NoInfoParagraph>
@@ -68,7 +70,7 @@ const Plans = ({ cars }) => {
                       longitude: car.position.lon,
                       zoom: 17,
                       transitionDuration: 3000,
-                      transitionInterpolator: new FlyToInterpolator(),
+                        transitionInterpolator: new FlyToInterpolator(),
                       transitionEasing: (t) => t * (2 - t),
                     })
                   }
@@ -85,4 +87,4 @@ const Plans = ({ cars }) => {
   )
 }
 
-export default Plans
+export default Plan

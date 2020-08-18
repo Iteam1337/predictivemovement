@@ -1,8 +1,6 @@
 import React from 'react'
-
 import Elements from './Elements'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 
 const Paragraph = styled.p`
   margin: 0;
@@ -20,17 +18,21 @@ const BookingDetails = ({ booking }) => {
       .then(({ features }) => features[0].properties.label)
   }
 
-  
   React.useEffect(() => {
-    const setAddressFromCoordinates = async (pickupCoordinates, deliveryCoordinates ) => {
+    const setAddressFromCoordinates = async (
+      pickupCoordinates,
+      deliveryCoordinates
+    ) => {
       const pickupAddress = await getAddressFromCoordinates(pickupCoordinates)
-      const deliveryAddress = await getAddressFromCoordinates(deliveryCoordinates)
+      const deliveryAddress = await getAddressFromCoordinates(
+        deliveryCoordinates
+      )
       setAddress({
         pickup: pickupAddress,
         delivery: deliveryAddress,
       })
     }
-    
+
     if (!booking) return
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])
@@ -50,7 +52,9 @@ const BookingDetails = ({ booking }) => {
         <>
           <Elements.StrongParagraph>Bokad transport</Elements.StrongParagraph>
 
-          <Elements.RoundedLink to={`/details?type=car&id=${booking.assigned_to.id}`}>
+          <Elements.RoundedLink
+            to={`/details?type=car&id=${booking.assigned_to.id}`}
+          >
             {booking.id}
           </Elements.RoundedLink>
         </>

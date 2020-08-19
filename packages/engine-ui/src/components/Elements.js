@@ -281,9 +281,6 @@ const TimeRestrictionDateInput = React.forwardRef(
     return (
       <TimeRestrictionDateInputWrapper>
         <InputInnerContainer>
-          {withIcon && (
-            <TimeRestrictionFormInputIcon onClick={onClick} src={arrowIcon} />
-          )}
           <DateInput
             onChange={onChange}
             onClick={onClick}
@@ -291,7 +288,6 @@ const TimeRestrictionDateInput = React.forwardRef(
             ref={ref}
             placeholder={placeholder}
             required
-            iconInset={withIcon}
           />
         </InputInnerContainer>
       </TimeRestrictionDateInputWrapper>

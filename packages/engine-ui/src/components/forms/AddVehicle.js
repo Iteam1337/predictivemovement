@@ -1,13 +1,14 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
+import nameIcon from '../../assets/contact-name.svg'
+import phoneIcon from '../../assets/contact-phone.svg'
 import Elements from '../Elements'
 import AddressSearchInput from './AddressSearchInput'
-import DriverScheduleRestriction from './DriverScheduleRestriction'
-import styled from 'styled-components'
-import TextInput from './TextInput'
-import phoneIcon from '../../assets/contact-phone.svg'
-import nameIcon from '../../assets/contact-name.svg'
-import { useHistory } from 'react-router-dom'
+import DriverScheduleRestrictionPair from './DriverScheduleRestrictionPair'
 import formHelpers from './formHelpers'
+import TextInput from './TextInput'
+
 const TimeRestrictionWrapper = styled.div`
   .react-datepicker-wrapper {
     width: 100%;
@@ -15,25 +16,15 @@ const TimeRestrictionWrapper = styled.div`
 `
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
-  const timeRestrictionInputRef = React.useRef()
   const history = useHistory()
 
-  const handleBookingTimeRestrictionChange = (date, property) =>
+  const handleDriverTimeRestrictionChange = (date, property) =>
     onChangeHandler((currentState) => {
       return {
         ...currentState,
         timewindow: { ...currentState.timewindow, [property]: date },
       }
     })
-
-  // const handleScheduleInputChange = (propertyName) => (event) => {
-  //   event.persist()
-
-  //   return onChangeHandler((currentState) => ({
-  //     ...currentState,
-  //     [propertyName]: event.target.value,
-  //   }))
-  // }
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
@@ -70,36 +61,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <Elements.Label>Körschema</Elements.Label>
           <Elements.InputContainer>
             <TimeRestrictionWrapper>
-              <Elements.TextInputPairContainer>
-                <Elements.TextInputPairItem>
-                  <DriverScheduleRestriction
-                    selected={state.timewindow.start}
-                    onChangeHandler={(date) =>
-                      handleBookingTimeRestrictionChange(date, 'start', 'start')
-                    }
-                    placeholderText="Starttid"
-                    inputElement={
-                      <Elements.TimeRestrictionDateInput
-                        ref={timeRestrictionInputRef}
-                      />
-                    }
-                  />
-                </Elements.TextInputPairItem>
-                <Elements.TextInputPairItem>
-                  <DriverScheduleRestriction
-                    selected={state.timewindow.end}
-                    onChangeHandler={(date) =>
-                      handleBookingTimeRestrictionChange(date, 'end', 'end')
-                    }
-                    placeholderText="Sluttid"
-                    inputElement={
-                      <Elements.TimeRestrictionDateInput
-                        ref={timeRestrictionInputRef}
-                      />
-                    }
-                  />
-                </Elements.TextInputPairItem>
-              </Elements.TextInputPairContainer>
+              <DriverScheduleRestrictionPair
+                timewindow={state.timewindow}
+                onChangeHandler={handleDriverTimeRestrictionChange}
+              />
             </TimeRestrictionWrapper>
           </Elements.InputContainer>
           <AddressSearchInput

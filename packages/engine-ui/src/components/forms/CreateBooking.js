@@ -7,11 +7,6 @@ import TextInput from './TextInput'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import formHelpers from './formHelpers'
-const TimeRestrictionWrapper = styled.div`
-  .react-datepicker-wrapper {
-    width: 100%;
-  }
-`
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const [
@@ -123,7 +118,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           label="Tidspassning"
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
-        <TimeRestrictionWrapper>
+        <Elements.TimeRestrictionWrapper>
           {showBookingTimeRestriction.pickup && state.pickup.timewindow && (
             <BookingTimeRestrictionPair
               typeProperty="pickup"
@@ -131,7 +126,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               onChangeHandler={handleBookingTimeRestrictionChange}
             />
           )}
-        </TimeRestrictionWrapper>
+        </Elements.TimeRestrictionWrapper>
       </Elements.InputContainer>
       <Elements.InputBlock>
         <Elements.InputContainer>
@@ -194,7 +189,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
           }
         />
-        <TimeRestrictionWrapper>
+        <Elements.TimeRestrictionWrapper>
           {showBookingTimeRestriction.delivery && state.delivery.timewindow && (
             <BookingTimeRestrictionPair
               typeProperty="delivery"
@@ -202,7 +197,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               onChangeHandler={handleBookingTimeRestrictionChange}
             />
           )}
-        </TimeRestrictionWrapper>
+        </Elements.TimeRestrictionWrapper>
       </Elements.InputContainer>
       <Elements.InputBlock>
         <Elements.InputContainer>

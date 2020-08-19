@@ -195,6 +195,12 @@ const TimeRestrictionDateInputWrapper = styled.div`
   margin-bottom: 0.25rem;
 `
 
+const TimeRestrictionWrapper = styled.div`
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+`
+
 // eslint-disable-next-line react/display-name
 const TimeRestrictionDateInput = React.forwardRef(
   ({ onChange, onClick, value, placeholder }, ref) => {
@@ -217,6 +223,7 @@ const TimeRestrictionDateInput = React.forwardRef(
 
 export default {
   StrongParagraph,
+  TimeRestrictionWrapper,
   Container,
   TimeRestrictionDateInput,
   InputContainer,

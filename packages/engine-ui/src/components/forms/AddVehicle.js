@@ -9,12 +9,6 @@ import DriverScheduleRestrictionPair from './DriverScheduleRestrictionPair'
 import formHelpers from './formHelpers'
 import TextInput from './TextInput'
 
-const TimeRestrictionWrapper = styled.div`
-  .react-datepicker-wrapper {
-    width: 100%;
-  }
-`
-
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const history = useHistory()
 
@@ -60,12 +54,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.InputContainer>
           <Elements.Label>Körschema</Elements.Label>
           <Elements.InputContainer>
-            <TimeRestrictionWrapper>
+            <Elements.TimeRestrictionWrapper>
               <DriverScheduleRestrictionPair
                 timewindow={state.timewindow}
                 onChangeHandler={handleDriverTimeRestrictionChange}
               />
-            </TimeRestrictionWrapper>
+            </Elements.TimeRestrictionWrapper>
           </Elements.InputContainer>
           <AddressSearchInput
             placeholder="Slutposition"

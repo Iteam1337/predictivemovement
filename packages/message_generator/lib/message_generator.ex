@@ -32,7 +32,7 @@ defmodule MessageGenerator do
 
   def random_car(location) do
     %{}
-    |> Map.put(:position, Address.random(location))
+    |> Map.put(:start_address, Address.random(location))
     |> Map.put(:id, Enum.random(0..100_000))
   end
 

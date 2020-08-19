@@ -1,7 +1,12 @@
 {
     "vehicles": [
         {
-            "position": {
+            "start_address": {
+                "lon": 21.928558,
+                "lat": 65.63069,
+                "hint": "yvWOiQb2jol5AAAABQAAAAMBAAAAAAAApnCoQoT-WEDJfzRDAAAAAHkAAAAFAAAAAwEAAAAAAAB4GwEAbZpOAeJx6QNumk4B4nHpAwQArwoGYbfc"
+            },
+            "end_address": {
                 "lon": 21.928558,
                 "lat": 65.63069,
                 "hint": "yvWOiQb2jol5AAAABQAAAAMBAAAAAAAApnCoQoT-WEDJfzRDAAAAAHkAAAAFAAAAAwEAAAAAAAB4GwEAbZpOAeJx6QNumk4B4nHpAwQArwoGYbfc"
@@ -20,7 +25,7 @@
                 "lon": 22.015809,
                 "lat": 65.64154,
                 "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc",
-                "time_windows": [
+                "_time_windows": [
                     {
                         "earliest": "2020-08-12T15:21:28.251Z",
                         "latest": "2020-08-12T18:21:28.251Z"
@@ -35,7 +40,7 @@
                 "lon": 22.137169,
                 "lat": 65.613139,
                 "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc",
-                "time_windows": [
+                "_time_windows": [
                     {
                         "earliest": "2020-08-12T15:21:28.251Z",
                         "latest": "2020-08-12T18:21:28.251Z"

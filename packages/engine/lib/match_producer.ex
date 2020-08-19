@@ -87,10 +87,33 @@ defmodule Engine.MatchProducer do
   ## helpers
 
   def string_to_vehicle_transform(vehicle_string) do
-    %{position: position, metadata: metadata} =
-      vehicle_string |> Poison.decode!(keys: :atoms) |> Map.put_new(:metadata, %{})
+    %{
+      start_address: start_address,
+      end_address: end_address,
+      profile: profile,
+      capacity: capacity,
+      earliest_start: earliest_start,
+      latest_end: latest_end,
+      metadata: metadata
+    } =
+      vehicle_string
+      |> Poison.decode!(keys: :atoms)
+      |> Map.put_new(:metadata, %{})
+      |> Map.put_new(:end_address, nil)
+      |> Map.put_new(:profile, "Circle K storlastbil")
+      |> Map.put_new(:capacity, 15)
+      |> Map.put_new(:earliest_start, nil)
+      |> Map.put_new(:latest_end, nil)
 
-    Vehicle.make(position, metadata)
+    Vehicle.make(
+      start_address,
+      end_address,
+      earliest_start,
+      latest_end,
+      metadata,
+      profile,
+      capacity
+    )
   end
 
   def string_to_booking_transform(booking_string) do

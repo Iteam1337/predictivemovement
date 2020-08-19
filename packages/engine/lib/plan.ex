@@ -23,7 +23,11 @@ defmodule Plan do
     matrix =
       bookings
       |> Enum.flat_map(fn %{pickup: pickup, delivery: delivery} -> [pickup, delivery] end)
-      |> Enum.concat(Enum.map(vehicles, fn %{position: position} -> position end))
+      |> Enum.concat(
+        Enum.flat_map(vehicles, fn %{start_address: start_address, end_address: end_address} ->
+          [start_address, end_address]
+        end)
+      )
       |> Osrm.get_time_between_coordinates()
       |> Map.delete(:code)
 
@@ -60,7 +64,12 @@ defmodule Plan do
     vehicles
     |> Enum.zip(hints)
     |> Enum.map(fn {vehicle, hint} ->
-      Map.update!(vehicle, :position, fn position -> Map.put(position, :hint, hint) end)
+      Map.update!(vehicle, :start_address, fn start_address ->
+        Map.put(start_address, :hint, hint)
+      end)
+      |> Map.update!(:end_address, fn end_address ->
+        Map.put(end_address, :hint, hint)
+      end)
     end)
   end
 end

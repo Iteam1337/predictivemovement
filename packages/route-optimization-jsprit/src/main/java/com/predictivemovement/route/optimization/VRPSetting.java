@@ -67,11 +67,17 @@ public class VRPSetting {
             // type
             vehicleBuilder.setType(vehicleDummyType);
 
-            // position
-            JSONObject jsonPosition = jsonVehicle.getJSONObject("position");
-            Location vehicleLocation = getLocation(jsonPosition);
-            vehicleBuilder.setStartLocation(vehicleLocation);
-            locations.put(jsonPosition.getString("hint"), vehicleLocation);
+            // start address
+            JSONObject startAddress = jsonVehicle.getJSONObject("start_address");
+            Location vehicleStartAddress = getLocation(startAddress);
+            vehicleBuilder.setStartLocation(vehicleStartAddress);
+            locations.put(startAddress.getString("hint"), vehicleStartAddress);
+
+            // end address
+            JSONObject endAddress = jsonVehicle.getJSONObject("end_address");
+            Location vehicleEndAddress = getLocation(endAddress);
+            vehicleBuilder.setEndLocation(vehicleEndAddress);
+            locations.put(endAddress.getString("hint"), vehicleEndAddress);
 
             VehicleImpl vehicle = vehicleBuilder.build();
             vehicles.add(vehicle);

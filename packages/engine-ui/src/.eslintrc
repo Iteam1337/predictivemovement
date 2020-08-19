@@ -1,10 +1,31 @@
 {
   "extends": ["@iteam/eslint-config-react"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "modules": true
+    },
+    "ecmaVersion": 8,
+    "sourceType": "module"
+  },
   "overrides": [
     {
-      "files": ["**/*.jsx", "**/*.js"],
+      "files": ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js"],
       "rules": {
-        "react/prop-types": "off"
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "react/prop-types": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "vars": "all",
+            "args": "after-used",
+            "ignoreRestSiblings": true,
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
+        ]
       }
     }
   ]

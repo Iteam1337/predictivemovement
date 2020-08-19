@@ -1,4 +1,4 @@
-import palette from '../palette'
+import palette from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
 import markerIcon from '../assets/car.svg'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import helpers from './utils/helpers'
+import helpers from './helpers'
 
 const useFilteredStateFromQueryParams = (state) => {
   const useQueryParams = () => new URLSearchParams(useLocation().search)

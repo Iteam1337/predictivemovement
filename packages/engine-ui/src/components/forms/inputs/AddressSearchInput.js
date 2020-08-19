@@ -1,8 +1,8 @@
 import React from 'react'
-import Elements from '../Elements'
-import locationIcon from '../../assets/location.svg'
+import Elements from '../../Elements'
+import locationIcon from '../../../assets/location.svg'
 import styled from 'styled-components'
-import hooks from '../../hooks'
+import hooks from '../../../utils/hooks'
 
 const DropdownWrapper = styled.div`
   width: 100%;

@@ -13,7 +13,7 @@ import {
   useLocation,
 } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
-import Hooks from '../hooks'
+import Hooks from '../utils/hooks'
 import CarDetails from './CarDetails'
 
 import AddVehicle from './AddVehicle'

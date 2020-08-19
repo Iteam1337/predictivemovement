@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 const findAddress = async (query) => {
   const res = await fetch(
     `https://pelias.iteamdev.io/v1/autocomplete?text=${query}`
@@ -6,4 +8,14 @@ const findAddress = async (query) => {
   return data
 }
 
-export default {findAddress}
+const calculateMinTime = (date, minDate) => {
+  const momentDate = moment(date || minDate)
+  const isToday = momentDate.isSame(moment(), 'day')
+  if (isToday) {
+    const nowAddOneHour = momentDate.add({ hours: 1 }).toDate()
+    return nowAddOneHour
+  }
+  return moment().startOf('day').toDate() // set to 12:00 am today
+}
+
+export default { findAddress, calculateMinTime }

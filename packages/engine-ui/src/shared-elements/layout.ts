@@ -50,6 +50,12 @@ const ButtonWrapper = styled.div`
   margin-top: 2rem;
 `
 
+const TimeRestrictionWrapper = styled.div`
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+`
+
 export default {
   InputBlock,
   InputContainer,
@@ -61,4 +67,5 @@ export default {
   TextInputPairContainer,
   TextInputPairItem,
   ButtonWrapper,
+  TimeRestrictionWrapper,
 }

@@ -19,10 +19,8 @@ const App = () => {
     })
   }
 
-  const addVehicle = (position) => {
-    socket.emit('add-vehicle', {
-      position,
-    })
+  const addVehicle = (params) => {
+    socket.emit('add-vehicle', params)
   }
 
   const createBooking = (params) => {

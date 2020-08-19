@@ -1,16 +1,9 @@
 import React from 'react'
 import Elements from '../../shared-elements'
 import FormInputs from './inputs'
-import BookingTimeRestriction from './inputs/BookingTimeRestriction'
-import styled from 'styled-components'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
-
-const TimeRestrictionWrapper = styled.div`
-  .react-datepicker-wrapper {
-    width: 100%;
-  }
-`
+import eventHandlers from './eventHandlers'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const [
@@ -29,28 +22,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       }
     })
 
-  const handleTextInputChange = (propertyName) => (event) => {
-    event.persist()
-
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: event.target.value,
-    }))
-  }
-
-  const handleContactInputChange = (propertyName, nestedPropertyName) => (
-    event
-  ) => {
-    event.persist()
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: {
-        ...currentState[propertyName],
-        [nestedPropertyName]: event.target.value,
-      },
-    }))
-  }
-
   const addTimeRestrictionWindow = (type) =>
     onChangeHandler((currentState) => ({
       ...currentState,
@@ -59,17 +30,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         timewindow: { earliest: null, latest: null },
       },
     }))
-
-  const handleDropdownSelect = (propertyName) => ({ name, lon, lat }) => {
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: {
-        name,
-        lon,
-        lat,
-      },
-    }))
-  }
 
   const handleToggleTimeRestrictionsChange = (propertyName) => {
     setShowBookingTimeRestriction((currentState) => ({
@@ -94,7 +54,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             name="id"
             value={state.id}
             placeholder="ID"
-            onChangeHandler={handleTextInputChange('id')}
+            onChangeHandler={eventHandlers.handleTextInputChange(
+              'id',
+              onChangeHandler
+            )}
           />
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer>
@@ -104,7 +67,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 name="measurement"
                 value={state.measurement}
                 placeholder="Mått (BxHxD)"
-                onChangeHandler={handleTextInputChange('measurement')}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'measurement',
+                  onChangeHandler
+                )}
               />
             </Elements.Layout.TextInputPairItem>
             <Elements.Layout.TextInputPairItem>
@@ -114,7 +80,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 value={state.weight}
                 placeholder="Vikt (kg)"
                 type="number"
-                onChangeHandler={handleTextInputChange('weight')}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'weight',
+                  onChangeHandler
+                )}
               />
             </Elements.Layout.TextInputPairItem>
           </Elements.Layout.TextInputPairContainer>
@@ -124,7 +93,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <FormInputs.TextInput
             name="cargo"
             value={state.cargo}
-            onChangeHandler={handleTextInputChange('cargo')}
+            onChangeHandler={eventHandlers.handleTextInputChange(
+              'cargo',
+              onChangeHandler
+            )}
             placeholder="Innehåll"
           />
         </Elements.Layout.InputContainer>
@@ -134,21 +106,24 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Form.Label htmlFor="pickup">Upphämtning</Elements.Form.Label>
         <FormInputs.AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 22"
-          onChangeHandler={handleDropdownSelect('pickup')}
+          onChangeHandler={eventHandlers.handleDropdownSelect(
+            'pickup',
+            onChangeHandler
+          )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
-        <TimeRestrictionWrapper>
+        <Elements.Layout.TimeRestrictionWrapper>
           {showBookingTimeRestriction.pickup && state.pickup.timewindow && (
-            <BookingTimeRestriction
+            <FormInputs.TimeRestriction.BookingTimeRestrictionPair
               typeProperty="pickup"
               timewindow={state.pickup.timewindow}
               onChangeHandler={handleBookingTimeRestrictionChange}
             />
           )}
-        </TimeRestrictionWrapper>
+        </Elements.Layout.TimeRestrictionWrapper>
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
@@ -163,7 +138,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             <FormInputs.TextInput
               name="sendername"
               value={state.sender.name}
-              onChangeHandler={handleContactInputChange('sender', 'name')}
+              onChangeHandler={eventHandlers.handleContactInputChange(
+                'sender',
+                'name',
+                onChangeHandler
+              )}
               placeholder="Sportbutiken AB"
               iconInset
             />
@@ -185,7 +164,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="sender"
               type="tel"
               value={state.sender.contact}
-              onChangeHandler={handleContactInputChange('sender', 'contact')}
+              onChangeHandler={eventHandlers.handleContactInputChange(
+                'sender',
+                'contact',
+                onChangeHandler
+              )}
               placeholder="070-123 45 67"
             />
           </Elements.Layout.InputInnerContainer>
@@ -196,22 +179,26 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Form.Label htmlFor="delivery">Avlämning</Elements.Form.Label>
         <FormInputs.AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 7"
-          onChangeHandler={handleDropdownSelect('delivery')}
+          onChangeHandler={eventHandlers.handleDropdownSelect(
+            'delivery',
+            onChangeHandler
+          )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
-          onChangeHandler={() => handleToggleTimeRestrictionsChange('delivery')}
+          onChangeHandler={() =>
+            handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
+          }
         />
-
-        <TimeRestrictionWrapper>
+        <Elements.Layout.TimeRestrictionWrapper>
           {showBookingTimeRestriction.delivery && state.delivery.timewindow && (
-            <BookingTimeRestriction
+            <FormInputs.TimeRestriction.BookingTimeRestrictionPair
               typeProperty="delivery"
               timewindow={state.delivery.timewindow}
               onChangeHandler={handleBookingTimeRestrictionChange}
             />
           )}
-        </TimeRestrictionWrapper>
+        </Elements.Layout.TimeRestrictionWrapper>
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
@@ -227,7 +214,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               iconInset
               name="recipient-name"
               value={state.recipient.name}
-              onChangeHandler={handleContactInputChange('recipient', 'name')}
+              onChangeHandler={eventHandlers.handleContactInputChange(
+                'recipient',
+                'name',
+                onChangeHandler
+              )}
               placeholder="Anna Andersson"
             />
           </Elements.Layout.InputInnerContainer>
@@ -248,7 +239,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="recipient-contact"
               type="number"
               value={state.recipient.contact}
-              onChangeHandler={handleContactInputChange('recipient', 'contact')}
+              onChangeHandler={eventHandlers.handleContactInputChange(
+                'recipient',
+                'contact',
+                onChangeHandler
+              )}
               placeholder="070-123 45 67"
             />
           </Elements.Layout.InputInnerContainer>

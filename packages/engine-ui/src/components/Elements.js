@@ -101,10 +101,9 @@ const DateInput = styled.input`
   background-color: #f1f3f5;
   border-radius: 0.25rem;
   width: 100%;
-  font-size: 0.75rem;
-
+  font-size: 0.875rem;
   padding: ${({ iconInset }) =>
-    iconInset ? '0.75rem 1rem 0.75rem 0.75rem' : '0.75rem'};
+    iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
 `
 
 const Label = styled.label`
@@ -270,15 +269,18 @@ const TimeRestrictionDateInputWrapper = styled.div`
   margin-bottom: 0.25rem;
 `
 
+const TimeRestrictionWrapper = styled.div`
+  .react-datepicker-wrapper {
+    width: 100%;
+  }
+`
+
 // eslint-disable-next-line react/display-name
 const TimeRestrictionDateInput = React.forwardRef(
-  ({ onChange, onClick, value, placeholder, withIcon = true }, ref) => {
+  ({ onChange, onClick, value, placeholder }, ref) => {
     return (
       <TimeRestrictionDateInputWrapper>
         <InputInnerContainer>
-          {withIcon && (
-            <TimeRestrictionFormInputIcon onClick={onClick} src={arrowIcon} />
-          )}
           <DateInput
             onChange={onChange}
             onClick={onClick}
@@ -286,7 +288,6 @@ const TimeRestrictionDateInput = React.forwardRef(
             ref={ref}
             placeholder={placeholder}
             required
-            iconInset={withIcon}
           />
         </InputInnerContainer>
       </TimeRestrictionDateInputWrapper>
@@ -296,6 +297,7 @@ const TimeRestrictionDateInput = React.forwardRef(
 
 export default {
   StrongParagraph,
+  TimeRestrictionWrapper,
   Container,
   TimeRestrictionDateInput,
   InputContainer,

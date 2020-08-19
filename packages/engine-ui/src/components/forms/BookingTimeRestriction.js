@@ -1,6 +1,7 @@
 import React from 'react'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
+import formHelpers from './formHelpers'
 
 const Component = ({
   selected,
@@ -9,16 +10,6 @@ const Component = ({
   inputElement,
   minDate = new Date(),
 }) => {
-  const calculateMinTime = (date) => {
-    const momentDate = moment(date || minDate)
-    const isToday = momentDate.isSame(moment(), 'day')
-    if (isToday) {
-      const nowAddOneHour = momentDate.add({ hours: 1 }).toDate()
-      return nowAddOneHour
-    }
-    return moment().startOf('day').toDate() // set to 12:00 am today
-  }
-
   return (
     <div style={{ width: '100%' }}>
       <DatePicker
@@ -27,7 +18,7 @@ const Component = ({
         onChange={onChangeHandler}
         showTimeSelect
         excludeOutOfBoundsTimes
-        minTime={calculateMinTime(selected)}
+        minTime={formHelpers.calculateMinTime(selected, minDate)}
         maxTime={moment().endOf('day').toDate()}
         startDate={minDate}
         minDate={minDate}

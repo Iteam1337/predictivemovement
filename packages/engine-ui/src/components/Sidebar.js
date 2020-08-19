@@ -93,7 +93,7 @@ const Details = ({ state }) => {
 
 const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
-    'bookings'
+    'new-booking'
   )
   const { pathname } = useLocation()
   const { data } = Hooks.useFilteredStateFromQueryParams(state)

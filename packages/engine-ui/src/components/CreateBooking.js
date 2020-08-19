@@ -12,8 +12,8 @@ const CreateBooking = ({ createBooking }) => {
     measurement: '',
     weight: '',
     cargo: '',
-    pickup: { name: '', lat: '', lon: '', timewindows: null },
-    delivery: { name: '', lat: '', lon: '', timewindows: null },
+    pickup: { name: '', lat: '', lon: '', timewindow: null },
+    delivery: { name: '', lat: '', lon: '', timewindow: null },
     sender: { name: '', contact: '' },
     recipient: { name: '', contact: '' },
   })

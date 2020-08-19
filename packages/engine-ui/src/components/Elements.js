@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import MaterialCheckbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import clockIcon from '../assets/schedule-24px.svg'
 
 const FlexRowWrapper = styled.div`
   display: flex;
@@ -183,14 +182,6 @@ const FormInputIcon = styled.img`
   left: 12.5px;
 `
 
-const DateInputIcon = styled.img`
-  width: 16px;
-  height: 18px;
-  position: absolute;
-  top: 6px;
-  left: 10px;
-`
-
 const StrongParagraph = styled.label`
   margin-bottom: 0.5rem;
   display: block;
@@ -210,12 +201,7 @@ const TimeRestrictionDateInput = React.forwardRef(
     return (
       <TimeRestrictionDateInputWrapper>
         <InputInnerContainer>
-          {withIcon && (
-            <DateInputIcon alt="Time restriction icon" src={`${clockIcon}`} />
-          )}
-
           <DateInput
-            iconInset={withIcon}
             onChange={onChange}
             onClick={onClick}
             value={value}

@@ -13,36 +13,19 @@ const TimeRestrictionWrapper = styled.div`
   }
 `
 
-const AddAdditionalTimeRestrictionsButton = styled.button`
-  border: none;
-  background: transparent;
-  font-weight: bold;
-  color: currentColor;
-`
-
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
 
-  const handleBookingTimeRestrictionChange = (targetIndex) => (
-    date,
-    type,
-    property
-  ) =>
+  const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
       return {
         ...currentState,
         [type]: {
           ...currentState[type],
-          timewindows: [
-            ...currentState[type].timewindows,
-          ].map((timewindow, index) =>
-            index === targetIndex
-              ? { ...currentState[type].timewindows[index], [property]: date }
-              : timewindow
-          ),
+          timewindow: { ...currentState[type].timewindow, [property]: date },
         },
       }
     })
@@ -52,10 +35,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       ...currentState,
       [type]: {
         ...currentState[type],
-        timewindows: [
-          ...(currentState[type].timewindows || []),
-          { earliest: null, latest: null },
-        ],
+        timewindow: { earliest: null, latest: null },
       },
     }))
 
@@ -65,10 +45,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       [propertyName]: !currentState[propertyName],
     }))
 
-    return state[propertyName].timewindows
+    return state[propertyName].timewindow
       ? onChangeHandler((currentState) => ({
           ...currentState,
-          [propertyName]: { ...currentState[propertyName], timewindows: null },
+          [propertyName]: { ...currentState[propertyName], timewindow: null },
         }))
       : addTimeRestrictionWindow(propertyName)
   }
@@ -144,23 +124,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
         <TimeRestrictionWrapper>
-          {showBookingTimeRestriction.pickup &&
-            state.pickup.timewindows &&
-            state.pickup.timewindows.map((timewindow, index) => (
-              <BookingTimeRestrictionPair
-                typeProperty="pickup"
-                key={index}
-                timewindow={timewindow}
-                onChangeHandler={handleBookingTimeRestrictionChange(index)}
-              />
-            ))}
-          {showBookingTimeRestriction.pickup && state.pickup.timewindows && (
-            <AddAdditionalTimeRestrictionsButton
-              type="button"
-              onClick={() => addTimeRestrictionWindow('pickup')}
-            >
-              + Lägg till fler
-            </AddAdditionalTimeRestrictionsButton>
+          {showBookingTimeRestriction.pickup && state.pickup.timewindow && (
+            <BookingTimeRestrictionPair
+              typeProperty="pickup"
+              timewindow={state.pickup.timewindow}
+              onChangeHandler={handleBookingTimeRestrictionChange}
+            />
           )}
         </TimeRestrictionWrapper>
       </Elements.InputContainer>
@@ -226,25 +195,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           }
         />
         <TimeRestrictionWrapper>
-          {showBookingTimeRestriction.delivery &&
-            state.delivery.timewindows &&
-            state.delivery.timewindows.map((timewindow, index) => {
-              return (
-                <BookingTimeRestrictionPair
-                  typeProperty="delivery"
-                  key={index}
-                  timewindow={timewindow}
-                  onChangeHandler={handleBookingTimeRestrictionChange(index)}
-                />
-              )
-            })}
-          {showBookingTimeRestriction.delivery && state.delivery.timewindows && (
-            <AddAdditionalTimeRestrictionsButton
-              type="button"
-              onClick={() => addTimeRestrictionWindow('delivery')}
-            >
-              + Lägg till fler
-            </AddAdditionalTimeRestrictionsButton>
+          {showBookingTimeRestriction.delivery && state.delivery.timewindow && (
+            <BookingTimeRestrictionPair
+              typeProperty="delivery"
+              timewindow={state.delivery.timewindow}
+              onChangeHandler={handleBookingTimeRestrictionChange}
+            />
           )}
         </TimeRestrictionWrapper>
       </Elements.InputContainer>

@@ -1,6 +1,6 @@
+
 import React from 'react'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
+
 import { useHistory } from 'react-router-dom'
 import Elements from './Elements'
 import styled from 'styled-components'
@@ -23,6 +23,7 @@ const Filters = () => {
     params !== '' ? history.push(`?${params}`) : history.push('')
   }, [filters, history])
 
+  // eslint-disable-next-line no-unused-vars
   const handleChange = (type, filter) => {
     setFilters((currentFilters) => ({
       ...currentFilters,
@@ -34,43 +35,9 @@ const Filters = () => {
 
   return (
     <Container>
-      <Elements.StrongParagraph>Filtrera</Elements.StrongParagraph>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={filters.status.includes('new')}
-            onChange={() => handleChange('status', 'new')}
-            inputProps={{ 'aria-label': 'primary checkbox' }}
-          />
-        }
-        value="top"
-        label={<Elements.CheckboxLabel>Nya</Elements.CheckboxLabel>}
-        labelPlacement="end"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={filters.status.includes('assigned')}
-            onChange={() => handleChange('status', 'assigned')}
-            inputProps={{ 'aria-label': 'primary checkbox' }}
-          />
-        }
-        value="top"
-        label={<Elements.CheckboxLabel>Tilldelade</Elements.CheckboxLabel>}
-        labelPlacement="end"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={filters.status.includes('delivered')}
-            onChange={() => handleChange('status', 'delivered')}
-            inputProps={{ 'aria-label': 'primary checkbox' }}
-          />
-        }
-        value="top"
-        label={<Elements.CheckboxLabel>Levererade</Elements.CheckboxLabel>}
-        labelPlacement="end"
-      />
+
+      <Elements.Checkbox/>
+
     </Container>
   )
 }

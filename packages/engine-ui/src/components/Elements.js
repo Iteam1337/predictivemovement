@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import MaterialCheckbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
+import arrowIcon from '../assets/input-arrowdown.svg'
 
 const FlexRowWrapper = styled.div`
   display: flex;
@@ -24,12 +23,6 @@ const NoInfoParagraph = styled.p`
 
 const Container = styled.div`
   margin-bottom: 2rem;
-`
-
-const CheckboxLabel = styled.span`
-  display: block;
-  font-weight: bold;
-  font-size: 0.875rem;
 `
 
 const InputBlock = styled.div`
@@ -97,7 +90,13 @@ const TextInput = styled.input`
     iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
 `
 
+const TextInputWithArrow = styled(TextInput)`
+  padding: ${({ iconInset }) =>
+    iconInset ? '0.75rem 0 0.75rem 1.1rem' : '0.75rem'};
+`
+
 const DateInput = styled.input`
+  cursor: default;
   border: none;
   background-color: #f1f3f5;
   border-radius: 0.25rem;
@@ -120,20 +119,87 @@ const ButtonWrapper = styled.div`
   margin-top: 2rem;
 `
 
-const Checkbox = ({ label, checked, onChangeHandler }) => (
-  <FormControlLabel
-    control={
-      <MaterialCheckbox
-        checked={checked}
-        onChange={onChangeHandler}
-        inputProps={{ 'aria-label': 'primary checkbox' }}
-      />
-    }
-    value="top"
-    label={<CheckboxLabel>{label}</CheckboxLabel>}
-    labelPlacement="end"
-  />
-)
+const HiddenCheckbox = styled.input`
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+`
+
+const CheckboxLabel = styled.label`
+  display: block;
+  font-weight: bold;
+  font-size: 0.875rem;
+  margin-left: 24px;
+`
+
+const CustomCheckboxContainer = styled.label`
+  position: relative;
+  margin: 0.5rem 0 0.5rem 0;
+  height: 20px;
+  display: block;
+  .custom-checkbox {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 18px;
+    width: 18px;
+    background-color: #f1f3f5;
+    border-radius: 3px;
+    border: 2px solid #666666;
+    transition: all 50ms ease;
+  }
+
+  .custom-checkbox::after {
+    position: absolute;
+    content: '';
+    left: 4px;
+    top: 0px;
+    height: 0;
+    width: 0;
+    border-radius: 3px;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    transform: rotate(0deg) scale(0);
+    opacity: 1;
+    transition: all 50ms ease;
+  }
+
+  input:checked ~ .custom-checkbox {
+    background-color: #666666;
+    border-radius: 3px;
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+    border: 2px solid #666666;
+  }
+
+  input:active ~ .custom-checkbox {
+    transform: rotate(0deg) scale(0.95);
+    opacity: 1;
+  }
+
+  input:checked ~ .custom-checkbox::after {
+    transform: rotate(45deg) scale(1);
+    opacity: 1;
+    left: 4px;
+    top: 0px;
+    width: 3px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    background-color: transparent;
+    border-radius: 0;
+  }
+`
+
+const Checkbox = ({ name, onChangeHandler, label }) => {
+  return (
+    <CustomCheckboxContainer>
+      <HiddenCheckbox name={name} type="checkbox" onChange={onChangeHandler} />
+      <CheckboxLabel>{label}</CheckboxLabel>
+      <span className="custom-checkbox" />
+    </CustomCheckboxContainer>
+  )
+}
 
 const TextInputPairContainer = styled.div`
   display: flex;
@@ -182,6 +248,14 @@ const FormInputIcon = styled.img`
   left: 12.5px;
 `
 
+const TimeRestrictionFormInputIcon = styled.img`
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  top: 14px;
+  left: 89%;
+`
+
 const StrongParagraph = styled.label`
   margin-bottom: 0.5rem;
   display: block;
@@ -207,6 +281,9 @@ const TimeRestrictionDateInput = React.forwardRef(
     return (
       <TimeRestrictionDateInputWrapper>
         <InputInnerContainer>
+          {withIcon && (
+            <TimeRestrictionFormInputIcon onClick={onClick} src={arrowIcon} />
+          )}
           <DateInput
             onChange={onChange}
             onClick={onClick}
@@ -214,6 +291,7 @@ const TimeRestrictionDateInput = React.forwardRef(
             ref={ref}
             placeholder={placeholder}
             required
+            iconInset={withIcon}
           />
         </InputInnerContainer>
       </TimeRestrictionDateInputWrapper>
@@ -246,4 +324,5 @@ export default {
   TextInputPairContainer,
   TextInputPairItem,
   InputBlock,
+  TextInputWithArrow,
 }

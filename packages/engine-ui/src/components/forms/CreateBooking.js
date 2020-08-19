@@ -105,7 +105,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         </Elements.InputContainer>
       </Elements.InputBlock>
 
-      <Elements.InputContainer>
+      <Elements.InputContainer style={{ marginBottom: '0.75rem' }}>
         <Elements.Label htmlFor="pickup">Upphämtning</Elements.Label>
         <AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 22"
@@ -114,6 +114,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             onChangeHandler
           )}
         />
+
         <Elements.Checkbox
           label="Tidspassning"
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
@@ -174,7 +175,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         </Elements.InputContainer>
       </Elements.InputBlock>
 
-      <Elements.InputContainer>
+      <Elements.InputContainer style={{ marginBottom: '0.75rem' }}>
         <Elements.Label htmlFor="delivery">Avlämning</Elements.Label>
         <AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 7"

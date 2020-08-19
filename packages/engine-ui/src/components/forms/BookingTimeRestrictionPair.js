@@ -14,7 +14,10 @@ const Component = ({ onChangeHandler, timewindow, typeProperty }) => {
           }
           placeholderText="Tidigast"
           inputElement={
-            <Elements.TimeRestrictionDateInput ref={timeRestrictionInputRef} />
+            <Elements.TimeRestrictionDateInput
+              ref={timeRestrictionInputRef}
+              withIcon
+            />
           }
         />
       </Elements.TextInputPairItem>
@@ -30,7 +33,7 @@ const Component = ({ onChangeHandler, timewindow, typeProperty }) => {
           placeholderText="Senast"
           inputElement={
             <Elements.TimeRestrictionDateInput
-              withIcon={false}
+              withIcon
               ref={timeRestrictionInputRef}
             />
           }

@@ -15,7 +15,7 @@ import {
 import BookingDetails from './BookingDetails'
 import Hooks from '../hooks'
 import CarDetails from './CarDetails'
-import Filters from './Filters'
+
 import AddVehicle from './AddVehicle'
 import Dispatch from '../assets/dispatch.svg'
 import Plans from './Plans'
@@ -93,7 +93,7 @@ const Details = ({ state }) => {
 
 const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
-    'new-booking'
+    'bookings'
   )
   const { pathname } = useLocation()
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
@@ -105,7 +105,6 @@ const Sidebar = (state) => {
           <>
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
-            <Filters />
             <AddNewContainer>
               <TextLink to="/add-booking">
                 <Elements.AddFormFieldButton>

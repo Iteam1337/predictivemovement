@@ -79,8 +79,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                     }
                     placeholderText="Starttid"
                     inputElement={
-                      <Elements.TimeRestrictionTimeInput
-                        withIcon={false}
+                      <Elements.TimeRestrictionDateInput
                         ref={timeRestrictionInputRef}
                       />
                     }
@@ -94,8 +93,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                     }
                     placeholderText="Sluttid"
                     inputElement={
-                      <Elements.TimeRestrictionTimeInput
-                        withIcon={false}
+                      <Elements.TimeRestrictionDateInput
                         ref={timeRestrictionInputRef}
                       />
                     }

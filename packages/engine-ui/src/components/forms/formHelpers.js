@@ -1,17 +1,19 @@
-const handleTextInputChange = (propertyName) => (event) => {
+const handleTextInputChange = (propertyName, callback) => (event) => {
   event.persist()
 
-  return onChangeHandler((currentState) => ({
+  return callback((currentState) => ({
     ...currentState,
     [propertyName]: event.target.value,
   }))
 }
 
-const handleContactInputChange = (propertyName, nestedPropertyName) => (
-  event
-) => {
+const handleContactInputChange = (
+  propertyName,
+  nestedPropertyName,
+  callback
+) => (event) => {
   event.persist()
-  return onChangeHandler((currentState) => ({
+  return callback((currentState) => ({
     ...currentState,
     [propertyName]: {
       ...currentState[propertyName],
@@ -20,8 +22,12 @@ const handleContactInputChange = (propertyName, nestedPropertyName) => (
   }))
 }
 
-const handleDropdownSelect = (propertyName) => ({ name, lon, lat }) => {
-  return onChangeHandler((currentState) => ({
+const handleDropdownSelect = (propertyName, callback) => ({
+  name,
+  lon,
+  lat,
+}) => {
+  return callback((currentState) => ({
     ...currentState,
     [propertyName]: {
       name,

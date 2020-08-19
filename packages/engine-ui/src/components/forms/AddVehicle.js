@@ -44,7 +44,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             name="vehicleType"
             value={state.vehicleType}
             placeholder="Paketbil"
-            onChangeHandler={formHelpers.handleTextInputChange('vehicleType')}
+            onChangeHandler={formHelpers.handleTextInputChange(
+              'vehicleType',
+              onChangeHandler
+            )}
           />
         </Elements.InputContainer>
       </Elements.InputBlock>
@@ -54,7 +57,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <TextInput
             name="capacity"
             value={state.capacity}
-            onChangeHandler={formHelpers.handleTextInputChange('capacity')}
+            onChangeHandler={formHelpers.handleTextInputChange(
+              'capacity',
+              onChangeHandler
+            )}
             placeholder="Lastvolym"
           />
         </Elements.InputContainer>
@@ -100,7 +106,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           </Elements.InputContainer>
           <AddressSearchInput
             placeholder="Slutposition"
-            onChangeHandler={formHelpers.handleDropdownSelect('endDestination')}
+            onChangeHandler={formHelpers.handleDropdownSelect(
+              'endDestination',
+              onChangeHandler
+            )}
           />
         </Elements.InputContainer>
       </Elements.InputBlock>
@@ -118,7 +127,8 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               value={state.driver.name}
               onChangeHandler={formHelpers.handleContactInputChange(
                 'driver',
-                'name'
+                'name',
+                onChangeHandler
               )}
               placeholder="Peter Persson"
             />
@@ -137,7 +147,8 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               value={state.driver.contact}
               onChangeHandler={formHelpers.handleContactInputChange(
                 'driver',
-                'contact'
+                'contact',
+                onChangeHandler
               )}
               placeholder="070-123 45 67"
             />

@@ -20,12 +20,12 @@ import org.json.JSONObject;
  */
 public class VRPSetting {
 
-    private static final int WEIGHT_INDEX = 0;
+    private static final int VOLUME_INDEX = 0;
 
     private static VehicleType vehicleDummyType;
     static {
         VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance("vehicleDummyType");
-        vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, 3);
+        vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, 3);
         vehicleTypeBuilder.setCostPerDistance(1);
         vehicleTypeBuilder.setCostPerTransportTime(1);
 
@@ -65,7 +65,7 @@ public class VRPSetting {
             VehicleImpl.Builder vehicleBuilder = VehicleImpl.Builder.newInstance(vehicleId);
 
             // type
-            vehicleBuilder.setType(vehicleDummyType);
+            vehicleBuilder.setType(getVehicleType(jsonVehicle));
 
             // start address
             JSONObject startAddress = jsonVehicle.getJSONObject("start_address");
@@ -117,7 +117,7 @@ public class VRPSetting {
             });
 
             // package capacity
-            shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);
+            shipmentBuilder.addSizeDimension(VOLUME_INDEX, 1);
 
             Shipment shipment = shipmentBuilder.build();
             shipments.add(shipment);
@@ -129,6 +129,19 @@ public class VRPSetting {
         float latitude = jsonLocation.getFloat("lat");
         Location location = Location.newInstance(longitude, latitude);
         return location;
+    }
+
+    private VehicleType getVehicleType(JSONObject vehicle) {
+        String profile = vehicle.optString("profile");
+        if (profile != null) {
+            VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance(profile);
+            int capacity = vehicle.optInt("capacity", 3);
+            vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, capacity);
+            vehicleTypeBuilder.setCostPerDistance(1);
+            vehicleTypeBuilder.setCostPerTransportTime(1);
+            return vehicleTypeBuilder.build();
+        }
+        return vehicleDummyType;
     }
 
     private void createCostMatrix() {

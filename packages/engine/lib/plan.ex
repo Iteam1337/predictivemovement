@@ -28,6 +28,7 @@ defmodule Plan do
           [start_address, end_address]
         end)
       )
+      |> Enum.uniq()
       |> Osrm.get_time_between_coordinates()
       |> Map.delete(:code)
 
@@ -62,13 +63,13 @@ defmodule Plan do
 
   def add_vehicle_hints(vehicles, hints) do
     vehicles
-    |> Enum.zip(hints)
-    |> Enum.map(fn {vehicle, hint} ->
+    |> Enum.zip(hints |> Enum.chunk_every(2))
+    |> Enum.map(fn {vehicle, [start_hint, end_hint]} ->
       Map.update!(vehicle, :start_address, fn start_address ->
-        Map.put(start_address, :hint, hint)
+        Map.put(start_address, :hint, start_hint)
       end)
       |> Map.update!(:end_address, fn end_address ->
-        Map.put(end_address, :hint, hint)
+        Map.put(end_address, :hint, end_hint)
       end)
     end)
   end

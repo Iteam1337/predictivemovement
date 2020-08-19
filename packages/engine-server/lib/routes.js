@@ -81,7 +81,7 @@ function register(io) {
         end_destination: params.endDestination,
         driver: params.driver,
       }
-      addVehicle(vehicle.start_position)
+      addVehicle(vehicle)
     })
 
     socket.on('new-bookings', ({ total }) => {

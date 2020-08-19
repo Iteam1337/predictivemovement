@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import TextInput from './TextInput'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
-
+import formHelpers from './formHelpers'
 const TimeRestrictionWrapper = styled.div`
   .react-datepicker-wrapper {
     width: 100%;
@@ -47,28 +47,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       }
     })
 
-  const handleTextInputChange = (propertyName) => (event) => {
-    event.persist()
-
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: event.target.value,
-    }))
-  }
-
-  const handleContactInputChange = (propertyName, nestedPropertyName) => (
-    event
-  ) => {
-    event.persist()
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: {
-        ...currentState[propertyName],
-        [nestedPropertyName]: event.target.value,
-      },
-    }))
-  }
-
   const addTimeRestrictionWindow = (type) =>
     onChangeHandler((currentState) => ({
       ...currentState,
@@ -80,17 +58,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         ],
       },
     }))
-
-  const handleDropdownSelect = (propertyName) => ({ name, lon, lat }) => {
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: {
-        name,
-        lon,
-        lat,
-      },
-    }))
-  }
 
   const handleToggleTimeRestrictionsChange = (propertyName) => {
     setShowBookingTimeRestriction((currentState) => ({
@@ -115,7 +82,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             name="id"
             value={state.id}
             placeholder="ID"
-            onChangeHandler={handleTextInputChange('id')}
+            onChangeHandler={formHelpers.handleTextInputChange('id')}
           />
         </Elements.InputContainer>
         <Elements.InputContainer>
@@ -125,7 +92,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 name="measurement"
                 value={state.measurement}
                 placeholder="Mått (BxHxD)"
-                onChangeHandler={handleTextInputChange('measurement')}
+                onChangeHandler={formHelpers.handleTextInputChange(
+                  'measurement'
+                )}
               />
             </Elements.TextInputPairItem>
             <Elements.TextInputPairItem>
@@ -135,7 +104,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 value={state.weight}
                 placeholder="Vikt (kg)"
                 type="number"
-                onChangeHandler={handleTextInputChange('weight')}
+                onChangeHandler={formHelpers.handleTextInputChange('weight')}
               />
             </Elements.TextInputPairItem>
           </Elements.TextInputPairContainer>
@@ -145,7 +114,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <TextInput
             name="cargo"
             value={state.cargo}
-            onChangeHandler={handleTextInputChange('cargo')}
+            onChangeHandler={formHelpers.handleTextInputChange('cargo')}
             placeholder="Innehåll"
           />
         </Elements.InputContainer>
@@ -155,7 +124,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Label htmlFor="pickup">Upphämtning</Elements.Label>
         <AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 22"
-          onChangeHandler={handleDropdownSelect('pickup')}
+          onChangeHandler={formHelpers.handleDropdownSelect('pickup')}
         />
         <Elements.Checkbox
           label="Tidspassning"
@@ -193,7 +162,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             <TextInput
               name="sendername"
               value={state.sender.name}
-              onChangeHandler={handleContactInputChange('sender', 'name')}
+              onChangeHandler={formHelpers.handleContactInputChange(
+                'sender',
+                'name'
+              )}
               placeholder="Sportbutiken AB"
               iconInset
             />
@@ -213,7 +185,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="sender"
               type="tel"
               value={state.sender.contact}
-              onChangeHandler={handleContactInputChange('sender', 'contact')}
+              onChangeHandler={formHelpers.handleContactInputChange(
+                'sender',
+                'contact'
+              )}
               placeholder="070-123 45 67"
             />
           </Elements.InputInnerContainer>
@@ -224,7 +199,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Label htmlFor="delivery">Avlämning</Elements.Label>
         <AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 7"
-          onChangeHandler={handleDropdownSelect('delivery')}
+          onChangeHandler={formHelpers.handleDropdownSelect('delivery')}
         />
         <Elements.Checkbox
           label="Tidspassning"
@@ -265,7 +240,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               iconInset
               name="recipient-name"
               value={state.recipient.name}
-              onChangeHandler={handleContactInputChange('recipient', 'name')}
+              onChangeHandler={formHelpers.handleContactInputChange(
+                'recipient',
+                'name'
+              )}
               placeholder="Anna Andersson"
             />
           </Elements.InputInnerContainer>
@@ -284,7 +262,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="recipient-contact"
               type="number"
               value={state.recipient.contact}
-              onChangeHandler={handleContactInputChange('recipient', 'contact')}
+              onChangeHandler={formHelpers.handleContactInputChange(
+                'recipient',
+                'contact'
+              )}
               placeholder="070-123 45 67"
             />
           </Elements.InputInnerContainer>

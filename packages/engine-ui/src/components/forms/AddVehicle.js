@@ -7,7 +7,7 @@ import TextInput from './TextInput'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import { useHistory } from 'react-router-dom'
-
+import formHelpers from './formHelpers'
 const TimeRestrictionWrapper = styled.div`
   .react-datepicker-wrapper {
     width: 100%;
@@ -35,39 +35,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   //   }))
   // }
 
-  const handleTextInputChange = (propertyName) => (event) => {
-    event.persist()
-
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: event.target.value,
-    }))
-  }
-
-  const handleContactInputChange = (propertyName, nestedPropertyName) => (
-    event
-  ) => {
-    event.persist()
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: {
-        ...currentState[propertyName],
-        [nestedPropertyName]: event.target.value,
-      },
-    }))
-  }
-
-  const handleDropdownSelect = (propertyName) => ({ name, lon, lat }) => {
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      [propertyName]: {
-        name,
-        lon,
-        lat,
-      },
-    }))
-  }
-
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.InputBlock>
@@ -77,7 +44,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             name="vehicleType"
             value={state.vehicleType}
             placeholder="Paketbil"
-            onChangeHandler={handleTextInputChange('vehicleType')}
+            onChangeHandler={formHelpers.handleTextInputChange('vehicleType')}
           />
         </Elements.InputContainer>
       </Elements.InputBlock>
@@ -87,7 +54,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <TextInput
             name="capacity"
             value={state.capacity}
-            onChangeHandler={handleTextInputChange('capacity')}
+            onChangeHandler={formHelpers.handleTextInputChange('capacity')}
             placeholder="Lastvolym"
           />
         </Elements.InputContainer>
@@ -133,7 +100,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           </Elements.InputContainer>
           <AddressSearchInput
             placeholder="Slutposition"
-            onChangeHandler={handleDropdownSelect('endDestination')}
+            onChangeHandler={formHelpers.handleDropdownSelect('endDestination')}
           />
         </Elements.InputContainer>
       </Elements.InputBlock>
@@ -149,7 +116,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               iconInset
               name="driver"
               value={state.driver.name}
-              onChangeHandler={handleContactInputChange('driver', 'name')}
+              onChangeHandler={formHelpers.handleContactInputChange(
+                'driver',
+                'name'
+              )}
               placeholder="Peter Persson"
             />
           </Elements.InputInnerContainer>
@@ -165,7 +135,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               iconInset
               name="contact"
               value={state.driver.contact}
-              onChangeHandler={handleContactInputChange('driver', 'contact')}
+              onChangeHandler={formHelpers.handleContactInputChange(
+                'driver',
+                'contact'
+              )}
               placeholder="070-123 45 67"
             />
           </Elements.InputInnerContainer>

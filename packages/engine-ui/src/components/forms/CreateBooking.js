@@ -2,11 +2,10 @@ import React from 'react'
 import Elements from '../Elements'
 import AddressSearchInput from './AddressSearchInput'
 import BookingTimeRestrictionPair from './BookingTimeRestrictionPair'
-import styled from 'styled-components'
 import TextInput from './TextInput'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
-import formHelpers from './formHelpers'
+import eventHandlers from './eventHandlers'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const [
@@ -57,7 +56,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             name="id"
             value={state.id}
             placeholder="ID"
-            onChangeHandler={formHelpers.handleTextInputChange(
+            onChangeHandler={eventHandlers.handleTextInputChange(
               'id',
               onChangeHandler
             )}
@@ -70,7 +69,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 name="measurement"
                 value={state.measurement}
                 placeholder="Mått (BxHxD)"
-                onChangeHandler={formHelpers.handleTextInputChange(
+                onChangeHandler={eventHandlers.handleTextInputChange(
                   'measurement',
                   onChangeHandler
                 )}
@@ -83,7 +82,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 value={state.weight}
                 placeholder="Vikt (kg)"
                 type="number"
-                onChangeHandler={formHelpers.handleTextInputChange(
+                onChangeHandler={eventHandlers.handleTextInputChange(
                   'weight',
                   onChangeHandler
                 )}
@@ -96,7 +95,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <TextInput
             name="cargo"
             value={state.cargo}
-            onChangeHandler={formHelpers.handleTextInputChange(
+            onChangeHandler={eventHandlers.handleTextInputChange(
               'cargo',
               onChangeHandler
             )}
@@ -109,7 +108,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Label htmlFor="pickup">Upphämtning</Elements.Label>
         <AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 22"
-          onChangeHandler={formHelpers.handleDropdownSelect(
+          onChangeHandler={eventHandlers.handleDropdownSelect(
             'pickup',
             onChangeHandler
           )}
@@ -140,7 +139,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             <TextInput
               name="sendername"
               value={state.sender.name}
-              onChangeHandler={formHelpers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleContactInputChange(
                 'sender',
                 'name',
                 onChangeHandler
@@ -164,7 +163,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="sender"
               type="tel"
               value={state.sender.contact}
-              onChangeHandler={formHelpers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleContactInputChange(
                 'sender',
                 'contact',
                 onChangeHandler
@@ -179,7 +178,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Label htmlFor="delivery">Avlämning</Elements.Label>
         <AddressSearchInput
           placeholder="T.ex. BARNSTUGEVÄGEN 7"
-          onChangeHandler={formHelpers.handleDropdownSelect(
+          onChangeHandler={eventHandlers.handleDropdownSelect(
             'delivery',
             onChangeHandler
           )}
@@ -212,7 +211,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               iconInset
               name="recipient-name"
               value={state.recipient.name}
-              onChangeHandler={formHelpers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleContactInputChange(
                 'recipient',
                 'name',
                 onChangeHandler
@@ -235,7 +234,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="recipient-contact"
               type="number"
               value={state.recipient.contact}
-              onChangeHandler={formHelpers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleContactInputChange(
                 'recipient',
                 'contact',
                 onChangeHandler

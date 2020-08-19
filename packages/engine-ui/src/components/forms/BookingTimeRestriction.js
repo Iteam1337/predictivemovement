@@ -1,7 +1,7 @@
 import React from 'react'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
-import formHelpers from './formHelpers'
+import helpers from '../../utils/helpers'
 
 const Component = ({
   selected,
@@ -18,7 +18,7 @@ const Component = ({
         onChange={onChangeHandler}
         showTimeSelect
         excludeOutOfBoundsTimes
-        minTime={formHelpers.calculateMinTime(selected, minDate)}
+        minTime={helpers.calculateMinTime(selected, minDate)}
         maxTime={moment().endOf('day').toDate()}
         startDate={minDate}
         minDate={minDate}

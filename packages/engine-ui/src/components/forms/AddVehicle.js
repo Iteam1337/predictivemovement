@@ -1,12 +1,11 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import styled from 'styled-components'
 import nameIcon from '../../assets/contact-name.svg'
 import phoneIcon from '../../assets/contact-phone.svg'
 import Elements from '../Elements'
 import AddressSearchInput from './AddressSearchInput'
 import DriverScheduleRestrictionPair from './DriverScheduleRestrictionPair'
-import formHelpers from './formHelpers'
+import eventHandlers from './eventHandlers'
 import TextInput from './TextInput'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
@@ -29,7 +28,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             name="vehicleType"
             value={state.vehicleType}
             placeholder="Paketbil"
-            onChangeHandler={formHelpers.handleTextInputChange(
+            onChangeHandler={eventHandlers.handleTextInputChange(
               'vehicleType',
               onChangeHandler
             )}
@@ -42,7 +41,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <TextInput
             name="capacity"
             value={state.capacity}
-            onChangeHandler={formHelpers.handleTextInputChange(
+            onChangeHandler={eventHandlers.handleTextInputChange(
               'capacity',
               onChangeHandler
             )}
@@ -63,7 +62,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           </Elements.InputContainer>
           <AddressSearchInput
             placeholder="Slutposition"
-            onChangeHandler={formHelpers.handleDropdownSelect(
+            onChangeHandler={eventHandlers.handleDropdownSelect(
               'endDestination',
               onChangeHandler
             )}
@@ -82,7 +81,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               iconInset
               name="driver"
               value={state.driver.name}
-              onChangeHandler={formHelpers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleContactInputChange(
                 'driver',
                 'name',
                 onChangeHandler
@@ -102,7 +101,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               iconInset
               name="contact"
               value={state.driver.contact}
-              onChangeHandler={formHelpers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleContactInputChange(
                 'driver',
                 'contact',
                 onChangeHandler

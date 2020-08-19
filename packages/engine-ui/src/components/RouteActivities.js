@@ -43,7 +43,7 @@ const RouteActivities = ({ car }) => {
               setViewport({
                 latitude: activity.address.lat,
                 longitude: activity.address.lon,
-                zoom: 17,
+                zoom: 10,
                 transitionDuration: 2000,
                 transitionInterpolator: new FlyToInterpolator(),
                 transitionEasing: (t) => t * (2 - t),

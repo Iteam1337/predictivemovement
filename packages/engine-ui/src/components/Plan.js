@@ -18,18 +18,21 @@ const RouteTitleWrapper = styled.div`
     background: none;
     border: none;
   }
+
   button:focus {
     outline: none;
   }
 `
 
-const Plans = ({ cars }) => {
+const Plan = ({ plan }) => {
   const { setViewport } = React.useContext(ViewportContext)
   const [showRouteInfo, setOpenRouteInfo] = React.useState(false)
   const history = useHistory()
-  const driverPlans = cars.filter((d) => d.activities.length > 0)
+  const driverPlans = plan.filter((d) => d.activities.length > 0)
+
   const toggle = (id) =>
     setOpenRouteInfo((showRouteInfo) => (showRouteInfo === id ? undefined : id)) // close if currently open
+
   if (!driverPlans.length)
     return (
       <Elements.NoInfoParagraph>
@@ -39,15 +42,15 @@ const Plans = ({ cars }) => {
 
   return (
     <div>
-      {driverPlans.map((car, index) => (
-        <div key={car.id}>
+      {driverPlans.map((vehicle, index) => (
+        <div key={vehicle.id}>
           <RouteTitleWrapper>
             <Elements.StrongParagraph>
               Rutt {index + 1}
             </Elements.StrongParagraph>
             <button
               onClick={() => {
-                toggle(car.id)
+                toggle(vehicle.id)
                 history.push('/')
               }}
             >
@@ -55,28 +58,28 @@ const Plans = ({ cars }) => {
             </button>
           </RouteTitleWrapper>
 
-          {showRouteInfo === car.id && (
+          {showRouteInfo === vehicle.id && (
             <>
               <Elements.FlexRowWrapper>
                 <Elements.StrongParagraph>Fordon</Elements.StrongParagraph>
                 <Elements.RoundedLink
                   margin="0 0.5rem"
-                  to={`/details?type=car&id=${car.id}`}
+                  to={`/details?type=vehicle&id=${vehicle.id}`}
                   onClick={() =>
                     setViewport({
-                      latitude: car.position.lat,
-                      longitude: car.position.lon,
-                      zoom: 17,
+                      latitude: vehicle.position.lat,
+                      longitude: vehicle.position.lon,
+                      zoom: 10,
                       transitionDuration: 3000,
-                      transitionInterpolator: new FlyToInterpolator(),
+                        transitionInterpolator: new FlyToInterpolator(),
                       transitionEasing: (t) => t * (2 - t),
                     })
                   }
                 >
-                  {car.id}
+                  {vehicle.id}
                 </Elements.RoundedLink>
               </Elements.FlexRowWrapper>
-              <RouteActivities car={car} />
+              <RouteActivities vehicle={vehicle} />
             </>
           )}
         </div>
@@ -85,4 +88,4 @@ const Plans = ({ cars }) => {
   )
 }
 
-export default Plans
+export default Plan

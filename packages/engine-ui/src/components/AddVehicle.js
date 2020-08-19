@@ -72,6 +72,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
                 src={`${locationIcon}`}
               />
               <Elements.TextInput
+              iconInset
                 name="position"
                 type="text"
                 value={formState}

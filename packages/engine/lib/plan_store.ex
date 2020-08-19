@@ -10,6 +10,8 @@ defmodule PlanStore do
   end
 
   def handle_call({:put, new_plan}, _from, _state) do
+    IO.inspect(new_plan, label: "the new plan")
+    MQ.publish(new_plan, "plan")
     {:reply, :ok, new_plan}
   end
 

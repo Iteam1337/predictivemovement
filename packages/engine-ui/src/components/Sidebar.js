@@ -17,8 +17,8 @@ import Hooks from '../hooks'
 import CarDetails from './CarDetails'
 import Filters from './Filters'
 import AddVehicle from './AddVehicle'
-import Dispatch from '../assets/dispatch.svg'
-import Plans from './Plans'
+import dispatchIcon from '../assets/dispatch.svg'
+import Plan from './Plan'
 import Elements from './Elements'
 
 const Container = styled.div`
@@ -132,11 +132,11 @@ const Sidebar = (state) => {
             </TextLink>
           </>
         )
-      case 'dispatch':
+      case 'plan':
         return (
           <PlanWrapper>
             <h3>Plan</h3>
-            <Plans cars={state.cars} />
+            <Plan plan={state.plan} />
             <Elements.SubmitButton
               justifySelf="center"
               onClick={state.dispatchOffers}
@@ -169,9 +169,9 @@ const Sidebar = (state) => {
         </Elements.NavIconLink>
         <Elements.NavIconLink to="/">
           <img
-            onClick={() => setNavigationCurrentView('dispatch')}
-            src={Dispatch}
-            alt="Dispatch icon"
+            onClick={() => setNavigationCurrentView('plan')}
+            src={dispatchIcon}
+            alt="dispatch icon"
           />
         </Elements.NavIconLink>
       </NavigationBar>

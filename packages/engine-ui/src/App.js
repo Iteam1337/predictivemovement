@@ -61,6 +61,13 @@ const App = () => {
     })
   })
 
+  useSocket('plan-update', (plan) => {
+    dispatch({
+      type: 'setPlan',
+      payload: plan.vehicles
+    })
+  })
+
   return (
     <ViewportProvider>
       <Router>

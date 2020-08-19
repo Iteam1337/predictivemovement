@@ -72,8 +72,16 @@ function register(io) {
       dispatchOffers()
     })
 
-    socket.on('add-vehicle', ({ position }) => {
-      addVehicle(position)
+    socket.on('add-vehicle', (params) => {
+      const vehicle = {
+        id: params.id || id62(),
+        capacity: params.capacity,
+        time_window: params.timewindow,
+        start_position: params.startPosition,
+        end_destination: params.endDestination,
+        driver: params.driver,
+      }
+      addVehicle(vehicle.start_position)
     })
 
     socket.on('new-bookings', ({ total }) => {

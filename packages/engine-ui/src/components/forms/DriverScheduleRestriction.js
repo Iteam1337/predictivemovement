@@ -13,20 +13,18 @@ const Component = ({
   return (
     <div style={{ width: '100%' }}>
       <DatePicker
-        id="startDate"
+        id="startTime"
         selected={selected}
         onChange={onChangeHandler}
         showTimeSelect
+        showTimeSelectOnly
+        timeIntervals={15}
+        timeCaption="time"
+        dateFormat="H:mm"
         excludeOutOfBoundsTimes
         minTime={helpers.calculateMinTime(selected, minDate)}
         maxTime={moment().endOf('day').toDate()}
-        startDate={minDate}
-        minDate={minDate}
         timeFormat="HH:mm"
-        timeIntervals={30}
-        timeCaption="time"
-        dateFormat="yyyy-MM-dd, HH:mm"
-        required
         placeholderText={placeholderText}
         customInput={inputElement}
       />

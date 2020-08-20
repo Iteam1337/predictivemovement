@@ -35,8 +35,8 @@ function register(io) {
       .doto((car) => {
         movingCarsCache.set(car.id, car)
       })
-      .pick(['position', 'status', 'id', 'activities', 'current_route'])
-      // .tap(updatePosition)
+      // .pick(['position', 'status', 'id', 'activities', 'current_route'])
+      // .tap((car) => car)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each((cars) => socket.emit('cars', cars))
@@ -52,6 +52,10 @@ function register(io) {
         id: params.id || id62(),
         senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
         bookingDate: new Date().toISOString(),
+        size: {
+          measurement: params.measurement,
+          weight: params.weight,
+        },
         pickup: {
           time_windows: params.pickup.timewindows,
           lat: params.pickup.lat,

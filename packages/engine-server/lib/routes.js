@@ -79,7 +79,9 @@ function register(io) {
         time_window: params.timewindow,
         start_position: params.startPosition,
         end_destination: params.endDestination,
-        driver: params.driver,
+        metadata: {
+          driver: params.driver,
+        },
       }
       addVehicle(vehicle)
     })

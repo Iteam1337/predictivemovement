@@ -79,6 +79,15 @@ public class VRPSetting {
             vehicleBuilder.setEndLocation(vehicleEndAddress);
             locations.put(endAddress.getString("hint"), vehicleEndAddress);
 
+            VRPSettingTimeUtils timeUtils = new VRPSettingTimeUtils();
+            // earliest start
+            double earliestStart = timeUtils.getTimeDifferenceFromNow(jsonVehicle, "earliest_start", 0.0);
+            vehicleBuilder.setEarliestStart(earliestStart);
+
+            // latest arrival
+            double latestArrival = timeUtils.getTimeDifferenceFromNow(jsonVehicle, "latest_end", Double.MAX_VALUE);
+            vehicleBuilder.setLatestArrival(latestArrival);
+
             VehicleImpl vehicle = vehicleBuilder.build();
             vehicles.add(vehicle);
         }

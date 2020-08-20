@@ -10,10 +10,10 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   const [formState, setState] = React.useState({
     vehicleType: '',
     id: '',
-    capacity: '',
+    capacity: null,
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472 },
-    endDestination: { lat: '', lon: '' },
+    endDestination: null,
     driver: { name: '', contact: '' },
   })
 

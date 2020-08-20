@@ -39,6 +39,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.InputContainer>
           <Elements.Label htmlFor="capacity">Kapacitet</Elements.Label>
           <TextInput
+            step={1}
+            min="0"
+            type="number"
             name="capacity"
             value={state.capacity}
             onChangeHandler={eventHandlers.handleTextInputChange(

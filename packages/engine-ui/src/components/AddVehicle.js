@@ -13,7 +13,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
     capacity: '',
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472 },
-    endDestination: { name: '', lat: '', lon: '' },
+    endDestination: { lat: '', lon: '' },
     driver: { name: '', contact: '' },
   })
 

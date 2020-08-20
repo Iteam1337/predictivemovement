@@ -76,9 +76,11 @@ function register(io) {
       const vehicle = {
         id: params.id || id62(),
         capacity: params.capacity,
-        time_window: params.timewindow,
-        start_position: params.startPosition,
-        end_destination: params.endDestination,
+        earliest_start: params.timewindow.start,
+        latest_end: params.timewindow.end,
+        start_address: params.startPosition,
+        end_address: params.endDestination,
+        profile: params.profile || '',
         metadata: {
           driver: params.driver,
         },

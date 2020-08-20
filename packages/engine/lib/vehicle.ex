@@ -90,8 +90,8 @@ defmodule Vehicle do
         earliest_start,
         latest_end,
         metadata,
-        profile \\ "Circle K storlastbil",
-        capacity \\ [15, 700]
+        profile,
+        capacity
       )
 
   def make(

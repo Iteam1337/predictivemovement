@@ -22,17 +22,10 @@ public class VRPSetting {
 
     private static final int VOLUME_INDEX = 0;
     private static final int WEIGHT_INDEX = 1;
-
-    private static VehicleType vehicleDummyType;
-    static {
-        VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance("vehicleDummyType");
-        vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, 3 * 1000 * 1000);
-        vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, 5);
-        vehicleTypeBuilder.setCostPerDistance(1);
-        vehicleTypeBuilder.setCostPerTransportTime(1);
-
-        vehicleDummyType = vehicleTypeBuilder.build();
-    }
+    private static final int SHIPMENT_DEFAULT_VOLUME = 19 * 18 * 14;
+    private static final int SHIPMENT_DEFAULT_WEIGHT = 1;
+    private static final int VEHICLE_DEFAULT_VOLUME = 3 * 1000 * 1000;
+    private static final int VEHICLE_DEFAULT_WEIGHT = 5;
 
     List<VehicleImpl> vehicles;
     List<Shipment> shipments;
@@ -127,9 +120,17 @@ public class VRPSetting {
                 shipmentBuilder.addDeliveryTimeWindow(timeWindow);
             });
 
-            shipmentBuilder.addSizeDimension(VOLUME_INDEX, 19*18*14);
-            shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);
-
+            JSONObject size = jsonBooking.optJSONObject("size");
+            if (size == null) {
+                shipmentBuilder.addSizeDimension(VOLUME_INDEX, SHIPMENT_DEFAULT_VOLUME);
+                shipmentBuilder.addSizeDimension(WEIGHT_INDEX, SHIPMENT_DEFAULT_WEIGHT);
+            } else {
+                JSONArray measurements = size.optJSONArray("measurements");
+                int weight = size.optInt("weight", SHIPMENT_DEFAULT_WEIGHT);
+                int volume = getVolumeFromMeasurements(measurements);
+                shipmentBuilder.addSizeDimension(VOLUME_INDEX, volume);
+                shipmentBuilder.addSizeDimension(WEIGHT_INDEX, weight);
+            }
             Shipment shipment = shipmentBuilder.build();
             shipments.add(shipment);
         }
@@ -142,25 +143,34 @@ public class VRPSetting {
         return location;
     }
 
-    private int cubicMetersToCentimeter (int meters) {
+    private int cubicMetersToCentimeter(int meters) {
         return meters * 1000 * 1000;
     }
 
     private VehicleType getVehicleType(JSONObject vehicle) {
         String profile = vehicle.optString("profile");
-        if (profile != null) {
-            VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance(profile);
-            JSONArray capacities = vehicle.optJSONArray("capacity");
-            int volume = capacities != null ? cubicMetersToCentimeter(capacities.getInt(0)) : cubicMetersToCentimeter(3);
-            int weight = capacities != null ? capacities.getInt(1): 5;
+        JSONArray capacities = vehicle.optJSONArray("capacity");
+        String vehicleId = profile != null ? profile : "vehicleDummyType";
+        VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance(vehicleId);
+        int volume = capacities != null ? cubicMetersToCentimeter(capacities.getInt(0)) : VEHICLE_DEFAULT_VOLUME;
+        int weight = capacities != null ? capacities.getInt(1) : VEHICLE_DEFAULT_WEIGHT;
+        vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, volume);
+        vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, weight);
+        vehicleTypeBuilder.setCostPerDistance(1);
+        vehicleTypeBuilder.setCostPerTransportTime(1);
+        return vehicleTypeBuilder.build();
+    }
 
-            vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, volume);
-            vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, weight);
-            vehicleTypeBuilder.setCostPerDistance(1);
-            vehicleTypeBuilder.setCostPerTransportTime(1);
-            return vehicleTypeBuilder.build();
+    private int getVolumeFromMeasurements(JSONArray measurements) {
+        if (measurements == null) return SHIPMENT_DEFAULT_VOLUME;
+        int volume = 1;
+
+        for (int i = 0; i < measurements.length(); i++) {
+            int measurement = measurements.getInt(i);
+            volume *= measurement;
         }
-        return vehicleDummyType;
+
+        return volume;
     }
 
     private void createCostMatrix() {

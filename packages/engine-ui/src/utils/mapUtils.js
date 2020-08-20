@@ -109,10 +109,10 @@ export const carIcon = (cars) => {
   let index = 0
   try {
     return [
-      ...cars.flatMap(({ id, tail, position }, i) => {
+      ...cars.flatMap(({ id, tail, start_address }, i) => {
         index = i
         return [
-          point([position.lon, position.lat], {
+          point([start_address.lon, start_address.lat], {
             properties: {
               color: '#00ff00',
               size: 80,

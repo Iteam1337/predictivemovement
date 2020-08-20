@@ -67,10 +67,10 @@ const dispatchOffers = () => {
     .publish(JUST_DO_IT_MESSAGE)
 }
 
-const addVehicle = (position) => {
+const addVehicle = (vehicle) => {
   return amqp.exchange('cars', 'fanout', { durable: false }).publish({
     id: id62(),
-    position,
+    ...vehicle,
   })
 }
 

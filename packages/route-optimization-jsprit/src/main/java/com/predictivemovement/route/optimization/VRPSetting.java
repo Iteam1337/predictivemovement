@@ -21,11 +21,13 @@ import org.json.JSONObject;
 public class VRPSetting {
 
     private static final int VOLUME_INDEX = 0;
+    private static final int WEIGHT_INDEX = 1;
 
     private static VehicleType vehicleDummyType;
     static {
         VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance("vehicleDummyType");
-        vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, 3);
+        vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, 3 * 1000 * 1000);
+        vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, 5);
         vehicleTypeBuilder.setCostPerDistance(1);
         vehicleTypeBuilder.setCostPerTransportTime(1);
 
@@ -125,8 +127,8 @@ public class VRPSetting {
                 shipmentBuilder.addDeliveryTimeWindow(timeWindow);
             });
 
-            // package capacity
-            shipmentBuilder.addSizeDimension(VOLUME_INDEX, 1);
+            shipmentBuilder.addSizeDimension(VOLUME_INDEX, 19*18*14);
+            shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);
 
             Shipment shipment = shipmentBuilder.build();
             shipments.add(shipment);
@@ -140,12 +142,20 @@ public class VRPSetting {
         return location;
     }
 
+    private int cubicMetersToCentimeter (int meters) {
+        return meters * 1000 * 1000;
+    }
+
     private VehicleType getVehicleType(JSONObject vehicle) {
         String profile = vehicle.optString("profile");
         if (profile != null) {
             VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance(profile);
-            int capacity = vehicle.optInt("capacity", 3);
-            vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, capacity);
+            JSONArray capacities = vehicle.optJSONArray("capacity");
+            int volume = capacities != null ? cubicMetersToCentimeter(capacities.getInt(0)) : cubicMetersToCentimeter(3);
+            int weight = capacities != null ? capacities.getInt(1): 5;
+
+            vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, volume);
+            vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, weight);
             vehicleTypeBuilder.setCostPerDistance(1);
             vehicleTypeBuilder.setCostPerTransportTime(1);
             return vehicleTypeBuilder.build();

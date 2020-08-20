@@ -20,11 +20,12 @@ public class VRPSettingTimeUtils {
     }
 
     public double getTimeDifferenceFromNow(JSONObject json, String field, double defaultSeconds) {
-
         if (!json.has(field))
             return defaultSeconds;
 
-        String dateTimeString = json.getString(field);
+        String dateTimeString = json.optString(field);
+        if (dateTimeString.isBlank()) return defaultSeconds;
+
         ZonedDateTime dateTime = ZonedDateTime.parse(dateTimeString);
         double seconds = ChronoUnit.SECONDS.between(now, dateTime);
 

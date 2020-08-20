@@ -101,7 +101,7 @@ defmodule Engine.MatchProducer do
       |> Map.put_new(:metadata, %{})
       |> Map.put_new(:end_address, nil)
       |> Map.put_new(:profile, "Circle K storlastbil")
-      |> Map.put_new(:capacity, 15)
+      |> Map.put_new(:capacity, [15, 700])
       |> Map.put_new(:earliest_start, nil)
       |> Map.put_new(:latest_end, nil)
 
@@ -117,11 +117,11 @@ defmodule Engine.MatchProducer do
   end
 
   def string_to_booking_transform(booking_string) do
-    %{pickup: pickup, delivery: delivery, id: external_id, metadata: metadata} =
+    %{pickup: pickup, delivery: delivery, id: external_id, metadata: metadata, size: size} =
       Poison.decode!(booking_string, keys: :atoms)
       |> Map.put_new(:metadata, %{})
 
-    Booking.make(pickup, delivery, external_id, metadata)
+    Booking.make(pickup, delivery, external_id, metadata, size)
   end
 
   ## set up queues

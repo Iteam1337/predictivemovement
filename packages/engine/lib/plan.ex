@@ -61,16 +61,41 @@ defmodule Plan do
     |> elem(0)
   end
 
+  def same_address(first, second) do
+    first.lat === second.lat and first.lon === second.lon
+  end
+
   def add_vehicle_hints(vehicles, hints) do
     vehicles
-    |> Enum.zip(hints |> Enum.chunk_every(2))
-    |> Enum.map(fn {vehicle, [start_hint, end_hint]} ->
-      Map.update!(vehicle, :start_address, fn start_address ->
-        Map.put(start_address, :hint, start_hint)
-      end)
-      |> Map.update!(:end_address, fn end_address ->
-        Map.put(end_address, :hint, end_hint)
-      end)
+    |> Enum.reduce({[], hints}, fn vehicle, {res, hints} ->
+      if same_address(vehicle.start_address, vehicle.end_address) do
+        [start_hint | rest_of_hints] = hints
+
+        updated_vehicle =
+          vehicle
+          |> Map.update!(:start_address, fn start_address ->
+            Map.put(start_address, :hint, start_hint)
+          end)
+          |> Map.update!(:end_address, fn end_address ->
+            Map.put(end_address, :hint, start_hint)
+          end)
+
+        {res ++ [updated_vehicle], rest_of_hints}
+      else
+        [start_hint, end_hint | rest_of_hints] = hints
+
+        updated_vehicle =
+          vehicle
+          |> Map.update!(:start_address, fn start_address ->
+            Map.put(start_address, :hint, start_hint)
+          end)
+          |> Map.update!(:end_address, fn end_address ->
+            Map.put(end_address, :hint, end_hint)
+          end)
+
+        {res ++ [updated_vehicle], rest_of_hints}
+      end
     end)
+    |> elem(0)
   end
 end

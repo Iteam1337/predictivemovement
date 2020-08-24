@@ -81,7 +81,7 @@ function register(io) {
         id: params.id || id62(),
         capacity:
           params.volyme && params.weight
-            ? [params.volyme, params.weight]
+            ? [parseInt(params.volyme), parseInt(params.weight)]
             : null,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,

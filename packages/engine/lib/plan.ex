@@ -68,33 +68,26 @@ defmodule Plan do
   def add_vehicle_hints(vehicles, hints) do
     vehicles
     |> Enum.reduce({[], hints}, fn vehicle, {res, hints} ->
-      if same_address(vehicle.start_address, vehicle.end_address) do
-        [start_hint | rest_of_hints] = hints
+      [start_hint | rest_of_hints] = hints
 
-        updated_vehicle =
-          vehicle
-          |> Map.update!(:start_address, fn start_address ->
-            Map.put(start_address, :hint, start_hint)
-          end)
-          |> Map.update!(:end_address, fn end_address ->
-            Map.put(end_address, :hint, start_hint)
-          end)
+      [end_hint, rest_of_hints] =
+        if same_address(vehicle.start_address, vehicle.end_address) do
+          [start_hint, rest_of_hints]
+        else
+          [end_hint | rest_of_hints] = rest_of_hints
+          [end_hint, rest_of_hints]
+        end
 
-        {res ++ [updated_vehicle], rest_of_hints}
-      else
-        [start_hint, end_hint | rest_of_hints] = hints
+      updated_vehicle =
+        vehicle
+        |> Map.update!(:start_address, fn start_address ->
+          Map.put(start_address, :hint, start_hint)
+        end)
+        |> Map.update!(:end_address, fn end_address ->
+          Map.put(end_address, :hint, end_hint)
+        end)
 
-        updated_vehicle =
-          vehicle
-          |> Map.update!(:start_address, fn start_address ->
-            Map.put(start_address, :hint, start_hint)
-          end)
-          |> Map.update!(:end_address, fn end_address ->
-            Map.put(end_address, :hint, end_hint)
-          end)
-
-        {res ++ [updated_vehicle], rest_of_hints}
-      end
+      {res ++ [updated_vehicle], rest_of_hints}
     end)
     |> elem(0)
   end

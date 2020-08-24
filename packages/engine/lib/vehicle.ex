@@ -86,16 +86,6 @@ defmodule Vehicle do
 
   def make(
         start_address,
-        end_address \\ nil,
-        earliest_start,
-        latest_end,
-        metadata,
-        profile,
-        capacity
-      )
-
-  def make(
-        start_address,
         end_address,
         earliest_start,
         latest_end,

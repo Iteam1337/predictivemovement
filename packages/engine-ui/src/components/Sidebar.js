@@ -4,12 +4,7 @@ import Bookings from './Bookings'
 import Cars from './Cars'
 import CreateBooking from './CreateBooking'
 import CreateBookings from './CreateBookings'
-import {
-  Switch as RouterSwitch,
-  Route,
-  Link,
-  useLocation,
-} from 'react-router-dom'
+import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../utils/hooks'
 import CarDetails from './CarDetails'
@@ -37,13 +32,6 @@ const TextLink = styled(Link)`
 const Content = styled.div`
   padding: 2rem;
   width: 350px;
-`
-
-const VerticalLine = styled.div`
-  background: transparent;
-  border-left: 1px solid #e5e5e5;
-  height: 87vh;
-  align-self: center;
 `
 
 const PlanWrapper = styled.div`
@@ -77,7 +65,6 @@ const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
     'bookings'
   )
-  const { pathname } = useLocation()
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
 
   const currentViewToElement = () => {

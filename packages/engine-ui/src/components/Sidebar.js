@@ -70,6 +70,7 @@ const PlanWrapper = styled.div`
   grid-template-rows: auto 1fr auto;
   height: 100%;
 `
+
 const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
@@ -81,7 +82,7 @@ const Details = ({ state }) => {
     switch (type) {
       case 'booking':
         return <BookingDetails booking={data.bookings[0]} />
-      case 'car':
+      case 'vehicle':
         return <CarDetails car={data.cars[0]} />
       default:
         return null

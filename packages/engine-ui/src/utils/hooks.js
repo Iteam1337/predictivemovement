@@ -21,7 +21,7 @@ const useFilteredStateFromQueryParams = (state) => {
           statuses.length ? statuses.includes(item.status) : true
         ),
       cars: state.cars.filter((item) =>
-        type === 'car' ? item.id.toString() === id : true
+        type === 'vehicle' ? item.id.toString() === id : true
       ),
     },
   }

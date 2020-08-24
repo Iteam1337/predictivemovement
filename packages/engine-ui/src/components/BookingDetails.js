@@ -60,7 +60,7 @@ const BookingDetails = ({ booking }) => {
           </Elements.Typography.StrongParagraph>
 
           <Elements.Links.RoundedLink
-            to={`/details?type=car&id=${booking.assigned_to.id}`}
+            to={`/details?type=vehicle&id=${booking.assigned_to.id}`}
           >
             {booking.id}
           </Elements.Links.RoundedLink>

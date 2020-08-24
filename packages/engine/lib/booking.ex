@@ -57,7 +57,7 @@ defmodule Booking do
 
     updated_state
     |> MQ.publish(
-      Application.fetch_env!(:engine, :bookings_exchange),
+      Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "assigned"
     )
 

@@ -2,91 +2,34 @@ defmodule Engine.MatchProducer do
   use GenStage
   alias Broadway.Message
 
-  @vehicles_exchange "cars"
-  @bookings_exchange "bookings"
+  @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
+  @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
 
-  @available_vehicles_queue_name "routes"
-  @available_bookings_queue_name "booking_requests"
-  @clear_queue "clear_state"
-
+  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
   def start_link(_) do
     GenStage.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
-    create_rmq_resources()
+    MQ.create_match_producer_resources()
     {:producer, %{vehicles: [], bookings: []}}
   end
 
-  ## Select events -> dispatch
-
-  def handle_info({:basic_consume_ok, _}, state) do
-    {:noreply, [], state}
-  end
-
-  def handle_info({:basic_deliver, vehicle, %{exchange: @vehicles_exchange}}, %{
-        vehicles: vehicles,
-        bookings: bookings
-      }) do
-    IO.puts("new vehicle!")
-
-    vehicle = string_to_vehicle_transform(vehicle)
-
-    dispatch_events([vehicle | vehicles], bookings)
-  end
-
-  def handle_info(
-        {:basic_deliver, booking, %{exchange: @bookings_exchange, routing_key: "new"}},
-        %{
-          vehicles: vehicles,
-          bookings: bookings
-        }
-      ) do
+  defp handle_new_booking(booking_msg, %{vehicles: vehicles, bookings: bookings}) do
     IO.puts("new booking!")
-    booking = string_to_booking_transform(booking)
-    IO.inspect(bookings, label: "current bookings state")
-    dispatch_events(vehicles, [booking | bookings])
+    new_booking = string_to_booking_transform(booking_msg)
+    dispatch_events(vehicles, [new_booking | bookings])
   end
 
-  def handle_info(
-        {:basic_deliver, _, %{routing_key: @clear_queue}},
-        _
-      ) do
-    IO.puts("Clearing MatchProducer state")
-    {:noreply, [], %{vehicles: [], bookings: []}}
-  end
-
-  ## send messages to broadway and update state
-
-  def dispatch_events(vehicles, [] = _bookings),
-    do: {:noreply, [], %{bookings: [], vehicles: vehicles}}
-
-  def dispatch_events(vehicles, bookings) when length(vehicles) < 1,
-    do: {:noreply, [], %{bookings: bookings, vehicles: vehicles}}
-
-  def dispatch_events(vehicles, bookings) do
-    message = %Message{
-      data: {vehicles, bookings},
-      acknowledger: {__MODULE__, :ack_id, :ack_data}
-    }
-
-    # pick out the message and return the state we want to keep
-    {:noreply, [message], %{bookings: bookings, vehicles: vehicles}}
-  end
-
-  ## handle backpressure
-
-  def handle_demand(_demand, state) do
-    {:noreply, [], state}
-  end
-
-  def ack(_ack_ref, _successful, _failed) do
-    :ok
+  defp handle_new_vehicle(vehicle_msg, %{vehicles: vehicles, bookings: bookings}) do
+    IO.puts("new vehicle!")
+    new_vehicle = string_to_vehicle_transform(vehicle_msg)
+    dispatch_events([new_vehicle | vehicles], bookings)
   end
 
   ## helpers
 
-  def string_to_vehicle_transform(vehicle_string) do
+  defp string_to_vehicle_transform(vehicle_string) do
     %{
       start_address: start_address,
       end_address: end_address,
@@ -116,7 +59,7 @@ defmodule Engine.MatchProducer do
     )
   end
 
-  def string_to_booking_transform(booking_string) do
+  defp string_to_booking_transform(booking_string) do
     %{pickup: pickup, delivery: delivery, id: external_id, metadata: metadata, size: size} =
       Poison.decode!(booking_string, keys: :atoms)
       |> Map.put_new(:metadata, %{})
@@ -125,35 +68,47 @@ defmodule Engine.MatchProducer do
     Booking.make(pickup, delivery, external_id, metadata, size)
   end
 
-  ## set up queues
+  def handle_clear_state do
+    IO.puts("Clearing MatchProducer state")
+    {:noreply, [], %{vehicles: [], bookings: []}}
+  end
 
-  defp create_rmq_resources do
-    # Setup RabbitMQ connection
-    {:ok, connection} =
-      AMQP.Connection.open("amqp://" <> Application.fetch_env!(:engine, :amqp_host))
+  ## send messages to broadway and update state
 
-    {:ok, channel} = AMQP.Channel.open(connection)
+  def dispatch_events(vehicles, [] = _bookings),
+    do: {:noreply, [], %{bookings: [], vehicles: vehicles}}
 
-    # Create exchange
-    AMQP.Exchange.fanout(channel, @vehicles_exchange, durable: false)
-    AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: false)
+  def dispatch_events(vehicles, bookings) when length(vehicles) < 1,
+    do: {:noreply, [], %{bookings: bookings, vehicles: vehicles}}
 
-    # Create queues
-    AMQP.Queue.declare(channel, @available_vehicles_queue_name, durable: false)
-    AMQP.Queue.declare(channel, @available_bookings_queue_name, durable: false)
-    AMQP.Queue.declare(channel, @clear_queue, durable: false)
+  def dispatch_events(vehicles, bookings) do
+    message = %Message{
+      data: {vehicles, bookings},
+      acknowledger: {__MODULE__, :ack_id, :ack_data}
+    }
 
-    # Bind queues to exchange
-    AMQP.Queue.bind(channel, @available_vehicles_queue_name, @vehicles_exchange,
-      routing_key: @available_vehicles_queue_name
-    )
+    # pick out the message and return the state we want to keep
+    {:noreply, [message], %{bookings: bookings, vehicles: vehicles}}
+  end
 
-    AMQP.Queue.bind(channel, @available_bookings_queue_name, @bookings_exchange,
-      routing_key: "new"
-    )
+  # Rabbitmq callbacks
+  def handle_info({:basic_consume_ok, _}, state), do: {:noreply, [], state}
 
-    AMQP.Basic.consume(channel, @available_vehicles_queue_name, nil, no_ack: true)
-    AMQP.Basic.consume(channel, @available_bookings_queue_name, nil, no_ack: true)
-    AMQP.Basic.consume(channel, @clear_queue, nil, no_ack: true)
+  def handle_info({:basic_deliver, vehicle, %{exchange: @incoming_vehicle_exchange}}, state),
+    do: handle_new_vehicle(vehicle, state)
+
+  def handle_info({:basic_deliver, booking, %{exchange: @incoming_booking_exchange}}, state),
+    do: handle_new_booking(booking, state)
+
+  def handle_info({:basic_deliver, _, %{routing_key: @clear_queue}}, _), do: handle_clear_state()
+
+  ## handle backpressure
+
+  def handle_demand(_demand, state) do
+    {:noreply, [], state}
+  end
+
+  def ack(_ack_ref, _successful, _failed) do
+    :ok
   end
 end

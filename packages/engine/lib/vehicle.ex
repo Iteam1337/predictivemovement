@@ -44,7 +44,7 @@ defmodule Vehicle do
           activities: activities,
           booking_ids: booking_ids
         },
-        Application.fetch_env!(:engine, :pickup_offers_queue)
+        "offer_booking_to_vehicle"
       )
       |> Poison.decode()
       |> IO.inspect(label: "the driver answered")
@@ -74,7 +74,7 @@ defmodule Vehicle do
     updated_state =
       current_state
       |> Map.merge(proposed_state)
-      |> MQ.publish(Application.fetch_env!(:engine, :vehicles_exchange), "planned")
+      |> MQ.publish(Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "plan_updated")
 
     updated_state
   end
@@ -133,7 +133,7 @@ defmodule Vehicle do
       name: via_tuple(id)
     )
 
-    MQ.publish(vehicle, Application.fetch_env!(:engine, :vehicles_exchange), "new")
+    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
 
     id
   end

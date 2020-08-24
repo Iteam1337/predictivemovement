@@ -1,5 +1,5 @@
 import React from 'react'
-import Elements from './../Elements'
+import Elements from '../../Elements'
 
 const Component = ({
   value,

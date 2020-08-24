@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import ParcelIcon from '../assets/parcel.svg'
-import ShippingIcon from '../assets/shippingIcon.svg'
 import Bookings from './Bookings'
 import Cars from './Cars'
 import CreateBooking from './CreateBooking'
@@ -17,7 +15,6 @@ import Hooks from '../utils/hooks'
 import CarDetails from './CarDetails'
 
 import AddVehicle from './AddVehicle'
-import dispatchIcon from '../assets/dispatch.svg'
 import Plan from './Plan'
 import Elements from './Elements'
 import Icons from '../assets/Icons'
@@ -170,39 +167,6 @@ const Sidebar = (state) => {
         setNavigationCurrentView={setNavigationCurrentView}
         navigationCurrentView={navigationCurrentView}
       />
-      {/* <NavigationBar>
-        <MenuItem>
-          <Link to="/">
-            <img
-              onClick={() => setNavigationCurrentView('bookings')}
-              src={ParcelIcon}
-              alt="parcel icon"
-            />
-          </Link>
-          {navigationCurrentView === 'bookings' && <Icons.ActiveView />}
-        </MenuItem>
-        <MenuItem>
-          <Link to="/">
-            <img
-              onClick={() => setNavigationCurrentView('cars')}
-              src={ShippingIcon}
-              alt="shipping icon"
-            />
-          </Link>
-          {navigationCurrentView === 'cars' && <Icons.ActiveView />}
-        </MenuItem>
-        <MenuItem>
-          <Link to="/">
-            <img
-              onClick={() => setNavigationCurrentView('plan')}
-              src={dispatchIcon}
-              alt="dispatch icon"
-            />
-          </Link>
-
-          {navigationCurrentView === 'plan' && <Icons.ActiveView />}
-        </MenuItem>
-      </NavigationBar> */}
 
       <Content>
         <RouterSwitch>

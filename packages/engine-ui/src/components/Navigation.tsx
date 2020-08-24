@@ -1,11 +1,11 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import styled from 'styled-components'
+import dispatchIcon from '../assets/dispatch.svg'
+import Icons from '../assets/Icons'
 import ParcelIcon from '../assets/parcel.svg'
 import ShippingIcon from '../assets/shippingIcon.svg'
-import dispatchIcon from '../assets/dispatch.svg'
-import Elements from './Elements'
-import Icons from '../assets/Icons'
+
 const NavigationBar = styled.nav`
   padding: 3rem 0;
   height: 100vh;
@@ -44,35 +44,30 @@ const Navigation: React.FC<INavProps> = ({
   navigationCurrentView,
   setNavigationCurrentView,
 }) => {
+  const handleOnClickNavIcon = (selectedView: string) => {
+    if (selectedView === navigationCurrentView) {
+      setNavigationCurrentView('')
+    } else {
+      setNavigationCurrentView(selectedView)
+    }
+  }
   return (
     <NavigationBar>
       <NavItem>
-        <Link to="/">
-          <img
-            onClick={() => setNavigationCurrentView('bookings')}
-            src={ParcelIcon}
-            alt="parcel icon"
-          />
+        <Link to="/" onClick={() => handleOnClickNavIcon('bookings')}>
+          <img src={ParcelIcon} alt="parcel icon" />
         </Link>
         {navigationCurrentView === 'bookings' && <Icons.ActiveView />}
       </NavItem>
       <NavItem>
-        <Link to="/">
-          <img
-            onClick={() => setNavigationCurrentView('cars')}
-            src={ShippingIcon}
-            alt="shipping icon"
-          />
+        <Link to="/" onClick={() => handleOnClickNavIcon('cars')}>
+          <img src={ShippingIcon} alt="shipping icon" />
         </Link>
         {navigationCurrentView === 'cars' && <Icons.ActiveView />}
       </NavItem>
       <NavItem>
-        <Link to="/">
-          <img
-            onClick={() => setNavigationCurrentView('plan')}
-            src={dispatchIcon}
-            alt="dispatch icon"
-          />
+        <Link to="/" onClick={() => handleOnClickNavIcon('plan')}>
+          <img src={dispatchIcon} alt="dispatch icon" />
         </Link>
 
         {navigationCurrentView === 'plan' && <Icons.ActiveView />}

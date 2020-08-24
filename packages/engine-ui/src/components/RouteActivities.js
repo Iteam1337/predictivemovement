@@ -17,9 +17,9 @@ const ActivityInfo = styled.div`
   }
 `
 
-const RouteActivities = ({ car }) => {
+const RouteActivities = ({ vehicle }) => {
   const { setViewport } = React.useContext(ViewportContext)
-  const activities = car.activities.slice(1, -1)
+  const activities = vehicle.activities.slice(1, -1)
 
   const getLabelForActivities = (type) => {
     switch (type) {
@@ -31,6 +31,7 @@ const RouteActivities = ({ car }) => {
         return
     }
   }
+
   return (
     <div>
       {activities.map((activity, index) => (

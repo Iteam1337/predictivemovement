@@ -1,5 +1,5 @@
 import React from 'react'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import styled from 'styled-components'
 
 const Paragraph = styled.p`
@@ -41,29 +41,35 @@ const BookingDetails = ({ booking }) => {
 
   return (
     <div>
-      <Elements.StrongParagraph>Bokning</Elements.StrongParagraph>
+      <Elements.Typography.StrongParagraph>
+        Bokning
+      </Elements.Typography.StrongParagraph>
       <Paragraph>{booking.id}</Paragraph>
-
-      <Elements.StrongParagraph>Upphämtning</Elements.StrongParagraph>
+      <Elements.Typography.StrongParagraph>
+        Upphämtning
+      </Elements.Typography.StrongParagraph>
       <Paragraph>{address.pickup}</Paragraph>
-      <Elements.StrongParagraph>Avlämning</Elements.StrongParagraph>
+      <Elements.Typography.StrongParagraph>
+        Avlämning
+      </Elements.Typography.StrongParagraph>
       <Paragraph>{address.delivery}</Paragraph>
       {booking.assigned_to && (
         <>
-          <Elements.StrongParagraph>Bokad transport</Elements.StrongParagraph>
+          <Elements.Typography.StrongParagraph>
+            Bokad transport
+          </Elements.Typography.StrongParagraph>
 
-          <Elements.RoundedLink
-            to={`/details?type=car&id=${booking.assigned_to.id}`}
+          <Elements.Links.RoundedLink
+            to={`/details?type=vehicle&id=${booking.assigned_to.id}`}
           >
             {booking.id}
-          </Elements.RoundedLink>
+          </Elements.Links.RoundedLink>
         </>
       )}
-      <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
+      <Elements.Typography.StrongParagraph>
+        Status:
+      </Elements.Typography.StrongParagraph>
       <span>{booking.status}</span>
-
-      {/* <Elements.StrongParagraph>Assigned to: </Elements.StrongParagraph>
-      <span>{booking.assigned_to.id}</span> */}
     </div>
   )
 }

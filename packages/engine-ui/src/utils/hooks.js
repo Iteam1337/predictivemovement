@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import helpers from './utils/helpers'
+import helpers from './helpers'
 
 const useFilteredStateFromQueryParams = (state) => {
   const useQueryParams = () => new URLSearchParams(useLocation().search)
@@ -21,7 +21,7 @@ const useFilteredStateFromQueryParams = (state) => {
           statuses.length ? statuses.includes(item.status) : true
         ),
       cars: state.cars.filter((item) =>
-        type === 'car' ? item.id.toString() === id : true
+        type === 'vehicle' ? item.id.toString() === id : true
       ),
     },
   }

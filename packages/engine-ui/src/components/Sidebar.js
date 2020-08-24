@@ -13,7 +13,7 @@ import {
   useLocation,
 } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
-import Hooks from '../hooks'
+import Hooks from '../utils/hooks'
 import CarDetails from './CarDetails'
 
 import AddVehicle from './AddVehicle'
@@ -84,6 +84,7 @@ const PlanWrapper = styled.div`
   grid-template-rows: auto 1fr auto;
   height: 100%;
 `
+
 const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
@@ -95,7 +96,7 @@ const Details = ({ state }) => {
     switch (type) {
       case 'booking':
         return <BookingDetails booking={data.bookings[0]} />
-      case 'car':
+      case 'vehicle':
         return <CarDetails car={data.cars[0]} />
       default:
         return null

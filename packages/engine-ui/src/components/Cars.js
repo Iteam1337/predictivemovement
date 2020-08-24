@@ -16,7 +16,7 @@ const Cars = ({ cars }) => {
     <Elements.LinkListContainer>
       {cars.map((car) => (
         <Elements.RoundedLink
-          to={`/details?type=car&id=${car.id}`}
+          to={`/details?type=vehicle&id=${car.id}`}
           key={car.id}
           onClick={() =>
             setViewport({

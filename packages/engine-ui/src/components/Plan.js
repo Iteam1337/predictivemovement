@@ -71,7 +71,7 @@ const Plan = ({ plan }) => {
                       longitude: vehicle.position.lon,
                       zoom: 10,
                       transitionDuration: 3000,
-                        transitionInterpolator: new FlyToInterpolator(),
+                      transitionInterpolator: new FlyToInterpolator(),
                       transitionEasing: (t) => t * (2 - t),
                     })
                   }

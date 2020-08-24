@@ -4,6 +4,8 @@ defmodule Engine.BookingProcessor do
   @plan Application.get_env(:engine, :plan)
 
   def start_link(_opts) do
+    MQ.init()
+
     Broadway.start_link(__MODULE__,
       name: __MODULE__,
       producer: [

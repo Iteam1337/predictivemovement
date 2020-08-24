@@ -7,11 +7,11 @@ const pickupOffers = () => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(queues.PICKUP_OFFERS, {
+        .assertQueue(queues.OFFER_BOOKING_TO_TELEGRAM_VEHICLE, {
           durable: false,
         })
         .then(() =>
-          ch.consume(queues.PICKUP_OFFERS, async (message) => {
+          ch.consume(queues.OFFER_BOOKING_TO_TELEGRAM_VEHICLE, async (message) => {
             const {
               vehicle,
               activities,

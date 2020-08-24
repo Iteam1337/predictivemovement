@@ -4,17 +4,17 @@ const amqp = require('amqplib').connect(
 
 const exchanges = {
   bookings: {
-    name: 'bookings',
+    name: 'incoming_booking_updates',
     type: 'topic',
     options: { durable: false },
     routingKeys: {
-      NEW: 'new',
+      REGISTERED: 'registered',
     },
   },
 }
 
 const queues = {
-  HISTORICAL_BOOKINGS: 'historical_bookings',
+  ADD_NR_OF_HISTORICAL_BOOKINGS: 'add_nr_of_historical_bookings',
 }
 
 const publish = (exchange, routingKey, data) => {

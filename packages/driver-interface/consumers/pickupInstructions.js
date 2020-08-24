@@ -1,7 +1,7 @@
 const {
   open,
   queues: { PICKUP_INSTRUCTIONS },
-  exchanges: { BOOKINGS },
+  exchanges: { OUTGOING_BOOKING_UPDATES },
 } = require('../adapters/amqp')
 
 const { addBooking } = require('../services/cache')
@@ -17,11 +17,11 @@ const pickupInstructions = () => {
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(BOOKINGS, 'topic', {
+          ch.assertExchange(OUTGOING_BOOKING_UPDATES, 'topic', {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, BOOKINGS, 'assigned'))
+        .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, OUTGOING_BOOKING_UPDATES, 'assigned'))
         .then(() =>
           ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
             const booking = JSON.parse(msg.content.toString())

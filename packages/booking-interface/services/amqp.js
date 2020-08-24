@@ -1,17 +1,17 @@
-const { open, exchanges, routingKeys } = require('../adapters/amqp')
+const { open, exchanges } = require('../adapters/amqp')
 
 const createBooking = (booking) => {
   return open
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertExchange(exchanges.BOOKINGS, 'topic', {
+        .assertExchange(exchanges.INCOMING_BOOKING_UPDATES, 'topic', {
           durable: false,
         })
         .then(() =>
           ch.publish(
-            exchanges.BOOKINGS,
-            routingKeys.NEW,
+            exchanges.INCOMING_BOOKING_UPDATES,
+            "registered",
             Buffer.from(JSON.stringify({...booking, assigned_to: null}))
           )
         )

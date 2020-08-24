@@ -3,7 +3,7 @@ defmodule Dispatcher do
     IO.puts("Dispatching!")
 
     PlanStore.get_plan()
-    |> (fn vehicles ->
+    |> (fn %{vehicles: vehicles} ->
           IO.inspect(length(vehicles), label: "amount of vehicles to be offered")
           vehicles
         end).()

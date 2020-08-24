@@ -101,6 +101,15 @@ public class VRPSetting {
             shipmentBuilder.setDeliveryLocation(deliveryLocation);
             locations.put(jsonDelivery.getString("hint"), deliveryLocation);
 
+            // time windows
+            VRPSettingTimeWindows timeWindows = new VRPSettingTimeWindows();
+            timeWindows.add(jsonPickup, (timeWindow) -> {
+                shipmentBuilder.addPickupTimeWindow(timeWindow);
+            });
+            timeWindows.add(jsonDelivery, (timeWindow) -> {
+                shipmentBuilder.addDeliveryTimeWindow(timeWindow);
+            });
+
             // package capacity
             shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);
 

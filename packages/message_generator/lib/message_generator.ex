@@ -28,6 +28,22 @@ defmodule MessageGenerator do
     {:ok, channel}
   end
 
+  def random_car(), do: random_car(@ljusdal)
+
+  def random_car(location) do
+    %{}
+    |> Map.put(:position, Address.random(location))
+    |> Map.put(:id, Enum.random(0..100_000))
+  end
+
+  def random_booking(), do: random_booking(@ljusdal)
+
+  def random_booking(location) do
+    %{}
+    |> add_addresses(location)
+    |> add_random_id_and_time()
+  end
+
   def add_random_car(), do: GenServer.call(__MODULE__, :add_random_car)
   def add_random_booking(), do: GenServer.call(__MODULE__, :add_random_booking)
 
@@ -42,9 +58,7 @@ defmodule MessageGenerator do
 
   def handle_call(:add_random_booking, _, %{channel: channel} = state) do
     payload =
-      %{}
-      |> add_addresses()
-      |> add_random_id_and_time()
+      random_booking()
       |> Poison.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
@@ -54,9 +68,7 @@ defmodule MessageGenerator do
 
   def handle_call({:add_random_booking, location}, _, %{channel: channel} = state) do
     payload =
-      %{}
-      |> add_addresses(location)
-      |> add_random_id_and_time()
+      random_booking(location)
       |> Poison.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
@@ -66,9 +78,7 @@ defmodule MessageGenerator do
 
   def handle_call(:add_random_car, _, %{channel: channel} = state) do
     payload =
-      %{}
-      |> Map.put(:position, Address.random(@ljusdal))
-      |> Map.put(:id, Enum.random(0..100_000))
+      random_car()
       |> Poison.encode!()
 
     AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
@@ -78,9 +88,7 @@ defmodule MessageGenerator do
 
   def handle_call({:add_random_car, location}, _, %{channel: channel} = state) do
     payload =
-      %{}
-      |> Map.put(:position, Address.random(location))
-      |> Map.put(:id, Enum.random(0..100_000))
+      random_car(location)
       |> Poison.encode!()
 
     AMQP.Basic.publish(channel, @cars_exchange, "", payload)

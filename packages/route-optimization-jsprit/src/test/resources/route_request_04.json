@@ -11,7 +11,7 @@
             },
             "id": "pmv-1zuURKyc",
             "googleMaps": "https://www.google.de/maps/dir/65.630583,21.9286/65.581615,+22.051738/65.641479,+22.015716/65.613636,+22.136855/@65.6071628,22.0112537,12.63z/data=!4m15!4m14!1m0!1m3!2m2!1d22.051738!2d65.581615!1m3!2m2!1d22.015716!2d65.641479!1m3!2m2!1d22.136855!2d65.613636!3e0",
-            "note": "with cost matrix it will notice the river and not cross it"
+            "note": "with cost matrix it will notice the river and not cross it and fulfil time constraint"
         }
     ],
     "bookings": [
@@ -19,7 +19,13 @@
             "pickup": {
                 "lon": 22.015809,
                 "lat": 65.64154,
-                "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc"
+                "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc",
+                "time_windows": [
+                    {
+                        "earliest": "2020-08-12T15:21:28.251Z",
+                        "latest": "2020-08-12T18:21:28.251Z"
+                    }
+                ]
             },
             "metadata": {
                 "start": "Gammelstads ICA (65.641479, 22.015716) -> LTU (65.613636, 22.136855) (no river crossing possible!)"
@@ -28,14 +34,20 @@
             "delivery": {
                 "lon": 22.137169,
                 "lat": 65.613139,
-                "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc"
+                "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc",
+                "time_windows": [
+                    {
+                        "earliest": "2020-08-12T15:21:28.251Z",
+                        "latest": "2020-08-12T18:21:28.251Z"
+                    }
+                ]
             }
         },
         {
             "pickup": {
                 "lon": 22.051736,
                 "lat": 65.581598,
-                "hint": "e_WOiYv1jokLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAAB4GwEAmHtQAR6y6AOYe1ABHrLoAwoA3wUGYbfc"
+                "hint": "e_WOiYv1jokLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAAB4GwEAmHtQAR6y6AOYe1ABHrLoAwoA3wUGYbfc",
             },
             "metadata": {
                 "start": "Gäddvik (65.581615, 22.051738) -> LTU (65.613636, 22.136855) (no river crossing possible!)"

@@ -97,6 +97,18 @@ const createBookingsFromHistory = (total) => {
 const resetState = () =>
   amqp.queue('clear_engine_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
 
+const plan = amqp
+  .exchange('plan', 'fanout', {
+    durable: false,
+  })
+  .queue('planned_vehicles', {
+    durable: false,
+  })
+  .subscribe({ noAck: true })
+  .map((plan) => {
+    return plan.json()
+  })
+
 module.exports = {
   addVehicle,
   bookings,
@@ -106,4 +118,5 @@ module.exports = {
   dispatchOffers,
   createBookingsFromHistory,
   resetState,
+  plan,
 }

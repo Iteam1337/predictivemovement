@@ -4,7 +4,7 @@ const { getBooking, updateBooking, getVehicle } = require('./services/cache')
 
 const {
   open,
-  exchanges: { BOOKINGS },
+  exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
 function onPickup(msg) {
@@ -13,13 +13,13 @@ function onPickup(msg) {
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {
-      ch.assertExchange(BOOKINGS, 'topic', {
+      ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
         durable: false,
       }).then(() => {
         const { id } = callbackPayload
         ch.publish(
-          BOOKINGS,
-          'pickup',
+          INCOMING_BOOKING_UPDATES,
+          'picked_up',
           Buffer.from(JSON.stringify(getBooking(id)))
         )
       })
@@ -34,12 +34,12 @@ function onDelivered(msg) {
   return open
     .then((conn) => conn.createChannel())
     .then((ch) => {
-      ch.assertExchange(BOOKINGS, 'topic', {
+      ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
         durable: false,
       }).then(() => {
         const { id } = callbackPayload
         ch.publish(
-          BOOKINGS,
+          INCOMING_BOOKING_UPDATES,
           'delivered',
           Buffer.from(JSON.stringify(getBooking(id)))
         )

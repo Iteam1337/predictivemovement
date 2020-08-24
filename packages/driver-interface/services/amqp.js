@@ -5,10 +5,10 @@ const updateLocation = (msg, _ctx) => {
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {
-      ch.assertExchange(exchanges.CARS, 'fanout', {
+      ch.assertExchange(exchanges.INCOMING_VEHICLE_UPDATES, 'topic', {
         durable: false,
       }).then(() =>
-        ch.publish(exchanges.CARS, '', Buffer.from(JSON.stringify(msg)))
+        ch.publish(exchanges.INCOMING_VEHICLE_UPDATES, 'registered', Buffer.from(JSON.stringify(msg)))
       )
     })
 

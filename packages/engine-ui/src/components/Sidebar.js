@@ -17,7 +17,6 @@ import CarDetails from './CarDetails'
 import AddVehicle from './AddVehicle'
 import Plan from './Plan'
 import Elements from './Elements'
-import Icons from '../assets/Icons'
 import Navigation from './Navigation'
 
 const Container = styled.div`
@@ -28,35 +27,6 @@ const Container = styled.div`
   background: white;
   height: 100vh;
   display: flex;
-`
-
-const NavigationBar = styled.div`
-  padding: 3rem 0;
-  height: 100vh;
-  background: #13c57b;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.2);
-
-  img {
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-  }
-`
-
-const MenuItem = styled.div`
-  position: relative;
-  padding: 0 1.5rem;
-  margin-bottom: 5rem;
-
-  svg {
-    position: absolute;
-    top: 10px;
-    right: -8px;
-  }
 `
 
 const TextLink = styled(Link)`
@@ -168,13 +138,15 @@ const Sidebar = (state) => {
         navigationCurrentView={navigationCurrentView}
       />
 
-      <Content>
-        <RouterSwitch>
-          <Route path="/">
-            <>{currentViewToElement()}</>
-          </Route>
-        </RouterSwitch>
-      </Content>
+      {navigationCurrentView && (
+        <Content>
+          <RouterSwitch>
+            <Route path="/">
+              <>{currentViewToElement()}</>
+            </Route>
+          </RouterSwitch>
+        </Content>
+      )}
 
       {pathname !== '/' && (
         <>

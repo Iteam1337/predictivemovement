@@ -36,7 +36,7 @@ const TextLink = styled(Link)`
 
 const Content = styled.div`
   padding: 2rem;
-  width: 375px;
+  width: 350px;
 `
 
 const VerticalLine = styled.div`

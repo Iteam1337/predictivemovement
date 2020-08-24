@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import Form from './forms/AddVehicle'
 
 const AddVehicle = ({ addVehicle, currentPosition }) => {
@@ -47,14 +47,14 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   }
 
   return (
-    <Elements.Container>
+    <Elements.Layout.Container>
       <h3>Lägg till fordon</h3>
       <Form
         onChangeHandler={setState}
         onSubmitHandler={onSubmitHandler}
         state={formState}
       />
-    </Elements.Container>
+    </Elements.Layout.Container>
   )
 }
 export default AddVehicle

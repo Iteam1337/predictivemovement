@@ -1,7 +1,7 @@
 import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
-import hooks from '../hooks'
+import hooks from '../utils/hooks'
 import mapUtils from '../utils/mapUtils'
 import { ViewportContext } from '../utils/ViewportContext'
 import { useHistory } from 'react-router-dom'

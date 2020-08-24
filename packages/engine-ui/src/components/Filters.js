@@ -35,9 +35,7 @@ const Filters = () => {
 
   return (
     <Container>
-
       <Elements.Checkbox/>
-
     </Container>
   )
 }

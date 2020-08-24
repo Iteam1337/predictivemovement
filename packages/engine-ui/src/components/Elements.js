@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import arrowIcon from '../assets/input-arrowdown.svg'
 
 const FlexRowWrapper = styled.div`
   display: flex;
@@ -246,14 +245,6 @@ const FormInputIcon = styled.img`
   position: absolute;
   top: 11px;
   left: 12.5px;
-`
-
-const TimeRestrictionFormInputIcon = styled.img`
-  width: 10px;
-  height: 10px;
-  position: absolute;
-  top: 14px;
-  left: 89%;
 `
 
 const StrongParagraph = styled.label`

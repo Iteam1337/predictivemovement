@@ -2,11 +2,9 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import nameIcon from '../../assets/contact-name.svg'
 import phoneIcon from '../../assets/contact-phone.svg'
-import Elements from '../Elements'
-import AddressSearchInput from './AddressSearchInput'
-import DriverScheduleRestrictionPair from './DriverScheduleRestrictionPair'
+import Elements from '../../shared-elements'
+import FormInputs from './inputs'
 import eventHandlers from './eventHandlers'
-import TextInput from './TextInput'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const history = useHistory()
@@ -21,10 +19,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
-      <Elements.InputBlock>
-        <Elements.InputContainer>
-          <Elements.Label htmlFor="vehicleType">Namn på fordon</Elements.Label>
-          <TextInput
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label htmlFor="vehicleType">
+            Namn på fordon
+          </Elements.Form.Label>
+          <FormInputs.TextInput
             name="vehicleType"
             value={state.vehicleType}
             placeholder="Paketbil"
@@ -33,28 +33,30 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               onChangeHandler
             )}
           />
-        </Elements.InputContainer>
-      </Elements.InputBlock>
-      <Elements.InputBlock>
-        <Elements.InputContainer>
-          <Elements.Label htmlFor="capacity">Kapacitet</Elements.Label>
-          <Elements.TextInputPairContainer>
-            <Elements.TextInputPairItem>
-              <TextInput
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label htmlFor="capacity">
+            Kapacitet
+          </Elements.Form.Label>
+          <Elements.Layout.TextInputPairContainer>
+            <Elements.Layout.TextInputPairItem>
+              <FormInputs.TextInput
                 step={1}
                 min="0"
-                type="number"
                 name="volyme"
                 value={state.volyme}
+                placeholder="Lastvolym"
+                type="number"
                 onChangeHandler={eventHandlers.handleTextInputChange(
                   'volyme',
                   onChangeHandler
                 )}
-                placeholder="Lastvolym"
               />
-            </Elements.TextInputPairItem>
-            <Elements.TextInputPairItem>
-              <TextInput
+            </Elements.Layout.TextInputPairItem>
+            <Elements.Layout.TextInputPairItem>
+              <FormInputs.TextInput
                 step={1}
                 min="0"
                 type="number"
@@ -66,39 +68,39 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 )}
                 placeholder="Maxvikt"
               />
-            </Elements.TextInputPairItem>
-          </Elements.TextInputPairContainer>
-        </Elements.InputContainer>
-      </Elements.InputBlock>
-      <Elements.InputBlock>
-        <Elements.InputContainer>
-          <Elements.Label>Körschema</Elements.Label>
-          <Elements.InputContainer>
-            <Elements.TimeRestrictionWrapper>
-              <DriverScheduleRestrictionPair
+            </Elements.Layout.TextInputPairItem>
+          </Elements.Layout.TextInputPairContainer>
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label>Körschema</Elements.Form.Label>
+          <Elements.Layout.InputContainer>
+            <Elements.Layout.TimeRestrictionWrapper>
+              <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
                 timewindow={state.timewindow}
                 onChangeHandler={handleDriverTimeRestrictionChange}
               />
-            </Elements.TimeRestrictionWrapper>
-          </Elements.InputContainer>
-          <AddressSearchInput
+            </Elements.Layout.TimeRestrictionWrapper>
+          </Elements.Layout.InputContainer>
+          <FormInputs.AddressSearchInput
             placeholder="Slutposition"
             onChangeHandler={eventHandlers.handleDropdownSelect(
               'endDestination',
               onChangeHandler
             )}
           />
-        </Elements.InputContainer>
-      </Elements.InputBlock>
-      <Elements.InputBlock>
-        <Elements.InputContainer>
-          <Elements.Label htmlFor="driver">Chaufför</Elements.Label>
-          <Elements.InputInnerContainer>
-            <Elements.FormInputIcon
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label htmlFor="driver">Chaufför</Elements.Form.Label>
+          <Elements.Layout.InputInnerContainer>
+            <Elements.Icons.FormInputIcon
               alt="Contact name icon"
               src={`${nameIcon}`}
             />
-            <TextInput
+            <FormInputs.TextInput
               iconInset
               name="driver"
               value={state.driver.name}
@@ -109,16 +111,16 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               )}
               placeholder="Peter Persson"
             />
-          </Elements.InputInnerContainer>
-        </Elements.InputContainer>
-        <Elements.InputContainer>
-          <Elements.Label htmlFor="contact">Kontakt</Elements.Label>
-          <Elements.InputInnerContainer>
-            <Elements.FormInputIcon
+          </Elements.Layout.InputInnerContainer>
+        </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label htmlFor="contact">Kontakt</Elements.Form.Label>
+          <Elements.Layout.InputInnerContainer>
+            <Elements.Icons.FormInputIcon
               alt="Contact number icon"
               src={`${phoneIcon}`}
             />
-            <TextInput
+            <FormInputs.TextInput
               iconInset
               name="contact"
               value={state.driver.contact}
@@ -129,16 +131,21 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               )}
               placeholder="070-123 45 67"
             />
-          </Elements.InputInnerContainer>
-        </Elements.InputContainer>
-      </Elements.InputBlock>
+          </Elements.Layout.InputInnerContainer>
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
 
-      <Elements.ButtonWrapper>
-        <Elements.CancelButton type="button" onClick={() => history.push('/')}>
+      <Elements.Layout.ButtonWrapper>
+        <Elements.Buttons.CancelButton
+          type="button"
+          onClick={() => history.push('/')}
+        >
           Avbryt
-        </Elements.CancelButton>
-        <Elements.SubmitButton type="submit">Lägg till</Elements.SubmitButton>
-      </Elements.ButtonWrapper>
+        </Elements.Buttons.CancelButton>
+        <Elements.Buttons.SubmitButton type="submit">
+          Lägg till
+        </Elements.Buttons.SubmitButton>
+      </Elements.Layout.ButtonWrapper>
     </form>
   )
 }

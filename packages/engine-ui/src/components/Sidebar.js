@@ -36,7 +36,7 @@ const TextLink = styled(Link)`
 
 const Content = styled.div`
   padding: 2rem;
-  width: 325px;
+  width: 375px;
 `
 
 const VerticalLine = styled.div`
@@ -141,36 +141,26 @@ const Sidebar = (state) => {
       {navigationCurrentView && (
         <Content>
           <RouterSwitch>
-            <Route path="/">
+            <Route exact path="/">
               <>{currentViewToElement()}</>
+            </Route>
+            <Route path="/details">
+              <Details state={data} />
+            </Route>
+            <Route path="/add-vehicle">
+              <AddVehicle
+                currentPosition={state.currentPosition}
+                addVehicle={state.addVehicle}
+              />
+            </Route>
+            <Route path="/add-booking">
+              <CreateBooking createBooking={state.createBooking} />
+            </Route>
+            <Route path="/add-bookings">
+              <CreateBookings createBookings={state.createBookings} />
             </Route>
           </RouterSwitch>
         </Content>
-      )}
-
-      {pathname !== '/' && (
-        <>
-          <VerticalLine />
-          <Content>
-            <RouterSwitch>
-              <Route path="/details">
-                <Details state={data} />
-              </Route>
-              <Route path="/add-vehicle">
-                <AddVehicle
-                  currentPosition={state.currentPosition}
-                  addVehicle={state.addVehicle}
-                />
-              </Route>
-              <Route path="/add-booking">
-                <CreateBooking createBooking={state.createBooking} />
-              </Route>
-              <Route path="/add-bookings">
-                <CreateBookings createBookings={state.createBookings} />
-              </Route>
-            </RouterSwitch>
-          </Content>
-        </>
       )}
     </Container>
   )

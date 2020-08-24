@@ -19,6 +19,7 @@ const LinkListContainer = styled.div`
 
 const Container = styled.div`
   margin-bottom: 2rem;
+  margin-left: 1rem;
 `
 
 const InputInnerContainer = styled.div`

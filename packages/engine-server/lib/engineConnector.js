@@ -3,8 +3,8 @@ const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const routingKeys = {
-  REGISTERED: 'registered',
   NEW: 'new',
+  REGISTERED: 'registered',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
   PICKED_UP: 'picked_up',
@@ -13,21 +13,50 @@ const routingKeys = {
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
-// Bind update_booking_in_admin_ui queue to exchanges, this is done here since fluent-amqp doesnt support 
+// Bind update_booking_in_admin_ui queue to exchanges, this is done here since fluent-amqp doesnt support
 // binding to different exchanges.
 
-amqp.connect()
-  .then(amqpConnection => amqpConnection.createChannel())
-  .then(ch => 
-    ch.assertQueue("update_booking_in_admin_ui", {
-      durable: false,
-    }).then(() =>
-      ch.assertExchange("outgoing_booking_updates", 'topic', {
+amqp
+  .connect()
+  .then((amqpConnection) => amqpConnection.createChannel())
+  .then((ch) =>
+    ch
+      .assertQueue('update_booking_in_admin_ui', {
         durable: false,
       })
-    ).then(() => ch.bindQueue('update_booking_in_admin_ui','outgoing_booking_updates', routingKeys.ASSIGNED))
-    .then(() => ch.bindQueue('update_booking_in_admin_ui','incoming_booking_updates', routingKeys.PICKED_UP))
-    .then(() => ch.bindQueue('update_booking_in_admin_ui','incoming_booking_updates', routingKeys.DELIVERED))
+      .then(() =>
+        ch.assertExchange('outgoing_booking_updates', 'topic', {
+          durable: false,
+        })
+      )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'outgoing_booking_updates',
+          routingKeys.ASSIGNED
+        )
+      )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'incoming_booking_updates',
+          routingKeys.PICKED_UP
+        )
+      )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'incoming_booking_updates',
+          routingKeys.DELIVERED
+        )
+      )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'outgoing_booking_updates',
+          routingKeys.NEW
+        )
+      )
   )
 
 const bookings = amqp
@@ -38,18 +67,6 @@ const bookings = amqp
    * it means but messages are not acked if i don't specify this
    */
   .subscribe({ noAck: true }, [])
-  .map((bookings) => {
-    return { ...bookings.json(), status: bookings.fields.routingKey }
-  })
-
-const bookingsNewWithRoutes = amqp
-  .exchange('bookings_with_routes', 'topic', {
-    durable: false,
-  })
-  .queue('update_booking_in_admin_ui', {
-    durable: false,
-  })
-  .subscribe({ noAck: true }, [routingKeys.REGISTERED])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
@@ -84,18 +101,27 @@ const dispatchOffers = () => {
 }
 
 const addVehicle = (position) => {
-  return amqp.exchange('incoming_vehicle_updates', 'topic', { durable: false }).publish({
-    id: id62(),
-    position,
-  }, routingKeys.REGISTERED)
+  return amqp
+    .exchange('incoming_vehicle_updates', 'topic', { durable: false })
+    .publish(
+      {
+        id: id62(),
+        position,
+      },
+      routingKeys.REGISTERED
+    )
 }
 
 const createBookingsFromHistory = (total) => {
-  return amqp.queue('add_nr_of_historical_bookings', { durable: false }).publish(total)
+  return amqp
+    .queue('add_nr_of_historical_bookings', { durable: false })
+    .publish(total)
 }
 
 const resetState = () =>
-  amqp.queue('clear_engine_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
+  amqp
+    .queue('clear_engine_state', { durable: false })
+    .publish(JUST_DO_IT_MESSAGE)
 
 const plan = amqp
   .exchange('plan', 'fanout', {
@@ -112,7 +138,6 @@ const plan = amqp
 module.exports = {
   addVehicle,
   bookings,
-  bookingsNewWithRoutes,
   cars,
   createBooking,
   dispatchOffers,

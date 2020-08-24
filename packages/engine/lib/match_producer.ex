@@ -37,11 +37,11 @@ defmodule Engine.MatchProducer do
   end
 
   defp string_to_booking_transform(booking_string) do
-    %{pickup: pickup, delivery: delivery, id: external_id, metadata: metadata} =
+    %{pickup: pickup, delivery: delivery, metadata: metadata} =
       Poison.decode!(booking_string, keys: :atoms)
       |> Map.put_new(:metadata, %{})
 
-    Booking.make(pickup, delivery, external_id, metadata)
+    Booking.make(pickup, delivery, metadata)
   end
 
   def handle_clear_state do

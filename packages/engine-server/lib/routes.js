@@ -2,7 +2,6 @@ const _ = require('highland')
 const {
   addVehicle,
   bookings,
-  bookingsNewWithRoutes,
   cars,
   createBooking,
   dispatchOffers,
@@ -18,11 +17,7 @@ const planCache = new Map()
 
 function register(io) {
   io.on('connection', function (socket) {
-    _.merge([
-      _(bookingsCache.values()),
-      bookings.fork(),
-      bookingsNewWithRoutes.fork(),
-    ])
+    _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto((booking) => bookingsCache.set(booking.id, booking))
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)

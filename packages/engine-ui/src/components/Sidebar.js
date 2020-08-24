@@ -21,6 +21,7 @@ import dispatchIcon from '../assets/dispatch.svg'
 import Plan from './Plan'
 import Elements from './Elements'
 import Icons from '../assets/Icons'
+import Navigation from './Navigation'
 
 const Container = styled.div`
   position: absolute;
@@ -164,7 +165,11 @@ const Sidebar = (state) => {
 
   return (
     <Container>
-      <NavigationBar>
+      <Navigation
+        setNavigationCurrentView={setNavigationCurrentView}
+        navigationCurrentView={navigationCurrentView}
+      />
+      {/* <NavigationBar>
         <MenuItem>
           <Link to="/">
             <img
@@ -196,7 +201,7 @@ const Sidebar = (state) => {
 
           {navigationCurrentView === 'plan' && <Icons.ActiveView />}
         </MenuItem>
-      </NavigationBar>
+      </NavigationBar> */}
 
       <Content>
         <RouterSwitch>

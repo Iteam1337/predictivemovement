@@ -1,0 +1,38 @@
+{
+    "metadata": {
+        "note": "Easiest setup, with one car and one booking. No constraints, no time-distance matrix. Start, pickup and end position are the same.",
+        "map": "https://www.google.de/maps/dir/65.6335,21.92567/'65.61582,22.13488'/@65.6053705,21.967947,12z/data=!3m1!4b1!4m7!4m6!1m0!1m3!2m2!1d22.13488!2d65.61582!3e0"
+    },
+    "vehicles": [
+        {
+            "position": {
+                "lon": 21.92567,
+                "lat": 65.63350,
+                "hint": "yvWOiQb2jol5AAAABQAAAAMBAAAAAAAApnCoQoT-WEDJfzRDAAAAAHkAAAAFAAAAAwEAAAAAAAB4GwEAbZpOAeJx6QNumk4B4nHpAwQArwoGYbfc"
+            },
+            "metadata": {
+                "start": "Bällinge (65.63350,21.92567)"
+            },
+            "id": "vehicle-1"
+        }
+    ],
+    "bookings": [
+        {
+            "pickup": {
+                "lon": 21.92567,
+                "lat": 65.63350,
+                "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc"
+            },
+            "metadata": {
+                "start": "Bällinge (65.63350,21.92567) -> LTU (65.61582,22.13488)"
+            },
+            "id": "Bällinge->LTU",
+            "delivery": {
+                "lon": 22.13488,
+                "lat": 65.61582,
+                "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc"
+            }
+        }
+    ],
+    "matrix": {}
+}

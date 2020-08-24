@@ -1,0 +1,11 @@
+{
+    "solution": {
+        "routes": [
+            {
+                "number": 1,
+                "activities": [],
+                "vehicle_id": "vehicle-1"
+            }
+        ]
+    }
+}

@@ -1,0 +1,46 @@
+{
+    "solution": {
+        "routes": [
+            {
+                "number": 1,
+                "activities": [
+                    {
+                        "address": {
+                            "lon": 21.92567,
+                            "lat": 65.63350
+                        },
+                        "index": -1,
+                        "type": "start"
+                    },
+                    {
+                        "address": {
+                            "lon": 21.92567,
+                            "lat": 65.63350
+                        },
+                        "index": 1,
+                        "id": "Bällinge->LTU",
+                        "type": "pickupShipment"
+                    },
+                    {
+                        "address": {
+                            "lon": 22.13488,
+                            "lat": 65.61582
+                        },
+                        "index": 2,
+                        "id": "Bällinge->LTU",
+                        "type": "deliverShipment"
+                    },
+                    {
+                        "address": {
+                            "lon": 21.92567,
+                            "lat": 65.63350
+                        },
+                        "index": -2,
+                        "type": "end"
+                    }
+                ],
+                "vehicle_id": "vehicle-1"
+            }
+        ]
+    }
+}

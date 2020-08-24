@@ -11,6 +11,8 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
     vehicleType: '',
     id: '',
     capacity: null,
+    volyme: null,
+    weight: null,
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472 },
     endDestination: null,

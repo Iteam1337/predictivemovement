@@ -38,18 +38,36 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       <Elements.InputBlock>
         <Elements.InputContainer>
           <Elements.Label htmlFor="capacity">Kapacitet</Elements.Label>
-          <TextInput
-            step={1}
-            min="0"
-            type="number"
-            name="capacity"
-            value={state.capacity}
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'capacity',
-              onChangeHandler
-            )}
-            placeholder="Lastvolym"
-          />
+          <Elements.TextInputPairContainer>
+            <Elements.TextInputPairItem>
+              <TextInput
+                step={1}
+                min="0"
+                type="number"
+                name="volyme"
+                value={state.volyme}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'volyme',
+                  onChangeHandler
+                )}
+                placeholder="Lastvolym"
+              />
+            </Elements.TextInputPairItem>
+            <Elements.TextInputPairItem>
+              <TextInput
+                step={1}
+                min="0"
+                type="number"
+                name="weight"
+                value={state.weight}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'weight',
+                  onChangeHandler
+                )}
+                placeholder="Maxvikt"
+              />
+            </Elements.TextInputPairItem>
+          </Elements.TextInputPairContainer>
         </Elements.InputContainer>
       </Elements.InputBlock>
       <Elements.InputBlock>

@@ -79,14 +79,20 @@ function register(io) {
     socket.on('add-vehicle', (params) => {
       const vehicle = {
         id: params.id || id62(),
-        capacity: params.capacity,
+        capacity:
+          params.volyme && params.weight
+            ? [params.volyme, params.weight]
+            : null,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,
         start_address: params.startPosition,
-        end_address: params.endDestination,
-        profile: params.profile || '',
+        end_address: params.endDestination
+          ? params.endDestination
+          : params.startPosition,
+
         metadata: {
           driver: params.driver,
+          profile: params.vehicleType,
         },
       }
       addVehicle(vehicle)

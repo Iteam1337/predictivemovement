@@ -20,7 +20,7 @@ public class MQApplication {
 
 	static final Logger log = LoggerFactory.getLogger(MQApplication.class);
 
-	private static final String QUEUE_NAME = "route_optimization_jsprit";
+	private static final String QUEUE_NAME = "calculate_route_optimization";
 
 	public static void main(final String[] args) {
 		SpringApplication.run(MQApplication.class, args);

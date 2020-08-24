@@ -1,5 +1,4 @@
 import React from 'react'
-
 import Elements from './Elements'
 import styled from 'styled-components'
 
@@ -8,9 +7,9 @@ const Paragraph = styled.p`
   margin-bottom: 2.5rem;
   text-transform: capitalize;
 `
+
 const BookingDetails = ({ booking }) => {
   const [address, setAddress] = React.useState()
-
   const getAddressFromCoordinates = async ({ lon, lat }) => {
     return await fetch(
       `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
@@ -19,16 +18,21 @@ const BookingDetails = ({ booking }) => {
       .then(({ features }) => features[0].properties.label)
   }
 
-  const setAddressFromCoordinates = async (pickupCoordinates, deliveryCoordinates ) => {
-    const pickupAddress = await getAddressFromCoordinates(pickupCoordinates)
-    const deliveryAddress = await getAddressFromCoordinates(deliveryCoordinates)
-    setAddress({
-      pickup: pickupAddress,
-      delivery: deliveryAddress,
-    })
-  }
-
   React.useEffect(() => {
+    const setAddressFromCoordinates = async (
+      pickupCoordinates,
+      deliveryCoordinates
+    ) => {
+      const pickupAddress = await getAddressFromCoordinates(pickupCoordinates)
+      const deliveryAddress = await getAddressFromCoordinates(
+        deliveryCoordinates
+      )
+      setAddress({
+        pickup: pickupAddress,
+        delivery: deliveryAddress,
+      })
+    }
+
     if (!booking) return
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])
@@ -44,6 +48,17 @@ const BookingDetails = ({ booking }) => {
       <Paragraph>{address.pickup}</Paragraph>
       <Elements.StrongParagraph>Avlämning</Elements.StrongParagraph>
       <Paragraph>{address.delivery}</Paragraph>
+      {booking.assigned_to && (
+        <>
+          <Elements.StrongParagraph>Bokad transport</Elements.StrongParagraph>
+
+          <Elements.RoundedLink
+            to={`/details?type=car&id=${booking.assigned_to.id}`}
+          >
+            {booking.id}
+          </Elements.RoundedLink>
+        </>
+      )}
       <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
       <span>{booking.status}</span>
 

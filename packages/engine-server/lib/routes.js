@@ -8,11 +8,13 @@ const {
   dispatchOffers,
   createBookingsFromHistory,
   resetState,
+  plan,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const movingCarsCache = new Map()
 const bookingsCache = new Map()
+const planCache = new Map()
 
 function register(io) {
   io.on('connection', function (socket) {
@@ -39,21 +41,26 @@ function register(io) {
       .errors(console.error)
       .each((cars) => socket.emit('cars', cars))
 
-    socket.on('new-booking', ({ pickup, delivery }) => {
-      const [pickupLat, pickupLon] = pickup
-      const [deliveryLat, deliveryLon] = delivery
+    _.merge([_(planCache.values()), plan.fork()])
+      .doto((data) => {
+        planCache.set('plan', data)
+      })
+      .each((data) => socket.emit('plan-update', data))
 
+    socket.on('new-booking', (params) => {
       const booking = {
-        id: id62(),
+        id: params.id || id62(),
         senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
         bookingDate: new Date().toISOString(),
         pickup: {
-          lat: pickupLat,
-          lon: pickupLon,
+          time_windows: params.pickup.timewindows,
+          lat: params.pickup.lat,
+          lon: params.pickup.lon,
         },
         delivery: {
-          lat: deliveryLat,
-          lon: deliveryLon,
+          time_windows: params.delivery.timewindows,
+          lat: params.delivery.lat,
+          lon: params.delivery.lon,
         },
       }
 
@@ -65,8 +72,16 @@ function register(io) {
       dispatchOffers()
     })
 
-    socket.on('add-vehicle', ({ position }) => {
-      addVehicle(position)
+    socket.on('add-vehicle', (params) => {
+      const vehicle = {
+        id: params.id || id62(),
+        capacity: params.capacity,
+        time_window: params.timewindow,
+        start_position: params.startPosition,
+        end_destination: params.endDestination,
+        driver: params.driver,
+      }
+      addVehicle(vehicle.start_position)
     })
 
     socket.on('new-bookings', ({ total }) => {

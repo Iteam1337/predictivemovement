@@ -5,6 +5,7 @@ defmodule Booking do
 
   def make(pickup, delivery, external_id, metadata) do
     id = "pmb-" <> (Base62UUID.generate() |> String.slice(0, 8))
+
     GenServer.start_link(
       __MODULE__,
       %Booking{
@@ -55,7 +56,7 @@ defmodule Booking do
 
     updated_state
     |> MQ.publish(
-      Application.fetch_env!(:engine, :bookings_exchange),
+      Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "assigned"
     )
 

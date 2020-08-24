@@ -20,6 +20,7 @@ import AddVehicle from './AddVehicle'
 import dispatchIcon from '../assets/dispatch.svg'
 import Plan from './Plan'
 import Elements from './Elements'
+import Icons from '../assets/Icons'
 
 const Container = styled.div`
   position: absolute;
@@ -32,7 +33,7 @@ const Container = styled.div`
 `
 
 const NavigationBar = styled.div`
-  padding: 3rem 1rem;
+  padding: 3rem 0;
   height: 100vh;
   background: #13c57b;
   color: white;
@@ -45,6 +46,18 @@ const NavigationBar = styled.div`
     width: 30px;
     height: 30px;
     cursor: pointer;
+  }
+`
+
+const MenuItem = styled.div`
+  position: relative;
+  padding: 0 1.5rem;
+  margin-bottom: 5rem;
+
+  svg {
+    position: absolute;
+    top: 10px;
+    right: -8px;
   }
 `
 
@@ -152,27 +165,37 @@ const Sidebar = (state) => {
   return (
     <Container>
       <NavigationBar>
-        <Elements.NavIconLink to="/">
-          <img
-            onClick={() => setNavigationCurrentView('bookings')}
-            src={ParcelIcon}
-            alt="parcel icon"
-          />
-        </Elements.NavIconLink>
-        <Elements.NavIconLink to="/">
-          <img
-            onClick={() => setNavigationCurrentView('cars')}
-            src={ShippingIcon}
-            alt="shipping icon"
-          />
-        </Elements.NavIconLink>
-        <Elements.NavIconLink to="/">
-          <img
-            onClick={() => setNavigationCurrentView('plan')}
-            src={dispatchIcon}
-            alt="dispatch icon"
-          />
-        </Elements.NavIconLink>
+        <MenuItem>
+          <Link to="/">
+            <img
+              onClick={() => setNavigationCurrentView('bookings')}
+              src={ParcelIcon}
+              alt="parcel icon"
+            />
+          </Link>
+          {navigationCurrentView === 'bookings' && <Icons.ActiveView />}
+        </MenuItem>
+        <MenuItem>
+          <Link to="/">
+            <img
+              onClick={() => setNavigationCurrentView('cars')}
+              src={ShippingIcon}
+              alt="shipping icon"
+            />
+          </Link>
+          {navigationCurrentView === 'cars' && <Icons.ActiveView />}
+        </MenuItem>
+        <MenuItem>
+          <Link to="/">
+            <img
+              onClick={() => setNavigationCurrentView('plan')}
+              src={dispatchIcon}
+              alt="dispatch icon"
+            />
+          </Link>
+
+          {navigationCurrentView === 'plan' && <Icons.ActiveView />}
+        </MenuItem>
       </NavigationBar>
 
       <Content>

@@ -262,9 +262,6 @@ const StrongParagraph = styled.label`
   font-weight: bold;
 `
 
-const NavIconLink = styled(Link)`
-  margin-bottom: 5rem;
-`
 const TimeRestrictionDateInputWrapper = styled.div`
   margin-bottom: 0.25rem;
 `
@@ -313,7 +310,6 @@ export default {
   NoInfoParagraph,
   FormInputIcon,
   CheckboxLabel,
-  NavIconLink,
   AddFormFieldButton,
   SmallInfo,
   Checkbox,

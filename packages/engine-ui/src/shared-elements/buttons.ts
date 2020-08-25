@@ -11,8 +11,11 @@ const SubmitButton = styled.button<{ justifySelf: string }>`
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
 
   :hover {
-    background: #ccffcc;
-    color: #666666;
+    background: #c1f5c1;
+  }
+
+  :focus {
+    outline-color: #ccffcc;
   }
 `
 
@@ -27,6 +30,10 @@ const CancelButton = styled.button`
 
   :hover {
     color: #666666;
+  }
+
+  :focus {
+    outline-color: #666666;
   }
 `
 

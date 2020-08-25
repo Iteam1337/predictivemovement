@@ -175,7 +175,6 @@ defmodule BookingProcessorTest do
     assert length(activities) == 3
   end
 
-  @tag :only
   test "it only stores latest plan response" do
     vehicles = [@tesla, @volvo]
     bookings = [@iteamToRadu]

@@ -10,6 +10,10 @@ defmodule ElixirUmbrella.MixProject do
     ]
   end
 
+  def application do
+    [extra_applications: [:logger, :gproc]]
+  end
+
   defp deps do
     []
   end

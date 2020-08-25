@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
+import NestedMenu from './layout/NestedMenu'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -12,17 +13,24 @@ const CarDetails = ({ car }) => {
   if (!car) return <p>Loading...</p>
 
   return (
-    <div>
-      <Elements.StrongParagraph>ID:</Elements.StrongParagraph>
-      <span>{car.id}</span>
-      <Line />
-      {car.activities.length > 0 && (
-        <>
-          <Elements.StrongParagraph>Rutt</Elements.StrongParagraph>
-          <RouteActivities car={car} />
-        </>
-      )}
-    </div>
+    <NestedMenu>
+      <Elements.Layout.Container>
+        <h3>Transport</h3>
+        <Elements.Typography.StrongParagraph>
+          ID:
+        </Elements.Typography.StrongParagraph>
+        <span>{car.id}</span>
+        <Line />
+        {car.activities.length > 0 && (
+          <>
+            <Elements.Typography.StrongParagraph>
+              Rutt
+            </Elements.Typography.StrongParagraph>
+            <RouteActivities car={car} />
+          </>
+        )}
+      </Elements.Layout.Container>
+    </NestedMenu>
   )
 }
 

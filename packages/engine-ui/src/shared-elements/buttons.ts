@@ -37,4 +37,18 @@ const CancelButton = styled.button`
   }
 `
 
-export default { SubmitButton, CancelButton }
+const StyledAddFormFieldButton = styled.button<{
+  size: string
+  marginTop: string
+}>`
+  color: #666666;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-weight: bold;
+  padding: 0;
+  font-size: ${({ size }) => size || '1rem'};
+  margin-top: ${({ marginTop }) => marginTop};
+`
+
+export default { SubmitButton, CancelButton, StyledAddFormFieldButton }

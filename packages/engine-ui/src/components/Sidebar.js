@@ -11,7 +11,7 @@ import CarDetails from './CarDetails'
 
 import AddVehicle from './AddVehicle'
 import Plan from './Plan'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import Navigation from './Navigation'
 
 const Container = styled.div`
@@ -39,6 +39,20 @@ const PlanWrapper = styled.div`
 const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
+
+const AddFormFieldButton = ({
+  onClickHandler,
+  children,
+  marginTop = '5rem',
+}) => (
+  <Elements.Buttons.StyledAddFormFieldButton
+    type="button"
+    onClick={onClickHandler}
+    marginTop={marginTop}
+  >
+    {children}
+  </Elements.Buttons.StyledAddFormFieldButton>
+)
 
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
@@ -72,16 +86,14 @@ const Sidebar = (state) => {
             <Bookings bookings={state.bookings} />
             <AddNewContainer>
               <Link to="/add-booking">
-                <Elements.AddFormFieldButton>
-                  + Lägg till bokning
-                </Elements.AddFormFieldButton>
+                <AddFormFieldButton>+ Lägg till bokning</AddFormFieldButton>
               </Link>
             </AddNewContainer>
             <AddNewContainer>
               <Link to="/add-bookings">
-                <Elements.AddFormFieldButton marginTop="0">
+                <AddFormFieldButton marginTop="0">
                   + Generera historiska bokningar
-                </Elements.AddFormFieldButton>
+                </AddFormFieldButton>
               </Link>
             </AddNewContainer>
           </>
@@ -92,9 +104,7 @@ const Sidebar = (state) => {
             <h3>Aktuella transporter</h3>
             <Cars cars={state.cars} />
             <Link to="/add-vehicle">
-              <Elements.AddFormFieldButton>
-                + Lägg till transport
-              </Elements.AddFormFieldButton>
+              <AddFormFieldButton>+ Lägg till transport</AddFormFieldButton>
             </Link>
           </>
         )
@@ -103,12 +113,12 @@ const Sidebar = (state) => {
           <PlanWrapper>
             <h3>Plan</h3>
             <Plan plan={state.plan} />
-            <Elements.SubmitButton
+            <Elements.Buttons.SubmitButton
               justifySelf="center"
               onClick={state.dispatchOffers}
             >
               Bekräfta plan
-            </Elements.SubmitButton>
+            </Elements.Buttons.SubmitButton>
           </PlanWrapper>
         )
       default:

@@ -1,15 +1,12 @@
 package com.predictivemovement.route.optimization;
 
-import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindow;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.function.Consumer;
 
 /**
- * This class adds time windows for pickup and/or delivery to shipments.
+ * This class provides time calculation functions.
  */
 public class VRPSettingTimeUtils {
 
@@ -24,7 +21,8 @@ public class VRPSettingTimeUtils {
             return defaultSeconds;
 
         String dateTimeString = json.optString(field);
-        if (dateTimeString.isBlank()) return defaultSeconds;
+        if (dateTimeString.isBlank())
+            return defaultSeconds;
 
         ZonedDateTime dateTime = ZonedDateTime.parse(dateTimeString);
         double seconds = ChronoUnit.SECONDS.between(now, dateTime);

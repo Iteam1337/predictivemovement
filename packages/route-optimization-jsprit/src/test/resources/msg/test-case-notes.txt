@@ -43,3 +43,8 @@ Time Constraints:
 3. Bookings with time constraints will have effects on bookings without time constraint.
     Example: Optimized route is from A->B and it is 06:00 o'clock in the morning. If you set an earliest delivery window to A at 23:00 o'clock the optimized route is still A->B since B has no time constraints. Probably the 'human expection' is, that B is delivered before A on the day?
 
+
+Costs:
+
+1. Could not find 'distances costs' in the response of OSRM time-distance-matrix request?! (only durations)
+    http://project-osrm.org/docs/v5.5.1/api/#table-service

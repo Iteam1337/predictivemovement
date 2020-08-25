@@ -6,6 +6,10 @@ defmodule Engine.MixProject do
       app: :engine,
       version: "0.1.0",
       elixir: "~> 1.10",
+      build_path: "../../_build",
+      config_path: "../../elixir_config/config.exs",
+      deps_path: "../../deps",
+      lockfile: "../../mix.lock",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env())
@@ -48,5 +52,5 @@ defmodule Engine.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/mocks"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(_), do: ["lib", "elixir_config"]
 end

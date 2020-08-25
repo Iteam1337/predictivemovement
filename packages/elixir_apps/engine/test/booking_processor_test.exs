@@ -54,20 +54,18 @@ defmodule BookingProcessorTest do
 
   @tesla %Vehicle{
     busy: false,
-    heading: nil,
     id: "tesla",
-    instructions: [],
+    activities: [],
     position: @iteam,
-    orsm_route: nil
+    current_route: nil
   }
 
   @volvo %Vehicle{
     busy: false,
-    heading: nil,
     id: "volvo",
-    instructions: [],
+    activities: [],
     position: @ralis,
-    orsm_route: nil
+    current_route: nil
   }
   @plan_response_with_one_booking_for_tesla %{
     copyrights: ["GraphHopper", "OpenStreetMap contributors"],
@@ -172,9 +170,9 @@ defmodule BookingProcessorTest do
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    [%Vehicle{id: "tesla", instructions: instructions}] = PlanStore.get_plan()
+    [%Vehicle{id: "tesla", activities: activities}] = PlanStore.get_plan()
 
-    assert length(instructions) == 3
+    assert length(activities) == 3
   end
 
   @tag :only
@@ -209,9 +207,9 @@ defmodule BookingProcessorTest do
     assert_receive {:ack, ^ref, messages, failed},
                    10000
 
-    [%Vehicle{id: "volvo", instructions: instructions}] = PlanStore.get_plan()
+    [%Vehicle{id: "volvo", activities: activities}] = PlanStore.get_plan()
 
-    assert length(instructions) == 3
+    assert length(activities) == 3
   end
 
   # This test should be moved to a more "e2e" location to test that our get_optimal_routes backend works properly
@@ -234,9 +232,9 @@ defmodule BookingProcessorTest do
   #   assert_receive {:ack, ^ref, messages, failed},
   #                  10000
 
-  #   {%Vehicle{id: "tesla", instructions: instructions}, _} = PlanStore.get_plan()
+  #   {%Vehicle{id: "tesla", activities: activities}, _} = PlanStore.get_plan()
 
-  #   assert length(instructions) == 11
+  #   assert length(activities) == 11
   # end
 
   # test "it can get another order that is on the same route" do
@@ -251,12 +249,12 @@ defmodule BookingProcessorTest do
   #   assert_receive {:ack, ^ref, messages, failed},
   #                  10000
 
-  #   %Vehicle{id: "tesla", instructions: instructions} =
+  #   %Vehicle{id: "tesla", activities: activities} =
   #     messages
   #     |> Enum.map(fn %Broadway.Message{data: {vehicles, bookings}} -> List.first(vehicles) end)
   #     |> List.first()
 
-  #   instructions
+  #   activities
   #   |> Enum.filter(fn %{type: type} -> type != "start" end)
   #   |> Enum.all?(fn %{id: id} ->
   #     id == @iteamToRadu.id or id == @iteamToChristian.id
@@ -268,14 +266,14 @@ defmodule BookingProcessorTest do
 
   # booking1 = {}
   # booking2 = {}
-  # vehicle1 = { instructions: []}
-  # vehicle2 = { instructions: []}
+  # vehicle1 = { activities: []}
+  # vehicle2 = { activities: []}
 
   # vehicles = [vehicle1, vehicle2]
 
   # result = process.message(booking1, vehicles)
 
-  # updated_vehicle1 = { instructions: [booking1] }
+  # updated_vehicle1 = { activities: [booking1] }
   # updated_vehicles = accept_offer(result)
 
   # updated_vehicles = [updated_vehicle1, vehicle2]

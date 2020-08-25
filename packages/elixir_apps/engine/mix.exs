@@ -52,5 +52,5 @@ defmodule Engine.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/mocks"]
-  defp elixirc_paths(_), do: ["lib", "elixir_config"]
+  defp elixirc_paths(_), do: ["lib"]
 end

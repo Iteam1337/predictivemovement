@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import Form from './forms/AddVehicle'
+import NestedMenu from './layout/NestedMenu'
 
 const AddVehicle = ({ addVehicle, currentPosition }) => {
   const history = useHistory()
@@ -47,14 +48,16 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   }
 
   return (
-    <Elements.Layout.Container>
-      <h3>Lägg till fordon</h3>
-      <Form
-        onChangeHandler={setState}
-        onSubmitHandler={onSubmitHandler}
-        state={formState}
-      />
-    </Elements.Layout.Container>
+    <NestedMenu>
+      <Elements.Layout.Container>
+        <h3>Lägg till fordon</h3>
+        <Form
+          onChangeHandler={setState}
+          onSubmitHandler={onSubmitHandler}
+          state={formState}
+        />
+      </Elements.Layout.Container>
+    </NestedMenu>
   )
 }
 export default AddVehicle

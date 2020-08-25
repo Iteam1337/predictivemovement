@@ -1,7 +1,12 @@
 {
     "vehicles": [
         {
-            "position": {
+            "start_address": {
+                "lon": 16.225352,
+                "lat": 61.736082,
+                "hint": ""
+            },
+            "end_address": {
                 "lon": 16.225352,
                 "lat": 61.736082,
                 "hint": ""

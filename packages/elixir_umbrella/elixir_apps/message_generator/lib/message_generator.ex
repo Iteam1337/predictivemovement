@@ -32,7 +32,11 @@ defmodule MessageGenerator do
 
   def random_car(location) do
     %{}
-    |> Map.put(:position, Address.random(location))
+    |> Map.put(:start_address, Address.random(location))
+    |> Map.put(:end_address, Address.random(location))
+    # |> Map.put(:earliest_start, DateTime.utc_now() |> DateTime.add(60 * 60))
+    # |> Map.put(:latest_end, DateTime.utc_now() |> DateTime.add(60 * 60 * 2))
+    |> Map.put(:capacity, [15, 700])
     |> Map.put(:id, Enum.random(0..100_000))
   end
 
@@ -42,6 +46,7 @@ defmodule MessageGenerator do
     %{}
     |> add_addresses(location)
     |> add_random_id_and_time()
+    |> Map.put(:size, %{measurements: [105, 55, 26], weight: 13.7})
   end
 
   def add_random_car(), do: GenServer.call(__MODULE__, :add_random_car)

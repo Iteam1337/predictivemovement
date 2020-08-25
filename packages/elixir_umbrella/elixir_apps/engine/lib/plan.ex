@@ -19,13 +19,20 @@ defmodule Plan do
     |> Poison.decode!(keys: :atoms)
   end
 
-  defp insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do
-    bookings
-    |> Enum.flat_map(fn %{pickup: pickup, delivery: delivery} -> [pickup, delivery] end)
-    |> Enum.concat(Enum.map(vehicles, fn %{position: position} -> position end))
-    |> Osrm.get_time_between_coordinates()
-    |> Map.delete(:code)
-    |> (&Map.put(items, :matrix, &1)).()
+  def insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do
+    matrix =
+      bookings
+      |> Enum.flat_map(fn %{pickup: pickup, delivery: delivery} -> [pickup, delivery] end)
+      |> Enum.concat(
+        Enum.flat_map(vehicles, fn %{start_address: start_address, end_address: end_address} ->
+          [start_address, end_address]
+        end)
+      )
+      |> Enum.uniq()
+      |> Osrm.get_time_between_coordinates()
+      |> Map.delete(:code)
+
+    Map.put(items, :matrix, matrix)
     |> add_hints_from_matrix()
   end
 
@@ -54,11 +61,34 @@ defmodule Plan do
     |> elem(0)
   end
 
-  defp add_vehicle_hints(vehicles, hints) do
+  def same_address(first, second) do
+    first.lat === second.lat and first.lon === second.lon
+  end
+
+  def add_vehicle_hints(vehicles, hints) do
     vehicles
-    |> Enum.zip(hints)
-    |> Enum.map(fn {vehicle, hint} ->
-      Map.update!(vehicle, :position, fn position -> Map.put(position, :hint, hint) end)
+    |> Enum.reduce({[], hints}, fn vehicle, {res, hints} ->
+      [start_hint | rest_of_hints] = hints
+
+      [end_hint, rest_of_hints] =
+        if same_address(vehicle.start_address, vehicle.end_address) do
+          [start_hint, rest_of_hints]
+        else
+          [end_hint | rest_of_hints] = rest_of_hints
+          [end_hint, rest_of_hints]
+        end
+
+      updated_vehicle =
+        vehicle
+        |> Map.update!(:start_address, fn start_address ->
+          Map.put(start_address, :hint, start_hint)
+        end)
+        |> Map.update!(:end_address, fn end_address ->
+          Map.put(end_address, :hint, end_hint)
+        end)
+
+      {res ++ [updated_vehicle], rest_of_hints}
     end)
+    |> elem(0)
   end
 end

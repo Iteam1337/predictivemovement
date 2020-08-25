@@ -1,0 +1,64 @@
+{
+  "solution": {
+    "routes": [
+      {
+        "number": 1,
+        "activities": [
+          {
+            "address": {
+              "lon": 21.928558349609375,
+              "lat": 65.63069152832031
+            },
+            "index": -1,
+            "type": "start"
+          },
+          {
+            "address": {
+              "lon": 22.05173683166504,
+              "lat": 65.58159637451172
+            },
+            "index": 1,
+            "id": "pmb-4FbTaQFr-2",
+            "type": "pickupShipment"
+          },
+          {
+            "address": {
+              "lon": 22.137168884277344,
+              "lat": 65.6131362915039
+            },
+            "index": 2,
+            "id": "pmb-4FbTaQFr-2",
+            "type": "deliverShipment"
+          },
+          {
+            "address": {
+              "lon": 22.01580810546875,
+              "lat": 65.64154052734375
+            },
+            "index": 3,
+            "id": "pmv-1zuURKyc-1",
+            "type": "pickupShipment"
+          },
+          {
+            "address": {
+              "lon": 22.137168884277344,
+              "lat": 65.6131362915039
+            },
+            "index": 4,
+            "id": "pmv-1zuURKyc-1",
+            "type": "deliverShipment"
+          },
+          {
+            "address": {
+              "lon": 21.928558349609375,
+              "lat": 65.63069152832031
+            },
+            "index": -2,
+            "type": "end"
+          }
+        ],
+        "vehicle_id": "pmv-1zuURKyc"
+      }
+    ]
+  }
+}

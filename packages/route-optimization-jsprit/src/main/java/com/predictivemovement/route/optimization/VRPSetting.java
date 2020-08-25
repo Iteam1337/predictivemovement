@@ -20,17 +20,12 @@ import org.json.JSONObject;
  */
 public class VRPSetting {
 
-    private static final int WEIGHT_INDEX = 0;
-
-    private static VehicleType vehicleDummyType;
-    static {
-        VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance("vehicleDummyType");
-        vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, 3);
-        vehicleTypeBuilder.setCostPerDistance(1);
-        vehicleTypeBuilder.setCostPerTransportTime(1);
-
-        vehicleDummyType = vehicleTypeBuilder.build();
-    }
+    private static final int VOLUME_INDEX = 0;
+    private static final int WEIGHT_INDEX = 1;
+    private static final int SHIPMENT_DEFAULT_VOLUME = 19 * 18 * 14;
+    private static final int SHIPMENT_DEFAULT_WEIGHT = 1;
+    private static final int VEHICLE_DEFAULT_VOLUME = 3 * 1000 * 1000;
+    private static final int VEHICLE_DEFAULT_WEIGHT = 5;
 
     List<VehicleImpl> vehicles;
     List<Shipment> shipments;
@@ -65,13 +60,28 @@ public class VRPSetting {
             VehicleImpl.Builder vehicleBuilder = VehicleImpl.Builder.newInstance(vehicleId);
 
             // type
-            vehicleBuilder.setType(vehicleDummyType);
+            vehicleBuilder.setType(getVehicleType(jsonVehicle));
 
-            // position
-            JSONObject jsonPosition = jsonVehicle.getJSONObject("position");
-            Location vehicleLocation = getLocation(jsonPosition);
-            vehicleBuilder.setStartLocation(vehicleLocation);
-            locations.put(jsonPosition.getString("hint"), vehicleLocation);
+            // start address
+            JSONObject startAddress = jsonVehicle.getJSONObject("start_address");
+            Location vehicleStartAddress = getLocation(startAddress);
+            vehicleBuilder.setStartLocation(vehicleStartAddress);
+            locations.put(startAddress.getString("hint"), vehicleStartAddress);
+
+            // end address
+            JSONObject endAddress = jsonVehicle.getJSONObject("end_address");
+            Location vehicleEndAddress = getLocation(endAddress);
+            vehicleBuilder.setEndLocation(vehicleEndAddress);
+            locations.put(endAddress.getString("hint"), vehicleEndAddress);
+
+            VRPSettingTimeUtils timeUtils = new VRPSettingTimeUtils();
+            // earliest start
+            double earliestStart = timeUtils.getTimeDifferenceFromNow(jsonVehicle, "earliest_start", 0.0);
+            vehicleBuilder.setEarliestStart(earliestStart);
+
+            // latest arrival
+            double latestArrival = timeUtils.getTimeDifferenceFromNow(jsonVehicle, "latest_end", Double.MAX_VALUE);
+            vehicleBuilder.setLatestArrival(latestArrival);
 
             VehicleImpl vehicle = vehicleBuilder.build();
             vehicles.add(vehicle);
@@ -110,9 +120,17 @@ public class VRPSetting {
                 shipmentBuilder.addDeliveryTimeWindow(timeWindow);
             });
 
-            // package capacity
-            shipmentBuilder.addSizeDimension(WEIGHT_INDEX, 1);
-
+            JSONObject size = jsonBooking.optJSONObject("size");
+            if (size == null) {
+                shipmentBuilder.addSizeDimension(VOLUME_INDEX, SHIPMENT_DEFAULT_VOLUME);
+                shipmentBuilder.addSizeDimension(WEIGHT_INDEX, SHIPMENT_DEFAULT_WEIGHT);
+            } else {
+                JSONArray measurements = size.optJSONArray("measurements");
+                int weight = size.optInt("weight", SHIPMENT_DEFAULT_WEIGHT);
+                int volume = getVolumeFromMeasurements(measurements);
+                shipmentBuilder.addSizeDimension(VOLUME_INDEX, volume);
+                shipmentBuilder.addSizeDimension(WEIGHT_INDEX, weight);
+            }
             Shipment shipment = shipmentBuilder.build();
             shipments.add(shipment);
         }
@@ -123,6 +141,36 @@ public class VRPSetting {
         float latitude = jsonLocation.getFloat("lat");
         Location location = Location.newInstance(longitude, latitude);
         return location;
+    }
+
+    private int cubicMetersToCentimeter(int meters) {
+        return meters * 1000 * 1000;
+    }
+
+    private VehicleType getVehicleType(JSONObject vehicle) {
+        String profile = vehicle.optString("profile");
+        JSONArray capacities = vehicle.optJSONArray("capacity");
+        String vehicleId = profile != null ? profile : "vehicleDummyType";
+        VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance(vehicleId);
+        int volume = capacities != null ? cubicMetersToCentimeter(capacities.getInt(0)) : VEHICLE_DEFAULT_VOLUME;
+        int weight = capacities != null ? capacities.getInt(1) : VEHICLE_DEFAULT_WEIGHT;
+        vehicleTypeBuilder.addCapacityDimension(VOLUME_INDEX, volume);
+        vehicleTypeBuilder.addCapacityDimension(WEIGHT_INDEX, weight);
+        vehicleTypeBuilder.setCostPerDistance(1);
+        vehicleTypeBuilder.setCostPerTransportTime(1);
+        return vehicleTypeBuilder.build();
+    }
+
+    private int getVolumeFromMeasurements(JSONArray measurements) {
+        if (measurements == null) return SHIPMENT_DEFAULT_VOLUME;
+        int volume = 1;
+
+        for (int i = 0; i < measurements.length(); i++) {
+            int measurement = measurements.getInt(i);
+            volume *= measurement;
+        }
+
+        return volume;
     }
 
     private void createCostMatrix() {

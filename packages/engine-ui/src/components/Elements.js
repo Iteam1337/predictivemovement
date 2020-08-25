@@ -57,9 +57,9 @@ const RoundedLink = styled(Link)`
 `
 
 const StyledAddFormFieldButton = styled.button`
-  color: #666666;
   border: none;
   outline: none;
+  color: inherit;
   background: transparent;
   font-weight: bold;
   padding: 0;

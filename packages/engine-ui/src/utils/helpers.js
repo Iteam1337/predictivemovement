@@ -8,6 +8,14 @@ const findAddress = async (query) => {
   return data
 }
 
+const getAddressFromCoordinates = async ({ lon, lat }) => {
+  return await fetch(
+    `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
+  )
+    .then((res) => res.json())
+    .then(({ features }) => features[0].properties.label)
+}
+
 const calculateMinTime = (date, minDate) => {
   const momentDate = moment(date || minDate)
   const isToday = momentDate.isSame(moment(), 'day')
@@ -18,4 +26,4 @@ const calculateMinTime = (date, minDate) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
-export default { findAddress, calculateMinTime }
+export default { findAddress, calculateMinTime, getAddressFromCoordinates }

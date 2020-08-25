@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const NoInfoParagraph = styled.p`
   font-style: italic;
   font-size: 0.875rem;
+  margin: 0;
 `
 
 const SmallInfo = styled.p`
@@ -18,4 +19,26 @@ const StrongParagraph = styled.label`
   font-weight: bold;
 `
 
-export default { NoInfoParagraph, SmallInfo, StrongParagraph }
+const CleanH4 = styled.h4`
+  margin: 0;
+`
+
+const RoundedLabelDisplay = styled.span<{ margin: string }>`
+  background: #e6ffe6;
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.6rem;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.875rem;
+  width: fit-content;
+  color: black;
+  margin: ${({ margin }) => margin && margin};
+`
+
+export default {
+  NoInfoParagraph,
+  SmallInfo,
+  StrongParagraph,
+  RoundedLabelDisplay,
+  CleanH4,
+}

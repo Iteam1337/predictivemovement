@@ -17,9 +17,29 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
+const BookingList = styled.ul`
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  list-style: none;
+  padding-top: 1rem;
+  li:not(:last-child) {
+    margin-bottom: 0.875rem;
+  }
+`
+
 const Container = styled.div`
   margin-bottom: 2rem;
   margin-left: 1rem;
+`
+
+const MarginBottomContainer = styled.div`
+  margin-bottom: 3rem;
+`
+
+const MarginTopContainer = styled.div`
+  margin-top: 2rem;
 `
 
 const InputInnerContainer = styled.div`
@@ -69,4 +89,7 @@ export default {
   TextInputPairItem,
   ButtonWrapper,
   TimeRestrictionWrapper,
+  BookingList,
+  MarginBottomContainer,
+  MarginTopContainer,
 }

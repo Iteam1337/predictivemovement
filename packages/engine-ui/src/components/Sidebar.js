@@ -8,7 +8,6 @@ import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../utils/hooks'
 import CarDetails from './CarDetails'
-
 import AddVehicle from './AddVehicle'
 import Plan from './Plan'
 import Elements from './Elements'
@@ -26,12 +25,11 @@ const Container = styled.div`
 
 const TextLink = styled(Link)`
   text-decoration: none;
-  color: #666666;
+  color: inherit;
 `
 
 const Content = styled.div`
   padding: 2rem;
-  margin-right: 2rem;
   width: 350px;
 `
 
@@ -73,7 +71,6 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
             <AddNewContainer>
               <TextLink to="/add-booking">

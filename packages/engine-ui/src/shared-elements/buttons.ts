@@ -30,4 +30,6 @@ const CancelButton = styled.button`
   }
 `
 
-export default { SubmitButton, CancelButton }
+const DisplayTextButton = styled.button``
+
+export default { SubmitButton, CancelButton, DisplayTextButton }

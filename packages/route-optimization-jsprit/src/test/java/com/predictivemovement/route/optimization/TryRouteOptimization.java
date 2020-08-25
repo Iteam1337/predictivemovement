@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.graphhopper.jsprit.analysis.toolbox.Plotter;
+import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
 import com.graphhopper.jsprit.core.util.Solutions;
 
@@ -28,9 +29,10 @@ public class TryRouteOptimization {
     public void jsprit() throws IOException {
 
         // given
-        // Path fileName = Path.of("src/test/resources/route_request_02.json");
-        // Path fileName = Path.of("src/test/resources/route_request_03.json");
-        Path fileName = Path.of("src/test/resources/route_request_04.json");
+        // Path fileName = Path.of("src/test/resources/msg/03/03_route_request.json");
+        // Path fileName = Path.of("src/test/resources/msg/05/05_route_request.json");
+        // Path fileName = Path.of("src/test/resources/msg/06/06_route_request.json");
+        Path fileName = Path.of("src/test/resources/msg/09/09_route_request.json");
         String msg = Files.readString(fileName);
         JSONObject routeRequest = new JSONObject(msg);
 
@@ -47,6 +49,7 @@ public class TryRouteOptimization {
         new File("tmp").mkdirs();
         plot();
         writeJsonFile();
+        dump();
     }
 
     private void plot() {
@@ -68,5 +71,16 @@ public class TryRouteOptimization {
     private void writeJsonFile() throws IOException {
         Path filepath = Paths.get("tmp/response.json");
         Files.write(filepath, response.toString().getBytes());
+    }
+
+    private void dump() {
+        System.out.println(routeOptimization.vrpSolution.solutions);
+
+        System.out.println("Number of solutions: " + routeOptimization.vrpSolution.solutions.size());
+
+        for (VehicleRoutingProblemSolution solution : routeOptimization.vrpSolution.solutions) {
+            System.out.println("\n--- next solution");
+            System.out.println(solution);
+        }
     }
 }

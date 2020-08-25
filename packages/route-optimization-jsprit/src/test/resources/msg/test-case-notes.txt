@@ -1,0 +1,45 @@
+
+
+Test Cases:
+-------------------------
+01: simple_one_car_one_boooking_route
+02: crossing_river_on_shortest_path_without_matrix
+03: crossing_river_avoided_with_matrix
+04: shortest_path_is_avoided_by_pickup_time_constraints
+05: pickup_time_constraint_in_the_past_not_achievable
+06: two_pickup_time_constraint_in_conflict
+07: two_pickup_time_constraint_conflict_with_two_vehicle_solution
+08: constraint_on_vehicle_volume_makes_only_one_booking_at_the_time_possible
+09: constraint_on_weight_volume_makes_only_one_booking_at_the_time_possible
+
+
+
+time-distance-matrix
+-------------------------
+
+Durations in seconds:
+
+    Bällinge                Gammelstad             LTU                     Gäddvik
+   [21.925676, 65.633503]  [22.015807, 65.64154]  [22.134865, 65.615818]  [22.051736, 65.581598]            destinations
+0                     0.0                 1071.8                  1119.1                   640.6  [21.925676, 65.633503] Bällinge
+1                  1057.7                    0.0                   516.4                   588.3   [22.015807, 65.64154] Gammelstad
+2                  1169.8                  503.4                     0.0                   691.4  [22.134865, 65.615818] LTU
+3                   639.8                  595.3                   642.6                     0.0  [22.051736, 65.581598] Gäddvik
+
+
+
+Open Issues
+-------------------------
+Issues related to the route optimization:
+
+Time Constraints:
+
+1. What to do when the time constraint is not achievable anymore?
+    Example: latest delivery is in the past: 2000-01-01 12:00:00
+
+2. What to do when the time constraints between the bookings are in conflict?
+    Example: Two bookings with same delivery window and only one car.
+
+3. Bookings with time constraints will have effects on bookings without time constraint.
+    Example: Optimized route is from A->B and it is 06:00 o'clock in the morning. If you set an earliest delivery window to A at 23:00 o'clock the optimized route is still A->B since B has no time constraints. Probably the 'human expection' is, that B is delivered before A on the day?
+

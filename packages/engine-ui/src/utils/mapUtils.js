@@ -1,6 +1,7 @@
 import palette from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
 import vehicleIcon from '../assets/vehicle.svg'
+import parcelIcon from '../assets/parcel.svg'
 
 export const point = (coordinates, props) => ({
   type: 'Feature',
@@ -128,6 +129,28 @@ export const carIcon = (cars) => {
   }
 }
 
+export const bookingIcon = (bookings) => {
+  let index = 0
+  try {
+    return [
+      ...bookings.flatMap(({ id, pickup }, i) => {
+        index = i
+        return [
+          point([pickup.lon, pickup.lat], {
+            properties: {
+              color: '#ccffcc',
+              size: 80,
+            },
+            id,
+          }),
+        ]
+      }),
+    ]
+  } catch (error) {
+    console.log(index, error)
+  }
+}
+
 export const bookingToFeature = (bookings) => {
   return bookings.flatMap(
     ({ id, pickup, delivery, status, route, assigned_to }) => {
@@ -195,6 +218,38 @@ export const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
+export const toBookingIconLayer = (data, callback) => {
+  if (!data.length) {
+    return
+  }
+  const ICON_MAPPING = {
+    marker: {
+      x: 0,
+      y: 0,
+      width: 150,
+      height: 150,
+      mask: true,
+    },
+  }
+
+  const iconData = data.map((feature) => ({
+    coordinates: feature.geometry.coordinates,
+    properties: { id: feature.id, color: '#ffffff' },
+  }))
+
+  return new IconLayer({
+    id: data[0].id,
+    data: iconData,
+    pickable: true,
+    iconAtlas: parcelIcon,
+    iconMapping: ICON_MAPPING,
+    getIcon: (d) => 'marker',
+    sizeScale: 4,
+    getPosition: (d) => d.coordinates,
+    getSize: (d) => 5,
+    getColor: (d) => hexToRGB(d.properties.color),
+  })
+}
 export const toIconLayer = (data, callback) => {
   if (!data.length) {
     return
@@ -237,6 +292,8 @@ export default {
   carToFeature,
   toGeoJsonLayer,
   toIconLayer,
+  toBookingIconLayer,
   hexToRGB,
   carIcon,
+  bookingIcon,
 }

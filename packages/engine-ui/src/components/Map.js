@@ -36,6 +36,7 @@ const Map = ({ state, onMapClick }) => {
       mapUtils.carToFeature(state.plan),
       handleClickEvent
     ),
+    mapUtils.toBookingIconLayer(mapUtils.bookingIcon(state.bookings)),
     mapUtils.toIconLayer(mapUtils.carIcon(state.cars)),
   ]
 

@@ -87,7 +87,7 @@ export const carToFeature = (cars) => {
 
           const points = activities
             .filter(({ type }) => type !== 'start')
-            .map(({ address, type }) =>
+            .map(({ address }) =>
               point([address.lon, address.lat], {
                 id,
                 properties: {
@@ -189,6 +189,7 @@ export const bookingToFeature = (bookings) => {
     }
   )
 }
+
 export const toGeoJsonLayer = (id, data, callback) =>
   new GeoJsonLayer({
     id,
@@ -243,7 +244,8 @@ export const toBookingIconLayer = (data, active) => {
     getColor: (d) => hexToRGB(d.properties.color),
   })
 }
-export const toIconLayer = (data, callback) => {
+
+export const toVehicleIconLayer = (data) => {
   if (!data.length) {
     return
   }
@@ -284,7 +286,7 @@ export default {
   bookingToFeature,
   carToFeature,
   toGeoJsonLayer,
-  toIconLayer,
+  toVehicleIconLayer,
   toBookingIconLayer,
   hexToRGB,
   carIcon,

@@ -8,7 +8,7 @@ const findAddress = async (query) => {
   return data
 }
 
-const getAddressFromCoordinates = async ({ lon, lat }) => {
+const getAddressFromCoordinate = async ({ lon, lat }) => {
   return await fetch(
     `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
   )
@@ -26,4 +26,4 @@ const calculateMinTime = (date, minDate) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
-export default { findAddress, calculateMinTime, getAddressFromCoordinates }
+export default { findAddress, calculateMinTime, getAddressFromCoordinate }

@@ -10,7 +10,7 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 
-const BookingDetails = ({ booking }) => {
+const BookingDetails = ({ booking, handleHighlightBooking }) => {
   const [address, setAddress] = React.useState()
 
   React.useEffect(() => {
@@ -18,10 +18,11 @@ const BookingDetails = ({ booking }) => {
       pickupCoordinates,
       deliveryCoordinates
     ) => {
-      const pickupAddress = await helpers.getAddressFromCoordinates(
+      const pickupAddress = await helpers.getAddressFromCoordinate(
         pickupCoordinates
       )
-      const deliveryAddress = await helpers.getAddressFromCoordinates(
+
+      const deliveryAddress = await helpers.getAddressFromCoordinate(
         deliveryCoordinates
       )
 
@@ -38,7 +39,7 @@ const BookingDetails = ({ booking }) => {
   if (!booking || !address) return <p>Laddar bokning...</p>
 
   return (
-    <NestedMenu>
+    <NestedMenu onClickHandler={handleHighlightBooking}>
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>

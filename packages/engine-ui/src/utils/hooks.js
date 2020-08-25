@@ -23,6 +23,7 @@ const useFilteredStateFromQueryParams = (state) => {
       cars: state.cars.filter((item) =>
         type === 'vehicle' ? item.id.toString() === id : true
       ),
+      plan: state.plan,
     },
   }
 }

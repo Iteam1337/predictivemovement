@@ -44,7 +44,8 @@ const BookingToggleList: React.FC<{
   bookings: Booking[]
   text: string
   onClickHandler: (lat: string, lon: string) => void
-}> = ({ bookings, text, onClickHandler }) => {
+  handleHighlightBooking: (id: string | undefined) => void
+}> = ({ bookings, text, onClickHandler, handleHighlightBooking }) => {
   const [toggled, set] = React.useState(false)
 
   return (
@@ -72,6 +73,8 @@ const BookingToggleList: React.FC<{
             bookings.map((booking) => (
               <li key={booking.id}>
                 <Elements.Links.RoundedLink
+                  onMouseOver={() => handleHighlightBooking(booking.id)}
+                  onMouseLeave={() => handleHighlightBooking(undefined)}
                   to={`/details?type=booking&id=${booking.id}`}
                   onClick={() =>
                     onClickHandler(booking.pickup.lat, booking.pickup.lon)
@@ -87,7 +90,10 @@ const BookingToggleList: React.FC<{
   )
 }
 
-const Bookings: React.FC<{ bookings: Booking[] }> = (props) => {
+const Bookings: React.FC<{
+  bookings: Booking[]
+  handleHighlightBooking: (id: string | undefined) => void
+}> = (props) => {
   const { setViewport } = React.useContext(ViewportContext)
 
   const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
@@ -110,16 +116,19 @@ const Bookings: React.FC<{ bookings: Booking[] }> = (props) => {
         bookings={bookings.new}
         onClickHandler={onClickHandler}
         text="Öppna bokningar"
+        handleHighlightBooking={props.handleHighlightBooking}
       />
       <BookingToggleList
         bookings={bookings.assigned}
         onClickHandler={onClickHandler}
         text="Bekräftade bokningar"
+        handleHighlightBooking={props.handleHighlightBooking}
       />
       <BookingToggleList
         bookings={bookings.delivered}
         onClickHandler={onClickHandler}
         text="Levererade bokningar"
+        handleHighlightBooking={props.handleHighlightBooking}
       />
     </Elements.Layout.MarginTopContainer>
   )

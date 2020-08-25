@@ -43,13 +43,18 @@ const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
 
-const Details = ({ state }) => {
+const Details = ({ state, handleHighlightBooking }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
 
   const componentFromType = () => {
     switch (type) {
       case 'booking':
-        return <BookingDetails booking={data.bookings[0]} />
+        return (
+          <BookingDetails
+            handleHighlightBooking={handleHighlightBooking}
+            booking={data.bookings[0]}
+          />
+        )
       case 'vehicle':
         return <CarDetails car={data.cars[0]} />
       default:
@@ -64,6 +69,7 @@ const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
     'bookings'
   )
+
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
 
   const currentViewToElement = () => {
@@ -71,7 +77,10 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <Bookings bookings={state.bookings} />
+            <Bookings
+              bookings={state.bookings}
+              handleHighlightBooking={state.handleHighlightBooking}
+            />
             <AddNewContainer>
               <TextLink to="/add-booking">
                 <Elements.AddFormFieldButton>
@@ -129,7 +138,12 @@ const Sidebar = (state) => {
               <>{currentViewToElement()}</>
             </Route>
             <Route path="/details">
-              <Details state={data} />
+              <Details
+                handleHighlightBooking={() =>
+                  state.handleHighlightBooking(undefined)
+                }
+                state={data}
+              />
             </Route>
             <Route path="/add-vehicle">
               <AddVehicle

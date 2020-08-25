@@ -3,14 +3,30 @@ import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Route, useLocation } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
 import { ViewportProvider } from './utils/ViewportContext'
+import hooks from './utils/hooks'
 
 const App = () => {
   const [state, dispatch] = React.useReducer(reducer, initState)
+  const [highlightedBookingById, setHighlightedBookingById] = React.useState(
+    undefined
+  )
+
+  const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
   const { socket } = useSocket()
+
+  const location = useLocation()
+  const locationIncludesBooking = location.search.includes('booking')
+
+  React.useEffect(() => {
+    console.log('running effect')
+    if (location.search.includes('booking') && mapData.bookings[0]) {
+      setHighlightedBookingById(mapData.bookings[0].id)
+    }
+  }, [location.search, mapData.bookings])
 
   const onMapClick = ({ lngLat }) => {
     dispatch({
@@ -68,20 +84,24 @@ const App = () => {
 
   return (
     <ViewportProvider>
-      <Router>
-        <Logotype />
-        <Sidebar
-          {...state}
-          createBooking={createBooking}
-          dispatchOffers={dispatchOffers}
-          resetState={resetState}
-          addVehicle={addVehicle}
-          createBookings={createBookings}
+      <Logotype />
+      <Sidebar
+        {...state}
+        createBooking={createBooking}
+        dispatchOffers={dispatchOffers}
+        resetState={resetState}
+        addVehicle={addVehicle}
+        createBookings={createBookings}
+        handleHighlightBooking={setHighlightedBookingById}
+      />
+      <Route path="/">
+        <Map
+          onMapClick={onMapClick}
+          data={mapData}
+          highlightedBooking={highlightedBookingById}
+          includeBookingRoute={locationIncludesBooking}
         />
-        <Route path="/">
-          <Map onMapClick={onMapClick} state={state} />
-        </Route>
-      </Router>
+      </Route>
     </ViewportProvider>
   )
 }

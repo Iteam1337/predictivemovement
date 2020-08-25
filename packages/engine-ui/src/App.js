@@ -22,7 +22,6 @@ const App = () => {
   const locationIncludesBooking = location.search.includes('booking')
 
   React.useEffect(() => {
-    console.log('running effect')
     if (location.search.includes('booking') && mapData.bookings[0]) {
       setHighlightedBookingById(mapData.bookings[0].id)
     }

@@ -1,4 +1,4 @@
-defmodule KvUmbrella.MixProject do
+defmodule ElixirUmbrella.MixProject do
   use Mix.Project
 
   def project do

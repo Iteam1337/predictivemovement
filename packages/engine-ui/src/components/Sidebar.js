@@ -31,6 +31,7 @@ const TextLink = styled(Link)`
 
 const Content = styled.div`
   padding: 2rem;
+  margin-right: 2rem;
   width: 350px;
 `
 
@@ -124,7 +125,6 @@ const Sidebar = (state) => {
         setNavigationCurrentView={setNavigationCurrentView}
         navigationCurrentView={navigationCurrentView}
       />
-
       {navigationCurrentView && (
         <Content>
           <RouterSwitch>

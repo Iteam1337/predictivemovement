@@ -31,6 +31,10 @@ public class VRPCostMatrix {
             return null;
 
         matrix = routeRequest.getJSONObject("matrix");
+        if (matrix.isEmpty())
+            return null;
+
+        matrix = routeRequest.getJSONObject("matrix");
         routeLocations = locations;
 
         if (matrix.has("sources")) {

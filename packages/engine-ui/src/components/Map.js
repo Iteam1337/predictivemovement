@@ -4,14 +4,19 @@ import DeckGL from '@deck.gl/react'
 import hooks from '../utils/hooks'
 import mapUtils from '../utils/mapUtils'
 import { ViewportContext } from '../utils/ViewportContext'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 const Map = ({ state, onMapClick }) => {
   const { data } = hooks.useFilteredStateFromQueryParams(state)
   const history = useHistory()
+  const location = useLocation()
+  const [showOneBooking, setShowOneBooking] = React.useState(false)
   const { viewport, setViewport, onLoad } = React.useContext(ViewportContext)
   const [tooltip, setTooltip] = React.useState('')
 
+  React.useEffect(() => {
+    setShowOneBooking(location.search.includes('booking'))
+  }, [location.search])
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type
@@ -26,17 +31,22 @@ const Map = ({ state, onMapClick }) => {
   }
 
   const layers = [
-    mapUtils.toGeoJsonLayer(
-      'geojson-bookings-layer',
-      mapUtils.bookingToFeature(data.bookings),
-      handleClickEvent
+    showOneBooking &&
+      mapUtils.toGeoJsonLayer(
+        'geojson-bookings-layer',
+        mapUtils.bookingToFeature(data.bookings),
+        handleClickEvent
+      ),
+    mapUtils.toBookingIconLayer(
+      mapUtils.bookingIcon(state.bookings),
+      showOneBooking
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-cars-layer',
       mapUtils.carToFeature(state.plan),
       handleClickEvent
     ),
-    mapUtils.toBookingIconLayer(mapUtils.bookingIcon(state.bookings)),
+
     mapUtils.toIconLayer(mapUtils.carIcon(state.cars)),
   ]
 

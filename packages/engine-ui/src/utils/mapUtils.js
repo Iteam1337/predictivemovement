@@ -155,13 +155,6 @@ export const bookingToFeature = (bookings) => {
   return bookings.flatMap(
     ({ id, pickup, delivery, status, route, assigned_to }) => {
       const points = [
-        point([pickup.lon, pickup.lat], {
-          id,
-          properties: {
-            status,
-            color: '#ccffcc',
-          },
-        }),
         point([delivery.lon, delivery.lat], {
           id,
           properties: {
@@ -218,7 +211,7 @@ export const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
-export const toBookingIconLayer = (data, callback) => {
+export const toBookingIconLayer = (data, active) => {
   if (!data.length) {
     return
   }
@@ -234,7 +227,7 @@ export const toBookingIconLayer = (data, callback) => {
 
   const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
-    properties: { id: feature.id, color: '#ffffff' },
+    properties: { id: feature.id, color: active ? '#19DE8B' : '#ffffff' },
   }))
 
   return new IconLayer({
@@ -244,7 +237,7 @@ export const toBookingIconLayer = (data, callback) => {
     iconAtlas: parcelIcon,
     iconMapping: ICON_MAPPING,
     getIcon: (d) => 'marker',
-    sizeScale: 4,
+    sizeScale: active ? 7 : 4,
     getPosition: (d) => d.coordinates,
     getSize: (d) => 5,
     getColor: (d) => hexToRGB(d.properties.color),

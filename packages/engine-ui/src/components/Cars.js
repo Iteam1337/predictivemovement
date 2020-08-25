@@ -22,7 +22,7 @@ const Cars = ({ cars }) => {
             setViewport({
               latitude: car.position.lat,
               longitude: car.position.lon,
-              zoom: 17,
+              zoom: 10,
               transitionDuration: 3000,
               transitionInterpolator: new FlyToInterpolator(),
               transitionEasing: (t) => t * (2 - t),

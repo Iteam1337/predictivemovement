@@ -22,7 +22,7 @@ const Bookings = ({ bookings }) => {
             setViewport({
               latitude: booking.pickup.lat,
               longitude: booking.pickup.lon,
-              zoom: 17,
+              zoom: 10,
               transitionDuration: 2000,
               transitionInterpolator: new FlyToInterpolator(),
               transitionEasing: (t) => t * (2 - t),

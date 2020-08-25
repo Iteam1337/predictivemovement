@@ -15,11 +15,12 @@ const CarDetails = ({ car }) => {
   return (
     <NestedMenu>
       <Elements.Layout.Container>
-        <h3>Transport</h3>
-        <Elements.Typography.StrongParagraph>
-          ID:
-        </Elements.Typography.StrongParagraph>
-        <span>{car.id}</span>
+        <Elements.Layout.FlexRowWrapper>
+          <h3>Transport</h3>
+          <Elements.Links.RoundedLink margin="0 0.5rem">
+            {car.id}
+          </Elements.Links.RoundedLink>
+        </Elements.Layout.FlexRowWrapper>
         <Line />
         {car.activities.length > 0 && (
           <>

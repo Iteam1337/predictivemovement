@@ -43,8 +43,13 @@ const BookingDetails = ({ booking }) => {
   return (
     <NestedMenu>
       <Elements.Layout.Container>
-        <h3>Bokning</h3>
-        <Paragraph>{booking.id}</Paragraph>
+        <Elements.Layout.FlexRowWrapper>
+          <h3>Bokning</h3>
+
+          <Elements.Links.RoundedLink margin="0 0.5rem">
+            {booking.id}
+          </Elements.Links.RoundedLink>
+        </Elements.Layout.FlexRowWrapper>
         <Elements.Typography.StrongParagraph>
           Upphämtning
         </Elements.Typography.StrongParagraph>

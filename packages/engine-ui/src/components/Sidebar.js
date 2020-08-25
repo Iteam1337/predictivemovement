@@ -89,11 +89,11 @@ const Sidebar = (state) => {
       case 'cars':
         return (
           <>
-            <h3>Aktuella fordon</h3>
+            <h3>Aktuella transporter</h3>
             <Cars cars={state.cars} />
             <Link to="/add-vehicle">
               <Elements.AddFormFieldButton>
-                + Lägg till bil
+                + Lägg till transport
               </Elements.AddFormFieldButton>
             </Link>
           </>

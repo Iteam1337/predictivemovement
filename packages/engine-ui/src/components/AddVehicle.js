@@ -48,7 +48,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   return (
     <NestedMenu>
       <Elements.Layout.Container>
-        <h3>Lägg till fordon</h3>
+        <h3>Lägg till transport</h3>
         <Form
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}

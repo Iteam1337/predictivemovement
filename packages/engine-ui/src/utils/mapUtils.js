@@ -1,6 +1,6 @@
 import palette from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
-import markerIcon from '../assets/car.svg'
+import vehicleIcon from '../assets/vehicle.svg'
 
 export const point = (coordinates, props) => ({
   type: 'Feature',
@@ -203,28 +203,28 @@ export const toIconLayer = (data, callback) => {
     marker: {
       x: 0,
       y: 0,
-      width: 160,
-      height: 160,
+      width: 131,
+      height: 150,
       mask: true,
     },
   }
 
   const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
-    properties: { id: feature.id },
+    properties: { id: feature.id, color: '#ffffff' },
   }))
 
   return new IconLayer({
     id: 'icon-layer',
     data: iconData,
     pickable: true,
-    iconAtlas: markerIcon,
+    iconAtlas: vehicleIcon,
     iconMapping: ICON_MAPPING,
     getIcon: (d) => 'marker',
     sizeScale: 7,
     getPosition: (d) => d.coordinates,
     getSize: (d) => 5,
-    getColor: (d) => [Math.sqrt(d.exits), 140, 0],
+    getColor: (d) => hexToRGB(d.properties.color),
   })
 }
 

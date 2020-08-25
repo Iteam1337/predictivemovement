@@ -87,6 +87,10 @@ const TextInput = styled.input`
   font-size: 0.875rem;
   padding: ${({ iconInset }) =>
     iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+
+  :focus {
+    outline-color: #13c57b;
+  }
 `
 
 const TextInputWithArrow = styled(TextInput)`

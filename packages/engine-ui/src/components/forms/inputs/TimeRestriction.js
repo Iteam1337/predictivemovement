@@ -4,6 +4,29 @@ import moment from 'moment'
 import Elements from '../../../shared-elements'
 import DateInput from './DateInput'
 import helpers from '../../../utils/helpers'
+import styled from 'styled-components'
+
+const Wrapper = styled.div`
+  width: '100%';
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected {
+    background-color: #13c57b;
+  }
+
+  .react-datepicker__day,
+  .react-datepicker__day--selected:focus,
+  .react-datepicker__day--selected:active {
+    outline-color: #13c57b;
+  }
+
+  .react-datepicker__time-container
+    .react-datepicker__time
+    .react-datepicker__time-box
+    ul.react-datepicker__time-list
+    li.react-datepicker__time-list-item--selected {
+    background-color: #13c57b;
+  }
+`
 
 const BookingTimeRestriction = ({
   selected,
@@ -13,7 +36,7 @@ const BookingTimeRestriction = ({
   minDate = new Date(),
 }) => {
   return (
-    <div style={{ width: '100%' }}>
+    <Wrapper>
       <DatePicker
         selected={selected}
         onChange={onChangeHandler}
@@ -31,7 +54,7 @@ const BookingTimeRestriction = ({
         placeholderText={placeholderText}
         customInput={inputElement}
       />
-    </div>
+    </Wrapper>
   )
 }
 
@@ -43,7 +66,7 @@ const VehicleTimeRestriction = ({
   minDate = new Date(),
 }) => {
   return (
-    <div style={{ width: '100%' }}>
+    <Wrapper>
       <DatePicker
         id="startTime"
         selected={selected}
@@ -60,7 +83,7 @@ const VehicleTimeRestriction = ({
         placeholderText={placeholderText}
         customInput={inputElement}
       />
-    </div>
+    </Wrapper>
   )
 }
 
@@ -108,9 +131,7 @@ const VehicleTimeRestrictionPair = ({ onChangeHandler, timewindow }) => {
           selected={timewindow.start}
           onChangeHandler={(date) => onChangeHandler(date, 'start', 'start')}
           placeholderText="Starttid"
-          inputElement={
-            <DateInput ref={timeRestrictionInputRef} />
-          }
+          inputElement={<DateInput ref={timeRestrictionInputRef} />}
         />
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
@@ -119,11 +140,7 @@ const VehicleTimeRestrictionPair = ({ onChangeHandler, timewindow }) => {
           minDate={timewindow.start ? new Date(timewindow.start) : new Date()}
           onChangeHandler={(date) => onChangeHandler(date, 'end', 'end')}
           placeholderText="Sluttid"
-          inputElement={
-            <DateInput
-              ref={timeRestrictionInputRef}
-            />
-          }
+          inputElement={<DateInput ref={timeRestrictionInputRef} />}
         />
       </Elements.Layout.TextInputPairItem>
     </Elements.Layout.TextInputPairContainer>

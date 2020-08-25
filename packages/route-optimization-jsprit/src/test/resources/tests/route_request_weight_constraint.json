@@ -1,0 +1,153 @@
+{
+    "vehicles": [
+        {
+            "start_address": {
+                "lon": 21.928558,
+                "lat": 65.63069,
+                "hint": "yvWOiQb2jol5AAAABQAAAAMBAAAAAAAApnCoQoT-WEDJfzRDAAAAAHkAAAAFAAAAAwEAAAAAAAB4GwEAbZpOAeJx6QNumk4B4nHpAwQArwoGYbfc"
+            },
+            "end_address": {
+                "lon": 21.928558,
+                "lat": 65.63069,
+                "hint": "yvWOiQb2jol5AAAABQAAAAMBAAAAAAAApnCoQoT-WEDJfzRDAAAAAHkAAAAFAAAAAwEAAAAAAAB4GwEAbZpOAeJx6QNumk4B4nHpAwQArwoGYbfc"
+            },
+            "metadata": {
+                "start": "Bällinge (65.630583, 21.928603)"
+            },
+            "capacity": [18, 1],
+            "id": "pmv-1zuURKyc",
+            "googleMaps": "https://www.google.de/maps/dir/65.630583,21.9286/65.581615,+22.051738/65.641479,+22.015716/65.613636,+22.136855/@65.6071628,22.0112537,12.63z/data=!4m15!4m14!1m0!1m3!2m2!1d22.051738!2d65.581615!1m3!2m2!1d22.015716!2d65.641479!1m3!2m2!1d22.136855!2d65.613636!3e0",
+            "note": "vehicle weight combined with shipment weight will make only 1 shipment in vehicle at a time"
+        }
+    ],
+    "bookings": [
+        {
+            "pickup": {
+                "lon": 22.015809,
+                "lat": 65.64154,
+                "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc"
+            },
+            "metadata": {
+                "start": "Gammelstads ICA (65.641479, 22.015716) -> LTU (65.613636, 22.136855) (no river crossing possible!)"
+            },
+            "id": "pmv-1zuURKyc-1",
+            "delivery": {
+                "lon": 22.137169,
+                "lat": 65.613139,
+                "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc"
+            },
+            "size": {
+                "weight": 1,
+                "measurements": [10, 10, 10]
+            }
+        },
+        {
+            "pickup": {
+                "lon": 22.051736,
+                "lat": 65.581598,
+                "hint": "e_WOiYv1jokLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAAB4GwEAmHtQAR6y6AOYe1ABHrLoAwoA3wUGYbfc",
+            },
+            "metadata": {
+                "start": "Gäddvik (65.581615, 22.051738) -> LTU (65.613636, 22.136855) (no river crossing possible!)"
+            },
+            "id": "pmb-4FbTaQFr-2",
+            "delivery": {
+                "lon": 22.137169,
+                "lat": 65.613139,
+                "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc"
+            },
+            "size": {
+                "weight": 1,
+                "measurements": [10, 10, 10]
+            }
+        }
+    ],
+    "matrix": {
+        "durations": [
+            [
+                0,
+                1014.6,
+                590.1,
+                1068
+            ],
+            [
+                1000.6,
+                0,
+                581.7,
+                509.2
+            ],
+            [
+                589.3,
+                588.6,
+                0,
+                642
+            ],
+            [
+                1116.5,
+                493.9,
+                657.5,
+                0
+            ]
+        ],
+        "sources": [
+            {
+                "hint": "yvWOiQb2jol5AAAABQAAAAMBAAAAAAAApnCoQoT-WEDJfzRDAAAAAHkAAAAFAAAAAwEAAAAAAAB4GwEAbZpOAeJx6QNumk4B4nHpAwQArwoGYbfc",
+                "location": [
+                    21.928557,
+                    65.63069
+                ]
+            },
+            {
+                "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc",
+                "location": [
+                    22.015809,
+                    65.64154
+                ]
+            },
+            {
+                "hint": "e_WOiYv1jokLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAAB4GwEAmHtQAR6y6AOYe1ABHrLoAwoA3wUGYbfc",
+                "location": [
+                    22.051736,
+                    65.581598
+                ]
+            },
+            {
+                "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc",
+                "location": [
+                    22.137169,
+                    65.613139
+                ]
+            }
+        ],
+        "destinations": [
+            {
+                "hint": "yvWOiQb2jol5AAAABQAAAAMBAAAAAAAApnCoQoT-WEDJfzRDAAAAAHkAAAAFAAAAAwEAAAAAAAB4GwEAbZpOAeJx6QNumk4B4nHpAwQArwoGYbfc",
+                "location": [
+                    21.928557,
+                    65.63069
+                ]
+            },
+            {
+                "hint": "AR_1gGkf9YANAAAAAgAAACwAAABVAAAARvN6Qf7-wD_bd0dCkebyQQ0AAAACAAAALAAAAFUAAAB4GwEAQe9PAUSc6QNB708BRJzpAwMA7xIGYbfc",
+                "location": [
+                    22.015809,
+                    65.64154
+                ]
+            },
+            {
+                "hint": "e_WOiYv1jokLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAAB4GwEAmHtQAR6y6AOYe1ABHrLoAwoA3wUGYbfc",
+                "location": [
+                    22.051736,
+                    65.581598
+                ]
+            },
+            {
+                "hint": "jyL1gKgi9YAGAAAABQAAAA0AAAAAAAAAVgAjQUCL4UCVAqVBAAAAAAYAAAAFAAAADQAAAAAAAAB4GwEAUclRAVMt6QNRyVEBUy3pAwEAvwQGYbfc",
+                "location": [
+                    22.137169,
+                    65.613139
+                ]
+            }
+        ]
+    }
+}

@@ -30,6 +30,36 @@ public class RouteOptimizationTest {
         assertEquals(responseExpected.toString(), response.toString());
     }
 
+    @Test
+    public void weight_constraint() throws IOException {
+        // given
+        JSONObject routeRequest = readJsonFromFile("src/test/resources/tests/route_request_weight_constraint.json");
+
+        // when
+        routeOptimization = new RouteOptimization();
+        response = routeOptimization.calculate(routeRequest);
+
+        // then
+        JSONObject responseExpected = readJsonFromFile("src/test/resources/tests/route_response_weight_constraint.json");
+        assertEquals(responseExpected.toString(), response.toString());
+    }
+
+    @Test
+    public void volume_constraint() throws IOException {
+        // given
+        JSONObject routeRequest = readJsonFromFile("src/test/resources/tests/route_request_volume_constraint.json");
+
+        // when
+        routeOptimization = new RouteOptimization();
+        response = routeOptimization.calculate(routeRequest);
+
+        // then
+        JSONObject responseExpected = readJsonFromFile("src/test/resources/tests/route_response_volume_constraint.json");
+        assertEquals(responseExpected.toString(), response.toString());
+    }
+
+
+
     private JSONObject readJsonFromFile(String filename) throws IOException {
         Path fileName = Path.of(filename);
         String msg = Files.readString(fileName);

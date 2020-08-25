@@ -64,10 +64,19 @@ const StyledAddFormFieldButton = styled.button`
   font-weight: bold;
   padding: 0;
   font-size: ${({ size }) => size || '1rem'};
+  margin-top: ${({ marginTop }) => marginTop};
 `
 
-const AddFormFieldButton = ({ onClickHandler, children }) => (
-  <StyledAddFormFieldButton type="button" onClick={onClickHandler}>
+const AddFormFieldButton = ({
+  onClickHandler,
+  children,
+  marginTop = '5rem',
+}) => (
+  <StyledAddFormFieldButton
+    type="button"
+    onClick={onClickHandler}
+    marginTop={marginTop}
+  >
     {children}
   </StyledAddFormFieldButton>
 )

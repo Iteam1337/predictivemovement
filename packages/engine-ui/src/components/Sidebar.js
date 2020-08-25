@@ -24,11 +24,6 @@ const Container = styled.div`
   display: flex;
 `
 
-const TextLink = styled(Link)`
-  text-decoration: none;
-  color: #666666;
-`
-
 const Content = styled.div`
   padding: 2rem;
   margin-right: 2rem;
@@ -76,18 +71,18 @@ const Sidebar = (state) => {
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
             <AddNewContainer>
-              <TextLink to="/add-booking">
+              <Link to="/add-booking">
                 <Elements.AddFormFieldButton>
                   + Lägg till bokning
                 </Elements.AddFormFieldButton>
-              </TextLink>
+              </Link>
             </AddNewContainer>
             <AddNewContainer>
-              <TextLink to="/add-bookings">
-                <Elements.AddFormFieldButton>
+              <Link to="/add-bookings">
+                <Elements.AddFormFieldButton marginTop="0">
                   + Generera historiska bokningar
                 </Elements.AddFormFieldButton>
-              </TextLink>
+              </Link>
             </AddNewContainer>
           </>
         )
@@ -96,9 +91,11 @@ const Sidebar = (state) => {
           <>
             <h3>Aktuella fordon</h3>
             <Cars cars={state.cars} />
-            <TextLink to="/add-vehicle">
-              <h3>+ Lägg till bil</h3>
-            </TextLink>
+            <Link to="/add-vehicle">
+              <Elements.AddFormFieldButton>
+                + Lägg till bil
+              </Elements.AddFormFieldButton>
+            </Link>
           </>
         )
       case 'plan':

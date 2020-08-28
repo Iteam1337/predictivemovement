@@ -1,5 +1,6 @@
 defmodule MessageGenerator do
   use GenServer
+  alias MessageGenerator.Address
   @rmq_uri "amqp://localhost"
   @cars_exchange "incoming_vehicle_updates"
   @bookings_exchange "incoming_booking_updates"
@@ -57,7 +58,9 @@ defmodule MessageGenerator do
   def add_random_car(), do: GenServer.call(__MODULE__, :add_random_car)
   def add_random_booking(), do: GenServer.call(__MODULE__, :add_random_booking)
 
-  def add_random_car(properties) when is_map(properties), do: GenServer.call(__MODULE__, {:add_random_car, properties})
+  def add_random_car(properties) when is_map(properties),
+    do: GenServer.call(__MODULE__, {:add_random_car, properties})
+
   def add_random_car(:stockholm), do: GenServer.call(__MODULE__, {:add_random_car, @stockholm})
   def add_random_car(:gothenburg), do: GenServer.call(__MODULE__, {:add_random_car, @gothenburg})
 
@@ -97,10 +100,12 @@ defmodule MessageGenerator do
     {:reply, :ok, state}
   end
 
-  def handle_call({:add_random_car, properties}, _, %{channel: channel} = state) when is_map(properties) do
+  def handle_call({:add_random_car, properties}, _, %{channel: channel} = state)
+      when is_map(properties) do
     payload =
       random_car(properties)
       |> Poison.encode!()
+
     AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
 
     {:reply, :ok, state}

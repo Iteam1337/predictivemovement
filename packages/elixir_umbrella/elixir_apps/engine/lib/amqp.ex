@@ -108,6 +108,8 @@ defmodule MQ do
     channel = open_channel()
 
     # Ensure that exchanges are created
+    AMQP.Exchange.declare(channel, @clear_queue, :topic, durable: false)
+    AMQP.Exchange.declare(channel, "plan", :fanout, durable: false)
     AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
     AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
 

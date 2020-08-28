@@ -1,5 +1,120 @@
-# defmodule BookingProcessorTest do
-#   use ExUnit.Case
+defmodule BookingProcessorTest do
+  def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
+  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
+  use ExUnit.Case
+
+  setup_all do
+    {:ok, connection} = AMQP.Connection.open(amqp_url())
+    {:ok, channel} = AMQP.Channel.open(connection)
+    AMQP.Queue.bind(channel, @clear_queue, @clear_queue, routing_key: @clear_queue)
+    AMQP.Queue.declare(channel, "get_plan", durable: false)
+    AMQP.Queue.bind(channel, "get_plan", "plan", routing_key: "")
+
+    on_exit(fn ->
+      IO.puts("exited")
+      AMQP.Channel.close(channel)
+    end)
+
+    %{channel: channel}
+  end
+
+  @tag :only
+  test "creates a plan for one vehicle and one booking", %{channel: channel} do
+    # AMQP.Queue.declare(channel, "get_plan_1", durable: false)
+    # AMQP.Queue.bind(channel, "get_plan_1", "plan", routing_key: "")
+    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
+    IO.puts("test one started")
+    :ok = MessageGenerator.add_random_car()
+    :ok = MessageGenerator.add_random_booking()
+    IO.inspect(self(), label: "etest 1")
+
+    plan = wait_for_message(channel, "get_plan")
+    # assert_receive {:basic_deliver, _, %{exchange: "plan"}}, 10000
+    IO.puts("sending clear queue msg 1")
+    MQ.publish("clear queue", @clear_queue, @clear_queue)
+
+    # assert Map.get(plan, :booking_ids) |> length() == 1
+    # assert Map.get(plan, :vehicles) |> length() == 1
+    # assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:earliest_start) == nil
+    # AMQP.Basic.cancel(channel)
+    IO.puts("test one ended")
+  end
+
+  # test "creates a plan where one vehicle gets two bookings and one get zero" do
+
+  # end
+
+  # test "creates a plan for two vehicles, where each vehicle gets one" do
+
+  # end
+
+  # test "vehicle with no end_address defined" do
+
+  # end
+  @tag :only
+  test "should get picked up by a vehicle with the right time window constraints", %{
+    channel: channel
+  } do
+    # AMQP.Queue.declare(channel, "get_plan_2", durable: false)
+    # AMQP.Queue.bind(channel, "get_plan_2", "plan", routing_key: "")
+    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
+    # AMQP.Basic.get(channel, get_plan_2)
+    IO.puts("test two started")
+    earliest_start = DateTime.utc_now()
+    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
+
+    :ok =
+      MessageGenerator.add_random_car(%{earliest_start: earliest_start, latest_end: latest_end})
+
+    :ok = MessageGenerator.add_random_booking()
+
+    IO.inspect(self(), label: "etest 2")
+    # assert_receive {:basic_deliver, _, %{exchange: "plan"}}, 10000
+    plan = wait_for_message(channel, "get_plan")
+    # |> IO.inspect(label: "planny")
+
+    IO.puts("sending clear queue msg 2")
+    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    # AMQP.Basic.cancel(channel)
+
+    # assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:earliest_start) ==
+    #          earliest_start |> DateTime.to_iso8601()
+
+    # assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:latest_end) ==
+    #          latest_end |> DateTime.to_iso8601()
+
+    # MQ.publish("clear queue", @clear_queue, @clear_queue)
+  end
+
+  # test "volume constraints" do
+
+  # end
+
+  # test "weig"
+
+  # end
+
+  def wait_for_message(channel, queue, consumer_tag \\ "") do
+    IO.inspect(consumer_tag, label: "consumer_tag")
+
+    receive do
+      {:basic_deliver, payload, %{exchange: "plan", consumer_tag: ^consumer_tag}} = this ->
+        IO.puts("payload received in test!")
+        AMQP.Basic.cancel(channel, consumer_tag)
+
+        payload
+        |> Poison.decode!(%{keys: :atoms})
+
+      {:basic_consume_ok, %{consumer_tag: consumer_tag}} ->
+        IO.puts("its working")
+        wait_for_message(channel, queue, consumer_tag)
+
+      payload ->
+        wait_for_message(channel, queue, consumer_tag)
+    end
+  end
+end
+
 #   import Mox
 #   setup :set_mox_from_context
 #   setup :verify_on_exit!

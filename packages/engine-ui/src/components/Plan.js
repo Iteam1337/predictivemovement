@@ -13,15 +13,11 @@ const RouteTitleWrapper = styled.div`
   align-items: baseline;
   justify-items: flex-start;
   width: 100%;
+`
 
-  button {
-    background: none;
-    border: none;
-  }
-
-  button:focus {
-    outline: none;
-  }
+const Chevron = styled(Icons.Arrow)`
+  transform: ${({ active }) => active && `rotate(180deg)`};
+  transition: transform 0.2s;
 `
 
 const Plan = ({ plan }) => {
@@ -44,18 +40,16 @@ const Plan = ({ plan }) => {
     <div>
       {driverPlans.map((vehicle, index) => (
         <div key={vehicle.id}>
-          <RouteTitleWrapper>
+          <RouteTitleWrapper
+            onClick={() => {
+              toggle(vehicle.id)
+              history.push('/')
+            }}
+          >
             <Elements.StrongParagraph>
               Rutt {index + 1}
             </Elements.StrongParagraph>
-            <button
-              onClick={() => {
-                toggle(vehicle.id)
-                history.push('/')
-              }}
-            >
-              <Icons.Arrow />
-            </button>
+            <Chevron active={showRouteInfo === vehicle.id ? true : undefined} />
           </RouteTitleWrapper>
 
           {showRouteInfo === vehicle.id && (

@@ -64,10 +64,19 @@ const StyledAddFormFieldButton = styled.button`
   font-weight: bold;
   padding: 0;
   font-size: ${({ size }) => size || '1rem'};
+  margin-top: ${({ marginTop }) => marginTop};
 `
 
-const AddFormFieldButton = ({ onClickHandler, children }) => (
-  <StyledAddFormFieldButton type="button" onClick={onClickHandler}>
+const AddFormFieldButton = ({
+  onClickHandler,
+  children,
+  marginTop = '5rem',
+}) => (
+  <StyledAddFormFieldButton
+    type="button"
+    onClick={onClickHandler}
+    marginTop={marginTop}
+  >
     {children}
   </StyledAddFormFieldButton>
 )
@@ -87,6 +96,10 @@ const TextInput = styled.input`
   font-size: 0.875rem;
   padding: ${({ iconInset }) =>
     iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+
+  :focus {
+    outline-color: #13c57b;
+  }
 `
 
 const TextInputWithArrow = styled(TextInput)`
@@ -253,9 +266,6 @@ const StrongParagraph = styled.label`
   font-weight: bold;
 `
 
-const NavIconLink = styled(Link)`
-  margin-bottom: 5rem;
-`
 const TimeRestrictionDateInputWrapper = styled.div`
   margin-bottom: 0.25rem;
 `
@@ -304,7 +314,6 @@ export default {
   NoInfoParagraph,
   FormInputIcon,
   CheckboxLabel,
-  NavIconLink,
   AddFormFieldButton,
   SmallInfo,
   Checkbox,

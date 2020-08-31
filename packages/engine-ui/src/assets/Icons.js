@@ -11,4 +11,10 @@ const Arrow = (props) => {
   )
 }
 
-export default { Arrow }
+const ActiveView = (props) => (
+  <svg width={8} height={16} viewBox="0 0 8 16" fill="none" {...props}>
+    <path d="M0 15.864V0l8 7.932-8 7.932z" fill="#13C57B" />
+  </svg>
+)
+
+export default { Arrow, ActiveView }

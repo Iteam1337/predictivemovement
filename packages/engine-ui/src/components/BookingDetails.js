@@ -1,6 +1,7 @@
 import React from 'react'
 import Elements from '../shared-elements'
 import styled from 'styled-components'
+import NestedMenu from './layout/NestedMenu'
 
 const Paragraph = styled.p`
   margin: 0;
@@ -40,37 +41,42 @@ const BookingDetails = ({ booking }) => {
   if (!booking || !address) return <p>Loading...</p>
 
   return (
-    <div>
-      <Elements.Typography.StrongParagraph>
-        Bokning
-      </Elements.Typography.StrongParagraph>
-      <Paragraph>{booking.id}</Paragraph>
-      <Elements.Typography.StrongParagraph>
-        Upphämtning
-      </Elements.Typography.StrongParagraph>
-      <Paragraph>{address.pickup}</Paragraph>
-      <Elements.Typography.StrongParagraph>
-        Avlämning
-      </Elements.Typography.StrongParagraph>
-      <Paragraph>{address.delivery}</Paragraph>
-      {booking.assigned_to && (
-        <>
-          <Elements.Typography.StrongParagraph>
-            Bokad transport
-          </Elements.Typography.StrongParagraph>
+    <NestedMenu>
+      <Elements.Layout.Container>
+        <Elements.Layout.FlexRowWrapper>
+          <h3>Bokning</h3>
 
-          <Elements.Links.RoundedLink
-            to={`/details?type=vehicle&id=${booking.assigned_to.id}`}
-          >
+          <Elements.Links.RoundedLink margin="0 0.5rem">
             {booking.id}
           </Elements.Links.RoundedLink>
-        </>
-      )}
-      <Elements.Typography.StrongParagraph>
-        Status:
-      </Elements.Typography.StrongParagraph>
-      <span>{booking.status}</span>
-    </div>
+        </Elements.Layout.FlexRowWrapper>
+        <Elements.Typography.StrongParagraph>
+          Upphämtning
+        </Elements.Typography.StrongParagraph>
+        <Paragraph>{address.pickup}</Paragraph>
+        <Elements.Typography.StrongParagraph>
+          Avlämning
+        </Elements.Typography.StrongParagraph>
+        <Paragraph>{address.delivery}</Paragraph>
+        {booking.assigned_to && (
+          <>
+            <Elements.Typography.StrongParagraph>
+              Bokad transport
+            </Elements.Typography.StrongParagraph>
+
+            <Elements.Links.RoundedLink
+              to={`/details?type=vehicle&id=${booking.assigned_to.id}`}
+            >
+              {booking.id}
+            </Elements.Links.RoundedLink>
+          </>
+        )}
+        <Elements.Typography.StrongParagraph>
+          Status:
+        </Elements.Typography.StrongParagraph>
+        <span>{booking.status}</span>
+      </Elements.Layout.Container>
+    </NestedMenu>
   )
 }
 

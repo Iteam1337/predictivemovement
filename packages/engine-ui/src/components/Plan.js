@@ -61,7 +61,7 @@ const Plan = ({ plan }) => {
           {showRouteInfo === vehicle.id && (
             <>
               <Elements.FlexRowWrapper>
-                <Elements.StrongParagraph>Fordon</Elements.StrongParagraph>
+                <Elements.StrongParagraph>Transport</Elements.StrongParagraph>
                 <Elements.RoundedLink
                   margin="0 0.5rem"
                   to={`/details?type=vehicle&id=${vehicle.id}`}

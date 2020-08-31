@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import Form from './forms/AddVehicle'
+import NestedMenu from './layout/NestedMenu'
 
 const AddVehicle = ({ addVehicle, currentPosition }) => {
   const history = useHistory()
@@ -10,10 +11,12 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   const [formState, setState] = React.useState({
     vehicleType: '',
     id: '',
-    capacity: '',
+    capacity: null,
+    volume: null,
+    weight: null,
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472 },
-    endDestination: { name: '', lat: '', lon: '' },
+    endDestination: null,
     driver: { name: '', contact: '' },
   })
 
@@ -45,14 +48,16 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   }
 
   return (
-    <Elements.Layout.Container>
-      <h3>Lägg till fordon</h3>
-      <Form
-        onChangeHandler={setState}
-        onSubmitHandler={onSubmitHandler}
-        state={formState}
-      />
-    </Elements.Layout.Container>
+    <NestedMenu>
+      <Elements.Layout.Container>
+        <h3>Lägg till transport</h3>
+        <Form
+          onChangeHandler={setState}
+          onSubmitHandler={onSubmitHandler}
+          state={formState}
+        />
+      </Elements.Layout.Container>
+    </NestedMenu>
   )
 }
 export default AddVehicle

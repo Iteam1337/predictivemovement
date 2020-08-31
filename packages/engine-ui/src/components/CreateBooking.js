@@ -1,8 +1,9 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
+import NestedMenu from './layout/NestedMenu'
 
 const CreateBooking = ({ createBooking }) => {
   const history = useHistory()
@@ -10,7 +11,7 @@ const CreateBooking = ({ createBooking }) => {
   const [formState, setState] = React.useState({
     id: '',
     measurement: '',
-    weight: '',
+    weight: null,
     cargo: '',
     pickup: { name: '', lat: '', lon: '', timewindow: null },
     delivery: { name: '', lat: '', lon: '', timewindow: null },
@@ -31,6 +32,9 @@ const CreateBooking = ({ createBooking }) => {
 
     createBooking({
       ...formState,
+      measurement:
+        formState.measurement &&
+        formState.measurement.split('x').map(parseFloat),
       pickup: formState.pickup,
       delivery: formState.delivery,
     })
@@ -39,14 +43,16 @@ const CreateBooking = ({ createBooking }) => {
   }
 
   return (
-    <Elements.Container>
-      <h3>Lägg till bokning</h3>
-      <Form
-        onChangeHandler={setState}
-        onSubmitHandler={onSubmitHandler}
-        state={formState}
-      />
-    </Elements.Container>
+    <NestedMenu>
+      <Elements.Layout.Container>
+        <h3>Lägg till bokning</h3>
+        <Form
+          onChangeHandler={setState}
+          onSubmitHandler={onSubmitHandler}
+          state={formState}
+        />
+      </Elements.Layout.Container>
+    </NestedMenu>
   )
 }
 export default CreateBooking

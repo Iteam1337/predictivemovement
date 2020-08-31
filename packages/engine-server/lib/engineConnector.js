@@ -100,18 +100,17 @@ const dispatchOffers = () => {
     .publish(JUST_DO_IT_MESSAGE)
 }
 
-const addVehicle = (position) => {
+const addVehicle = (vehicle) => {
   return amqp
     .exchange('incoming_vehicle_updates', 'topic', { durable: false })
     .publish(
       {
         id: id62(),
-        position,
+        ...vehicle,
       },
       routingKeys.REGISTERED
     )
 }
-
 const createBookingsFromHistory = (total) => {
   return amqp
     .queue('add_nr_of_historical_bookings', { durable: false })

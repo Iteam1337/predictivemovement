@@ -11,11 +11,13 @@ const Map = ({ state, onMapClick }) => {
   const history = useHistory()
   const location = useLocation()
   const [showOneBooking, setShowOneBooking] = React.useState(false)
+  const [showOneVehicle, setShowOneVehicle] = React.useState(false)
   const { viewport, setViewport, onLoad } = React.useContext(ViewportContext)
   const [tooltip, setTooltip] = React.useState('')
 
   React.useEffect(() => {
     setShowOneBooking(location.search.includes('booking'))
+    setShowOneVehicle(location.search.includes('vehicle'))
   }, [location.search])
   const handleClickEvent = (event) => {
     if (!event.object) return
@@ -37,17 +39,14 @@ const Map = ({ state, onMapClick }) => {
         mapUtils.bookingToFeature(data.bookings),
         handleClickEvent
       ),
-    mapUtils.toBookingIconLayer(
-      mapUtils.bookingIcon(state.bookings),
-      showOneBooking
-    ),
+    mapUtils.toIconLayer(mapUtils.bookingIcon(state.bookings), showOneBooking),
     mapUtils.toGeoJsonLayer(
       'geojson-cars-layer',
       mapUtils.carToFeature(state.plan),
       handleClickEvent
     ),
 
-    mapUtils.toIconLayer(mapUtils.carIcon(state.cars)),
+    mapUtils.toIconLayer(mapUtils.carIcon(state.cars), showOneVehicle),
   ]
 
   const getAddressFromCoordinates = async ({ pickup, delivery }) => {

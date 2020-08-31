@@ -13,21 +13,43 @@ const routingKeys = {
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
-// Bind update_booking_in_admin_ui queue to exchanges, this is done here since fluent-amqp doesnt support 
+// Bind update_booking_in_admin_ui queue to exchanges, this is done here since fluent-amqp doesnt support
 // binding to different exchanges.
 
-amqp.connect()
-  .then(amqpConnection => amqpConnection.createChannel())
-  .then(ch => 
-    ch.assertQueue("update_booking_in_admin_ui", {
-      durable: false,
-    }).then(() =>
-      ch.assertExchange("outgoing_booking_updates", 'topic', {
+amqp
+  .connect()
+  .then((amqpConnection) => amqpConnection.createChannel())
+  .then((ch) =>
+    ch
+      .assertQueue('update_booking_in_admin_ui', {
         durable: false,
       })
-    ).then(() => ch.bindQueue('update_booking_in_admin_ui','outgoing_booking_updates', routingKeys.ASSIGNED))
-    .then(() => ch.bindQueue('update_booking_in_admin_ui','incoming_booking_updates', routingKeys.PICKED_UP))
-    .then(() => ch.bindQueue('update_booking_in_admin_ui','incoming_booking_updates', routingKeys.DELIVERED))
+      .then(() =>
+        ch.assertExchange('outgoing_booking_updates', 'topic', {
+          durable: false,
+        })
+      )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'outgoing_booking_updates',
+          routingKeys.ASSIGNED
+        )
+      )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'incoming_booking_updates',
+          routingKeys.PICKED_UP
+        )
+      )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'incoming_booking_updates',
+          routingKeys.DELIVERED
+        )
+      )
   )
 
 const bookings = amqp
@@ -83,19 +105,27 @@ const dispatchOffers = () => {
     .publish(JUST_DO_IT_MESSAGE)
 }
 
-const addVehicle = (position) => {
-  return amqp.exchange('incoming_vehicle_updates', 'topic', { durable: false }).publish({
-    id: id62(),
-    position,
-  }, routingKeys.REGISTERED)
+const addVehicle = (vehicle) => {
+  return amqp
+    .exchange('incoming_vehicle_updates', 'topic', { durable: false })
+    .publish(
+      {
+        id: id62(),
+        ...vehicle,
+      },
+      routingKeys.REGISTERED
+    )
 }
-
 const createBookingsFromHistory = (total) => {
-  return amqp.queue('add_nr_of_historical_bookings', { durable: false }).publish(total)
+  return amqp
+    .queue('add_nr_of_historical_bookings', { durable: false })
+    .publish(total)
 }
 
 const resetState = () =>
-  amqp.queue('clear_engine_state', { durable: false }).publish(JUST_DO_IT_MESSAGE)
+  amqp
+    .queue('clear_engine_state', { durable: false })
+    .publish(JUST_DO_IT_MESSAGE)
 
 const plan = amqp
   .exchange('plan', 'fanout', {

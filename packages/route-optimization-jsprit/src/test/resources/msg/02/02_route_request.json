@@ -1,0 +1,59 @@
+{
+    "metadata": {
+        "note": "Will cross a river on shortest path, because of a missing time-distance matrix.",
+        "maps": "https://www.google.de/maps/dir/65.630583,21.928603/65.581598,+22.051736/65.641574,+22.015858/65.613636,+22.136855/@65.6114975,21.9979542,13z/data=!3m1!4b1!4m15!4m14!1m0!1m3!2m2!1d22.051736!2d65.581598!1m3!2m2!1d22.015858!2d65.641574!1m3!2m2!1d22.136855!2d65.613636!3e0"
+    },
+    "vehicles": [
+        {
+            "id": "vehicle-1",
+            "start_address": {
+                "lon": 21.92567,
+                "lat": 65.6335,
+                "hint": "2xOsjEgUrIxCAAAAAQAAADsAAAAQAgAAZ0E6Qma2PD0mCyRCdlpxQ0IAAAABAAAAOwAAABACAABQHQEALI9OAd986QMmj04B3HzpAwEAbxMZJKLf"
+            },
+            "end_address": {
+                "lon": 21.92567,
+                "lat": 65.6335,
+                "hint": "2xOsjEgUrIxCAAAAAQAAADsAAAAQAgAAZ0E6Qma2PD0mCyRCdlpxQ0IAAAABAAAAOwAAABACAABQHQEALI9OAd986QMmj04B3HzpAwEAbxMZJKLf"
+            },
+            "metadata": {
+                "start": "Bällinge (65.6335,21.92567)"
+            }
+        }
+    ],
+    "bookings": [
+        {
+            "pickup": {
+                "lon": 22.015858,
+                "lat": 65.641574,
+                "hint": "51w8gT9dPIENAAAAAgAAACwAAABVAAAA4zJ8Qb0Btz_bd0dCkebyQQ0AAAACAAAALAAAAFUAAABQHQEAP-9PAUSc6QNy708BZpzpAwMA7xIZJKLf"
+            },
+            "metadata": {
+                "start": "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
+            },
+            "id": "Gammelstad->LTU",
+            "delivery": {
+                "lon": 22.13488,
+                "lat": 65.61582,
+                "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf"
+            }
+        },
+        {
+            "pickup": {
+                "lon": 22.051736,
+                "lat": 65.581598,
+                "hint": "hxasjJ8WrIwLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAABQHQEAmHtQAR6y6AOYe1ABHrLoAwoA3wUZJKLf"
+            },
+            "metadata": {
+                "start": "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
+            },
+            "id": "Gäddvik->LTU",
+            "delivery": {
+                "lon": 22.13488,
+                "lat": 65.61582,
+                "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf"
+            }
+        }
+    ],
+    "matrix": {}
+}

@@ -17,8 +17,8 @@ const NavigationBar = styled.nav`
   box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.2);
 
   img {
-    width: 30px;
-    height: 30px;
+    width: 29px;
+    height: 35px;
     cursor: pointer;
   }
 `

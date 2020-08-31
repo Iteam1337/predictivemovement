@@ -11,7 +11,7 @@ import CarDetails from './CarDetails'
 
 import AddVehicle from './AddVehicle'
 import Plan from './Plan'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import Navigation from './Navigation'
 
 const Container = styled.div`
@@ -22,11 +22,6 @@ const Container = styled.div`
   background: white;
   height: 100vh;
   display: flex;
-`
-
-const TextLink = styled(Link)`
-  text-decoration: none;
-  color: #666666;
 `
 
 const Content = styled.div`
@@ -44,6 +39,20 @@ const PlanWrapper = styled.div`
 const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
+
+const AddFormFieldButton = ({
+  onClickHandler,
+  children,
+  marginTop = '5rem',
+}) => (
+  <Elements.Buttons.StyledAddFormFieldButton
+    type="button"
+    onClick={onClickHandler}
+    marginTop={marginTop}
+  >
+    {children}
+  </Elements.Buttons.StyledAddFormFieldButton>
+)
 
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
@@ -76,29 +85,27 @@ const Sidebar = (state) => {
             <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
             <AddNewContainer>
-              <TextLink to="/add-booking">
-                <Elements.AddFormFieldButton>
-                  + Lägg till bokning
-                </Elements.AddFormFieldButton>
-              </TextLink>
+              <Link to="/add-booking">
+                <AddFormFieldButton>+ Lägg till bokning</AddFormFieldButton>
+              </Link>
             </AddNewContainer>
             <AddNewContainer>
-              <TextLink to="/add-bookings">
-                <Elements.AddFormFieldButton>
+              <Link to="/add-bookings">
+                <AddFormFieldButton marginTop="0">
                   + Generera historiska bokningar
-                </Elements.AddFormFieldButton>
-              </TextLink>
+                </AddFormFieldButton>
+              </Link>
             </AddNewContainer>
           </>
         )
       case 'cars':
         return (
           <>
-            <h3>Aktuella fordon</h3>
+            <h3>Aktuella transporter</h3>
             <Cars cars={state.cars} />
-            <TextLink to="/add-vehicle">
-              <h3>+ Lägg till bil</h3>
-            </TextLink>
+            <Link to="/add-vehicle">
+              <AddFormFieldButton>+ Lägg till transport</AddFormFieldButton>
+            </Link>
           </>
         )
       case 'plan':
@@ -106,12 +113,12 @@ const Sidebar = (state) => {
           <PlanWrapper>
             <h3>Plan</h3>
             <Plan plan={state.plan} />
-            <Elements.SubmitButton
+            <Elements.Buttons.SubmitButton
               justifySelf="center"
               onClick={state.dispatchOffers}
             >
               Bekräfta plan
-            </Elements.SubmitButton>
+            </Elements.Buttons.SubmitButton>
           </PlanWrapper>
         )
       default:

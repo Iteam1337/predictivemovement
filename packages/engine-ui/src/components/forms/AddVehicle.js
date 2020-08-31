@@ -22,7 +22,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label htmlFor="vehicleType">
-            Namn på fordon
+            Namn på transport
           </Elements.Form.Label>
           <FormInputs.TextInput
             name="vehicleType"

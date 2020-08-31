@@ -80,8 +80,11 @@ function register(io) {
       const vehicle = {
         id: params.id || id62(),
         capacity:
-          params.volyme && params.weight
-            ? [parseInt(params.volyme), parseInt(params.weight)]
+          params.volume && params.weight
+            ? {
+                volume: parseInt(params.volume, 10),
+                weight: parseInt(params.weight, 10),
+              }
             : null,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,

@@ -79,16 +79,14 @@ public class VRPVehicles {
         VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance(vehicleId);
 
         //
-        JSONArray capacities = vehicle.optJSONArray("capacity");
-
-        // TODO use different JSON fields for volume and weight?!
-
+        JSONObject capacities = vehicle.optJSONObject("capacity");
+        
         // volume
-        int volume = capacities != null ? cubicMetersToCentimeter(capacities.getInt(0)) : VEHICLE_DEFAULT_VOLUME;
+        int volume = capacities != null ? cubicMetersToCentimeter(capacities.optInt("volume", 0)) : VEHICLE_DEFAULT_VOLUME;
         vehicleTypeBuilder.addCapacityDimension(VRPSetting.VOLUME_INDEX, volume);
 
         // weight
-        int weight = capacities != null ? capacities.getInt(1) : VEHICLE_DEFAULT_WEIGHT;
+        int weight = capacities != null ? capacities.optInt("weight", 1) : VEHICLE_DEFAULT_WEIGHT;
         vehicleTypeBuilder.addCapacityDimension(VRPSetting.WEIGHT_INDEX, weight);
 
         // costs

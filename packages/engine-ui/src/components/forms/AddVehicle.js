@@ -45,12 +45,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               <FormInputs.TextInput
                 step={1}
                 min="0"
-                name="volyme"
-                value={state.volyme}
+                name="volume"
+                value={state.volume}
                 placeholder="Lastvolym"
                 type="number"
                 onChangeHandler={eventHandlers.handleTextInputChange(
-                  'volyme',
+                  'volume',
                   onChangeHandler
                 )}
               />

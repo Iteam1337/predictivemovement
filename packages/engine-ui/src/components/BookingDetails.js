@@ -10,7 +10,7 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 
-const BookingDetails = ({ booking, handleHighlightBooking }) => {
+const BookingDetails = ({ booking, onClickHandler }) => {
   const [address, setAddress] = React.useState()
 
   React.useEffect(() => {
@@ -39,7 +39,7 @@ const BookingDetails = ({ booking, handleHighlightBooking }) => {
   if (!booking || !address) return <p>Laddar bokning...</p>
 
   return (
-    <NestedMenu onClickHandler={handleHighlightBooking}>
+    <NestedMenu onClickHandler={onClickHandler}>
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>

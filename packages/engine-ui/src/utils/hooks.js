@@ -7,8 +7,20 @@ const useFilteredStateFromQueryParams = (state) => {
   const type = useQueryParams().get('type')
   const id = useQueryParams().get('id')
   const status = useQueryParams().get('status')
+  const shouldIncludeRoute = useQueryParams().get('route')
 
   const statuses = status ? status.split(',') : []
+
+  const includeRouteIfDetailView = (booking) => {
+    const { route, ...rest } = booking
+    return shouldIncludeRoute ? booking : rest
+  }
+
+  const maybeExcludeFromStatus = (booking) =>
+    statuses.length ? statuses.includes(booking.status) : true
+
+  const includeOneIfDetailView = (booking) =>
+    type === 'booking' ? booking.id === id : true
 
   return {
     type,
@@ -16,10 +28,10 @@ const useFilteredStateFromQueryParams = (state) => {
     data: {
       ...state,
       bookings: state.bookings
-        .filter((item) => (type === 'booking' ? item.id === id : true))
-        .filter((item) =>
-          statuses.length ? statuses.includes(item.status) : true
-        ),
+        .map(includeRouteIfDetailView)
+        .filter(includeOneIfDetailView)
+        .filter(maybeExcludeFromStatus),
+
       cars: state.cars.filter((item) =>
         type === 'vehicle' ? item.id.toString() === id : true
       ),

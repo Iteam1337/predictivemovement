@@ -3,34 +3,22 @@ import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-import { Route, useLocation } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import { ViewportProvider } from './utils/ViewportContext'
+import { UIStateProvider } from './utils/UIStateContext'
 import hooks from './utils/hooks'
 
 const App = () => {
+  const { socket } = useSocket()
   const [state, dispatch] = React.useReducer(reducer, initState)
-  const [highlightedBookingById, setHighlightedBookingById] = React.useState(
-    undefined
-  )
 
   const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
-  const { socket } = useSocket()
 
-  const location = useLocation()
-  const locationIncludesBooking = location.search.includes('booking')
-
-  React.useEffect(() => {
-    if (location.search.includes('booking') && mapData.bookings[0]) {
-      setHighlightedBookingById(mapData.bookings[0].id)
-    }
-  }, [location.search, mapData.bookings])
-
-  const onMapClick = ({ lngLat }) => {
+  const onMapClick = ({ lngLat: [lon, lat] }) => {
     dispatch({
       type: 'setPosition',
-      payload: { lat: lngLat[1], lon: lngLat[0] },
+      payload: { lat, lon },
     })
   }
 
@@ -82,7 +70,7 @@ const App = () => {
   })
 
   return (
-    <ViewportProvider>
+    <UIStateProvider>
       <Logotype />
       <Sidebar
         {...state}
@@ -91,17 +79,11 @@ const App = () => {
         resetState={resetState}
         addVehicle={addVehicle}
         createBookings={createBookings}
-        handleHighlightBooking={setHighlightedBookingById}
       />
       <Route path="/">
-        <Map
-          onMapClick={onMapClick}
-          data={mapData}
-          highlightedBooking={highlightedBookingById}
-          includeBookingRoute={locationIncludesBooking}
-        />
+        <Map onMapClick={onMapClick} data={mapData} />
       </Route>
-    </ViewportProvider>
+    </UIStateProvider>
   )
 }
 

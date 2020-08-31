@@ -1,5 +1,5 @@
 import React from 'react'
-import { ViewportContext } from '../utils/ViewportContext'
+import { UIStateContext } from '../utils/UIStateContext'
 import { FlyToInterpolator } from 'react-map-gl'
 import Elements from '../shared-elements/'
 import Icons from '../assets/Icons'
@@ -44,8 +44,15 @@ const BookingToggleList: React.FC<{
   bookings: Booking[]
   text: string
   onClickHandler: (lat: string, lon: string) => void
-  handleHighlightBooking: (id: string | undefined) => void
-}> = ({ bookings, text, onClickHandler, handleHighlightBooking }) => {
+  onMouseEnterHandler: (id: string) => void
+  onMouseLeaveHandler: () => void
+}> = ({
+  bookings,
+  text,
+  onClickHandler,
+  onMouseEnterHandler,
+  onMouseLeaveHandler,
+}) => {
   const [toggled, set] = React.useState(false)
 
   return (
@@ -73,9 +80,9 @@ const BookingToggleList: React.FC<{
             bookings.map((booking) => (
               <li key={booking.id}>
                 <Elements.Links.RoundedLink
-                  onMouseOver={() => handleHighlightBooking(booking.id)}
-                  onMouseLeave={() => handleHighlightBooking(undefined)}
-                  to={`/details?type=booking&id=${booking.id}`}
+                  onMouseOver={() => onMouseEnterHandler(booking.id)}
+                  onMouseLeave={() => onMouseLeaveHandler()}
+                  to={`/details?type=booking&id=${booking.id}&route=true`}
                   onClick={() =>
                     onClickHandler(booking.pickup.lat, booking.pickup.lon)
                   }
@@ -92,22 +99,24 @@ const BookingToggleList: React.FC<{
 
 const Bookings: React.FC<{
   bookings: Booking[]
-  handleHighlightBooking: (id: string | undefined) => void
 }> = (props) => {
-  const { setViewport } = React.useContext(ViewportContext)
+  const { dispatch } = React.useContext(UIStateContext)
 
   const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
     props.bookings,
   ])
 
   const onClickHandler = (lat: string, lon: string) =>
-    setViewport({
-      latitude: lat,
-      longitude: lon,
-      zoom: 10,
-      transitionDuration: 2000,
-      transitionInterpolator: new FlyToInterpolator(),
-      transitionEasing: (t: number) => t * (2 - t),
+    dispatch({
+      type: 'viewport',
+      payload: {
+        latitude: lat,
+        longitude: lon,
+        zoom: 10,
+        transitionDuration: 2000,
+        transitionInterpolator: new FlyToInterpolator(),
+        transitionEasing: (t: number) => t * (2 - t),
+      },
     })
 
   return (
@@ -116,19 +125,34 @@ const Bookings: React.FC<{
         bookings={bookings.new}
         onClickHandler={onClickHandler}
         text="Öppna bokningar"
-        handleHighlightBooking={props.handleHighlightBooking}
+        onMouseEnterHandler={(id: string) =>
+          dispatch({ type: 'highlightBooking', payload: id })
+        }
+        onMouseLeaveHandler={() =>
+          dispatch({ type: 'highlightBooking', payload: undefined })
+        }
       />
       <BookingToggleList
         bookings={bookings.assigned}
         onClickHandler={onClickHandler}
         text="Bekräftade bokningar"
-        handleHighlightBooking={props.handleHighlightBooking}
+        onMouseEnterHandler={(id: string) =>
+          dispatch({ type: 'highlightBooking', payload: id })
+        }
+        onMouseLeaveHandler={() =>
+          dispatch({ type: 'highlightBooking', payload: undefined })
+        }
       />
       <BookingToggleList
         bookings={bookings.delivered}
         onClickHandler={onClickHandler}
         text="Levererade bokningar"
-        handleHighlightBooking={props.handleHighlightBooking}
+        onMouseEnterHandler={(id: string) =>
+          dispatch({ type: 'highlightBooking', payload: id })
+        }
+        onMouseLeaveHandler={() =>
+          dispatch({ type: 'highlightBooking', payload: undefined })
+        }
       />
     </Elements.Layout.MarginTopContainer>
   )

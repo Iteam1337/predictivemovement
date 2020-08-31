@@ -12,7 +12,7 @@ const NestedMenu: React.FC<{onClickHandler?: () => void}> = ({ children, onClick
   return (
     <NestedMenuWrapper>
       <Elements.Layout.FlexRowWrapper style={{ margin: '1.2em 0' }}>
-        <Link to="/" onClick={() => onClickHandler && onClickHandler()}>
+        <Link to="/" onClick={() => onClickHandler?.()}>
           <Icons.Arrow style={{ transform: 'rotate(90deg)' }} />
         </Link>
       </Elements.Layout.FlexRowWrapper>

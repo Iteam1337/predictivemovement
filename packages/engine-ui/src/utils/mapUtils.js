@@ -184,7 +184,8 @@ export const bookingToFeature = (bookings) => {
         ),
       ]
     }
-    return points
+
+    return route ? points : []
   })
 }
 
@@ -242,7 +243,7 @@ export const toBookingIconLayer = (data, activeBookingId) => {
     getIcon: (d) => 'marker',
     sizeScale: 4,
     getPosition: (d) => d.coordinates,
-    transitions: { getSize: { duration: 100 } },
+    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
     getSize: (d) => (d.properties.id === activeBookingId ? 8 : 5),
     getColor: (d) => hexToRGB(d.properties.color),
   })

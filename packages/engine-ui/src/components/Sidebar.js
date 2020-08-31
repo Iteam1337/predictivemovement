@@ -12,6 +12,7 @@ import AddVehicle from './AddVehicle'
 import Plan from './Plan'
 import Elements from './Elements'
 import Navigation from './Navigation'
+import { UIStateContext } from '../utils/UIStateContext'
 
 const Container = styled.div`
   position: absolute;
@@ -43,16 +44,19 @@ const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
 
-const Details = ({ state, handleHighlightBooking }) => {
+const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
+  const { dispatch } = React.useContext(UIStateContext)
 
   const componentFromType = () => {
     switch (type) {
       case 'booking':
         return (
           <BookingDetails
-            handleHighlightBooking={handleHighlightBooking}
             booking={data.bookings[0]}
+            onClickHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
           />
         )
       case 'vehicle':
@@ -77,10 +81,7 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <Bookings
-              bookings={state.bookings}
-              handleHighlightBooking={state.handleHighlightBooking}
-            />
+            <Bookings bookings={state.bookings} />
             <AddNewContainer>
               <TextLink to="/add-booking">
                 <Elements.AddFormFieldButton>

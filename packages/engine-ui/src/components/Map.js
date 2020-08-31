@@ -2,15 +2,25 @@ import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import mapUtils from '../utils/mapUtils'
-import { ViewportContext } from '../utils/ViewportContext'
-import { useHistory } from 'react-router-dom'
+import { UIStateContext } from '../utils/UIStateContext'
+import { useHistory, useLocation } from 'react-router-dom'
 import helpers from '../utils/helpers'
 
-const Map = ({ data, onMapClick, highlightedBooking, includeBookingRoute }) => {
+const Map = ({ data, onMapClick }) => {
   const history = useHistory()
 
-  const { viewport, setViewport, onLoad } = React.useContext(ViewportContext)
+  const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
   const [tooltip, setTooltip] = React.useState('')
+
+  const useQueryParams = () => new URLSearchParams(useLocation().search)
+  const entityTypeFromQueryParams = useQueryParams().get('type')
+  const id = useQueryParams().get('id')
+
+  React.useEffect(() => {
+    if (entityTypeFromQueryParams === 'booking' && Boolean(data.bookings[0])) {
+      dispatch({ type: 'highlightBooking', payload: id })
+    }
+  }, [entityTypeFromQueryParams, dispatch, id, data.bookings])
 
   const handleClickEvent = (event) => {
     if (!event.object) return
@@ -28,7 +38,7 @@ const Map = ({ data, onMapClick, highlightedBooking, includeBookingRoute }) => {
   const layers = [
     mapUtils.toBookingIconLayer(
       mapUtils.bookingIcon(data.bookings),
-      highlightedBooking
+      UIState.highlightBooking
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-cars-layer',
@@ -36,15 +46,13 @@ const Map = ({ data, onMapClick, highlightedBooking, includeBookingRoute }) => {
       handleClickEvent
     ),
     mapUtils.toVehicleIconLayer(mapUtils.carIcon(data.cars)),
-  ].concat(
-    includeBookingRoute
-      ? mapUtils.toGeoJsonLayer(
-          'geojson-bookings-layer',
-          mapUtils.bookingToFeature(data.bookings),
-          handleClickEvent
-        )
-      : []
-  )
+    mapUtils.toGeoJsonLayer(
+      'geojson-bookings-layer',
+
+      mapUtils.bookingToFeature(data.bookings),
+      handleClickEvent
+    ),
+  ]
 
   const getAddressFromCoordinates = async ({ pickup, delivery }) => {
     if (!pickup || !delivery) return
@@ -63,8 +71,10 @@ const Map = ({ data, onMapClick, highlightedBooking, includeBookingRoute }) => {
         onMapClick(e)
         handleClickEvent(e)
       }}
-      viewState={viewport}
-      onViewStateChange={({ viewState }) => setViewport(viewState)}
+      viewState={UIState.viewport}
+      onViewStateChange={({ viewState }) =>
+        dispatch({ type: 'viewport', payload: viewState })
+      }
       onLoad={onLoad}
       getTooltip={({ object }) => {
         return (

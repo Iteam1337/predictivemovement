@@ -49,7 +49,7 @@ const InputInnerContainer = styled.div`
 `
 
 const InputBlock = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 `
 
 const InputContainer = styled.div`

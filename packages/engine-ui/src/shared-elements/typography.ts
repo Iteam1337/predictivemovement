@@ -21,6 +21,7 @@ const StrongParagraph = styled.label`
 
 const CleanH4 = styled.h4`
   margin: 0;
+  cursor: default;
 `
 
 const RoundedLabelDisplay = styled.span<{ margin: string }>`

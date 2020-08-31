@@ -8,7 +8,7 @@ const Cars = ({ cars }) => {
   if (!cars.length)
     return (
       <Elements.NoInfoParagraph>
-        Det finns inga aktuella bilar...
+        Det finns inga aktuella transporter...
       </Elements.NoInfoParagraph>
     )
 

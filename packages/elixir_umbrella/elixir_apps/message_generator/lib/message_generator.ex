@@ -42,7 +42,7 @@ defmodule MessageGenerator do
     %{}
     |> Map.put(:start_address, Address.random(location))
     |> Map.put(:end_address, Address.random(location))
-    |> Map.put(:capacity, [15, 700])
+    |> Map.put(:capacity, %{volume: 15, weight: 700})
     |> Map.put(:id, Enum.random(0..100_000))
   end
 

@@ -6,8 +6,8 @@
         "activities": [
           {
             "address": {
-              "lon": 21.928558349609375,
-              "lat": 65.63069152832031
+              "lon": 21.925670623779297,
+              "lat": 65.63349914550781
             },
             "index": -1,
             "type": "start"
@@ -18,46 +18,46 @@
               "lat": 65.58159637451172
             },
             "index": 1,
-            "id": "pmb-4FbTaQFr-2",
+            "id": "Gäddvik->LTU",
             "type": "pickupShipment"
           },
           {
             "address": {
-              "lon": 22.137168884277344,
-              "lat": 65.6131362915039
+              "lon": 22.13488006591797,
+              "lat": 65.6158218383789
             },
             "index": 2,
-            "id": "pmb-4FbTaQFr-2",
+            "id": "Gäddvik->LTU",
             "type": "deliverShipment"
           },
           {
             "address": {
-              "lon": 22.01580810546875,
-              "lat": 65.64154052734375
+              "lon": 22.015857696533203,
+              "lat": 65.64157104492188
             },
             "index": 3,
-            "id": "pmv-1zuURKyc-1",
+            "id": "Gammelstad->LTU",
             "type": "pickupShipment"
           },
           {
             "address": {
-              "lon": 22.137168884277344,
-              "lat": 65.6131362915039
+              "lon": 22.13488006591797,
+              "lat": 65.6158218383789
             },
             "index": 4,
-            "id": "pmv-1zuURKyc-1",
+            "id": "Gammelstad->LTU",
             "type": "deliverShipment"
           },
           {
             "address": {
-              "lon": 21.928558349609375,
-              "lat": 65.63069152832031
+              "lon": 21.925670623779297,
+              "lat": 65.63349914550781
             },
             "index": -2,
             "type": "end"
           }
         ],
-        "vehicle_id": "pmv-1zuURKyc"
+        "vehicle_id": "vehicle-1"
       }
     ]
   }

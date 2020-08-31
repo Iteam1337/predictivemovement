@@ -12,7 +12,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
     vehicleType: '',
     id: '',
     capacity: null,
-    volyme: null,
+    volume: null,
     weight: null,
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472 },
@@ -50,7 +50,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   return (
     <NestedMenu>
       <Elements.Layout.Container>
-        <h3>Lägg till fordon</h3>
+        <h3>Lägg till transport</h3>
         <Form
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}

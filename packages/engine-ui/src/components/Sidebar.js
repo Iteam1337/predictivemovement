@@ -53,7 +53,7 @@ const Details = ({ state }) => {
       case 'booking':
         return <BookingDetails booking={data.bookings[0]} />
       case 'vehicle':
-        return <CarDetails car={data.cars[0]} />
+        return <CarDetails vehicle={data.cars[0]} />
       default:
         return null
     }
@@ -97,7 +97,7 @@ const Sidebar = (state) => {
             <h3>Aktuella fordon</h3>
             <Cars cars={state.cars} />
             <TextLink to="/add-vehicle">
-              <h3>+ Lägg till bil</h3>
+              <h3>+ Lägg till fordon</h3>
             </TextLink>
           </>
         )

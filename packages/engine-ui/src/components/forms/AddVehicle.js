@@ -109,7 +109,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 'name',
                 onChangeHandler
               )}
-              placeholder="Peter Persson"
+              placeholder="Namn"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
@@ -129,7 +129,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 'contact',
                 onChangeHandler
               )}
-              placeholder="070-123 45 67"
+              placeholder="Telefonnummer"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>

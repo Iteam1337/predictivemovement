@@ -20,8 +20,8 @@ const Cars = ({ cars }) => {
           key={car.id}
           onClick={() =>
             setViewport({
-              latitude: car.position.lat,
-              longitude: car.position.lon,
+              latitude: car.start_address.lat,
+              longitude: car.start_address.lon,
               zoom: 17,
               transitionDuration: 3000,
               transitionInterpolator: new FlyToInterpolator(),

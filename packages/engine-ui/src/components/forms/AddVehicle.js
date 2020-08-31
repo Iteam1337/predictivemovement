@@ -40,15 +40,36 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <Elements.Form.Label htmlFor="capacity">
             Kapacitet
           </Elements.Form.Label>
-          <FormInputs.TextInput
-            name="capacity"
-            value={state.capacity}
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'capacity',
-              onChangeHandler
-            )}
-            placeholder="Lastvolym"
-          />
+          <Elements.Layout.TextInputPairContainer>
+            <Elements.Layout.TextInputPairItem>
+              <FormInputs.TextInput
+                step={1}
+                min="0"
+                name="volume"
+                value={state.volume}
+                placeholder="Lastvolym"
+                type="number"
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'volume',
+                  onChangeHandler
+                )}
+              />
+            </Elements.Layout.TextInputPairItem>
+            <Elements.Layout.TextInputPairItem>
+              <FormInputs.TextInput
+                step={1}
+                min="0"
+                type="number"
+                name="weight"
+                value={state.weight}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'weight',
+                  onChangeHandler
+                )}
+                placeholder="Maxvikt"
+              />
+            </Elements.Layout.TextInputPairItem>
+          </Elements.Layout.TextInputPairContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>

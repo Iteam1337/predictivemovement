@@ -14,7 +14,7 @@ defmodule Engine.BookingProcessor do
       ],
       processors: [
         default: [
-          concurrency: 1
+          concurrency: 2
         ]
       ]
     )
@@ -27,9 +27,8 @@ defmodule Engine.BookingProcessor do
       ) do
     IO.inspect({vehicle_ids, booking_ids}, label: "oh a message")
 
-    %{solution: %{routes: routes}} =
-      @plan.find_optimal_routes(vehicle_ids, booking_ids)
-      |> IO.inspect(label: "optimal routes")
+    %{solution: %{routes: routes}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
+    # |> IO.inspect(label: "optimal routes")
 
     vehicles =
       routes

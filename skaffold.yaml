@@ -13,7 +13,7 @@ build:
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine
-      context: packages/elixir_umbrella/elixir_apps/engine
+      context: packages/elixir_umbrella
       sync:
         infer:
           - "**/*.ex"

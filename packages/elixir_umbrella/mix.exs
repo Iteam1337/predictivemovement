@@ -6,7 +6,15 @@ defmodule ElixirUmbrella.MixProject do
       apps_path: "elixir_apps",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      config_path: "elixir_config/config.exs"
+      config_path: "config/config.exs",
+      version: "0.1.0",
+      releases: [
+        elixir_umbrella: [
+          applications: [
+            engine: :permanent
+          ]
+        ]
+      ]
     ]
   end
 

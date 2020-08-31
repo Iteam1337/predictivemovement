@@ -34,7 +34,7 @@ defmodule MessageGenerator do
   def random_car(properties) when is_map(properties) do
     properties
     |> Map.put(:id, Enum.random(0..100_000))
-    |> Map.put_new(:capacity, [15, 700])
+    |> Map.put(:capacity, %{volume: 15, weight: 700})
     |> Map.put(:start_address, Address.random(@ljusdal))
   end
 
@@ -47,6 +47,13 @@ defmodule MessageGenerator do
   end
 
   def random_booking(), do: random_booking(@ljusdal)
+
+  def random_booking(properties) when is_map(properties) do
+    properties
+    |> add_random_id_and_time()
+    |> add_addresses()
+    |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: 13.7})
+  end
 
   def random_booking(location) do
     %{}
@@ -64,6 +71,9 @@ defmodule MessageGenerator do
   def add_random_car(:stockholm), do: GenServer.call(__MODULE__, {:add_random_car, @stockholm})
   def add_random_car(:gothenburg), do: GenServer.call(__MODULE__, {:add_random_car, @gothenburg})
 
+  def add_random_booking(properties) when is_map(properties),
+    do: GenServer.call(__MODULE__, {:add_random_booking, properties})
+
   def add_random_booking(:stockholm),
     do: GenServer.call(__MODULE__, {:add_random_booking, @stockholm})
 
@@ -73,6 +83,17 @@ defmodule MessageGenerator do
   def handle_call(:add_random_booking, _, %{channel: channel} = state) do
     payload =
       random_booking()
+      |> Poison.encode!()
+
+    AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
+
+    {:reply, :ok, state}
+  end
+
+  def handle_call({:add_random_booking, properties}, _, %{channel: channel} = state)
+      when is_map(properties) do
+    payload =
+      random_booking(properties)
       |> Poison.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)

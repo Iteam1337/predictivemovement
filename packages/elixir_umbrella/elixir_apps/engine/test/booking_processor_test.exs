@@ -48,6 +48,7 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_booking(:stockholm)
     MessageGenerator.add_random_booking(:gothenburg)
     MessageGenerator.add_random_car(:stockholm)
+
     MessageGenerator.add_random_car(:gothenburg)
 
     plan = wait_for_x_messages(2, channel, "get_plan") |> IO.inspect(label: "planny")

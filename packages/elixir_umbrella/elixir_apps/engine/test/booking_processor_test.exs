@@ -29,7 +29,6 @@ defmodule BookingProcessorTest do
     assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:earliest_start) == nil
   end
 
-
   test "creates a plan where one vehicle gets two bookings and one gets zero", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
     MessageGenerator.add_random_booking(:stockholm)
@@ -44,7 +43,6 @@ defmodule BookingProcessorTest do
     assert plan |> List.first() |> Map.get(:booking_ids) |> length() == 2
   end
 
-
   test "creates a plan for two vehicles, where each vehicle gets one", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
     MessageGenerator.add_random_booking(:stockholm)
@@ -56,14 +54,18 @@ defmodule BookingProcessorTest do
 
     MQ.publish("clear queue", @clear_queue, @clear_queue)
     assert plan |> List.last() |> Map.get(:vehicles) |> length() == 2
-    assert plan |> List.last() |> Map.get(:vehicles) |> List.first() |> Map.get(:booking_ids) |> length() == 1
 
+    assert plan
+           |> List.last()
+           |> Map.get(:vehicles)
+           |> List.first()
+           |> Map.get(:booking_ids)
+           |> length() == 1
   end
 
   test "vehicle with no end_address defined", %{channel: channel} do
   end
 
-  #
   test "time window constrains is passed on from vehicle to plan", %{
     channel: channel
   } do
@@ -101,6 +103,7 @@ defmodule BookingProcessorTest do
     AMQP.Basic.cancel(channel, consumer_tag)
     messages
   end
+
   def do_wait_for_x_messages(messages, channel, exchange, consumer_tag, x) do
     receive do
       {:basic_deliver, payload, %{consumer_tag: ^consumer_tag}} ->
@@ -124,7 +127,6 @@ defmodule BookingProcessorTest do
     receive do
       {:basic_deliver, payload, %{consumer_tag: ^consumer_tag}} ->
         AMQP.Basic.cancel(channel, consumer_tag)
-        IO.puts("here")
 
         payload
         |> Poison.decode!(%{keys: :atoms})

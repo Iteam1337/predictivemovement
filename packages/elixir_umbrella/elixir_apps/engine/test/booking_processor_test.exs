@@ -109,7 +109,7 @@ defmodule BookingProcessorTest do
 
   def wait_for_message(channel, exchange, consumer_tag \\ "") do
     receive do
-      {:basic_deliver, payload, %{exchange: ^exchange, consumer_tag: ^consumer_tag}} ->
+      {:basic_deliver, payload, %{consumer_tag: ^consumer_tag}} ->
         AMQP.Basic.cancel(channel, consumer_tag)
         IO.puts("here")
 
@@ -119,7 +119,7 @@ defmodule BookingProcessorTest do
       {:basic_consume_ok, %{consumer_tag: consumer_tag}} ->
         wait_for_message(channel, exchange, consumer_tag)
 
-      _ ->
+      payload ->
         wait_for_message(channel, exchange, consumer_tag)
     end
   end

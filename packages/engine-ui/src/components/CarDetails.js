@@ -17,7 +17,10 @@ const CarDetails = ({ car }) => {
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
-          <Elements.Links.RoundedLink margin="0 0.5rem">
+          <Elements.Links.RoundedLink
+            to={`/details?type=vehicle&id=${car.id}`}
+            margin="0 0.5rem"
+          >
             {car.id}
           </Elements.Links.RoundedLink>
         </Elements.Layout.FlexRowWrapper>

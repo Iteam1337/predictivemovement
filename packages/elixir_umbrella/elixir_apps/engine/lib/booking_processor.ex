@@ -14,7 +14,7 @@ defmodule Engine.BookingProcessor do
       ],
       processors: [
         default: [
-          concurrency: 2
+          concurrency: 100
         ]
       ]
     )

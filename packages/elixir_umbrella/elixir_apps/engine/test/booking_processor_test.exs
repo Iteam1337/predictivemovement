@@ -65,7 +65,40 @@ defmodule BookingProcessorTest do
            |> length() == 1
   end
 
-  test "vehicle with no end_address defined", %{channel: channel} do
+  test "vehicle with no end_address defined gets start_address as end_address", %{
+    channel: channel
+  } do
+    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
+    earliest_start = DateTime.utc_now()
+    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
+
+    MessageGenerator.add_random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
+    MessageGenerator.add_random_booking()
+    plan = wait_for_message(channel, "get_plan")
+    MQ.publish("clear queue", @clear_queue, @clear_queue)
+
+    first_vehicle = plan |> Map.get(:vehicles) |> List.first()
+
+    assert first_vehicle |> Map.get(:end_address) == %{lat: 61.829182, lon: 16.0896213}
+  end
+
+  test "vehicle with end_address defined", %{channel: channel} do
+    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
+    earliest_start = DateTime.utc_now()
+    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
+
+    MessageGenerator.add_random_car(%{
+      start_address: %{lat: 61.829182, lon: 16.0896213},
+      end_address: %{lat: 51.829182, lon: 17.0896213}
+    })
+
+    MessageGenerator.add_random_booking()
+    plan = wait_for_message(channel, "get_plan")
+    MQ.publish("clear queue", @clear_queue, @clear_queue)
+
+    first_vehicle = plan |> Map.get(:vehicles) |> List.first()
+
+    assert first_vehicle |> Map.get(:end_address) == %{lat: 51.829182, lon: 17.0896213}
   end
 
   test "time window constrains is passed on from vehicle to plan", %{

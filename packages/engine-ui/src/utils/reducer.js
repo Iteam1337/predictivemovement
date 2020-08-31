@@ -21,12 +21,6 @@ export const reducer = (state, action) => {
         ],
       }
 
-    case 'setPosition':
-      return {
-        ...state,
-        currentPosition: action.payload,
-      }
-
     case 'setPlan':
       return {
         ...state,
@@ -46,6 +40,6 @@ export const initState = {
   bookings: [],
   assignedBookings: [],
   cars: [],
-  currentPosition: { lat: null, lon: null },
-  plan: []
+
+  plan: [],
 }

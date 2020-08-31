@@ -9,6 +9,11 @@ const reducer = (state, action) => {
       return { ...state, viewport: action.payload }
     case 'highlightBooking':
       return { ...state, highlightBooking: action.payload }
+    case 'lastClickedPosition':
+      return {
+        ...state,
+        lastClickedPosition: action.payload,
+      }
     default:
       return state
   }
@@ -43,4 +48,5 @@ const INITIAL_STATE = {
     transitionEasing: (t) => t * (2 - t),
   },
   highlightBooking: undefined,
+  lastClickedPosition: { lat: null, lon: null },
 }

@@ -6,7 +6,7 @@ import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useLocation } from 'react-router-dom'
 import helpers from '../utils/helpers'
 
-const Map = ({ data, onMapClick }) => {
+const Map = ({ data }) => {
   const history = useHistory()
 
   const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
@@ -34,6 +34,12 @@ const Map = ({ data, onMapClick }) => {
         return
     }
   }
+
+  const onMapClick = ({ lngLat: [lon, lat] }) =>
+    dispatch({
+      type: 'lastClickedPosition',
+      payload: { lat, lon },
+    })
 
   const layers = [
     mapUtils.toBookingIconLayer(

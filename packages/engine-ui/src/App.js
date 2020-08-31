@@ -15,13 +15,6 @@ const App = () => {
 
   const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
 
-  const onMapClick = ({ lngLat: [lon, lat] }) => {
-    dispatch({
-      type: 'setPosition',
-      payload: { lat, lon },
-    })
-  }
-
   const addVehicle = (params) => {
     socket.emit('add-vehicle', params)
   }
@@ -81,7 +74,7 @@ const App = () => {
         createBookings={createBookings}
       />
       <Route path="/">
-        <Map onMapClick={onMapClick} data={mapData} />
+        <Map data={mapData} />
       </Route>
     </UIStateProvider>
   )

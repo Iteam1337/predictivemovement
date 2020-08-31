@@ -5,7 +5,7 @@ import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
 import NestedMenu from './layout/NestedMenu'
 
-const CreateBooking = ({ createBooking }) => {
+const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
 
   const [formState, setState] = React.useState({
@@ -30,7 +30,7 @@ const CreateBooking = ({ createBooking }) => {
       return false
     }
 
-    createBooking({
+    onSubmit({
       ...formState,
       pickup: formState.pickup,
       delivery: formState.delivery,

@@ -66,7 +66,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               <FormInputs.TextInput
                 name="measurement"
                 value={state.measurement}
-                placeholder="Mått (BxHxD)"
+                placeholder="Mått (BxHxDcm)"
                 onChangeHandler={eventHandlers.handleTextInputChange(
                   'measurement',
                   onChangeHandler
@@ -75,7 +75,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             </Elements.Layout.TextInputPairItem>
             <Elements.Layout.TextInputPairItem>
               <FormInputs.TextInput
-                step={0.1}
+                step={1}
                 name="weight"
                 value={state.weight}
                 placeholder="Vikt (kg)"

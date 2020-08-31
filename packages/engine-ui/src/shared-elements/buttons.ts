@@ -11,8 +11,11 @@ const SubmitButton = styled.button<{ justifySelf: string }>`
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
 
   :hover {
-    background: #ccffcc;
-    color: #666666;
+    background: #c1f5c1;
+  }
+
+  :focus {
+    outline-color: #ccffcc;
   }
 `
 
@@ -28,8 +31,30 @@ const CancelButton = styled.button`
   :hover {
     color: #666666;
   }
+
+  :focus {
+    outline-color: #666666;
+  }
 `
 
+const StyledAddFormFieldButton = styled.button<{
+  size: string
+  marginTop: string
+}>`
+  color: #666666;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-weight: bold;
+  padding: 0;
+  font-size: ${({ size }) => size || '1rem'};
+  margin-top: ${({ marginTop }) => marginTop};
+`
 const DisplayTextButton = styled.button``
 
-export default { SubmitButton, CancelButton, DisplayTextButton }
+export default {
+  SubmitButton,
+  CancelButton,
+  StyledAddFormFieldButton,
+  DisplayTextButton,
+}

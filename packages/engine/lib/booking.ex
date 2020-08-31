@@ -1,9 +1,9 @@
 defmodule Booking do
   use GenServer
 
-  defstruct [:id, :pickup, :delivery, :assigned_to, :external_id, :events, :metadata]
+  defstruct [:id, :pickup, :delivery, :assigned_to, :external_id, :events, :metadata, :size]
 
-  def make(pickup, delivery, metadata) do
+  def make(pickup, delivery, external_id, metadata, size) do
     id = "pmb-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
     booking = %Booking{
@@ -16,7 +16,15 @@ defmodule Booking do
 
     GenServer.start_link(
       __MODULE__,
-      booking,
+      %Booking{
+        id: id,
+        external_id: external_id,
+        pickup: pickup,
+        delivery: delivery,
+        metadata: metadata,
+        events: [],
+        size: size
+      },
       name: via_tuple(id)
     )
 

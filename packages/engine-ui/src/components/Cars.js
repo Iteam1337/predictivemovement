@@ -8,7 +8,7 @@ const Cars = ({ cars }) => {
   if (!cars.length)
     return (
       <Elements.NoInfoParagraph>
-        Det finns inga aktuella bilar...
+        Det finns inga aktuella transporter...
       </Elements.NoInfoParagraph>
     )
 
@@ -22,8 +22,8 @@ const Cars = ({ cars }) => {
             dispatch({
               type: 'viewport',
               payload: {
-                latitude: car.position.lat,
-                longitude: car.position.lon,
+                latitude: car.start_address.lat,
+                longitude: car.start_address.lon,
                 zoom: 10,
                 transitionDuration: 3000,
                 transitionInterpolator: new FlyToInterpolator(),

@@ -1,20 +1,23 @@
 defmodule Vehicle do
   use GenServer
 
-  defstruct id: 0,
-            position: %{lon: 53, lat: 14},
-            busy: false,
-            activities: [],
-            current_route: nil,
-            booking_ids: [],
-            metadata: %{}
+  defstruct [
+    :id,
+    :busy,
+    :activities,
+    :current_route,
+    :booking_ids,
+    :metadata,
+    :start_address,
+    :end_address,
+    :earliest_start,
+    :latest_end,
+    :profile,
+    :capacity
+  ]
 
   def init(init_arg) do
     {:ok, init_arg}
-  end
-
-  def handle_call({:put, id, position, busy}, _from, _state) do
-    {:reply, :ok}
   end
 
   def handle_call(:get, _from, state) do
@@ -81,13 +84,46 @@ defmodule Vehicle do
     |> IO.inspect(label: "Driver didnt want the booking :(")
   end
 
-  def make(position, metadata, busy \\ false) do
+  def make(
+        start_address,
+        end_address,
+        earliest_start,
+        latest_end,
+        metadata,
+        profile,
+        capacity
+      )
+      when is_nil(end_address) do
+    make(
+      start_address,
+      start_address,
+      earliest_start,
+      latest_end,
+      metadata,
+      profile,
+      capacity
+    )
+  end
+
+  def make(
+        start_address,
+        end_address,
+        earliest_start,
+        latest_end,
+        metadata,
+        profile,
+        capacity
+      ) do
     id = "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
     vehicle = %Vehicle{
       id: id,
-      position: position,
-      busy: busy,
+      start_address: start_address,
+      end_address: end_address,
+      profile: profile,
+      capacity: capacity,
+      earliest_start: earliest_start,
+      latest_end: latest_end,
       metadata: metadata
     }
 

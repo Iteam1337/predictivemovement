@@ -13,10 +13,12 @@ const AddVehicle = ({ onSubmit }) => {
   const [formState, setState] = React.useState({
     vehicleType: '',
     id: '',
-    capacity: '',
+    capacity: null,
+    volume: null,
+    weight: null,
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472 },
-    endDestination: { name: '', lat: '', lon: '' },
+    endDestination: null,
     driver: { name: '', contact: '' },
   })
 
@@ -54,7 +56,7 @@ const AddVehicle = ({ onSubmit }) => {
   return (
     <NestedMenu>
       <Elements.Layout.Container>
-        <h3>Lägg till fordon</h3>
+        <h3>Lägg till transport</h3>
         <Form
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}

@@ -30,8 +30,8 @@ function register(io) {
       .doto((car) => {
         movingCarsCache.set(car.id, car)
       })
-      .pick(['position', 'status', 'id', 'activities', 'current_route'])
-      // .tap(updatePosition)
+      // .pick(['position', 'status', 'id', 'activities', 'current_route'])
+      // .tap((car) => car)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each((cars) => socket.emit('cars', cars))
@@ -47,6 +47,10 @@ function register(io) {
         id: params.id || id62(),
         senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
         bookingDate: new Date().toISOString(),
+        size: {
+          measurement: params.measurement,
+          weight: params.weight,
+        },
         pickup: {
           time_windows: params.pickup.timewindows,
           lat: params.pickup.lat,
@@ -70,13 +74,26 @@ function register(io) {
     socket.on('add-vehicle', (params) => {
       const vehicle = {
         id: params.id || id62(),
-        capacity: params.capacity,
-        time_window: params.timewindow,
-        start_position: params.startPosition,
-        end_destination: params.endDestination,
-        driver: params.driver,
+        capacity:
+          params.volume && params.weight
+            ? {
+                volume: parseInt(params.volume, 10),
+                weight: parseInt(params.weight, 10),
+              }
+            : null,
+        earliest_start: params.timewindow.start,
+        latest_end: params.timewindow.end,
+        start_address: params.startPosition,
+        end_address: params.endDestination
+          ? params.endDestination
+          : params.startPosition,
+
+        metadata: {
+          driver: params.driver,
+          profile: params.vehicleType,
+        },
       }
-      addVehicle(vehicle.start_position)
+      addVehicle(vehicle)
     })
 
     socket.on('new-bookings', ({ total }) => {

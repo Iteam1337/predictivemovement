@@ -28,7 +28,7 @@ const INITIAL_STATE = {
   zoom: 8,
 }
 
-const DRC_MAP = {
+export const DRC_MAP = {
   latitude: 61.8294959,
   longitude: 16.0740589,
   zoom: 10,

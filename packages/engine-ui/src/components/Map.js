@@ -10,15 +10,16 @@ const Map = ({ state, onMapClick }) => {
   const { data } = hooks.useFilteredStateFromQueryParams(state)
   const history = useHistory()
   const location = useLocation()
-  const [showOneBooking, setShowOneBooking] = React.useState(false)
-  const [showOneVehicle, setShowOneVehicle] = React.useState(false)
+  const [showBookingRoute, setShowBookingRoute] = React.useState(false)
+  const [active, setActive] = React.useState(false)
   const { viewport, setViewport, onLoad } = React.useContext(ViewportContext)
   const [tooltip, setTooltip] = React.useState('')
 
   React.useEffect(() => {
-    setShowOneBooking(location.search.includes('booking'))
-    setShowOneVehicle(location.search.includes('vehicle'))
+    setShowBookingRoute(location.search.includes('booking'))
+    setActive(location.search)
   }, [location.search])
+
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type
@@ -33,20 +34,20 @@ const Map = ({ state, onMapClick }) => {
   }
 
   const layers = [
-    showOneBooking &&
+    showBookingRoute &&
       mapUtils.toGeoJsonLayer(
         'geojson-bookings-layer',
         mapUtils.bookingToFeature(data.bookings),
         handleClickEvent
       ),
-    mapUtils.toIconLayer(mapUtils.bookingIcon(state.bookings), showOneBooking),
+    mapUtils.toIconLayer(mapUtils.bookingIcon(state.bookings), active),
     mapUtils.toGeoJsonLayer(
       'geojson-cars-layer',
       mapUtils.carToFeature(state.plan),
       handleClickEvent
     ),
 
-    mapUtils.toIconLayer(mapUtils.carIcon(state.cars), showOneVehicle),
+    mapUtils.toIconLayer(mapUtils.carIcon(state.cars), active),
   ]
 
   const getAddressFromCoordinates = async ({ pickup, delivery }) => {

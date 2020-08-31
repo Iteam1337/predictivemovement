@@ -266,17 +266,20 @@ export const toIconLayer = (data, active) => {
 
   const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
-    properties: { id: feature.id, color: active ? colors[0] : colors[1] },
+    properties: {
+      id: feature.id,
+      color: active.includes(feature.id) ? colors[0] : colors[1],
+    },
   }))
 
   return new IconLayer({
-    id: data[0].properties.type,
+    id: data[0].id,
     data: iconData,
     pickable: true,
     iconAtlas: options.iconAtlas,
     iconMapping: ICON_MAPPING,
     getIcon: (d) => 'marker',
-    sizeScale: active ? options.activeSize : options.size,
+    sizeScale: active.includes(data[0].id) ? options.activeSize : options.size,
     getPosition: (d) => d.coordinates,
     getSize: (d) => 5,
     getColor: (d) => hexToRGB(d.properties.color),

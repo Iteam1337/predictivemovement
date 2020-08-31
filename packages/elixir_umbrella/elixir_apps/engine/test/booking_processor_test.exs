@@ -88,9 +88,27 @@ defmodule BookingProcessorTest do
              latest_end |> DateTime.to_iso8601()
   end
 
-  # test "volume constraints" do
+  @tag :only
+  test "volume constraints", %{
+    channel: channel
+  } do
+    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
 
-  # end
+    MessageGenerator.add_random_car(%{
+      capacity: %{weight: 700, volume: 18}
+    })
+
+    MessageGenerator.add_random_booking(%{
+      size: %{measurements: [14, 12, 10], weight: 1}
+    })
+
+    plan = wait_for_message(channel, "get_plan") |> IO.inspect(label: "planny")
+    MQ.publish("clear queue", @clear_queue, @clear_queue)
+
+    # first_vehicle = plan |> Map.get(:vehicles) |> List.first()
+
+    # assert first_vehicle |> Map.get(:capacity) == %{weight: 700, volume: 18}
+  end
 
   # test "weig"
 

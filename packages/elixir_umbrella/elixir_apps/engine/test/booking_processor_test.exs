@@ -17,7 +17,6 @@ defmodule BookingProcessorTest do
     %{channel: channel}
   end
 
-  @tag :only
   test "creates a plan for one vehicle and one booking", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
     MessageGenerator.add_random_car()
@@ -30,7 +29,7 @@ defmodule BookingProcessorTest do
     assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:earliest_start) == nil
   end
 
-  # @tag :only
+
   test "creates a plan where one vehicle gets two bookings and one gets zero", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
     MessageGenerator.add_random_booking(:stockholm)
@@ -45,14 +44,26 @@ defmodule BookingProcessorTest do
     assert plan |> List.first() |> Map.get(:booking_ids) |> length() == 2
   end
 
-  # test "creates a plan for two vehicles, where each vehicle gets one" do
 
-  # end
+  test "creates a plan for two vehicles, where each vehicle gets one", %{channel: channel} do
+    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
+    MessageGenerator.add_random_booking(:stockholm)
+    MessageGenerator.add_random_booking(:gothenburg)
+    MessageGenerator.add_random_car(:stockholm)
+    MessageGenerator.add_random_car(:gothenburg)
 
-  # test "vehicle with no end_address defined" do
-  # end
+    plan = wait_for_x_messages(2, channel, "get_plan") |> IO.inspect(label: "planny")
 
-  # @tag :only
+    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    assert plan |> List.last() |> Map.get(:vehicles) |> length() == 2
+    assert plan |> List.last() |> Map.get(:vehicles) |> List.first() |> Map.get(:booking_ids) |> length() == 1
+
+  end
+
+  test "vehicle with no end_address defined", %{channel: channel} do
+  end
+
+  #
   test "time window constrains is passed on from vehicle to plan", %{
     channel: channel
   } do
@@ -86,11 +97,13 @@ defmodule BookingProcessorTest do
   def wait_for_x_messages(x, channel, exchange),
     do: do_wait_for_x_messages([], channel, exchange, "", x)
 
-  def do_wait_for_x_messages(messages, _channel, _exchange, _consumer_tag, 0), do: messages
-
+  def do_wait_for_x_messages(messages, channel, _exchange, consumer_tag, 0) do
+    AMQP.Basic.cancel(channel, consumer_tag)
+    messages
+  end
   def do_wait_for_x_messages(messages, channel, exchange, consumer_tag, x) do
     receive do
-      {:basic_deliver, payload, %{exchange: exchange, consumer_tag: ^consumer_tag}} ->
+      {:basic_deliver, payload, %{consumer_tag: ^consumer_tag}} ->
         decoded =
           payload
           |> Poison.decode!(%{keys: :atoms})

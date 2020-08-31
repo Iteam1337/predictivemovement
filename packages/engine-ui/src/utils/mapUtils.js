@@ -234,7 +234,7 @@ export const toBookingIconLayer = (data, activeBookingId) => {
   }))
 
   return new IconLayer({
-    id: 'icon-layer',
+    id: 'icon-layer-booking',
     data: iconData,
     pickable: true,
     iconAtlas: parcelIcon,
@@ -252,6 +252,7 @@ export const toVehicleIconLayer = (data) => {
   if (!data.length) {
     return
   }
+
   const ICON_MAPPING = {
     marker: {
       x: 0,
@@ -268,7 +269,7 @@ export const toVehicleIconLayer = (data) => {
   }))
 
   return new IconLayer({
-    id: 'icon-layer',
+    id: 'icon-layer-car',
     data: iconData,
     pickable: true,
     iconAtlas: vehicleIcon,

@@ -1,6 +1,7 @@
 defmodule BookingProcessorTest do
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
   @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
+  @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   setup_all do
@@ -8,7 +9,7 @@ defmodule BookingProcessorTest do
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.bind(channel, @clear_queue, @clear_queue, routing_key: @clear_queue)
     AMQP.Queue.declare(channel, "get_plan", durable: false)
-    AMQP.Queue.bind(channel, "get_plan", "plan", routing_key: "")
+    AMQP.Queue.bind(channel, "get_plan", @outgoing_plan_exchange, routing_key: "")
 
     on_exit(fn ->
       AMQP.Channel.close(channel)

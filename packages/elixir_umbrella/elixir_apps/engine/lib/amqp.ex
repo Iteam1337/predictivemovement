@@ -7,6 +7,7 @@ defmodule MQ do
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
   @outgoing_vehicle_exchange Application.compile_env!(:engine, :outgoing_vehicle_exchange)
   @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
+  @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
 
   def init() do
     create_outgoing_exchanges()
@@ -109,7 +110,7 @@ defmodule MQ do
 
     # Ensure that exchanges are created
     AMQP.Exchange.declare(channel, @clear_queue, :topic, durable: false)
-    AMQP.Exchange.declare(channel, "plan", :fanout, durable: false)
+    AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
     AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
     AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
 

@@ -1,14 +1,14 @@
 import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
-import { ViewportContext } from '../utils/ViewportContext'
+import { UIStateContext } from '../utils/UIStateContext'
 import Elements from './Elements'
 
 const Cars = ({ cars }) => {
-  const { setViewport } = React.useContext(ViewportContext)
+  const { dispatch } = React.useContext(UIStateContext)
   if (!cars.length)
     return (
       <Elements.NoInfoParagraph>
-        Det finns inga aktuella bilar...
+        Det finns inga aktuella transporter...
       </Elements.NoInfoParagraph>
     )
 
@@ -19,13 +19,16 @@ const Cars = ({ cars }) => {
           to={`/details?type=vehicle&id=${car.id}`}
           key={car.id}
           onClick={() =>
-            setViewport({
-              latitude: car.start_address.lat,
-              longitude: car.start_address.lon,
-              zoom: 17,
-              transitionDuration: 3000,
-              transitionInterpolator: new FlyToInterpolator(),
-              transitionEasing: (t) => t * (2 - t),
+            dispatch({
+              type: 'viewport',
+              payload: {
+                latitude: car.start_address.lat,
+                longitude: car.start_address.lon,
+                zoom: 10,
+                transitionDuration: 3000,
+                transitionInterpolator: new FlyToInterpolator(),
+                transitionEasing: (t) => t * (2 - t),
+              },
             })
           }
         >

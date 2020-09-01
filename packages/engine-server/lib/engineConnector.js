@@ -3,8 +3,8 @@ const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const routingKeys = {
-  REGISTERED: 'registered',
   NEW: 'new',
+  REGISTERED: 'registered',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
   PICKED_UP: 'picked_up',
@@ -50,6 +50,13 @@ amqp
           routingKeys.DELIVERED
         )
       )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'outgoing_booking_updates',
+          routingKeys.NEW
+        )
+      )
   )
 
 const bookings = amqp
@@ -60,18 +67,6 @@ const bookings = amqp
    * it means but messages are not acked if i don't specify this
    */
   .subscribe({ noAck: true }, [])
-  .map((bookings) => {
-    return { ...bookings.json(), status: bookings.fields.routingKey }
-  })
-
-const bookingsNewWithRoutes = amqp
-  .exchange('bookings_with_routes', 'topic', {
-    durable: false,
-  })
-  .queue('update_booking_in_admin_ui', {
-    durable: false,
-  })
-  .subscribe({ noAck: true }, [routingKeys.REGISTERED])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
@@ -142,7 +137,6 @@ const plan = amqp
 module.exports = {
   addVehicle,
   bookings,
-  bookingsNewWithRoutes,
   cars,
   createBooking,
   dispatchOffers,

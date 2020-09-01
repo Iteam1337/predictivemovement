@@ -66,12 +66,9 @@ const CarDetails = ({ vehicle }) => {
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
-          <Elements.Links.RoundedLink
-            to={`/details?type=vehicle&id=${vehicle.id}`}
-            margin="0 0.5rem"
-          >
+          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
             {vehicle.id}
-          </Elements.Links.RoundedLink>
+          </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.capacity && (
           <>

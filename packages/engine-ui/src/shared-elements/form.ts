@@ -9,6 +9,10 @@ const DateInput = styled.input<{ iconInset: boolean }>`
   font-size: 0.75rem;
   padding: ${({ iconInset }) =>
     iconInset ? '0.75rem 1rem 0.75rem 0.75rem' : '0.75rem'};
+
+  :focus {
+    outline-color: #13c57b;
+  }
 `
 
 const Label = styled.label`

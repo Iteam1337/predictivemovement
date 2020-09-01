@@ -9,8 +9,7 @@ defmodule Engine.Application do
     children = [
       Engine.BookingProcessor,
       PlanStore,
-      Engine.AdminProcessor,
-      BookingRoutes
+      Engine.AdminProcessor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

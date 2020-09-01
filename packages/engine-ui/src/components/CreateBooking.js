@@ -5,13 +5,13 @@ import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
 import NestedMenu from './layout/NestedMenu'
 
-const CreateBooking = ({ createBooking }) => {
+const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
 
   const [formState, setState] = React.useState({
     id: '',
     measurement: '',
-    weight: null,
+    weight: '',
     cargo: '',
     pickup: { name: '', lat: '', lon: '', timewindow: null },
     delivery: { name: '', lat: '', lon: '', timewindow: null },
@@ -30,7 +30,7 @@ const CreateBooking = ({ createBooking }) => {
       return false
     }
 
-    createBooking({
+    onSubmit({
       ...formState,
       measurement:
         formState.measurement &&

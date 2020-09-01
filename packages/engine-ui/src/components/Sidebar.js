@@ -8,11 +8,11 @@ import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../utils/hooks'
 import CarDetails from './CarDetails'
-
 import AddVehicle from './AddVehicle'
 import Plan from './Plan'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import Navigation from './Navigation'
+import { UIStateContext } from '../utils/UIStateContext'
 
 const Container = styled.div`
   position: absolute;
@@ -24,14 +24,8 @@ const Container = styled.div`
   display: flex;
 `
 
-const TextLink = styled(Link)`
-  text-decoration: none;
-  color: #666666;
-`
-
 const Content = styled.div`
-  padding: 2rem 0 2rem 2rem;
-  margin-right: 2rem;
+  padding: 2rem;
   width: 350px;
 `
 
@@ -45,13 +39,35 @@ const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
 
+const AddFormFieldButton = ({
+  onClickHandler,
+  children,
+  marginTop = '5rem',
+}) => (
+  <Elements.Buttons.StyledAddFormFieldButton
+    type="button"
+    onClick={onClickHandler}
+    marginTop={marginTop}
+  >
+    {children}
+  </Elements.Buttons.StyledAddFormFieldButton>
+)
+
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
+  const { dispatch } = React.useContext(UIStateContext)
 
   const componentFromType = () => {
     switch (type) {
       case 'booking':
-        return <BookingDetails booking={data.bookings[0]} />
+        return (
+          <BookingDetails
+            booking={data.bookings[0]}
+            onClickHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+        )
       case 'vehicle':
         return <CarDetails vehicle={data.cars[0]} />
       default:
@@ -66,6 +82,7 @@ const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
     'bookings'
   )
+
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
 
   const currentViewToElement = () => {
@@ -73,32 +90,29 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
             <AddNewContainer>
-              <TextLink to="/add-booking">
-                <Elements.AddFormFieldButton>
-                  + Lägg till bokning
-                </Elements.AddFormFieldButton>
-              </TextLink>
+              <Link to="/add-booking">
+                <AddFormFieldButton>+ Lägg till bokning</AddFormFieldButton>
+              </Link>
             </AddNewContainer>
             <AddNewContainer>
-              <TextLink to="/add-bookings">
-                <Elements.AddFormFieldButton>
+              <Link to="/add-bookings">
+                <AddFormFieldButton marginTop="0">
                   + Generera historiska bokningar
-                </Elements.AddFormFieldButton>
-              </TextLink>
+                </AddFormFieldButton>
+              </Link>
             </AddNewContainer>
           </>
         )
       case 'cars':
         return (
           <>
-            <h3>Aktuella fordon</h3>
+            <h3>Aktuella transporter</h3>
             <Cars cars={state.cars} />
-            <TextLink to="/add-vehicle">
-              <h3>+ Lägg till fordon</h3>
-            </TextLink>
+            <Link to="/add-vehicle">
+              <AddFormFieldButton>+ Lägg till transport</AddFormFieldButton>
+            </Link>
           </>
         )
       case 'plan':
@@ -106,12 +120,12 @@ const Sidebar = (state) => {
           <PlanWrapper>
             <h3>Plan</h3>
             <Plan plan={state.plan} />
-            <Elements.SubmitButton
+            <Elements.Buttons.SubmitButton
               justifySelf="center"
               onClick={state.dispatchOffers}
             >
               Bekräfta plan
-            </Elements.SubmitButton>
+            </Elements.Buttons.SubmitButton>
           </PlanWrapper>
         )
       default:
@@ -132,16 +146,18 @@ const Sidebar = (state) => {
               <>{currentViewToElement()}</>
             </Route>
             <Route path="/details">
-              <Details state={data} />
-            </Route>
-            <Route path="/add-vehicle">
-              <AddVehicle
-                currentPosition={state.currentPosition}
-                addVehicle={state.addVehicle}
+              <Details
+                handleHighlightBooking={() =>
+                  state.handleHighlightBooking(undefined)
+                }
+                state={data}
               />
             </Route>
+            <Route path="/add-vehicle">
+              <AddVehicle onSubmit={state.addVehicle} />
+            </Route>
             <Route path="/add-booking">
-              <CreateBooking createBooking={state.createBooking} />
+              <CreateBooking onSubmit={state.createBooking} />
             </Route>
             <Route path="/add-bookings">
               <CreateBookings createBookings={state.createBookings} />

@@ -16,7 +16,6 @@ defmodule Booking do
       size: size
     }
 
-    IO.inspect(booking, label: "this is the booking")
 
     GenServer.start_link(
       __MODULE__,

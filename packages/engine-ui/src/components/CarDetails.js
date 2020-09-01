@@ -54,8 +54,8 @@ const CarDetails = ({ vehicle }) => {
     dispatch({
       type: 'viewport',
       payload: {
-        latitude: activitie[0].address.lon,
-        longitude: activitie[0].address.lat,
+        latitude: activitie[0].address.lat,
+        longitude: activitie[0].address.lon,
         zoom: 14,
         transitionDuration: 2000,
         transitionInterpolator: new FlyToInterpolator(),

@@ -1,4 +1,6 @@
-defmodule Address do
+defmodule MessageGenerator.Address do
+  alias MessageGenerator.Osrm
+
   def random(%{lon: lon, lat: lat}) do
     lon = lon + (Enum.random(0..100) - 50) / 200
     lat = lat + (Enum.random(0..100) - 50) / 500

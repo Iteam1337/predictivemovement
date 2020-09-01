@@ -1,4 +1,4 @@
-defmodule Osrm do
+defmodule MessageGenerator.Osrm do
   @osrmBase "https://osrm.iteamdev.io/"
 
   def nearest(%{lon: lon, lat: lat}) do

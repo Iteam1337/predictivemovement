@@ -58,19 +58,28 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', (ctx) => {
-    const id = ctx.update.message.from.id
+    const id = ctx.metadata.getId(ctx.botInfo.id)
 
     const vehicleWithPlan = getVehicle(id)
     if (!vehicleWithPlan) return messaging.onNoInstructionsForVehicle(ctx)
-
     const activities = vehicleWithPlan.activities
     const bookingIds = vehicleWithPlan.booking_ids
 
-    messaging.onInstructionsForVehicle(activities, bookingIds, id)
+    messaging.onInstructionsForVehicle(
+      activities,
+      bookingIds,
+      ctx.update.message.from.id
+    )
+  })
+
+  bot.command('/login', (ctx) => {
+    ctx.reply(`Skriv in ditt transport id`)
   })
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
+
+    if (msg.text) botServices.onLogin(msg.text, ctx)
 
     if (!msg.location) return
 

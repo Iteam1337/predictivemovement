@@ -61,7 +61,7 @@ const init = (bot) => {
     const id = ctx.metadata.getId(ctx.botInfo.id)
 
     const vehicleWithPlan = getVehicle(id)
-    if (!vehicleWithPlan) return messaging.onNoInstructionsForVehicle(ctx)
+    if (!vehicleWithPlan || !vehicleWithPlan.activities ) return messaging.onNoInstructionsForVehicle(ctx)
     const activities = vehicleWithPlan.activities
     const bookingIds = vehicleWithPlan.booking_ids
 

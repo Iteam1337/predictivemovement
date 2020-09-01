@@ -5,8 +5,8 @@ import RouteActivities from './RouteActivities'
 import NestedMenu from './layout/NestedMenu'
 import moment from 'moment'
 import Icons from '../assets/Icons'
-import { ViewportContext } from '../utils/ViewportContext'
 import { FlyToInterpolator } from 'react-map-gl'
+import { UIStateContext } from '../utils/UIStateContext'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -38,7 +38,7 @@ const RouteTitleWrapper = styled.div`
 `
 
 const CarDetails = ({ vehicle }) => {
-  const { setViewport } = React.useContext(ViewportContext)
+  const { dispatch } = React.useContext(UIStateContext)
   const [showInfo, setShowInfo] = React.useState({
     route: false,
     bookings: false,
@@ -51,13 +51,16 @@ const CarDetails = ({ vehicle }) => {
     const activitie = vehicle.activities.filter(
       (activitie) => activitie.id === id
     )
-    setViewport({
-      latitude: activitie[0].address.lon,
-      longitude: activitie[0].address.lat,
-      zoom: 17,
-      transitionDuration: 2000,
-      transitionInterpolator: new FlyToInterpolator(),
-      transitionEasing: (t) => t * (2 - t),
+    dispatch({
+      type: 'viewport',
+      payload: {
+        latitude: activitie[0].address.lon,
+        longitude: activitie[0].address.lat,
+        zoom: 14,
+        transitionDuration: 2000,
+        transitionInterpolator: new FlyToInterpolator(),
+        transitionEasing: (t) => t * (2 - t),
+      },
     })
   }
 

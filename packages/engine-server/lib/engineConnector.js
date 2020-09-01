@@ -50,6 +50,13 @@ amqp
           routingKeys.DELIVERED
         )
       )
+      .then(() =>
+        ch.bindQueue(
+          'update_booking_in_admin_ui',
+          'outgoing_booking_updates',
+          routingKeys.NEW
+        )
+      )
   )
 
 const bookings = amqp

@@ -11,7 +11,7 @@ const CreateBooking = ({ onSubmit }) => {
   const [formState, setState] = React.useState({
     id: '',
     measurement: '',
-    weight: null,
+    weight: '',
     cargo: '',
     pickup: { name: '', lat: '', lon: '', timewindow: null },
     delivery: { name: '', lat: '', lon: '', timewindow: null },

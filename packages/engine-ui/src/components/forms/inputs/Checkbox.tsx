@@ -40,6 +40,10 @@ const CustomCheckboxContainer = styled.label`
     opacity: 1;
     border: 2px solid #666666;
   }
+  
+  input:focus ~ .custom-checkbox {
+    border: 2px solid #13c57b;
+  }
 
   input:active ~ .custom-checkbox {
     transform: rotate(0deg) scale(0.95);

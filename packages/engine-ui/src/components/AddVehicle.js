@@ -3,8 +3,10 @@ import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import Form from './forms/AddVehicle'
 import NestedMenu from './layout/NestedMenu'
+import { UIStateContext } from '../utils/UIStateContext'
 
-const AddVehicle = ({ addVehicle, currentPosition }) => {
+const AddVehicle = ({ onSubmit }) => {
+  const { state: UIState } = React.useContext(UIStateContext)
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
 
@@ -21,13 +23,17 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   })
 
   useEffect(() => {
-    if (isActive && currentPosition.lat && currentPosition.lon) {
+    if (
+      isActive &&
+      UIState.lastClickedPosition.lat &&
+      UIState.lastClickedPosition.lon
+    ) {
       setState((formState) => ({
         ...formState,
-        startPosition: currentPosition,
+        startPosition: UIState.lastClickedPosition,
       }))
     }
-  }, [currentPosition, isActive])
+  }, [UIState.lastClickedPosition, isActive])
 
   useEffect(() => {
     setActive(true)
@@ -38,7 +44,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   const onSubmitHandler = (event) => {
     event.preventDefault()
 
-    addVehicle({
+    onSubmit({
       ...formState,
       lat: formState.startPosition.lat,
       lon: formState.startPosition.lon,

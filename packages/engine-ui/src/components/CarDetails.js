@@ -5,8 +5,8 @@ import RouteActivities from './RouteActivities'
 import NestedMenu from './layout/NestedMenu'
 import moment from 'moment'
 import Icons from '../assets/Icons'
-import { handleViewportUpdate } from '../utils/mapUtils'
 import { ViewportContext } from '../utils/ViewportContext'
+import { FlyToInterpolator } from 'react-map-gl'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -51,9 +51,14 @@ const CarDetails = ({ vehicle }) => {
     const activitie = vehicle.activities.filter(
       (activitie) => activitie.id === id
     )
-    setViewport(
-      handleViewportUpdate(activitie[0].address.lon, activitie[0].address.lat)
-    )
+    setViewport({
+      latitude: activitie[0].address.lon,
+      longitude: activitie[0].address.lat,
+      zoom: 17,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: (t) => t * (2 - t),
+    })
   }
 
   return (

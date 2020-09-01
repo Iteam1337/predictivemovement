@@ -8,11 +8,11 @@ import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import Hooks from '../utils/hooks'
 import CarDetails from './CarDetails'
-
 import AddVehicle from './AddVehicle'
 import Plan from './Plan'
 import Elements from '../shared-elements'
 import Navigation from './Navigation'
+import { UIStateContext } from '../utils/UIStateContext'
 
 const Container = styled.div`
   position: absolute;
@@ -26,7 +26,6 @@ const Container = styled.div`
 
 const Content = styled.div`
   padding: 2rem;
-  margin-right: 2rem;
   width: 350px;
 `
 
@@ -56,11 +55,19 @@ const AddFormFieldButton = ({
 
 const Details = ({ state }) => {
   const { data, type } = Hooks.useFilteredStateFromQueryParams(state)
+  const { dispatch } = React.useContext(UIStateContext)
 
   const componentFromType = () => {
     switch (type) {
       case 'booking':
-        return <BookingDetails booking={data.bookings[0]} />
+        return (
+          <BookingDetails
+            booking={data.bookings[0]}
+            onClickHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+        )
       case 'vehicle':
         return <CarDetails car={data.cars[0]} />
       default:
@@ -75,6 +82,7 @@ const Sidebar = (state) => {
   const [navigationCurrentView, setNavigationCurrentView] = React.useState(
     'bookings'
   )
+
   const { data } = Hooks.useFilteredStateFromQueryParams(state)
 
   const currentViewToElement = () => {
@@ -82,7 +90,6 @@ const Sidebar = (state) => {
       case 'bookings':
         return (
           <>
-            <h3>Aktuella bokningar</h3>
             <Bookings bookings={state.bookings} />
             <AddNewContainer>
               <Link to="/add-booking">
@@ -139,16 +146,18 @@ const Sidebar = (state) => {
               <>{currentViewToElement()}</>
             </Route>
             <Route path="/details">
-              <Details state={data} />
-            </Route>
-            <Route path="/add-vehicle">
-              <AddVehicle
-                currentPosition={state.currentPosition}
-                addVehicle={state.addVehicle}
+              <Details
+                handleHighlightBooking={() =>
+                  state.handleHighlightBooking(undefined)
+                }
+                state={data}
               />
             </Route>
+            <Route path="/add-vehicle">
+              <AddVehicle onSubmit={state.addVehicle} />
+            </Route>
             <Route path="/add-booking">
-              <CreateBooking createBooking={state.createBooking} />
+              <CreateBooking onSubmit={state.createBooking} />
             </Route>
             <Route path="/add-bookings">
               <CreateBookings createBookings={state.createBookings} />

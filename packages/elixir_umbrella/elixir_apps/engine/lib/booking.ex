@@ -6,6 +6,14 @@ defmodule Booking do
   def make(pickup, delivery, external_id, metadata, size) do
     id = "pmb-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
+    booking = %Booking{
+      id: id,
+      pickup: pickup,
+      delivery: delivery,
+      metadata: metadata,
+      events: []
+    }
+
     GenServer.start_link(
       __MODULE__,
       %Booking{
@@ -18,6 +26,14 @@ defmodule Booking do
         size: size
       },
       name: via_tuple(id)
+    )
+
+    route = Osrm.route(pickup, delivery)
+
+    MQ.publish(
+      booking |> Map.put(:route, route),
+      Application.fetch_env!(:engine, :outgoing_booking_exchange),
+      "new"
     )
 
     id

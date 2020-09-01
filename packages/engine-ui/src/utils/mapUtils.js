@@ -1,6 +1,6 @@
 import palette from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
-import vehicleIcon from '../assets/vehicle.svg'
+import vehicleSymbol from '../assets/vehicle.svg'
 import parcelIcon from '../assets/parcel.svg'
 
 export const point = (coordinates, props) => ({
@@ -106,7 +106,7 @@ export const carToFeature = (cars) => {
   }
 }
 
-export const carIcon = (cars) => {
+export const vehicleIcon = (cars) => {
   let index = 0
   try {
     return [
@@ -228,9 +228,9 @@ const getIconType = (type) => {
         },
         colors: ['#9DFFF9', '#ffffff'],
         options: {
-          iconAtlas: vehicleIcon,
-          size: 7,
-          activeSize: 8,
+          iconAtlas: vehicleSymbol,
+          size: 6,
+          activeSize: 7,
         },
       }
     case 'booking':
@@ -257,7 +257,7 @@ const getIconType = (type) => {
   }
 }
 
-export const toIconLayer = (data, active) => {
+export const toIconLayer = (data, activeId) => {
   if (!data.length) {
     return
   }
@@ -268,7 +268,7 @@ export const toIconLayer = (data, active) => {
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
-      color: active.includes(feature.id) ? colors[0] : colors[1],
+      color: activeId === feature.id ? colors[0] : colors[1],
     },
   }))
 
@@ -279,9 +279,11 @@ export const toIconLayer = (data, active) => {
     iconAtlas: options.iconAtlas,
     iconMapping: ICON_MAPPING,
     getIcon: (d) => 'marker',
-    sizeScale: active.includes(data[0].id) ? options.activeSize : options.size,
+    sizeScale: options.size,
     getPosition: (d) => d.coordinates,
-    getSize: (d) => 5,
+    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
+    getSize: (d) =>
+      d.properties.id === activeId ? options.activeSize : options.size,
     getColor: (d) => hexToRGB(d.properties.color),
   })
 }
@@ -296,6 +298,6 @@ export default {
   toGeoJsonLayer,
   toIconLayer,
   hexToRGB,
-  carIcon,
+  vehicleIcon,
   bookingIcon,
 }

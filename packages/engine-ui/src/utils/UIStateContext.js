@@ -9,6 +9,8 @@ const reducer = (state, action) => {
       return { ...state, viewport: action.payload }
     case 'highlightBooking':
       return { ...state, highlightBooking: action.payload }
+    case 'highlightVehicle':
+      return { ...state, highlightVehicle: action.payload }
     case 'lastClickedPosition':
       return {
         ...state,

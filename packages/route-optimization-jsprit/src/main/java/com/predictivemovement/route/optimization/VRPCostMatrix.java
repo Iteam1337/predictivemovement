@@ -24,14 +24,23 @@ public class VRPCostMatrix {
     private List<String> sourceIds;
     private List<String> destinationIds;
 
+    private JSONObject routeRequest;
     private Map<String, Location> routeLocations;
 
-    public VehicleRoutingTransportCosts set(JSONObject routeRequest, Map<String, Location> locations) {
+    VRPCostMatrix(VRPSetting vrpSetting) {
+        routeRequest = vrpSetting.routeRequest;
+        routeLocations = vrpSetting.locations;
+    }
+
+    protected VehicleRoutingTransportCosts createCostMatrix() {
         if (!routeRequest.has("matrix"))
             return null;
 
         matrix = routeRequest.getJSONObject("matrix");
-        routeLocations = locations;
+        if (matrix.isEmpty())
+            return null;
+
+        matrix = routeRequest.getJSONObject("matrix");
 
         if (matrix.has("sources")) {
             JSONArray sourcesLocation = matrix.getJSONArray("sources");

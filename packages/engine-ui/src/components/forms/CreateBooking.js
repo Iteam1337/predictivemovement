@@ -66,7 +66,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               <FormInputs.TextInput
                 name="measurement"
                 value={state.measurement}
-                placeholder="Mått (BxHxD)"
+                placeholder="Mått (BxHxDcm)"
                 onChangeHandler={eventHandlers.handleTextInputChange(
                   'measurement',
                   onChangeHandler
@@ -75,7 +75,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             </Elements.Layout.TextInputPairItem>
             <Elements.Layout.TextInputPairItem>
               <FormInputs.TextInput
-                step={0.1}
+                step={1}
                 name="weight"
                 value={state.weight}
                 placeholder="Vikt (kg)"
@@ -105,7 +105,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <Elements.Form.Label htmlFor="pickup">Upphämtning</Elements.Form.Label>
         <FormInputs.AddressSearchInput
-          placeholder="T.ex. BARNSTUGEVÄGEN 22"
+          placeholder="Adress"
           onChangeHandler={eventHandlers.handleDropdownSelect(
             'pickup',
             onChangeHandler
@@ -143,7 +143,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 'name',
                 onChangeHandler
               )}
-              placeholder="Sportbutiken AB"
+              placeholder="Namn"
               iconInset
             />
           </Elements.Layout.InputInnerContainer>
@@ -169,7 +169,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 'contact',
                 onChangeHandler
               )}
-              placeholder="070-123 45 67"
+              placeholder="Telefonnummer"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
@@ -178,7 +178,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <Elements.Form.Label htmlFor="delivery">Avlämning</Elements.Form.Label>
         <FormInputs.AddressSearchInput
-          placeholder="T.ex. BARNSTUGEVÄGEN 7"
+          placeholder="Adress"
           onChangeHandler={eventHandlers.handleDropdownSelect(
             'delivery',
             onChangeHandler
@@ -219,7 +219,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 'name',
                 onChangeHandler
               )}
-              placeholder="Anna Andersson"
+              placeholder="Namn"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
@@ -237,14 +237,14 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             <FormInputs.TextInput
               iconInset
               name="recipient-contact"
-              type="number"
+              type="tel"
               value={state.recipient.contact}
               onChangeHandler={eventHandlers.handleContactInputChange(
                 'recipient',
                 'contact',
                 onChangeHandler
               )}
-              placeholder="070-123 45 67"
+              placeholder="Telefonnummer"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>

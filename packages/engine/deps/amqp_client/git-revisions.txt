@@ -1,0 +1,1 @@
+RabbitMQ AMQP Client 3.8.3

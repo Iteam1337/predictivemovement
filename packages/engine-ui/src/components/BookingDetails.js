@@ -3,6 +3,7 @@ import Elements from '../shared-elements'
 import styled from 'styled-components'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams } from 'react-router-dom'
+import helpers from '../utils/helpers'
 
 const Paragraph = styled.p`
   margin: 0;
@@ -10,28 +11,25 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 
-const BookingDetails = ({ bookings }) => {
+const BookingDetails = ({ bookings, onClickHandler }) => {
   const { bookingId } = useParams()
-  const booking = bookings.find((b) => b.id === bookingId)
 
+  const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
-  const getAddressFromCoordinates = async ({ lon, lat }) => {
-    return await fetch(
-      `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
-    )
-      .then((res) => res.json())
-      .then(({ features }) => features[0].properties.label)
-  }
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
       pickupCoordinates,
       deliveryCoordinates
     ) => {
-      const pickupAddress = await getAddressFromCoordinates(pickupCoordinates)
-      const deliveryAddress = await getAddressFromCoordinates(
+      const pickupAddress = await helpers.getAddressFromCoordinate(
+        pickupCoordinates
+      )
+
+      const deliveryAddress = await helpers.getAddressFromCoordinate(
         deliveryCoordinates
       )
+
       setAddress({
         pickup: pickupAddress,
         delivery: deliveryAddress,
@@ -42,17 +40,17 @@ const BookingDetails = ({ bookings }) => {
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])
 
-  if (!booking || !address) return <p>Loading...</p>
+  if (!booking || !address) return <p>Laddar bokning...</p>
 
   return (
-    <MainRouteLayout>
+    <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
 
-          <Elements.Links.RoundedLink margin="0 0.5rem">
+          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
             {booking.id}
-          </Elements.Links.RoundedLink>
+          </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         <Elements.Typography.StrongParagraph>
           Upphämtning
@@ -69,7 +67,7 @@ const BookingDetails = ({ bookings }) => {
             </Elements.Typography.StrongParagraph>
 
             <Elements.Links.RoundedLink
-              to={`/details?type=vehicle&id=${booking.assigned_to.id}`}
+              to={`/transports/${booking.assigned_to.id}`}
             >
               {booking.id}
             </Elements.Links.RoundedLink>

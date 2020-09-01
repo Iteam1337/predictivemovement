@@ -15,6 +15,9 @@ const DropdownButton = styled.button`
   text-align: left;
   padding: 0.5rem;
   border: 1px solid grey;
+  :focus {
+    outline-color: #13c57b;
+  }
 `
 
 const Component = ({ onChangeHandler, placeholder }) => {

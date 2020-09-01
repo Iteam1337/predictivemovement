@@ -3,7 +3,7 @@ import Elements from './Elements'
 import { useHistory } from 'react-router-dom'
 import MainRouteLayout from './layout/MainRouteLayout'
 
-const CreateBookings = ({ createBookings }) => {
+const CreateBookings = ({ onSubmit }) => {
   const history = useHistory()
   const [formState, setState] = React.useState({
     total: '3',
@@ -14,7 +14,7 @@ const CreateBookings = ({ createBookings }) => {
 
     try {
       const total = parseInt(formState.total, 10)
-      createBookings(total)
+      onSubmit(total)
     } catch (ex) {
       return false
     } finally {

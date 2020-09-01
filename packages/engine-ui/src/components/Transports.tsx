@@ -7,9 +7,8 @@ import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 
 const Transports: React.FC<{
   cars: any
-  currentPosition: any
   addVehicle: any
-}> = ({ cars, currentPosition, addVehicle }) => {
+}> = ({ cars, addVehicle }) => {
   const { path, url } = useRouteMatch()
   return (
     <>
@@ -17,11 +16,13 @@ const Transports: React.FC<{
         <h3>Aktuella transporter</h3>
         <Cars cars={cars} />
         <Link to={`${url}/add-vehicle`}>
-          <AddFormFieldButton>+ Lägg till transport</AddFormFieldButton>
+          <AddFormFieldButton onClickHandler={null}>
+            + Lägg till transport
+          </AddFormFieldButton>
         </Link>
       </Route>
       <Route path={`${path}/add-vehicle`}>
-        <AddVehicle currentPosition={currentPosition} addVehicle={addVehicle} />
+        <AddVehicle onSubmit={addVehicle} />
       </Route>
       <Route path={`${path}/:vehicleId`}>
         <CarDetails vehicles={cars} />

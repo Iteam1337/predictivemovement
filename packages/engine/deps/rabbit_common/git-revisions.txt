@@ -1,0 +1,1 @@
+Modules shared by rabbitmq-server and rabbitmq-erlang-client 3.8.3

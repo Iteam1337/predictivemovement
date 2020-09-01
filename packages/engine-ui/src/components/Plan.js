@@ -4,7 +4,7 @@ import Elements from './Elements'
 import { useHistory } from 'react-router-dom'
 import Icons from '../assets/Icons'
 import RouteActivities from './RouteActivities'
-import { ViewportContext } from '../utils/ViewportContext'
+import { UIStateContext } from '../utils/UIStateContext'
 import { FlyToInterpolator } from 'react-map-gl'
 
 const RouteTitleWrapper = styled.div`
@@ -22,7 +22,7 @@ const Chevron = styled(Icons.Arrow)`
 `
 
 const Plan = ({ plan }) => {
-  const { setViewport } = React.useContext(ViewportContext)
+  const { dispatch } = React.useContext(UIStateContext)
   const [showRouteInfo, setOpenRouteInfo] = React.useState(false)
   const history = useHistory()
   const driverPlans = plan.filter((d) => d.activities.length > 0)
@@ -59,15 +59,18 @@ const Plan = ({ plan }) => {
                 <Elements.StrongParagraph>Transport</Elements.StrongParagraph>
                 <Elements.RoundedLink
                   margin="0 0.5rem"
-                  to={`/details?type=vehicle&id=${vehicle.id}`}
+                  to={`/transports/${vehicle.id}`}
                   onClick={() =>
-                    setViewport({
-                      latitude: vehicle.position.lat,
-                      longitude: vehicle.position.lon,
-                      zoom: 10,
-                      transitionDuration: 3000,
-                      transitionInterpolator: new FlyToInterpolator(),
-                      transitionEasing: (t) => t * (2 - t),
+                    dispatch({
+                      type: 'viewport',
+                      payload: {
+                        latitude: vehicle.position.lat,
+                        longitude: vehicle.position.lon,
+                        zoom: 10,
+                        transitionDuration: 3000,
+                        transitionInterpolator: new FlyToInterpolator(),
+                        transitionEasing: (t) => t * (2 - t),
+                      },
                     })
                   }
                 >

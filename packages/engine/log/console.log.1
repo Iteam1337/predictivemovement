@@ -1,0 +1,101 @@
+2020-06-08 13:31:40.304 [info] <0.43.0> Application lager started on node nonode@nohost
+2020-06-08 13:31:40.314 [info] <0.43.0> Application xmerl started on node nonode@nohost
+2020-06-08 13:31:40.343 [info] <0.43.0> Application sasl started on node nonode@nohost
+2020-06-08 13:31:40.349 [info] <0.43.0> Application tools started on node nonode@nohost
+2020-06-08 13:31:40.351 [info] <0.43.0> Application jsx started on node nonode@nohost
+2020-06-08 13:31:40.363 [info] <0.43.0> Application ranch started on node nonode@nohost
+2020-06-08 13:31:40.367 [info] <0.43.0> Application recon started on node nonode@nohost
+2020-06-08 13:31:40.408 [info] <0.43.0> Application credentials_obfuscation started on node nonode@nohost
+2020-06-08 13:31:40.408 [info] <0.43.0> Application rabbit_common started on node nonode@nohost
+2020-06-08 13:31:40.418 [info] <0.43.0> Application amqp_client started on node nonode@nohost
+2020-06-08 13:31:40.418 [info] <0.43.0> Application amqp started on node nonode@nohost
+2020-06-08 13:31:40.420 [info] <0.43.0> Application broadway_rabbitmq started on node nonode@nohost
+2020-06-08 13:31:40.640 [error] <0.1044.0> CRASH REPORT Process <0.1044.0> with 0 neighbours crashed with reason: #{'__exception__' => true,'__struct__' => 'Elixir.ArgumentError',message => <<"invalid options given to BroadwayRabbitMQ.AmqpClient.init/1, expected :queue to be a string, got: nil">>} in 'Elixir.BroadwayRabbitMQ.Producer':'init_client!'/2 line 453
+2020-06-08 13:31:40.640 [error] <0.1043.0> Supervisor 'Elixir.BookingRoutes.Broadway.ProducerSupervisor' had child 'Elixir.BookingRoutes.Broadway.Producer_0' started with 'Elixir.Broadway.Producer':start_link([{broadway,[{hibernate_after,15000},{batchers,[]},{context,context_not_set},{resubscribe_interval,...},...]},...], 0, [{name,'Elixir.BookingRoutes.Broadway.Producer_0'},{hibernate_after,15000}]) at undefined exit with reason #{'__exception__' => true,'__struct__' => 'Elixir.ArgumentError',message => <<"invalid options given to BroadwayRabbitMQ.AmqpClient.init/1, expected :queue to be a string, got: nil">>} in 'Elixir.BroadwayRabbitMQ.Producer':'init_client!'/2 line 453 in context start_error
+2020-06-08 13:31:40.641 [error] <0.1042.0> Supervisor 'Elixir.BookingRoutes.Broadway.Supervisor' had child #Ref<0.2573714332.4082106373.104692> started with 'Elixir.Supervisor':start_link([#{id => 'Elixir.BookingRoutes.Broadway.Producer_0',shutdown => 30000,start => {'Elixir.Broadway.Producer',...}}], [{name,'Elixir.BookingRoutes.Broadway.ProducerSupervisor'},{strategy,one_for_one},{max_restarts,...},...]) at undefined exit with reason {shutdown,{failed_to_start_child,'Elixir.BookingRoutes.Broadway.Producer_0',{#{'__exception__' => true,'__struct__' => 'Elixir.ArgumentError',message => <<"invalid options given to BroadwayRabbitMQ.AmqpClient.init/1, expected :queue to be a string, got: nil">>},[{'Elixir.BroadwayRabbitMQ.Producer','init_client!',2,[{file,"lib/broadway_rabbitmq/producer.ex"},{line,453}]},{'Elixir.BroadwayRabbitMQ.Producer',init,1,[{file,"lib/broadway_rabbitmq/producer.ex"},{line,204}]},{'Elixir.Broadway.Producer',...},...]}}} in context start_error
+2020-06-08 13:31:40.641 [error] <0.1041.0>@Elixir.Broadway.Server:init:30 CRASH REPORT Process <0.1041.0> with 0 neighbours crashed with reason: no match of right hand value {error,{shutdown,{failed_to_start_child,#Ref<0.2573714332.4082106373.104692>,{shutdown,{failed_to_start_child,'Elixir.BookingRoutes.Broadway.Producer_0',{#{'__exception__' => true,'__struct__' => 'Elixir.ArgumentError',message => <<"invalid options given to BroadwayRabbitMQ.AmqpClient.init/1, expected :queue to be a string, got: nil">>},[{'Elixir.BroadwayRabbitMQ.Producer','init_client!',2,[{file,"lib/broadway_rabbitmq/producer.ex"},{line,453}]},{'Elixir.BroadwayRabbitMQ.Producer',init,1,[{...},...]},...]}}}}}} in 'Elixir.Broadway.Server':init/1 line 30
+2020-06-08 13:31:40.642 [error] <0.897.0>@Elixir.Broadway.Server:init:30 Supervisor 'Elixir.Engine.Supervisor' had child 'Elixir.BookingRoutes' started with 'Elixir.BookingRoutes':start_link([]) at undefined exit with reason no match of right hand value {error,{shutdown,{failed_to_start_child,#Ref<0.2573714332.4082106373.104692>,{shutdown,{failed_to_start_child,'Elixir.BookingRoutes.Broadway.Producer_0',{#{'__exception__' => true,'__struct__' => 'Elixir.ArgumentError',message => <<"invalid options given to BroadwayRabbitMQ.AmqpClient.init/1, expected :queue to be a string, got: nil">>},[{'Elixir.BroadwayRabbitMQ.Producer','init_client!',2,[{file,"lib/broadway_rabbitmq/producer.ex"},{line,453}]},{'Elixir.BroadwayRabbitMQ.Producer',init,1,[{...},...]},...]}}}}}} in 'Elixir.Broadway.Server':init/1 line 30 in context start_error
+2020-06-08 13:36:58.464 [info] <0.43.0> Application lager started on node nonode@nohost
+2020-06-08 13:36:58.472 [info] <0.43.0> Application xmerl started on node nonode@nohost
+2020-06-08 13:36:58.493 [info] <0.43.0> Application sasl started on node nonode@nohost
+2020-06-08 13:36:58.502 [info] <0.43.0> Application tools started on node nonode@nohost
+2020-06-08 13:36:58.506 [info] <0.43.0> Application jsx started on node nonode@nohost
+2020-06-08 13:36:58.525 [info] <0.43.0> Application ranch started on node nonode@nohost
+2020-06-08 13:36:58.531 [info] <0.43.0> Application recon started on node nonode@nohost
+2020-06-08 13:36:58.584 [info] <0.43.0> Application credentials_obfuscation started on node nonode@nohost
+2020-06-08 13:36:58.584 [info] <0.43.0> Application rabbit_common started on node nonode@nohost
+2020-06-08 13:36:58.592 [info] <0.43.0> Application amqp_client started on node nonode@nohost
+2020-06-08 13:36:58.596 [info] <0.43.0> Application amqp started on node nonode@nohost
+2020-06-08 13:36:58.598 [info] <0.43.0> Application broadway_rabbitmq started on node nonode@nohost
+2020-06-08 13:36:58.898 [info] <0.43.0> Application engine started on node nonode@nohost
+2020-06-08 13:40:17.585 [info] <0.43.0> Application lager started on node nonode@nohost
+2020-06-08 13:40:17.593 [info] <0.43.0> Application xmerl started on node nonode@nohost
+2020-06-08 13:40:17.617 [info] <0.43.0> Application sasl started on node nonode@nohost
+2020-06-08 13:40:17.623 [info] <0.43.0> Application tools started on node nonode@nohost
+2020-06-08 13:40:17.626 [info] <0.43.0> Application jsx started on node nonode@nohost
+2020-06-08 13:40:17.636 [info] <0.43.0> Application ranch started on node nonode@nohost
+2020-06-08 13:40:17.639 [info] <0.43.0> Application recon started on node nonode@nohost
+2020-06-08 13:40:17.679 [info] <0.43.0> Application credentials_obfuscation started on node nonode@nohost
+2020-06-08 13:40:17.679 [info] <0.43.0> Application rabbit_common started on node nonode@nohost
+2020-06-08 13:40:17.690 [info] <0.43.0> Application amqp_client started on node nonode@nohost
+2020-06-08 13:40:17.692 [info] <0.43.0> Application amqp started on node nonode@nohost
+2020-06-08 13:40:17.693 [info] <0.43.0> Application broadway_rabbitmq started on node nonode@nohost
+2020-06-08 13:40:18.002 [info] <0.43.0> Application engine started on node nonode@nohost
+2020-06-08 13:48:11.885 [info] <0.43.0> Application lager started on node nonode@nohost
+2020-06-08 13:48:11.896 [info] <0.43.0> Application xmerl started on node nonode@nohost
+2020-06-08 13:48:11.918 [info] <0.43.0> Application sasl started on node nonode@nohost
+2020-06-08 13:48:11.927 [info] <0.43.0> Application tools started on node nonode@nohost
+2020-06-08 13:48:11.929 [info] <0.43.0> Application jsx started on node nonode@nohost
+2020-06-08 13:48:11.940 [info] <0.43.0> Application ranch started on node nonode@nohost
+2020-06-08 13:48:11.943 [info] <0.43.0> Application recon started on node nonode@nohost
+2020-06-08 13:48:11.983 [info] <0.43.0> Application credentials_obfuscation started on node nonode@nohost
+2020-06-08 13:48:11.983 [info] <0.43.0> Application rabbit_common started on node nonode@nohost
+2020-06-08 13:48:11.993 [info] <0.43.0> Application amqp_client started on node nonode@nohost
+2020-06-08 13:48:11.996 [info] <0.43.0> Application amqp started on node nonode@nohost
+2020-06-08 13:48:11.997 [info] <0.43.0> Application broadway_rabbitmq started on node nonode@nohost
+2020-06-08 13:48:12.312 [info] <0.43.0> Application engine started on node nonode@nohost
+2020-06-09 13:33:54.246 [info] <0.43.0> Application lager started on node nonode@nohost
+2020-06-09 13:33:54.255 [info] <0.43.0> Application xmerl started on node nonode@nohost
+2020-06-09 13:33:54.277 [info] <0.43.0> Application sasl started on node nonode@nohost
+2020-06-09 13:33:54.287 [info] <0.43.0> Application tools started on node nonode@nohost
+2020-06-09 13:33:54.293 [info] <0.43.0> Application jsx started on node nonode@nohost
+2020-06-09 13:33:54.306 [info] <0.43.0> Application ranch started on node nonode@nohost
+2020-06-09 13:33:54.308 [info] <0.43.0> Application recon started on node nonode@nohost
+2020-06-09 13:33:54.357 [info] <0.43.0> Application credentials_obfuscation started on node nonode@nohost
+2020-06-09 13:33:54.357 [info] <0.43.0> Application rabbit_common started on node nonode@nohost
+2020-06-09 13:33:54.366 [info] <0.43.0> Application amqp_client started on node nonode@nohost
+2020-06-09 13:33:54.369 [info] <0.43.0> Application amqp started on node nonode@nohost
+2020-06-09 13:33:54.370 [info] <0.43.0> Application broadway_rabbitmq started on node nonode@nohost
+2020-06-09 13:33:54.697 [info] <0.43.0> Application engine started on node nonode@nohost
+2020-06-09 23:45:39.088 [error] <0.684.0> gen_server <0.684.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.090 [error] <0.679.0> gen_server <0.679.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.090 [error] <0.483.0> gen_server <0.483.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.091 [error] <0.501.0> gen_server <0.501.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.091 [error] <0.676.0> gen_server <0.676.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.091 [error] <0.477.0> gen_server <0.477.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.091 [error] <0.497.0> gen_server <0.497.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.091 [error] <0.649.0> gen_server <0.649.0> terminated with reason: {socket_error,timeout}
+2020-06-09 23:45:39.175 [error] <0.684.0> CRASH REPORT Process <0.684.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.175 [error] <0.483.0> CRASH REPORT Process <0.483.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.177 [error] <0.678.0> Supervisor {<0.678.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.743>, <0.679.0>, <0.682.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50395 -> 127.0.0.1:5672">>) at <0.684.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.177 [error] <0.678.0> Supervisor {<0.678.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.743>, <0.679.0>, <0.682.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50395 -> 127.0.0.1:5672">>) at <0.684.0> exit with reason reached_max_restart_intensity in context shutdown
+2020-06-09 23:45:39.177 [error] <0.501.0> CRASH REPORT Process <0.501.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.177 [error] <0.679.0> CRASH REPORT Process <0.679.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.177 [error] <0.676.0> CRASH REPORT Process <0.676.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.177 [error] <0.476.0> Supervisor {<0.476.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.740>, <0.477.0>, <0.481.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50392 -> 127.0.0.1:5672">>) at <0.483.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.178 [error] <0.476.0> Supervisor {<0.476.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.740>, <0.477.0>, <0.481.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50392 -> 127.0.0.1:5672">>) at <0.483.0> exit with reason reached_max_restart_intensity in context shutdown
+2020-06-09 23:45:39.178 [error] <0.496.0> Supervisor {<0.496.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.741>, <0.497.0>, <0.499.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50393 -> 127.0.0.1:5672">>) at <0.501.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.178 [error] <0.496.0> Supervisor {<0.496.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.741>, <0.497.0>, <0.499.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50393 -> 127.0.0.1:5672">>) at <0.501.0> exit with reason reached_max_restart_intensity in context shutdown
+2020-06-09 23:45:39.178 [error] <0.644.0> Supervisor {<0.644.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.742>, <0.649.0>, <0.674.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50394 -> 127.0.0.1:5672">>) at <0.676.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.179 [error] <0.644.0> Supervisor {<0.644.0>,amqp_connection_type_sup} had child main_reader started with amqp_main_reader:start_link(#Port<0.742>, <0.649.0>, <0.674.0>, {method,rabbit_framing_amqp_0_9_1}, <<"client 127.0.0.1:50394 -> 127.0.0.1:5672">>) at <0.676.0> exit with reason reached_max_restart_intensity in context shutdown
+2020-06-09 23:45:39.179 [error] <0.677.0> Supervisor {<0.677.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.678.0>, {amqp_params_network,<<"guest">>,<<"RdFjgKWmdJ8ttP+iWMuG9FPcCRIcnal8aRgi/IJ1zBgSXnOI6dFSCmNzgXkLGK...">>,...}) at <0.679.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.179 [error] <0.677.0> Supervisor {<0.677.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.678.0>, {amqp_params_network,<<"guest">>,<<"RdFjgKWmdJ8ttP+iWMuG9FPcCRIcnal8aRgi/IJ1zBgSXnOI6dFSCmNzgXkLGK...">>,...}) at <0.679.0> exit with reason reached_max_restart_intensity in context shutdown
+2020-06-09 23:45:39.179 [error] <0.497.0> CRASH REPORT Process <0.497.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.179 [error] <0.477.0> CRASH REPORT Process <0.477.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.180 [error] <0.495.0> Supervisor {<0.495.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.496.0>, {amqp_params_network,<<"guest">>,<<"okhW0nFSLICqv1DipHUUPMiJ5c1SpR89XRXHy+LONA2TyLDzNqdvXg9ighUzB3...">>,...}) at <0.497.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.180 [error] <0.495.0> Supervisor {<0.495.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.496.0>, {amqp_params_network,<<"guest">>,<<"okhW0nFSLICqv1DipHUUPMiJ5c1SpR89XRXHy+LONA2TyLDzNqdvXg9ighUzB3...">>,...}) at <0.497.0> exit with reason reached_max_restart_intensity in context shutdown
+2020-06-09 23:45:39.180 [error] <0.475.0> Supervisor {<0.475.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.476.0>, {amqp_params_network,<<"guest">>,<<"EvI1pCpRVDW2CPBbiNSHyWqXGYNfVkJ/A6L9B+h64qjLbWu6i5NxfCgNSV0vPx...">>,...}) at <0.477.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.180 [error] <0.475.0> Supervisor {<0.475.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.476.0>, {amqp_params_network,<<"guest">>,<<"EvI1pCpRVDW2CPBbiNSHyWqXGYNfVkJ/A6L9B+h64qjLbWu6i5NxfCgNSV0vPx...">>,...}) at <0.477.0> exit with reason reached_max_restart_intensity in context shutdown
+2020-06-09 23:45:39.180 [error] <0.649.0> CRASH REPORT Process <0.649.0> with 0 neighbours exited with reason: {socket_error,timeout} in gen_server:handle_common_reply/8 line 751
+2020-06-09 23:45:39.180 [error] <0.642.0> Supervisor {<0.642.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.644.0>, {amqp_params_network,<<"guest">>,<<"VBPIdpuGFf0HLQEN05IyA4m0tBplYIU0DgmrkWaLMek9N/SU3XZaR7HFSMoIhV...">>,...}) at <0.649.0> exit with reason {socket_error,timeout} in context child_terminated
+2020-06-09 23:45:39.181 [error] <0.642.0> Supervisor {<0.642.0>,amqp_connection_sup} had child connection started with amqp_gen_connection:start_link(<0.644.0>, {amqp_params_network,<<"guest">>,<<"VBPIdpuGFf0HLQEN05IyA4m0tBplYIU0DgmrkWaLMek9N/SU3XZaR7HFSMoIhV...">>,...}) at <0.649.0> exit with reason reached_max_restart_intensity in context shutdown

@@ -1,68 +1,67 @@
 import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
-import hooks from '../utils/hooks'
 import mapUtils from '../utils/mapUtils'
-import { ViewportContext } from '../utils/ViewportContext'
-import { useHistory, useLocation } from 'react-router-dom'
+import { UIStateContext } from '../utils/UIStateContext'
+import { useHistory } from 'react-router-dom'
+import helpers from '../utils/helpers'
 
-const Map = ({ state, onMapClick }) => {
-  const { data } = hooks.useFilteredStateFromQueryParams(state)
+const Map = ({ data }) => {
   const history = useHistory()
-  const location = useLocation()
-  const [showOneBooking, setShowOneBooking] = React.useState(false)
-  const { viewport, setViewport, onLoad } = React.useContext(ViewportContext)
+
+  const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
   const [tooltip, setTooltip] = React.useState('')
 
-  React.useEffect(() => {
-    setShowOneBooking(location.search.includes('booking'))
-  }, [location.search])
+  // React.useEffect(() => {
+  //   if (entityTypeFromQueryParams === 'booking' && Boolean(data.bookings[0])) {
+  //     dispatch({ type: 'highlightBooking', payload: id })
+  //   }
+  // }, [entityTypeFromQueryParams, dispatch, id, data.bookings])
+
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type
     switch (type) {
       case 'booking':
-        return history.push(`/details?type=booking&id=${event.object.id}`)
+        return history.push(`/bookings/${event.object.id}`)
       case 'plan':
-        return history.push(`/details?type=car&id=${event.object.id}`)
+        return history.push(`/transports/${event.object.id}`)
       default:
         return
     }
   }
 
+  const onMapClick = ({ lngLat: [lon, lat] }) =>
+    dispatch({
+      type: 'lastClickedPosition',
+      payload: { lat, lon },
+    })
+
   const layers = [
-    showOneBooking &&
-      mapUtils.toGeoJsonLayer(
-        'geojson-bookings-layer',
-        mapUtils.bookingToFeature(data.bookings),
-        handleClickEvent
-      ),
     mapUtils.toBookingIconLayer(
-      mapUtils.bookingIcon(state.bookings),
-      showOneBooking
+      mapUtils.bookingIcon(data.bookings),
+      UIState.highlightBooking
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-cars-layer',
-      mapUtils.carToFeature(state.plan),
+      mapUtils.carToFeature(data.plan),
       handleClickEvent
     ),
+    mapUtils.toVehicleIconLayer(mapUtils.carIcon(data.cars)),
+    mapUtils.toGeoJsonLayer(
+      'geojson-bookings-layer',
 
-    mapUtils.toIconLayer(mapUtils.carIcon(state.cars)),
+      mapUtils.bookingToFeature(data.bookings),
+      handleClickEvent
+    ),
   ]
 
   const getAddressFromCoordinates = async ({ pickup, delivery }) => {
     if (!pickup || !delivery) return
-    const pickupAddress = await fetch(
-      `https://pelias.iteamdev.io/v1/reverse?point.lat=${pickup.lat}&point.lon=${pickup.lon}`
-    )
-      .then((res) => res.json())
-      .then(({ features }) => features[0].properties.label)
 
-    const deliveryAddress = await fetch(
-      `https://pelias.iteamdev.io/v1/reverse?point.lat=${delivery.lat}&point.lon=${delivery.lon}`
-    )
-      .then((res) => res.json())
-      .then(({ features }) => features[0].properties.label)
+    const pickupAddress = await helpers.getAddressFromCoordinate(pickup)
+    const deliveryAddress = await helpers.getAddressFromCoordinate(delivery)
+
     setTooltip(`${pickupAddress} - ${deliveryAddress}`)
   }
 
@@ -74,15 +73,19 @@ const Map = ({ state, onMapClick }) => {
         onMapClick(e)
         handleClickEvent(e)
       }}
-      viewState={viewport}
-      onViewStateChange={({ viewState }) => setViewport(viewState)}
-      onLoad={onLoad}
-      getTooltip={({ object }) =>
-        object &&
-        object.properties.address &&
-        getAddressFromCoordinates(object.properties.address) &&
-        tooltip
+      viewState={UIState.viewport}
+      onViewStateChange={({ viewState }) =>
+        dispatch({ type: 'viewport', payload: viewState })
       }
+      onLoad={onLoad}
+      getTooltip={({ object }) => {
+        return (
+          object &&
+          object.properties.address &&
+          getAddressFromCoordinates(object.properties.address) &&
+          tooltip
+        )
+      }}
     >
       <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />
     </DeckGL>

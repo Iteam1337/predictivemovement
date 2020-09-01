@@ -1,28 +1,43 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 import helpers from './helpers'
 
 const useFilteredStateFromQueryParams = (state) => {
-  const useQueryParams = () => new URLSearchParams(useLocation().search)
-  const type = useQueryParams().get('type')
-  const id = useQueryParams().get('id')
-  const status = useQueryParams().get('status')
+  const bookingDetailView = useRouteMatch({
+    path: '/bookings/:id',
+    exact: true,
+  })
+  const bookingOverview = useRouteMatch({ path: '/bookings', exact: true })
+  const vehicleDetailView = useRouteMatch({
+    path: '/vehicles/:id',
+    exact: true,
+  })
 
-  const statuses = status ? status.split(',') : []
+  const includeRoute = (booking) => {
+    const { route, ...rest } = booking
+
+    if (bookingOverview || bookingDetailView) {
+      return booking
+    }
+
+    return rest
+  }
+
+  const includeOneIfDetailView = (booking) => {
+    if (!bookingDetailView) return true
+
+    return booking.id === bookingDetailView.params['id'] || false
+  }
 
   return {
-    type,
-    id,
     data: {
       ...state,
-      bookings: state.bookings
-        .filter((item) => (type === 'booking' ? item.id === id : true))
-        .filter((item) =>
-          statuses.length ? statuses.includes(item.status) : true
-        ),
+      bookings: state.bookings.map(includeRoute).filter(includeOneIfDetailView),
+
       cars: state.cars.filter((item) =>
-        type === 'vehicle' ? item.id.toString() === id : true
+        vehicleDetailView ? vehicleDetailView.params.id === item.id : true
       ),
+      plan: state.plan,
     },
   }
 }

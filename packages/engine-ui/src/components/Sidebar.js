@@ -27,7 +27,6 @@ const Container = styled.div`
 
 const Content = styled.div`
   padding: 2rem;
-  margin-right: 2rem;
   width: 350px;
 `
 
@@ -51,11 +50,7 @@ const Sidebar = (state) => {
           </Route>
 
           <Route path="/transports">
-            <Transports
-              cars={state.cars}
-              currentPosition={state.currentPosition}
-              addVehicle={state.addVehicle}
-            />
+            <Transports cars={state.cars} addVehicle={state.addVehicle} />
           </Route>
 
           <Route path="/plans">

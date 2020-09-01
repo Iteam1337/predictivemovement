@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import Elements from '../../shared-elements'
 import Icons from '../../assets/Icons'
 import styled from 'styled-components'
-import { ViewportContext, DRC_MAP } from '../../utils/ViewportContext'
 
 const NestedMenuWrapper = styled.div`
   display: grid;

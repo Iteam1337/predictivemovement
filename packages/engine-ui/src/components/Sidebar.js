@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import Bookings from './Bookings'
-import Cars from './Cars'
 import CreateBooking from './CreateBooking'
 import CreateBookings from './CreateBookings'
 import { Switch as RouterSwitch, Route, Link } from 'react-router-dom'
@@ -13,6 +12,7 @@ import Plan from './Plan'
 import Elements from '../shared-elements'
 import Navigation from './Navigation'
 import { UIStateContext } from '../utils/UIStateContext'
+import Vehicles from './Vehicles'
 
 const Container = styled.div`
   position: absolute;
@@ -109,7 +109,7 @@ const Sidebar = (state) => {
         return (
           <>
             <h3>Aktuella transporter</h3>
-            <Cars cars={state.cars} />
+            <Vehicles vehicles={state.cars} />
             <Link to="/add-vehicle">
               <AddFormFieldButton>+ Lägg till transport</AddFormFieldButton>
             </Link>

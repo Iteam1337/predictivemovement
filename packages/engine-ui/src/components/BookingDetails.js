@@ -1,7 +1,8 @@
 import React from 'react'
 import Elements from '../shared-elements'
 import styled from 'styled-components'
-import NestedMenu from './layout/NestedMenu'
+import MainRouteLayout from './layout/MainRouteLayout'
+import { useParams } from 'react-router-dom'
 
 const Paragraph = styled.p`
   margin: 0;
@@ -9,7 +10,10 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 
-const BookingDetails = ({ booking }) => {
+const BookingDetails = ({ bookings }) => {
+  const { bookingId } = useParams()
+  const booking = bookings.find((b) => b.id === bookingId)
+
   const [address, setAddress] = React.useState()
   const getAddressFromCoordinates = async ({ lon, lat }) => {
     return await fetch(
@@ -41,7 +45,7 @@ const BookingDetails = ({ booking }) => {
   if (!booking || !address) return <p>Loading...</p>
 
   return (
-    <NestedMenu>
+    <MainRouteLayout>
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
@@ -76,7 +80,7 @@ const BookingDetails = ({ booking }) => {
         </Elements.Typography.StrongParagraph>
         <span>{booking.status}</span>
       </Elements.Layout.Container>
-    </NestedMenu>
+    </MainRouteLayout>
   )
 }
 

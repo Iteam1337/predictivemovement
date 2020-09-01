@@ -18,6 +18,7 @@ const RouteTitleWrapper = styled.div`
 const Chevron = styled(Icons.Arrow)`
   transform: ${({ active }) => active && `rotate(180deg)`};
   transition: transform 0.2s;
+  justify-self: flex-end;
 `
 
 const Plan = ({ plan }) => {

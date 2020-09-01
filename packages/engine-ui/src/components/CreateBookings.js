@@ -1,6 +1,7 @@
 import React from 'react'
 import Elements from './Elements'
 import { useHistory } from 'react-router-dom'
+import MainRouteLayout from './layout/MainRouteLayout'
 
 const CreateBookings = ({ createBookings }) => {
   const history = useHistory()
@@ -17,43 +18,47 @@ const CreateBookings = ({ createBookings }) => {
     } catch (ex) {
       return false
     } finally {
-      history.push('/')
+      history.push('/bookings')
     }
   }
 
   return (
-    <Elements.Container>
-      <h3>Skapa massa bokningar</h3>
-      <form onSubmit={create} autoComplete="on">
-        <div>
-          <Elements.InputContainer>
-            <Elements.Label htmlFor="pickup">Total number</Elements.Label>
-            <Elements.InputInnerContainer>
-              <Elements.TextInput
-                name="pickup"
-                type="text"
-                value={formState.total}
-                placeholder="3"
-                onChange={(e) =>
-                  setState({
-                    total: e.target.value,
-                  })
-                }
-              />
-            </Elements.InputInnerContainer>
-          </Elements.InputContainer>
-        </div>
-        <Elements.ButtonWrapper>
-          <Elements.CancelButton
-            type="button"
-            onClick={() => history.push('/')}
-          >
-            Avbryt
-          </Elements.CancelButton>
-          <Elements.SubmitButton type="submit">Lägg till</Elements.SubmitButton>
-        </Elements.ButtonWrapper>
-      </form>
-    </Elements.Container>
+    <MainRouteLayout redirect="/bookings">
+      <Elements.Container>
+        <h3>Skapa massa bokningar</h3>
+        <form onSubmit={create} autoComplete="on">
+          <div>
+            <Elements.InputContainer>
+              <Elements.Label htmlFor="pickup">Total number</Elements.Label>
+              <Elements.InputInnerContainer>
+                <Elements.TextInput
+                  name="pickup"
+                  type="text"
+                  value={formState.total}
+                  placeholder="3"
+                  onChange={(e) =>
+                    setState({
+                      total: e.target.value,
+                    })
+                  }
+                />
+              </Elements.InputInnerContainer>
+            </Elements.InputContainer>
+          </div>
+          <Elements.ButtonWrapper>
+            <Elements.CancelButton
+              type="button"
+              onClick={() => history.push('/bookings')}
+            >
+              Avbryt
+            </Elements.CancelButton>
+            <Elements.SubmitButton type="submit">
+              Lägg till
+            </Elements.SubmitButton>
+          </Elements.ButtonWrapper>
+        </form>
+      </Elements.Container>
+    </MainRouteLayout>
   )
 }
 export default CreateBookings

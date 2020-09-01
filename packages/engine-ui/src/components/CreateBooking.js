@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
-import NestedMenu from './layout/NestedMenu'
+import MainRouteLayout from './layout/MainRouteLayout'
 
 const CreateBooking = ({ createBooking }) => {
   const history = useHistory()
@@ -39,11 +39,11 @@ const CreateBooking = ({ createBooking }) => {
       delivery: formState.delivery,
     })
 
-    history.push('/')
+    history.push('/bookings')
   }
 
   return (
-    <NestedMenu>
+    <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
         <Form
@@ -52,7 +52,7 @@ const CreateBooking = ({ createBooking }) => {
           state={formState}
         />
       </Elements.Layout.Container>
-    </NestedMenu>
+    </MainRouteLayout>
   )
 }
 export default CreateBooking

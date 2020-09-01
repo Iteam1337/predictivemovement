@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import dispatchIcon from '../assets/dispatch.svg'
 import Icons from '../assets/Icons'
@@ -35,42 +35,28 @@ const NavItem = styled.div`
   }
 `
 
-interface INavProps {
-  navigationCurrentView: string
-  setNavigationCurrentView: (arg: string) => void
-}
-
-const Navigation: React.FC<INavProps> = ({
-  navigationCurrentView,
-  setNavigationCurrentView,
-}) => {
-  const handleOnClickNavIcon = (selectedView: string) => {
-    if (selectedView === navigationCurrentView) {
-      setNavigationCurrentView('')
-    } else {
-      setNavigationCurrentView(selectedView)
-    }
-  }
+const Navigation: React.FC = () => {
+  const location = useLocation()
   return (
     <NavigationBar>
       <NavItem>
-        <Link to="/" onClick={() => handleOnClickNavIcon('bookings')}>
+        <Link to="/bookings">
           <img src={ParcelIcon} alt="parcel icon" />
         </Link>
-        {navigationCurrentView === 'bookings' && <Icons.ActiveView />}
+        {location.pathname.search('bookings') !== -1 && <Icons.ActiveView />}
       </NavItem>
       <NavItem>
-        <Link to="/" onClick={() => handleOnClickNavIcon('cars')}>
+        <Link to="/transports">
           <img src={ShippingIcon} alt="shipping icon" />
         </Link>
-        {navigationCurrentView === 'cars' && <Icons.ActiveView />}
+        {location.pathname.search('transports') !== -1 && <Icons.ActiveView />}
       </NavItem>
       <NavItem>
-        <Link to="/" onClick={() => handleOnClickNavIcon('plan')}>
+        <Link to="/plans">
           <img src={dispatchIcon} alt="dispatch icon" />
         </Link>
 
-        {navigationCurrentView === 'plan' && <Icons.ActiveView />}
+        {location.pathname.search('plans') !== -1 && <Icons.ActiveView />}
       </NavItem>
     </NavigationBar>
   )

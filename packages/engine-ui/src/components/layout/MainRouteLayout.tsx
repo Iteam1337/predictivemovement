@@ -8,11 +8,14 @@ const NestedMenuWrapper = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
 `
-const NestedMenu: React.FC = ({ children }) => {
+const MainRouteLayout: React.FC<{ redirect: string }> = ({
+  children,
+  redirect = '/',
+}) => {
   return (
     <NestedMenuWrapper>
       <Elements.Layout.FlexRowWrapper style={{ margin: '1.2em 0' }}>
-        <Link to="/">
+        <Link to={redirect}>
           <Icons.Arrow style={{ transform: 'rotate(90deg)' }} />
         </Link>
       </Elements.Layout.FlexRowWrapper>
@@ -20,4 +23,4 @@ const NestedMenu: React.FC = ({ children }) => {
     </NestedMenuWrapper>
   )
 }
-export default NestedMenu
+export default MainRouteLayout

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import Form from './forms/AddVehicle'
-import NestedMenu from './layout/NestedMenu'
+import MainRouteLayout from './layout/MainRouteLayout'
 
 const AddVehicle = ({ addVehicle, currentPosition }) => {
   const history = useHistory()
@@ -48,7 +48,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
   }
 
   return (
-    <NestedMenu>
+    <MainRouteLayout redirect="/transports">
       <Elements.Layout.Container>
         <h3>Lägg till transport</h3>
         <Form
@@ -57,7 +57,7 @@ const AddVehicle = ({ addVehicle, currentPosition }) => {
           state={formState}
         />
       </Elements.Layout.Container>
-    </NestedMenu>
+    </MainRouteLayout>
   )
 }
 export default AddVehicle

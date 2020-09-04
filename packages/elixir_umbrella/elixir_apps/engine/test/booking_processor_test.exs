@@ -14,6 +14,7 @@ defmodule BookingProcessorTest do
 
     on_exit(fn ->
       AMQP.Channel.close(channel)
+      AMQP.Connection.close(connection)
     end)
 
     %{channel: channel}
@@ -71,8 +72,6 @@ defmodule BookingProcessorTest do
     channel: channel
   } do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    earliest_start = DateTime.utc_now()
-    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
 
     MessageGenerator.add_random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
     MessageGenerator.add_random_booking()
@@ -86,8 +85,6 @@ defmodule BookingProcessorTest do
 
   test "vehicle with end_address defined", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    earliest_start = DateTime.utc_now()
-    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
 
     MessageGenerator.add_random_car(%{
       start_address: %{lat: 61.829182, lon: 16.0896213},

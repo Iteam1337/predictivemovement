@@ -12,7 +12,7 @@ const onMessage = (msg, ctx) => {
   }
 
   const message = {
-    position,
+    start_address: position,
     metadata: {
       telegram: telegramMetadata,
     },

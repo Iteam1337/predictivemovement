@@ -43,14 +43,13 @@ const AddVehicle = ({ onSubmit }) => {
 
   const onSubmitHandler = (event) => {
     event.preventDefault()
-
     onSubmit({
       ...formState,
       lat: formState.startPosition.lat,
       lon: formState.startPosition.lon,
     })
 
-    history.push('/')
+    history.push('/transports')
   }
 
   return (

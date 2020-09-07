@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import dispatchIcon from '../assets/dispatch.svg'
+import DispatchIcon from '../assets/dispatch.svg'
 import Icons from '../assets/Icons'
 import ParcelIcon from '../assets/parcel.svg'
 import ShippingIcon from '../assets/shippingIcon.svg'
@@ -35,29 +35,44 @@ const NavItem = styled.div`
   }
 `
 
+const navItems = [
+  {
+    path: 'bookings',
+    icon: {
+      src: ParcelIcon,
+      alt: 'parcel icon',
+    },
+  },
+  {
+    path: 'transports',
+    icon: {
+      src: ShippingIcon,
+      alt: 'shipping icon',
+    },
+  },
+  {
+    path: 'plans',
+    icon: {
+      src: DispatchIcon,
+      alt: 'dispatch icon',
+    },
+  },
+]
+
 const Navigation: React.FC = () => {
   const location = useLocation()
   return (
     <NavigationBar>
-      <NavItem>
-        <Link to="/bookings">
-          <img src={ParcelIcon} alt="parcel icon" />
-        </Link>
-        {location.pathname.search('bookings') !== -1 && <Icons.ActiveView />}
-      </NavItem>
-      <NavItem>
-        <Link to="/transports">
-          <img src={ShippingIcon} alt="shipping icon" />
-        </Link>
-        {location.pathname.search('transports') !== -1 && <Icons.ActiveView />}
-      </NavItem>
-      <NavItem>
-        <Link to="/plans">
-          <img src={dispatchIcon} alt="dispatch icon" />
-        </Link>
-
-        {location.pathname.search('plans') !== -1 && <Icons.ActiveView />}
-      </NavItem>
+      {navItems.map((navItem, i) => (
+        <NavItem key={i}>
+          <Link to={navItem.path}>
+            <img src={navItem.icon.src} alt={navItem.icon.alt} />
+          </Link>
+          {location.pathname.search(navItem.path) !== -1 && (
+            <Icons.ActiveView />
+          )}
+        </NavItem>
+      ))}
     </NavigationBar>
   )
 }

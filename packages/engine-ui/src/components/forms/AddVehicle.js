@@ -138,7 +138,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       <Elements.Layout.ButtonWrapper>
         <Elements.Buttons.CancelButton
           type="button"
-          onClick={() => history.push('/')}
+          onClick={() => history.push('/transports')}
         >
           Avbryt
         </Elements.Buttons.CancelButton>

@@ -14,7 +14,6 @@ defmodule Plan do
       end)
     )
     |> insert_time_matrix()
-    |> IO.inspect(label: "this is sent to jsprit")
     |> MQ.call("calculate_route_optimization")
     |> Poison.decode!(keys: :atoms)
   end

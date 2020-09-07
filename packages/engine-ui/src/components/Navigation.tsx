@@ -1,7 +1,7 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
-import dispatchIcon from '../assets/dispatch.svg'
+import DispatchIcon from '../assets/dispatch.svg'
 import Icons from '../assets/Icons'
 import ParcelIcon from '../assets/parcel.svg'
 import ShippingIcon from '../assets/shippingIcon.svg'
@@ -35,43 +35,44 @@ const NavItem = styled.div`
   }
 `
 
-interface INavProps {
-  navigationCurrentView: string
-  setNavigationCurrentView: (arg: string) => void
-}
+const navItems = [
+  {
+    path: 'bookings',
+    icon: {
+      src: ParcelIcon,
+      alt: 'parcel icon',
+    },
+  },
+  {
+    path: 'transports',
+    icon: {
+      src: ShippingIcon,
+      alt: 'shipping icon',
+    },
+  },
+  {
+    path: 'plans',
+    icon: {
+      src: DispatchIcon,
+      alt: 'dispatch icon',
+    },
+  },
+]
 
-const Navigation: React.FC<INavProps> = ({
-  navigationCurrentView,
-  setNavigationCurrentView,
-}) => {
-  const handleOnClickNavIcon = (selectedView: string) => {
-    if (selectedView === navigationCurrentView) {
-      setNavigationCurrentView('')
-    } else {
-      setNavigationCurrentView(selectedView)
-    }
-  }
+const Navigation: React.FC = () => {
+  const location = useLocation()
   return (
     <NavigationBar>
-      <NavItem>
-        <Link to="/" onClick={() => handleOnClickNavIcon('bookings')}>
-          <img src={ParcelIcon} alt="parcel icon" />
-        </Link>
-        {navigationCurrentView === 'bookings' && <Icons.ActiveView />}
-      </NavItem>
-      <NavItem>
-        <Link to="/" onClick={() => handleOnClickNavIcon('cars')}>
-          <img src={ShippingIcon} alt="shipping icon" />
-        </Link>
-        {navigationCurrentView === 'cars' && <Icons.ActiveView />}
-      </NavItem>
-      <NavItem>
-        <Link to="/" onClick={() => handleOnClickNavIcon('plan')}>
-          <img src={dispatchIcon} alt="dispatch icon" />
-        </Link>
-
-        {navigationCurrentView === 'plan' && <Icons.ActiveView />}
-      </NavItem>
+      {navItems.map((navItem, i) => (
+        <NavItem key={i}>
+          <Link to={`/${navItem.path}`}>
+            <img src={navItem.icon.src} alt={navItem.icon.alt} />
+          </Link>
+          {location.pathname.search(navItem.path) !== -1 && (
+            <Icons.ActiveView />
+          )}
+        </NavItem>
+      ))}
     </NavigationBar>
   )
 }

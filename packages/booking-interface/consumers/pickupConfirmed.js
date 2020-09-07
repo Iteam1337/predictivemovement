@@ -11,14 +11,14 @@ const pickupConfirmed = () =>
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(exchanges.INCOMING_BOOKING_UPDATES, 'topic', {
+          ch.assertExchange(exchanges.OUTGOING_BOOKING_UPDATES, 'topic', {
             durable: false,
           })
         )
         .then(() =>
           ch.bindQueue(
             queues.NOTIFY_PICKUP,
-            exchanges.INCOMING_BOOKING_UPDATES,
+            exchanges.OUTGOING_BOOKING_UPDATES,
             "picked_up"
           )
         )
@@ -26,8 +26,8 @@ const pickupConfirmed = () =>
           () =>
               ch.consume(queues.NOTIFY_PICKUP, (msg) => {
                 const message = JSON.parse(msg.content.toString())
-                ch.ack(msg)
                 notifyBooker(message)
+                ch.ack(msg)
               })
         )
     )

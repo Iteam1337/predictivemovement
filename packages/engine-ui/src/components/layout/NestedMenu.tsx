@@ -8,7 +8,10 @@ const NestedMenuWrapper = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
 `
-const NestedMenu: React.FC<{onClickHandler?: () => void}> = ({ children, onClickHandler }) => {
+const NestedMenu: React.FC<{ onClickHandler?: () => void }> = ({
+  children,
+  onClickHandler,
+}) => {
   return (
     <NestedMenuWrapper>
       <Elements.Layout.FlexRowWrapper style={{ margin: '1.2em 0' }}>

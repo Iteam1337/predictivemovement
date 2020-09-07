@@ -1,13 +1,20 @@
 const amqp = require('./amqp')
-const { getVehicle, addVehicle } = require('./cache')
+const {
+  getVehicle,
+  addVehicle,
+  addInstructions,
+  getInstructions,
+} = require('./cache')
+const messaging = require('./messaging')
 
 const onLogin = (vehicleId, ctx) => {
   const oldVehicle = getVehicle(vehicleId)
   const telegramId = ctx.botInfo.id
-  ctx.metadata.setId(telegramId, vehicleId)
+  ctx.metadata.setVehicleIdFromTelegramId(telegramId, vehicleId)
   if (oldVehicle && oldVehicle.telegramId) {
     return
   }
+
   if (oldVehicle) {
     addVehicle(vehicleId, {
       ...oldVehicle,
@@ -17,6 +24,7 @@ const onLogin = (vehicleId, ctx) => {
     addVehicle(vehicleId, { telegramId })
   }
 }
+
 const onMessage = (msg, ctx) => {
   const position = {
     lon: msg.location.longitude,
@@ -38,4 +46,17 @@ const onMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-module.exports = { onLogin, onMessage }
+const handlePickupInstruction = (vehicleId, telegramId) => {
+  const instructions = getInstructions(vehicleId)
+  // if (!instructions)
+  //   ctx.reply(
+  //     'Vi hittade inte någon plan för ditt fordon, är du säker på att du har skrivt rätt id?'
+  //   )
+
+  const [first, ...rest] = instructions
+
+  messaging.sendPickupInstructions(first, telegramId)
+  addInstructions(vehicleId, rest)
+}
+
+module.exports = { onLogin, onMessage, handlePickupInstruction }

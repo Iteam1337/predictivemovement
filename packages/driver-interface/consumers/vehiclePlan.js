@@ -1,4 +1,4 @@
-const { addVehicle, getVehicle } = require('../services/cache')
+const { addVehicle, getVehicle, addInstructions } = require('../services/cache')
 
 const {
   open,
@@ -34,6 +34,9 @@ const vehiclePlan = () => {
               ...oldVehicle,
               ...vehicle,
             })
+            const instructions = vehicle.activities.slice(1, -1)
+            addInstructions(vehicle.id, instructions)
+
             ch.ack(msg)
           })
         )

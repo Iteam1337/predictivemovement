@@ -78,7 +78,7 @@ defmodule Booking do
   end
 
   def handle_call({:add_event, status}, _, state) do
-    new_event = %{timestamp: DateTime.utc_now(), type: status}
+    new_event = %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
 
     updated_state =
       Map.update!(state, :events, fn events -> [new_event | events] end)

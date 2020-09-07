@@ -20,7 +20,10 @@ const Map = ({ data }) => {
     if (entityTypeFromQueryParams === 'booking' && Boolean(data.bookings[0])) {
       dispatch({ type: 'highlightBooking', payload: id })
     }
-  }, [entityTypeFromQueryParams, dispatch, id, data.bookings])
+    if (entityTypeFromQueryParams === 'vehicle' && Boolean(data.cars[0])) {
+      dispatch({ type: 'highlightVehicle', payload: id })
+    }
+  }, [entityTypeFromQueryParams, dispatch, id, data.bookings, data.cars])
 
   const handleClickEvent = (event) => {
     if (!event.object) return
@@ -42,7 +45,7 @@ const Map = ({ data }) => {
     })
 
   const layers = [
-    mapUtils.toBookingIconLayer(
+    mapUtils.toIconLayer(
       mapUtils.bookingIcon(data.bookings),
       UIState.highlightBooking
     ),
@@ -51,7 +54,10 @@ const Map = ({ data }) => {
       mapUtils.carToFeature(data.plan),
       handleClickEvent
     ),
-    mapUtils.toVehicleIconLayer(mapUtils.carIcon(data.cars)),
+    mapUtils.toIconLayer(
+      mapUtils.vehicleIcon(data.cars),
+      UIState.highlightVehicle
+    ),
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
 

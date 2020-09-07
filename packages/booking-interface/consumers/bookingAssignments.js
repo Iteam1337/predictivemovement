@@ -23,7 +23,6 @@ const bookingAssignments = () => {
           () =>
             ch.consume(SET_BOOKING_ASSIGNED, (msg) => {
               const message = JSON.parse(msg.content.toString())
-              console.log('incoming booking assignment')
               ch.ack(msg)
               notifyBooker(message)
             })

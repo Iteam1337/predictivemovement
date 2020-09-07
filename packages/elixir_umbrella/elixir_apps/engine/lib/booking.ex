@@ -18,10 +18,7 @@ defmodule Booking do
       size: size
     }
 
-    {:ok, bookings} = Redix.command(:redix, ["GET", "bookings"])
-
-    Redix.command(:redix, ["SET", "bookings", [booking | bookings] |> Poison.encode!()])
-
+    Engine.RedisAdapter.add_booking(booking)
     IO.inspect(booking, label: "booking")
 
     GenServer.start_link(
@@ -37,6 +34,7 @@ defmodule Booking do
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "new"
     )
+
     Engine.BookingStore.put_booking(id)
 
     id
@@ -58,6 +56,7 @@ defmodule Booking do
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "new"
     )
+
     Engine.BookingStore.put_booking(booking.id)
 
     booking.id

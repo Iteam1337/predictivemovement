@@ -74,7 +74,6 @@ defmodule Booking do
       |> Map.put(:events, [%{timestamp: DateTime.utc_now(), type: :assigned} | state.events])
 
     updated_state
-    |> IO.inspect(label: "publishing assigned")
     |> MQ.publish(
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "assigned"

@@ -48,14 +48,12 @@ const CarDetails = ({ vehicle }) => {
   if (!vehicle) return <p>Loading...</p>
 
   const handleOnLinkClick = (id) => {
-    const activitie = vehicle.activities.filter(
-      (activitie) => activitie.id === id
-    )
+    const activity = vehicle.activities.find((activity) => activity.id === id)
     dispatch({
       type: 'viewport',
       payload: {
-        latitude: activitie[0].address.lat,
-        longitude: activitie[0].address.lon,
+        latitude: activity.address.lat,
+        longitude: activity.address.lon,
         zoom: 14,
         transitionDuration: 2000,
         transitionInterpolator: new FlyToInterpolator(),

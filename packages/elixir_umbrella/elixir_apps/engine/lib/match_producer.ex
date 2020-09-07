@@ -15,16 +15,30 @@ defmodule Engine.MatchProducer do
     {:producer, %{vehicles: [], bookings: []}}
   end
 
-  defp handle_new_booking(booking_msg, %{vehicles: vehicles, bookings: bookings}) do
+  defp handle_new_booking(booking_msg, _) do
     IO.puts("new booking!")
     new_booking = string_to_booking_transform(booking_msg)
-    dispatch_events(vehicles, [new_booking | bookings])
+    # dispatch_events(vehicles, [new_booking | bookings])
+    message = %Message{
+      data: %{booking: new_booking},
+      acknowledger: {__MODULE__, :ack_id, :ack_data}
+    }
+
+    # pick out the message and return the state we want to keep
+    {:noreply, [message], %{}}
   end
 
-  defp handle_new_vehicle(vehicle_msg, %{vehicles: vehicles, bookings: bookings}) do
+  defp handle_new_vehicle(vehicle_msg, _) do
     IO.puts("new vehicle!")
     new_vehicle = string_to_vehicle_transform(vehicle_msg)
-    dispatch_events([new_vehicle | vehicles], bookings)
+    # dispatch_events([new_vehicle | vehicles], bookings)
+    message = %Message{
+      data: %{vehicle: new_vehicle},
+      acknowledger: {__MODULE__, :ack_id, :ack_data}
+    }
+
+    # pick out the message and return the state we want to keep
+    {:noreply, [message], %{}}
   end
 
   ## helpers

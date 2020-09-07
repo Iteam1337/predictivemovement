@@ -154,42 +154,40 @@ export const bookingIcon = (bookings) => {
 }
 
 export const bookingToFeature = (bookings) => {
-  return bookings.flatMap(
-    ({ id, pickup, delivery, status, route, assigned_to }) => {
-      const points = [
-        point([delivery.lon, delivery.lat], {
-          id,
-          properties: {
-            status,
-            color: '#ccffcc',
-          },
-        }),
-      ]
+  return bookings.flatMap(({ id, pickup, delivery, status, route }) => {
+    const points = [
+      point([delivery.lon, delivery.lat], {
+        id,
+        properties: {
+          status,
+          color: '#ccffcc',
+        },
+      }),
+    ]
 
-      if (status === 'assigned' && route) {
-        return [...points, routeAssignedToBooking({ id, route })]
-      }
-
-      if (route) {
-        return [
-          ...points,
-          line(
-            route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
-            {
-              id,
-              properties: {
-                color: '#e6ffe6',
-                offset: 0,
-                address: { pickup: pickup, delivery: delivery },
-                type: 'booking',
-              },
-            }
-          ),
-        ]
-      }
-      return points
+    if (status === 'assigned' && route) {
+      return [...points, routeAssignedToBooking({ id, route })]
     }
-  )
+
+    if (route) {
+      return [
+        ...points,
+        line(
+          route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+          {
+            id,
+            properties: {
+              color: '#e6ffe6',
+              offset: 0,
+              address: { pickup: pickup, delivery: delivery },
+              type: 'booking',
+            },
+          }
+        ),
+      ]
+    }
+    return points
+  })
 }
 export const toGeoJsonLayer = (id, data, callback) =>
   new GeoJsonLayer({

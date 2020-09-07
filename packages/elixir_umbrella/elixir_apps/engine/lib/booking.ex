@@ -1,7 +1,17 @@
 defmodule Booking do
   use GenServer
 
-  defstruct [:id, :pickup, :delivery, :assigned_to, :external_id, :events, :metadata, :size]
+  defstruct [
+    :id,
+    :pickup,
+    :delivery,
+    :assigned_to,
+    :external_id,
+    :events,
+    :metadata,
+    :size,
+    :route
+  ]
 
   def make(pickup, delivery, external_id, metadata, size) do
     id = "pmb-" <> (Base62UUID.generate() |> String.slice(0, 8))
@@ -13,9 +23,9 @@ defmodule Booking do
       delivery: delivery,
       metadata: metadata,
       events: [],
-      size: size
+      size: size,
+      route: Osrm.route(pickup, delivery)
     }
-
 
     GenServer.start_link(
       __MODULE__,
@@ -23,10 +33,7 @@ defmodule Booking do
       name: via_tuple(id)
     )
 
-    route = Osrm.route(pickup, delivery)
-
     MQ.publish(
-      booking |> Map.put(:route, route),
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "new"
     )
@@ -67,6 +74,7 @@ defmodule Booking do
       |> Map.put(:events, [%{timestamp: DateTime.utc_now(), type: :assigned} | state.events])
 
     updated_state
+    |> IO.inspect(label: "publishing assigned")
     |> MQ.publish(
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "assigned"

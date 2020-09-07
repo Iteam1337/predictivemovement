@@ -1,7 +1,7 @@
 defmodule Booking do
   use GenServer
   require Logger
-  @outgoing_booking_exchange Application.fetch_env!(:engine, :outgoing_booking_exchange)
+  @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
 
   defstruct [
     :id,
@@ -36,7 +36,8 @@ defmodule Booking do
     )
 
     MQ.publish(
-      Application.fetch_env!(:engine, :outgoing_booking_exchange),
+      booking,
+      @outgoing_booking_exchange,
       "new"
     )
 

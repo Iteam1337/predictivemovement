@@ -211,7 +211,7 @@ export const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
-const getIconType = (type) => {
+const getIconMappingFromEntityType = (type) => {
   switch (type) {
     case 'vehicle':
       return {
@@ -260,7 +260,9 @@ export const toIconLayer = (data, activeId) => {
     return
   }
 
-  const { ICON_MAPPING, colors, options } = getIconType(data[0].properties.type)
+  const { ICON_MAPPING, colors, options } = getIconMappingFromEntityType(
+    data[0].properties.type
+  )
 
   const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,

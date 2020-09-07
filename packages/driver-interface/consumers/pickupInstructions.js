@@ -1,6 +1,6 @@
 const {
   open,
-  queues: { PICKUP_INSTRUCTIONS },
+  queues: { SEND_PICKUP_INSTRUCTIONS },
   exchanges: { OUTGOING_BOOKING_UPDATES },
 } = require('../adapters/amqp')
 

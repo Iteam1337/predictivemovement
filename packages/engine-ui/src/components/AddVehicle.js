@@ -13,12 +13,12 @@ const AddVehicle = ({ onSubmit }) => {
   const [formState, setState] = React.useState({
     vehicleType: '',
     id: '',
-    capacity: null,
-    volume: null,
-    weight: null,
+    capacity: '',
+    volume: '',
+    weight: '',
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472 },
-    endDestination: null,
+    endDestination: '',
     driver: { name: '', contact: '' },
   })
 

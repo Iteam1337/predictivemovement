@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Elements from './Elements'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import Icons from '../assets/Icons'
 import RouteActivities from './RouteActivities'
 import { UIStateContext } from '../utils/UIStateContext'
@@ -30,12 +30,17 @@ const PlanWrapper = styled.div`
 
 const Plan = ({ plan, dispatchOffers }) => {
   const { dispatch } = React.useContext(UIStateContext)
-  const [showRouteInfo, setOpenRouteInfo] = React.useState(false)
   const history = useHistory()
   const driverPlans = plan.filter((d) => d.activities.length > 0)
+  const { routeId } = useParams()
 
-  const toggle = (id) =>
-    setOpenRouteInfo((showRouteInfo) => (showRouteInfo === id ? undefined : id)) // close if currently open
+  const toggle = (id) => {
+    if (id === routeId) {
+      return history.push('/plans')
+    }
+
+    return history.push(`/plans/route/${id}`)
+  }
 
   return (
     <PlanWrapper>
@@ -51,18 +56,15 @@ const Plan = ({ plan, dispatchOffers }) => {
               <RouteTitleWrapper
                 onClick={() => {
                   toggle(vehicle.id)
-                  history.push('/plans')
                 }}
               >
                 <Elements.StrongParagraph>
                   Rutt {index + 1}
                 </Elements.StrongParagraph>
-                <Chevron
-                  active={showRouteInfo === vehicle.id ? true : undefined}
-                />
+                <Chevron active={routeId === vehicle.id ? true : undefined} />
               </RouteTitleWrapper>
 
-              {showRouteInfo === vehicle.id && (
+              {routeId === vehicle.id && (
                 <>
                   <Elements.FlexRowWrapper>
                     <Elements.StrongParagraph>

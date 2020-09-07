@@ -7,9 +7,18 @@ const useFilteredStateFromQueryParams = (state) => {
     path: '/bookings/:id',
     exact: true,
   })
-  // const bookingOverview = useRouteMatch({ path: '/bookings', exact: true })
+
   const vehicleDetailView = useRouteMatch({
     path: '/vehicles/:id',
+    exact: true,
+  })
+
+  const planView = useRouteMatch({
+    path: '/plans',
+  })
+
+  const planRouteDetailsView = useRouteMatch({
+    path: '/plans/route/:routeId',
     exact: true,
   })
 
@@ -37,7 +46,13 @@ const useFilteredStateFromQueryParams = (state) => {
       cars: state.cars.filter((item) =>
         vehicleDetailView ? vehicleDetailView.params.id === item.id : true
       ),
-      plan: state.plan,
+      plan: state.plan
+        .filter(() => planView)
+        .filter((route) =>
+          planRouteDetailsView
+            ? planRouteDetailsView.params.routeId === route.id
+            : true
+        ),
     },
   }
 }

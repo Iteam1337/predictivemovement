@@ -126,6 +126,10 @@ defmodule Vehicle do
       metadata: metadata
     }
 
+    {:ok, vehicles} = Redix.command(:redix, ["GET", "vehicles"])
+
+    Redix.command(:redix, ["SET", "vehicles", [vehicle | vehicles] |> Poison.encode!()])
+
     IO.inspect(vehicle, label: "vehicle")
 
     GenServer.start_link(

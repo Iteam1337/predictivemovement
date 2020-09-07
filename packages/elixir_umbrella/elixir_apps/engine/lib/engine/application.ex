@@ -44,7 +44,8 @@ defmodule Engine.Application do
       Engine.AdminProcessor,
       Engine.BookingUpdatesProcessor,
       Engine.BookingStore,
-      Engine.VehicleStore
+      Engine.VehicleStore,
+      {Redix, {"redis://localhost:6379", [name: :redix]}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

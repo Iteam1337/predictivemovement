@@ -18,6 +18,10 @@ defmodule Booking do
       size: size
     }
 
+    {:ok, bookings} = Redix.command(:redix, ["GET", "bookings"])
+
+    Redix.command(:redix, ["SET", "bookings", [booking | bookings] |> Poison.encode!()])
+
     IO.inspect(booking, label: "booking")
 
     GenServer.start_link(

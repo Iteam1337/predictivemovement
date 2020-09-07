@@ -83,13 +83,24 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               />
             </Elements.Layout.TimeRestrictionWrapper>
           </Elements.Layout.InputContainer>
-          <FormInputs.AddressSearchInput
-            placeholder="Slutposition"
-            onChangeHandler={eventHandlers.handleDropdownSelect(
-              'endDestination',
-              onChangeHandler
-            )}
-          />
+          <Elements.Layout.InputContainer>
+            <FormInputs.AddressSearchInput
+              placeholder="Startposition"
+              onChangeHandler={eventHandlers.handleDropdownSelect(
+                'startPosition',
+                onChangeHandler
+              )}
+            />
+          </Elements.Layout.InputContainer>
+          <Elements.Layout.InputContainer>
+            <FormInputs.AddressSearchInput
+              placeholder="Slutposition"
+              onChangeHandler={eventHandlers.handleDropdownSelect(
+                'endDestination',
+                onChangeHandler
+              )}
+            />
+          </Elements.Layout.InputContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>

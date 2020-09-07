@@ -8,8 +8,11 @@ const {
 } = require('./adapters/amqp')
 
 function onPickup(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  updateBooking(callbackPayload.id, { status: callbackPayload.e })
+
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {
@@ -25,7 +28,7 @@ function onPickup(msg) {
       })
     })
 
-  return messaging.onPickupConfirm(msg)
+  return botServices.handlePickupInstruction(vehicleId, telegramId)
 }
 
 function onDelivered(msg) {
@@ -58,10 +61,11 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', (ctx) => {
-    const id = ctx.metadata.getId(ctx.botInfo.id)
+    const vehicleId = ctx.metadata.getVehicleIdFromTelegramId(ctx.botInfo.id)
 
-    const vehicleWithPlan = getVehicle(id)
-    if (!vehicleWithPlan || !vehicleWithPlan.activities ) return messaging.onNoInstructionsForVehicle(ctx)
+    const vehicleWithPlan = getVehicle(vehicleId)
+    if (!vehicleWithPlan || !vehicleWithPlan.activities)
+      return messaging.onNoInstructionsForVehicle(ctx)
     const activities = vehicleWithPlan.activities
     const bookingIds = vehicleWithPlan.booking_ids
 
@@ -73,17 +77,22 @@ const init = (bot) => {
   })
 
   bot.command('/login', (ctx) => {
-    ctx.reply(`Skriv in ditt transport id`)
+    ctx.reply('Ange ditt transport-id')
   })
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
 
-    if (msg.text) botServices.onLogin(msg.text, ctx)
+    if (msg.text.includes('pmv-')) {
+      botServices.onLogin(msg.text, ctx)
+
+      ctx.reply(
+        'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du är bokad för.'
+      )
+      botServices.handlePickupInstruction(msg.text, ctx.update.message.from.id)
+    }
 
     if (!msg.location) return
-
-    ctx.reply('Du finns nu tillgänglig för bokningar')
 
     botServices.onMessage(msg, ctx)
   })

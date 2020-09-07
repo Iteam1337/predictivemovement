@@ -6,16 +6,8 @@ const { getDirectionsFromActivities } = require('./google')
 const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
-  const {
-    first_name,
-
-    last_name,
-
-    id,
-  } = ctx.update.message.from
-
   ctx.reply(
-    `Välkommen ${first_name} ${last_name}! Klicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :) Ditt id är ${id}`
+    "Välkommen till Predictive Movement. När du loggat in kan du agera som förare och hämta och leverera paket i vårt system. Logga in genom att skriva '/login'."
   )
 }
 
@@ -108,10 +100,11 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
     { parse_mode: 'markdown' }
   )
 }
-const sendPickupInstructions = (message) => {
+
+const sendPickupInstructions = (message, telegramId) => {
   return bot.telegram.sendMessage(
-    message.assigned_to.metadata.telegram.senderId,
-    `Hämta paketet [här](https://www.google.com/maps/dir/?api=1&&destination=${message.pickup.lat},${message.pickup.lon})!`,
+    telegramId,
+    `Hämta paket [här](https://www.google.com/maps/dir/?api=1&&destination=${message.address.lat},${message.address.lon})!`,
     {
       parse_mode: 'markdown',
       reply_markup: {

@@ -10,14 +10,14 @@ const deliveryConfirmed = () =>
           durable: false,
         })
         .then(() =>
-          ch.assertExchange(exchanges.INCOMING_BOOKING_UPDATES, 'topic', {
+          ch.assertExchange(exchanges.OUTGOING_BOOKING_UPDATES, 'topic', {
             durable: false,
           })
         )
         .then(() =>
           ch.bindQueue(
             queues.NOTIFY_DELIVERY,
-            exchanges.INCOMING_BOOKING_UPDATES,
+            exchanges.OUTGOING_BOOKING_UPDATES,
             "delivered"
           )
         )

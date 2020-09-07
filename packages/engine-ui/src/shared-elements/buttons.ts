@@ -38,7 +38,7 @@ const CancelButton = styled.button`
 `
 
 const StyledAddFormFieldButton = styled.button<{
-  size: string
+  size?: string
   marginTop: string
 }>`
   color: #666666;

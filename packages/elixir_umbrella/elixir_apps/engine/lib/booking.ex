@@ -1,5 +1,7 @@
 defmodule Booking do
   use GenServer
+  require Logger
+  @outgoing_booking_exchange Application.fetch_env!(:engine, :outgoing_booking_exchange)
 
   defstruct [
     :id,
@@ -45,10 +47,10 @@ defmodule Booking do
     GenServer.call(via_tuple(id), :get)
   end
 
-  # def assign(%Booking{pickup: pickup, delivery: delivery} = booking) do
-  def assign(booking_id, vehicle_id) do
-    GenServer.call(via_tuple(booking_id), {:assign, vehicle_id})
-  end
+  def assign(booking_id, vehicle), do: GenServer.call(via_tuple(booking_id), {:assign, vehicle})
+
+  def add_event(booking_id, status) when status in ["picked_up", "delivered"],
+    do: GenServer.call(via_tuple(booking_id), {:add_event, status})
 
   defp via_tuple(id) when is_integer(id), do: via_tuple(Integer.to_string(id))
 
@@ -79,7 +81,17 @@ defmodule Booking do
       "assigned"
     )
 
-    IO.puts("Booking assigned")
+    Logger.debug("booking was assigned", updated_state)
+    {:reply, true, updated_state}
+  end
+
+  def handle_call({:add_event, status}, _, state) do
+    new_event = %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
+
+    updated_state =
+      Map.update!(state, :events, fn events -> [new_event | events] end)
+      |> MQ.publish(@outgoing_booking_exchange, status)
+
     {:reply, true, updated_state}
   end
 end

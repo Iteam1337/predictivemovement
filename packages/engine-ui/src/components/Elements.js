@@ -56,31 +56,6 @@ const RoundedLink = styled(Link)`
   margin: ${({ margin }) => margin && margin};
 `
 
-const StyledAddFormFieldButton = styled.button`
-  border: none;
-  outline: none;
-  color: inherit;
-  background: transparent;
-  font-weight: bold;
-  padding: 0;
-  font-size: ${({ size }) => size || '1rem'};
-  margin-top: ${({ marginTop }) => marginTop};
-`
-
-const AddFormFieldButton = ({
-  onClickHandler,
-  children,
-  marginTop = '5rem',
-}) => (
-  <StyledAddFormFieldButton
-    type="button"
-    onClick={onClickHandler}
-    marginTop={marginTop}
-  >
-    {children}
-  </StyledAddFormFieldButton>
-)
-
 const SmallInfo = styled.p`
   font-style: italic;
   font-size: 0.75rem;
@@ -314,7 +289,6 @@ export default {
   NoInfoParagraph,
   FormInputIcon,
   CheckboxLabel,
-  AddFormFieldButton,
   SmallInfo,
   Checkbox,
   TextInputPairContainer,

@@ -1,39 +1,41 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 import helpers from './helpers'
 
 const useFilteredStateFromQueryParams = (state) => {
-  const useQueryParams = () => new URLSearchParams(useLocation().search)
-  const type = useQueryParams().get('type')
-  const id = useQueryParams().get('id')
-  const status = useQueryParams().get('status')
-  const shouldIncludeRoute = useQueryParams().get('route')
+  const bookingDetailView = useRouteMatch({
+    path: '/bookings/:id',
+    exact: true,
+  })
+  // const bookingOverview = useRouteMatch({ path: '/bookings', exact: true })
+  const vehicleDetailView = useRouteMatch({
+    path: '/vehicles/:id',
+    exact: true,
+  })
 
-  const statuses = status ? status.split(',') : []
-
-  const includeRouteIfDetailView = (booking) => {
+  const includeRoute = (booking) => {
     const { route, ...rest } = booking
-    return shouldIncludeRoute ? booking : rest
+
+    if (bookingDetailView) {
+      return booking
+    }
+
+    return rest
   }
 
-  const maybeExcludeFromStatus = (booking) =>
-    statuses.length ? statuses.includes(booking.status) : true
+  const includeOneIfDetailView = (booking) => {
+    if (!bookingDetailView) return true
 
-  const includeOneIfDetailView = (booking) =>
-    type === 'booking' ? booking.id === id : true
+    return booking.id === bookingDetailView.params['id'] || false
+  }
 
   return {
-    type,
-    id,
     data: {
       ...state,
-      bookings: state.bookings
-        .map(includeRouteIfDetailView)
-        .filter(includeOneIfDetailView)
-        .filter(maybeExcludeFromStatus),
+      bookings: state.bookings.map(includeRoute).filter(includeOneIfDetailView),
 
       cars: state.cars.filter((item) =>
-        type === 'vehicle' ? item.id.toString() === id : true
+        vehicleDetailView ? vehicleDetailView.params.id === item.id : true
       ),
       plan: state.plan,
     },

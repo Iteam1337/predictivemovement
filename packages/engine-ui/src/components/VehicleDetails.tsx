@@ -2,7 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
-import NestedMenu from './layout/NestedMenu'
+import MainRouteLayout from './layout/MainRouteLayout'
+import { useParams } from 'react-router-dom'
 import moment from 'moment'
 import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
@@ -37,7 +38,7 @@ const RouteTitleWrapper = styled.div`
   }
 `
 
-const CarDetails = ({ vehicle }) => {
+const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
   const { dispatch } = React.useContext(UIStateContext)
   const [showInfo, setShowInfo] = React.useState({
     route: false,
@@ -45,10 +46,16 @@ const CarDetails = ({ vehicle }) => {
     status: false,
   })
 
+  const { vehicleId } = useParams()
+
+  const vehicle = vehicles.find((v: any) => v.id === vehicleId)
+
   if (!vehicle) return <p>Loading...</p>
 
-  const handleOnLinkClick = (id) => {
-    const activity = vehicle.activities.find((activity) => activity.id === id)
+  const handleOnLinkClick = (id: string) => {
+    const activity = vehicle.activities.find(
+      (activity: { id: string }) => activity.id === id
+    )
     dispatch({
       type: 'viewport',
       payload: {
@@ -57,13 +64,13 @@ const CarDetails = ({ vehicle }) => {
         zoom: 14,
         transitionDuration: 2000,
         transitionInterpolator: new FlyToInterpolator(),
-        transitionEasing: (t) => t * (2 - t),
+        transitionEasing: (t: number) => t * (2 - t),
       },
     })
   }
 
   return (
-    <NestedMenu>
+    <MainRouteLayout redirect={'/transports'}>
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
@@ -114,9 +121,9 @@ const CarDetails = ({ vehicle }) => {
             </RouteTitleWrapper>
             {showInfo.bookings && (
               <Elements.Layout.LinkListContainer>
-                {vehicle.booking_ids.map((bookingId) => (
+                {vehicle.booking_ids.map((bookingId: string) => (
                   <Elements.Links.RoundedLink
-                    to={`/details?type=booking&id=${bookingId}`}
+                    to={`/bookings/${bookingId}`}
                     key={bookingId}
                     onClick={() => handleOnLinkClick(bookingId)}
                   >
@@ -162,8 +169,8 @@ const CarDetails = ({ vehicle }) => {
           </>
         )}
       </Elements.Layout.Container>
-    </NestedMenu>
+    </MainRouteLayout>
   )
 }
 
-export default CarDetails
+export default VehicleDetails

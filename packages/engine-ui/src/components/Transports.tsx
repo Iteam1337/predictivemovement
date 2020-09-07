@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Route, useRouteMatch } from 'react-router-dom'
+import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
 import AddVehicle from './AddVehicle'
 import Vehicles from './Vehicles'
 import VehicleDetails from './VehicleDetails'
@@ -11,7 +11,7 @@ const Transports: React.FC<{
 }> = ({ vehicles, addVehicle }) => {
   const { path, url } = useRouteMatch()
   return (
-    <>
+    <Switch>
       <Route exact path={path}>
         <h3>Aktuella transporter</h3>
         <Vehicles vehicles={vehicles} />
@@ -27,7 +27,7 @@ const Transports: React.FC<{
       <Route path={`${path}/:vehicleId`}>
         <VehicleDetails vehicles={vehicles} />
       </Route>
-    </>
+    </Switch>
   )
 }
 

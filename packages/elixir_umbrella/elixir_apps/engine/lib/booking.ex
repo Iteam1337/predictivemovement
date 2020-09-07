@@ -80,11 +80,9 @@ defmodule Booking do
   def handle_call({:add_event, status}, _, state) do
     new_event = %{timestamp: DateTime.utc_now(), type: status}
 
-    updated_state = Map.update!(state, :events, fn events -> [new_event | events] end)
-
-    new_event
-    |> Map.put(:booking_id, state.id)
-    |> MQ.publish(@outgoing_booking_exchange, status)
+    updated_state =
+      Map.update!(state, :events, fn events -> [new_event | events] end)
+      |> MQ.publish(@outgoing_booking_exchange, status)
 
     {:reply, true, updated_state}
   end

@@ -49,14 +49,14 @@ defmodule BookingUpdatesProcessorTest do
         %{lat: 61.80762475411504, lon: 16.05761905846783},
         %{lat: 61.80762475411504, lon: 17.05761905846783},
         nil,
-        nil,
+        %{senderId: "telegramIdString"},
         nil
       )
 
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
     send_status_msg(booking_id, vehicle_id, "picked_up")
     update = wait_for_message(channel)
-    assert Map.get(update, :booking_id) == booking_id
+    assert Kernel.get_in(update, [:metadata, :senderId]) == "telegramIdString"
 
     assert "picked_up" ==
              Booking.get(booking_id)
@@ -84,14 +84,14 @@ defmodule BookingUpdatesProcessorTest do
         %{lat: 61.80762475411504, lon: 16.05761905846783},
         %{lat: 61.80762475411504, lon: 17.05761905846783},
         nil,
-        nil,
+        %{senderId: "telegramIdString"},
         nil
       )
 
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
     send_status_msg(booking_id, vehicle_id, "delivered")
     update = wait_for_message(channel)
-    assert Map.get(update, :booking_id) == booking_id
+    assert Kernel.get_in(update, [:metadata, :senderId]) == "telegramIdString"
 
     assert "delivered" ==
              Booking.get(booking_id)
@@ -109,7 +109,6 @@ defmodule BookingUpdatesProcessorTest do
         },
         delivery: %{lat: 61.75485695153156, lon: 15.989146086447738},
         events: [],
-        external_id: "0vUETUYGCVAkCqBq7AZvg",
         id: booking_id,
         metadata: %{},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},

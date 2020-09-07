@@ -7,7 +7,7 @@ const useFilteredStateFromQueryParams = (state) => {
     path: '/bookings/:id',
     exact: true,
   })
-  const bookingOverview = useRouteMatch({ path: '/bookings', exact: true })
+  // const bookingOverview = useRouteMatch({ path: '/bookings', exact: true })
   const vehicleDetailView = useRouteMatch({
     path: '/vehicles/:id',
     exact: true,
@@ -16,7 +16,7 @@ const useFilteredStateFromQueryParams = (state) => {
   const includeRoute = (booking) => {
     const { route, ...rest } = booking
 
-    if (bookingOverview || bookingDetailView) {
+    if (bookingDetailView) {
       return booking
     }
 

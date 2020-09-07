@@ -65,7 +65,7 @@ const Navigation: React.FC = () => {
     <NavigationBar>
       {navItems.map((navItem, i) => (
         <NavItem key={i}>
-          <Link to={navItem.path}>
+          <Link to={`/${navItem.path}`}>
             <img src={navItem.icon.src} alt={navItem.icon.alt} />
           </Link>
           {location.pathname.search(navItem.path) !== -1 && (

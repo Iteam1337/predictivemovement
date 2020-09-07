@@ -186,7 +186,7 @@ export const bookingToFeature = (bookings) => {
         ),
       ]
     }
-    return points
+    return route ? points : []
   })
 }
 export const toGeoJsonLayer = (id, data, callback) =>

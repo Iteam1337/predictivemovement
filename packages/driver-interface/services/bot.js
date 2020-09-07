@@ -1,5 +1,22 @@
 const amqp = require('./amqp')
+const { getVehicle, addVehicle } = require('./cache')
 
+const onLogin = (vehicleId, ctx) => {
+  const oldVehicle = getVehicle(vehicleId)
+  const telegramId = ctx.botInfo.id
+  ctx.metadata.setId(telegramId, vehicleId)
+  if (oldVehicle && oldVehicle.telegramId) {
+    return
+  }
+  if (oldVehicle) {
+    addVehicle(vehicleId, {
+      ...oldVehicle,
+      telegramId,
+    })
+  } else {
+    addVehicle(vehicleId, { telegramId })
+  }
+}
 const onMessage = (msg, ctx) => {
   const position = {
     lon: msg.location.longitude,
@@ -12,7 +29,7 @@ const onMessage = (msg, ctx) => {
   }
 
   const message = {
-    position,
+    start_address: position,
     metadata: {
       telegram: telegramMetadata,
     },
@@ -21,4 +38,4 @@ const onMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-module.exports = { onMessage }
+module.exports = { onLogin, onMessage }

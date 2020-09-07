@@ -1,20 +1,20 @@
 import React from 'react'
 import { Link, Route, useRouteMatch } from 'react-router-dom'
 import AddVehicle from './AddVehicle'
-import Cars from './Cars'
-import CarDetails from './VehicleDetails'
+import Vehicles from './Vehicles'
+import VehicleDetails from './VehicleDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 
 const Transports: React.FC<{
-  cars: any
+  vehicles: any
   addVehicle: any
-}> = ({ cars, addVehicle }) => {
+}> = ({ vehicles, addVehicle }) => {
   const { path, url } = useRouteMatch()
   return (
     <>
       <Route exact path={path}>
         <h3>Aktuella transporter</h3>
-        <Cars cars={cars} />
+        <Vehicles vehicles={vehicles} />
         <Link to={`${url}/add-vehicle`}>
           <AddFormFieldButton onClickHandler={null}>
             + Lägg till transport
@@ -25,7 +25,7 @@ const Transports: React.FC<{
         <AddVehicle onSubmit={addVehicle} />
       </Route>
       <Route path={`${path}/:vehicleId`}>
-        <CarDetails vehicles={cars} />
+        <VehicleDetails vehicles={vehicles} />
       </Route>
     </>
   )

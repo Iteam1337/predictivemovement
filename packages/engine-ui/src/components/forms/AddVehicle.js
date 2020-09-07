@@ -47,7 +47,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 min="0"
                 name="volume"
                 value={state.volume}
-                placeholder="Lastvolym"
+                placeholder="Lastvolym (kbm)"
                 type="number"
                 onChangeHandler={eventHandlers.handleTextInputChange(
                   'volume',
@@ -66,7 +66,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                   'weight',
                   onChangeHandler
                 )}
-                placeholder="Maxvikt"
+                placeholder="Maxvikt (kg)"
               />
             </Elements.Layout.TextInputPairItem>
           </Elements.Layout.TextInputPairContainer>
@@ -109,7 +109,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 'name',
                 onChangeHandler
               )}
-              placeholder="Peter Persson"
+              placeholder="Namn"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
@@ -129,7 +129,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 'contact',
                 onChangeHandler
               )}
-              placeholder="070-123 45 67"
+              placeholder="Telefonnummer"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>

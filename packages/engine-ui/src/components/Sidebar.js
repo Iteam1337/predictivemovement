@@ -38,7 +38,10 @@ const Sidebar = (state) => {
                 />
               </Route>
               <Route path="/transports">
-                <Transports cars={state.cars} addVehicle={state.addVehicle} />
+                <Transports
+                  vehicles={state.cars}
+                  addVehicle={state.addVehicle}
+                />
               </Route>
               <Route path="/plans">
                 <Plan plan={state.plan} dispatchOffers={state.dispatchOffers} />

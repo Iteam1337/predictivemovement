@@ -12,12 +12,6 @@ const Map = ({ data }) => {
   const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
   const [tooltip, setTooltip] = React.useState('')
 
-  // React.useEffect(() => {
-  //   if (entityTypeFromQueryParams === 'booking' && Boolean(data.bookings[0])) {
-  //     dispatch({ type: 'highlightBooking', payload: id })
-  //   }
-  // }, [entityTypeFromQueryParams, dispatch, id, data.bookings])
-
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type
@@ -38,7 +32,7 @@ const Map = ({ data }) => {
     })
 
   const layers = [
-    mapUtils.toBookingIconLayer(
+    mapUtils.toIconLayer(
       mapUtils.bookingIcon(data.bookings),
       UIState.highlightBooking
     ),
@@ -47,7 +41,10 @@ const Map = ({ data }) => {
       mapUtils.carToFeature(data.plan),
       handleClickEvent
     ),
-    mapUtils.toVehicleIconLayer(mapUtils.carIcon(data.cars)),
+    mapUtils.toIconLayer(
+      mapUtils.vehicleIcon(data.cars),
+      UIState.highlightVehicle
+    ),
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
 

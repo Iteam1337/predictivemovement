@@ -9,22 +9,17 @@ defmodule Booking do
     booking = %Booking{
       id: id,
       pickup: pickup,
+      external_id: external_id,
       delivery: delivery,
       metadata: metadata,
-      events: []
+      events: [],
+      size: size
     }
+
 
     GenServer.start_link(
       __MODULE__,
-      %Booking{
-        id: id,
-        external_id: external_id,
-        pickup: pickup,
-        delivery: delivery,
-        metadata: metadata,
-        events: [],
-        size: size
-      },
+      booking,
       name: via_tuple(id)
     )
 

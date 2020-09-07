@@ -1,5 +1,6 @@
 defmodule PlanStore do
   use GenServer
+  @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -11,7 +12,7 @@ defmodule PlanStore do
 
   def handle_call({:put, new_plan}, _from, _state) do
     IO.puts("publishing new plan")
-    MQ.publish(new_plan, "plan")
+    MQ.publish(new_plan, @outgoing_plan_exchange)
     {:reply, :ok, new_plan}
   end
 

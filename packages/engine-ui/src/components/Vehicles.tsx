@@ -39,7 +39,7 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
           onMouseLeave={() =>
             dispatch({ type: 'highlightVehicle', payload: undefined })
           }
-          to={`/details?type=vehicle&id=${vehicle.id}`}
+          to={`/transports/${vehicle.id}`}
           key={vehicle.id}
           onClick={() =>
             onClickHandler(vehicle.start_address.lat, vehicle.start_address.lon)

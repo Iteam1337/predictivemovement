@@ -3,6 +3,16 @@ import { UIStateContext } from '../utils/UIStateContext'
 import { FlyToInterpolator } from 'react-map-gl'
 import Elements from '../shared-elements/'
 import Icons from '../assets/Icons'
+import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
+import BookingDetails from './BookingDetails'
+import CreateBooking from './CreateBooking'
+import CreateBookings from './CreateBookings'
+import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
+import styled from 'styled-components'
+
+const AddNewContainer = styled.div`
+  margin-top: 1rem;
+`
 
 enum BookingStatus {
   NEW = 'new',
@@ -82,7 +92,7 @@ const BookingToggleList: React.FC<{
                 <Elements.Links.RoundedLink
                   onMouseOver={() => onMouseEnterHandler(booking.id)}
                   onMouseLeave={() => onMouseLeaveHandler()}
-                  to={`/details?type=booking&id=${booking.id}&route=true`}
+                  to={`/bookings/${booking.id}`}
                   onClick={() =>
                     onClickHandler(booking.pickup.lat, booking.pickup.lon)
                   }
@@ -99,9 +109,11 @@ const BookingToggleList: React.FC<{
 
 const Bookings: React.FC<{
   bookings: Booking[]
+  createBookings: any
+  createBooking: any
 }> = (props) => {
   const { dispatch } = React.useContext(UIStateContext)
-
+  const { path, url } = useRouteMatch()
   const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
     props.bookings,
   ])
@@ -120,41 +132,76 @@ const Bookings: React.FC<{
     })
 
   return (
-    <Elements.Layout.MarginTopContainer>
-      <BookingToggleList
-        bookings={bookings.new}
-        onClickHandler={onClickHandler}
-        text="Öppna bokningar"
-        onMouseEnterHandler={(id: string) =>
-          dispatch({ type: 'highlightBooking', payload: id })
-        }
-        onMouseLeaveHandler={() =>
-          dispatch({ type: 'highlightBooking', payload: undefined })
-        }
-      />
-      <BookingToggleList
-        bookings={bookings.assigned}
-        onClickHandler={onClickHandler}
-        text="Bekräftade bokningar"
-        onMouseEnterHandler={(id: string) =>
-          dispatch({ type: 'highlightBooking', payload: id })
-        }
-        onMouseLeaveHandler={() =>
-          dispatch({ type: 'highlightBooking', payload: undefined })
-        }
-      />
-      <BookingToggleList
-        bookings={bookings.delivered}
-        onClickHandler={onClickHandler}
-        text="Levererade bokningar"
-        onMouseEnterHandler={(id: string) =>
-          dispatch({ type: 'highlightBooking', payload: id })
-        }
-        onMouseLeaveHandler={() =>
-          dispatch({ type: 'highlightBooking', payload: undefined })
-        }
-      />
-    </Elements.Layout.MarginTopContainer>
+    <Switch>
+      <Route exact path={path}>
+        <Elements.Layout.MarginTopContainer>
+          <BookingToggleList
+            bookings={bookings.new}
+            onClickHandler={onClickHandler}
+            text="Öppna bokningar"
+            onMouseEnterHandler={(id: string) =>
+              dispatch({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+          <BookingToggleList
+            bookings={bookings.assigned}
+            onClickHandler={onClickHandler}
+            text="Bekräftade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              dispatch({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+          <BookingToggleList
+            bookings={bookings.delivered}
+            onClickHandler={onClickHandler}
+            text="Levererade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              dispatch({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+        </Elements.Layout.MarginTopContainer>
+        <AddNewContainer>
+          <Link to={`${url}/add-booking`}>
+            <AddFormFieldButton onClickHandler={null}>
+              + Lägg till bokning
+            </AddFormFieldButton>
+          </Link>
+        </AddNewContainer>
+        <AddNewContainer>
+          <Link to={`${url}/add-bookings`}>
+            <AddFormFieldButton onClickHandler={null} marginTop="0">
+              + Generera historiska bokningar
+            </AddFormFieldButton>
+          </Link>
+        </AddNewContainer>
+      </Route>
+
+      <Route exact path={`${path}/add-booking`}>
+        <CreateBooking onSubmit={props.createBooking} />
+      </Route>
+
+      <Route exact path={`${path}/add-bookings`}>
+        <CreateBookings onSubmit={props.createBookings} />
+      </Route>
+
+      <Route path={`${path}/:bookingId`}>
+        <BookingDetails
+          onClickHandler={() =>
+            dispatch({ type: 'highlightBooking', payload: undefined })
+          }
+          bookings={props.bookings}
+        />
+      </Route>
+    </Switch>
   )
 }
 

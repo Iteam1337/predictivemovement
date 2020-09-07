@@ -1,7 +1,8 @@
 import React from 'react'
 import Elements from '../shared-elements'
 import styled from 'styled-components'
-import NestedMenu from './layout/NestedMenu'
+import MainRouteLayout from './layout/MainRouteLayout'
+import { useParams } from 'react-router-dom'
 import helpers from '../utils/helpers'
 
 const Paragraph = styled.p`
@@ -10,7 +11,10 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 
-const BookingDetails = ({ booking, onClickHandler }) => {
+const BookingDetails = ({ bookings, onClickHandler }) => {
+  const { bookingId } = useParams()
+
+  const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
 
   React.useEffect(() => {
@@ -39,7 +43,7 @@ const BookingDetails = ({ booking, onClickHandler }) => {
   if (!booking || !address) return <p>Laddar bokning...</p>
 
   return (
-    <NestedMenu onClickHandler={onClickHandler}>
+    <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
@@ -63,7 +67,7 @@ const BookingDetails = ({ booking, onClickHandler }) => {
             </Elements.Typography.StrongParagraph>
 
             <Elements.Links.RoundedLink
-              to={`/details?type=vehicle&id=${booking.assigned_to.id}`}
+              to={`/transports/${booking.assigned_to.id}`}
             >
               {booking.id}
             </Elements.Links.RoundedLink>
@@ -74,7 +78,7 @@ const BookingDetails = ({ booking, onClickHandler }) => {
         </Elements.Typography.StrongParagraph>
         <span>{booking.status}</span>
       </Elements.Layout.Container>
-    </NestedMenu>
+    </MainRouteLayout>
   )
 }
 

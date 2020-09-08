@@ -20,12 +20,12 @@ defmodule Engine.BookingProcessor do
     )
   end
 
-  def calculate_plan() do
-    booking_ids = Engine.BookingStore.get_bookings()
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
+  def calculate_plan(vehicle_ids, booking_ids) when length(vehicle_ids) == 0 or length(booking_ids) == 0 do
+    IO.puts("No vehicles/bookings to calculate plan for")
+  end
 
+  def calculate_plan(vehicle_ids, booking_ids) do
     %{solution: %{routes: routes}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
-    # |> IO.inspect(label: "optimal routes")
 
     vehicles =
       routes
@@ -57,8 +57,10 @@ defmodule Engine.BookingProcessor do
       ) do
     IO.inspect(booking, label: "a new booking")
 
+    booking_ids = Engine.BookingStore.get_bookings()
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
 
-    calculate_plan()
+    calculate_plan(vehicle_ids, booking_ids)
 
     %Broadway.Message{
       data: %{booking: booking},
@@ -73,7 +75,10 @@ defmodule Engine.BookingProcessor do
       ) do
     IO.inspect(vehicle, label: "a new vehicle")
 
-    calculate_plan()
+    booking_ids = Engine.BookingStore.get_bookings()
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+
+    calculate_plan(vehicle_ids, booking_ids)
 
     %Broadway.Message{
       data: %{vehicle: vehicle},

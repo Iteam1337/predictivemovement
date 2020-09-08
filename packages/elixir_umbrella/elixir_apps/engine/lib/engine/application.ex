@@ -6,9 +6,10 @@ defmodule Engine.Application do
   use Application
 
   def init_from_storage() do
-    Engine.RedisAdapter.get_bookings() |> Enum.map(&Booking.make/1)
-    Engine.RedisAdapter.get_vehicles() |> Enum.map(&Vehicle.make/1)
-    Engine.BookingProcessor.calculate_plan()
+    booking_ids = Engine.RedisAdapter.get_bookings() |> Enum.map(&Booking.make/1)
+    vehicle_ids = Engine.RedisAdapter.get_vehicles() |> Enum.map(&Vehicle.make/1)
+
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
   end
 
   def start(_type, _args) do

@@ -32,7 +32,7 @@ public class TryRouteOptimization {
         // Path fileName = Path.of("src/test/resources/msg/03/03_route_request.json");
         // Path fileName = Path.of("src/test/resources/msg/05/05_route_request.json");
         // Path fileName = Path.of("src/test/resources/msg/06/06_route_request.json");
-        Path fileName = Path.of("src/test/resources/msg/09/09_route_request.json");
+        Path fileName = Path.of("src/test/resources/msg/11/11_route_request.json");
         String msg = Files.readString(fileName);
         JSONObject routeRequest = new JSONObject(msg);
 

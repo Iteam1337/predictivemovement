@@ -18,7 +18,7 @@ const useFilteredStateFromQueryParams = (state) => {
   })
 
   const planRouteDetailsView = useRouteMatch({
-    path: '/plans/route/:routeId',
+    path: '/plans/routes/:routeId',
     exact: true,
   })
 

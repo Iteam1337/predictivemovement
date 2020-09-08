@@ -38,7 +38,11 @@ const InputInnerContainer = styled.div`
   width: 100%;
 `
 
-const RoundedLink = styled(Link)`
+interface IRoundedLinkProps {
+  margin?: string
+}
+
+const RoundedLink = styled(Link)<IRoundedLinkProps>`
   background: #e6ffe6;
   border-radius: 0.75rem;
   padding: 0.5rem 0.6rem;
@@ -63,7 +67,11 @@ const SmallInfo = styled.p`
   margin-bottom: 0.25rem;
 `
 
-const TextInput = styled.input`
+interface IIconInsetProps {
+  iconInset?: boolean
+}
+
+const TextInput = styled.input<IIconInsetProps>`
   border: none;
   background-color: #f1f3f5;
   border-radius: 0.25rem;
@@ -82,7 +90,7 @@ const TextInputWithArrow = styled(TextInput)`
     iconInset ? '0.75rem 0 0.75rem 1.1rem' : '0.75rem'};
 `
 
-const DateInput = styled.input`
+const DateInput = styled.input<IIconInsetProps>`
   cursor: default;
   border: none;
   background-color: #f1f3f5;
@@ -178,7 +186,15 @@ const CustomCheckboxContainer = styled.label`
   }
 `
 
-const Checkbox = ({ name, onChangeHandler, label }) => {
+const Checkbox = ({
+  name,
+  onChangeHandler,
+  label,
+}: {
+  name: string
+  onChangeHandler: any
+  label: string
+}) => {
   return (
     <CustomCheckboxContainer>
       <HiddenCheckbox name={name} type="checkbox" onChange={onChangeHandler} />
@@ -197,7 +213,11 @@ const TextInputPairItem = styled.div`
   width: 48.5%;
 `
 
-const SubmitButton = styled.button`
+interface SubmitButtonProps {
+  justifySelf?: string
+}
+
+const SubmitButton = styled.button<SubmitButtonProps>`
   padding: 0.75rem 2.3rem;
   background: #ccffcc;
   font-weight: 600;
@@ -253,7 +273,15 @@ const TimeRestrictionWrapper = styled.div`
 
 // eslint-disable-next-line react/display-name
 const TimeRestrictionDateInput = React.forwardRef(
-  ({ onChange, onClick, value, placeholder }, ref) => {
+  (
+    {
+      onChange,
+      onClick,
+      value,
+      placeholder,
+    }: { onChange: any; onClick: any; value: any; placeholder: any },
+    ref: any
+  ) => {
     return (
       <TimeRestrictionDateInputWrapper>
         <InputInnerContainer>

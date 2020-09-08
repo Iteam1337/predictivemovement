@@ -43,7 +43,7 @@ const Sidebar = (state) => {
                   addVehicle={state.addVehicle}
                 />
               </Route>
-              <Route exact path={['/plans', '/plans/route/:routeId']}>
+              <Route path="/plans">
                 <Plan plan={state.plan} dispatchOffers={state.dispatchOffers} />
               </Route>
             </RouterSwitch>

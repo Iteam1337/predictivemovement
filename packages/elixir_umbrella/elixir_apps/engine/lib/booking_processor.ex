@@ -20,9 +20,8 @@ defmodule Engine.BookingProcessor do
     )
   end
 
-  def calculate_plan(vehicle_ids, booking_ids) when length(vehicle_ids) == 0 or length(booking_ids) == 0 do
+  def calculate_plan(vehicle_ids, booking_ids) when length(vehicle_ids) == 0 or length(booking_ids) == 0, do:
     IO.puts("No vehicles/bookings to calculate plan for")
-  end
 
   def calculate_plan(vehicle_ids, booking_ids) do
     %{solution: %{routes: routes}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
@@ -52,7 +51,7 @@ defmodule Engine.BookingProcessor do
 
   def handle_message(
         _processor,
-        %Broadway.Message{acknowledger: acknowledger, data: %{booking: booking}},
+        %Message{data: %{booking: booking}} = msg ,
         _context
       ) do
     IO.inspect(booking, label: "a new booking")
@@ -62,15 +61,12 @@ defmodule Engine.BookingProcessor do
 
     calculate_plan(vehicle_ids, booking_ids)
 
-    %Broadway.Message{
-      data: %{booking: booking},
-      acknowledger: acknowledger
-    }
+    msg
   end
 
   def handle_message(
         _processor,
-        %Broadway.Message{acknowledger: acknowledger, data: %{vehicle: vehicle}},
+        %Message{data: %{vehicle: vehicle}} = msg,
         _context
       ) do
     IO.inspect(vehicle, label: "a new vehicle")
@@ -80,9 +76,6 @@ defmodule Engine.BookingProcessor do
 
     calculate_plan(vehicle_ids, booking_ids)
 
-    %Broadway.Message{
-      data: %{vehicle: vehicle},
-      acknowledger: acknowledger
-    }
+    msg
   end
 end

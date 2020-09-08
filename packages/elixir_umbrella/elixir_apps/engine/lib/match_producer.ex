@@ -5,39 +5,34 @@ defmodule Engine.MatchProducer do
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
 
-  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
   def start_link(_) do
     GenStage.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
     MQ.create_match_producer_resources()
-    {:producer, %{vehicles: [], bookings: []}}
+    {:producer, %{}}
   end
 
   defp handle_new_booking(booking_msg, _) do
     IO.puts("new booking!")
     new_booking = string_to_booking_transform(booking_msg)
-    # dispatch_events(vehicles, [new_booking | bookings])
     message = %Message{
       data: %{booking: new_booking},
       acknowledger: {__MODULE__, :ack_id, :ack_data}
     }
 
-    # pick out the message and return the state we want to keep
     {:noreply, [message], %{}}
   end
 
   defp handle_new_vehicle(vehicle_msg, _) do
     IO.puts("new vehicle!")
     new_vehicle = string_to_vehicle_transform(vehicle_msg)
-    # dispatch_events([new_vehicle | vehicles], bookings)
     message = %Message{
       data: %{vehicle: new_vehicle},
       acknowledger: {__MODULE__, :ack_id, :ack_data}
     }
 
-    # pick out the message and return the state we want to keep
     {:noreply, [message], %{}}
   end
 
@@ -82,29 +77,6 @@ defmodule Engine.MatchProducer do
     Booking.make(pickup, delivery, external_id, metadata, size)
   end
 
-  def handle_clear_state do
-    IO.puts("Clearing MatchProducer state")
-    {:noreply, [], %{vehicles: [], bookings: []}}
-  end
-
-  ## send messages to broadway and update state
-
-  def dispatch_events(vehicles, [] = _bookings),
-    do: {:noreply, [], %{bookings: [], vehicles: vehicles}}
-
-  def dispatch_events(vehicles, bookings) when length(vehicles) < 1,
-    do: {:noreply, [], %{bookings: bookings, vehicles: vehicles}}
-
-  def dispatch_events(vehicles, bookings) do
-    message = %Message{
-      data: {vehicles, bookings},
-      acknowledger: {__MODULE__, :ack_id, :ack_data}
-    }
-
-    # pick out the message and return the state we want to keep
-    {:noreply, [message], %{bookings: bookings, vehicles: vehicles}}
-  end
-
   # Rabbitmq callbacks
   def handle_info({:basic_consume_ok, _}, state), do: {:noreply, [], state}
 
@@ -113,8 +85,6 @@ defmodule Engine.MatchProducer do
 
   def handle_info({:basic_deliver, booking, %{exchange: @incoming_booking_exchange}}, state),
     do: handle_new_booking(booking, state)
-
-  def handle_info({:basic_deliver, _, %{routing_key: @clear_queue}}, _), do: handle_clear_state()
 
   ## handle backpressure
 

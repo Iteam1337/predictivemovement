@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import Form from './forms/AddVehicle'
-import NestedMenu from './layout/NestedMenu'
+import MainRouteLayout from './layout/MainRouteLayout'
 import { UIStateContext } from '../utils/UIStateContext'
 
 const AddVehicle = ({ onSubmit }) => {
@@ -43,18 +43,17 @@ const AddVehicle = ({ onSubmit }) => {
 
   const onSubmitHandler = (event) => {
     event.preventDefault()
-
     onSubmit({
       ...formState,
       lat: formState.startPosition.lat,
       lon: formState.startPosition.lon,
     })
 
-    history.push('/')
+    history.push('/transports')
   }
 
   return (
-    <NestedMenu>
+    <MainRouteLayout redirect="/transports">
       <Elements.Layout.Container>
         <h3>Lägg till transport</h3>
         <Form
@@ -63,7 +62,7 @@ const AddVehicle = ({ onSubmit }) => {
           state={formState}
         />
       </Elements.Layout.Container>
-    </NestedMenu>
+    </MainRouteLayout>
   )
 }
 export default AddVehicle

@@ -108,7 +108,7 @@ const init = (bot) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
     switch (callbackPayload.e) {
-      case 'pickup':
+      case 'picked_up':
         return onPickup(msg)
 
       case 'delivered':

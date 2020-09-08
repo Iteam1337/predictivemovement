@@ -3,7 +3,7 @@ import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import mapUtils from '../utils/mapUtils'
 import { UIStateContext } from '../utils/UIStateContext'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import helpers from '../utils/helpers'
 
 const Map = ({ data }) => {
@@ -12,27 +12,14 @@ const Map = ({ data }) => {
   const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
   const [tooltip, setTooltip] = React.useState('')
 
-  const useQueryParams = () => new URLSearchParams(useLocation().search)
-  const entityTypeFromQueryParams = useQueryParams().get('type')
-  const id = useQueryParams().get('id')
-
-  React.useEffect(() => {
-    if (entityTypeFromQueryParams === 'booking' && Boolean(data.bookings[0])) {
-      dispatch({ type: 'highlightBooking', payload: id })
-    }
-    if (entityTypeFromQueryParams === 'vehicle' && Boolean(data.cars[0])) {
-      dispatch({ type: 'highlightVehicle', payload: id })
-    }
-  }, [entityTypeFromQueryParams, dispatch, id, data.bookings, data.cars])
-
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type
     switch (type) {
       case 'booking':
-        return history.push(`/details?type=booking&id=${event.object.id}`)
+        return history.push(`/bookings/${event.object.id}`)
       case 'plan':
-        return history.push(`/details?type=vehicle&id=${event.object.id}`)
+        return history.push(`/transports/${event.object.id}`)
       default:
         return
     }

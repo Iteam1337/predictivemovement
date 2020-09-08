@@ -113,7 +113,7 @@ const sendPickupInstructions = (message, telegramId) => {
             {
               text: 'Hämtat',
               callback_data: JSON.stringify({
-                e: 'pickup',
+                e: 'picked_up',
                 id: message.id,
               }),
             },

@@ -5,14 +5,13 @@ defmodule BookingProcessorTest do
   use ExUnit.Case
 
   setup_all do
-    clear_state()
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.bind(channel, @clear_queue, @clear_queue, routing_key: @clear_queue)
     AMQP.Queue.declare(channel, "get_plan", durable: false)
     AMQP.Queue.bind(channel, "get_plan", @outgoing_plan_exchange, routing_key: "")
 
     on_exit(fn ->
+      clear_state()
       AMQP.Channel.close(channel)
       AMQP.Connection.close(connection)
     end)

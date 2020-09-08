@@ -19,7 +19,6 @@ defmodule Booking do
     }
 
     Engine.RedisAdapter.add_booking(booking)
-    IO.inspect(booking, label: "booking")
 
     GenServer.start_link(
       __MODULE__,

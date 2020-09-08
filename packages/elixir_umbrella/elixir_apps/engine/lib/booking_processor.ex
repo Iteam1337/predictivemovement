@@ -1,6 +1,6 @@
 defmodule Engine.BookingProcessor do
   use Broadway
-
+  alias Broadway.Message
   @plan Application.get_env(:engine, :plan)
 
   def start_link(_opts) do
@@ -20,15 +20,11 @@ defmodule Engine.BookingProcessor do
     )
   end
 
-  def handle_message(
-        _processor,
-        %Broadway.Message{acknowledger: acknowledger, data: {vehicle_ids, booking_ids}},
-        _context
-      ) do
-    IO.inspect({vehicle_ids, booking_ids}, label: "oh a message")
+  def calculate_plan(vehicle_ids, booking_ids) when length(vehicle_ids) == 0 or length(booking_ids) == 0, do:
+    IO.puts("No vehicles/bookings to calculate plan for")
 
+  def calculate_plan(vehicle_ids, booking_ids) do
     %{solution: %{routes: routes}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
-    # |> IO.inspect(label: "optimal routes")
 
     vehicles =
       routes
@@ -51,10 +47,35 @@ defmodule Engine.BookingProcessor do
       end)
 
     PlanStore.put_plan(%{vehicles: vehicles, booking_ids: booking_ids})
+  end
 
-    %Broadway.Message{
-      data: {vehicle_ids, booking_ids},
-      acknowledger: acknowledger
-    }
+  def handle_message(
+        _processor,
+        %Message{data: %{booking: booking}} = msg ,
+        _context
+      ) do
+    IO.inspect(booking, label: "a new booking")
+
+    booking_ids = Engine.BookingStore.get_bookings()
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+
+    calculate_plan(vehicle_ids, booking_ids)
+
+    msg
+  end
+
+  def handle_message(
+        _processor,
+        %Message{data: %{vehicle: vehicle}} = msg,
+        _context
+      ) do
+    IO.inspect(vehicle, label: "a new vehicle")
+
+    booking_ids = Engine.BookingStore.get_bookings()
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+
+    calculate_plan(vehicle_ids, booking_ids)
+
+    msg
   end
 end

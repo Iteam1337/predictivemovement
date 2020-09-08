@@ -1,9 +1,19 @@
 defmodule Booking do
   use GenServer
   require Logger
+  @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
 
-  defstruct [:id, :pickup, :delivery, :assigned_to, :external_id, :events, :metadata, :size]
-  @outgoing_booking_exchange Application.fetch_env!(:engine, :outgoing_booking_exchange)
+  defstruct [
+    :id,
+    :pickup,
+    :delivery,
+    :assigned_to,
+    :external_id,
+    :events,
+    :metadata,
+    :size,
+    :route
+  ]
 
   def make(pickup, delivery, external_id, metadata, size) do
     id = "pmb-" <> (Base62UUID.generate() |> String.slice(0, 8))
@@ -15,8 +25,11 @@ defmodule Booking do
       delivery: delivery,
       metadata: metadata,
       events: [],
-      size: size
+      size: size,
+      route: Osrm.route(pickup, delivery)
     }
+
+    Engine.RedisAdapter.add_booking(booking)
 
     GenServer.start_link(
       __MODULE__,
@@ -24,7 +37,27 @@ defmodule Booking do
       name: via_tuple(id)
     )
 
-    route = Osrm.route(pickup, delivery)
+    MQ.publish(
+      booking,
+      @outgoing_booking_exchange,
+      "new"
+    )
+
+    Engine.BookingStore.put_booking(id)
+
+    id
+  end
+
+  def make(%{} = booking_data) do
+    booking = struct(Booking, booking_data)
+
+    GenServer.start_link(
+      __MODULE__,
+      booking,
+      name: via_tuple(booking.id)
+    )
+
+    route = Osrm.route(booking.pickup, booking.delivery)
 
     MQ.publish(
       booking |> Map.put(:route, route),
@@ -32,7 +65,9 @@ defmodule Booking do
       "new"
     )
 
-    id
+    Engine.BookingStore.put_booking(booking.id)
+
+    booking.id
   end
 
   def get(id) do

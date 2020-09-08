@@ -68,17 +68,17 @@ defmodule MessageGenerator do
   def add_random_car(properties) when is_map(properties),
     do: GenServer.call(__MODULE__, {:add_random_car, properties})
 
-  def add_random_car(:stockholm), do: GenServer.call(__MODULE__, {:add_random_car, @stockholm})
-  def add_random_car(:gothenburg), do: GenServer.call(__MODULE__, {:add_random_car, @gothenburg})
+  def add_random_car(:stockholm), do: GenServer.call(__MODULE__, {:add_random_car, :stockholm})
+  def add_random_car(:gothenburg), do: GenServer.call(__MODULE__, {:add_random_car, :gothenburg})
 
   def add_random_booking(properties) when is_map(properties),
     do: GenServer.call(__MODULE__, {:add_random_booking, properties})
 
   def add_random_booking(:stockholm),
-    do: GenServer.call(__MODULE__, {:add_random_booking, @stockholm})
+    do: GenServer.call(__MODULE__, {:add_random_booking, :stockholm})
 
   def add_random_booking(:gothenburg),
-    do: GenServer.call(__MODULE__, {:add_random_booking, @gothenburg})
+    do: GenServer.call(__MODULE__, {:add_random_booking, :gothenburg})
 
   def handle_call(:add_random_booking, _, %{channel: channel} = state) do
     payload =
@@ -101,9 +101,23 @@ defmodule MessageGenerator do
     {:reply, :ok, state}
   end
 
-  def handle_call({:add_random_booking, location}, _, %{channel: channel} = state) do
+  def handle_call({:add_random_booking, :stockholm}, _, %{channel: channel} = state) do
     payload =
-      random_booking(location)
+      %{}
+      |> add_addresses(@stockholm)
+      |> random_booking()
+      |> Poison.encode!()
+
+    AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
+
+    {:reply, :ok, state}
+  end
+
+  def handle_call({:add_random_booking, :gothenburg}, _, %{channel: channel} = state) do
+    payload =
+      %{}
+      |> add_addresses(@gothenburg)
+      |> random_booking()
       |> Poison.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
@@ -132,20 +146,36 @@ defmodule MessageGenerator do
     {:reply, :ok, state}
   end
 
-  def handle_call({:add_random_car, location}, _, %{channel: channel} = state) do
+  def handle_call({:add_random_car, :stockholm}, _, %{channel: channel} = state) do
     payload =
-      random_car(location)
+      %{}
+      |> Map.put(:start_address, Address.random(@stockholm))
+      |> Map.put(:end_address, Address.random(@stockholm))
+      |> random_car()
       |> Poison.encode!()
 
-    AMQP.Basic.publish(channel, @cars_exchange, "", payload)
+    AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
+
+    {:reply, :ok, state}
+  end
+
+  def handle_call({:add_random_car, :gothenburg}, _, %{channel: channel} = state) do
+    payload =
+      %{}
+      |> Map.put(:start_address, Address.random(@gothenburg))
+      |> Map.put(:end_address, Address.random(@gothenburg))
+      |> random_car()
+      |> Poison.encode!()
+
+    AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
 
     {:reply, :ok, state}
   end
 
   def add_addresses(map, center \\ @ljusdal) do
     map
-    |> Map.put(:pickup, Address.random(center))
-    |> Map.put(:delivery, Address.random(center))
+    |> Map.put_new(:pickup, Address.random(center))
+    |> Map.put_new(:delivery, Address.random(center))
   end
 
   def add_random_id_and_time(map) do

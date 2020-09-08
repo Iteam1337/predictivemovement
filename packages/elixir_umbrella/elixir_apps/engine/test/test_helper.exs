@@ -32,4 +32,10 @@ defmodule TestHelper do
         do_wait_for_x_messages(messages, channel, consumer_tag, x)
     end
   end
+
+  def clear_state() do
+    Engine.VehicleStore.clear()
+    Engine.BookingStore.clear()
+    Engine.RedisAdapter.clear()
+  end
 end

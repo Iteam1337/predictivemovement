@@ -17,11 +17,19 @@ defmodule Engine.VehicleStore do
     {:reply, vehicle_ids, vehicle_ids}
   end
 
+  def handle_call(:clear, _from, _) do
+    {:reply, [], []}
+  end
+
   def put_vehicle(vehicle_id) do
     GenServer.call(__MODULE__, {:put, vehicle_id})
   end
 
   def get_vehicles() do
     GenServer.call(__MODULE__, :get)
+  end
+
+  def clear() do
+    GenServer.call(__MODULE__, :clear)
   end
 end

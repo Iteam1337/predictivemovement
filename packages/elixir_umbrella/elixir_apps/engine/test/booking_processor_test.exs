@@ -1,11 +1,11 @@
 defmodule BookingProcessorTest do
   import TestHelper
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   setup_all do
+    clear_state()
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.bind(channel, @clear_queue, @clear_queue, routing_key: @clear_queue)
@@ -25,7 +25,7 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car()
     MessageGenerator.add_random_booking()
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     assert Map.get(plan, :booking_ids) |> length() == 1
     assert Map.get(plan, :vehicles) |> length() == 1
@@ -41,7 +41,7 @@ defmodule BookingProcessorTest do
 
     plan = wait_for_x_messages(2, channel)
 
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
     assert plan |> List.first() |> Map.get(:vehicles) |> length() == 1
     assert plan |> List.first() |> Map.get(:booking_ids) |> length() == 2
   end
@@ -57,7 +57,7 @@ defmodule BookingProcessorTest do
 
     plan = wait_for_x_messages(2, channel)
 
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
     assert plan |> List.last() |> Map.get(:vehicles) |> length() == 2
 
     assert plan
@@ -76,7 +76,7 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
     MessageGenerator.add_random_booking()
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -93,7 +93,7 @@ defmodule BookingProcessorTest do
 
     MessageGenerator.add_random_booking()
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -111,7 +111,7 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_booking()
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -136,7 +136,7 @@ defmodule BookingProcessorTest do
     })
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -157,7 +157,7 @@ defmodule BookingProcessorTest do
     })
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
@@ -176,7 +176,7 @@ defmodule BookingProcessorTest do
     })
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end

@@ -101,11 +101,11 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
   )
 }
 
+const sendDriverFinishedMessage = (telegramId) =>
+  bot.telegram.sendMessage(telegramId, 'Du är färdig! :D:D')
+
 const sendDeliveryInstruction = (instruction, telegramId) => {
-  //  Om du får problem så är kontaktuppgiften: 070-1234567 [Länk till telefonappen]
-  //Tryck på [Levererat] när du har lämnat paketet.
-  console.log(instruction)
-  return bot.text.sendMessage(
+  return bot.telegram.sendMessage(
     telegramId,
     `Leverera paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
     Tryck [Levererat] när du har lämnat paketet.
@@ -167,4 +167,5 @@ module.exports = {
   sendDeliveryInstruction,
   onPickupConfirm,
   onPickupOfferResponse,
+  sendDriverFinishedMessage,
 }

@@ -10,7 +10,6 @@ const messaging = require('./messaging')
 
 const onLogin = (vehicleId, ctx) => {
   const currentVehicle = getVehicle(vehicleId)
-  console.log(vehicleId, { currentVehicle })
   if (!currentVehicle) return ctx.reply('Någonting gick fel..')
 
   const telegramId = ctx.update.message.from.id
@@ -33,7 +32,7 @@ const onLogin = (vehicleId, ctx) => {
 
   return ctx
     .reply(
-      'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du är bokad för.'
+      'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
     )
     .then(() => handlePickupInstruction(vehicleId, ctx.update.message.from.id))
 }
@@ -63,15 +62,15 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
   try {
     const instructions = getInstructions(vehicleId)
 
-    // if (!instructions)
-    //   ctx.reply(
-    //     'Vi hittade inte någon plan för ditt fordon, är du säker på att du har skrivt rätt id?'
-    //   )
+    const [nextInstruction, ...rest] = instructions
 
-    const [first, ...rest] = instructions
-    console.log('firstInstructions', first)
-    if (first.type === 'pickupShipment')
-      messaging.sendPickupInstruction(first, telegramId)
+    if (!nextInstruction) return messaging.sendDriverFinishedMessage(telegramId)
+
+    if (nextInstruction.type === 'pickupShipment')
+      messaging.sendPickupInstruction(nextInstruction, telegramId)
+
+    if (nextInstruction.type === 'deliverShipment')
+      messaging.sendDeliveryInstruction(nextInstruction, telegramId)
 
     setInstructions(vehicleId, rest)
   } catch (error) {

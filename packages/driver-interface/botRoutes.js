@@ -1,6 +1,6 @@
 const botServices = require('./services/bot')
 const messaging = require('./services/messaging')
-const { getBooking, updateBooking, getVehicle } = require('./services/cache')
+const { getVehicle } = require('./services/cache')
 
 const {
   open,
@@ -12,7 +12,6 @@ function onPickup(msg) {
   const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  console.log('inside onPickup: ', { telegramId, vehicleId })
 
   open
     .then((conn) => conn.createChannel())
@@ -21,10 +20,11 @@ function onPickup(msg) {
         durable: false,
       }).then(() => {
         const { id } = callbackPayload
+
         ch.publish(
           INCOMING_BOOKING_UPDATES,
           'picked_up',
-          Buffer.from(JSON.stringify({ id }))
+          Buffer.from(JSON.stringify({ id, status: 'picked_up' }))
         )
       })
     })
@@ -47,7 +47,7 @@ function onDelivered(msg) {
         ch.publish(
           INCOMING_BOOKING_UPDATES,
           'delivered',
-          Buffer.from(JSON.stringify({ id }))
+          Buffer.from(JSON.stringify({ id, status: 'delivered' }))
         )
       })
     })
@@ -114,13 +114,10 @@ const init = (bot) => {
     switch (callbackPayload.e) {
       case 'picked_up':
         return onPickup(msg)
-
       case 'delivered':
         return onDelivered(msg)
-
       case 'offer':
         return onOffer(msg)
-
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

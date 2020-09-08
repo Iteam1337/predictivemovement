@@ -30,6 +30,7 @@ const vehiclePlan = () => {
           ch.consume(SEND_PLAN_TO_VEHICLE, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
             const currentVehicle = getVehicle(vehicle.id)
+            console.log('received plan')
             if (!currentVehicle) {
               return addVehicle(vehicle.id, vehicle)
             }

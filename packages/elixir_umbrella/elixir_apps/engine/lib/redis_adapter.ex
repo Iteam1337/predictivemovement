@@ -11,7 +11,7 @@ defmodule Engine.RedisAdapter do
   def get_bookings() do
     {:ok, bookings} = Redix.command(:redix, ["GET", "bookings"])
 
-    if is_nil(bookings), do: [], else: bookings |> Poison.decode!()
+    if is_nil(bookings), do: [], else: bookings |> Poison.decode!(keys: :atoms)
   end
 
   def add_vehicle(vehicle) do
@@ -26,6 +26,6 @@ defmodule Engine.RedisAdapter do
   def get_vehicles() do
     {:ok, vehicles} = Redix.command(:redix, ["GET", "vehicles"])
 
-    if is_nil(vehicles), do: [], else: vehicles |> Poison.decode!()
+    if is_nil(vehicles), do: [], else: vehicles |> Poison.decode!(keys: :atoms)
   end
 end

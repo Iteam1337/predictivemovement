@@ -21,7 +21,8 @@ defmodule Engine.MixProject do
     [
       env: [
         amqp_host: "localhost",
-        osrm_url: "https://osrm.iteamdev.io"
+        osrm_url: "https://osrm.iteamdev.io",
+        redis_url: "redis://localhost:6379"
       ],
       extra_applications: [:logger, :gproc],
       mod: {Engine.Application, []}

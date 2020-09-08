@@ -24,5 +24,7 @@ spec:
               value: rabbitmq
             - name: OSRM_URL
               value: http://osrm
+            - name: REDIS_URL
+              value: redis://redis:6379
           resources: {}
       restartPolicy: Always

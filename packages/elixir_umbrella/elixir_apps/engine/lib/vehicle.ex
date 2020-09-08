@@ -126,6 +126,8 @@ defmodule Vehicle do
       metadata: metadata
     }
 
+    Engine.RedisAdapter.add_vehicle(vehicle)
+
     GenServer.start_link(
       __MODULE__,
       vehicle,
@@ -134,7 +136,23 @@ defmodule Vehicle do
 
     MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
 
+    Engine.VehicleStore.put_vehicle(id)
     id
+  end
+
+  def make(%{} = vehicle_data) do
+    vehicle = struct(Vehicle, vehicle_data)
+
+    GenServer.start_link(
+      __MODULE__,
+      vehicle,
+      name: via_tuple(vehicle.id)
+    )
+
+    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
+
+    Engine.VehicleStore.put_vehicle(vehicle.id)
+    vehicle.id
   end
 
   defp via_tuple(id) do

@@ -18,6 +18,8 @@ defmodule Booking do
       size: size
     }
 
+    Engine.RedisAdapter.add_booking(booking)
+
     GenServer.start_link(
       __MODULE__,
       booking,
@@ -32,7 +34,31 @@ defmodule Booking do
       "new"
     )
 
+    Engine.BookingStore.put_booking(id)
+
     id
+  end
+
+  def make(%{} = booking_data) do
+    booking = struct(Booking, booking_data)
+
+    GenServer.start_link(
+      __MODULE__,
+      booking,
+      name: via_tuple(booking.id)
+    )
+
+    route = Osrm.route(booking.pickup, booking.delivery)
+
+    MQ.publish(
+      booking |> Map.put(:route, route),
+      Application.fetch_env!(:engine, :outgoing_booking_exchange),
+      "new"
+    )
+
+    Engine.BookingStore.put_booking(booking.id)
+
+    booking.id
   end
 
   def get(id) do

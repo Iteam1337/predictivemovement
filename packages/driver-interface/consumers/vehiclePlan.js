@@ -1,4 +1,4 @@
-const { addVehicle, getVehicle, setInstructions } = require('../services/cache')
+const { addVehicle, getVehicle } = require('../services/cache')
 
 const {
   open,
@@ -29,9 +29,12 @@ const vehiclePlan = () => {
         .then(() =>
           ch.consume(SEND_PLAN_TO_VEHICLE, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
-
             const currentVehicle = getVehicle(vehicle.id)
-            addVehicle(vehicle.id, {
+            if (!currentVehicle) {
+              return addVehicle(vehicle.id, vehicle)
+            }
+
+            return addVehicle(vehicle.id, {
               ...currentVehicle,
               ...vehicle,
             })

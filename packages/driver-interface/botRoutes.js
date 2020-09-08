@@ -12,6 +12,7 @@ function onPickup(msg) {
   const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  console.log('inside onPickup: ', { telegramId, vehicleId })
 
   open
     .then((conn) => conn.createChannel())
@@ -23,7 +24,7 @@ function onPickup(msg) {
         ch.publish(
           INCOMING_BOOKING_UPDATES,
           'picked_up',
-          Buffer.from(JSON.stringify(getBooking(id)))
+          Buffer.from(JSON.stringify({ id }))
         )
       })
     })
@@ -32,9 +33,11 @@ function onPickup(msg) {
 }
 
 function onDelivered(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  updateBooking(callbackPayload.id, { status: callbackPayload.e })
-  return open
+  open
     .then((conn) => conn.createChannel())
     .then((ch) => {
       ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
@@ -44,11 +47,13 @@ function onDelivered(msg) {
         ch.publish(
           INCOMING_BOOKING_UPDATES,
           'delivered',
-          Buffer.from(JSON.stringify(getBooking(id)))
+          Buffer.from(JSON.stringify({ id }))
         )
       })
     })
     .catch(console.warn)
+
+  return botServices.handlePickupInstruction(vehicleId, telegramId)
 }
 
 function onOffer(msg) {
@@ -86,14 +91,6 @@ const init = (bot) => {
     /** Login attempt from command /login. */
     if (msg.text.includes('pmv-')) {
       botServices.onLogin(msg.text, ctx)
-      ctx.reply(
-        'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du är bokad för.'
-      )
-
-      return botServices.handlePickupInstruction(
-        msg.text,
-        ctx.update.message.from.id
-      )
     }
 
     if (!msg.location) return

@@ -101,10 +101,44 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
   )
 }
 
-const sendPickupInstructions = (message, telegramId) => {
+const sendDeliveryInstruction = (instruction, telegramId) => {
+  //  Om du får problem så är kontaktuppgiften: 070-1234567 [Länk till telefonappen]
+  //Tryck på [Levererat] när du har lämnat paketet.
+  console.log(instruction)
+  return bot.text.sendMessage(
+    telegramId,
+    `Leverera paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
+    Tryck [Levererat] när du har lämnat paketet.
+    Ring kontaktpersonen
+    `,
+    {
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Levererat',
+              callback_data: JSON.stringify({
+                e: 'delivered',
+                id: instruction.id,
+              }),
+            },
+          ],
+        ],
+      },
+    }
+  )
+}
+
+const sendPickupInstruction = (instruction, telegramId) => {
+  // 🎁 Hämta paket “pmb-aabbcc” på Östermalmsgatan 26A
+  // [Länk till Google Maps]
+
+  // Tryck [Hämtat] när du hämtat upp paketet
   return bot.telegram.sendMessage(
     telegramId,
-    `Hämta paket [här](https://www.google.com/maps/dir/?api=1&&destination=${message.address.lat},${message.address.lon})!`,
+    `🎁 Hämta paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
+    Tryck [Hämtat] när du hämtat upp paketet.`,
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -114,7 +148,7 @@ const sendPickupInstructions = (message, telegramId) => {
               text: 'Hämtat',
               callback_data: JSON.stringify({
                 e: 'picked_up',
-                id: message.id,
+                id: instruction.id,
               }),
             },
           ],
@@ -129,7 +163,8 @@ module.exports = {
   onInstructionsForVehicle,
   onBotStart,
   sendPickupOffer,
-  sendPickupInstructions,
+  sendPickupInstruction,
+  sendDeliveryInstruction,
   onPickupConfirm,
   onPickupOfferResponse,
 }

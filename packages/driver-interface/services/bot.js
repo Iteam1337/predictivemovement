@@ -2,26 +2,28 @@ const amqp = require('./amqp')
 const {
   getVehicle,
   addVehicle,
-  addInstructions,
+  setInstructions,
   getInstructions,
 } = require('./cache')
 const messaging = require('./messaging')
 
 const onLogin = (vehicleId, ctx) => {
-  const oldVehicle = getVehicle(vehicleId)
+  const currentVehicle = getVehicle(vehicleId)
   const telegramId = ctx.botInfo.id
   ctx.metadata.setVehicleIdFromTelegramId(telegramId, vehicleId)
-  if (oldVehicle && oldVehicle.telegramId) {
+
+  if (currentVehicle && currentVehicle.telegramId) {
     return
   }
-
-  if (oldVehicle) {
-    addVehicle(vehicleId, {
-      ...oldVehicle,
+  console.log('setting instructions')
+  setInstructions(currentVehicle.id, currentVehicle.activities.slice(1, -1))
+  if (currentVehicle) {
+    return addVehicle(vehicleId, {
+      ...currentVehicle,
       telegramId,
     })
   } else {
-    addVehicle(vehicleId, { telegramId })
+    return addVehicle(vehicleId, { telegramId })
   }
 }
 
@@ -47,16 +49,22 @@ const onMessage = (msg, ctx) => {
 }
 
 const handlePickupInstruction = (vehicleId, telegramId) => {
-  const instructions = getInstructions(vehicleId)
-  // if (!instructions)
-  //   ctx.reply(
-  //     'Vi hittade inte någon plan för ditt fordon, är du säker på att du har skrivt rätt id?'
-  //   )
+  try {
+    const instructions = getInstructions(vehicleId)
 
-  const [first, ...rest] = instructions
+    // if (!instructions)
+    //   ctx.reply(
+    //     'Vi hittade inte någon plan för ditt fordon, är du säker på att du har skrivt rätt id?'
+    //   )
 
-  messaging.sendPickupInstructions(first, telegramId)
-  addInstructions(vehicleId, rest)
+    const [first, ...rest] = instructions
+
+    messaging.sendPickupInstructions(first, telegramId)
+    setInstructions(vehicleId, rest)
+  } catch (error) {
+    console.log('error in handlePickupINstructions: ', error)
+    return
+  }
 }
 
 module.exports = { onLogin, onMessage, handlePickupInstruction }

@@ -13,7 +13,7 @@ module.exports = {
       ...update,
     })
   },
-  addInstructions: (vehicleId, inscructions) =>
+  setInstructions: (vehicleId, inscructions) =>
     instructionsCache.set(vehicleId, inscructions),
   getInstructions: (vehicleId) => instructionsCache.get(vehicleId),
 

@@ -83,13 +83,17 @@ const init = (bot) => {
   bot.on('message', (ctx) => {
     const msg = ctx.message
 
+    /** Login attempt from command /login. */
     if (msg.text.includes('pmv-')) {
       botServices.onLogin(msg.text, ctx)
-
       ctx.reply(
         'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du är bokad för.'
       )
-      botServices.handlePickupInstruction(msg.text, ctx.update.message.from.id)
+
+      return botServices.handlePickupInstruction(
+        msg.text,
+        ctx.update.message.from.id
+      )
     }
 
     if (!msg.location) return
@@ -99,11 +103,14 @@ const init = (bot) => {
 
   bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
+
+    /** Telegram live location updates. */
     if (!msg.location) return
 
     botServices.onMessage(msg, ctx)
   })
 
+  /** Listen for user invoked button clicks. */
   bot.on('callback_query', (msg) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
 

@@ -1,0 +1,86 @@
+{
+    "solution": {
+        "routes": [
+            {
+                "number": 1,
+                "activities": [
+                    {
+                        "address": {
+                            "lon": 11.97442626953125,
+                            "lat": 57.70016098022461
+                        },
+                        "index": -1,
+                        "type": "start"
+                    },
+                    {
+                        "address": {
+                            "lon": 12.03236198425293,
+                            "lat": 57.690528869628906
+                        },
+                        "index": 1,
+                        "id": "Kaffestugan->Universum",
+                        "type": "pickupShipment"
+                    },
+                    {
+                        "address": {
+                            "lon": 11.989446640014648,
+                            "lat": 57.69566345214844
+                        },
+                        "index": 2,
+                        "id": "Kaffestugan->Universum",
+                        "type": "deliverShipment"
+                    },
+                    {
+                        "address": {
+                            "lon": 11.97442626953125,
+                            "lat": 57.70016098022461
+                        },
+                        "index": -2,
+                        "type": "end"
+                    }
+                ],
+                "vehicle_id": "vehicle-2"
+            },
+            {
+                "number": 2,
+                "activities": [
+                    {
+                        "address": {
+                            "lon": 18.069782257080078,
+                            "lat": 59.34375
+                        },
+                        "index": -1,
+                        "type": "start"
+                    },
+                    {
+                        "address": {
+                            "lon": 18.05840301513672,
+                            "lat": 59.309871673583984
+                        },
+                        "index": 1,
+                        "id": "Sjukhusbacken->Karolinska",
+                        "type": "pickupShipment"
+                    },
+                    {
+                        "address": {
+                            "lon": 18.028928756713867,
+                            "lat": 59.34774398803711
+                        },
+                        "index": 2,
+                        "id": "Sjukhusbacken->Karolinska",
+                        "type": "deliverShipment"
+                    },
+                    {
+                        "address": {
+                            "lon": 18.069782257080078,
+                            "lat": 59.34375
+                        },
+                        "index": -2,
+                        "type": "end"
+                    }
+                ],
+                "vehicle_id": "vehicle-1"
+            }
+        ]
+    }
+}

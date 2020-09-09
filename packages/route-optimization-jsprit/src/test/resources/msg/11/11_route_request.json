@@ -1,0 +1,231 @@
+{
+    "metadata": {
+        "note": "Two routes for two vehicles, because of different cities.",
+        "maps1": "https://www.google.de/maps/dir/Iteam+Solutions+AB,+%C3%96stermalmsgatan+26A,+114+26+Stockholm/Sjukhusbacken,+Stockholm/Karolinska+Institutet,+Solna/@59.3292405,18.0261293,13.88z/data=!4m20!4m19!1m5!1m1!1s0x465f9d661116cc0d:0x9b7be5da66f916f8!2m2!1d18.0698226!2d59.3436358!1m5!1m1!1s0x465f77ec28e3be5b:0x9361cb517124219b!2m2!1d18.0585499!2d59.3098407!1m5!1m1!1s0x465f770207a517c9:0xe1c0f66f34b8de86!2m2!1d18.0236579!2d59.3481484!3e0",
+        "maps2": "https://www.google.de/maps/dir/Iteam+Solutions+AB,+Kungsportsavenyen+21,+411+36+G%C3%B6teborg/Kaffestugan+Lyckan/Universeum,+S%C3%B6dra+V%C3%A4gen,+G%C3%B6teborg/@57.6930505,11.9871291,14z/data=!3m1!4b1!4m20!4m19!1m5!1m1!1s0x464ff36c6b9d5e9f:0xa384a4a4fec02554!2m2!1d11.9747571!2d57.7001628!1m5!1m1!1s0x464ff3e937c2300d:0x2944e75b45457c58!2m2!1d12.0322757!2d57.6904754!1m5!1m1!1s0x464ff39e0791ad9b:0x30ab0c07481829d4!2m2!1d11.9894063!2d57.6955352!3e0",
+    },
+    "vehicles": [
+        {
+            "id": "vehicle-1",
+            "start_address": {
+                "lon": 18.069782,
+                "lat": 59.343749,
+                "hint": "mFvRh____38IAAAACAAAAAYAAAAmAAAAKL2iQAAAAAByhoRAlGaxQQgAAAAIAAAABgAAACYAAABQHQEAI7oTAXODiQMWuRMBhYOJAwEAvwwZJKLf"
+            },
+            "end_address": {
+                "lon": 18.069782,
+                "lat": 59.343749,
+                "hint": "mFvRh____38IAAAACAAAAAYAAAAmAAAAKL2iQAAAAAByhoRAlGaxQQgAAAAIAAAABgAAACYAAABQHQEAI7oTAXODiQMWuRMBhYOJAwEAvwwZJKLf"
+            },
+            "metadata": {
+                "start": "iteam Stockholm (59.343749, 18.069782)",
+                "end": "iteam Stockholm (59.343749, 18.069782)"
+            }
+        },
+        {
+            "id": "vehicle-2",
+            "start_address": {
+                "lon": 11.974426,
+                "lat": 57.700160,
+                "hint": "ZDHWh____38eAAAAbwAAAAAAAAAAAAAAXeIGQqm4skIAAAAAAAAAAB4AAABvAAAAAAAAAAAAAABQHQEAn7W2AKVucAMat7YAQG9wAwAA7wgZJKLf"
+            },
+            "end_address": {
+                "lon": 11.974426,
+                "lat": 57.700160,
+                "hint": "ZDHWh____38eAAAAbwAAAAAAAAAAAAAAXeIGQqm4skIAAAAAAAAAAB4AAABvAAAAAAAAAAAAAABQHQEAn7W2AKVucAMat7YAQG9wAwAA7wgZJKLf"
+            },
+            "metadata": {
+                "start": "iteam Göteburg (57.700160, 11.974426)",
+                "end": "iteam Göteburg (57.700160, 11.974426)"
+            }
+        }
+    ],
+    "bookings": [
+        {
+            "id": "Sjukhusbacken->Karolinska",
+            "pickup": {
+                "lon": 18.058403,
+                "lat": 59.309870,
+                "hint": "zwbZh____39XAAAAXQAAABgAAAAaAAAA5l4bQixvJkC_dilBv3YpQVcAAABdAAAAGAAAABoAAABQHQEAo4wTAS3_iAOjjBMBLv-IAwEATwYZJKLf"
+            },
+            "delivery": {
+                "lon": 18.028928,
+                "lat": 59.347744,
+                "hint": "G5_Rh52f0YcJAAAAGwAAABMAAAAAAAAAUEGMQKH-N0EdwAVBAAAAAAkAAAAbAAAAEwAAAAAAAABQHQEAkhkTARSTiQOAGRMBIJOJAwEATwMZJKLf"
+            },
+            "metadata": {
+                "pickup": "Sjukhusbacken (59.309870, 18.058403)",
+                "delivery": "Karolinska (59.347744, 18.028928)"
+            }
+        },
+        {
+            "id": "Kaffestugan->Universum",
+            "pickup": {
+                "lon": 12.032362,
+                "lat": 57.690527,
+                "hint": "jq_Vh5Sv1YdgAAAAAAAAAAAAAADVAAAAeCOgQQAAAAAAAAAAeCOgQTAAAAAAAAAAAAAAAGsAAABQHQEAFZ23AENNcANqmbcAn0lwAwAA_wsZJKLf"
+            },
+            "delivery": {
+                "lon": 11.989447,
+                "lat": 57.695665,
+                "hint": "OUvWh2dL1ocvAAAAKwAAAIQAAACeAgAAj7IdQaHGDUHJlttBHdofQxcAAAAWAAAAQQAAAE0BAABQHQEAIPK2AC1ecAPH8bYAsV1wAwIALxIZJKLf"
+            },
+            "metadata": {
+                "pickup": "Kaffestugan (57.690527, 12.032362)",
+                "delivery": "Universum (57.695665, 11.989447)"
+            }
+        }
+    ],
+    "matrix": {
+        "durations": [
+            [
+                0,
+                20544.2,
+                704.8,
+                359.3,
+                20722.4,
+                20493.3
+            ],
+            [
+                20536.4,
+                0,
+                20234.4,
+                20282.4,
+                643,
+                217.9
+            ],
+            [
+                663.7,
+                20233.8,
+                0,
+                701.4,
+                20412,
+                20182.9
+            ],
+            [
+                386.5,
+                20257.1,
+                752.5,
+                0,
+                20435.3,
+                20206.2
+            ],
+            [
+                20781.8,
+                656.6,
+                20479.8,
+                20527.8,
+                0,
+                656.1
+            ],
+            [
+                20424.7,
+                300.3,
+                20122.7,
+                20170.7,
+                507.1,
+                0
+            ]
+        ],
+        "sources": [
+            {
+                "hint": "mFvRh____38IAAAACAAAAAYAAAAmAAAAKL2iQAAAAAByhoRAlGaxQQgAAAAIAAAABgAAACYAAABQHQEAI7oTAXODiQMWuRMBhYOJAwEAvwwZJKLf",
+                "location": [
+                    18.070051,
+                    59.343731
+                ],
+                "name": "Danderydsplan"
+            },
+            {
+                "hint": "ZDHWh____38eAAAAbwAAAAAAAAAAAAAAXeIGQqm4skIAAAAAAAAAAB4AAABvAAAAAAAAAAAAAABQHQEAn7W2AKVucAMat7YAQG9wAwAA7wgZJKLf",
+                "location": [
+                    11.974047,
+                    57.700005
+                ],
+                "name": "Teatergatan"
+            },
+            {
+                "hint": "zwbZh____39XAAAAXQAAABgAAAAaAAAA5l4bQixvJkC_dilBv3YpQVcAAABdAAAAGAAAABoAAABQHQEAo4wTAS3_iAOjjBMBLv-IAwEATwYZJKLf",
+                "location": [
+                    18.058403,
+                    59.309869
+                ],
+                "name": "Sjukhusbacken"
+            },
+            {
+                "hint": "G5_Rh52f0YcJAAAAGwAAABMAAAAAAAAAUEGMQKH-N0EdwAVBAAAAAAkAAAAbAAAAEwAAAAAAAABQHQEAkhkTARSTiQOAGRMBIJOJAwEATwMZJKLf",
+                "location": [
+                    18.028946,
+                    59.347732
+                ],
+                "name": "von Eulers väg"
+            },
+            {
+                "hint": "jq_Vh5Sv1YdgAAAAAAAAAAAAAADVAAAAeCOgQQAAAAAAAAAAeCOgQTAAAAAAAAAAAAAAAGsAAABQHQEAFZ23AENNcANqmbcAn0lwAwAA_wsZJKLf",
+                "location": [
+                    12.033301,
+                    57.691459
+                ],
+                "name": ""
+            },
+            {
+                "hint": "OUvWh2dL1ocvAAAAKwAAAIQAAACeAgAAj7IdQaHGDUHJlttBHdofQxcAAAAWAAAAQQAAAE0BAABQHQEAIPK2AC1ecAPH8bYAsV1wAwIALxIZJKLf",
+                "location": [
+                    11.989536,
+                    57.695789
+                ],
+                "name": ""
+            }
+        ],
+        "destinations": [
+            {
+                "hint": "mFvRh____38IAAAACAAAAAYAAAAmAAAAKL2iQAAAAAByhoRAlGaxQQgAAAAIAAAABgAAACYAAABQHQEAI7oTAXODiQMWuRMBhYOJAwEAvwwZJKLf",
+                "location": [
+                    18.070051,
+                    59.343731
+                ],
+                "name": "Danderydsplan"
+            },
+            {
+                "hint": "ZDHWh____38eAAAAbwAAAAAAAAAAAAAAXeIGQqm4skIAAAAAAAAAAB4AAABvAAAAAAAAAAAAAABQHQEAn7W2AKVucAMat7YAQG9wAwAA7wgZJKLf",
+                "location": [
+                    11.974047,
+                    57.700005
+                ],
+                "name": "Teatergatan"
+            },
+            {
+                "hint": "zwbZh____39XAAAAXQAAABgAAAAaAAAA5l4bQixvJkC_dilBv3YpQVcAAABdAAAAGAAAABoAAABQHQEAo4wTAS3_iAOjjBMBLv-IAwEATwYZJKLf",
+                "location": [
+                    18.058403,
+                    59.309869
+                ],
+                "name": "Sjukhusbacken"
+            },
+            {
+                "hint": "G5_Rh52f0YcJAAAAGwAAABMAAAAAAAAAUEGMQKH-N0EdwAVBAAAAAAkAAAAbAAAAEwAAAAAAAABQHQEAkhkTARSTiQOAGRMBIJOJAwEATwMZJKLf",
+                "location": [
+                    18.028946,
+                    59.347732
+                ],
+                "name": "von Eulers väg"
+            },
+            {
+                "hint": "jq_Vh5Sv1YdgAAAAAAAAAAAAAADVAAAAeCOgQQAAAAAAAAAAeCOgQTAAAAAAAAAAAAAAAGsAAABQHQEAFZ23AENNcANqmbcAn0lwAwAA_wsZJKLf",
+                "location": [
+                    12.033301,
+                    57.691459
+                ],
+                "name": ""
+            },
+            {
+                "hint": "OUvWh2dL1ocvAAAAKwAAAIQAAACeAgAAj7IdQaHGDUHJlttBHdofQxcAAAAWAAAAQQAAAE0BAABQHQEAIPK2AC1ecAPH8bYAsV1wAwIALxIZJKLf",
+                "location": [
+                    11.989536,
+                    57.695789
+                ],
+                "name": ""
+            }
+        ]
+    }
+}

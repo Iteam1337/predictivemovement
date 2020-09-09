@@ -75,6 +75,12 @@ public class RouteOptimizationTest {
                 "src/test/resources/msg/09/09_route_response.json");
     }
 
+    @Test
+    public void two_routes_for_two_vehicles() throws IOException {
+        test_route_optimization("src/test/resources/msg/10/10_route_request.json",
+                "src/test/resources/msg/10/10_route_response.json");
+    }
+
     private void test_route_optimization(String requestFilename, String expectedResponseFilename) throws IOException {
         // given
         JSONObject routeRequest = readJsonFromFile(requestFilename);

@@ -39,7 +39,7 @@ const onLogin = (vehicleId, ctx) => {
     .then(() => handlePickupInstruction(vehicleId, ctx.update.message.from.id))
 }
 
-const onMessage = (msg, ctx) => {
+const onLocationMessage = (msg, ctx) => {
   const position = {
     lon: msg.location.longitude,
     lat: msg.location.latitude,
@@ -82,4 +82,4 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
   }
 }
 
-module.exports = { onLogin, onMessage, handlePickupInstruction }
+module.exports = { onLogin, onLocationMessage, handlePickupInstruction }

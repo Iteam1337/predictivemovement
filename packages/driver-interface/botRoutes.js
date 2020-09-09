@@ -89,13 +89,13 @@ const init = (bot) => {
     const msg = ctx.message
 
     /** Login attempt from command /login. */
-    if (msg.text.includes('pmv-')) {
+    if (msg.text && msg.text.includes('pmv-')) {
       botServices.onLogin(msg.text, ctx)
     }
 
     if (!msg.location) return
 
-    botServices.onMessage(msg, ctx)
+    botServices.onLocationMessage(msg, ctx)
   })
 
   bot.on('edited_message', (ctx) => {
@@ -104,7 +104,7 @@ const init = (bot) => {
     /** Telegram live location updates. */
     if (!msg.location) return
 
-    botServices.onMessage(msg, ctx)
+    botServices.onLocationMessage(msg, ctx)
   })
 
   /** Listen for user invoked button clicks. */

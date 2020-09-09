@@ -1,6 +1,10 @@
 import moment from 'moment'
 
 const findAddress = async (query) => {
+  if (!query) {
+    return { features: [] }
+  }
+
   const res = await fetch(
     `https://pelias.iteamdev.io/v1/autocomplete?text=${query}`
   )

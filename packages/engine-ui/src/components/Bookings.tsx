@@ -18,6 +18,7 @@ enum BookingStatus {
   NEW = 'new',
   ASSIGNED = 'assigned',
   DELIVERED = 'delivered',
+  PICKED_UP = 'picked_up',
 }
 
 type Booking = {
@@ -38,6 +39,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
     new: Booking[]
     assigned: Booking[]
     delivered: Booking[]
+    picked_up: Booking[]
   }>(
     (prev, current) => ({
       ...prev,
@@ -47,6 +49,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
       new: [],
       assigned: [],
       delivered: [],
+      picked_up: [],
     }
   )
 
@@ -147,7 +150,7 @@ const Bookings: React.FC<{
             }
           />
           <BookingToggleList
-            bookings={bookings.assigned}
+            bookings={[...bookings.assigned, ...bookings.picked_up]}
             onClickHandler={onClickHandler}
             text="Bekräftade bokningar"
             onMouseEnterHandler={(id: string) =>

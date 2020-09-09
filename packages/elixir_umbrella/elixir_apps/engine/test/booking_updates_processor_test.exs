@@ -7,7 +7,6 @@ defmodule BookingUpdatesProcessorTest do
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
 
   setup_all do
-    clear_state()
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.declare(channel, "look_for_picked_up_updates_in_test", durable: false)
@@ -22,6 +21,7 @@ defmodule BookingUpdatesProcessorTest do
     )
 
     on_exit(fn ->
+      clear_state()
       AMQP.Channel.close(channel)
       AMQP.Connection.close(connection)
     end)

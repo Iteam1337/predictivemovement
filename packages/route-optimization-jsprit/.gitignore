@@ -14,6 +14,9 @@ bin/
 ### Python
 venv
 
+### Logs
+logs/
+
 ### Misc
 tmp/
 output/

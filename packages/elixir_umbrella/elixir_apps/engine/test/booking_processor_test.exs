@@ -45,8 +45,6 @@ defmodule BookingProcessorTest do
     assert plan |> List.first() |> Map.get(:booking_ids) |> length() == 2
   end
 
-  # Skip until bug in jsprit is fixed
-  @tag :skip
   test "creates a plan for two vehicles, where each vehicle gets one", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
     MessageGenerator.add_random_booking(:stockholm)
@@ -54,13 +52,19 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car(:stockholm)
     MessageGenerator.add_random_car(:gothenburg)
 
-    plan = wait_for_x_messages(2, channel)
+    plan =
+      wait_for_x_messages(2, channel)
+      |> Enum.sort(&(length(&1.vehicles) > length(&2.vehicles)))
+      |> List.first()
 
     clear_state()
-    assert plan |> List.last() |> Map.get(:vehicles) |> length() == 2
+
+    assert 2 ==
+             plan
+             |> Map.get(:vehicles)
+             |> length()
 
     assert plan
-           |> List.last()
            |> Map.get(:vehicles)
            |> List.first()
            |> Map.get(:booking_ids)

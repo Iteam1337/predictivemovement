@@ -8,11 +8,14 @@ const NestedMenuWrapper = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
 `
-const NestedMenu: React.FC<{onClickHandler?: () => void}> = ({ children, onClickHandler }) => {
+const MainRouteLayout: React.FC<{
+  onClickHandler?: () => void
+  redirect: string
+}> = ({ children, onClickHandler, redirect = '/' }) => {
   return (
     <NestedMenuWrapper>
       <Elements.Layout.FlexRowWrapper style={{ margin: '1.2em 0' }}>
-        <Link to="/" onClick={() => onClickHandler?.()}>
+        <Link to={redirect} onClick={() => onClickHandler?.()}>
           <Icons.Arrow style={{ transform: 'rotate(90deg)' }} />
         </Link>
       </Elements.Layout.FlexRowWrapper>
@@ -20,4 +23,4 @@ const NestedMenu: React.FC<{onClickHandler?: () => void}> = ({ children, onClick
     </NestedMenuWrapper>
   )
 }
-export default NestedMenu
+export default MainRouteLayout

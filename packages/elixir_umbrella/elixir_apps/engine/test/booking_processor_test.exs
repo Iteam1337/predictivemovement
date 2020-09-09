@@ -1,18 +1,19 @@
 defmodule BookingProcessorTest do
+  import TestHelper
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   setup_all do
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.bind(channel, @clear_queue, @clear_queue, routing_key: @clear_queue)
     AMQP.Queue.declare(channel, "get_plan", durable: false)
     AMQP.Queue.bind(channel, "get_plan", @outgoing_plan_exchange, routing_key: "")
 
     on_exit(fn ->
+      clear_state()
       AMQP.Channel.close(channel)
+      AMQP.Connection.close(connection)
     end)
 
     %{channel: channel}
@@ -22,8 +23,8 @@ defmodule BookingProcessorTest do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
     MessageGenerator.add_random_car()
     MessageGenerator.add_random_booking()
-    plan = wait_for_message(channel, "get_plan")
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    plan = wait_for_message(channel)
+    clear_state()
 
     assert Map.get(plan, :booking_ids) |> length() == 1
     assert Map.get(plan, :vehicles) |> length() == 1
@@ -37,9 +38,9 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car(:stockholm)
     MessageGenerator.add_random_car(:gothenburg)
 
-    plan = wait_for_x_messages(2, channel, "get_plan")
+    plan = wait_for_x_messages(2, channel)
 
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
     assert plan |> List.first() |> Map.get(:vehicles) |> length() == 1
     assert plan |> List.first() |> Map.get(:booking_ids) |> length() == 2
   end
@@ -53,9 +54,9 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car(:stockholm)
     MessageGenerator.add_random_car(:gothenburg)
 
-    plan = wait_for_x_messages(2, channel, "get_plan")
+    plan = wait_for_x_messages(2, channel)
 
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
     assert plan |> List.last() |> Map.get(:vehicles) |> length() == 2
 
     assert plan
@@ -70,13 +71,11 @@ defmodule BookingProcessorTest do
     channel: channel
   } do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    earliest_start = DateTime.utc_now()
-    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
 
     MessageGenerator.add_random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
     MessageGenerator.add_random_booking()
-    plan = wait_for_message(channel, "get_plan")
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    plan = wait_for_message(channel)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -85,8 +84,6 @@ defmodule BookingProcessorTest do
 
   test "vehicle with end_address defined", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    earliest_start = DateTime.utc_now()
-    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
 
     MessageGenerator.add_random_car(%{
       start_address: %{lat: 61.829182, lon: 16.0896213},
@@ -94,8 +91,8 @@ defmodule BookingProcessorTest do
     })
 
     MessageGenerator.add_random_booking()
-    plan = wait_for_message(channel, "get_plan")
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    plan = wait_for_message(channel)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -112,8 +109,8 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car(%{earliest_start: earliest_start, latest_end: latest_end})
     MessageGenerator.add_random_booking()
 
-    plan = wait_for_message(channel, "get_plan")
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    plan = wait_for_message(channel)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -137,8 +134,8 @@ defmodule BookingProcessorTest do
       size: %{measurements: [14, 12, 10], weight: 1}
     })
 
-    plan = wait_for_message(channel, "get_plan")
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    plan = wait_for_message(channel)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -158,8 +155,8 @@ defmodule BookingProcessorTest do
       size: %{measurements: [100, 100, 101], weight: 2}
     })
 
-    plan = wait_for_message(channel, "get_plan")
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    plan = wait_for_message(channel)
+    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
@@ -177,52 +174,9 @@ defmodule BookingProcessorTest do
       size: %{measurements: [14, 12, 10], weight: 100}
     })
 
-    plan = wait_for_message(channel, "get_plan")
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    plan = wait_for_message(channel)
+    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
-  end
-
-  def wait_for_x_messages(x, channel, exchange),
-    do: do_wait_for_x_messages([], channel, exchange, "", x)
-
-  def do_wait_for_x_messages(messages, channel, _exchange, consumer_tag, 0) do
-    AMQP.Basic.cancel(channel, consumer_tag)
-    messages
-  end
-
-  def do_wait_for_x_messages(messages, channel, exchange, consumer_tag, x) do
-    receive do
-      {:basic_deliver, payload, %{consumer_tag: ^consumer_tag}} ->
-        decoded =
-          payload
-          |> Poison.decode!(%{keys: :atoms})
-
-        messages
-        |> List.insert_at(-1, decoded)
-        |> do_wait_for_x_messages(channel, exchange, consumer_tag, x - 1)
-
-      {:basic_consume_ok, %{consumer_tag: consumer_tag}} ->
-        do_wait_for_x_messages(messages, channel, exchange, consumer_tag, x)
-
-      _ ->
-        do_wait_for_x_messages(messages, channel, exchange, consumer_tag, x)
-    end
-  end
-
-  def wait_for_message(channel, exchange, consumer_tag \\ "") do
-    receive do
-      {:basic_deliver, payload, %{consumer_tag: ^consumer_tag}} ->
-        AMQP.Basic.cancel(channel, consumer_tag)
-
-        payload
-        |> Poison.decode!(%{keys: :atoms})
-
-      {:basic_consume_ok, %{consumer_tag: consumer_tag}} ->
-        wait_for_message(channel, exchange, consumer_tag)
-
-      payload ->
-        wait_for_message(channel, exchange, consumer_tag)
-    end
   end
 end

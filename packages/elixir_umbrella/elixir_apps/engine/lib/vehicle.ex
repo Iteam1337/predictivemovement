@@ -1,5 +1,6 @@
 defmodule Vehicle do
   use GenServer
+  require Logger
 
   defstruct [
     :id,
@@ -29,7 +30,7 @@ defmodule Vehicle do
          %Vehicle{id: vehicle_id, activities: activities, booking_ids: booking_ids} = vehicle},
         state
       ) do
-    IO.inspect(vehicle, label: "offer to vehicle")
+    Logger.debug("offer to vehicle", vehicle)
 
     current_route =
       activities
@@ -47,7 +48,6 @@ defmodule Vehicle do
         "offer_booking_to_vehicle"
       )
       |> Poison.decode()
-      |> IO.inspect(label: "the driver answered")
       |> handle_driver_response(
         %{
           booking_ids: booking_ids,
@@ -69,7 +69,6 @@ defmodule Vehicle do
     |> Enum.map(fn booking_id ->
       Booking.assign(booking_id, current_state)
     end)
-    |> IO.inspect(label: "booking was assigned")
 
     updated_state =
       current_state
@@ -80,8 +79,8 @@ defmodule Vehicle do
   end
 
   def handle_driver_response({:ok, false}, _, state) do
+    Logger.debug("Driver didnt want the booking :(")
     state
-    |> IO.inspect(label: "Driver didnt want the booking :(")
   end
 
   def make(
@@ -127,6 +126,8 @@ defmodule Vehicle do
       metadata: metadata
     }
 
+    Engine.RedisAdapter.add_vehicle(vehicle)
+
     GenServer.start_link(
       __MODULE__,
       vehicle,
@@ -135,7 +136,23 @@ defmodule Vehicle do
 
     MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
 
+    Engine.VehicleStore.put_vehicle(id)
     id
+  end
+
+  def make(%{} = vehicle_data) do
+    vehicle = struct(Vehicle, vehicle_data)
+
+    GenServer.start_link(
+      __MODULE__,
+      vehicle,
+      name: via_tuple(vehicle.id)
+    )
+
+    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
+
+    Engine.VehicleStore.put_vehicle(vehicle.id)
+    vehicle.id
   end
 
   defp via_tuple(id) do

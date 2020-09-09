@@ -40,6 +40,5 @@ export const initState = {
   bookings: [],
   assignedBookings: [],
   cars: [],
-
   plan: [],
 }

@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-offer
+  labels:
+    app: vehicle-offer
+spec:
+  selector:
+    matchLabels:
+      app: vehicle-offer
+  template:
+    metadata:
+      labels:
+        app: vehicle-offer
+    spec:
+      containers:
+        - name: vehicle-offer
+          image: iteam1337/pm-vehicle-offer
+          env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq

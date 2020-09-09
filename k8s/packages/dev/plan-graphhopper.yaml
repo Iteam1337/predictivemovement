@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: plan-graphhopper
+  labels:
+    app: plan-graphhopper
+spec:
+  selector:
+    matchLabels:
+      app: plan-graphhopper
+  template:
+    metadata:
+      labels:
+        app: plan-graphhopper
+    spec:
+      containers:
+        - name: plan-graphhopper
+          image: iteam1337/pm-plan-graphhopper
+          env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: GRAPHHOPPER_API_KEY
+                  name: graphhopper-api-key

@@ -11,7 +11,8 @@ const messaging = require('./messaging')
 
 const onLogin = (vehicleId, ctx) => {
   const currentVehicle = getVehicle(vehicleId)
-  if (!currentVehicle) return ctx.reply('Någonting gick fel..')
+  if (!currentVehicle)
+    return ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
 
   const telegramId = ctx.update.message.from.id
 

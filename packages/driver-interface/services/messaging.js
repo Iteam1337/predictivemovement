@@ -104,13 +104,19 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
 const sendDriverFinishedMessage = (telegramId) =>
   bot.telegram.sendMessage(telegramId, 'Du är färdig! :D:D')
 
-const sendDeliveryInstruction = (instruction, telegramId) => {
+const sendDeliveryInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
-    `Leverera paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
-    Tryck [Levererat] när du har lämnat paketet.
-    Ring kontaktpersonen
-    `,
+    `🎁 Leverera paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
+    `.concat(
+      booking.metadata &&
+        booking.metadata.recipient &&
+        booking.metadata.recipient.contact
+        ? 'När du kommit fram till leveransplatsen kan du nå mottagaren på ' +
+            booking.metadata.recipient.contact
+        : ''
+    ).concat(`
+    Tryck "[Levererat]" när du har lämnat paketet.`),
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -130,15 +136,19 @@ const sendDeliveryInstruction = (instruction, telegramId) => {
   )
 }
 
-const sendPickupInstruction = (instruction, telegramId) => {
-  // 🎁 Hämta paket “pmb-aabbcc” på Östermalmsgatan 26A
-  // [Länk till Google Maps]
-
-  // Tryck [Hämtat] när du hämtat upp paketet
+const sendPickupInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
     `🎁 Hämta paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
-    Tryck [Hämtat] när du hämtat upp paketet.`,
+    `.concat(
+      booking.metadata &&
+        booking.metadata.sender &&
+        booking.metadata.sender.contact
+        ? 'När du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
+            booking.metadata.sender.contact
+        : ''
+    ).concat(`
+    Tryck på "[Hämtat]" när du hämtat upp paketet.`),
     {
       parse_mode: 'markdown',
       reply_markup: {

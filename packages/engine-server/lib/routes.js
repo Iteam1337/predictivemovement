@@ -61,6 +61,10 @@ function register(io) {
           lat: params.delivery.lat,
           lon: params.delivery.lon,
         },
+        metadata: {
+          sender: params.sender,
+          recipient: params.recipient,
+        },
       }
 
       createBooking(booking)

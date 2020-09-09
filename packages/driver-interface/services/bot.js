@@ -5,6 +5,7 @@ const {
   setInstructions,
   getInstructions,
 } = require('./cache')
+const { getBooking } = require('./cache')
 
 const messaging = require('./messaging')
 
@@ -65,12 +66,13 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
     const [nextInstruction, ...rest] = instructions
 
     if (!nextInstruction) return messaging.sendDriverFinishedMessage(telegramId)
+    const booking = getBooking(nextInstruction.id)
 
     if (nextInstruction.type === 'pickupShipment')
-      messaging.sendPickupInstruction(nextInstruction, telegramId)
+      messaging.sendPickupInstruction(nextInstruction, telegramId, booking)
 
     if (nextInstruction.type === 'deliverShipment')
-      messaging.sendDeliveryInstruction(nextInstruction, telegramId)
+      messaging.sendDeliveryInstruction(nextInstruction, telegramId, booking)
 
     setInstructions(vehicleId, rest)
   } catch (error) {

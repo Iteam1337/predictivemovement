@@ -30,43 +30,26 @@ amqp
         })
       )
       .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'outgoing_booking_updates',
-          routingKeys.ASSIGNED
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'incoming_booking_updates',
-          routingKeys.PICKED_UP
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'incoming_booking_updates',
-          routingKeys.DELIVERED
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'outgoing_booking_updates',
-          routingKeys.NEW
-        )
+        ch.bindQueue('update_booking_in_admin_ui', 'outgoing_booking_updates')
       )
   )
 
 const bookings = amqp
+  .exchange('outgoing_booking_updates', 'topic', {
+    durable: false,
+  })
   .queue('update_booking_in_admin_ui', {
     durable: false,
   })
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, [])
+  .subscribe({ noAck: true }, [
+    routingKeys.NEW,
+    routingKeys.ASSIGNED,
+    routingKeys.PICKED_UP,
+    routingKeys.DELIVERED,
+  ])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })

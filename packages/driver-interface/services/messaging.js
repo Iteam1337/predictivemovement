@@ -102,7 +102,7 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
 }
 
 const sendDriverFinishedMessage = (telegramId) =>
-  bot.telegram.sendMessage(telegramId, 'Du är färdig! :D:D')
+  bot.telegram.sendMessage(telegramId, 'Bra jobbat! Tack för idag!')
 
 const sendDeliveryInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(

@@ -7,11 +7,10 @@ const {
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
-function onPickup(msg) {
-  const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
-
-  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+function onPickup(ctx) {
+  const telegramId = ctx.update.callback_query.from.id
+  const vehicleId = ctx.metadata.getVehicleIdFromTelegramId(telegramId)
+  const callbackPayload = JSON.parse(ctx.update.callback_query.data)
 
   open
     .then((conn) => conn.createChannel())
@@ -56,10 +55,10 @@ function onDelivered(msg) {
   return botServices.handlePickupInstruction(vehicleId, telegramId)
 }
 
-function onOffer(msg) {
-  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+function onOffer(ctx) {
+  const callbackPayload = JSON.parse(ctx.update.callback_query.data)
   const { a: isAccepted, ...options } = callbackPayload
-  return messaging.onPickupOfferResponse(isAccepted, options, msg)
+  return messaging.onPickupOfferResponse(isAccepted, options, ctx)
 }
 
 const init = (bot) => {
@@ -108,16 +107,16 @@ const init = (bot) => {
   })
 
   /** Listen for user invoked button clicks. */
-  bot.on('callback_query', (msg) => {
-    const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  bot.on('callback_query', (ctx) => {
+    const callbackPayload = JSON.parse(ctx.update.callback_query.data)
 
     switch (callbackPayload.e) {
       case 'picked_up':
-        return onPickup(msg)
+        return onPickup(ctx)
       case 'delivered':
-        return onDelivered(msg)
+        return onDelivered(ctx)
       case 'offer':
-        return onOffer(msg)
+        return onOffer(ctx)
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

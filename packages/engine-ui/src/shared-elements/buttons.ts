@@ -38,14 +38,6 @@ const CancelButton = styled.button`
   font-size: 0.875rem;
   border: 1px solid #c4c4c4;
   cursor: pointer;
-
-  :hover {
-    color: #666666;
-  }
-
-  :focus {
-    outline-color: #666666;
-  }
 `
 
 const StyledAddFormFieldButton = styled.button<{

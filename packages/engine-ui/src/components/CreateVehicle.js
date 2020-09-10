@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
-import Form from './forms/AddVehicle'
+import Form from './forms/CreateVehicle'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { UIStateContext } from '../utils/UIStateContext'
 

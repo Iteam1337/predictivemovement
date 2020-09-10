@@ -9,6 +9,14 @@ const SubmitButton = styled.button<{ justifySelf: string }>`
   border: none;
   cursor: pointer;
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
+
+  :hover {
+    background: #c1f5c1;
+  }
+
+  :focus {
+    outline-color: #ccffcc;
+  }
 `
 
 const DeleteButton = styled.button<{ justifySelf: string }>`
@@ -20,14 +28,6 @@ const DeleteButton = styled.button<{ justifySelf: string }>`
   border: none;
   cursor: pointer;
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
-
-  :hover {
-    background: #c1f5c1;
-  }
-
-  :focus {
-    outline-color: #ccffcc;
-  }
 `
 
 const CancelButton = styled.button`
@@ -38,6 +38,14 @@ const CancelButton = styled.button`
   font-size: 0.875rem;
   border: 1px solid #c4c4c4;
   cursor: pointer;
+
+  :hover {
+    color: #666666;
+  }
+
+  :focus {
+    outline-color: #666666;
+  }
 `
 
 const StyledAddFormFieldButton = styled.button<{

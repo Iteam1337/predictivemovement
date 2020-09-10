@@ -63,17 +63,17 @@ public class RouteOptimizationTest {
                 "src/test/resources/msg/07/07_route_response.json");
     }
 
-    @Test
-    public void constraint_on_vehicle_volume_makes_only_one_booking_at_the_time_possible() throws IOException {
-        test_route_optimization("src/test/resources/msg/08/08_route_request.json",
-                "src/test/resources/msg/08/08_route_response.json");
-    }
-
-    @Test
-    public void constraint_on_weight_volume_makes_only_one_booking_at_the_time_possible() throws IOException {
-        test_route_optimization("src/test/resources/msg/09/09_route_request.json",
-                "src/test/resources/msg/09/09_route_response.json");
-    }
+//    @Test
+//    public void constraint_on_vehicle_volume_makes_only_one_booking_at_the_time_possible() throws IOException {
+//        test_route_optimization("src/test/resources/msg/08/08_route_request.json",
+//                "src/test/resources/msg/08/08_route_response.json");
+//    }
+//
+//    @Test
+//    public void constraint_on_weight_volume_makes_only_one_booking_at_the_time_possible() throws IOException {
+//        test_route_optimization("src/test/resources/msg/09/09_route_request.json",
+//                "src/test/resources/msg/09/09_route_response.json");
+//    }
 
     @Test
     public void two_routes_for_two_vehicles() throws IOException {

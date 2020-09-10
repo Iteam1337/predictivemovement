@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-dispatcher
+  labels:
+    app: booking-dispatcher
+spec:
+  selector:
+    matchLabels:
+      app: booking-dispatcher
+  template:
+    metadata:
+      labels:
+        app: booking-dispatcher
+    spec:
+      containers:
+        - name: booking-dispatcher
+          image: iteam1337/pm-booking-dispatcher
+          env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+          volumeMounts:
+            - name: fastigheter
+              mountPath: /app/data/fastigheter.xlsx
+              subPath: fastigheter.xlsx
+            - name: paketdata
+              mountPath: /app/data/paketdata.xlsx
+              subPath: paketdata.xlsx
+      volumes:
+        - name: fastigheter
+          configMap:
+            name: fastigheter
+        - name: paketdata
+          configMap:
+            name: paketdata

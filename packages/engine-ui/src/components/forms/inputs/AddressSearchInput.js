@@ -3,6 +3,7 @@ import Elements from '../../Elements'
 import locationIcon from '../../../assets/location.svg'
 import styled from 'styled-components'
 import hooks from '../../../utils/hooks'
+import debounce from 'lodash.debounce'
 
 const DropdownWrapper = styled.div`
   width: 100%;
@@ -25,9 +26,14 @@ const Component = ({ onChangeHandler, placeholder }) => {
   const [query, setQuery] = React.useState('')
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
 
+  const searchWithDebounce = React.useCallback(
+    debounce((q) => search(q, () => setShowDropdown(true)), 300),
+    []
+  )
+
   const onSearchInputHandler = (event) => {
     event.persist()
-    search(event.target.value, () => setShowDropdown(true))
+    searchWithDebounce(event.target.value)
 
     return setQuery(event.target.value)
   }

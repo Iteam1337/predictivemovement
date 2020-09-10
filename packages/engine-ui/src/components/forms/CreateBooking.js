@@ -12,6 +12,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
+  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
 
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
@@ -47,63 +48,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       : addTimeRestrictionWindow(propertyName)
   }
 
+  const handleToggleParcelDetailsChange = () => {
+    setShowParcelDetails((currentValue) => !currentValue)
+  }
+
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
-      <Elements.Layout.InputBlock>
-        <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="parceldetails" />
-          <FormInputs.TextInput
-            name="id"
-            value={state.id}
-            placeholder="ID"
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'id',
-              onChangeHandler
-            )}
-          />
-        </Elements.Layout.InputContainer>
-        <Elements.Layout.InputContainer>
-          <Elements.Layout.TextInputPairContainer>
-            <Elements.Layout.TextInputPairItem>
-              <FormInputs.TextInput
-                name="measurement"
-                value={state.measurement}
-                placeholder="Mått (BxHxDcm)"
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'measurement',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-            <Elements.Layout.TextInputPairItem>
-              <FormInputs.TextInput
-                step={1}
-                name="weight"
-                value={state.weight}
-                placeholder="Vikt (kg)"
-                type="number"
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'weight',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-          </Elements.Layout.TextInputPairContainer>
-        </Elements.Layout.InputContainer>
-
-        <Elements.Layout.InputContainer>
-          <FormInputs.TextInput
-            name="cargo"
-            value={state.cargo}
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'cargo',
-              onChangeHandler
-            )}
-            placeholder="Innehåll"
-          />
-        </Elements.Layout.InputContainer>
-      </Elements.Layout.InputBlock>
-
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <Elements.Form.Label htmlFor="pickup">Upphämtning</Elements.Form.Label>
         <FormInputs.AddressSearchInput
@@ -252,6 +202,70 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+
+      <Elements.Layout.InputBlock>
+        <FormInputs.Checkbox
+          label="Lägg till paketinformation"
+          onChangeHandler={handleToggleParcelDetailsChange}
+        />
+
+        {showParcelDetails && (
+          <>
+            <Elements.Layout.InputContainer>
+              <Elements.Form.Label htmlFor="parceldetails" />
+              <FormInputs.TextInput
+                name="id"
+                value={state.id}
+                placeholder="ID"
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'id',
+                  onChangeHandler
+                )}
+              />
+            </Elements.Layout.InputContainer>
+            <Elements.Layout.InputContainer>
+              <Elements.Layout.TextInputPairContainer>
+                <Elements.Layout.TextInputPairItem>
+                  <FormInputs.TextInput
+                    name="measurement"
+                    value={state.measurement}
+                    placeholder="Mått (BxHxDcm)"
+                    onChangeHandler={eventHandlers.handleTextInputChange(
+                      'measurement',
+                      onChangeHandler
+                    )}
+                  />
+                </Elements.Layout.TextInputPairItem>
+                <Elements.Layout.TextInputPairItem>
+                  <FormInputs.TextInput
+                    step={1}
+                    name="weight"
+                    value={state.weight}
+                    placeholder="Vikt (kg)"
+                    type="number"
+                    onChangeHandler={eventHandlers.handleTextInputChange(
+                      'weight',
+                      onChangeHandler
+                    )}
+                  />
+                </Elements.Layout.TextInputPairItem>
+              </Elements.Layout.TextInputPairContainer>
+            </Elements.Layout.InputContainer>
+
+            <Elements.Layout.InputContainer>
+              <FormInputs.TextInput
+                name="cargo"
+                value={state.cargo}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'cargo',
+                  onChangeHandler
+                )}
+                placeholder="Innehåll"
+              />
+            </Elements.Layout.InputContainer>
+          </>
+        )}
       </Elements.Layout.InputBlock>
       <Elements.Layout.ButtonWrapper>
         <Elements.Buttons.CancelButton

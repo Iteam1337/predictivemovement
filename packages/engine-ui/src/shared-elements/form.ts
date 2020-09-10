@@ -15,11 +15,18 @@ const DateInput = styled.input<{ iconInset: boolean }>`
   }
 `
 
-const Label = styled.label`
+const Label = styled.label<{ required?: boolean }>`
   margin-bottom: 0.25rem;
   display: block;
   font-weight: bold;
   font-size: 0.875rem;
+  ${({ required }) =>
+    required &&
+    `
+  ::after {
+    content:" *";
+    color: red;
+  }`}
 `
 
 export default { DateInput, Label }

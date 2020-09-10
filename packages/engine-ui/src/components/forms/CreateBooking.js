@@ -55,8 +55,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-        <Elements.Form.Label htmlFor="pickup">Upphämtning</Elements.Form.Label>
+        <Elements.Form.Label required htmlFor="pickup">
+          Upphämtning
+        </Elements.Form.Label>
         <FormInputs.AddressSearchInput
+          required
           placeholder="Adress"
           onChangeHandler={eventHandlers.handleDropdownSelect(
             'pickup',
@@ -103,7 +106,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="sender-contact">
+          <Elements.Form.Label required htmlFor="sender-contact">
             Kontakt
           </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>
@@ -127,9 +130,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+      <Elements.Layout.MarginBottomContainer />
 
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-        <Elements.Form.Label htmlFor="delivery">Avlämning</Elements.Form.Label>
+        <Elements.Form.Label required htmlFor="delivery">
+          Avlämning
+        </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           placeholder="Adress"
           onChangeHandler={eventHandlers.handleDropdownSelect(
@@ -179,7 +185,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="recipient-contact">
+          <Elements.Form.Label required htmlFor="recipient-contact">
             Kontakt
           </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>

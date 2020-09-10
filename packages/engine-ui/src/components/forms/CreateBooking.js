@@ -4,8 +4,10 @@ import FormInputs from './inputs'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import eventHandlers from './eventHandlers'
+import { useHistory } from 'react-router-dom'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
+  const history = useHistory()
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
@@ -252,7 +254,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       <Elements.Layout.ButtonWrapper>
         <Elements.Buttons.CancelButton
           type="button"
-          onClick={() => console.log('canceling')}
+          onClick={() => history.push('/bookings')}
         >
           Avbryt
         </Elements.Buttons.CancelButton>

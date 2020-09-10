@@ -123,7 +123,7 @@ const resetState = () =>
     .publish(JUST_DO_IT_MESSAGE)
 
 const plan = amqp
-  .exchange('plan', 'fanout', {
+  .exchange('outgoing_plan_updates', 'fanout', {
     durable: false,
   })
   .queue('planned_vehicles', {

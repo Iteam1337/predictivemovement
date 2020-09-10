@@ -1,6 +1,6 @@
 const {
   open,
-  queues: { PICKUP_INSTRUCTIONS },
+  queues: { SEND_PICKUP_INSTRUCTIONS },
   exchanges: { OUTGOING_BOOKING_UPDATES },
 } = require('../adapters/amqp')
 
@@ -13,7 +13,7 @@ const pickupInstructions = () => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(PICKUP_INSTRUCTIONS, {
+        .assertQueue(SEND_PICKUP_INSTRUCTIONS, {
           durable: false,
         })
         .then(() =>
@@ -21,9 +21,9 @@ const pickupInstructions = () => {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(PICKUP_INSTRUCTIONS, OUTGOING_BOOKING_UPDATES, 'assigned'))
+        .then(() => ch.bindQueue(SEND_PICKUP_INSTRUCTIONS, OUTGOING_BOOKING_UPDATES, 'assigned'))
         .then(() =>
-          ch.consume(PICKUP_INSTRUCTIONS, (msg) => {
+          ch.consume(SEND_PICKUP_INSTRUCTIONS, (msg) => {
             const booking = JSON.parse(msg.content.toString())
             const fromTelegram =
               booking.assigned_to.metadata &&

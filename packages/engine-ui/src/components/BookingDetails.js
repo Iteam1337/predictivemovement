@@ -2,7 +2,7 @@ import React from 'react'
 import Elements from '../shared-elements'
 import styled from 'styled-components'
 import MainRouteLayout from './layout/MainRouteLayout'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import helpers from '../utils/helpers'
 
 const Paragraph = styled.p`
@@ -13,6 +13,7 @@ const Paragraph = styled.p`
 
 const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
   const { bookingId } = useParams()
+  const history = useHistory()
 
   const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
@@ -39,6 +40,13 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
     if (!booking) return
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])
+
+  const handleDeleteClick = (bookingId) => {
+    if (window.confirm('Är du säker på att du vill radera bokningen?')) {
+      deleteBooking(bookingId)
+      return history.push('/bookings')
+    }
+  }
 
   if (!booking || !address) return <p>Laddar bokning...</p>
 
@@ -76,7 +84,13 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
           Status:
         </Elements.Typography.StrongParagraph>
         <span>{booking.status}</span>
-        <button onClick={() => deleteBooking(booking.id)}>DELETE</button>
+        <Elements.Layout.MarginTopContainer>
+          <Elements.Buttons.DeleteButton
+            onClick={() => handleDeleteClick(booking.id)}
+          >
+            Radera bokning
+          </Elements.Buttons.DeleteButton>
+        </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

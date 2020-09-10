@@ -9,6 +9,17 @@ const SubmitButton = styled.button<{ justifySelf: string }>`
   border: none;
   cursor: pointer;
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
+`
+
+const DeleteButton = styled.button<{ justifySelf: string }>`
+  padding: 0.75rem 2.3rem;
+  background: red;
+  font-weight: 600;
+  color: white;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
 
   :hover {
     background: #c1f5c1;
@@ -57,4 +68,5 @@ export default {
   CancelButton,
   StyledAddFormFieldButton,
   DisplayTextButton,
+  DeleteButton,
 }

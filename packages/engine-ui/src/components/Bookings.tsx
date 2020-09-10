@@ -112,9 +112,9 @@ const BookingToggleList: React.FC<{
 
 const Bookings: React.FC<{
   bookings: Booking[]
-  createBookings: any
-  createBooking: any
-  deleteBooking: any
+  createBookings: () => void
+  createBooking: () => void
+  deleteBooking: () => void
 }> = (props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const { path, url } = useRouteMatch()

@@ -10,6 +10,7 @@ const {
 function onPickup(ctx) {
   const telegramId = ctx.update.callback_query.from.id
   const vehicleId = ctx.metadata.getVehicleIdFromTelegramId(telegramId)
+  if (!vehicleId) return messaging.onNoInstructionsForVehicle(ctx)
   const callbackPayload = JSON.parse(ctx.update.callback_query.data)
 
   open
@@ -31,11 +32,12 @@ function onPickup(ctx) {
   return botServices.handlePickupInstruction(vehicleId, telegramId)
 }
 
-function onDelivered(msg) {
-  const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+function onDelivered(ctx) {
+  const telegramId = ctx.update.callback_query.from.id
+  const vehicleId = ctx.metadata.getVehicleIdFromTelegramId(telegramId)
+  if (!vehicleId) return messaging.onNoInstructionsForVehicle(ctx)
 
-  const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  const callbackPayload = JSON.parse(ctx.update.callback_query.data)
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {

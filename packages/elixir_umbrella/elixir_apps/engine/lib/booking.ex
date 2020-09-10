@@ -76,8 +76,14 @@ defmodule Booking do
 
   def assign(booking_id, vehicle), do: GenServer.call(via_tuple(booking_id), {:assign, vehicle})
 
-  def add_event(booking_id, status) when status in ["picked_up", "delivered"],
-    do: GenServer.call(via_tuple(booking_id), {:add_event, status})
+  def add_event(booking_id, status) when status in ["picked_up", "delivered"] do
+    try do
+      GenServer.call(via_tuple(booking_id), {:add_event, status})
+    catch
+      :exit, {:noproc, _} ->
+        {:error, "No process found with that id"}
+    end
+  end
 
   defp via_tuple(id) when is_integer(id), do: via_tuple(Integer.to_string(id))
 

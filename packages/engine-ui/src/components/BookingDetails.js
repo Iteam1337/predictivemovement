@@ -11,7 +11,7 @@ const Paragraph = styled.p`
   text-transform: capitalize;
 `
 
-const BookingDetails = ({ bookings, onClickHandler }) => {
+const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
   const { bookingId } = useParams()
 
   const booking = bookings.find((b) => b.id === bookingId)
@@ -47,7 +47,6 @@ const BookingDetails = ({ bookings, onClickHandler }) => {
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
-
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
             {booking.id}
           </Elements.Typography.RoundedLabelDisplay>
@@ -77,6 +76,7 @@ const BookingDetails = ({ bookings, onClickHandler }) => {
           Status:
         </Elements.Typography.StrongParagraph>
         <span>{booking.status}</span>
+        <button onClick={() => deleteBooking(booking.id)}>DELETE</button>
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

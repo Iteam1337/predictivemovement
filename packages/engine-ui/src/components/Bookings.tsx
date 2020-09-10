@@ -114,6 +114,7 @@ const Bookings: React.FC<{
   bookings: Booking[]
   createBookings: any
   createBooking: any
+  deleteBooking: any
 }> = (props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const { path, url } = useRouteMatch()
@@ -202,6 +203,7 @@ const Bookings: React.FC<{
             dispatch({ type: 'highlightBooking', payload: undefined })
           }
           bookings={props.bookings}
+          deleteBooking={props.deleteBooking}
         />
       </Route>
     </Switch>

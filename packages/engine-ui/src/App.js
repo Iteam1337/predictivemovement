@@ -33,6 +33,10 @@ const App = () => {
     })
   }
 
+  const deleteBooking = (id) => {
+    socket.emit('delete-booking', id)
+  }
+
   const resetState = () => {
     dispatch({
       type: 'clearState',
@@ -71,6 +75,7 @@ const App = () => {
         resetState={resetState}
         addVehicle={addVehicle}
         createBookings={createBookings}
+        deleteBooking={deleteBooking}
       />
       <Route path="/">
         <Map data={mapData} />

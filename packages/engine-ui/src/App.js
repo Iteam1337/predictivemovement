@@ -51,6 +51,13 @@ const App = () => {
     })
   })
 
+  useSocket('new-booking', (booking) => {
+    dispatch({
+      type: 'addBooking',
+      payload: booking,
+    })
+  })
+
   useSocket('cars', (newCars) => {
     dispatch({
       type: 'setCars',

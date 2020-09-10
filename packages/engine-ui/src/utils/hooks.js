@@ -69,9 +69,10 @@ const useGetSuggestedAddresses = (initialState) => {
               geometry: {
                 coordinates: [lon, lat],
               },
-              properties: { name },
+              properties: { name, county },
             }) => ({
               name,
+              county,
               lon,
               lat,
             })

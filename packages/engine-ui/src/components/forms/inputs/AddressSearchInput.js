@@ -63,7 +63,7 @@ const Component = ({ onChangeHandler, placeholder }) => {
               name={address.name}
               onClick={(event) => handleDropdownSelect(event, address)}
             >
-              {address.name}
+              {address.name}, {address.county}
             </DropdownButton>
           ))}
         </DropdownWrapper>

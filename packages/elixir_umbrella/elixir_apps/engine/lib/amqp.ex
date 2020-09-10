@@ -1,8 +1,6 @@
 defmodule MQ do
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
-  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
-
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
   @outgoing_vehicle_exchange Application.compile_env!(:engine, :outgoing_vehicle_exchange)
@@ -109,7 +107,6 @@ defmodule MQ do
     channel = open_channel()
 
     # Ensure that exchanges are created
-    AMQP.Exchange.declare(channel, @clear_queue, :topic, durable: false)
     AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
     AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
     AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
@@ -119,7 +116,6 @@ defmodule MQ do
     register_new_vehicle_queue = "register_new_vehicle"
     AMQP.Queue.declare(channel, register_new_vehicle_queue, durable: false)
     AMQP.Queue.declare(channel, register_new_booking_queue, durable: false)
-    AMQP.Queue.declare(channel, @clear_queue, durable: false)
 
     # Bind queues to exchange
     AMQP.Queue.bind(channel, register_new_vehicle_queue, @incoming_vehicle_exchange(),
@@ -132,6 +128,5 @@ defmodule MQ do
 
     AMQP.Basic.consume(channel, register_new_vehicle_queue, nil, no_ack: true)
     AMQP.Basic.consume(channel, register_new_booking_queue, nil, no_ack: true)
-    AMQP.Basic.consume(channel, @clear_queue, nil, no_ack: true)
   end
 end

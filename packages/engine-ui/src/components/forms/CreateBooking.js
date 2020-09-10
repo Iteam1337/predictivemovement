@@ -172,6 +172,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 onChangeHandler
               )}
               placeholder="Telefonnummer"
+              required
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
@@ -247,6 +248,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 onChangeHandler
               )}
               placeholder="Telefonnummer"
+              required
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>

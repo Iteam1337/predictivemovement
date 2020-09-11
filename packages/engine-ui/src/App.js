@@ -3,26 +3,20 @@ import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import { ViewportProvider } from './utils/ViewportContext'
+import { UIStateProvider } from './utils/UIStateContext'
+import hooks from './utils/hooks'
 
 const App = () => {
-  const [state, dispatch] = React.useReducer(reducer, initState)
   const { socket } = useSocket()
+  const [state, dispatch] = React.useReducer(reducer, initState)
 
-  const onMapClick = ({ lngLat }) => {
-    dispatch({
-      type: 'setPosition',
-      payload: { lat: lngLat[1], lon: lngLat[0] },
-    })
-  }
+  const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
 
-  const addVehicle = (position) => {
-    socket.emit('add-vehicle', {
-      position,
-    })
+  const addVehicle = (params) => {
+    socket.emit('add-vehicle', params)
   }
 
   const createBooking = (params) => {
@@ -30,7 +24,6 @@ const App = () => {
   }
 
   const dispatchOffers = () => {
-    console.log('user pressed the dispatch button')
     socket.emit('dispatch-offers')
   }
 
@@ -38,6 +31,10 @@ const App = () => {
     socket.emit('new-bookings', {
       total,
     })
+  }
+
+  const deleteBooking = (id) => {
+    socket.emit('delete-booking', id)
   }
 
   const resetState = () => {
@@ -54,6 +51,13 @@ const App = () => {
     })
   })
 
+  useSocket('delete-booking', (bookingId) => {
+    dispatch({
+      type: 'deleteBooking',
+      payload: bookingId,
+    })
+  })
+
   useSocket('cars', (newCars) => {
     dispatch({
       type: 'setCars',
@@ -61,23 +65,29 @@ const App = () => {
     })
   })
 
+  useSocket('plan-update', (plan) => {
+    dispatch({
+      type: 'setPlan',
+      payload: plan.vehicles,
+    })
+  })
+
   return (
-    <ViewportProvider>
-      <Router>
-        <Logotype />
-        <Sidebar
-          {...state}
-          createBooking={createBooking}
-          dispatchOffers={dispatchOffers}
-          resetState={resetState}
-          addVehicle={addVehicle}
-          createBookings={createBookings}
-        />
-        <Route path="/">
-          <Map onMapClick={onMapClick} state={state} />
-        </Route>
-      </Router>
-    </ViewportProvider>
+    <UIStateProvider>
+      <Logotype />
+      <Sidebar
+        {...state}
+        createBooking={createBooking}
+        dispatchOffers={dispatchOffers}
+        resetState={resetState}
+        addVehicle={addVehicle}
+        createBookings={createBookings}
+        deleteBooking={deleteBooking}
+      />
+      <Route path="/">
+        <Map data={mapData} />
+      </Route>
+    </UIStateProvider>
   )
 }
 

@@ -1,44 +1,47 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  labels:
+    app.kubernetes.io/name: redis
   name: redis
+  namespace: predictivemovement
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      app.kubernetes.io/name: redis
   serviceName: redis
   template:
     metadata:
       labels:
-        app: redis
+        app.kubernetes.io/name: redis
     spec:
       containers:
-      - image: redis
-        name: redis
-        ports:
-        - containerPort: 6379
-          protocol: TCP
-        volumeMounts:
-        - name: redis-data
-          mountPath:  "/data"
+        - image: redis
+          name: redis
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          volumeMounts:
+            - name: redis-data
+              mountPath: "/data"
   volumeClaimTemplates:
     - metadata:
         name: redis-data
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: do-block-storage
         resources:
           requests:
-            storage: "2Gi"
+            storage: "5Gi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: redis
+  namespace: predictivemovement
   labels:
-    app: redis
+    app.kubernetes.io/name: redis
 spec:
   ports:
     - name: "6379"
@@ -46,4 +49,4 @@ spec:
       port: 6379
       targetPort: 6379
   selector:
-    app: redis
+    app.kubernetes.io/name: redis

@@ -1,8 +1,10 @@
 import React from 'react'
-
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import styled from 'styled-components'
 import Dot from '../assets/dot.svg'
+import MainRouteLayout from './layout/MainRouteLayout'
+import { useParams, useHistory } from 'react-router-dom'
+import helpers from '../utils/helpers'
 
 const Paragraph = styled.p`
   margin: 0;
@@ -62,25 +64,26 @@ const Timeline = styled.div`
 `
 
 const statuses = ['new', 'assigned', 'picked up', 'deliverd']
-const BookingDetails = ({ booking }) => {
+const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
+  const { bookingId } = useParams()
+  const history = useHistory()
+
+  const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
-  const getAddressFromCoordinates = async ({ lon, lat }) => {
-    return await fetch(
-      `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
-    )
-      .then((res) => res.json())
-      .then(({ features }) => features[0].properties.label)
-  }
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
       pickupCoordinates,
       deliveryCoordinates
     ) => {
-      const pickupAddress = await getAddressFromCoordinates(pickupCoordinates)
-      const deliveryAddress = await getAddressFromCoordinates(
+      const pickupAddress = await helpers.getAddressFromCoordinate(
+        pickupCoordinates
+      )
+
+      const deliveryAddress = await helpers.getAddressFromCoordinate(
         deliveryCoordinates
       )
+
       setAddress({
         pickup: pickupAddress,
         delivery: deliveryAddress,
@@ -91,48 +94,70 @@ const BookingDetails = ({ booking }) => {
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])
 
-  if (!booking || !address) return <p>Loading...</p>
+  const handleDeleteClick = (bookingId) => {
+    if (window.confirm('Är du säker på att du vill radera bokningen?')) {
+      deleteBooking(bookingId)
+      return history.push('/bookings')
+    }
+  }
+
+  if (!booking || !address) return <p>Laddar bokning...</p>
 
   return (
-    <div>
-      <Elements.StrongParagraph>Bokning</Elements.StrongParagraph>
-      <Paragraph>{booking.id}</Paragraph>
-
-      <Elements.StrongParagraph>Upphämtning</Elements.StrongParagraph>
-      <Paragraph>{address.pickup}</Paragraph>
-      <Elements.StrongParagraph>Avlämning</Elements.StrongParagraph>
-      <Paragraph>{address.delivery}</Paragraph>
-      {booking.assigned_to && (
-        <>
-          <Elements.StrongParagraph>Bokad transport</Elements.StrongParagraph>
-
-          <Elements.RoundedLink
-            to={`/details?type=car&id=${booking.assigned_to.id}`}
-          >
+    <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
+      <Elements.Layout.Container>
+        <Elements.Layout.FlexRowWrapper>
+          <h3>Bokning</h3>
+          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
             {booking.id}
-          </Elements.RoundedLink>
-        </>
-      )}
-      <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
-      <Timeline>
-        <ol>
-          {statuses.map((status, index) => (
-            <li key={index}>
-              <Elements.FlexRowWrapper>
-                <Elements.NoMarginParagraph>15.17</Elements.NoMarginParagraph>
-                <Elements.NoMarginParagraph>
-                  {status}
-                </Elements.NoMarginParagraph>
-              </Elements.FlexRowWrapper>
-            </li>
-          ))}
-        </ol>
-      </Timeline>
-      <span>{booking.status}</span>
+          </Elements.Typography.RoundedLabelDisplay>
+        </Elements.Layout.FlexRowWrapper>
+        <Elements.Typography.StrongParagraph>
+          Upphämtning
+        </Elements.Typography.StrongParagraph>
+        <Paragraph>{address.pickup}</Paragraph>
+        <Elements.Typography.StrongParagraph>
+          Avlämning
+        </Elements.Typography.StrongParagraph>
+        <Paragraph>{address.delivery}</Paragraph>
+        {booking.assigned_to && (
+          <>
+            <Elements.Typography.StrongParagraph>
+              Bokad transport
+            </Elements.Typography.StrongParagraph>
 
-      {/* <Elements.StrongParagraph>Assigned to: </Elements.StrongParagraph>
-      <span>{booking.assigned_to.id}</span> */}
-    </div>
+            <Elements.Links.RoundedLink
+              to={`/transports/${booking.assigned_to.id}`}
+            >
+              {booking.id}
+            </Elements.Links.RoundedLink>
+          </>
+        )}
+        <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
+        <Timeline>
+          <ol>
+            {statuses.map((status, index) => (
+              <li key={index}>
+                <Elements.FlexRowWrapper>
+                  <Elements.NoMarginParagraph>15.17</Elements.NoMarginParagraph>
+                  <Elements.NoMarginParagraph>
+                    {status}
+                  </Elements.NoMarginParagraph>
+                </Elements.FlexRowWrapper>
+              </li>
+            ))}
+          </ol>
+        </Timeline>
+        <span>{booking.status}</span>
+        <Elements.Layout.MarginTopContainer>
+          <Elements.Buttons.DeleteButton
+            onClick={() => handleDeleteClick(booking.id)}
+          >
+            Radera bokning
+          </Elements.Buttons.DeleteButton>
+        </Elements.Layout.MarginTopContainer>
+      </Elements.Layout.Container>
+    </MainRouteLayout>
   )
 }
 

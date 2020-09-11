@@ -10,6 +10,13 @@ export const reducer = (state, action) => {
           ...action.payload,
         ],
       }
+    case 'deleteBooking':
+      return {
+        ...state,
+        bookings: state.bookings.filter(
+          (booking) => booking.id !== action.payload
+        ),
+      }
     case 'setBookings':
       return {
         ...state,
@@ -21,10 +28,10 @@ export const reducer = (state, action) => {
         ],
       }
 
-    case 'setPosition':
+    case 'setPlan':
       return {
         ...state,
-        currentPosition: action.payload,
+        plan: action.payload,
       }
 
     case 'clearState':
@@ -40,5 +47,5 @@ export const initState = {
   bookings: [],
   assignedBookings: [],
   cars: [],
-  currentPosition: { lat: null, lon: null },
+  plan: [],
 }

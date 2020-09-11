@@ -1,20 +1,20 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 import Form from './forms/CreateBooking'
-
 import 'react-datepicker/dist/react-datepicker.css'
+import MainRouteLayout from './layout/MainRouteLayout'
 
-const CreateBooking = ({ createBooking }) => {
+const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
 
   const [formState, setState] = React.useState({
     id: '',
     measurement: '',
-    weight: undefined,
+    weight: '',
     cargo: '',
-    pickup: { name: '', lat: '', lon: '', timewindows: null },
-    delivery: { name: '', lat: '', lon: '', timewindows: null },
+    pickup: { name: '', lat: '', lon: '', timewindow: null },
+    delivery: { name: '', lat: '', lon: '', timewindow: null },
     sender: { name: '', contact: '' },
     recipient: { name: '', contact: '' },
   })
@@ -30,24 +30,29 @@ const CreateBooking = ({ createBooking }) => {
       return false
     }
 
-    createBooking({
+    onSubmit({
       ...formState,
+      measurement:
+        formState.measurement &&
+        formState.measurement.split('x').map(parseFloat),
       pickup: formState.pickup,
       delivery: formState.delivery,
     })
 
-    history.push('/')
+    history.push('/bookings')
   }
 
   return (
-    <Elements.Container>
-      <h3>Lägg till bokning</h3>
-      <Form
-        onChangeHandler={setState}
-        onSubmitHandler={onSubmitHandler}
-        state={formState}
-      />
-    </Elements.Container>
+    <MainRouteLayout redirect="/bookings">
+      <Elements.Layout.Container>
+        <h3>Lägg till bokning</h3>
+        <Form
+          onChangeHandler={setState}
+          onSubmitHandler={onSubmitHandler}
+          state={formState}
+        />
+      </Elements.Layout.Container>
+    </MainRouteLayout>
   )
 }
 export default CreateBooking

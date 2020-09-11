@@ -3,20 +3,19 @@ const open = require('amqplib').connect(
 )
 
 const exchanges = {
-  BOOKINGS: 'bookings',
-  BOOKING_ASSIGNMENTS: 'booking_assignments',
+  INCOMING_BOOKING_UPDATES: 'incoming_booking_updates',
+  OUTGOING_BOOKING_UPDATES: 'outgoing_booking_updates',
 }
 
 const queues = {
-  BOOKING_ASSIGNED: 'booking_assigned',
-  PICKUP_CONFIRMED: 'pickup_confirmed',
-  DELIVERY_CONFIRMED: 'delivery_confirmed',
+  SET_BOOKING_ASSIGNED: 'set_booking_assigned_in_booker_interface',
+  NOTIFY_PICKUP: 'notify_booker_of_pickup',
+  NOTIFY_DELIVERY: 'notify_booker_of_delivery',
 }
 
 const routingKeys = {
   DELIVERED: 'delivered',
-  PICKUP: 'pickup',
-  NEW: 'new',
+  PICKED_UP: 'picked_up',
 }
 
 module.exports = {

@@ -11,6 +11,10 @@ export const reducer = (state, action) => {
         ],
       }
     case 'setBookings':
+      state['bookings'] = action.payload
+      return state
+
+    case 'addBooking':
       return {
         ...state,
         bookings: [

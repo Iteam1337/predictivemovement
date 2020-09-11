@@ -76,6 +76,12 @@ defmodule Booking do
 
   def assign(booking_id, vehicle), do: GenServer.call(via_tuple(booking_id), {:assign, vehicle})
 
+  def delete(id) do
+    Engine.RedisAdapter.delete_booking(id)
+    Engine.BookingStore.delete_booking(id)
+    GenServer.stop(via_tuple(id))
+  end
+
   def add_event(booking_id, status) when status in ["picked_up", "delivered"],
     do: GenServer.call(via_tuple(booking_id), {:add_event, status})
 

@@ -8,6 +8,7 @@ const {
   createBookingsFromHistory,
   resetState,
   plan,
+  deleteBooking,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
@@ -22,7 +23,7 @@ function register(io) {
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
-        socket.emit('bookings', bookings)
+        socket.emit('new-booking', bookings)
       })
 
     _.merge([_(movingCarsCache.values()), cars.fork()])
@@ -111,6 +112,12 @@ function register(io) {
       resetState()
       socket.emit('cars', [])
       socket.emit('bookings', [])
+    })
+
+    socket.on('delete-booking', (id) => {
+      bookingsCache.delete(id)
+      deleteBooking(id)
+      socket.emit('bookings', Array.from(bookingsCache.values()))
     })
   })
 }

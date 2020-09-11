@@ -9,6 +9,7 @@ const routingKeys = {
   DELIVERED: 'delivered',
   PICKED_UP: 'picked_up',
   PLANNED: 'plan_updated',
+  DELETED: 'deleted',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -117,6 +118,15 @@ const plan = amqp
     return plan.json()
   })
 
+const deleteBooking = (id) => {
+  return amqp
+    .exchange('incoming_booking_updates', 'topic', {
+      durable: false,
+    })
+    .publish(id, routingKeys.DELETED)
+    .then(() => console.log(` [x] Delete booking ${id}`))
+}
+
 module.exports = {
   addVehicle,
   bookings,
@@ -126,4 +136,5 @@ module.exports = {
   createBookingsFromHistory,
   resetState,
   plan,
+  deleteBooking,
 }

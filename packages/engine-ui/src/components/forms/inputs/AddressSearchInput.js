@@ -3,6 +3,7 @@ import Elements from '../../Elements'
 import locationIcon from '../../../assets/location.svg'
 import styled from 'styled-components'
 import hooks from '../../../utils/hooks'
+import debounce from 'lodash.debounce'
 
 const DropdownWrapper = styled.div`
   width: 100%;
@@ -20,14 +21,19 @@ const DropdownButton = styled.button`
   }
 `
 
-const Component = ({ onChangeHandler, placeholder }) => {
+const Component = ({ onChangeHandler, placeholder, ...rest }) => {
   const [showDropdown, setShowDropdown] = React.useState(false)
   const [query, setQuery] = React.useState('')
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
 
+  const searchWithDebounce = React.useCallback(
+    debounce((q) => search(q, () => setShowDropdown(true)), 300),
+    []
+  )
+
   const onSearchInputHandler = (event) => {
     event.persist()
-    search(event.target.value, () => setShowDropdown(true))
+    searchWithDebounce(event.target.value)
 
     return setQuery(event.target.value)
   }
@@ -47,6 +53,7 @@ const Component = ({ onChangeHandler, placeholder }) => {
         src={`${locationIcon}`}
       />
       <Elements.TextInput
+        {...rest}
         name="pickup"
         type="text"
         value={query}
@@ -63,7 +70,7 @@ const Component = ({ onChangeHandler, placeholder }) => {
               name={address.name}
               onClick={(event) => handleDropdownSelect(event, address)}
             >
-              {address.name}
+              {address.name}, {address.county}
             </DropdownButton>
           ))}
         </DropdownWrapper>

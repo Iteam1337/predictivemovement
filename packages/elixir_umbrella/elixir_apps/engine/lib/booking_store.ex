@@ -10,7 +10,7 @@ defmodule Engine.BookingStore do
   end
 
   def handle_call({:put, new_booking_id}, _from, booking_ids) do
-    {:reply, :ok, [new_booking_id |booking_ids]}
+    {:reply, :ok, [new_booking_id | booking_ids]}
   end
 
   def handle_call(:get, _from, booking_ids) do
@@ -19,6 +19,14 @@ defmodule Engine.BookingStore do
 
   def handle_call(:clear, _from, _) do
     {:reply, [], []}
+  end
+
+  def handle_call({:delete, booking_id}, _from, booking_ids) do
+    updated_booking_ids =
+      booking_ids
+      |> Enum.reject(fn id -> id == booking_id end)
+
+    {:reply, :ok, updated_booking_ids}
   end
 
   def put_booking(booking_id) do
@@ -31,5 +39,9 @@ defmodule Engine.BookingStore do
 
   def clear() do
     GenServer.call(__MODULE__, :clear)
+  end
+
+  def delete_booking(booking_id) do
+    GenServer.call(__MODULE__, {:delete, booking_id})
   end
 end

@@ -32,4 +32,13 @@ defmodule Engine.RedisAdapter do
     Redix.command(:redix, ["DEL", "bookings"])
     Redix.command(:redix, ["DEL", "vehicles"])
   end
+
+  def delete_booking(booking_id) do
+    updated_bookings =
+      get_bookings()
+      |> Enum.reject(fn %{id: id} -> id == booking_id end)
+      |> Poison.encode!()
+
+    Redix.command(:redix, ["SET", "bookings", updated_bookings])
+  end
 end

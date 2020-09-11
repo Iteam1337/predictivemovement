@@ -7,6 +7,7 @@ import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import Elements from './Elements'
 import { IPlanVehicle } from './Plan'
+import { getColor } from '../utils/palette'
 
 interface Props {
   vehicle: IPlanVehicle
@@ -50,7 +51,9 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
           toggle(vehicle.id)
         }}
       >
-        <Elements.StrongParagraph>Rutt {routeNumber}</Elements.StrongParagraph>
+        <Elements.StrongParagraph dotColor={getColor(routeNumber - 1, 3)}>
+          Rutt {routeNumber}
+        </Elements.StrongParagraph>
         <Chevron active={routeId === vehicle.id ? true : undefined} />
       </RouteTitleWrapper>
 

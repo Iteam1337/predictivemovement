@@ -10,6 +10,13 @@ export const reducer = (state, action) => {
           ...action.payload,
         ],
       }
+    case 'deleteBooking':
+      return {
+        ...state,
+        bookings: state.bookings.filter(
+          (booking) => booking.id !== action.payload
+        ),
+      }
     case 'setBookings':
       return {
         ...state,

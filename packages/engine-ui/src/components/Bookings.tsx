@@ -118,8 +118,9 @@ const Wrapper = styled.div`
 
 const Bookings: React.FC<{
   bookings: Booking[]
-  createBookings: any
-  createBooking: any
+  createBookings: () => void
+  createBooking: () => void
+  deleteBooking: () => void
 }> = (props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const { path, url } = useRouteMatch()
@@ -203,15 +204,16 @@ const Bookings: React.FC<{
           <CreateBookings onSubmit={props.createBookings} />
         </Route>
 
-        <Route path={`${path}/:bookingId`}>
-          <BookingDetails
-            onClickHandler={() =>
-              dispatch({ type: 'highlightBooking', payload: undefined })
-            }
-            bookings={props.bookings}
-          />
-        </Route>
-      </Switch>
+      <Route path={`${path}/:bookingId`}>
+        <BookingDetails
+          onClickHandler={() =>
+            dispatch({ type: 'highlightBooking', payload: undefined })
+          }
+          bookings={props.bookings}
+          deleteBooking={props.deleteBooking}
+        />
+      </Route>
+    </Switch>
     </Wrapper>
   )
 }

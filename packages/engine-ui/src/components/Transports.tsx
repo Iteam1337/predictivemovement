@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
-import AddVehicle from './AddVehicle'
+import AddVehicle from './CreateVehicle'
 import Vehicles from './Vehicles'
 import VehicleDetails from './VehicleDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'

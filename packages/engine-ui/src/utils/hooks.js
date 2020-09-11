@@ -46,13 +46,15 @@ const useFilteredStateFromQueryParams = (state) => {
       cars: state.cars.filter((item) =>
         vehicleDetailView ? vehicleDetailView.params.id === item.id : true
       ),
-      plan: state.plan
-        .filter(() => planView)
-        .filter((route) =>
-          planRouteDetailsView
-            ? planRouteDetailsView.params.routeId === route.id
-            : true
-        ),
+      plan: planView
+        ? state.plan
+            .map((r, i) => ({ ...r, routeIndex: i }))
+            .filter((route) =>
+              planRouteDetailsView
+                ? planRouteDetailsView.params.routeId === route.id
+                : true
+            )
+        : [],
     },
   }
 }

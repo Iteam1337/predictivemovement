@@ -27,7 +27,7 @@ const Timeline = styled.div`
     padding-bottom: 1em;
     padding-left: 1em;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
   }
 
   img {
@@ -38,8 +38,8 @@ const Timeline = styled.div`
     content: '';
     background-color: #19de8b;
     position: absolute;
-    bottom: 0;
-    top: 1px;
+    bottom: -4px;
+    top: 4px;
     left: 0.3rem;
     width: 2px;
   }
@@ -49,7 +49,7 @@ const Timeline = styled.div`
     background-image: url(${Dot});
     position: absolute;
     left: 0;
-    top: 0;
+    top: 3px;
     height: 12px;
     width: 12px;
   }
@@ -57,12 +57,6 @@ const Timeline = styled.div`
   li:last-child:after {
     content: '';
     width: 0;
-  }
-
-  div {
-    justify-content: space-between;
-    width: 70%;
-    margin-top: -2px;
   }
 `
 
@@ -100,6 +94,18 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
     if (window.confirm('Är du säker på att du vill radera bokningen?')) {
       deleteBooking(bookingId)
       return history.push('/bookings')
+    }
+  }
+  const parseEventTypeToHumanReadable = (type) => {
+    switch (type) {
+      case 'picked_up':
+        return 'Upphämtad'
+      case 'delivered':
+        return 'Levererad'
+      case 'assigned':
+        return 'Tilldelad förare'
+      default:
+        return 'Ingen status hittades'
     }
   }
 
@@ -143,14 +149,14 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <ol>
               {booking.events.map((event, index) => (
                 <li key={index}>
-                  <Elements.Layout.FlexRowWrapper>
+                  <Elements.Typography.NoMarginParagraph>
+                    {moment(event.timestamp).format('HH:mm')}
+                  </Elements.Typography.NoMarginParagraph>
+                  <Elements.Layout.MarginLeftContainerSm>
                     <Elements.Typography.NoMarginParagraph>
-                      {moment(event.timestamp).format('HH:mm')}
+                      {parseEventTypeToHumanReadable(event.type)}
                     </Elements.Typography.NoMarginParagraph>
-                    <Elements.Typography.NoMarginParagraph>
-                      {event.type}
-                    </Elements.Typography.NoMarginParagraph>
-                  </Elements.Layout.FlexRowWrapper>
+                  </Elements.Layout.MarginLeftContainerSm>
                 </li>
               ))}
             </ol>

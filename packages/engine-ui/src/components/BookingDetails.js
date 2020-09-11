@@ -98,6 +98,8 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
   }
   const parseEventTypeToHumanReadable = (type) => {
     switch (type) {
+      case 'new':
+        return 'Registrerad'
       case 'picked_up':
         return 'Upphämtad'
       case 'delivered':

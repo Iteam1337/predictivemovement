@@ -19,6 +19,10 @@ const StrongParagraph = styled.label`
   font-weight: bold;
 `
 
+const NoMarginParagraph = styled.p`
+  margin: 0;
+`
+
 const CleanH4 = styled.h4`
   margin: 0;
   cursor: default;
@@ -38,6 +42,7 @@ const RoundedLabelDisplay = styled.span<{ margin: string }>`
 
 export default {
   NoInfoParagraph,
+  NoMarginParagraph,
   SmallInfo,
   StrongParagraph,
   RoundedLabelDisplay,

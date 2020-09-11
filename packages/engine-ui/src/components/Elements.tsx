@@ -15,10 +15,6 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
-const NoMarginParagraph = styled.p`
-  margin: 0;
-`
-
 const NoInfoParagraph = styled.p`
   font-style: italic;
   font-size: 0.875rem;
@@ -323,7 +319,6 @@ export default {
   CheckboxLabel,
   SmallInfo,
   Checkbox,
-  NoMarginParagraph,
   TextInputPairContainer,
   TextInputPairItem,
   InputBlock,

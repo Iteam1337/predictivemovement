@@ -5,6 +5,7 @@ import Dot from '../assets/dot.svg'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams, useHistory } from 'react-router-dom'
 import helpers from '../utils/helpers'
+import moment from 'moment'
 
 const Paragraph = styled.p`
   margin: 0;
@@ -13,6 +14,8 @@ const Paragraph = styled.p`
 `
 
 const Timeline = styled.div`
+  margin-top: 2.5rem;
+
   ol {
     list-style-type: none;
     padding: 0;
@@ -63,7 +66,6 @@ const Timeline = styled.div`
   }
 `
 
-const statuses = ['new', 'assigned', 'picked up', 'deliverd']
 const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
   const { bookingId } = useParams()
   const history = useHistory()
@@ -133,22 +135,29 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             </Elements.Links.RoundedLink>
           </>
         )}
-        <Elements.StrongParagraph>Status:</Elements.StrongParagraph>
         <Timeline>
-          <ol>
-            {statuses.map((status, index) => (
-              <li key={index}>
-                <Elements.FlexRowWrapper>
-                  <Elements.NoMarginParagraph>15.17</Elements.NoMarginParagraph>
-                  <Elements.NoMarginParagraph>
-                    {status}
-                  </Elements.NoMarginParagraph>
-                </Elements.FlexRowWrapper>
-              </li>
-            ))}
-          </ol>
+          <Elements.Typography.StrongParagraph>
+            Status
+          </Elements.Typography.StrongParagraph>
+          {booking.events.length ? (
+            <ol>
+              {booking.events.map((event, index) => (
+                <li key={index}>
+                  <Elements.Layout.FlexRowWrapper>
+                    <Elements.Typography.NoMarginParagraph>
+                      {moment(event.timestamp).format('HH:mm')}
+                    </Elements.Typography.NoMarginParagraph>
+                    <Elements.Typography.NoMarginParagraph>
+                      {event.type}
+                    </Elements.Typography.NoMarginParagraph>
+                  </Elements.Layout.FlexRowWrapper>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <Paragraph>{booking.status}</Paragraph>
+          )}
         </Timeline>
-        <span>{booking.status}</span>
         <Elements.Layout.MarginTopContainer>
           <Elements.Buttons.DeleteButton
             onClick={() => handleDeleteClick(booking.id)}

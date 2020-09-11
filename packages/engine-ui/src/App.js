@@ -51,10 +51,10 @@ const App = () => {
     })
   })
 
-  useSocket('new-booking', (booking) => {
+  useSocket('delete-booking', (bookingId) => {
     dispatch({
-      type: 'addBooking',
-      payload: booking,
+      type: 'deleteBooking',
+      payload: bookingId,
     })
   })
 

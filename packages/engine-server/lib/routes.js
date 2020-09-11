@@ -23,7 +23,7 @@ function register(io) {
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
-        socket.emit('new-booking', bookings)
+        socket.emit('bookings', bookings)
       })
 
     _.merge([_(movingCarsCache.values()), cars.fork()])
@@ -115,9 +115,10 @@ function register(io) {
     })
 
     socket.on('delete-booking', (id) => {
+      console.log('about to delete booking: ', id)
       bookingsCache.delete(id)
       deleteBooking(id)
-      socket.emit('bookings', Array.from(bookingsCache.values()))
+      socket.emit('delete-booking', id)
     })
   })
 }

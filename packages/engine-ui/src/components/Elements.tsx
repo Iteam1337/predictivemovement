@@ -255,7 +255,7 @@ const FormInputIcon = styled.img`
   left: 12.5px;
 `
 
-const StrongParagraph = styled.label<{ dotColor?: any }>`
+const StrongParagraph = styled.label<{ dotColor?: string }>`
   ${({ dotColor }) =>
     dotColor &&
     `

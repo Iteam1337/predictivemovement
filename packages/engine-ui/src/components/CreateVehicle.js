@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
-import Form from './forms/AddVehicle'
+import Form from './forms/CreateVehicle'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { UIStateContext } from '../utils/UIStateContext'
 
-const AddVehicle = ({ onSubmit }) => {
+const CreateVehicle = ({ onSubmit }) => {
   const { state: UIState } = React.useContext(UIStateContext)
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
@@ -65,4 +65,5 @@ const AddVehicle = ({ onSubmit }) => {
     </MainRouteLayout>
   )
 }
-export default AddVehicle
+
+export default CreateVehicle

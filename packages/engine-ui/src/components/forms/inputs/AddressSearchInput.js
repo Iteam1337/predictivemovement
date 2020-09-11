@@ -21,7 +21,7 @@ const DropdownButton = styled.button`
   }
 `
 
-const Component = ({ onChangeHandler, placeholder }) => {
+const Component = ({ onChangeHandler, placeholder, ...rest }) => {
   const [showDropdown, setShowDropdown] = React.useState(false)
   const [query, setQuery] = React.useState('')
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
@@ -53,6 +53,7 @@ const Component = ({ onChangeHandler, placeholder }) => {
         src={`${locationIcon}`}
       />
       <Elements.TextInput
+        {...rest}
         name="pickup"
         type="text"
         value={query}

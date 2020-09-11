@@ -21,6 +21,39 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
+          <Elements.Form.Label required>Körschema</Elements.Form.Label>
+          <Elements.Layout.InputContainer>
+            <Elements.Layout.TimeRestrictionWrapper>
+              <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
+                timewindow={state.timewindow}
+                onChangeHandler={handleDriverTimeRestrictionChange}
+              />
+            </Elements.Layout.TimeRestrictionWrapper>
+          </Elements.Layout.InputContainer>
+          <Elements.Layout.InputContainer>
+            <Elements.Form.Label>Startposition</Elements.Form.Label>
+            <FormInputs.AddressSearchInput
+              placeholder="Adress"
+              onChangeHandler={eventHandlers.handleDropdownSelect(
+                'startPosition',
+                onChangeHandler
+              )}
+            />
+          </Elements.Layout.InputContainer>
+          <Elements.Layout.InputContainer>
+            <Elements.Form.Label>Slutposition</Elements.Form.Label>
+            <FormInputs.AddressSearchInput
+              placeholder="Adress"
+              onChangeHandler={eventHandlers.handleDropdownSelect(
+                'endDestination',
+                onChangeHandler
+              )}
+            />
+          </Elements.Layout.InputContainer>
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
           <Elements.Form.Label htmlFor="vehicleType">
             Namn på transport
           </Elements.Form.Label>
@@ -72,37 +105,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           </Elements.Layout.TextInputPairContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
-      <Elements.Layout.InputBlock>
-        <Elements.Layout.InputContainer>
-          <Elements.Form.Label>Körschema</Elements.Form.Label>
-          <Elements.Layout.InputContainer>
-            <Elements.Layout.TimeRestrictionWrapper>
-              <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
-                timewindow={state.timewindow}
-                onChangeHandler={handleDriverTimeRestrictionChange}
-              />
-            </Elements.Layout.TimeRestrictionWrapper>
-          </Elements.Layout.InputContainer>
-          <Elements.Layout.InputContainer>
-            <FormInputs.AddressSearchInput
-              placeholder="Startposition"
-              onChangeHandler={eventHandlers.handleDropdownSelect(
-                'startPosition',
-                onChangeHandler
-              )}
-            />
-          </Elements.Layout.InputContainer>
-          <Elements.Layout.InputContainer>
-            <FormInputs.AddressSearchInput
-              placeholder="Slutposition"
-              onChangeHandler={eventHandlers.handleDropdownSelect(
-                'endDestination',
-                onChangeHandler
-              )}
-            />
-          </Elements.Layout.InputContainer>
-        </Elements.Layout.InputContainer>
-      </Elements.Layout.InputBlock>
+
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label htmlFor="driver">Chaufför</Elements.Form.Label>

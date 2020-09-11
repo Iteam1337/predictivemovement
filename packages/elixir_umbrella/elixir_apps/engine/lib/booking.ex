@@ -24,7 +24,7 @@ defmodule Booking do
       external_id: external_id,
       delivery: delivery,
       metadata: metadata,
-      events: [],
+      events: [create_event("new")],
       size: size,
       route: Osrm.route(pickup, delivery)
     }
@@ -85,6 +85,8 @@ defmodule Booking do
   def add_event(booking_id, status) when status in ["picked_up", "delivered"],
     do: GenServer.call(via_tuple(booking_id), {:add_event, status})
 
+  defp create_event(status), do: %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
+
   defp via_tuple(id) when is_integer(id), do: via_tuple(Integer.to_string(id))
 
   defp via_tuple(id) when is_binary(id) do
@@ -119,7 +121,7 @@ defmodule Booking do
   end
 
   def handle_call({:add_event, status}, _, state) do
-    new_event = %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
+    new_event = create_event(status)
 
     updated_state =
       Map.update!(state, :events, fn events -> [new_event | events] end)

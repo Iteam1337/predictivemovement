@@ -1,14 +1,63 @@
 import React from 'react'
 import Elements from '../shared-elements'
 import styled from 'styled-components'
+import Dot from '../assets/dot.svg'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams, useHistory } from 'react-router-dom'
 import helpers from '../utils/helpers'
+import moment from 'moment'
 
 const Paragraph = styled.p`
   margin: 0;
   margin-bottom: 2.5rem;
   text-transform: capitalize;
+`
+
+const Timeline = styled.div`
+  margin-top: 2.5rem;
+
+  ol {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    position: relative;
+    margin: 0;
+    padding-bottom: 1em;
+    padding-left: 1em;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  img {
+    padding-right: 0.5rem;
+  }
+
+  li:after {
+    content: '';
+    background-color: #19de8b;
+    position: absolute;
+    bottom: -4px;
+    top: 4px;
+    left: 0.3rem;
+    width: 2px;
+  }
+
+  li:before {
+    content: '';
+    background-image: url(${Dot});
+    position: absolute;
+    left: 0;
+    top: 3px;
+    height: 12px;
+    width: 12px;
+  }
+
+  li:last-child:after {
+    content: '';
+    width: 0;
+  }
 `
 
 const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
@@ -47,6 +96,20 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
       return history.push('/bookings')
     }
   }
+  const parseEventTypeToHumanReadable = (type) => {
+    switch (type) {
+      case 'new':
+        return 'Registrerad'
+      case 'picked_up':
+        return 'Upphämtad'
+      case 'delivered':
+        return 'Levererad'
+      case 'assigned':
+        return 'Tilldelad förare'
+      default:
+        return 'Ingen status hittades'
+    }
+  }
 
   if (!booking || !address) return <p>Laddar bokning...</p>
 
@@ -80,10 +143,29 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             </Elements.Links.RoundedLink>
           </>
         )}
-        <Elements.Typography.StrongParagraph>
-          Status:
-        </Elements.Typography.StrongParagraph>
-        <span>{booking.status}</span>
+        <Timeline>
+          <Elements.Typography.StrongParagraph>
+            Status
+          </Elements.Typography.StrongParagraph>
+          {booking.events.length ? (
+            <ol>
+              {booking.events.map((event, index) => (
+                <li key={index}>
+                  <Elements.Typography.NoMarginParagraph>
+                    {moment(event.timestamp).format('HH:mm')}
+                  </Elements.Typography.NoMarginParagraph>
+                  <Elements.Layout.MarginLeftContainerSm>
+                    <Elements.Typography.NoMarginParagraph>
+                      {parseEventTypeToHumanReadable(event.type)}
+                    </Elements.Typography.NoMarginParagraph>
+                  </Elements.Layout.MarginLeftContainerSm>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <Paragraph>{booking.status}</Paragraph>
+          )}
+        </Timeline>
         <Elements.Layout.MarginTopContainer>
           <Elements.Buttons.DeleteButton
             onClick={() => handleDeleteClick(booking.id)}

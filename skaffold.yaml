@@ -4,8 +4,8 @@ metadata:
   name: pm-mapbox-test
 build:
   artifacts:
-    - image: iteam1337/pm-booking-interface
-      context: packages/booking-interface
+    # - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
+    #   context: packages/booking-interface
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine

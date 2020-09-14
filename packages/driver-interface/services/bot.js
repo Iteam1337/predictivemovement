@@ -77,7 +77,7 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
 
     setInstructions(vehicleId, rest)
   } catch (error) {
-    console.log('error in handlePickupINstructions: ', error)
+    console.log('error in handlePickupInstructions: ', error)
     return
   }
 }

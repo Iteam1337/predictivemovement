@@ -2,7 +2,7 @@ const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
 const moment = require('moment')
-const { getDirectionsFromActivities } = require('./google')
+const { getDirectionsFromActivities, getDirectionsUrl } = require('./google')
 const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
@@ -111,9 +111,11 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
       booking.pickup.street
         ? `vid ${booking.delivery.street}, ${booking.delivery.city}`
         : 'här'
-    }](https://www.google.com/maps/dir/?api=1&&destination=${
-      instruction.address.lat
-    },${instruction.address.lon})!
+    }](${
+      booking.delivery.street && booking.delivery.city
+        ? getDirectionsUrl(booking.delivery.street, booking.delivery.city)
+        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
+    })!
     `.concat(
       booking.metadata &&
         booking.metadata.recipient &&
@@ -149,9 +151,11 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
       booking.pickup.street
         ? `vid ${booking.pickup.street}, ${booking.pickup.city}`
         : 'här'
-    }](https://www.google.com/maps/dir/?api=1&&destination=${
-      instruction.address.lat
-    },${instruction.address.lon})!
+    }](${
+      booking.pickup.street && booking.pickup.city
+        ? getDirectionsUrl(booking.pickup.street, booking.pickup.city)
+        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
+    })!
     `.concat(
       booking.metadata &&
         booking.metadata.sender &&

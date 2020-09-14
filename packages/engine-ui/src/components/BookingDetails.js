@@ -112,7 +112,6 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
   }
 
   if (!booking || !address) return <p>Laddar bokning...</p>
-  console.log('this is the booking: ', booking)
 
   return (
     <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>

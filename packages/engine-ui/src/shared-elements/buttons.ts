@@ -19,6 +19,17 @@ const SubmitButton = styled.button<{ justifySelf: string }>`
   }
 `
 
+const DeleteButton = styled.button<{ justifySelf: string }>`
+  padding: 0.75rem 2.3rem;
+  background: red;
+  font-weight: 600;
+  color: white;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
+`
+
 const CancelButton = styled.button`
   padding: 0.75rem 2.3rem;
   background: #fff;
@@ -38,7 +49,7 @@ const CancelButton = styled.button`
 `
 
 const StyledAddFormFieldButton = styled.button<{
-  size: string
+  size?: string
   marginTop: string
 }>`
   color: #666666;
@@ -57,4 +68,5 @@ export default {
   CancelButton,
   StyledAddFormFieldButton,
   DisplayTextButton,
+  DeleteButton,
 }

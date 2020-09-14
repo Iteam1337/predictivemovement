@@ -42,6 +42,10 @@ const MarginTopContainer = styled.div`
   margin-top: 2rem;
 `
 
+const MarginLeftContainerSm = styled.div`
+  margin-left: 1rem;
+`
+
 const InputInnerContainer = styled.div`
   position: relative;
   display: inline-block;
@@ -92,4 +96,5 @@ export default {
   BookingList,
   MarginBottomContainer,
   MarginTopContainer,
+  MarginLeftContainerSm,
 }

@@ -1,14 +1,12 @@
 defmodule Dispatcher do
+  require Logger
+
   def dispatch_offers() do
     IO.puts("Dispatching!")
 
-    PlanStore.get_plan()
-    |> (fn %{vehicles: vehicles} ->
-          IO.inspect(length(vehicles), label: "amount of vehicles to be offered")
-          vehicles
-        end).()
-    |> Enum.map(&Vehicle.offer/1)
+    %{vehicles: vehicles} = PlanStore.get_plan()
+    Logger.debug(length(vehicles), label: "amount of vehicles to be offered")
 
-    # |> Enum.each(....Engine.MatchProducer.remove_bookings)
+    Enum.map(vehicles, &Vehicle.offer/1)
   end
 end

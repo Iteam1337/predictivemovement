@@ -4,12 +4,15 @@ import FormInputs from './inputs'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import eventHandlers from './eventHandlers'
+import { useHistory } from 'react-router-dom'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
+  const history = useHistory()
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
+  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
 
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
@@ -45,66 +48,18 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       : addTimeRestrictionWindow(propertyName)
   }
 
+  const handleToggleParcelDetailsChange = () => {
+    setShowParcelDetails((currentValue) => !currentValue)
+  }
+
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
-      <Elements.Layout.InputBlock>
-        <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="parceldetails" />
-          <FormInputs.TextInput
-            name="id"
-            value={state.id}
-            placeholder="ID"
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'id',
-              onChangeHandler
-            )}
-          />
-        </Elements.Layout.InputContainer>
-        <Elements.Layout.InputContainer>
-          <Elements.Layout.TextInputPairContainer>
-            <Elements.Layout.TextInputPairItem>
-              <FormInputs.TextInput
-                name="measurement"
-                value={state.measurement}
-                placeholder="Mått (BxHxDcm)"
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'measurement',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-            <Elements.Layout.TextInputPairItem>
-              <FormInputs.TextInput
-                step={1}
-                name="weight"
-                value={state.weight}
-                placeholder="Vikt (kg)"
-                type="number"
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'weight',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-          </Elements.Layout.TextInputPairContainer>
-        </Elements.Layout.InputContainer>
-
-        <Elements.Layout.InputContainer>
-          <FormInputs.TextInput
-            name="cargo"
-            value={state.cargo}
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'cargo',
-              onChangeHandler
-            )}
-            placeholder="Innehåll"
-          />
-        </Elements.Layout.InputContainer>
-      </Elements.Layout.InputBlock>
-
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-        <Elements.Form.Label htmlFor="pickup">Upphämtning</Elements.Form.Label>
+        <Elements.Form.Label required htmlFor="pickup">
+          Upphämtning
+        </Elements.Form.Label>
         <FormInputs.AddressSearchInput
+          required
           placeholder="Adress"
           onChangeHandler={eventHandlers.handleDropdownSelect(
             'pickup',
@@ -151,7 +106,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="sender-contact">
+          <Elements.Form.Label required htmlFor="sender-contact">
             Kontakt
           </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>
@@ -170,13 +125,17 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 onChangeHandler
               )}
               placeholder="Telefonnummer"
+              required
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+      <Elements.Layout.MarginBottomContainer />
 
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-        <Elements.Form.Label htmlFor="delivery">Avlämning</Elements.Form.Label>
+        <Elements.Form.Label required htmlFor="delivery">
+          Avlämning
+        </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           placeholder="Adress"
           onChangeHandler={eventHandlers.handleDropdownSelect(
@@ -226,7 +185,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="recipient-contact">
+          <Elements.Form.Label required htmlFor="recipient-contact">
             Kontakt
           </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>
@@ -245,14 +204,79 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 onChangeHandler
               )}
               placeholder="Telefonnummer"
+              required
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+
+      <Elements.Layout.InputBlock>
+        <FormInputs.Checkbox
+          label="Lägg till paketinformation"
+          onChangeHandler={handleToggleParcelDetailsChange}
+        />
+
+        {showParcelDetails && (
+          <>
+            <Elements.Layout.InputContainer>
+              <Elements.Form.Label htmlFor="parceldetails" />
+              <FormInputs.TextInput
+                name="id"
+                value={state.id}
+                placeholder="ID"
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'id',
+                  onChangeHandler
+                )}
+              />
+            </Elements.Layout.InputContainer>
+            <Elements.Layout.InputContainer>
+              <Elements.Layout.TextInputPairContainer>
+                <Elements.Layout.TextInputPairItem>
+                  <FormInputs.TextInput
+                    name="measurement"
+                    value={state.measurement}
+                    placeholder="Mått (BxHxDcm)"
+                    onChangeHandler={eventHandlers.handleTextInputChange(
+                      'measurement',
+                      onChangeHandler
+                    )}
+                  />
+                </Elements.Layout.TextInputPairItem>
+                <Elements.Layout.TextInputPairItem>
+                  <FormInputs.TextInput
+                    step={1}
+                    name="weight"
+                    value={state.weight}
+                    placeholder="Vikt (kg)"
+                    type="number"
+                    onChangeHandler={eventHandlers.handleTextInputChange(
+                      'weight',
+                      onChangeHandler
+                    )}
+                  />
+                </Elements.Layout.TextInputPairItem>
+              </Elements.Layout.TextInputPairContainer>
+            </Elements.Layout.InputContainer>
+
+            <Elements.Layout.InputContainer>
+              <FormInputs.TextInput
+                name="cargo"
+                value={state.cargo}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'cargo',
+                  onChangeHandler
+                )}
+                placeholder="Innehåll"
+              />
+            </Elements.Layout.InputContainer>
+          </>
+        )}
+      </Elements.Layout.InputBlock>
       <Elements.Layout.ButtonWrapper>
         <Elements.Buttons.CancelButton
           type="button"
-          onClick={() => console.log('canceling')}
+          onClick={() => history.push('/bookings')}
         >
           Avbryt
         </Elements.Buttons.CancelButton>

@@ -39,7 +39,7 @@ const RouteActivities = ({ vehicle }) => {
           <p>{index + 1}</p>
           <p>{getLabelForActivities(activity.type)}</p>
           <Elements.RoundedLink
-            to={`/details?type=booking&id=${activity.id}`}
+            to={`/bookings/${activity.id}`}
             onClick={() =>
               dispatch({
                 type: 'viewport',

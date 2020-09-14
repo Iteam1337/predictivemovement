@@ -1,4 +1,4 @@
-const { addVehicle } = require('../services/cache')
+const { addVehicle, getVehicle } = require('../services/cache')
 
 const {
   open,
@@ -19,14 +19,25 @@ const vehiclePlan = () => {
             durable: false,
           })
         )
-        .then(() => ch.bindQueue(SEND_PLAN_TO_VEHICLE, OUTGOING_VEHICLE_UPDATES, 'plan_updated'))
+        .then(() =>
+          ch.bindQueue(
+            SEND_PLAN_TO_VEHICLE,
+            OUTGOING_VEHICLE_UPDATES,
+            'plan_updated'
+          )
+        )
         .then(() =>
           ch.consume(SEND_PLAN_TO_VEHICLE, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
-            if (vehicle.metadata && vehicle.metadata.telegram) {
-              addVehicle(vehicle.metadata.telegram.senderId, vehicle)
-              ch.ack(msg)
-            }
+            const currentVehicle = getVehicle(vehicle.id) || {}
+            console.log('received plan')
+
+            addVehicle(vehicle.id, {
+              ...currentVehicle,
+              ...vehicle,
+            })
+
+            return ch.ack(msg)
           })
         )
     )

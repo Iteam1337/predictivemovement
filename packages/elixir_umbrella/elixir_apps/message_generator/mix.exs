@@ -7,7 +7,7 @@ defmodule MessageGenerator.MixProject do
       version: "0.1.0",
       elixir: "~> 1.10",
       build_path: "../../_build",
-      config_path: "../../elixir_config/config.exs",
+      config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       start_permanent: Mix.env() == :prod,

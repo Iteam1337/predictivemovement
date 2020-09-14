@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-interface
+  labels:
+    app: booking-interface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-interface
+  template:
+    metadata:
+      labels:
+        app: booking-interface
+    spec:
+      containers:
+        - env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: BOOKING_TOKEN
+                  name: booking-token
+          image: iteam1337/pm-booking-interface
+          name: booking-interface
+          resources: {}
+      restartPolicy: Always

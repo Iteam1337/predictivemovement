@@ -1,7 +1,19 @@
 defmodule Booking do
   use GenServer
+  require Logger
+  @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
 
-  defstruct [:id, :pickup, :delivery, :assigned_to, :external_id, :events, :metadata, :size]
+  defstruct [
+    :id,
+    :pickup,
+    :delivery,
+    :assigned_to,
+    :external_id,
+    :events,
+    :metadata,
+    :size,
+    :route
+  ]
 
   def make(pickup, delivery, external_id, metadata, size) do
     id = "pmb-" <> (Base62UUID.generate() |> String.slice(0, 8))
@@ -9,26 +21,43 @@ defmodule Booking do
     booking = %Booking{
       id: id,
       pickup: pickup,
+      external_id: external_id,
       delivery: delivery,
       metadata: metadata,
-      events: []
+      events: [create_event("new")],
+      size: size,
+      route: Osrm.route(pickup, delivery)
     }
+
+    Engine.RedisAdapter.add_booking(booking)
 
     GenServer.start_link(
       __MODULE__,
-      %Booking{
-        id: id,
-        external_id: external_id,
-        pickup: pickup,
-        delivery: delivery,
-        metadata: metadata,
-        events: [],
-        size: size
-      },
+      booking,
       name: via_tuple(id)
     )
 
-    route = Osrm.route(pickup, delivery)
+    MQ.publish(
+      booking,
+      @outgoing_booking_exchange,
+      "new"
+    )
+
+    Engine.BookingStore.put_booking(id)
+
+    id
+  end
+
+  def make(%{} = booking_data) do
+    booking = struct(Booking, booking_data)
+
+    GenServer.start_link(
+      __MODULE__,
+      booking,
+      name: via_tuple(booking.id)
+    )
+
+    route = Osrm.route(booking.pickup, booking.delivery)
 
     MQ.publish(
       booking |> Map.put(:route, route),
@@ -36,17 +65,27 @@ defmodule Booking do
       "new"
     )
 
-    id
+    Engine.BookingStore.put_booking(booking.id)
+
+    booking.id
   end
 
   def get(id) do
     GenServer.call(via_tuple(id), :get)
   end
 
-  # def assign(%Booking{pickup: pickup, delivery: delivery} = booking) do
-  def assign(booking_id, vehicle_id) do
-    GenServer.call(via_tuple(booking_id), {:assign, vehicle_id})
+  def assign(booking_id, vehicle), do: GenServer.call(via_tuple(booking_id), {:assign, vehicle})
+
+  def delete(id) do
+    Engine.RedisAdapter.delete_booking(id)
+    Engine.BookingStore.delete_booking(id)
+    GenServer.stop(via_tuple(id))
   end
+
+  def add_event(booking_id, status) when status in ["picked_up", "delivered"],
+    do: GenServer.call(via_tuple(booking_id), {:add_event, status})
+
+  defp create_event(status), do: %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
 
   defp via_tuple(id) when is_integer(id), do: via_tuple(Integer.to_string(id))
 
@@ -77,7 +116,17 @@ defmodule Booking do
       "assigned"
     )
 
-    IO.puts("Booking assigned")
+    Logger.debug("booking was assigned", updated_state)
+    {:reply, true, updated_state}
+  end
+
+  def handle_call({:add_event, status}, _, state) do
+    new_event = create_event(status)
+
+    updated_state =
+      Map.update!(state, :events, fn events -> [new_event | events] end)
+      |> MQ.publish(@outgoing_booking_exchange, status)
+
     {:reply, true, updated_state}
   end
 end

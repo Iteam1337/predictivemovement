@@ -30,7 +30,7 @@ defmodule Vehicle do
          %Vehicle{id: vehicle_id, activities: activities, booking_ids: booking_ids} = vehicle},
         state
       ) do
-    Logger.debug("offer to vehicle", vehicle)
+    Logger.debug("offer to vehicle #{vehicle}")
 
     current_route =
       activities
@@ -83,65 +83,18 @@ defmodule Vehicle do
     state
   end
 
-  def make(
-        start_address,
-        end_address,
-        earliest_start,
-        latest_end,
-        metadata,
-        profile,
-        capacity
-      )
-      when is_nil(end_address) do
-    make(
-      start_address,
-      start_address,
-      earliest_start,
-      latest_end,
-      metadata,
-      profile,
-      capacity
-    )
-  end
+  defp generate_id, do: "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
-  def make(
-        start_address,
-        end_address,
-        earliest_start,
-        latest_end,
-        metadata,
-        profile,
-        capacity
-      ) do
-    id = "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
+  def make(%{} = vehicle_info) do
+    vehicle_fields =
+      vehicle_info
+      |> Map.put_new(:end_address, Map.get(vehicle_info, :start_address))
+      |> Map.put_new(:id, generate_id())
+      |> Map.put_new(:capacity, %{volume: 15, weight: 700})
+      |> Map.put_new(:metadata, %{})
 
-    vehicle = %Vehicle{
-      id: id,
-      start_address: start_address,
-      end_address: end_address,
-      profile: profile,
-      capacity: capacity,
-      earliest_start: earliest_start,
-      latest_end: latest_end,
-      metadata: metadata
-    }
-
+    vehicle = struct(Vehicle, vehicle_fields)
     Engine.RedisAdapter.add_vehicle(vehicle)
-
-    GenServer.start_link(
-      __MODULE__,
-      vehicle,
-      name: via_tuple(id)
-    )
-
-    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
-
-    Engine.VehicleStore.put_vehicle(id)
-    id
-  end
-
-  def make(%{} = vehicle_data) do
-    vehicle = struct(Vehicle, vehicle_data)
 
     GenServer.start_link(
       __MODULE__,
@@ -163,7 +116,7 @@ defmodule Vehicle do
     GenServer.call(via_tuple(id), :get)
   end
 
-  def offer(%Vehicle{id: id, activities: activities, booking_ids: booking_ids} = vehicle) do
+  def offer(%Vehicle{id: id} = vehicle) do
     GenServer.cast(via_tuple(id), {:offer, vehicle})
   end
 end

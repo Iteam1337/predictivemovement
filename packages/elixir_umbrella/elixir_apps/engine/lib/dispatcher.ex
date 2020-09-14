@@ -5,7 +5,7 @@ defmodule Dispatcher do
     IO.puts("Dispatching!")
 
     %{vehicles: vehicles} = PlanStore.get_plan()
-    Logger.debug(length(vehicles), label: "amount of vehicles to be offered")
+    Logger.debug("amount of vehicles to be offered: #{length(vehicles)}")
 
     Enum.map(vehicles, &Vehicle.offer/1)
   end

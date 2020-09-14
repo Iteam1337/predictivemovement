@@ -107,7 +107,13 @@ const sendDriverFinishedMessage = (telegramId) =>
 const sendDeliveryInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Leverera paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
+    `🎁 Leverera paket "${instruction.id}" [${
+      booking.pickup.street
+        ? `vid ${booking.delivery.street}, ${booking.delivery.city}`
+        : 'här'
+    }](https://www.google.com/maps/dir/?api=1&&destination=${
+      instruction.address.lat
+    },${instruction.address.lon})!
     `.concat(
       booking.metadata &&
         booking.metadata.recipient &&
@@ -139,7 +145,13 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
 const sendPickupInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Hämta paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
+    `🎁 Hämta paket "${instruction.id}" [${
+      booking.pickup.street
+        ? `vid ${booking.pickup.street}, ${booking.pickup.city}`
+        : 'här'
+    }](https://www.google.com/maps/dir/?api=1&&destination=${
+      instruction.address.lat
+    },${instruction.address.lon})!
     `.concat(
       booking.metadata &&
         booking.metadata.sender &&

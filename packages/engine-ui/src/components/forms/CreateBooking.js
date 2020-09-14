@@ -52,6 +52,13 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
     setShowParcelDetails((currentValue) => !currentValue)
   }
 
+  const handleFragilePacelChange = () => {
+    onChangeHandler((currentState) => ({
+      ...currentState,
+      fragile: !currentState.fragile,
+    }))
+  }
+
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
@@ -268,6 +275,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                   onChangeHandler
                 )}
                 placeholder="Innehåll"
+              />
+              <FormInputs.Checkbox
+                label="Paketet är ömtåligt"
+                onChangeHandler={handleFragilePacelChange}
               />
             </Elements.Layout.InputContainer>
           </>

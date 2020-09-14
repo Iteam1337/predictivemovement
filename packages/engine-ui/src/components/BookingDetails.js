@@ -112,6 +112,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
   }
 
   if (!booking || !address) return <p>Laddar bokning...</p>
+  console.log('this is the booking: ', booking)
 
   return (
     <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
@@ -139,7 +140,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <Elements.Links.RoundedLink
               to={`/transports/${booking.assigned_to.id}`}
             >
-              {booking.id}
+              {booking.assigned_to.id}
             </Elements.Links.RoundedLink>
           </>
         )}

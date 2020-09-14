@@ -59,22 +59,10 @@ defmodule Plan do
     |> elem(0)
   end
 
-  def same_address(first, second) do
-    first.lat === second.lat and first.lon === second.lon
-  end
-
   def add_vehicle_hints(vehicles, hints) do
     vehicles
     |> Enum.reduce({[], hints}, fn vehicle, {res, hints} ->
-      [start_hint | rest_of_hints] = hints
-
-      [end_hint, rest_of_hints] =
-        if same_address(vehicle.start_address, vehicle.end_address) do
-          [start_hint, rest_of_hints]
-        else
-          [end_hint | rest_of_hints] = rest_of_hints
-          [end_hint, rest_of_hints]
-        end
+      [start_hint, end_hint | rest_of_hints] = hints
 
       updated_vehicle =
         vehicle

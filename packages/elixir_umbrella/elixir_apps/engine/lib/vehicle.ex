@@ -85,7 +85,7 @@ defmodule Vehicle do
 
   defp generate_id, do: "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
 
-  def make(%{} = vehicle_info) do
+  def make(vehicle_info, options \\ []) do
     vehicle_fields =
       vehicle_info
       |> Map.put_new(:end_address, Map.get(vehicle_info, :start_address))
@@ -94,7 +94,7 @@ defmodule Vehicle do
       |> Map.put_new(:metadata, %{})
 
     vehicle = struct(Vehicle, vehicle_fields)
-    Engine.RedisAdapter.add_vehicle(vehicle)
+    unless options[:added_from_restore], do: Engine.RedisAdapter.add_vehicle(vehicle)
 
     GenServer.start_link(
       __MODULE__,

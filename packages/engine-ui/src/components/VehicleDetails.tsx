@@ -170,7 +170,11 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
                   <Icons.Arrow active={showInfo.status} />
                 </button>
               </RouteTitleWrapper>
-              {showInfo.status && <h6>Status</h6>}
+              {showInfo.status && (
+                <Elements.Typography.NoInfoParagraph>
+                  Det finns ingen status för detta fordonet ännu...
+                </Elements.Typography.NoInfoParagraph>
+              )}
             </Elements.Layout.MarginBottomContainer>
           </>
         )}

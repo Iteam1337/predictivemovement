@@ -16,8 +16,8 @@ const CreateBooking = ({ onSubmit }) => {
     fragile: false,
     pickup: { name: '', lat: '', lon: '', timewindow: null },
     delivery: { name: '', lat: '', lon: '', timewindow: null },
-    sender: { name: '', contact: '' },
-    recipient: { name: '', contact: '' },
+    sender: { name: '', contact: '', doorCode: '' },
+    recipient: { name: '', contact: '', doorCode: '' },
   })
 
   const onSubmitHandler = (event) => {

@@ -116,14 +116,22 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
         ? getDirectionsUrl(booking.delivery.street, booking.delivery.city)
         : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
     })!
-    `.concat(
-      booking.metadata &&
-        booking.metadata.recipient &&
-        booking.metadata.recipient.contact
-        ? 'När du kommit fram till leveransplatsen kan du nå mottagaren på ' +
-            booking.metadata.recipient.contact
-        : ''
-    ).concat(`
+    `
+      .concat(
+        booking.metadata &&
+          booking.metadata.recipient &&
+          booking.metadata.recipient.contact
+          ? 'När du kommit fram till leveransplatsen kan du nå mottagaren på ' +
+              booking.metadata.recipient.contact
+          : ''
+      )
+      .concat(
+        booking.metadata &&
+          booking.metadata.recipient &&
+          booking.metadata.recipient.doorCode
+          ? `\nPortkod: ${booking.metadata.recipient.doorCode}`
+          : ''
+      ).concat(`
     Tryck "[Levererat]" när du har lämnat paketet.`),
     {
       parse_mode: 'markdown',
@@ -161,8 +169,15 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
         booking.metadata &&
           booking.metadata.sender &&
           booking.metadata.sender.contact
-          ? 'När du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
+          ? '\nNär du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
               booking.metadata.sender.contact
+          : ''
+      )
+      .concat(
+        booking.metadata &&
+          booking.metadata.sender &&
+          booking.metadata.sender.doorCode
+          ? `\nPortkod: ${booking.metadata.sender.doorCode}`
           : ''
       )
       .concat(

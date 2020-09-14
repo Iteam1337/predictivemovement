@@ -18,19 +18,16 @@ const onLogin = (vehicleId, ctx) => {
 
   ctx.metadata.setVehicleIdFromTelegramId(telegramId, vehicleId)
 
-  if (currentVehicle && currentVehicle.telegramId) {
+  if (currentVehicle.telegramId) {
     return
   }
 
-  if (currentVehicle) {
-    setInstructions(currentVehicle.id, currentVehicle.activities.slice(1, -1))
-    addVehicle(vehicleId, {
-      ...currentVehicle,
-      telegramId,
-    })
-  } else {
-    addVehicle(vehicleId, { telegramId })
-  }
+  setInstructions(currentVehicle.id, currentVehicle.activities.slice(1, -1))
+
+  addVehicle(vehicleId, {
+    ...currentVehicle,
+    telegramId,
+  })
 
   return ctx
     .reply(

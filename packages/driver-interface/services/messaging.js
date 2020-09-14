@@ -104,8 +104,8 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
 const sendDriverFinishedMessage = (telegramId) =>
   bot.telegram.sendMessage(telegramId, 'Bra jobbat! Tack för idag!')
 
-const sendDeliveryInstruction = (instruction, telegramId, booking) => {
-  return bot.telegram.sendMessage(
+const sendDeliveryInstruction = (instruction, telegramId, booking) =>
+  bot.telegram.sendMessage(
     telegramId,
     `🎁 Leverera paket "${instruction.id}" [${
       booking.pickup.street
@@ -142,10 +142,9 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
       },
     }
   )
-}
 
-const sendPickupInstruction = (instruction, telegramId, booking) => {
-  return bot.telegram.sendMessage(
+const sendPickupInstruction = (instruction, telegramId, booking) =>
+  bot.telegram.sendMessage(
     telegramId,
     `🎁 Hämta paket "${instruction.id}" [${
       booking.pickup.street
@@ -182,7 +181,6 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
       },
     }
   )
-}
 
 module.exports = {
   onNoInstructionsForVehicle,

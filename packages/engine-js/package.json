@@ -13,7 +13,7 @@
     "highland": "^2.10.1",
     "moment": "^2.15.1",
     "moment-timezone": "^0.5.7",
-    "node-fetch": "^1.5.3",
+    "node-fetch": "^2.6.1",
     "point-in-polygon": "^1.0.1",
     "polyline": "^0.2.0",
     "socket.io-client": "^1.4.6"

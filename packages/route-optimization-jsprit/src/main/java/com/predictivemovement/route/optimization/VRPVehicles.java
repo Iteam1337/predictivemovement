@@ -2,6 +2,8 @@ package com.predictivemovement.route.optimization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.graphhopper.jsprit.core.problem.Location;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
@@ -19,6 +21,8 @@ public class VRPVehicles {
 
     private static final int VEHICLE_DEFAULT_VOLUME = 3 * 1000 * 1000;
     private static final int VEHICLE_DEFAULT_WEIGHT = 5;
+
+    private static Map<String, VehicleType> vehicle_types = new HashMap<String, VehicleType>();
 
     List<VehicleImpl> vehicles;
     private VRPSetting vrpSetting;
@@ -76,13 +80,20 @@ public class VRPVehicles {
         // id
         String profile = vehicle.optString("profile");
         String vehicleId = profile != null ? profile : "vehicleDummyType";
+
+        // check for existsing vehicle types. Needed to be created only once!
+        if (vehicle_types.containsKey(vehicleId)) {
+            return vehicle_types.get(vehicleId);
+        }
+
         VehicleTypeImpl.Builder vehicleTypeBuilder = VehicleTypeImpl.Builder.newInstance(vehicleId);
 
         //
         JSONObject capacities = vehicle.optJSONObject("capacity");
-        
+
         // volume
-        int volume = capacities != null ? cubicMetersToCentimeter(capacities.optInt("volume", 0)) : VEHICLE_DEFAULT_VOLUME;
+        int volume = capacities != null ? cubicMetersToCentimeter(capacities.optInt("volume", 0))
+                : VEHICLE_DEFAULT_VOLUME;
         vehicleTypeBuilder.addCapacityDimension(VRPSetting.VOLUME_INDEX, volume);
 
         // weight
@@ -93,7 +104,10 @@ public class VRPVehicles {
         vehicleTypeBuilder.setCostPerDistance(1);
         vehicleTypeBuilder.setCostPerTransportTime(1);
 
-        return vehicleTypeBuilder.build();
+        // cache types to make sure they are only created once
+        VehicleType vType = vehicleTypeBuilder.build();
+        vehicle_types.put(vehicleId, vType);
+        return vType;
     }
 
     private int cubicMetersToCentimeter(int meters) {

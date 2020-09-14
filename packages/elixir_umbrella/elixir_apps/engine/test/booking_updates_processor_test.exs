@@ -3,14 +3,12 @@ defmodule BookingUpdatesProcessorTest do
   import TestHelper
 
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
   @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
 
   setup_all do
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.bind(channel, @clear_queue, @clear_queue, routing_key: @clear_queue)
     AMQP.Queue.declare(channel, "look_for_picked_up_updates_in_test", durable: false)
     AMQP.Queue.declare(channel, "look_for_delivered_updates_in_test", durable: false)
 
@@ -23,6 +21,7 @@ defmodule BookingUpdatesProcessorTest do
     )
 
     on_exit(fn ->
+      clear_state()
       AMQP.Channel.close(channel)
       AMQP.Connection.close(connection)
     end)
@@ -58,7 +57,7 @@ defmodule BookingUpdatesProcessorTest do
     update = wait_for_message(channel)
     assert Kernel.get_in(update, [:metadata, :senderId]) == "telegramIdString"
 
-    assert "picked_up" ==
+    assert :picked_up ==
              Booking.get(booking_id)
              |> Map.get(:events)
              |> List.first()
@@ -93,7 +92,7 @@ defmodule BookingUpdatesProcessorTest do
     update = wait_for_message(channel)
     assert Kernel.get_in(update, [:metadata, :senderId]) == "telegramIdString"
 
-    assert "delivered" ==
+    assert :delivered ==
              Booking.get(booking_id)
              |> Map.get(:events)
              |> List.first()

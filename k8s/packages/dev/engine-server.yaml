@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engine-server
+  labels:
+    app: engine-server
+spec:
+  selector:
+    matchLabels:
+      app: engine-server
+  template:
+    metadata:
+      labels:
+        app: engine-server
+    spec:
+      containers:
+        - name: engine-server
+          image: iteam1337/pm-engine-server
+          ports:
+            - containerPort: 4000
+          env:
+            - name: AMQP_HOST
+              value: amqp://rabbitmq
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: engine-server
+  labels:
+    app: engine-server
+spec:
+  ports:
+    - port: 4000
+      targetPort: 4000
+  selector:
+    app: engine-server
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: engine-server
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  labels:
+    app: engine-server
+spec:
+  tls:
+    - hosts:
+        - engine-server.dev.iteamdev.io
+      secretName: engine-server-prod-tls
+  rules:
+    - host: engine-server.dev.iteamdev.io
+      http:
+        paths:
+          - backend:
+              serviceName: engine-server
+              servicePort: 4000

@@ -18,6 +18,7 @@ enum BookingStatus {
   NEW = 'new',
   ASSIGNED = 'assigned',
   DELIVERED = 'delivered',
+  PICKED_UP = 'picked_up',
 }
 
 type Booking = {
@@ -38,6 +39,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
     new: Booking[]
     assigned: Booking[]
     delivered: Booking[]
+    picked_up: Booking[]
   }>(
     (prev, current) => ({
       ...prev,
@@ -47,6 +49,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
       new: [],
       assigned: [],
       delivered: [],
+      picked_up: [],
     }
   )
 
@@ -109,8 +112,9 @@ const BookingToggleList: React.FC<{
 
 const Bookings: React.FC<{
   bookings: Booking[]
-  createBookings: any
-  createBooking: any
+  createBookings: () => void
+  createBooking: () => void
+  deleteBooking: () => void
 }> = (props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const { path, url } = useRouteMatch()
@@ -147,7 +151,7 @@ const Bookings: React.FC<{
             }
           />
           <BookingToggleList
-            bookings={bookings.assigned}
+            bookings={[...bookings.assigned, ...bookings.picked_up]}
             onClickHandler={onClickHandler}
             text="Bekräftade bokningar"
             onMouseEnterHandler={(id: string) =>
@@ -199,6 +203,7 @@ const Bookings: React.FC<{
             dispatch({ type: 'highlightBooking', payload: undefined })
           }
           bookings={props.bookings}
+          deleteBooking={props.deleteBooking}
         />
       </Route>
     </Switch>

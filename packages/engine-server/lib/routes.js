@@ -8,6 +8,7 @@ const {
   createBookingsFromHistory,
   resetState,
   plan,
+  deleteBooking,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
@@ -61,6 +62,10 @@ function register(io) {
           lat: params.delivery.lat,
           lon: params.delivery.lon,
         },
+        metadata: {
+          sender: params.sender,
+          recipient: params.recipient,
+        },
       }
 
       createBooking(booking)
@@ -107,6 +112,13 @@ function register(io) {
       resetState()
       socket.emit('cars', [])
       socket.emit('bookings', [])
+    })
+
+    socket.on('delete-booking', (id) => {
+      console.log('about to delete booking: ', id)
+      bookingsCache.delete(id)
+      deleteBooking(id)
+      socket.emit('delete-booking', id)
     })
   })
 }

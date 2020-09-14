@@ -24,7 +24,6 @@ const App = () => {
   }
 
   const dispatchOffers = () => {
-    console.log('user pressed the dispatch button')
     socket.emit('dispatch-offers')
   }
 
@@ -32,6 +31,10 @@ const App = () => {
     socket.emit('new-bookings', {
       total,
     })
+  }
+
+  const deleteBooking = (id) => {
+    socket.emit('delete-booking', id)
   }
 
   const resetState = () => {
@@ -45,6 +48,13 @@ const App = () => {
     dispatch({
       type: 'setBookings',
       payload: bookings,
+    })
+  })
+
+  useSocket('delete-booking', (bookingId) => {
+    dispatch({
+      type: 'deleteBooking',
+      payload: bookingId,
     })
   })
 
@@ -72,6 +82,7 @@ const App = () => {
         resetState={resetState}
         addVehicle={addVehicle}
         createBookings={createBookings}
+        deleteBooking={deleteBooking}
       />
       <Route path="/">
         <Map data={mapData} />

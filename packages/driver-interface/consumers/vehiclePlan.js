@@ -29,12 +29,15 @@ const vehiclePlan = () => {
         .then(() =>
           ch.consume(SEND_PLAN_TO_VEHICLE, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
-            const oldVehicle = getVehicle(vehicle.id)
+            const currentVehicle = getVehicle(vehicle.id) || {}
+            console.log('received plan')
+
             addVehicle(vehicle.id, {
-              ...oldVehicle,
+              ...currentVehicle,
               ...vehicle,
             })
-            ch.ack(msg)
+
+            return ch.ack(msg)
           })
         )
     )

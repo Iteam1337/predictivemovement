@@ -9,6 +9,7 @@ const routingKeys = {
   DELIVERED: 'delivered',
   PICKED_UP: 'picked_up',
   PLANNED: 'plan_updated',
+  DELETED: 'deleted',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -30,43 +31,26 @@ amqp
         })
       )
       .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'outgoing_booking_updates',
-          routingKeys.ASSIGNED
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'incoming_booking_updates',
-          routingKeys.PICKED_UP
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'incoming_booking_updates',
-          routingKeys.DELIVERED
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'outgoing_booking_updates',
-          routingKeys.NEW
-        )
+        ch.bindQueue('update_booking_in_admin_ui', 'outgoing_booking_updates')
       )
   )
 
 const bookings = amqp
+  .exchange('outgoing_booking_updates', 'topic', {
+    durable: false,
+  })
   .queue('update_booking_in_admin_ui', {
     durable: false,
   })
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, [])
+  .subscribe({ noAck: true }, [
+    routingKeys.NEW,
+    routingKeys.ASSIGNED,
+    routingKeys.PICKED_UP,
+    routingKeys.DELIVERED,
+  ])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
@@ -134,6 +118,15 @@ const plan = amqp
     return plan.json()
   })
 
+const deleteBooking = (id) => {
+  return amqp
+    .exchange('incoming_booking_updates', 'topic', {
+      durable: false,
+    })
+    .publish(id, routingKeys.DELETED)
+    .then(() => console.log(` [x] Delete booking ${id}`))
+}
+
 module.exports = {
   addVehicle,
   bookings,
@@ -143,4 +136,5 @@ module.exports = {
   createBookingsFromHistory,
   resetState,
   plan,
+  deleteBooking,
 }

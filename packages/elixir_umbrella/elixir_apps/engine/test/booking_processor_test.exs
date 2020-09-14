@@ -1,18 +1,17 @@
 defmodule BookingProcessorTest do
   import TestHelper
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @clear_queue Application.compile_env!(:engine, :clear_match_producer_state_queue)
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   setup_all do
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.bind(channel, @clear_queue, @clear_queue, routing_key: @clear_queue)
     AMQP.Queue.declare(channel, "get_plan", durable: false)
     AMQP.Queue.bind(channel, "get_plan", @outgoing_plan_exchange, routing_key: "")
 
     on_exit(fn ->
+      clear_state()
       AMQP.Channel.close(channel)
       AMQP.Connection.close(connection)
     end)
@@ -25,7 +24,7 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car()
     MessageGenerator.add_random_booking()
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     assert Map.get(plan, :booking_ids) |> length() == 1
     assert Map.get(plan, :vehicles) |> length() == 1
@@ -41,13 +40,11 @@ defmodule BookingProcessorTest do
 
     plan = wait_for_x_messages(2, channel)
 
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
     assert plan |> List.first() |> Map.get(:vehicles) |> length() == 1
     assert plan |> List.first() |> Map.get(:booking_ids) |> length() == 2
   end
 
-  # Skip until bug in jsprit is fixed
-  @tag :skip
   test "creates a plan for two vehicles, where each vehicle gets one", %{channel: channel} do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
     MessageGenerator.add_random_booking(:stockholm)
@@ -55,13 +52,19 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car(:stockholm)
     MessageGenerator.add_random_car(:gothenburg)
 
-    plan = wait_for_x_messages(2, channel)
+    plan =
+      wait_for_x_messages(2, channel)
+      |> Enum.sort(&(length(&1.vehicles) > length(&2.vehicles)))
+      |> List.first()
 
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
-    assert plan |> List.last() |> Map.get(:vehicles) |> length() == 2
+    clear_state()
+
+    assert 2 ==
+             plan
+             |> Map.get(:vehicles)
+             |> length()
 
     assert plan
-           |> List.last()
            |> Map.get(:vehicles)
            |> List.first()
            |> Map.get(:booking_ids)
@@ -76,7 +79,7 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
     MessageGenerator.add_random_booking()
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -93,7 +96,7 @@ defmodule BookingProcessorTest do
 
     MessageGenerator.add_random_booking()
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -111,7 +114,7 @@ defmodule BookingProcessorTest do
     MessageGenerator.add_random_booking()
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -136,7 +139,7 @@ defmodule BookingProcessorTest do
     })
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -157,7 +160,7 @@ defmodule BookingProcessorTest do
     })
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
@@ -176,7 +179,7 @@ defmodule BookingProcessorTest do
     })
 
     plan = wait_for_message(channel)
-    MQ.publish("clear queue", @clear_queue, @clear_queue)
+    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end

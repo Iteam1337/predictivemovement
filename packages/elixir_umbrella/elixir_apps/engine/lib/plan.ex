@@ -27,7 +27,6 @@ defmodule Plan do
           [start_address, end_address]
         end)
       )
-      |> Enum.uniq()
       |> Osrm.get_time_between_coordinates()
       |> Map.delete(:code)
 

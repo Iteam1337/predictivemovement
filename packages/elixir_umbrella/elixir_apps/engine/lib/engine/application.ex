@@ -7,7 +7,9 @@ defmodule Engine.Application do
 
   def init_from_storage() do
     booking_ids = Engine.RedisAdapter.get_bookings() |> Enum.map(&Booking.make/1)
-    vehicle_ids = Engine.RedisAdapter.get_vehicles() |> Enum.map(&Vehicle.make/1)
+
+    vehicle_ids =
+      Engine.RedisAdapter.get_vehicles() |> Enum.map(&Vehicle.make(&1, added_from_restore: true))
 
     Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
   end

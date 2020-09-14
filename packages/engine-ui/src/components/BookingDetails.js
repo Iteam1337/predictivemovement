@@ -139,7 +139,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <Elements.Links.RoundedLink
               to={`/transports/${booking.assigned_to.id}`}
             >
-              {booking.id}
+              {booking.assigned_to.id}
             </Elements.Links.RoundedLink>
           </>
         )}

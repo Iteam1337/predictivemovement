@@ -13,7 +13,7 @@ defmodule DistanceTest do
 
   @pickupA %{
     distance: 100,
-    id: "start",
+    id: "A",
     type: "pickupShipment"
   }
 
@@ -36,7 +36,6 @@ defmodule DistanceTest do
   }
 
   @endRoute %{
-    id: "end",
     distance: 200,
     type: "end"
   }
@@ -50,7 +49,7 @@ defmodule DistanceTest do
   end
 
   @tag :only
-  test "2 booking share no costs" do
+  test "2 booking share costs" do
     activities = [@pickupA, @deliverA, @pickupB, @deliverB, @endRoute]
     result = Distance.calculate_distance(activities)
     expected = %{A: %{specific: 300, shared: 150}, B: %{specific: 300, shared: 150}}

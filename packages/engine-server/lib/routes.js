@@ -65,6 +65,8 @@ function register(io) {
         metadata: {
           sender: params.sender,
           recipient: params.recipient,
+          cargo: params.cargo,
+          fragile: params.fragile,
         },
       }
 

@@ -13,6 +13,7 @@ const CreateBooking = ({ onSubmit }) => {
     measurement: '',
     weight: '',
     cargo: '',
+    fragile: false,
     pickup: { name: '', lat: '', lon: '', timewindow: null },
     delivery: { name: '', lat: '', lon: '', timewindow: null },
     sender: { name: '', contact: '' },

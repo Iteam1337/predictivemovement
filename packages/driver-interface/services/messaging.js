@@ -140,15 +140,26 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
     `🎁 Hämta paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
-    `.concat(
-      booking.metadata &&
-        booking.metadata.sender &&
-        booking.metadata.sender.contact
-        ? 'När du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
-            booking.metadata.sender.contact
-        : ''
-    ).concat(`
-    Tryck på "[Hämtat]" när du hämtat upp paketet.`),
+    `
+      .concat(
+        booking.metadata &&
+          booking.metadata.sender &&
+          booking.metadata.sender.contact
+          ? '\nNär du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
+              booking.metadata.sender.contact
+          : ''
+      )
+      .concat(
+        booking.size.weight || booking.size.measurement
+          ? '\n\nPaketinformation:'
+          : ''
+      )
+      .concat(booking.size.weight && `\nVikt: ${booking.size.weight}kg`)
+      .concat(
+        booking.size.measurement &&
+          `\nMått: ${booking.size.measurement[0]}x${booking.size.measurement[1]}x${booking.size.measurement[2]}cm`
+      ).concat(`
+    \nTryck på "[Hämtat]" när du hämtat upp paketet.`),
     {
       parse_mode: 'markdown',
       reply_markup: {

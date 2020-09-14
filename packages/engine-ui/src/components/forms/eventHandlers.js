@@ -26,6 +26,7 @@ const handleDropdownSelect = (propertyName, callback) => ({
   name,
   lon,
   lat,
+  county,
 }) => {
   return callback((currentState) => ({
     ...currentState,
@@ -33,6 +34,8 @@ const handleDropdownSelect = (propertyName, callback) => ({
       name,
       lon,
       lat,
+      city: county,
+      street: name,
     },
   }))
 }

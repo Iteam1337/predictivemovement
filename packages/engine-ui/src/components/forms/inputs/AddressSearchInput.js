@@ -40,7 +40,7 @@ const Component = ({ onChangeHandler, placeholder, ...rest }) => {
 
   const handleDropdownSelect = (event, address) => {
     event.persist()
-    setQuery(address.name)
+    setQuery(`${address.name}, ${address.county}`)
     setShowDropdown(false)
 
     return onChangeHandler(address)

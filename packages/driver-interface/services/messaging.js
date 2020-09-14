@@ -2,7 +2,7 @@ const bot = require('../adapters/bot')
 const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
 const moment = require('moment')
-const { getDirectionsFromActivities } = require('./google')
+const { getDirectionsFromActivities, getDirectionsUrl } = require('./google')
 const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
@@ -107,7 +107,15 @@ const sendDriverFinishedMessage = (telegramId) =>
 const sendDeliveryInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Leverera paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
+    `🎁 Leverera paket "${instruction.id}" [${
+      booking.pickup.street
+        ? `vid ${booking.delivery.street}, ${booking.delivery.city}`
+        : 'här'
+    }](${
+      booking.delivery.street && booking.delivery.city
+        ? getDirectionsUrl(booking.delivery.street, booking.delivery.city)
+        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
+    })!
     `.concat(
       booking.metadata &&
         booking.metadata.recipient &&
@@ -139,13 +147,21 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
 const sendPickupInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Hämta paket "${instruction.id}" [här](https://www.google.com/maps/dir/?api=1&&destination=${instruction.address.lat},${instruction.address.lon})!
+    `🎁 Hämta paket "${instruction.id}" [${
+      booking.pickup.street
+        ? `vid ${booking.pickup.street}, ${booking.pickup.city}`
+        : 'här'
+    }](${
+      booking.pickup.street && booking.pickup.city
+        ? getDirectionsUrl(booking.pickup.street, booking.pickup.city)
+        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
+    })!
     `
       .concat(
         booking.metadata &&
           booking.metadata.sender &&
           booking.metadata.sender.contact
-          ? '\nNär du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
+          ? 'När du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
               booking.metadata.sender.contact
           : ''
       )
@@ -162,7 +178,7 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
         booking.size.measurement &&
           `\nMått: ${booking.size.measurement[0]}x${booking.size.measurement[1]}x${booking.size.measurement[2]}cm`
       ).concat(`
-    \nTryck på "[Hämtat]" när du hämtat upp paketet.`),
+    Tryck på "[Hämtat]" när du hämtat upp paketet.`),
     {
       parse_mode: 'markdown',
       reply_markup: {

@@ -7,6 +7,8 @@ const TimeRestrictionDateInputWrapper = styled.div`
 const FlexRowWrapper = styled.div`
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
+  height: 50px;
 `
 
 const LinkListContainer = styled.div`
@@ -18,6 +20,8 @@ const LinkListContainer = styled.div`
 `
 
 const BookingList = styled.ul`
+  overflow: auto;
+  height: 100%;
   padding: 0;
   margin: 0;
   display: flex;
@@ -35,11 +39,17 @@ const Container = styled.div`
 `
 
 const MarginBottomContainer = styled.div`
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `
 
 const MarginTopContainer = styled.div`
   margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `
 
 const MarginLeftContainerSm = styled.div`

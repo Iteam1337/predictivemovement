@@ -45,7 +45,7 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
   }
 
   return (
-    <div key={vehicle.id}>
+    <>
       <RouteTitleWrapper
         onClick={() => {
           toggle(vehicle.id)
@@ -84,7 +84,7 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
           <RouteActivities vehicle={vehicle} />
         </>
       )}
-    </div>
+    </>
   )
 }
 

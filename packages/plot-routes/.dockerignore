@@ -1,8 +1,0 @@
-*
-!src/
-!types/
-!public/
-!.eslint*
-!.prettierrc
-!package*
-!tsconfig.json

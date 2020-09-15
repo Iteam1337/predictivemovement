@@ -185,7 +185,7 @@ const sendPickupInformation = (instruction, telegramId, booking) => {
           ? `\nPortkod: ${booking.metadata.sender.doorCode}`
           : ''
       )
-      .concat('\n\nPaketinformation:')
+      .concat('\n\n***Paketinformation***')
       .concat(`\nÖmtåligt: ${booking.metadata.fragile ? 'Ja' : 'Nej'}`)
       .concat(booking.size.weight ? `\nVikt: ${booking.size.weight}kg` : '')
       .concat(

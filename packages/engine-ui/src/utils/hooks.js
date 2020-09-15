@@ -65,21 +65,20 @@ const useGetSuggestedAddresses = (initialState) => {
     helpers
       .findAddress(query)
       .then(({ features }) => {
-        set(
-          features.map(
-            ({
-              geometry: {
-                coordinates: [lon, lat],
-              },
-              properties: { name, county },
-            }) => ({
-              name,
-              county,
-              lon,
-              lat,
-            })
-          )
+        const parsedFeatures = features.map(
+          ({
+            geometry: {
+              coordinates: [lon, lat],
+            },
+            properties: { name, county },
+          }) => ({
+            name,
+            county,
+            lon,
+            lat,
+          })
         )
+        set(parsedFeatures)
 
         return callback()
       })
@@ -93,4 +92,7 @@ const useGetSuggestedAddresses = (initialState) => {
   return [find, suggested]
 }
 
-export default { useFilteredStateFromQueryParams, useGetSuggestedAddresses }
+export default {
+  useFilteredStateFromQueryParams,
+  useGetSuggestedAddresses,
+}

@@ -4,9 +4,13 @@ import Elements from '../shared-elements'
 import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
 import MainRouteLayout from './layout/MainRouteLayout'
+import { UIStateContext } from '../utils/UIStateContext'
 
 const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
+  const { state: UIState, dispatch: UIStateDispatch } = React.useContext(
+    UIStateContext
+  )
 
   const [formState, setState] = React.useState({
     id: '',
@@ -14,10 +18,54 @@ const CreateBooking = ({ onSubmit }) => {
     weight: '',
     cargo: '',
     pickup: { name: '', lat: '', lon: '', timewindow: null },
-    delivery: { name: '', lat: '', lon: '', timewindow: null },
+    delivery: {
+      name: '',
+      lat: '',
+      lon: '',
+      timewindow: null,
+    },
     sender: { name: '', contact: '' },
     recipient: { name: '', contact: '' },
   })
+
+  React.useEffect(() => {
+    /**
+     * Listen for a combination of clicks on an
+     * input field and on the map.
+     * When this happens, set pickup/delivery input
+     * to name of address clicked on map.
+     */
+
+    if (UIState.lastFocusedInput && UIState.lastClickedPosition.address) {
+      const { address, lat, lon } = UIState.lastClickedPosition
+      const formattedAddress = `${address.name}, ${address.county}`
+
+      switch (UIState.lastFocusedInput) {
+        case 'createbooking:pickup':
+          setState((current) => ({
+            ...current,
+            pickup: { ...current.pickup, name: formattedAddress, lat, lon },
+          }))
+          break
+
+        case 'createbooking:delivery':
+          setState((current) => ({
+            ...current,
+            delivery: { ...current.delivery, name: formattedAddress, lat, lon },
+          }))
+          break
+
+        default:
+          break
+      }
+
+      return UIStateDispatch({ type: 'resetInputClickState' })
+    }
+  }, [UIStateDispatch, UIState.lastClickedPosition, UIState.lastFocusedInput])
+
+  React.useEffect(() => {
+    return () => UIStateDispatch({ type: 'resetInputClickState' })
+  }, [UIStateDispatch])
 
   const onSubmitHandler = (event) => {
     event.preventDefault()
@@ -39,7 +87,7 @@ const CreateBooking = ({ onSubmit }) => {
       delivery: formState.delivery,
     })
 
-    history.push('/bookings')
+    return history.push('/bookings')
   }
 
   return (

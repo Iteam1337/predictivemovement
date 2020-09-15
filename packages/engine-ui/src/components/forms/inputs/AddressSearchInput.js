@@ -21,9 +21,8 @@ const DropdownButton = styled.button`
   }
 `
 
-const Component = ({ onChangeHandler, placeholder, ...rest }) => {
+const Component = ({ onChangeHandler, placeholder, value, ...rest }) => {
   const [showDropdown, setShowDropdown] = React.useState(false)
-  const [query, setQuery] = React.useState('')
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
 
   const searchWithDebounce = React.useCallback(
@@ -35,15 +34,17 @@ const Component = ({ onChangeHandler, placeholder, ...rest }) => {
     event.persist()
     searchWithDebounce(event.target.value)
 
-    return setQuery(event.target.value)
+    return onChangeHandler({ name: event.target.value })
   }
 
   const handleDropdownSelect = (event, address) => {
     event.persist()
-    setQuery(address.name)
     setShowDropdown(false)
 
-    return onChangeHandler(address)
+    return onChangeHandler({
+      ...address,
+      name: `${address.name}, ${address.county}`,
+    })
   }
 
   return (
@@ -56,7 +57,7 @@ const Component = ({ onChangeHandler, placeholder, ...rest }) => {
         {...rest}
         name="pickup"
         type="text"
-        value={query}
+        value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
         iconInset

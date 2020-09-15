@@ -5,14 +5,17 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
+import { UIStateContext } from '../../utils/UIStateContext'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const history = useHistory()
+  const { dispatch: UIStateDispatch } = React.useContext(UIStateContext)
+  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
+
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
-  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
 
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
@@ -61,13 +64,21 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <FormInputs.AddressSearchInput
           required
           placeholder="Adress"
-          onChangeHandler={eventHandlers.handleDropdownSelect(
+          value={state.pickup.name}
+          onFocus={() =>
+            UIStateDispatch({
+              type: 'focusInput',
+              payload: 'createbooking:pickup',
+            })
+          }
+          onChangeHandler={eventHandlers.handleAddressInput(
             'pickup',
             onChangeHandler
           )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
         <Elements.Layout.TimeRestrictionWrapper>
@@ -91,6 +102,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               name="sendername"
               value={state.sender.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -115,6 +127,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               iconInset
               name="sender"
               type="tel"
@@ -138,13 +151,21 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           placeholder="Adress"
-          onChangeHandler={eventHandlers.handleDropdownSelect(
+          value={state.delivery.name}
+          onFocus={() =>
+            UIStateDispatch({
+              type: 'focusInput',
+              payload: 'createbooking:delivery',
+            })
+          }
+          onChangeHandler={eventHandlers.handleAddressInput(
             'delivery',
             onChangeHandler
           )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() =>
             handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
           }
@@ -171,6 +192,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             />
             <FormInputs.TextInput
               iconInset
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               name="recipient-name"
               value={state.recipient.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -198,6 +220,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="recipient-contact"
               type="tel"
               value={state.recipient.contact}
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleContactInputChange(
                 'recipient',
                 'contact',
@@ -212,6 +235,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
 
       <Elements.Layout.InputBlock>
         <FormInputs.Checkbox
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           label="Lägg till paketinformation"
           onChangeHandler={handleToggleParcelDetailsChange}
         />

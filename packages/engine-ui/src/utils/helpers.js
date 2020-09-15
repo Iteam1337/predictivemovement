@@ -17,7 +17,13 @@ const getAddressFromCoordinate = async ({ lon, lat }) => {
     `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
   )
     .then((res) => res.json())
-    .then(({ features }) => features[0].properties.label)
+    .then(({ features: [topResult] }) => {
+      if (!topResult) return Promise.reject('Inga resultat hittades...')
+      return {
+        name: topResult.properties.name,
+        county: topResult.properties.county,
+      }
+    })
 }
 
 const calculateMinTime = (date, minDate) => {

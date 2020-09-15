@@ -50,6 +50,7 @@ deploy:
     flags:
       global:
         - --namespace=predictivemovement-dev
+  statusCheckDeadlineSeconds: 600
 profiles:
   - name: prod
     # TODO: this is the nicer way to do things so disabled until we learn how to

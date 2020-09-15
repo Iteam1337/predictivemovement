@@ -5,9 +5,11 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import Elements from '../../shared-elements'
 import FormInputs from './inputs'
 import eventHandlers from './eventHandlers'
+import { UIStateContext } from '../../utils/UIStateContext'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const history = useHistory()
+  const { dispatch: UIStateDispatch } = React.useContext(UIStateContext)
 
   const handleDriverTimeRestrictionChange = (date, property) =>
     onChangeHandler((currentState) => {
@@ -25,6 +27,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <Elements.Layout.InputContainer>
             <Elements.Layout.TimeRestrictionWrapper>
               <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
+                handleFocus={() =>
+                  UIStateDispatch({ type: 'resetInputClickState' })
+                }
                 timewindow={state.timewindow}
                 onChangeHandler={handleDriverTimeRestrictionChange}
               />
@@ -33,21 +38,35 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <Elements.Layout.InputContainer>
             <Elements.Form.Label>Startposition</Elements.Form.Label>
             <FormInputs.AddressSearchInput
-              placeholder="Adress"
-              onChangeHandler={eventHandlers.handleDropdownSelect(
+              placeholder="Adress (sök eller klicka på karta)"
+              value={state.startPosition.name}
+              onChangeHandler={eventHandlers.handleAddressInput(
                 'startPosition',
                 onChangeHandler
               )}
+              onFocus={() =>
+                UIStateDispatch({
+                  type: 'focusInput',
+                  payload: 'start',
+                })
+              }
             />
           </Elements.Layout.InputContainer>
           <Elements.Layout.InputContainer>
             <Elements.Form.Label>Slutposition</Elements.Form.Label>
             <FormInputs.AddressSearchInput
-              placeholder="Adress"
-              onChangeHandler={eventHandlers.handleDropdownSelect(
-                'endDestination',
+              value={state.endPosition.name}
+              placeholder="Adress (sök eller klicka på karta)"
+              onChangeHandler={eventHandlers.handleAddressInput(
+                'endPosition',
                 onChangeHandler
               )}
+              onFocus={() =>
+                UIStateDispatch({
+                  type: 'focusInput',
+                  payload: 'end',
+                })
+              }
             />
           </Elements.Layout.InputContainer>
         </Elements.Layout.InputContainer>
@@ -58,6 +77,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             Namn på transport
           </Elements.Form.Label>
           <FormInputs.TextInput
+            onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
             name="vehicleType"
             value={state.vehicleType}
             placeholder="Paketbil"
@@ -76,6 +96,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           <Elements.Layout.TextInputPairContainer>
             <Elements.Layout.TextInputPairItem>
               <FormInputs.TextInput
+                onFocus={() =>
+                  UIStateDispatch({ type: 'resetInputClickState' })
+                }
                 step={1}
                 min="0"
                 name="volume"
@@ -90,6 +113,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             </Elements.Layout.TextInputPairItem>
             <Elements.Layout.TextInputPairItem>
               <FormInputs.TextInput
+                onFocus={() =>
+                  UIStateDispatch({ type: 'resetInputClickState' })
+                }
                 step={1}
                 min="0"
                 type="number"
@@ -115,6 +141,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               iconInset
               name="driver"
               value={state.driver.name}
@@ -135,6 +162,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               iconInset
               name="contact"
               value={state.driver.contact}

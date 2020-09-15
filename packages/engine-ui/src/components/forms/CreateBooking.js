@@ -63,12 +63,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           required
-          placeholder="Adress"
+          placeholder="Adress (sök eller klicka på karta)"
           value={state.pickup.name}
           onFocus={() =>
             UIStateDispatch({
               type: 'focusInput',
-              payload: 'createbooking:pickup',
+              payload: 'start',
             })
           }
           onChangeHandler={eventHandlers.handleAddressInput(
@@ -150,12 +150,12 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           Avlämning
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
-          placeholder="Adress"
+          placeholder="Adress (sök eller klicka på karta)"
           value={state.delivery.name}
           onFocus={() =>
             UIStateDispatch({
               type: 'focusInput',
-              payload: 'createbooking:delivery',
+              payload: 'end',
             })
           }
           onChangeHandler={eventHandlers.handleAddressInput(

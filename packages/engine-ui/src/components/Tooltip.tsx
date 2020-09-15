@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Elements from '../shared-elements'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
+import { useLocation} from 'react-router-dom'
 
 const Container = styled.div<{ x: number; y: number }>`
   position: absolute;
@@ -89,16 +90,31 @@ const Component: React.FC<{
   position: { x: number; y: number; lat: number; lon: number }
 }> = ({ position: { lat, lon, ...rest } }) => {
   const { data, error, loading } = useAddressFromCoordinate({ lat, lon })
-  const { state: UIState, dispatch } = React.useContext(UIStateContext)
+  const location = useLocation()
+  const {
+    state: { lastFocusedInput },
+    dispatch,
+  } = React.useContext(UIStateContext)
+
+  const tooltipTexts = {
+    vehicle: {
+      start: 'startposition',
+      end: 'slutposition',
+    },
+    booking: {
+      start: 'upphämtningsplats',
+      end: 'leveransplats',
+    },
+  }
 
   const parseLastFocusedInputToHumanReadable = (
-    lastFocusedInputCode: string
+    lastFocusedInputCode: 'start' | 'end'
   ) => {
-    switch (lastFocusedInputCode) {
-      case 'createbooking:pickup':
-        return 'upphämtningsplats'
-      case 'createbooking:delivery':
-        return 'avlämningsplats'
+    switch (location.pathname) {
+      case '/transports/add-vehicle':
+        return tooltipTexts['vehicle'][lastFocusedInputCode]
+      case '/bookings/add-booking':
+        return tooltipTexts['booking'][lastFocusedInputCode]
     }
   }
 
@@ -131,7 +147,7 @@ const Component: React.FC<{
             <CountyName>{data.county}</CountyName>
             <Coordinate>{formatCoordinate({ lat, lon })}</Coordinate>
 
-            {Boolean(UIState.lastFocusedInput) && (
+            {Boolean(lastFocusedInput) && (
               <Elements.Typography.StrongSmallInfo>
                 <AddButton
                   onClick={() =>
@@ -142,7 +158,7 @@ const Component: React.FC<{
                   }
                 >
                   {`Lägg till som ${parseLastFocusedInputToHumanReadable(
-                    UIState.lastFocusedInput
+                    lastFocusedInput
                   )}`}
                 </AddButton>
               </Elements.Typography.StrongSmallInfo>

@@ -96,7 +96,7 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
 
   return bot.telegram.sendMessage(
     id,
-    `${bookingIds.length} paket finns att hämta.[Se på kartan](${directions}).`,
+    `${bookingIds.length} paket finns att hämta. [Se på kartan](${directions}).`,
     { parse_mode: 'markdown' }
   )
 }
@@ -115,7 +115,7 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
       booking.pickup.street && booking.pickup.city
         ? getDirectionsUrl(booking.pickup.street, booking.pickup.city)
         : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
-    })!`.concat(`\nTryck på "[Framme]" när du har anlänt till destinatione.`),
+    })!`.concat(`\nTryck på "[Framme]" när du har anlänt till destinationen.`),
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -169,7 +169,6 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
 }
 
 const sendPickupInformation = (instruction, telegramId, booking) => {
-  console.log(booking)
   return bot.telegram.sendMessage(
     telegramId,
     ` ${

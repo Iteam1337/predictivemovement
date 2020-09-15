@@ -63,7 +63,6 @@ const onLocationMessage = (msg, ctx) => {
 const handleOnArrive = (vehicleId, telegramId) => {
   try {
     const [current] = getInstructions(vehicleId)
-    console.log(current)
 
     if (!current) return messaging.sendDriverFinishedMessage(telegramId)
     const booking = getBooking(current.id)

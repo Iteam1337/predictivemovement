@@ -4,8 +4,8 @@ metadata:
   name: pm-mapbox-test
 build:
   artifacts:
-    - image: iteam1337/pm-booking-interface
-      context: packages/booking-interface
+    # - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
+    #   context: packages/booking-interface
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine
@@ -61,12 +61,11 @@ profiles:
     deploy:
       kubectl:
         manifests:
-          - k8s/packages/prod/booking-interface.yaml
+          # - k8s/packages/prod/booking-interface.yaml # Disabled until needed again since we use the admin-ui for creating bookings
           - k8s/packages/prod/driver-interface.yaml
           - k8s/packages/prod/engine.yaml
           - k8s/packages/prod/engine-server.yaml
           - k8s/packages/prod/engine-ui.yaml
-          - k8s/packages/prod/plan-graphhopper.yaml
           - k8s/packages/prod/route-optimization-jsprit.yaml
           - k8s/packages/prod/vehicle-offer.yaml
           - k8s/packages/prod/auto-accept-offer.yaml

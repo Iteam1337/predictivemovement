@@ -101,11 +101,6 @@ const createBookingsFromHistory = (total) => {
     .publish(total)
 }
 
-const resetState = () =>
-  amqp
-    .queue('clear_engine_state', { durable: false })
-    .publish(JUST_DO_IT_MESSAGE)
-
 const plan = amqp
   .exchange('outgoing_plan_updates', 'fanout', {
     durable: false,
@@ -134,7 +129,6 @@ module.exports = {
   createBooking,
   dispatchOffers,
   createBookingsFromHistory,
-  resetState,
   plan,
   deleteBooking,
 }

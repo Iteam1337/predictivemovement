@@ -46,7 +46,7 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
     status: false,
   })
 
-  const { vehicleId } = useParams()
+  const { vehicleId } = useParams<{ vehicleId: string }>()
 
   const vehicle = vehicles.find((v: any) => v.id === vehicleId)
 
@@ -92,8 +92,11 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {moment(vehicle.earliest_start).format('LT')} -{' '}
-            {moment(vehicle.latest_end).format('LT')}{' '}
+            {vehicle.earliest_start && vehicle.latest_end
+              ? `
+                ${moment(vehicle.earliest_start).format('LT')} -
+                ${moment(vehicle.latest_end).format('LT')} `
+              : 'Inget körschema fastställt'}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.end_address.name && (

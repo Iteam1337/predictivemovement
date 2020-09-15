@@ -149,7 +149,6 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
     })!
   `.concat(`\nTryck "[Framme]" när du har anlänt till destinationen.`),
     {
-      disable_web_page_preview: 1,
       parse_mode: 'markdown',
       reply_markup: {
         inline_keyboard: [
@@ -164,6 +163,7 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
           ],
         ],
       },
+      disable_web_page_preview: true,
     }
   )
 }
@@ -232,7 +232,6 @@ const sendDeliveryInformation = (instruction, telegramId, booking) => {
       )
       .concat(`\nTryck "[Levererat]" när du har lämnat paketet.`),
     {
-      disable_web_page_preview: 1,
       parse_mode: 'markdown',
       reply_markup: {
         inline_keyboard: [
@@ -247,6 +246,7 @@ const sendDeliveryInformation = (instruction, telegramId, booking) => {
           ],
         ],
       },
+      disable_web_page_preview: true,
     }
   )
 }

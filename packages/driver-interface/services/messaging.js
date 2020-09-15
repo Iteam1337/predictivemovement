@@ -187,10 +187,11 @@ const sendPickupInformation = (instruction, telegramId, booking) => {
       )
       .concat('\n\nPaketinformation:')
       .concat(`\nÖmtåligt: ${booking.metadata.fragile ? 'Ja' : 'Nej'}`)
-      .concat(booking.size.weight && `\nVikt: ${booking.size.weight}kg`)
+      .concat(booking.size.weight ? `\nVikt: ${booking.size.weight}kg` : '')
       .concat(
-        booking.size.measurement &&
-          `\nMått: ${booking.size.measurement[0]}x${booking.size.measurement[1]}x${booking.size.measurement[2]}cm`
+        booking.size.measurement
+          ? `\nMått: ${booking.size.measurement[0]}x${booking.size.measurement[1]}x${booking.size.measurement[2]}cm`
+          : ''
       )
       .concat(`\nTryck på "[Hämtat]" när du hämtat upp paketet.`),
     {

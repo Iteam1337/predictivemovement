@@ -104,6 +104,37 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
 const sendDriverFinishedMessage = (telegramId) =>
   bot.telegram.sendMessage(telegramId, 'Bra jobbat! Tack för idag!')
 
+const sendPickupInstruction = (instruction, telegramId, booking) => {
+  return bot.telegram.sendMessage(
+    telegramId,
+    `🎁 Hämta paket "${instruction.id}" [${
+      booking.pickup.street
+        ? `vid ${booking.pickup.street}, ${booking.pickup.city}`
+        : 'här'
+    }](${
+      booking.pickup.street && booking.pickup.city
+        ? getDirectionsUrl(booking.pickup.street, booking.pickup.city)
+        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
+    })!`.concat(`\nTryck på "[Framme]" när du har anlänt till destinatione.`),
+    {
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Framme',
+              callback_data: JSON.stringify({
+                e: 'arrived',
+                id: instruction.id,
+              }),
+            },
+          ],
+        ],
+      },
+    }
+  )
+}
+
 const sendDeliveryInstruction = (instruction, telegramId, booking) => {
   return bot.telegram.sendMessage(
     telegramId,
@@ -116,32 +147,17 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
         ? getDirectionsUrl(booking.delivery.street, booking.delivery.city)
         : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
     })!
-    `
-      .concat(
-        booking.metadata &&
-          booking.metadata.recipient &&
-          booking.metadata.recipient.contact
-          ? 'När du kommit fram till leveransplatsen kan du nå mottagaren på ' +
-              booking.metadata.recipient.contact
-          : ''
-      )
-      .concat(
-        booking.metadata &&
-          booking.metadata.recipient &&
-          booking.metadata.recipient.doorCode
-          ? `\nPortkod: ${booking.metadata.recipient.doorCode}`
-          : ''
-      ).concat(`
-    Tryck "[Levererat]" när du har lämnat paketet.`),
+  `.concat(`\nTryck "[Framme]" när du har anlänt till destinationen.`),
     {
+      disable_web_page_preview: 1,
       parse_mode: 'markdown',
       reply_markup: {
         inline_keyboard: [
           [
             {
-              text: 'Levererat',
+              text: 'Framme',
               callback_data: JSON.stringify({
-                e: 'delivered',
+                e: 'arrived',
                 id: instruction.id,
               }),
             },
@@ -152,27 +168,17 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) => {
   )
 }
 
-const sendPickupInstruction = (instruction, telegramId, booking) => {
+const sendPickupInformation = (instruction, telegramId, booking) => {
+  console.log(booking)
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Hämta paket "${instruction.id}" [${
-      booking.pickup.street
-        ? `vid ${booking.pickup.street}, ${booking.pickup.city}`
-        : 'här'
-    }](${
-      booking.pickup.street && booking.pickup.city
-        ? getDirectionsUrl(booking.pickup.street, booking.pickup.city)
-        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
-    })!
-    `
-      .concat(
-        booking.metadata &&
-          booking.metadata.sender &&
-          booking.metadata.sender.contact
-          ? '\nNär du kommit fram till upphämtningsplatsen kan du nå avsändaren på ' +
-              booking.metadata.sender.contact
-          : ''
-      )
+    ` ${
+      booking.metadata &&
+      booking.metadata.sender &&
+      booking.metadata.sender.contact
+        ? '\nDu kan nu nå avsändaren på ' + booking.metadata.sender.contact
+        : ''
+    }`
       .concat(
         booking.metadata &&
           booking.metadata.sender &&
@@ -180,20 +186,14 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
           ? `\nPortkod: ${booking.metadata.sender.doorCode}`
           : ''
       )
-      .concat(
-        booking.size.weight ||
-          booking.size.measurement ||
-          booking.metadata.fragile
-          ? '\n\nPaketinformation:'
-          : ''
-      )
+      .concat('\n\nPaketinformation:')
       .concat(`\nÖmtåligt: ${booking.metadata.fragile ? 'Ja' : 'Nej'}`)
       .concat(booking.size.weight && `\nVikt: ${booking.size.weight}kg`)
       .concat(
         booking.size.measurement &&
           `\nMått: ${booking.size.measurement[0]}x${booking.size.measurement[1]}x${booking.size.measurement[2]}cm`
-      ).concat(`
-    Tryck på "[Hämtat]" när du hämtat upp paketet.`),
+      )
+      .concat(`\nTryck på "[Hämtat]" när du hämtat upp paketet.`),
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -213,13 +213,53 @@ const sendPickupInstruction = (instruction, telegramId, booking) => {
   )
 }
 
+const sendDeliveryInformation = (instruction, telegramId, booking) => {
+  return bot.telegram.sendMessage(
+    telegramId,
+    ` ${
+      booking.metadata &&
+      booking.metadata.recipient &&
+      booking.metadata.recipient.contact
+        ? 'Du kan nu nå mottagern på ' + booking.metadata.recipient.contact
+        : ''
+    }`
+      .concat(
+        booking.metadata &&
+          booking.metadata.recipient &&
+          booking.metadata.recipient.doorCode
+          ? `\nPortkod: ${booking.metadata.recipient.doorCode}`
+          : ''
+      )
+      .concat(`\nTryck "[Levererat]" när du har lämnat paketet.`),
+    {
+      disable_web_page_preview: 1,
+      parse_mode: 'markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Levererat',
+              callback_data: JSON.stringify({
+                e: 'delivered',
+                id: instruction.id,
+              }),
+            },
+          ],
+        ],
+      },
+    }
+  )
+}
+
 module.exports = {
   onNoInstructionsForVehicle,
   onInstructionsForVehicle,
   onBotStart,
   sendPickupOffer,
   sendPickupInstruction,
+  sendPickupInformation,
   sendDeliveryInstruction,
+  sendDeliveryInformation,
   onPickupConfirm,
   onPickupOfferResponse,
   sendDriverFinishedMessage,

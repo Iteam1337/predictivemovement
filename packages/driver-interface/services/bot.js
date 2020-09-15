@@ -36,7 +36,7 @@ const onLogin = (vehicleId, ctx) => {
     .reply(
       'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
     )
-    .then(() => handlePickupInstruction(vehicleId, ctx.update.message.from.id))
+    .then(() => handleOnArrive(vehicleId, ctx.update.message.from.id))
 }
 
 const onLocationMessage = (msg, ctx) => {
@@ -60,6 +60,25 @@ const onLocationMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
+const handleOnArrive = (vehicleId, telegramId) => {
+  try {
+    const [current] = getInstructions(vehicleId)
+    console.log(current)
+
+    if (!current) return messaging.sendDriverFinishedMessage(telegramId)
+    const booking = getBooking(current.id)
+
+    if (current.type === 'pickupShipment')
+      messaging.sendPickupInstruction(current, telegramId, booking)
+
+    if (current.type === 'deliverShipment')
+      messaging.sendDeliveryInstruction(current, telegramId, booking)
+  } catch (error) {
+    console.log('error in handlePickupInstructions: ', error)
+    return
+  }
+}
+
 const handlePickupInstruction = (vehicleId, telegramId) => {
   try {
     const instructions = getInstructions(vehicleId)
@@ -70,10 +89,10 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
     const booking = getBooking(nextInstruction.id)
 
     if (nextInstruction.type === 'pickupShipment')
-      messaging.sendPickupInstruction(nextInstruction, telegramId, booking)
+      messaging.sendPickupInformation(nextInstruction, telegramId, booking)
 
     if (nextInstruction.type === 'deliverShipment')
-      messaging.sendDeliveryInstruction(nextInstruction, telegramId, booking)
+      messaging.sendDeliveryInformation(nextInstruction, telegramId, booking)
 
     setInstructions(vehicleId, rest)
   } catch (error) {
@@ -82,4 +101,9 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
   }
 }
 
-module.exports = { onLogin, onLocationMessage, handlePickupInstruction }
+module.exports = {
+  onLogin,
+  onLocationMessage,
+  handlePickupInstruction,
+  handleOnArrive,
+}

@@ -16,7 +16,7 @@ defmodule Booking do
   ]
 
   def make(pickup, delivery, external_id, metadata, size) do
-    id = "pmb-" <> (Base62UUID.generate() |> String.slice(0, 8))
+    id = "pmb-" <> (Base62UUID.generate() |> String.downcase() |> String.slice(0, 8))
 
     booking = %Booking{
       id: id,

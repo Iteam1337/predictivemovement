@@ -116,6 +116,8 @@ const useFormStateWithMapClickControl = (start, end, set) => {
             [start]: {
               ...current.startPosition,
               name: formattedAddress,
+              street: address.name,
+              city: address.county,
               lat,
               lon,
             },
@@ -128,6 +130,8 @@ const useFormStateWithMapClickControl = (start, end, set) => {
             [end]: {
               ...current.endPosition,
               name: formattedAddress,
+              street: address.name,
+              city: address.county,
               lat,
               lon,
             },

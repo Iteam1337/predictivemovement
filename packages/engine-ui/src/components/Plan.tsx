@@ -8,8 +8,8 @@ import SharedElements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
 
 const PlanWrapper = styled.div`
-  display: grid;
-  grid-template-rows: auto auto auto 1fr;
+  display: flex;
+  flex-direction: column;
   height: 100%;
 `
 
@@ -76,6 +76,7 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
               ))}
               <SharedElements.Buttons.SubmitButton
                 justifySelf="center"
+                marginTop="20px"
                 onClick={dispatchOffers}
               >
                 Bekräfta plan

@@ -32,16 +32,7 @@ defmodule BookingUpdatesProcessorTest do
   test "pickup update is registered and published", %{channel: channel} do
     AMQP.Basic.consume(channel, "look_for_picked_up_updates_in_test", nil, no_ack: true)
 
-    vehicle_id =
-      Vehicle.make(
-        %{lat: 61.80762475411504, lon: 16.05761905846783},
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
-        nil
-      )
+    vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =
       Booking.make(
@@ -67,16 +58,7 @@ defmodule BookingUpdatesProcessorTest do
   test "delivered update is registered and published", %{channel: channel} do
     AMQP.Basic.consume(channel, "look_for_delivered_updates_in_test", nil, no_ack: true)
 
-    vehicle_id =
-      Vehicle.make(
-        %{lat: 61.80762475411504, lon: 16.05761905846783},
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
-        nil
-      )
+    vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =
       Booking.make(

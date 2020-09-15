@@ -33,4 +33,11 @@ const getDirectionsFromActivities = (activities) => {
   return directions
 }
 
-module.exports = { getAddressFromCoordinate, getDirectionsFromActivities }
+const getDirectionsUrl = (first, second) =>
+  `https://www.google.com/maps/dir/?api=1&destination=${first},${second}`
+
+module.exports = {
+  getAddressFromCoordinate,
+  getDirectionsFromActivities,
+  getDirectionsUrl,
+}

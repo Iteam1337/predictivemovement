@@ -26,15 +26,19 @@ const handleAddressInput = (propertyName, callback) => ({
   name = '',
   lon = '',
   lat = '',
-}) =>
-  callback((currentState) => ({
+  county = '',
+}) => {
+  return callback((currentState) => ({
     ...currentState,
     [propertyName]: {
       name,
       lon,
       lat,
+      city: county,
+      street: name,
     },
   }))
+}
 
 export default {
   handleTextInputChange,

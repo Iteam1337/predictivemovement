@@ -17,6 +17,11 @@ const ActivityInfo = styled.div`
   }
 `
 
+const Wrapper = styled.div`
+  overflow: auto;
+  height: 100%;
+`
+
 const RouteActivities = ({ vehicle }) => {
   const { dispatch } = React.useContext(UIStateContext)
   const activities = vehicle.activities.slice(1, -1)
@@ -33,7 +38,7 @@ const RouteActivities = ({ vehicle }) => {
   }
 
   return (
-    <div>
+    <Wrapper>
       {activities.map((activity, index) => (
         <ActivityInfo key={index}>
           <p>{index + 1}</p>
@@ -58,7 +63,7 @@ const RouteActivities = ({ vehicle }) => {
           </Elements.RoundedLink>
         </ActivityInfo>
       ))}
-    </div>
+    </Wrapper>
   )
 }
 

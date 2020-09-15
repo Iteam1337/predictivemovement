@@ -1,26 +1,31 @@
 import moment from 'moment'
 
-const findAddress = async (query) => {
+interface Feature {
+  properties: {
+    label: string
+  }
+}
+
+const findAddress = (query: string) => {
   if (!query) {
     return { features: [] }
   }
 
-  const res = await fetch(
-    `https://pelias.iteamdev.io/v1/autocomplete?text=${query}`
-  )
-  const data = await res.json()
-  return data
+  return fetch(
+    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`
+  ).then((res) => res.json())
 }
 
-const getAddressFromCoordinate = async ({ lon, lat }) => {
-  return await fetch(
+const getAddressFromCoordinate = ({ lon, lat }: { lon: string; lat: string }) =>
+  fetch(
     `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
   )
     .then((res) => res.json())
-    .then(({ features }) => features[0].properties.label)
-}
+    .then(
+      ({ features }: { features: Feature[] }) => features[0].properties.label
+    )
 
-const calculateMinTime = (date, minDate) => {
+const calculateMinTime = (date?: Date, minDate?: Date) => {
   const momentDate = moment(date || minDate)
   const isToday = momentDate.isSame(moment(), 'day')
   if (isToday) {

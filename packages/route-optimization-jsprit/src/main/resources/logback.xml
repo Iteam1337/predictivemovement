@@ -31,18 +31,14 @@
         </rollingPolicy>
     </appender>
     
-    <root level="error">
+    <root level="info">
         <appender-ref ref="RollingFile" />
-        <!--
         <appender-ref ref="Console" />
-        -->
     </root>
  
-    <logger name="com.predictivemovement" level="error" additivity="false">
+    <logger name="com.predictivemovement" level="info" additivity="false">
         <appender-ref ref="RollingFile" />
-        <!--
         <appender-ref ref="Console" />
-        -->
     </logger>
  
 </configuration>

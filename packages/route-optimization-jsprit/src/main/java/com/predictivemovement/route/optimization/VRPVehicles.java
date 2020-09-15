@@ -92,12 +92,12 @@ public class VRPVehicles {
         JSONObject capacities = vehicle.optJSONObject("capacity");
 
         // volume
-        int volume = capacities != null ? cubicMetersToCentimeter(capacities.optInt("volume", 0))
+        int volume = capacities != null ? cubicMetersToCentimeter(capacities.optInt("volume", VEHICLE_DEFAULT_VOLUME))
                 : VEHICLE_DEFAULT_VOLUME;
         vehicleTypeBuilder.addCapacityDimension(VRPSetting.VOLUME_INDEX, volume);
 
         // weight
-        int weight = capacities != null ? capacities.optInt("weight", 1) : VEHICLE_DEFAULT_WEIGHT;
+        int weight = capacities != null ? capacities.optInt("weight", VEHICLE_DEFAULT_WEIGHT) : VEHICLE_DEFAULT_WEIGHT;
         vehicleTypeBuilder.addCapacityDimension(VRPSetting.WEIGHT_INDEX, weight);
 
         // costs

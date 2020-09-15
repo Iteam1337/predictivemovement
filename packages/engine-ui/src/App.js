@@ -37,13 +37,6 @@ const App = () => {
     socket.emit('delete-booking', id)
   }
 
-  const resetState = () => {
-    dispatch({
-      type: 'clearState',
-    })
-    socket.emit('reset-state')
-  }
-
   useSocket('bookings', (bookings) => {
     dispatch({
       type: 'setBookings',
@@ -79,7 +72,6 @@ const App = () => {
         {...state}
         createBooking={createBooking}
         dispatchOffers={dispatchOffers}
-        resetState={resetState}
         addVehicle={addVehicle}
         createBookings={createBookings}
         deleteBooking={deleteBooking}

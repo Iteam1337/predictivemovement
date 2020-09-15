@@ -6,7 +6,6 @@ const {
   createBooking,
   dispatchOffers,
   createBookingsFromHistory,
-  resetState,
   plan,
   deleteBooking,
 } = require('./engineConnector')
@@ -56,15 +55,21 @@ function register(io) {
           time_windows: params.pickup.timewindows,
           lat: params.pickup.lat,
           lon: params.pickup.lon,
+          street: params.pickup.street,
+          city: params.pickup.city,
         },
         delivery: {
           time_windows: params.delivery.timewindows,
           lat: params.delivery.lat,
           lon: params.delivery.lon,
+          street: params.delivery.street,
+          city: params.delivery.city,
         },
         metadata: {
           sender: params.sender,
           recipient: params.recipient,
+          cargo: params.cargo,
+          fragile: params.fragile,
         },
       }
 
@@ -104,14 +109,6 @@ function register(io) {
     socket.on('new-bookings', ({ total }) => {
       console.log('will create ', total, 'bookings')
       createBookingsFromHistory(total)
-    })
-
-    socket.on('reset-state', () => {
-      bookingsCache.clear()
-      movingCarsCache.clear()
-      resetState()
-      socket.emit('cars', [])
-      socket.emit('bookings', [])
     })
 
     socket.on('delete-booking', (id) => {

@@ -13,10 +13,25 @@ const CreateBooking = ({ onSubmit }) => {
     measurement: '',
     weight: '',
     cargo: '',
-    pickup: { name: '', lat: '', lon: '', timewindow: null },
-    delivery: { name: '', lat: '', lon: '', timewindow: null },
-    sender: { name: '', contact: '' },
-    recipient: { name: '', contact: '' },
+    fragile: false,
+    pickup: {
+      name: '',
+      lat: '',
+      lon: '',
+      timewindow: null,
+      street: '',
+      city: '',
+    },
+    delivery: {
+      name: '',
+      lat: '',
+      lon: '',
+      street: '',
+      city: '',
+      timewindow: null,
+    },
+    sender: { name: '', contact: '', doorCode: '' },
+    recipient: { name: '', contact: '', doorCode: '' },
   })
 
   const onSubmitHandler = (event) => {

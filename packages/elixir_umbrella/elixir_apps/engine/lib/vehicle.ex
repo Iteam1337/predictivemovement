@@ -83,7 +83,8 @@ defmodule Vehicle do
     state
   end
 
-  defp generate_id, do: "pmv-" <> (Base62UUID.generate() |> String.slice(0, 8))
+  defp generate_id,
+    do: "pmv-" <> (Base62UUID.generate() |> String.downcase() |> String.slice(0, 8))
 
   def make(vehicle_info, options \\ []) do
     vehicle_fields =

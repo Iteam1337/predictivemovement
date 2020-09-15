@@ -1,32 +1,37 @@
 import moment from 'moment'
 
-const findAddress = async (query) => {
-  if (!query) {
-    return { features: [] }
+interface Feature {
+  properties: {
+    label: string
+    name: string
+    county: string
   }
-
-  const res = await fetch(
-    `https://pelias.iteamdev.io/v1/autocomplete?text=${query}`
-  )
-  const data = await res.json()
-  return data
 }
 
-const getAddressFromCoordinate = async ({ lon, lat }) => {
-  return await fetch(
+const findAddress = (query: string) => {
+  if (!query) {
+    return Promise.resolve({ features: [] })
+  }
+
+  return fetch(
+    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`
+  ).then((res) => res.json())
+}
+
+const getAddressFromCoordinate = ({ lon, lat }: { lon: number; lat: number }) =>
+  fetch(
     `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
   )
     .then((res) => res.json())
-    .then(({ features: [topResult] }) => {
+    .then(({ features: [topResult] }: { features: Feature[] }) => {
       if (!topResult) return Promise.reject('Inga resultat hittades...')
       return {
         name: topResult.properties.name,
         county: topResult.properties.county,
       }
     })
-}
 
-const calculateMinTime = (date, minDate) => {
+const calculateMinTime = (date?: Date, minDate?: Date) => {
   const momentDate = moment(date || minDate)
   const isToday = momentDate.isSame(moment(), 'day')
   if (isToday) {

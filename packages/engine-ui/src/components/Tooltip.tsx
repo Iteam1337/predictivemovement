@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Elements from '../shared-elements'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
-import { useLocation} from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const Container = styled.div<{ x: number; y: number }>`
   position: absolute;

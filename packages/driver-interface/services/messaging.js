@@ -189,7 +189,7 @@ const sendPickupInformation = (instruction, telegramId, booking) => {
       .concat(`\nÖmtåligt: ${booking.metadata.fragile ? 'Ja' : 'Nej'}`)
       .concat(booking.size.weight ? `\nVikt: ${booking.size.weight}kg` : '')
       .concat(
-        booking.size.measurement
+        booking.size.measurement && booking.size.measurement.length === 3
           ? `\nMått: ${booking.size.measurement[0]}x${booking.size.measurement[1]}x${booking.size.measurement[2]}cm`
           : ''
       )

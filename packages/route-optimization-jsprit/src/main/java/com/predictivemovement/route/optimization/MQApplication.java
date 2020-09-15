@@ -41,16 +41,29 @@ public class MQApplication {
 		return BindingBuilder.bind(queue).to(exchange).with("rpc");
 	}
 
-	@RabbitListener(queues = QUEUE_NAME)
-	public String listen(final String msg) {
+	@Bean
+	public RabbitErrorHandler rabbitErrorHandler() {
+		return new RabbitErrorHandler();
+	}
+
+	@RabbitListener(queues = QUEUE_NAME, errorHandler = "rabbitErrorHandler", returnExceptions = "true")
+	public String listen(final String msg) throws Exception {
 		log.info("Message read from queue: {}", msg);
-
-		JSONObject routeRequest = new JSONObject(msg);
-		RouteOptimization routeOptimization = new RouteOptimization();
-		JSONObject routeSolution = routeOptimization.calculate(routeRequest);
-		String response = routeSolution.toString();
-
-		log.info("Publishing result: {}", response);
-		return response;
+		// try {
+		/*
+		 * JSONObject routeRequest = new JSONObject(msg); RouteOptimization
+		 * routeOptimization = new RouteOptimization(); JSONObject routeSolution =
+		 * routeOptimization.calculate(routeRequest); String response =
+		 * routeSolution.toString();
+		 * 
+		 * log.info("Publishing result: {}", response); return response;
+		 */
+		// } catch (Exception e) {
+		// String errorResponse = new ErrorResponse(e).create();
+		// log.error("Publishing error response: {}", errorResponse);
+		// return errorResponse;
+		// }
+		throw new Exception("Oh no, I ordered pizza and get pasta! This is an exception!");
+		// return "{\"foo\":\"smi\"}";
 	}
 }

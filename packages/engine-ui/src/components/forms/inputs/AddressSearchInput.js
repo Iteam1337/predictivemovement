@@ -44,6 +44,7 @@ const Component = ({ onChangeHandler, placeholder, value, ...rest }) => {
     return onChangeHandler({
       ...address,
       name: `${address.name}, ${address.county}`,
+      street: address.name,
     })
   }
 

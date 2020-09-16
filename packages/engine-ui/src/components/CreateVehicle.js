@@ -17,7 +17,7 @@ const CreateVehicle = ({ onSubmit }) => {
     weight: '',
     timewindow: { start: null, end: null },
     startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
-    endPosition: { lat: '', lon: '', name: '' },
+    endPosition: { lat: undefined, lon: undefined, name: '' },
     driver: { name: '', contact: '' },
   })
 

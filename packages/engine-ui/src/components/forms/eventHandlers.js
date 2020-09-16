@@ -24,8 +24,9 @@ const handleContactInputChange = (
 
 const handleAddressInput = (propertyName, callback) => ({
   name = '',
-  lon = '',
-  lat = '',
+  street = '',
+  lon,
+  lat,
   county = '',
 }) => {
   return callback((currentState) => ({
@@ -35,7 +36,7 @@ const handleAddressInput = (propertyName, callback) => ({
       lon,
       lat,
       city: county,
-      street: name,
+      street,
     },
   }))
 }

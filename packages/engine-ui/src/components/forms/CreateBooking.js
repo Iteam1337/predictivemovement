@@ -60,14 +60,14 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
     setShowParcelDetails((currentValue) => !currentValue)
   }
 
-  const handleTogglePacelInfo = (propertyName) => {
+  const handleToggleParcelInfo = (propertyName) => {
     setShowParcelInfo((currentState) => ({
       ...currentState,
       [propertyName]: !currentState[propertyName],
     }))
   }
 
-  const handleFragilePacelChange = () => {
+  const handleFragileParcelChange = () => {
     onChangeHandler((currentState) => ({
       ...currentState,
       fragile: !currentState.fragile,
@@ -164,7 +164,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Layout.InputContainer>
           <FormInputs.Checkbox
             label="Portkod"
-            onChangeHandler={() => handleTogglePacelInfo('pickup')}
+            onChangeHandler={() => handleToggleParcelInfo('pickup')}
           />
 
           {showParcelInfo.pickup && (
@@ -272,7 +272,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Layout.InputContainer>
           <FormInputs.Checkbox
             label="Portkod"
-            onChangeHandler={() => handleTogglePacelInfo('delivery')}
+            onChangeHandler={() => handleToggleParcelInfo('delivery')}
           />
 
           {showParcelInfo.delivery && (
@@ -352,7 +352,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               />
               <FormInputs.Checkbox
                 label="Paketet är ömtåligt"
-                onChangeHandler={handleFragilePacelChange}
+                onChangeHandler={handleFragileParcelChange}
               />
             </Elements.Layout.InputContainer>
           </>

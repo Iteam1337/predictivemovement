@@ -41,4 +41,17 @@ const calculateMinTime = (date?: Date, minDate?: Date) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
-export default { findAddress, calculateMinTime, getAddressFromCoordinate }
+const formatCoordinateToFixedDecimalLength = ({
+  lat,
+  lon,
+}: {
+  lat: number
+  lon: number
+}) => `${lat.toFixed(6)}, ${lon.toFixed(6)}`
+
+export default {
+  findAddress,
+  calculateMinTime,
+  getAddressFromCoordinate,
+  formatCoordinateToFixedDecimalLength,
+}

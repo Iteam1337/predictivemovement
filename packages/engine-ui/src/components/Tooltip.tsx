@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Elements from '../shared-elements'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
-import { useLocation } from 'react-router-dom'
+import { useRouteMatch } from 'react-router-dom'
 
 const Container = styled.div<{ x: number; y: number }>`
   position: absolute;
@@ -90,7 +90,12 @@ const Component: React.FC<{
   position: { x: number; y: number; lat: number; lon: number }
 }> = ({ position: { lat, lon, ...rest } }) => {
   const { data, error, loading } = useAddressFromCoordinate({ lat, lon })
-  const location = useLocation()
+
+  const createBookingOrVehicleView = useRouteMatch<{}>({
+    path: ['/bookings/add-booking', '/transports/add-vehicle'],
+    exact: true,
+  })
+
   const {
     state: { lastFocusedInput },
     dispatch,
@@ -107,21 +112,39 @@ const Component: React.FC<{
     },
   }
 
-  const parseLastFocusedInputToHumanReadable = (
-    lastFocusedInputCode: 'start' | 'end'
-  ) => {
-    switch (location.pathname) {
-      case '/transports/add-vehicle':
-        return tooltipTexts['vehicle'][lastFocusedInputCode]
-      case '/bookings/add-booking':
-        return tooltipTexts['booking'][lastFocusedInputCode]
-    }
-  }
-
   const handleClose = () => dispatch({ type: 'hideTooltip' })
 
-  const formatCoordinate = ({ lat, lon }: { lat: number; lon: number }) =>
-    `${lat.toFixed(6)}, ${lon.toFixed(6)}`
+  enum EntityTypes {
+    VEHICLE = 'vehicle',
+    BOOKING = 'booking',
+  }
+
+  enum InputTypes {
+    START = 'start',
+    END = 'end',
+  }
+
+  const entityTypeFromPathname = (pathname: string): EntityTypes => {
+    const [, type] = pathname.split('add-')
+    return type as EntityTypes
+  }
+
+  const getAddAsInputButton = (pathname: string, inputCode: InputTypes) => (
+    <Elements.Typography.StrongSmallInfo>
+      <AddButton
+        onClick={() =>
+          dispatch({
+            type: 'addAddressToLastClickedPosition',
+            payload: data,
+          })
+        }
+      >
+        {`Lägg till som ${
+          tooltipTexts[entityTypeFromPathname(pathname)][inputCode]
+        }`}
+      </AddButton>
+    </Elements.Typography.StrongSmallInfo>
+  )
 
   return (
     <Container {...rest}>
@@ -145,24 +168,16 @@ const Component: React.FC<{
           <>
             <AddressName>{data.name}</AddressName>
             <CountyName>{data.county}</CountyName>
-            <Coordinate>{formatCoordinate({ lat, lon })}</Coordinate>
+            <Coordinate>
+              {helpers.formatCoordinateToFixedDecimalLength({ lat, lon })}
+            </Coordinate>
 
-            {Boolean(lastFocusedInput) && (
-              <Elements.Typography.StrongSmallInfo>
-                <AddButton
-                  onClick={() =>
-                    dispatch({
-                      type: 'addAddressToLastClickedPosition',
-                      payload: data,
-                    })
-                  }
-                >
-                  {`Lägg till som ${parseLastFocusedInputToHumanReadable(
-                    lastFocusedInput
-                  )}`}
-                </AddButton>
-              </Elements.Typography.StrongSmallInfo>
-            )}
+            {Boolean(lastFocusedInput) &&
+              createBookingOrVehicleView &&
+              getAddAsInputButton(
+                createBookingOrVehicleView.path,
+                lastFocusedInput as InputTypes
+              )}
           </>
         )}
       </ContentContainer>

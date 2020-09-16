@@ -10,7 +10,7 @@ const useFilteredStateFromQueryParams = (state) => {
   })
 
   const vehicleDetailView = useRouteMatch({
-    path: '/vehicles/:id',
+    path: '/transports/:id',
     exact: true,
   })
 

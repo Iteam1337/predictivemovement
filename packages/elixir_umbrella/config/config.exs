@@ -11,5 +11,7 @@ config :engine, :outgoing_booking_exchange, "outgoing_booking_updates"
 config :engine, :incoming_booking_exchange, "incoming_booking_updates"
 config :engine, :outgoing_plan_exchange, "outgoing_plan_updates"
 
+config :engine, :init_from_storage, System.get_env("INIT_FROM_STORAGE") == "true"
+
 config :logger, level: :warn
 import_config "#{Mix.env()}.exs"

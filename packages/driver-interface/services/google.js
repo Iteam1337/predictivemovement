@@ -25,16 +25,14 @@ const getAddressFromCoordinate = (coordinate) =>
       console.log('Error getting google geocode data: ', err.message)
     )
 
-const getDirectionsFromActivities = (activities) => {
-  const directions = activities.reduce((result, { address }) => {
-    return result.concat(`/${address.lat},${address.lon}`)
-  }, 'https://www.google.com/maps/dir')
+const getDirectionsFromActivities = (activities) =>
+  activities.reduce(
+    (result, { address }) => result.concat(`/${address.lat},${address.lon}`),
+    'https://www.google.com/maps/dir'
+  )
 
-  return directions
-}
-
-const getDirectionsUrl = (first, second) =>
-  `https://www.google.com/maps/dir/?api=1&destination=${first},${second}`
+const getDirectionsUrl = (...args) =>
+  `https://www.google.com/maps/dir/?api=1&destination=${args.join(',')}`
 
 module.exports = {
   getAddressFromCoordinate,

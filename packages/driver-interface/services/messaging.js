@@ -3,6 +3,7 @@ const Markup = require('telegraf/markup')
 const { open } = require('../adapters/amqp')
 const moment = require('moment')
 const { getDirectionsFromActivities, getDirectionsUrl } = require('./google')
+const { getAddressFromCoordinate } = require('./pelias')
 const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
@@ -104,18 +105,24 @@ const onInstructionsForVehicle = (activities, bookingIds, id) => {
 const sendDriverFinishedMessage = (telegramId) =>
   bot.telegram.sendMessage(telegramId, 'Bra jobbat! Tack för idag!')
 
-const sendPickupInstruction = (instruction, telegramId, booking) =>
-  bot.telegram.sendMessage(
+const sendPickupInstruction = async (instruction, telegramId, booking) => {
+  const pickup =
+    booking.pickup.street && booking.pickup.city
+      ? `${booking.pickup.street}, ${booking.pickup.city}`
+      : await getAddressFromCoordinate
+
+  const delivery =
+    booking.delivery.street && booking.delivery.city
+      ? `${booking.delivery.street}, ${booking.delivery.city}`
+      : await getAddressFromCoordinate({ ...booking.delivery })
+
+  return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Hämta paket "${instruction.id}" [${
-      booking.pickup.street
-        ? `vid ${booking.pickup.street}, ${booking.pickup.city}`
-        : 'här'
-    }](${
-      booking.pickup.street && booking.pickup.city
-        ? getDirectionsUrl(booking.pickup.street, booking.pickup.city)
-        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
-    })!`.concat(`\nTryck på "[Framme]" när du har anlänt till destinationen.`),
+    `🎁 Hämta paket "${instruction.id}" vid [${pickup}](${getDirectionsUrl(
+      pickup
+    )}) och leverera det sedan till ${delivery}!`.concat(
+      `\nTryck på "[Framme]" när du har anlänt till destinationen.`
+    ),
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -133,20 +140,21 @@ const sendPickupInstruction = (instruction, telegramId, booking) =>
       },
     }
   )
+}
 
-const sendDeliveryInstruction = (instruction, telegramId, booking) =>
-  bot.telegram.sendMessage(
+const sendDeliveryInstruction = async (instruction, telegramId, booking) => {
+  const delivery =
+    booking.delivery.street && booking.delivery.city
+      ? `${booking.delivery.street}, ${booking.delivery.city}`
+      : await getAddressFromCoordinate({ ...booking.delivery })
+
+  return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Leverera paket "${instruction.id}" [${
-      booking.pickup.street
-        ? `vid ${booking.delivery.street}, ${booking.delivery.city}`
-        : 'här'
-    }](${
-      booking.delivery.street && booking.delivery.city
-        ? getDirectionsUrl(booking.delivery.street, booking.delivery.city)
-        : getDirectionsUrl(instruction.address.lat, instruction.address.lon)
-    })!
-  `.concat(`\nTryck "[Framme]" när du har anlänt till destinationen.`),
+    `🎁 Leverera paket "${
+      instruction.id
+    }" till [${delivery}](${getDirectionsUrl(delivery)})!`.concat(
+      `\nTryck "[Framme]" när du har anlänt till destinationen.`
+    ),
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -165,6 +173,7 @@ const sendDeliveryInstruction = (instruction, telegramId, booking) =>
       disable_web_page_preview: true,
     }
   )
+}
 
 const sendPickupInformation = (instruction, telegramId, booking) =>
   bot.telegram.sendMessage(

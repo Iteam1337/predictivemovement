@@ -1,6 +1,6 @@
 const {
   open,
-  queues: { SEND_PICKUP_INSTRUCTIONS },
+  queues: { ADD_BOOKING_INFO },
   exchanges: { OUTGOING_BOOKING_UPDATES },
 } = require('../adapters/amqp')
 const { addBooking } = require('../services/cache')
@@ -10,7 +10,7 @@ const pickupInstructions = () => {
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(SEND_PICKUP_INSTRUCTIONS, {
+        .assertQueue(ADD_BOOKING_INFO, {
           durable: false,
         })
         .then(() =>
@@ -20,13 +20,13 @@ const pickupInstructions = () => {
         )
         .then(() =>
           ch.bindQueue(
-            SEND_PICKUP_INSTRUCTIONS,
+            ADD_BOOKING_INFO,
             OUTGOING_BOOKING_UPDATES,
             'assigned'
           )
         )
         .then(() =>
-          ch.consume(SEND_PICKUP_INSTRUCTIONS, (msg) => {
+          ch.consume(ADD_BOOKING_INFO, (msg) => {
             const booking = JSON.parse(msg.content.toString())
             console.log('received booking: ', booking)
 

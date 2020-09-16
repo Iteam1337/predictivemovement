@@ -105,7 +105,7 @@ const plan = amqp
   .exchange('outgoing_plan_updates', 'fanout', {
     durable: false,
   })
-  .queue('planned_vehicles', {
+  .queue('update_plan_in_admin_ui', {
     durable: false,
   })
   .subscribe({ noAck: true })

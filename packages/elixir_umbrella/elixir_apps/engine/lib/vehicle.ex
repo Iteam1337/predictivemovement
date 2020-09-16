@@ -65,6 +65,8 @@ defmodule Vehicle do
         proposed_state,
         current_state
       ) do
+    Logger.info("Driver #{current_state.id} accepted")
+
     proposed_state.booking_ids
     |> Enum.map(fn booking_id ->
       Booking.assign(booking_id, current_state)
@@ -79,9 +81,11 @@ defmodule Vehicle do
   end
 
   def handle_driver_response({:ok, false}, _, state) do
-    Logger.debug("Driver didnt want the booking :(")
+    Logger.info("Driver didnt want the booking :(")
     state
   end
+
+  def handle_info({:basic_cancel_ok, _}, state), do: {:noreply, state}
 
   defp generate_id,
     do: "pmv-" <> (Base62UUID.generate() |> String.downcase() |> String.slice(0, 8))

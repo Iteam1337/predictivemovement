@@ -23,7 +23,7 @@ const vehiclePlan = () => {
           ch.bindQueue(
             ADD_INSTRUCTIONS_TO_VEHICLE,
             OUTGOING_VEHICLE_UPDATES,
-            'plan_updated'
+            'new_instructions'
           )
         )
         .then(() =>

@@ -73,7 +73,10 @@ defmodule Vehicle do
     updated_state =
       current_state
       |> Map.merge(proposed_state)
-      |> MQ.publish(Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "plan_updated")
+      |> MQ.publish(
+        Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+        "new_instructions"
+      )
 
     updated_state
   end

@@ -11,8 +11,8 @@ const exchanges = {
 
 const queues = {
   OFFER_BOOKING_TO_TELEGRAM_VEHICLE: 'offer_bookings_to_telegram_vehicles',
-  SEND_PICKUP_INSTRUCTIONS: 'send_pickup_instructions_to_driver',
-  SEND_PLAN_TO_VEHICLE: 'send_plan_to_vehicle',
+  ADD_BOOKING_INFO: 'add_booking_info_in_driver_interface',
+  ADD_INSTRUCTIONS_TO_VEHICLE: 'add_instructions_to_vehicle',
 }
 
 module.exports = {

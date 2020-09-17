@@ -9,9 +9,9 @@ COPY config ./config
 COPY mix.exs .
 COPY mix.lock .
 
-COPY ./elixir_apps/engine/lib ./elixir_apps/engine/lib
-COPY ./elixir_apps/engine/mix.exs ./elixir_apps/engine/mix.exs
-COPY ./elixir_apps/engine/mix.lock ./elixir_apps/engine/mix.lock
+COPY ./apps/engine/lib ./apps/engine/lib
+COPY ./apps/engine/mix.exs ./apps/engine/mix.exs
+COPY ./apps/engine/mix.lock ./apps/engine/mix.lock
 
 #Install dependencies and build Release
 RUN export MIX_ENV=prod && \
@@ -21,9 +21,9 @@ RUN export MIX_ENV=prod && \
 FROM elixir
 
 WORKDIR /app
-COPY --from=build /app/_build/prod/rel/elixir_umbrella .
+COPY --from=build /app/_build/prod/rel/engine_umbrella .
 
 
 #Set default entrypoint and command
-ENTRYPOINT ["/app/bin/elixir_umbrella"]
+ENTRYPOINT ["/app/bin/engine_umbrella"]
 CMD ["start"]

@@ -3,13 +3,13 @@ defmodule ElixirUmbrella.MixProject do
 
   def project do
     [
-      apps_path: "elixir_apps",
+      apps_path: "apps",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       config_path: "config/config.exs",
       version: "0.1.0",
       releases: [
-        elixir_umbrella: [
+        engine_umbrella: [
           applications: [
             engine: :permanent
           ]

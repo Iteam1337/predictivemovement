@@ -25,5 +25,7 @@ spec:
               value: http://osrm.predictivemovement.svc.cluster.local
             - name: REDIS_URL
               value: redis://redis:6379
+            - name: INIT_FROM_STORAGE
+              value: true
           resources: {}
       restartPolicy: Always

@@ -109,7 +109,7 @@ const sendPickupInstruction = async (instruction, telegramId, booking) => {
   const pickup =
     booking.pickup.street && booking.pickup.city
       ? `${booking.pickup.street}, ${booking.pickup.city}`
-      : await getAddressFromCoordinate
+      : await getAddressFromCoordinate({...booking.pickup})
 
   const delivery =
     booking.delivery.street && booking.delivery.city

@@ -13,6 +13,8 @@ import com.graphhopper.jsprit.core.problem.vehicle.VehicleTypeImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static com.predictivemovement.route.optimization.StatusResponse.Type.ERROR;
+
 /**
  * This class sets the vehicles with their vehicle types for the VRP based on
  * the incoming request.
@@ -33,7 +35,7 @@ public class VRPVehicles {
         this.routeRequest = vrpSetting.routeRequest;
     }
 
-    protected List<VehicleImpl> createVehicles() {
+    protected List<VehicleImpl> createVehicles() throws RouteOptimizationException {
         VRPSettingTimeUtils timeUtils = new VRPSettingTimeUtils();
         vehicles = new ArrayList<>();
 
@@ -75,7 +77,7 @@ public class VRPVehicles {
         return vehicles;
     }
 
-    private VehicleType getVehicleType(JSONObject vehicle) {
+    private VehicleType getVehicleType(JSONObject vehicle) throws RouteOptimizationException {
 
         // id
         String profile = vehicle.optString("profile");
@@ -92,12 +94,12 @@ public class VRPVehicles {
         JSONObject capacities = vehicle.optJSONObject("capacity");
 
         // volume
-        int volume = capacities != null ? cubicMetersToCentimeter(capacities.optInt("volume", 0))
-                : VEHICLE_DEFAULT_VOLUME;
+        int volume = tryGetInteger(capacities, "volume", VEHICLE_DEFAULT_VOLUME);
+        volume = cubicMetersToCentimeter(volume);
         vehicleTypeBuilder.addCapacityDimension(VRPSetting.VOLUME_INDEX, volume);
 
         // weight
-        int weight = capacities != null ? capacities.optInt("weight", 1) : VEHICLE_DEFAULT_WEIGHT;
+        int weight = tryGetInteger(capacities, "weight", VEHICLE_DEFAULT_WEIGHT);
         vehicleTypeBuilder.addCapacityDimension(VRPSetting.WEIGHT_INDEX, weight);
 
         // costs
@@ -112,5 +114,29 @@ public class VRPVehicles {
 
     private int cubicMetersToCentimeter(int meters) {
         return meters * 1000 * 1000;
+    }
+
+    private int tryGetInteger(JSONObject jsonObject, String jsonField, int defaultValue)
+            throws RouteOptimizationException {
+        try {
+            return getInteger(jsonObject, jsonField, defaultValue);
+        } catch (NumberFormatException ex) {
+            throw new RouteOptimizationException(ex, ERROR).setStatusCode(406).setStatusMsg("not acceptable")
+                    .setMessage(ex.getMessage()).setSource(jsonField)
+                    .setDetail("The weight and volume of vehicles has to be an integer value.")
+                    .setMeta(jsonObject.toString());
+        }
+    }
+
+    private int getInteger(JSONObject jsonObject, String jsonField, int defaultValue) throws NumberFormatException {
+        if (jsonObject != null) {
+            if (jsonObject.has(jsonField)) {
+                Object value = jsonObject.get(jsonField);
+                int intValue = Integer.parseInt(value.toString());
+                return intValue;
+            }
+        }
+
+        return defaultValue;
     }
 }

@@ -33,7 +33,7 @@ public class MQApplication {
 
 	@Bean
 	public DirectExchange exchange() {
-		return new DirectExchange("");
+		return new DirectExchange("Foo");
 	}
 
 	@Bean
@@ -42,28 +42,22 @@ public class MQApplication {
 	}
 
 	@Bean
-	public RabbitErrorHandler rabbitErrorHandler() {
-		return new RabbitErrorHandler();
+	public MessageErrorHandler messageErrorHandler() {
+		return new MessageErrorHandler();
 	}
 
-	@RabbitListener(queues = QUEUE_NAME, errorHandler = "rabbitErrorHandler", returnExceptions = "true")
+	@RabbitListener(queues = QUEUE_NAME, errorHandler = "messageErrorHandler", returnExceptions = "true")
 	public String listen(final String msg) throws Exception {
 		log.info("Message read from queue: {}", msg);
-		// try {
-		/*
-		 * JSONObject routeRequest = new JSONObject(msg); RouteOptimization
-		 * routeOptimization = new RouteOptimization(); JSONObject routeSolution =
-		 * routeOptimization.calculate(routeRequest); String response =
-		 * routeSolution.toString();
-		 * 
-		 * log.info("Publishing result: {}", response); return response;
-		 */
-		// } catch (Exception e) {
-		// String errorResponse = new ErrorResponse(e).create();
-		// log.error("Publishing error response: {}", errorResponse);
-		// return errorResponse;
-		// }
-		throw new Exception("Oh no, I ordered pizza and get pasta! This is an exception!");
-		// return "{\"foo\":\"smi\"}";
+
+		JSONObject routeRequest = new JSONObject(msg);
+		RouteOptimization routeOptimization = new RouteOptimization();
+		JSONObject routeSolution = routeOptimization.calculate(routeRequest);
+
+		StatusResponse statusResponse = new StatusResponse(routeSolution);
+		String response = statusResponse.toString();
+
+		log.info("Publishing result: {}", response);
+		return response;
 	}
 }

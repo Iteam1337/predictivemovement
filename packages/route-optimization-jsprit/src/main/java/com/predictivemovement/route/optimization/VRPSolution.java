@@ -27,7 +27,7 @@ public class VRPSolution {
         this.vrpSetting = vrpSetting;
     }
 
-    VRPSolution calculate() {
+    VRPSolution calculate() throws RouteOptimizationException {
         createVRP();
         findBestSolution();
         return this;
@@ -53,6 +53,7 @@ public class VRPSolution {
 
     private void findBestSolution() {
         VehicleRoutingAlgorithm algorithm = new SchrimpfFactory().createAlgorithm(problem);
+
         solutions = algorithm.searchSolutions();
         bestSolution = Solutions.bestOf(solutions);
     }

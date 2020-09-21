@@ -1,0 +1,13 @@
+# kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+  - ../../base
+
+patchesStrategicMerge:
+  - engine-server-ingres.yaml
+  - engine-ui-ingres.yaml
+
+# namespace to deploy all Resources to
+namespace: predictivemovement

@@ -25,8 +25,11 @@ jobs:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"
     steps:
-      - name: hej
-        run: echo "hej"
+      - uses: actions/checkout@v2
+      - name: step into directory
+        run: "cd packages/engine_umbrella/"
+      - name: "run dem tests"
+        uses: Adzz/elixir_run_tests_action@v2.0.0
 
   # This workflow contains a single job called "build"
   build-and-deploy:

@@ -9,6 +9,9 @@ on: [push]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   container-job:
+    defaults:
+      run:
+        working-directory: packages/engine_umbrella/
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in

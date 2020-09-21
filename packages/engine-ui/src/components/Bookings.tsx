@@ -9,6 +9,7 @@ import CreateBooking from './CreateBooking'
 import CreateBookings from './CreateBookings'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import styled from 'styled-components'
+import helpers from '../utils/helpers'
 
 const AddNewContainer = styled.div`
   margin-top: 1rem;
@@ -92,16 +93,23 @@ const BookingToggleList: React.FC<{
           {bookings.length > 0 &&
             bookings.map((booking) => (
               <li key={booking.id}>
-                <Elements.Links.RoundedLink
-                  onMouseOver={() => onMouseEnterHandler(booking.id)}
-                  onMouseLeave={() => onMouseLeaveHandler()}
-                  to={`/bookings/${booking.id}`}
-                  onClick={() =>
-                    onClickHandler(booking.pickup.lat, booking.pickup.lon)
-                  }
-                >
-                  {booking.id}
-                </Elements.Links.RoundedLink>
+                <Elements.Layout.InlineContainer>
+                  <Elements.Typography.NoMarginParagraph>
+                    ID
+                  </Elements.Typography.NoMarginParagraph>
+                  <Elements.Layout.MarginLeftContainerSm>
+                    <Elements.Links.RoundedLink
+                      onMouseOver={() => onMouseEnterHandler(booking.id)}
+                      onMouseLeave={() => onMouseLeaveHandler()}
+                      to={`/bookings/${booking.id}`}
+                      onClick={() =>
+                        onClickHandler(booking.pickup.lat, booking.pickup.lon)
+                      }
+                    >
+                      {helpers.formatIdAsFourChar(booking.id)}
+                    </Elements.Links.RoundedLink>
+                  </Elements.Layout.MarginLeftContainerSm>
+                </Elements.Layout.InlineContainer>
               </li>
             ))}
         </Elements.Layout.BookingList>
@@ -204,16 +212,16 @@ const Bookings: React.FC<{
           <CreateBookings onSubmit={props.createBookings} />
         </Route>
 
-      <Route path={`${path}/:bookingId`}>
-        <BookingDetails
-          onClickHandler={() =>
-            dispatch({ type: 'highlightBooking', payload: undefined })
-          }
-          bookings={props.bookings}
-          deleteBooking={props.deleteBooking}
-        />
-      </Route>
-    </Switch>
+        <Route path={`${path}/:bookingId`}>
+          <BookingDetails
+            onClickHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+            bookings={props.bookings}
+            deleteBooking={props.deleteBooking}
+          />
+        </Route>
+      </Switch>
     </Wrapper>
   )
 }

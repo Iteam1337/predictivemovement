@@ -119,7 +119,10 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {booking.id}
+            {booking.id.slice(0, booking.id.length - 5)}
+            <Elements.Typography.SpanBold>
+              {booking.id.slice(booking.id.length - 4, booking.id.length)}
+            </Elements.Typography.SpanBold>
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         <Elements.Typography.StrongParagraph>

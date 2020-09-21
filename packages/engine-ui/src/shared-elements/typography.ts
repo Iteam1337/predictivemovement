@@ -6,16 +6,31 @@ const NoInfoParagraph = styled.p`
   margin: 0;
 `
 
-const SmallInfo = styled.p`
+const InfoSm = styled.p`
   font-style: italic;
   font-size: 0.75rem;
   margin-top: 0;
   margin-bottom: 0.25rem;
 `
 
+const InfoMd = styled.p`
+  font-style: italic;
+  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+`
+
+const SemiBoldParagraph = styled.p`
+  font-weight: semibold;
+`
+
 const StrongParagraph = styled.label`
   margin-bottom: 0.5rem;
   display: block;
+  font-weight: bold;
+`
+
+const SpanBold = styled.span`
   font-weight: bold;
 `
 
@@ -43,8 +58,11 @@ const RoundedLabelDisplay = styled.span<{ margin: string }>`
 export default {
   NoInfoParagraph,
   NoMarginParagraph,
-  SmallInfo,
+  InfoSm,
+  InfoMd,
   StrongParagraph,
   RoundedLabelDisplay,
   CleanH4,
+  SemiBoldParagraph,
+  SpanBold,
 }

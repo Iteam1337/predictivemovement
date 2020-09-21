@@ -44,7 +44,6 @@ function register(io) {
 
     _(bookings.fork()).each((booking) => socket.emit('notification', booking))
     _(cars.fork()).each((car) => socket.emit('notification', car))
-    _(plan.fork()).each((data) => socket.emit('notification', { plan: data }))
 
     socket.on('new-booking', (params) => {
       const booking = {

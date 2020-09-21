@@ -9,9 +9,6 @@ on: [push]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   container-job:
-    defaults:
-      run:
-        working-directory: packages/engine_umbrella/
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -31,8 +28,17 @@ jobs:
       - uses: actions/checkout@v2
       - name: "print it"
         run: "ls"
-      - name: "run dem tests"
-        uses: Adzz/elixir_run_tests_action@v2.0.0
+      - uses: actions/setup-elixir@v1.0.0
+        with:
+          otp-version: 22.x
+          elixir-version: 1.10.x
+      - name: Install Dependencies
+        run: mix deps.get
+      - name: Compile
+        run: mix compile
+      - name: run tests
+        working-directory: packages/engine_umbrella/
+        run: mix test
   # This workflow contains a single job called "build"
   # build-and-deploy:
   #   # The type of runner that the job will run on

@@ -48,7 +48,7 @@ const BookingNotification: React.FC<{
   booking: any
   handleOnClose: (value: string) => void
 }> = ({ booking, handleOnClose }) => (
-  <Zoom in={booking}>
+  <Zoom in={Boolean(booking)}>
     <Alert
       onClose={() => handleOnClose(booking.id)}
       key={booking.id}
@@ -70,19 +70,21 @@ const VehicleNotification: React.FC<{
   handleOnClose: (value: string) => void
 }> = ({ vehicle, handleOnClose }) => {
   return (
-    <Alert
-      onClose={() => handleOnClose(vehicle.id)}
-      key={vehicle.id}
-      severity="success"
-    >
-      New vehicle was succesfully added
-      <Elements.Links.RoundedLink
-        margin="0 1rem"
-        to={`/transports/${vehicle.id}`}
+    <Zoom in={Boolean(vehicle)}>
+      <Alert
+        onClose={() => handleOnClose(vehicle.id)}
+        key={vehicle.id}
+        severity="success"
       >
-        {vehicle.id}
-      </Elements.Links.RoundedLink>
-    </Alert>
+        New vehicle was succesfully added
+        <Elements.Links.RoundedLink
+          margin="0 1rem"
+          to={`/transports/${vehicle.id}`}
+        >
+          {vehicle.id}
+        </Elements.Links.RoundedLink>
+      </Alert>
+    </Zoom>
   )
 }
 

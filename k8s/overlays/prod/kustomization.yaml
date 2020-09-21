@@ -6,8 +6,14 @@ bases:
   - ../../base
 
 patchesStrategicMerge:
-  - engine-server-ingres.yaml
-  - engine-ui-ingres.yaml
+  - engine-server.yaml
+  - engine-ui.yaml
 
 # namespace to deploy all Resources to
 namespace: predictivemovement
+
+configMapGenerator:
+  - name: engine-properties
+    behavior: merge
+    envs:
+      - engine.properties

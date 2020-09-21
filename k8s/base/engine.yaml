@@ -18,12 +18,8 @@ spec:
         - name: engine
           image: iteam1337/pm-engine
           imagePullPolicy: Always
-          env:
-            - name: AMQP_HOST
-              value: rabbitmq
-            - name: OSRM_URL
-              value: http://osrm.predictivemovement.svc.cluster.local
-            - name: REDIS_URL
-              value: redis://redis:6379
+          envFrom:
+            - configMapRef:
+                name: engine-properties
           resources: {}
       restartPolicy: Always

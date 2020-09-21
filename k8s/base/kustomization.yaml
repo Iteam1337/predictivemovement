@@ -15,3 +15,9 @@ resources:
 
 # namespace to deploy all Resources to
 namespace: predictivemovement-dev
+
+configMapGenerator:
+  - name: engine-properties
+    envs:
+      - common.properties
+      - engine.properties

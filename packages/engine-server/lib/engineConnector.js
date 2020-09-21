@@ -8,7 +8,7 @@ const routingKeys = {
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
   PICKED_UP: 'picked_up',
-  PLANNED: 'plan_updated',
+  NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
 }
 
@@ -62,7 +62,7 @@ const cars = amqp
   .queue('update_vehicle_in_admin_ui', {
     durable: false,
   })
-  .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.PLANNED])
+  .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
   .map((cars) => {
     return cars.json()
   })
@@ -105,7 +105,7 @@ const plan = amqp
   .exchange('outgoing_plan_updates', 'fanout', {
     durable: false,
   })
-  .queue('planned_vehicles', {
+  .queue('update_plan_in_admin_ui', {
     durable: false,
   })
   .subscribe({ noAck: true })

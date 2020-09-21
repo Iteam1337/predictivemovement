@@ -7,6 +7,13 @@ const {
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
+function onArrive(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+
+  return botServices.handlePickupInstruction(vehicleId, telegramId)
+}
+
 function onPickup(msg) {
   const telegramId = msg.update.callback_query.from.id
   const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
@@ -29,7 +36,7 @@ function onPickup(msg) {
       })
     })
 
-  return botServices.handlePickupInstruction(vehicleId, telegramId)
+  return botServices.handleOnArrive(vehicleId, telegramId)
 }
 
 function onDelivered(msg) {
@@ -53,7 +60,7 @@ function onDelivered(msg) {
     })
     .catch(console.warn)
 
-  return botServices.handlePickupInstruction(vehicleId, telegramId)
+  return botServices.handleOnArrive(vehicleId, telegramId)
 }
 
 function onOffer(msg) {
@@ -114,6 +121,8 @@ const init = (bot) => {
     switch (callbackPayload.e) {
       case 'picked_up':
         return onPickup(msg)
+      case 'arrived':
+        return onArrive(msg)
       case 'delivered':
         return onDelivered(msg)
       case 'offer':

@@ -2,10 +2,11 @@ defmodule Engine.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
-
+  require Logger
   use Application
 
   def init_from_storage() do
+    Logger.info("Restoring Vehicles & Bookings from storage")
     booking_ids = Engine.RedisAdapter.get_bookings() |> Enum.map(&Booking.make/1)
 
     vehicle_ids =
@@ -30,7 +31,8 @@ defmodule Engine.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Engine.Supervisor]
     proccesses = Supervisor.start_link(children, opts)
-    init_from_storage()
+
+    if Application.get_env(:engine, :init_from_storage, false), do: init_from_storage()
     proccesses
   end
 end

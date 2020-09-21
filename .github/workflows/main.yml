@@ -16,6 +16,14 @@ jobs:
     services:
       rabbitmq:
         image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+      route-optmization-jsprit:
+        image: iteam1337/pm-route-optimization-jsprit:234f34c
+        env:
+          RABBITMQ_HOST: rabbitmq
+          RABBITMQ_PORT: "5672"
     steps:
       - name: hej
         run: echo "hej"

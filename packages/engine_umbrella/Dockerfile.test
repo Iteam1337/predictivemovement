@@ -1,0 +1,18 @@
+FROM elixir
+
+WORKDIR /app
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+COPY config ./config
+COPY mix.exs .
+COPY mix.lock .
+
+COPY ./apps/engine ./apps/engine
+COPY ./apps/message_generator ./apps/message_generator
+
+RUN export MIX_ENV=test && \
+    rm -Rf _build && \
+    mix do deps.get, compile 
+
+CMD [ "mix", "test" ]

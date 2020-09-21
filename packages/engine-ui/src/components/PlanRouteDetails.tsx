@@ -8,6 +8,7 @@ import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import Elements from './Elements'
 import { IPlanVehicle } from './Plan'
 import { getColor } from '../utils/palette'
+import helpers from '../utils/helpers'
 
 interface Props {
   vehicle: IPlanVehicle
@@ -31,7 +32,7 @@ const Chevron = styled(Icons.Arrow)`
 const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
-  const { routeId } = useParams()
+  const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
 
   const toggle = (id: string) => {
@@ -78,7 +79,7 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
                 })
               }
             >
-              {vehicle.id}
+              {helpers.formatIdAsFourChar(vehicle.id)}
             </Elements.RoundedLink>
           </Elements.FlexRowWrapper>
           <RouteActivities vehicle={vehicle} />

@@ -42,6 +42,10 @@ function register(io) {
       })
       .each((data) => socket.emit('plan-update', data))
 
+    _(bookings.fork()).each((booking) => socket.emit('notification', booking))
+    _(cars.fork()).each((car) => socket.emit('notification', car))
+    _(plan.fork()).each((data) => socket.emit('notification', { plan: data }))
+
     socket.on('new-booking', (params) => {
       const booking = {
         id: params.id || id62(),

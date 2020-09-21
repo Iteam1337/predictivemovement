@@ -9,6 +9,9 @@ on: [push]
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   container-job:
+    env:
+      REDIS_URL: redis://localhost:6379
+      AMQP_HOST: localhost
     defaults:
       run:
         working-directory: packages/engine_umbrella/

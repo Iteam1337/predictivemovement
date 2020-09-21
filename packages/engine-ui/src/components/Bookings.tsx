@@ -106,7 +106,7 @@ const BookingToggleList: React.FC<{
                         onClickHandler(booking.pickup.lat, booking.pickup.lon)
                       }
                     >
-                      {helpers.formatIdAsFourChar(booking.id)}
+                      ...{helpers.formatIdAsFourChar(booking.id)}
                     </Elements.Links.RoundedLink>
                   </Elements.Layout.MarginLeftContainerSm>
                 </Elements.Layout.InlineContainer>

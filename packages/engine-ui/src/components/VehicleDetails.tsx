@@ -8,6 +8,7 @@ import moment from 'moment'
 import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
+import helpers from '../utils/helpers'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -77,7 +78,7 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
             {vehicle.id.slice(0, vehicle.id.length - 4)}
             <Elements.Typography.SpanBold>
-              {vehicle.id.slice(vehicle.id.length - 4, vehicle.id.length)}
+              {helpers.formatIdAsFourChar(vehicleId)}
             </Elements.Typography.SpanBold>
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
@@ -112,7 +113,7 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>
                 <Elements.Typography.StrongParagraph>
-                  Bokingar på fordon
+                  Bokningar på fordon
                 </Elements.Typography.StrongParagraph>
                 <button
                   onClick={() => {
@@ -134,7 +135,10 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
                       key={bookingId}
                       onClick={() => handleOnLinkClick(bookingId)}
                     >
-                      {bookingId}
+                      {bookingId.slice(0, bookingId.length - 4)}
+                      <Elements.Typography.SpanBold>
+                        {helpers.formatIdAsFourChar(bookingId)}
+                      </Elements.Typography.SpanBold>
                     </Elements.Links.RoundedLink>
                   ))}
                 </Elements.Layout.LinkListContainer>

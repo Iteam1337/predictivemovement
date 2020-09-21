@@ -121,7 +121,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
             {booking.id.slice(0, booking.id.length - 4)}
             <Elements.Typography.SpanBold>
-              {booking.id.slice(booking.id.length - 4, booking.id.length)}
+              {helpers.formatIdAsFourChar(booking.id)}
             </Elements.Typography.SpanBold>
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
@@ -142,7 +142,13 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <Elements.Links.RoundedLink
               to={`/transports/${booking.assigned_to.id}`}
             >
-              {booking.assigned_to.id}
+              {booking.assigned_to.id.slice(
+                0,
+                booking.assigned_to.id.length - 4
+              )}
+              <Elements.Typography.SpanBold>
+                {helpers.formatIdAsFourChar(booking.assigned_to.id)}
+              </Elements.Typography.SpanBold>
             </Elements.Links.RoundedLink>
           </>
         )}

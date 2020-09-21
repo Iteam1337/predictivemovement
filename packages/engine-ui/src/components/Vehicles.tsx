@@ -53,7 +53,7 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
                 )
               }
             >
-              {helpers.formatIdAsFourChar(vehicle.id)}
+              ...{helpers.formatIdAsFourChar(vehicle.id)}
             </Elements.Links.RoundedLink>
           </Elements.Layout.MarginLeftContainerSm>
         </Elements.Layout.InlineContainer>

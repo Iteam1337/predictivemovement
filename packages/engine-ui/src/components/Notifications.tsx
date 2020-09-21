@@ -1,5 +1,6 @@
 import React from 'react'
 import Alert from '@material-ui/lab/Alert'
+import Zoom from '@material-ui/core/Zoom'
 import styled from 'styled-components'
 import Elements from '../shared-elements'
 
@@ -47,23 +48,27 @@ const BookingNotification: React.FC<{
   booking: any
   handleOnClose: (value: string) => void
 }> = ({ booking, handleOnClose }) => (
-  <Alert
-    onClose={() => handleOnClose(booking.id)}
-    key={booking.id}
-    severity="success"
-  >
-    New booking was succesfully added
-    <Elements.Links.RoundedLink margin="0 1rem" to={`/bookings/${booking.id}`}>
-      {booking.id}
-    </Elements.Links.RoundedLink>
-  </Alert>
+  <Zoom in={booking}>
+    <Alert
+      onClose={() => handleOnClose(booking.id)}
+      key={booking.id}
+      severity="success"
+    >
+      New booking was succesfully added
+      <Elements.Links.RoundedLink
+        margin="0 1rem"
+        to={`/bookings/${booking.id}`}
+      >
+        {booking.id}
+      </Elements.Links.RoundedLink>
+    </Alert>
+  </Zoom>
 )
 
 const VehicleNotification: React.FC<{
   vehicle: any
   handleOnClose: (value: string) => void
 }> = ({ vehicle, handleOnClose }) => {
-  console.log('VEHICLE', vehicle)
   return (
     <Alert
       onClose={() => handleOnClose(vehicle.id)}
@@ -85,15 +90,7 @@ const Notifications: React.FC<{
   notifications: []
   updateNotifications: (value: any) => void
 }> = ({ notifications, updateNotifications }) => {
-  const handleOnClose = (itemId: string) => {
-    updateNotifications((notifications: any) =>
-      notifications.filter((notification: any) => notification.id !== itemId)
-    )
-  }
   const notificationType = (notification: any) => {
-    console.log('NOTIFICATIONS', notification)
-    // console.log(type)
-
     switch (true) {
       case notification.id.includes('pmv-'):
         return (
@@ -118,11 +115,14 @@ const Notifications: React.FC<{
     }
   }
 
+  const handleOnClose = (itemId: string) => {
+    updateNotifications((notifications: any) =>
+      notifications.filter((notification: any) => notification.id !== itemId)
+    )
+  }
+
   return (
     <NotificationsContaioner>
-      {/* <Alert severity="error">This is an error alert — check it out!</Alert>
-      <Alert severity="warning">This is a warning alert — check it out!</Alert>
-      <Alert severity="info">This is an info alert — check it out!</Alert> */}
       {notifications &&
         notifications
           .map((notification) => notificationType(notification))

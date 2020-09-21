@@ -75,7 +75,7 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {vehicle.id.slice(0, vehicle.id.length - 5)}
+            {vehicle.id.slice(0, vehicle.id.length - 4)}
             <Elements.Typography.SpanBold>
               {vehicle.id.slice(vehicle.id.length - 4, vehicle.id.length)}
             </Elements.Typography.SpanBold>

@@ -20,6 +20,8 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
+                name: common-properties
+            - configMapRef:
                 name: engine-properties
           resources: {}
       restartPolicy: Always

@@ -16,13 +16,14 @@ spec:
     spec:
       containers:
         - env:
-            - name: AMQP_HOST
-              value: amqp://rabbitmq
             - name: BOT_TOKEN
               valueFrom:
                 secretKeyRef:
                   key: BOOKING_TOKEN
                   name: booking-token
+          envFrom:
+            - configMapRef:
+                name: common-properties
           image: iteam1337/pm-booking-interface
           name: booking-interface
           resources: {}

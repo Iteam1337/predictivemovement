@@ -17,6 +17,6 @@ spec:
       containers:
         - name: vehicle-offer
           image: iteam1337/pm-vehicle-offer
-          env:
-            - name: AMQP_HOST
-              value: amqp://rabbitmq
+          envFrom:
+            - configMapRef:
+                name: common-properties

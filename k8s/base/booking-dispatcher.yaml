@@ -17,9 +17,9 @@ spec:
       containers:
         - name: booking-dispatcher
           image: iteam1337/pm-booking-dispatcher
-          env:
-            - name: AMQP_HOST
-              value: amqp://rabbitmq
+          envFrom:
+            - configMapRef:
+                name: common-properties
           volumeMounts:
             - name: fastigheter
               mountPath: /app/data/fastigheter.xlsx

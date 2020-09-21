@@ -19,5 +19,7 @@ namespace: predictivemovement-dev
 configMapGenerator:
   - name: engine-properties
     envs:
-      - common.properties
       - engine.properties
+  - name: common-properties
+    envs:
+      - common.properties

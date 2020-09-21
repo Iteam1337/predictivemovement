@@ -18,10 +18,8 @@ spec:
         - name: route-optimization-jsprit
           image: iteam1337/pm-route-optimization-jsprit
           imagePullPolicy: Always
-          env:
-            - name: RABBITMQ_HOST
-              value: rabbitmq
-            - name: RABBITMQ_PORT
-              value: "5672"
+          envFrom:
+            - configMapRef:
+                name: common-properties
           resources: {}
       restartPolicy: Always

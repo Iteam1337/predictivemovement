@@ -19,9 +19,9 @@ spec:
           image: iteam1337/pm-engine-server
           ports:
             - containerPort: 4000
-          env:
-            - name: AMQP_HOST
-              value: amqp://rabbitmq
+          envFrom:
+            - configMapRef:
+                name: common-properties
 ---
 apiVersion: v1
 kind: Service

@@ -17,6 +17,6 @@ spec:
       containers:
         - name: auto-accept-offer
           image: iteam1337/pm-auto-accept-offer
-          env:
-            - name: AMQP_HOST
-              value: amqp://rabbitmq
+          envFrom:
+            - configMapRef:
+                name: common-properties

@@ -3,6 +3,8 @@ import moment from 'moment'
 interface Feature {
   properties: {
     label: string
+    name: string
+    county: string
   }
 }
 
@@ -15,14 +17,18 @@ const findAddress = (query: string) => {
   ).then((res) => res.json())
 }
 
-const getAddressFromCoordinate = ({ lon, lat }: { lon: string; lat: string }) =>
+const getAddressFromCoordinate = ({ lon, lat }: { lon: number; lat: number }) =>
   fetch(
     `https://pelias.iteamdev.io/v1/reverse?point.lat=${lat}&point.lon=${lon}`
   )
     .then((res) => res.json())
-    .then(
-      ({ features }: { features: Feature[] }) => features[0].properties.label
-    )
+    .then(({ features: [topResult] }: { features: Feature[] }) => {
+      if (!topResult) return Promise.reject('Inga resultat hittades...')
+      return {
+        name: topResult.properties.name,
+        county: topResult.properties.county,
+      }
+    })
 
 const calculateMinTime = (date?: Date, minDate?: Date) => {
   const momentDate = moment(date || minDate)
@@ -34,4 +40,17 @@ const calculateMinTime = (date?: Date, minDate?: Date) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
-export default { findAddress, calculateMinTime, getAddressFromCoordinate }
+const formatCoordinateToFixedDecimalLength = ({
+  lat,
+  lon,
+}: {
+  lat: number
+  lon: number
+}) => `${lat.toFixed(6)}, ${lon.toFixed(6)}`
+
+export default {
+  findAddress,
+  calculateMinTime,
+  getAddressFromCoordinate,
+  formatCoordinateToFixedDecimalLength,
+}

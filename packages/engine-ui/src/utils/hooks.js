@@ -1,6 +1,7 @@
 import React from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import helpers from './helpers'
+import { UIStateContext } from './UIStateContext'
 
 const useFilteredStateFromQueryParams = (state) => {
   const bookingDetailView = useRouteMatch({
@@ -9,7 +10,7 @@ const useFilteredStateFromQueryParams = (state) => {
   })
 
   const vehicleDetailView = useRouteMatch({
-    path: '/vehicles/:id',
+    path: '/transports/:id',
     exact: true,
   })
 
@@ -65,21 +66,20 @@ const useGetSuggestedAddresses = (initialState) => {
     helpers
       .findAddress(query)
       .then(({ features }) => {
-        set(
-          features.map(
-            ({
-              geometry: {
-                coordinates: [lon, lat],
-              },
-              properties: { name, county },
-            }) => ({
-              name,
-              county,
-              lon,
-              lat,
-            })
-          )
+        const parsedFeatures = features.map(
+          ({
+            geometry: {
+              coordinates: [lon, lat],
+            },
+            properties: { name, county },
+          }) => ({
+            name,
+            county,
+            lon,
+            lat,
+          })
         )
+        set(parsedFeatures)
 
         return callback()
       })
@@ -93,4 +93,73 @@ const useGetSuggestedAddresses = (initialState) => {
   return [find, suggested]
 }
 
-export default { useFilteredStateFromQueryParams, useGetSuggestedAddresses }
+const useFormStateWithMapClickControl = (start, end, set) => {
+  const { state: UIState, dispatch: UIStateDispatch } = React.useContext(
+    UIStateContext
+  )
+  React.useEffect(() => {
+    /**
+     * Listen for a combination of clicks on an
+     * input field and on the map.
+     * When this happens, set pickup/delivery input
+     * to name of address clicked on map.
+     */
+
+    if (UIState.lastFocusedInput && UIState.lastClickedPosition.address) {
+      const { address, lat, lon } = UIState.lastClickedPosition
+      const formattedAddress = `${address.name}, ${address.county}`
+
+      switch (UIState.lastFocusedInput) {
+        case 'start':
+          set((current) => ({
+            ...current,
+            [start]: {
+              ...current.startPosition,
+              name: formattedAddress,
+              street: address.name,
+              city: address.county,
+              lat,
+              lon,
+            },
+          }))
+          break
+
+        case 'end':
+          set((current) => ({
+            ...current,
+            [end]: {
+              ...current.endPosition,
+              name: formattedAddress,
+              street: address.name,
+              city: address.county,
+              lat,
+              lon,
+            },
+          }))
+          break
+
+        default:
+          break
+      }
+
+      return UIStateDispatch({ type: 'resetInputClickState' })
+    }
+  }, [
+    UIStateDispatch,
+    UIState.lastClickedPosition,
+    UIState.lastFocusedInput,
+    set,
+    start,
+    end,
+  ])
+
+  React.useEffect(() => {
+    return () => UIStateDispatch({ type: 'resetInputClickState' })
+  }, [UIStateDispatch])
+}
+
+export default {
+  useFilteredStateFromQueryParams,
+  useGetSuggestedAddresses,
+  useFormStateWithMapClickControl,
+}

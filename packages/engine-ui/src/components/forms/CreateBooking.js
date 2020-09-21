@@ -5,14 +5,18 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
+import { UIStateContext } from '../../utils/UIStateContext'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const history = useHistory()
+  const { dispatch: UIStateDispatch } = React.useContext(UIStateContext)
+  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
+
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
-  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
+
   const [showParcelInfo, setShowParcelInfo] = React.useState({
     pickup: false,
     delivery: false,
@@ -56,14 +60,14 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
     setShowParcelDetails((currentValue) => !currentValue)
   }
 
-  const handleTogglePacelInfo = (propertyName) => {
+  const handleToggleParcelInfo = (propertyName) => {
     setShowParcelInfo((currentState) => ({
       ...currentState,
       [propertyName]: !currentState[propertyName],
     }))
   }
 
-  const handleFragilePacelChange = () => {
+  const handleFragileParcelChange = () => {
     onChangeHandler((currentState) => ({
       ...currentState,
       fragile: !currentState.fragile,
@@ -78,14 +82,22 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           required
-          placeholder="Adress"
-          onChangeHandler={eventHandlers.handleDropdownSelect(
+          placeholder="Adress (sök eller klicka på karta)"
+          value={state.pickup.name}
+          onFocus={() =>
+            UIStateDispatch({
+              type: 'focusInput',
+              payload: 'start',
+            })
+          }
+          onChangeHandler={eventHandlers.handleAddressInput(
             'pickup',
             onChangeHandler
           )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
         <Elements.Layout.TimeRestrictionWrapper>
@@ -109,6 +121,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               name="sendername"
               value={state.sender.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -133,6 +146,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               iconInset
               name="sender"
               type="tel"
@@ -150,7 +164,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Layout.InputContainer>
           <FormInputs.Checkbox
             label="Portkod"
-            onChangeHandler={() => handleTogglePacelInfo('pickup')}
+            onChangeHandler={() => handleToggleParcelInfo('pickup')}
           />
 
           {showParcelInfo.pickup && (
@@ -174,14 +188,22 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           Avlämning
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
-          placeholder="Adress"
-          onChangeHandler={eventHandlers.handleDropdownSelect(
+          placeholder="Adress (sök eller klicka på karta)"
+          value={state.delivery.name}
+          onFocus={() =>
+            UIStateDispatch({
+              type: 'focusInput',
+              payload: 'end',
+            })
+          }
+          onChangeHandler={eventHandlers.handleAddressInput(
             'delivery',
             onChangeHandler
           )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() =>
             handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
           }
@@ -208,6 +230,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             />
             <FormInputs.TextInput
               iconInset
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               name="recipient-name"
               value={state.recipient.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -235,6 +258,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="recipient-contact"
               type="tel"
               value={state.recipient.contact}
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleContactInputChange(
                 'recipient',
                 'contact',
@@ -248,7 +272,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <Elements.Layout.InputContainer>
           <FormInputs.Checkbox
             label="Portkod"
-            onChangeHandler={() => handleTogglePacelInfo('delivery')}
+            onChangeHandler={() => handleToggleParcelInfo('delivery')}
           />
 
           {showParcelInfo.delivery && (
@@ -268,6 +292,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
 
       <Elements.Layout.InputBlock>
         <FormInputs.Checkbox
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           label="Lägg till paketinformation"
           onChangeHandler={handleToggleParcelDetailsChange}
         />
@@ -327,7 +352,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               />
               <FormInputs.Checkbox
                 label="Paketet är ömtåligt"
-                onChangeHandler={handleFragilePacelChange}
+                onChangeHandler={handleFragileParcelChange}
               />
             </Elements.Layout.InputContainer>
           </>

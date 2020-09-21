@@ -16,6 +16,9 @@ jobs:
     services:
       rabbitmq:
         image: rabbitmq:3-management
+    steps:
+      - name: hej
+        run: echo "hej"
 
   # This workflow contains a single job called "build"
   build-and-deploy:

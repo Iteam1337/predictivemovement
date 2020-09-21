@@ -8,8 +8,8 @@ import helpers from '../utils/helpers'
 import moment from 'moment'
 
 const Paragraph = styled.p`
-  margin: 0;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
   text-transform: capitalize;
 `
 
@@ -96,6 +96,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
       return history.push('/bookings')
     }
   }
+
   const parseEventTypeToHumanReadable = (type) => {
     switch (type) {
       case 'new':
@@ -113,23 +114,43 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
 
   if (!booking || !address) return <p>Laddar bokning...</p>
 
+  const { pickup, delivery, id } = booking
+
   return (
     <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {booking.id}
+            {id}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
+        <Elements.Layout.MarginBottomContainer />
         <Elements.Typography.StrongParagraph>
           Upphämtning
         </Elements.Typography.StrongParagraph>
         <Paragraph>{address.pickup}</Paragraph>
+        {pickup.time_windows &&
+          pickup.time_windows.map((timeWindow) => (
+            <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
+              {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
+              {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}
+            </Elements.Typography.SmallInfoBold>
+          ))}
+        <Elements.Layout.MarginBottomContainer />
         <Elements.Typography.StrongParagraph>
           Avlämning
         </Elements.Typography.StrongParagraph>
         <Paragraph>{address.delivery}</Paragraph>
+
+        {delivery.time_windows &&
+          delivery.time_windows.map((timeWindow) => (
+            <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
+              {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
+              {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}
+            </Elements.Typography.SmallInfoBold>
+          ))}
+
         {booking.assigned_to && (
           <>
             <Elements.Typography.StrongParagraph>
@@ -167,9 +188,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
           )}
         </Timeline>
         <Elements.Layout.MarginTopContainer>
-          <Elements.Buttons.DeleteButton
-            onClick={() => handleDeleteClick(booking.id)}
-          >
+          <Elements.Buttons.DeleteButton onClick={() => handleDeleteClick(id)}>
             Radera bokning
           </Elements.Buttons.DeleteButton>
         </Elements.Layout.MarginTopContainer>

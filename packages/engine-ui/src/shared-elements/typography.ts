@@ -13,6 +13,13 @@ const SmallInfo = styled.p`
   margin-bottom: 0.25rem;
 `
 
+const SmallInfoBold = styled.p`
+  font-weight: bold;
+  font-size: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+`
+
 const StrongParagraph = styled.label`
   margin-bottom: 0.5rem;
   display: block;
@@ -47,4 +54,5 @@ export default {
   StrongParagraph,
   RoundedLabelDisplay,
   CleanH4,
+  SmallInfoBold,
 }

@@ -24,6 +24,10 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
       route-optmization-jsprit:
         image: iteam1337/pm-route-optimization-jsprit:234f34c
         env:

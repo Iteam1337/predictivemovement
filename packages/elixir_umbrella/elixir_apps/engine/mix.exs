@@ -22,7 +22,8 @@ defmodule Engine.MixProject do
       env: [
         amqp_host: "localhost",
         osrm_url: "https://osrm.iteamdev.io",
-        redis_url: "redis://localhost:6379"
+        redis_url: "redis://localhost:6379",
+        init_from_storage: false
       ],
       extra_applications: [:logger, :gproc],
       mod: {Engine.Application, []}
@@ -33,7 +34,7 @@ defmodule Engine.MixProject do
   defp deps do
     [
       {:message_generator, in_umbrella: true, only: :test},
-      {:amqp, "~> 1.0"},
+      {:amqp, "~> 1.5"},
       {:flow, "~> 1.0.0"},
       {:broadway, "~> 0.6.0"},
       {:broadway_rabbitmq, "~> 0.6.0"},

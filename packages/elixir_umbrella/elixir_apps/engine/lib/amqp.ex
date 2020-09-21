@@ -14,8 +14,7 @@ defmodule MQ do
   def wait_for_messages(channel, correlation_id) do
     receive do
       {:basic_deliver, payload, %{correlation_id: ^correlation_id} = msg} ->
-        AMQP.Basic.ack(channel, Map.get(msg, :delivery_tag))
-        AMQP.Queue.delete(channel, Map.get(msg, :routing_key))
+        AMQP.Queue.unsubscribe(channel, Map.get(msg, :consumer_tag))
         payload
 
       _ ->
@@ -32,7 +31,8 @@ defmodule MQ do
       AMQP.Queue.declare(
         channel,
         "",
-        exclusive: true
+        exclusive: true,
+        auto_delete: true
       )
 
     AMQP.Basic.consume(channel, queue_name, nil, no_ack: false)

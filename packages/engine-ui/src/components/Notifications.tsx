@@ -74,8 +74,8 @@ const Notifications: React.FC<{
   React.useEffect(() => {
     if (notifications.length > 0) {
       setTimeout(() => {
-        updateNotifications(() => notifications.slice(1))
-      }, 10000)
+        handleOnClose(notifications[0].id)
+      }, 20000)
     }
   }, [notifications, updateNotifications])
 

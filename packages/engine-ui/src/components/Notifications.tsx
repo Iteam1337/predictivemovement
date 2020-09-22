@@ -3,6 +3,7 @@ import Alert from '@material-ui/lab/Alert'
 import Zoom from '@material-ui/core/Zoom'
 import styled from 'styled-components'
 import Elements from '../shared-elements'
+import { Booking, NotificationType, Vehicle } from '../types'
 
 const NotificationsContaioner = styled.div`
   width: 25%;
@@ -24,28 +25,8 @@ const NotificationsContaioner = styled.div`
   }
 `
 
-enum BookingStatus {
-  NEW = 'new',
-  ASSIGNED = 'assigned',
-  DELIVERED = 'delivered',
-  PICKED_UP = 'picked_up',
-}
-
-type Booking = {
-  id: string
-  pickup: {
-    lat: string
-    lon: string
-  }
-  delivery: {
-    lat: string
-    lon: string
-  }
-  status: BookingStatus
-}
-
 const BookingNotification: React.FC<{
-  booking: any
+  booking: Booking
   handleOnClose: (value: string) => void
 }> = ({ booking, handleOnClose }) => (
   <Zoom in={Boolean(booking)}>
@@ -54,9 +35,9 @@ const BookingNotification: React.FC<{
       key={booking.id}
       severity="success"
     >
-      New booking was succesfully added
+      En ny bokning har lags till
       <Elements.Links.RoundedLink
-        margin="0 1rem"
+        margin="0 0.5rem"
         to={`/bookings/${booking.id}`}
       >
         {booking.id}
@@ -66,33 +47,39 @@ const BookingNotification: React.FC<{
 )
 
 const VehicleNotification: React.FC<{
-  vehicle: any
+  vehicle: Vehicle
   handleOnClose: (value: string) => void
-}> = ({ vehicle, handleOnClose }) => {
-  return (
-    <Zoom in={Boolean(vehicle)}>
-      <Alert
-        onClose={() => handleOnClose(vehicle.id)}
-        key={vehicle.id}
-        severity="success"
+}> = ({ vehicle, handleOnClose }) => (
+  <Zoom in={Boolean(vehicle)}>
+    <Alert
+      onClose={() => handleOnClose(vehicle.id)}
+      key={vehicle.id}
+      severity="success"
+    >
+      En ny transport har lags till
+      <Elements.Links.RoundedLink
+        margin="0 0.5rem"
+        to={`/transports/${vehicle.id}`}
       >
-        New vehicle was succesfully added
-        <Elements.Links.RoundedLink
-          margin="0 1rem"
-          to={`/transports/${vehicle.id}`}
-        >
-          {vehicle.id}
-        </Elements.Links.RoundedLink>
-      </Alert>
-    </Zoom>
-  )
-}
+        {vehicle.id}
+      </Elements.Links.RoundedLink>
+    </Alert>
+  </Zoom>
+)
 
 const Notifications: React.FC<{
-  notifications: []
+  notifications: NotificationType[]
   updateNotifications: (value: any) => void
 }> = ({ notifications, updateNotifications }) => {
-  const notificationType = (notification: any) => {
+  React.useEffect(() => {
+    if (notifications.length > 0) {
+      setTimeout(() => {
+        updateNotifications(() => notifications.slice(1))
+      }, 10000)
+    }
+  }, [notifications])
+
+  const notificationType = (notification: NotificationType) => {
     switch (true) {
       case notification.id.includes('pmv-'):
         return (
@@ -108,27 +95,26 @@ const Notifications: React.FC<{
           <BookingNotification
             key={notification.id}
             handleOnClose={handleOnClose}
-            booking={notification}
+            booking={notification as Booking}
           />
         )
 
       default:
-        break
+        return
     }
   }
 
   const handleOnClose = (itemId: string) => {
-    updateNotifications((notifications: any) =>
-      notifications.filter((notification: any) => notification.id !== itemId)
+    updateNotifications((notifications: NotificationType[]) =>
+      notifications.filter((notification) => notification.id !== itemId)
     )
   }
 
   return (
     <NotificationsContaioner>
-      {notifications &&
+      {notifications.length > 0 &&
         notifications
           .map((notification) => notificationType(notification))
-
           .reverse()}
     </NotificationsContaioner>
   )

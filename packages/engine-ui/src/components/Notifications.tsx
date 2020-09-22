@@ -77,7 +77,7 @@ const Notifications: React.FC<{
         updateNotifications(() => notifications.slice(1))
       }, 10000)
     }
-  }, [notifications])
+  }, [notifications, updateNotifications])
 
   const notificationType = (notification: NotificationType) => {
     switch (true) {

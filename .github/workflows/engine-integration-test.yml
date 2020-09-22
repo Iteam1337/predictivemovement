@@ -1,0 +1,43 @@
+name: Integration tests
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on: [pull_request]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  container-job:
+    env:
+      REDIS_URL: redis://localhost:6379
+      AMQP_HOST: localhost
+    defaults:
+      run:
+        working-directory: packages/engine_umbrella/
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      route-optmization-jsprit:
+        image: iteam1337/pm-route-optimization-jsprit:234f34c
+        env:
+          RABBITMQ_HOST: rabbitmq
+          RABBITMQ_PORT: "5672"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1.0.0
+        with:
+          otp-version: "22.2"
+          elixir-version: "1.10.3"
+      - name: Install Dependencies
+        run: mix deps.get
+      - name: Compile
+        run: mix compile
+      - name: Run tests
+        run: mix test

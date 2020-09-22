@@ -24,6 +24,11 @@ const SemiBoldParagraph = styled.p`
   font-weight: semibold;
 `
 
+const InfoSmStrong = styled(InfoSm)`
+  font-style: normal;
+  font-weight: bold;
+`
+
 const StrongParagraph = styled.label`
   margin-bottom: 0.5rem;
   display: block;
@@ -65,4 +70,5 @@ export default {
   CleanH4,
   SemiBoldParagraph,
   SpanBold,
+  InfoSmStrong,
 }

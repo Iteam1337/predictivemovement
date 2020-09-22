@@ -81,8 +81,8 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
       )
 
       setAddress({
-        pickup: pickupAddress,
-        delivery: deliveryAddress,
+        pickup: `${pickupAddress.name}, ${pickupAddress.county}`,
+        delivery: `${deliveryAddress.name}, ${deliveryAddress.county}`,
       })
     }
 

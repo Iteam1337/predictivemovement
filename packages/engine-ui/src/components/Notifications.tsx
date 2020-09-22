@@ -4,6 +4,7 @@ import Zoom from '@material-ui/core/Zoom'
 import styled from 'styled-components'
 import Elements from '../shared-elements'
 import { Booking, NotificationType, Vehicle } from '../types'
+import CheckIcon from '../assets/check-icon.svg'
 
 const NotificationsContaioner = styled.div`
   width: 25%;
@@ -31,6 +32,7 @@ const BookingNotification: React.FC<{
 }> = ({ booking, handleOnClose }) => (
   <Zoom in={Boolean(booking)}>
     <Alert
+      icon={<img src={CheckIcon} alt="Success" />}
       onClose={() => handleOnClose(booking.id)}
       key={booking.id}
       severity="success"
@@ -52,6 +54,7 @@ const VehicleNotification: React.FC<{
 }> = ({ vehicle, handleOnClose }) => (
   <Zoom in={Boolean(vehicle)}>
     <Alert
+      icon={<img src={CheckIcon} alt="Success" />}
       onClose={() => handleOnClose(vehicle.id)}
       key={vehicle.id}
       severity="success"

@@ -79,7 +79,7 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
                 })
               }
             >
-              ...{helpers.formatIdAsFourChar(vehicle.id)}
+              ...{helpers.getLastFourChars(vehicle.id)}
             </Elements.RoundedLink>
           </Elements.FlexRowWrapper>
           <RouteActivities vehicle={vehicle} />

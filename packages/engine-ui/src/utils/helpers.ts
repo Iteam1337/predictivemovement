@@ -35,11 +35,13 @@ const calculateMinTime = (date?: Date, minDate?: Date) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
-const formatIdAsFourChar = (id: string) => id.slice(id.length - 4, id.length)
+const getLastFourChars = (str: string) => str.slice(str.length - 4, str.length)
+const withoutLastFourChars = (str: string) => str.slice(0, str.length - 4)
 
 export default {
   findAddress,
   calculateMinTime,
   getAddressFromCoordinate,
-  formatIdAsFourChar,
+  getLastFourChars,
+  withoutLastFourChars,
 }

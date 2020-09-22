@@ -9,30 +9,11 @@ import CreateBooking from './CreateBooking'
 import CreateBookings from './CreateBookings'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import styled from 'styled-components'
+import { Booking } from '../types'
 
 const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
-
-enum BookingStatus {
-  NEW = 'new',
-  ASSIGNED = 'assigned',
-  DELIVERED = 'delivered',
-  PICKED_UP = 'picked_up',
-}
-
-type Booking = {
-  id: string
-  pickup: {
-    lat: string
-    lon: string
-  }
-  delivery: {
-    lat: string
-    lon: string
-  }
-  status: BookingStatus
-}
 
 const sortBookingsByStatus = (bookings: Booking[]) =>
   bookings.reduce<{
@@ -204,16 +185,16 @@ const Bookings: React.FC<{
           <CreateBookings onSubmit={props.createBookings} />
         </Route>
 
-      <Route path={`${path}/:bookingId`}>
-        <BookingDetails
-          onClickHandler={() =>
-            dispatch({ type: 'highlightBooking', payload: undefined })
-          }
-          bookings={props.bookings}
-          deleteBooking={props.deleteBooking}
-        />
-      </Route>
-    </Switch>
+        <Route path={`${path}/:bookingId`}>
+          <BookingDetails
+            onClickHandler={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+            bookings={props.bookings}
+            deleteBooking={props.deleteBooking}
+          />
+        </Route>
+      </Switch>
     </Wrapper>
   )
 }

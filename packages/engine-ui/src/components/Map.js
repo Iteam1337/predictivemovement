@@ -4,13 +4,12 @@ import DeckGL from '@deck.gl/react'
 import mapUtils from '../utils/mapUtils'
 import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory } from 'react-router-dom'
-import helpers from '../utils/helpers'
+import Tooltip from './Tooltip'
 
 const Map = ({ data }) => {
   const history = useHistory()
 
   const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
-  const [tooltip, setTooltip] = React.useState('')
 
   const handleClickEvent = (event) => {
     if (!event.object) return
@@ -25,10 +24,10 @@ const Map = ({ data }) => {
     }
   }
 
-  const onMapClick = ({ lngLat: [lon, lat] }) =>
+  const onMapClick = ({ lngLat: [lon, lat], x, y }) =>
     dispatch({
       type: 'lastClickedPosition',
-      payload: { lat, lon },
+      payload: { lat, lon, x, y },
     })
 
   const layers = [
@@ -53,39 +52,31 @@ const Map = ({ data }) => {
     ),
   ]
 
-  const getAddressFromCoordinates = async ({ pickup, delivery }) => {
-    if (!pickup || !delivery) return
-
-    const pickupAddress = await helpers.getAddressFromCoordinate(pickup)
-    const deliveryAddress = await helpers.getAddressFromCoordinate(delivery)
-
-    setTooltip(`${pickupAddress} - ${deliveryAddress}`)
-  }
+  const handleDragEvent = () =>
+    UIState.showMapTooltip && dispatch({ type: 'hideTooltip' })
 
   return (
-    <DeckGL
-      layers={layers}
-      controller={true}
-      onClick={(e) => {
-        onMapClick(e)
-        handleClickEvent(e)
-      }}
-      viewState={UIState.viewport}
-      onViewStateChange={({ viewState }) =>
-        dispatch({ type: 'viewport', payload: viewState })
-      }
-      onLoad={onLoad}
-      getTooltip={({ object }) => {
-        return (
-          object &&
-          object.properties.address &&
-          getAddressFromCoordinates(object.properties.address) &&
-          tooltip
-        )
-      }}
-    >
-      <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />
-    </DeckGL>
+    <>
+      <DeckGL
+        layers={layers}
+        controller={true}
+        onClick={(e) => {
+          onMapClick(e)
+          handleClickEvent(e)
+        }}
+        viewState={UIState.viewport}
+        onViewStateChange={({ viewState }) =>
+          dispatch({ type: 'viewport', payload: viewState })
+        }
+        onLoad={onLoad}
+        onDrag={handleDragEvent}
+      >
+        <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />
+      </DeckGL>
+      {UIState.showMapTooltip && (
+        <Tooltip position={UIState.lastClickedPosition} />
+      )}
+    </>
   )
 }
 

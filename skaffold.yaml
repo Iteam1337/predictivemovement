@@ -6,10 +6,11 @@ build:
   artifacts:
     # - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
     #   context: packages/booking-interface
+
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine
-      context: packages/elixir_umbrella
+      context: packages/engine_umbrella
       sync:
         infer:
           - "**/*.ex"
@@ -31,46 +32,13 @@ build:
     - image: iteam1337/pm-booking-dispatcher
       context: packages/booking-dispatcher
 deploy:
-  kubectl:
-    manifests:
-      # - k8s/packages/dev/booking-interface.yaml # Disabled until needed again since we use the admin-ui for creating bookings
-      - k8s/packages/dev/driver-interface.yaml
-      - k8s/packages/dev/engine.yaml
-      - k8s/packages/dev/engine-server.yaml
-      - k8s/packages/dev/engine-ui.yaml
-      - k8s/packages/dev/route-optimization-jsprit.yaml
-      - k8s/packages/dev/vehicle-offer.yaml
-      - k8s/packages/dev/auto-accept-offer.yaml
-      - k8s/packages/dev/booking-dispatcher.yaml
-    # TODO: Disabled because this should be done once and not redeployed every time
-    # - k8s/cicd-rbac.yaml
-    # - k8s/rabbitmq.yaml
-    # - k8s/redis.yaml
-    # - k8s/osrm.yaml
-    flags:
-      global:
-        - --namespace=predictivemovement-dev
+  kustomize:
+    paths:
+      - k8s/base
   statusCheckDeadlineSeconds: 600
 profiles:
   - name: prod
-    # TODO: this is the nicer way to do things so disabled until we learn how to
-    # update ingress hosts without duplication of files
-    # patches:
-    #   - op: replace
-    #     path: /deploy/kubectl/flags/global/0
-    #     value: --namespace=predictivemovement
     deploy:
-      kubectl:
-        manifests:
-          # - k8s/packages/prod/booking-interface.yaml # Disabled until needed again since we use the admin-ui for creating bookings
-          - k8s/packages/prod/driver-interface.yaml
-          - k8s/packages/prod/engine.yaml
-          - k8s/packages/prod/engine-server.yaml
-          - k8s/packages/prod/engine-ui.yaml
-          - k8s/packages/prod/route-optimization-jsprit.yaml
-          - k8s/packages/prod/vehicle-offer.yaml
-          - k8s/packages/prod/auto-accept-offer.yaml
-          - k8s/packages/prod/booking-dispatcher.yaml
-        flags:
-          global:
-            - --namespace=predictivemovement
+      kustomize:
+        paths:
+          - k8s/overlays/prod

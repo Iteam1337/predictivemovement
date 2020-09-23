@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auto-accept-offer
+  labels:
+    app: auto-accept-offer
+spec:
+  selector:
+    matchLabels:
+      app: auto-accept-offer
+  template:
+    metadata:
+      labels:
+        app: auto-accept-offer
+    spec:
+      containers:
+        - name: auto-accept-offer
+          image: iteam1337/pm-auto-accept-offer
+          envFrom:
+            - configMapRef:
+                name: common-properties

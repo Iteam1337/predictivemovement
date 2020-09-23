@@ -1,34 +1,27 @@
 const helpers = require('../helpers')
 const amqp = require('./amqp')
-const {
-  getVehicle,
-  addVehicle,
-  setInstructions,
-  getInstructions,
-} = require('./cache')
-const { getBooking } = require('./cache')
+const cache = require('./cache')
 
 const messaging = require('./messaging')
 
 const onLogin = (vehicleId, ctx) => {
-  const vehicle = getVehicle(vehicleId)
+  const vehicle = cache.getVehicle(vehicleId)
   if (!vehicle)
     return ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
 
   const telegramId = ctx.update.message.from.id
-
-  ctx.metadata.setVehicleIdFromTelegramId(telegramId, vehicleId)
+  cache.setVehicleIdFromTelegramId(telegramId, vehicleId)
 
   if (vehicle.telegramId) {
     return
   }
 
-  setInstructions(
+  cache.setInstructions(
     vehicle.id,
     helpers.cleanDriverInstructions(vehicle.activities)
   )
 
-  addVehicle(vehicleId, {
+  cache.addVehicle(vehicleId, {
     ...vehicle,
     telegramId,
   })
@@ -71,10 +64,10 @@ const handleDriverArrivedToPickupOrDeliveryPosition = (
   telegramId
 ) => {
   try {
-    const [current] = getInstructions(vehicleId)
+    const [current] = cache.getInstructions(vehicleId)
 
     if (!current) return messaging.sendDriverFinishedMessage(telegramId)
-    const booking = getBooking(current.id)
+    const booking = cache.getBooking(current.id)
 
     if (current.type === 'pickupShipment')
       return messaging.sendPickupInstruction(current, telegramId, booking)
@@ -89,11 +82,11 @@ const handleDriverArrivedToPickupOrDeliveryPosition = (
 
 const handleNextDriverInstruction = (vehicleId, telegramId) => {
   try {
-    const instructions = getInstructions(vehicleId)
+    const instructions = cache.getInstructions(vehicleId)
     const [nextInstruction, ...rest] = instructions
 
     if (!nextInstruction) return messaging.sendDriverFinishedMessage(telegramId)
-    const booking = getBooking(nextInstruction.id)
+    const booking = cache.getBooking(nextInstruction.id)
 
     if (nextInstruction.type === 'pickupShipment')
       messaging.sendPickupInformation(nextInstruction, telegramId, booking)
@@ -101,7 +94,7 @@ const handleNextDriverInstruction = (vehicleId, telegramId) => {
     if (nextInstruction.type === 'deliverShipment')
       messaging.sendDeliveryInformation(nextInstruction, telegramId, booking)
 
-    return setInstructions(vehicleId, [...rest])
+    return cache.setInstructions(vehicleId, [...rest])
   } catch (error) {
     console.log('error in handlePickupInstructions: ', error)
     return

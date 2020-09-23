@@ -1,22 +1,21 @@
 const botServices = require('./services/bot')
 const messaging = require('./services/messaging')
-const { getVehicle } = require('./services/cache')
-
+const cache = require('./services/cache')
 const {
   open,
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
-function onArrive(msg) {
+function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdFromTelegramId(telegramId)
 
   return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onPickup(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdFromTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
@@ -46,7 +45,7 @@ function onPickup(msg) {
 
 function onDelivered(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdFromTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
@@ -83,8 +82,8 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', (ctx) => {
-    const vehicleId = ctx.metadata.getVehicleIdFromTelegramId(ctx.botInfo.id)
-    const vehicleWithPlan = getVehicle(vehicleId)
+    const vehicleId = cache.getVehicleIdFromTelegramId(ctx.botInfo.id)
+    const vehicleWithPlan = cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
       return messaging.onNoInstructionsForVehicle(ctx)
@@ -131,7 +130,7 @@ const init = (bot) => {
       case 'picked_up':
         return onPickup(msg)
       case 'arrived':
-        return onArrive(msg)
+        return onArrived(msg)
       case 'delivered':
         return onDelivered(msg)
       case 'offer':

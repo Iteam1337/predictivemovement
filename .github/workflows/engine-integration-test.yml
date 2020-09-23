@@ -24,7 +24,6 @@ jobs:
         with:
           context: .
           tags: iteam1337/pm-route-optimization-jsprit
-          push: true
   run-integration-tests:
     env:
       REDIS_URL: redis://localhost:6379

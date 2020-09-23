@@ -6,7 +6,7 @@ import Elements from '../shared-elements'
 import { Booking, NotificationType, Vehicle } from '../types'
 import CheckIcon from '../assets/check-icon.svg'
 
-const NotificationsContaioner = styled.div`
+const NotificationsContainer = styled.div`
   width: 25%;
   position: absolute;
   z-index: 30;
@@ -113,12 +113,12 @@ const Notifications: React.FC<{
   }
 
   return (
-    <NotificationsContaioner>
+    <NotificationsContainer>
       {notifications.length > 0 &&
         notifications
           .map((notification) => notificationType(notification))
           .reverse()}
-    </NotificationsContaioner>
+    </NotificationsContainer>
   )
 }
 

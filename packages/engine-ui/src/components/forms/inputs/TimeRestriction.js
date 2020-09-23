@@ -122,8 +122,13 @@ const BookingTimeRestrictionPair = ({
   )
 }
 
-const VehicleTimeRestrictionPair = ({ onChangeHandler, timewindow }) => {
+const VehicleTimeRestrictionPair = ({
+  onChangeHandler,
+  timewindow,
+  handleFocus,
+}) => {
   const timeRestrictionInputRef = React.useRef()
+
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
@@ -131,7 +136,12 @@ const VehicleTimeRestrictionPair = ({ onChangeHandler, timewindow }) => {
           selected={timewindow.start}
           onChangeHandler={(date) => onChangeHandler(date, 'start', 'start')}
           placeholderText="Starttid"
-          inputElement={<DateInput ref={timeRestrictionInputRef} />}
+          inputElement={
+            <DateInput
+              handleFocus={handleFocus}
+              ref={timeRestrictionInputRef}
+            />
+          }
         />
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
@@ -140,7 +150,12 @@ const VehicleTimeRestrictionPair = ({ onChangeHandler, timewindow }) => {
           minDate={timewindow.start ? new Date(timewindow.start) : new Date()}
           onChangeHandler={(date) => onChangeHandler(date, 'end', 'end')}
           placeholderText="Sluttid"
-          inputElement={<DateInput ref={timeRestrictionInputRef} />}
+          inputElement={
+            <DateInput
+              handleFocus={handleFocus}
+              ref={timeRestrictionInputRef}
+            />
+          }
         />
       </Elements.Layout.TextInputPairItem>
     </Elements.Layout.TextInputPairContainer>

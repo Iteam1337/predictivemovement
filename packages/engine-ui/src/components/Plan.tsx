@@ -56,7 +56,6 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
   const activePlanVehicles = planVehicles.filter((d) => d.activities.length > 0)
   const { path } = useRouteMatch()
 
-  console.log('vehicles', planVehicles)
   return (
     <Switch>
       <Route exact path={[path, `${path}/routes/:routeId`]}>

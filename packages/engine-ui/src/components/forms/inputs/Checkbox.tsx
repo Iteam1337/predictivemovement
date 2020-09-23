@@ -77,10 +77,11 @@ const Checkbox: React.FC<{
   name: string
   onChangeHandler: (event: any) => void
   label: string
-}> = ({ name, onChangeHandler, label }) => {
+  onFocus?: () => void 
+}> = ({ name, onChangeHandler, label, ...rest }) => {
   return (
     <CustomCheckboxContainer>
-      <HiddenCheckbox name={name} type="checkbox" onChange={onChangeHandler} />
+      <HiddenCheckbox name={name} type="checkbox" onChange={onChangeHandler} {...rest} />
       <CheckboxLabel>{label}</CheckboxLabel>
       <span className="custom-checkbox" />
     </CustomCheckboxContainer>

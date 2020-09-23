@@ -64,18 +64,31 @@ const handleDriverArrivedToPickupOrDeliveryPosition = (
   telegramId
 ) => {
   try {
-    const [current] = cache.getInstructions(vehicleId)
+    const [currentInstruction] = cache.getInstructions(vehicleId)
 
-    if (!current) return messaging.sendDriverFinishedMessage(telegramId)
-    const booking = cache.getBooking(current.id)
+    if (!currentInstruction)
+      return messaging.sendDriverFinishedMessage(telegramId)
 
-    if (current.type === 'pickupShipment')
-      return messaging.sendPickupInstruction(current, telegramId, booking)
+    const booking = cache.getBooking(currentInstruction.id)
 
-    if (current.type === 'deliverShipment')
-      return messaging.sendDeliveryInstruction(current, telegramId, booking)
+    if (currentInstruction.type === 'pickupShipment')
+      return messaging.sendPickupInstruction(
+        currentInstruction,
+        telegramId,
+        booking
+      )
+
+    if (currentInstruction.type === 'deliverShipment')
+      return messaging.sendDeliveryInstruction(
+        currentInstruction,
+        telegramId,
+        booking
+      )
   } catch (error) {
-    console.log('error in handlePickupInstructions: ', error)
+    console.log(
+      'error in handleDriverArrivedToPickupOrDeliveryPosition: ',
+      error
+    )
     return
   }
 }
@@ -96,7 +109,7 @@ const handleNextDriverInstruction = (vehicleId, telegramId) => {
 
     return cache.setInstructions(vehicleId, [...rest])
   } catch (error) {
-    console.log('error in handlePickupInstructions: ', error)
+    console.log('error in handleNextDriverInstruction: ', error)
     return
   }
 }

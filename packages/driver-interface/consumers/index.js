@@ -1,5 +1,6 @@
 const pickupInstructions = require('./pickupInstructions')
 const vehiclePlan = require('./vehiclePlan')
+
 const register = () => {
   pickupInstructions()
   vehiclePlan()
@@ -7,5 +8,4 @@ const register = () => {
 
 module.exports = {
   register,
-  pickupInstructions,
 }

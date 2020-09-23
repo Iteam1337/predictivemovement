@@ -60,6 +60,7 @@ const sendPickupInstruction = async (instruction, telegramId, booking) => {
           ],
         ],
       },
+      disable_web_page_preview: true,
     }
   )
 }
@@ -138,6 +139,7 @@ const sendPickupInformation = (instruction, telegramId, booking) =>
           ],
         ],
       },
+      disable_web_page_preview: true,
     }
   )
 

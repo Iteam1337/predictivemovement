@@ -74,15 +74,3 @@ profiles:
         flags:
           global:
             - --namespace=predictivemovement
-  - name: integration-tests
-    deploy:
-      kubectl:
-        manifests:
-          - k8s/packages/integration-tests/engine.yaml
-          - k8s/packages/integration-tests/route-optimization-jsprit.yaml
-          - k8s/packages/integration-tests/vehicle-offer.yaml
-          - k8s/packages/integration-tests/auto-accept-offer.yaml
-          # - k8s/cicd-rbac.yaml
-        flags:
-          global:
-            - --namespace=predictivemovement-integration-tests

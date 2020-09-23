@@ -74,13 +74,18 @@ const Notifications: React.FC<{
   notifications: NotificationType[]
   updateNotifications: (value: any) => void
 }> = ({ notifications, updateNotifications }) => {
+  const handleOnClose = (itemId: string) => {
+    updateNotifications((notifications: NotificationType[]) =>
+      notifications.filter((notification) => notification.id !== itemId)
+    )
+  }
   React.useEffect(() => {
     if (notifications.length > 0) {
       setTimeout(() => {
         handleOnClose(notifications[0].id)
       }, 20000)
     }
-  }, [notifications, updateNotifications])
+  }, [notifications, updateNotifications, handleOnClose])
 
   const notificationType = (notification: NotificationType) => {
     switch (true) {
@@ -105,12 +110,6 @@ const Notifications: React.FC<{
       default:
         return
     }
-  }
-
-  const handleOnClose = (itemId: string) => {
-    updateNotifications((notifications: NotificationType[]) =>
-      notifications.filter((notification) => notification.id !== itemId)
-    )
   }
 
   return (

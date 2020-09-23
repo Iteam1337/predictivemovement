@@ -101,7 +101,7 @@ const handleNextDriverInstruction = (vehicleId, telegramId) => {
     if (nextInstruction.type === 'deliverShipment')
       messaging.sendDeliveryInformation(nextInstruction, telegramId, booking)
 
-    return setInstructions(vehicleId, rest)
+    return setInstructions(vehicleId, [...rest])
   } catch (error) {
     console.log('error in handlePickupInstructions: ', error)
     return

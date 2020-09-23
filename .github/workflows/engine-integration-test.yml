@@ -6,6 +6,17 @@ on: [pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  build-route-optimization:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/build-push-action@v2
+        with:
+          context: packages/route-optimization-jsprit/
+          push: true
+          tags: iteam1337/pm-route-optimization-jsprit
+          secrets: |
+            GIT_AUTH_TOKEN=${{ github.token }}
   run-integration-tests:
     env:
       REDIS_URL: redis://localhost:6379
@@ -31,13 +42,6 @@ jobs:
           RABBITMQ_PORT: "5672"
     steps:
       - uses: actions/checkout@v2
-      - uses: docker/build-push-action@v2
-        with:
-          context: packages/route-optimization-jsprit/
-          push: true
-          tags: iteam1337/pm-route-optimization-jsprit
-          secrets: |
-            GIT_AUTH_TOKEN=${{ github.token }}
       - uses: actions/setup-elixir@v1.0.0
         with:
           otp-version: "22.2"

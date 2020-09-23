@@ -1,4 +1,4 @@
-const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
+const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 // const { generate } = require('@iteam1337/engine/simulator/cars')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 

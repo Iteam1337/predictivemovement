@@ -9,6 +9,8 @@ const onBotStart = (ctx) => {
   )
 }
 
+const onPromptUserForTransportId = (ctx) => ctx.reply('Ange ditt transport-id')
+
 const onNoVehicleFoundFromId = (ctx) =>
   ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
 
@@ -199,4 +201,5 @@ module.exports = {
   sendDriverFinishedMessage,
   onNoVehicleFoundFromId,
   onDriverLoginSuccessful,
+  onPromptUserForTransportId,
 }

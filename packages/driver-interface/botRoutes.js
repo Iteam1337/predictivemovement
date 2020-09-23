@@ -91,7 +91,7 @@ const init = (bot) => {
     )
   })
 
-  bot.command('/login', (ctx) => ctx.reply('Ange ditt transport-id'))
+  bot.command('/login', (ctx) => messaging.onPromptUserForTransportId(ctx))
 
   bot.on('message', (ctx) => {
     const msg = ctx.message

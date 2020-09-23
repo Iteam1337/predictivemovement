@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: engine
+  labels:
+    app: engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: engine
+  template:
+    metadata:
+      labels:
+        app: engine
+    spec:
+      containers:
+        - name: engine
+          image: iteam1337/pm-engine
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: common-properties
+            - configMapRef:
+                name: engine-properties
+          resources: {}
+      restartPolicy: Always

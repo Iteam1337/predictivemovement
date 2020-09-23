@@ -10,7 +10,10 @@ function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
   const vehicleId = cache.getVehicleIdFromTelegramId(telegramId)
 
-  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
+  return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
+    vehicleId,
+    telegramId
+  )
 }
 
 function onPickup(msg) {
@@ -34,12 +37,7 @@ function onPickup(msg) {
         )
       })
     })
-    .then(() =>
-      botServices.handleDriverArrivedToPickupOrDeliveryPosition(
-        vehicleId,
-        telegramId
-      )
-    )
+    .then(() => botServices.handleNextDriverInstruction(vehicleId, telegramId))
     .catch(console.warn)
 }
 
@@ -63,12 +61,7 @@ function onDelivered(msg) {
         )
       })
     })
-    .then(() =>
-      botServices.handleDriverArrivedToPickupOrDeliveryPosition(
-        vehicleId,
-        telegramId
-      )
-    )
+    .then(() => botServices.handleNextDriverInstruction(vehicleId, telegramId))
     .catch(console.warn)
 }
 

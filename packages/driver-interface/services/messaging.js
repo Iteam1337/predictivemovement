@@ -9,6 +9,14 @@ const onBotStart = (ctx) => {
   )
 }
 
+const onNoVehicleFoundFromId = (ctx) =>
+  ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
+
+const onDriverLoginSuccessful = (ctx) =>
+  ctx.reply(
+    'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
+  )
+
 const onNoInstructionsForVehicle = (ctx) =>
   ctx.reply('Vi kunde inte hitta några instruktioner...')
 
@@ -189,4 +197,6 @@ module.exports = {
   sendDeliveryInstruction,
   sendDeliveryInformation,
   sendDriverFinishedMessage,
+  onNoVehicleFoundFromId,
+  onDriverLoginSuccessful,
 }

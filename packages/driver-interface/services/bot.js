@@ -6,8 +6,7 @@ const messaging = require('./messaging')
 
 const onLogin = (vehicleId, ctx) => {
   const vehicle = cache.getVehicle(vehicleId)
-  if (!vehicle)
-    return ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
+  if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
 
   const telegramId = ctx.update.message.from.id
   cache.setVehicleIdFromTelegramId(telegramId, vehicleId)
@@ -26,15 +25,10 @@ const onLogin = (vehicleId, ctx) => {
     telegramId,
   })
 
-  return ctx
-    .reply(
-      'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
-    )
+  return messaging
+    .onDriverLoginSuccessful(ctx)
     .then(() =>
-      handleDriverArrivedToPickupOrDeliveryPosition(
-        vehicleId,
-        ctx.update.message.from.id
-      )
+      handleNextDriverInstruction(vehicleId, ctx.update.message.from.id)
     )
 }
 
@@ -59,10 +53,7 @@ const onLocationMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-const handleDriverArrivedToPickupOrDeliveryPosition = (
-  vehicleId,
-  telegramId
-) => {
+const handleNextDriverInstruction = (vehicleId, telegramId) => {
   try {
     const [currentInstruction] = cache.getInstructions(vehicleId)
 
@@ -93,7 +84,10 @@ const handleDriverArrivedToPickupOrDeliveryPosition = (
   }
 }
 
-const handleNextDriverInstruction = (vehicleId, telegramId) => {
+const handleDriverArrivedToPickupOrDeliveryPosition = (
+  vehicleId,
+  telegramId
+) => {
   try {
     const instructions = cache.getInstructions(vehicleId)
     const [nextInstruction, ...rest] = instructions

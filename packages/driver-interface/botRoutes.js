@@ -11,7 +11,7 @@ function onArrive(msg) {
   const telegramId = msg.update.callback_query.from.id
   const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
 
-  return botServices.handlePickupInstruction(vehicleId, telegramId)
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onPickup(msg) {
@@ -20,7 +20,7 @@ function onPickup(msg) {
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
-  open
+  return open
     .then((conn) => conn.createChannel())
     .then((ch) => {
       ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
@@ -28,15 +28,20 @@ function onPickup(msg) {
       }).then(() => {
         const { id } = callbackPayload
 
-        ch.publish(
+        return ch.publish(
           INCOMING_BOOKING_UPDATES,
           'picked_up',
           Buffer.from(JSON.stringify({ id, status: 'picked_up' }))
         )
       })
     })
-
-  return botServices.handleOnArrive(vehicleId, telegramId)
+    .then(() =>
+      botServices.handleDriverArrivedToPickupOrDeliveryPosition(
+        vehicleId,
+        telegramId
+      )
+    )
+    .catch(console.warn)
 }
 
 function onDelivered(msg) {
@@ -44,23 +49,28 @@ function onDelivered(msg) {
   const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  open
+
+  return open
     .then((conn) => conn.createChannel())
     .then((ch) => {
       ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
         durable: false,
       }).then(() => {
         const { id } = callbackPayload
-        ch.publish(
+        return ch.publish(
           INCOMING_BOOKING_UPDATES,
           'delivered',
           Buffer.from(JSON.stringify({ id, status: 'delivered' }))
         )
       })
     })
+    .then(() =>
+      botServices.handleDriverArrivedToPickupOrDeliveryPosition(
+        vehicleId,
+        telegramId
+      )
+    )
     .catch(console.warn)
-
-  return botServices.handleOnArrive(vehicleId, telegramId)
 }
 
 function onOffer(msg) {
@@ -74,23 +84,22 @@ const init = (bot) => {
 
   bot.command('/lista', (ctx) => {
     const vehicleId = ctx.metadata.getVehicleIdFromTelegramId(ctx.botInfo.id)
-
     const vehicleWithPlan = getVehicle(vehicleId)
+
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
       return messaging.onNoInstructionsForVehicle(ctx)
+
     const activities = vehicleWithPlan.activities
     const bookingIds = vehicleWithPlan.booking_ids
 
-    messaging.onInstructionsForVehicle(
+    return messaging.onInstructionsForVehicle(
       activities,
       bookingIds,
       ctx.update.message.from.id
     )
   })
 
-  bot.command('/login', (ctx) => {
-    ctx.reply('Ange ditt transport-id')
-  })
+  bot.command('/login', (ctx) => ctx.reply('Ange ditt transport-id'))
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
@@ -102,7 +111,7 @@ const init = (bot) => {
 
     if (!msg.location) return
 
-    botServices.onLocationMessage(msg, ctx)
+    return botServices.onLocationMessage(msg, ctx)
   })
 
   bot.on('edited_message', (ctx) => {
@@ -111,7 +120,7 @@ const init = (bot) => {
     /** Telegram live location updates. */
     if (!msg.location) return
 
-    botServices.onLocationMessage(msg, ctx)
+    return botServices.onLocationMessage(msg, ctx)
   })
 
   /** Listen for user invoked button clicks. */

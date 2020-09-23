@@ -18,7 +18,6 @@ jobs:
           driver: docker
       - uses: docker/login-action@v1
         with:
-          registry: iteam1337
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - uses: docker/build-push-action@v2

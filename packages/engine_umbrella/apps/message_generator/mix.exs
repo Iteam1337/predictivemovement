@@ -18,6 +18,9 @@ defmodule MessageGenerator.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      env: [
+        amqp_host: "localhost"
+      ],
       extra_applications: [:logger],
       mod: {MessageGenerator.Application, []}
     ]

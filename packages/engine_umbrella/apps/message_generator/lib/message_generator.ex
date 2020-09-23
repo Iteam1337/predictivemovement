@@ -1,7 +1,8 @@
 defmodule MessageGenerator do
   use GenServer
   alias MessageGenerator.Address
-  @rmq_uri "amqp://localhost"
+  def amqp_url, do: "amqp://" <> Application.fetch_env!(:message_generator, :amqp_host)
+
   @cars_exchange "incoming_vehicle_updates"
   @bookings_exchange "incoming_booking_updates"
   @stockholm %{lat: 59.3414072, lon: 18.0470482}
@@ -20,7 +21,7 @@ defmodule MessageGenerator do
   end
 
   def start_amqp_resources() do
-    {:ok, connection} = AMQP.Connection.open(@rmq_uri)
+    {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
 
     AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: false)

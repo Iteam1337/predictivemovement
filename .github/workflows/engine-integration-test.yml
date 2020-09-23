@@ -10,17 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - uses: docker/setup-buildx-action@v1
-      - uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - uses: docker/build-push-action@v2
-        with:
-          context: packages/route-optimization-jsprit/
-          tags: iteam1337/pm-route-optimization-jsprit
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build the tagged Docker image
+        run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest
+      - name: Push the tagged Docker image
+        run: docker push iteam1337/pm-route-optimization-jsprit:latest
   run-integration-tests:
     env:
       REDIS_URL: redis://localhost:6379

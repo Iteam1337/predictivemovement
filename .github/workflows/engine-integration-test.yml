@@ -1,10 +1,7 @@
 name: Integration tests
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on: [pull_request]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-and-push-route-optimization:
     runs-on: ubuntu-latest
@@ -12,9 +9,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Login to DockerHub Registry
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build the tagged Docker image
+      - name: Build route-optimization-image
         run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest
-      - name: Push the tagged Docker image
+      - name: Push route-optimization-image
         run: docker push iteam1337/pm-route-optimization-jsprit:latest
   run-integration-tests:
     needs: build-and-push-route-optimization

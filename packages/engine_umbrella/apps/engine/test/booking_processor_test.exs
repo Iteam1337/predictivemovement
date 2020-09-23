@@ -146,6 +146,7 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:capacity) == %{weight: 731, volume: 18}
   end
 
+  @tag :skip
   test "vehicle with too small storage doesn't get assigned", %{
     channel: channel
   } do
@@ -165,6 +166,7 @@ defmodule BookingProcessorTest do
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
 
+  @tag :skip
   test "vehicle with too little weight capabilities doesn't get assigned", %{
     channel: channel
   } do
@@ -186,31 +188,24 @@ defmodule BookingProcessorTest do
 
   test "bookings with same pickup should work just fine", %{
     channel: channel
-  } do    
+  } do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    MessageGenerator.add_random_booking(
-      %{
-        pickup: %{lat: 61.829182, lon: 16.0896213},
-        
-      }
-    )
-    MessageGenerator.add_random_booking(
-      %{
-        pickup: %{lat: 61.829182, lon: 16.0896213},
-      }
-    )
 
-    MessageGenerator.add_random_booking(
-      %{
-        delivery: %{lat: 61.829182, lon: 16.0896213},
-      }
-    )
+    MessageGenerator.add_random_booking(%{
+      pickup: %{lat: 61.829182, lon: 16.0896213}
+    })
+
+    MessageGenerator.add_random_booking(%{
+      pickup: %{lat: 61.829182, lon: 16.0896213}
+    })
+
+    MessageGenerator.add_random_booking(%{
+      delivery: %{lat: 61.829182, lon: 16.0896213}
+    })
 
     MessageGenerator.add_random_car(%{start_address: %{lat: 60.1111, lon: 16.07544}})
 
-    plan =
-      wait_for_message(channel)
-      
+    plan = wait_for_message(channel)
 
     clear_state()
 

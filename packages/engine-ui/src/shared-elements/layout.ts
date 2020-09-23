@@ -45,6 +45,12 @@ const MarginBottomContainer = styled.div`
   overflow: hidden;
 `
 
+const InlineContainer = styled.div`
+  * {
+    display: inline;
+  }
+`
+
 const MarginTopContainer = styled.div`
   margin-top: 2rem;
   display: flex;
@@ -107,4 +113,5 @@ export default {
   MarginBottomContainer,
   MarginTopContainer,
   MarginLeftContainerSm,
+  InlineContainer,
 }

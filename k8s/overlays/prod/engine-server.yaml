@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - engine-server.prod.iteamdev.io
+        - engine-server.iteamdev.io
       secretName: engine-server-prod-tls
   rules:
-    - host: engine-server.prod.iteamdev.io
+    - host: engine-server.iteamdev.io
       http:
         paths:
           - backend:

@@ -1,5 +1,4 @@
 defmodule PlanTest do
-  import TestHelper
   use ExUnit.Case
 
   test "insert time matrix correctly" do

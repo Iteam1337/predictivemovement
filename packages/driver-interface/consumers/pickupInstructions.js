@@ -19,11 +19,7 @@ const pickupInstructions = () => {
           })
         )
         .then(() =>
-          ch.bindQueue(
-            ADD_BOOKING_INFO,
-            OUTGOING_BOOKING_UPDATES,
-            'assigned'
-          )
+          ch.bindQueue(ADD_BOOKING_INFO, OUTGOING_BOOKING_UPDATES, 'assigned')
         )
         .then(() =>
           ch.consume(ADD_BOOKING_INFO, (msg) => {

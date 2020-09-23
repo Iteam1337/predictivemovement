@@ -36,12 +36,12 @@ const Map = ({ data }) => {
       UIState.highlightBooking
     ),
     mapUtils.toGeoJsonLayer(
-      'geojson-cars-layer',
-      mapUtils.carToFeature(data.plan),
+      'geojson-vehicles-layer',
+      mapUtils.vehicleToFeature(data.plan),
       handleClickEvent
     ),
     mapUtils.toIconLayer(
-      mapUtils.vehicleIcon(data.cars),
+      mapUtils.vehicleIcon(data.vehicles),
       UIState.highlightVehicle
     ),
     mapUtils.toGeoJsonLayer(

@@ -116,6 +116,12 @@ defmodule Vehicle do
     vehicle.id
   end
 
+  def delete(id) do
+    Engine.RedisAdapter.delete_vehicle(id)
+    Engine.VehicleStore.delete_vehicle(id)
+    GenServer.stop(via_tuple(id))
+  end
+
   defp via_tuple(id) do
     {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
   end

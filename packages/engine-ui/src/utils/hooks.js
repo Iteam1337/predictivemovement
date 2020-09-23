@@ -44,7 +44,7 @@ const useFilteredStateFromQueryParams = (state) => {
       ...state,
       bookings: state.bookings.map(includeRoute).filter(includeOneIfDetailView),
 
-      cars: state.cars.filter((item) =>
+      vehicles: state.vehicles.filter((item) =>
         vehicleDetailView ? vehicleDetailView.params.id === item.id : true
       ),
       plan: planView

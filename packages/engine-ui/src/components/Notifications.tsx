@@ -88,8 +88,8 @@ const Notifications: React.FC<{
   }, [notifications, updateNotifications, handleOnClose])
 
   const notificationType = (notification: NotificationType) => {
-    switch (true) {
-      case notification.id.includes('pmv-'):
+    switch (notification.id.substr(0, 3)) {
+      case 'pmv':
         return (
           <VehicleNotification
             key={notification.id}
@@ -98,7 +98,7 @@ const Notifications: React.FC<{
           />
         )
 
-      case notification.id.includes('pmb-'):
+      case 'pmb':
         return (
           <BookingNotification
             key={notification.id}

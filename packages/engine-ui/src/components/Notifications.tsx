@@ -114,7 +114,7 @@ const Notifications: React.FC<{
 
   return (
     <NotificationsContainer>
-      {notifications.length > 0 &&
+      {notifications &&
         notifications
           .map((notification) => notificationType(notification))
           .reverse()}

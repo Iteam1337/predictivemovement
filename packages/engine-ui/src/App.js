@@ -27,12 +27,6 @@ const App = () => {
     socket.emit('dispatch-offers')
   }
 
-  const createBookings = (total) => {
-    socket.emit('new-bookings', {
-      total,
-    })
-  }
-
   const deleteBooking = (id) => {
     socket.emit('delete-booking', id)
   }
@@ -73,7 +67,6 @@ const App = () => {
         createBooking={createBooking}
         dispatchOffers={dispatchOffers}
         addVehicle={addVehicle}
-        createBookings={createBookings}
         deleteBooking={deleteBooking}
       />
       <Route path="/">

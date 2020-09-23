@@ -6,7 +6,6 @@ import Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
-import CreateBookings from './CreateBookings'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import styled from 'styled-components'
 import helpers from '../utils/helpers'
@@ -126,7 +125,6 @@ const Wrapper = styled.div`
 
 const Bookings: React.FC<{
   bookings: Booking[]
-  createBookings: () => void
   createBooking: () => void
   deleteBooking: () => void
 }> = (props) => {
@@ -195,21 +193,10 @@ const Bookings: React.FC<{
               </AddFormFieldButton>
             </Link>
           </AddNewContainer>
-          <AddNewContainer>
-            <Link to={`${url}/add-bookings`}>
-              <AddFormFieldButton onClickHandler={null} marginTop="0">
-                + Generera historiska bokningar
-              </AddFormFieldButton>
-            </Link>
-          </AddNewContainer>
         </Route>
 
         <Route exact path={`${path}/add-booking`}>
           <CreateBooking onSubmit={props.createBooking} />
-        </Route>
-
-        <Route exact path={`${path}/add-bookings`}>
-          <CreateBookings onSubmit={props.createBookings} />
         </Route>
 
         <Route path={`${path}/:bookingId`}>

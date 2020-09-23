@@ -33,7 +33,6 @@ const Sidebar = (state) => {
               <Route path="/bookings">
                 <Bookings
                   bookings={state.bookings}
-                  createBookings={state.createBookings}
                   createBooking={state.createBooking}
                   deleteBooking={state.deleteBooking}
                 />

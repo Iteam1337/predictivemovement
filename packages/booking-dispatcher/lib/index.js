@@ -1,9 +1,6 @@
 require('dotenv').config()
 
-const format = require('date-fns/format')
-const setYear = require('date-fns/setYear')
 const { exchanges, publish, amqp, queues } = require('./adapters/amqp')
-const { fetchGeoCodes } = require('./adapters/google')
 const { readXlsx, swerefConverter } = require('./helpers')
 
 const id62 = require('id62').default

@@ -25,12 +25,19 @@ jobs:
         ports:
           - 6379:6379
       route-optmization-jsprit:
-        image: iteam1337/pm-route-optimization-jsprit:234f34c
+        image: iteam1337/pm-route-optimization-jsprit
         env:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"
     steps:
       - uses: actions/checkout@v2
+      - uses: docker/build-push-action@v2
+        with:
+          context: packages/route-optimization-jsprit/
+          push: true
+          tags: iteam1337/pm-route-optimization-jsprit
+          secrets: |
+            GIT_AUTH_TOKEN=${{ github.token }}
       - uses: actions/setup-elixir@v1.0.0
         with:
           otp-version: "22.2"

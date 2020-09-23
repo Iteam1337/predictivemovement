@@ -6,7 +6,7 @@ on: [pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build-route-optimization:
+  build-and-push-route-optimization:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -17,6 +17,7 @@ jobs:
       - name: Push the tagged Docker image
         run: docker push iteam1337/pm-route-optimization-jsprit:latest
   run-integration-tests:
+    needs: build-and-push-route-optimization
     env:
       REDIS_URL: redis://localhost:6379
       AMQP_HOST: localhost

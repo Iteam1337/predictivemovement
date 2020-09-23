@@ -30,7 +30,7 @@ const vehiclePlan = () => {
           ch.consume(ADD_INSTRUCTIONS_TO_VEHICLE, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
             const currentVehicle = getVehicle(vehicle.id) || {}
-            console.log('received plan')
+            console.log('received plan: ', vehicle)
 
             addVehicle(vehicle.id, {
               ...currentVehicle,

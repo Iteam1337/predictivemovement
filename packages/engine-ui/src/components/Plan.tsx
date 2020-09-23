@@ -13,10 +13,6 @@ const PlanWrapper = styled.div`
   height: 100%;
 `
 
-// const StyledLink = styled(Link)`
-//   align-self: flex-end;
-// `
-
 interface Address {
   lat: string
   lon: string

@@ -109,7 +109,7 @@ const sendPickupInstruction = async (instruction, telegramId, booking) => {
   const pickup =
     booking.pickup.street && booking.pickup.city
       ? `${booking.pickup.street}, ${booking.pickup.city}`
-      : await getAddressFromCoordinate({...booking.pickup})
+      : await getAddressFromCoordinate({ ...booking.pickup })
 
   const delivery =
     booking.delivery.street && booking.delivery.city
@@ -118,7 +118,10 @@ const sendPickupInstruction = async (instruction, telegramId, booking) => {
 
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Hämta paket "${instruction.id}" vid [${pickup}](${getDirectionsUrl(
+    `🎁 Hämta paket "${instruction.id.slice(
+      instruction.id.length - 4,
+      instruction.id.length
+    )}" vid [${pickup}](${getDirectionsUrl(
       pickup
     )}) och leverera det sedan till ${delivery}!`.concat(
       `\nTryck på "[Framme]" när du har anlänt till destinationen.`

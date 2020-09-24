@@ -1,7 +1,7 @@
 const bookingsCache = new Map()
 const vehiclesCache = new Map()
 const instructionsCache = new Map()
-const idMap = new Map()
+const vehicleIdByTelegramIdCache = new Map()
 
 module.exports = {
   getBooking: (id) => bookingsCache.get(id),
@@ -11,6 +11,8 @@ module.exports = {
   getInstructions: (vehicleId) => instructionsCache.get(vehicleId),
   addVehicle: (vehicleId, vehicle) => vehiclesCache.set(vehicleId, vehicle),
   getVehicle: (vehicleId) => vehiclesCache.get(vehicleId),
-  getVehicleIdFromTelegramId: (telegramId) => idMap.get(telegramId),
-  setVehicleIdFromTelegramId: (telegramId, id) => idMap.set(telegramId, id),
+  getVehicleIdByTelegramId: (telegramId) =>
+    vehicleIdByTelegramIdCache.get(telegramId),
+  setVehicleIdByTelegramId: (telegramId, id) =>
+    vehicleIdByTelegramIdCache.set(telegramId, id),
 }

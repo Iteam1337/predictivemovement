@@ -8,7 +8,7 @@ const {
 
 function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
 
   return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
     vehicleId,
@@ -18,11 +18,11 @@ function onArrived(msg) {
 
 function onPickup(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
-  return open
+  open
     .then((conn) => conn.createChannel())
     .then((ch) => {
       ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
@@ -37,17 +37,18 @@ function onPickup(msg) {
         )
       })
     })
-    .then(() => botServices.handleNextDriverInstruction(vehicleId, telegramId))
     .catch(console.warn)
+
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onDelivered(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
-  return open
+  open
     .then((conn) => conn.createChannel())
     .then((ch) => {
       ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
@@ -61,8 +62,9 @@ function onDelivered(msg) {
         )
       })
     })
-    .then(() => botServices.handleNextDriverInstruction(vehicleId, telegramId))
     .catch(console.warn)
+
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onOffer(msg) {
@@ -75,7 +77,7 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', (ctx) => {
-    const vehicleId = cache.getVehicleIdFromTelegramId(ctx.botInfo.id)
+    const vehicleId = cache.getVehicleIdByTelegramId(ctx.botInfo.id)
     const vehicleWithPlan = cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
@@ -91,7 +93,7 @@ const init = (bot) => {
     )
   })
 
-  bot.command('/login', (ctx) => messaging.onPromptUserForTransportId(ctx))
+  bot.command('/login', messaging.onPromptUserForTransportId)
 
   bot.on('message', (ctx) => {
     const msg = ctx.message

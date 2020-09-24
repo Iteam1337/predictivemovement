@@ -9,7 +9,7 @@ const onLogin = (vehicleId, ctx) => {
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
 
   const telegramId = ctx.update.message.from.id
-  cache.setVehicleIdFromTelegramId(telegramId, vehicleId)
+  cache.setVehicleIdByTelegramId(telegramId, vehicleId)
 
   if (vehicle.telegramId) {
     return

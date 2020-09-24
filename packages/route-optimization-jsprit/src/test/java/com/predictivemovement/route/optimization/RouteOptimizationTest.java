@@ -87,6 +87,11 @@ public class RouteOptimizationTest {
                 "src/test/resources/msg/13/13_route_response.json");
     }
 
+    @Test
+    public void vehicle_time_schedule() throws IOException {
+        test_route_optimization("src/test/resources/msg/14/14_route_request.json", "src/test/resources/msg/14/14_route_response.json");
+    }
+
     private void test_route_optimization(String requestFilename, String expectedResponseFilename) throws IOException {
         // given
         JSONObject routeRequest = readJsonFromFile(requestFilename);

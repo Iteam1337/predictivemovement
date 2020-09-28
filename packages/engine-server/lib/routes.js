@@ -5,7 +5,6 @@ const {
   cars,
   createBooking,
   dispatchOffers,
-  createBookingsFromHistory,
   plan,
   deleteBooking,
 } = require('./engineConnector')
@@ -107,11 +106,6 @@ function register(io) {
         },
       }
       addVehicle(vehicle)
-    })
-
-    socket.on('new-bookings', ({ total }) => {
-      console.log('will create ', total, 'bookings')
-      createBookingsFromHistory(total)
     })
 
     socket.on('delete-booking', (id) => {

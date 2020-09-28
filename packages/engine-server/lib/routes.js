@@ -5,7 +5,6 @@ const {
   vehicles,
   createBooking,
   dispatchOffers,
-  createBookingsFromHistory,
   plan,
   deleteBooking,
   deleteVehicle,
@@ -42,6 +41,9 @@ function register(io) {
         planCache.set('plan', data)
       })
       .each((data) => socket.emit('plan-update', data))
+
+    _(bookings.fork()).each((booking) => socket.emit('notification', booking))
+    _(cars.fork()).each((car) => socket.emit('notification', car))
 
     socket.on('new-booking', (params) => {
       const booking = {
@@ -105,11 +107,6 @@ function register(io) {
         },
       }
       addVehicle(vehicle)
-    })
-
-    socket.on('new-bookings', ({ total }) => {
-      console.log('will create ', total, 'bookings')
-      createBookingsFromHistory(total)
     })
 
     socket.on('delete-booking', (id) => {

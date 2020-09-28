@@ -12,7 +12,6 @@ const findAddress = (query: string) => {
   if (!query) {
     return Promise.resolve({ features: [] })
   }
-
   return fetch(
     `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`
   ).then((res) => res.json())

@@ -6,6 +6,15 @@ const {
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
+const channel = open
+  .then((conn) => conn.createChannel())
+  .then((ch) => {
+    ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
+      durable: false,
+    })
+    return ch
+  })
+
 function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
   const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
@@ -62,6 +71,21 @@ function onDelivered(msg) {
         )
       })
     })
+    .catch(console.warn)
+
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
+}
+
+function onDeliveryFailed(msg) {
+  const { id: bookingId } = JSON.parse(msg.update.callback_query.data)
+  const { id: telegramId } = msg.update.callback_query.from
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+  const openChannel = await channel
+  openChannel.publish(
+    INCOMING_BOOKING_UPDATES,
+    'delivery_failed',
+    Buffer.from(JSON.stringify({ id: bookingId, status: 'delivery_failed' }))
+  )
     .catch(console.warn)
 
   return botServices.handleNextDriverInstruction(vehicleId, telegramId)
@@ -128,6 +152,8 @@ const init = (bot) => {
         return onArrived(msg)
       case 'delivered':
         return onDelivered(msg)
+      case 'delivery_failed':
+        return onDeliveryFailed(msg)
       case 'offer':
         return onOffer(msg)
       default:

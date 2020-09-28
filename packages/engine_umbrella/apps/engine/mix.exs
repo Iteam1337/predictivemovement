@@ -11,8 +11,7 @@ defmodule Engine.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env())
+      deps: deps()
     ]
   end
 
@@ -43,7 +42,6 @@ defmodule Engine.MixProject do
       {:jason, "~> 1.2"},
       {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
       {:math, "~> 0.4.0"},
-      {:mox, "~> 0.5"},
       {:poison, "~> 3.1"},
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
       {:gproc, "~> 0.8.0"},
@@ -53,8 +51,4 @@ defmodule Engine.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
   end
-
-  # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/mocks"]
-  defp elixirc_paths(_), do: ["lib"]
 end

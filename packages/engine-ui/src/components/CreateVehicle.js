@@ -4,6 +4,7 @@ import Elements from '../shared-elements'
 import Form from './forms/CreateVehicle'
 import MainRouteLayout from './layout/MainRouteLayout'
 import hooks from '../utils/hooks'
+import moment from 'moment'
 
 const CreateVehicle = ({ onSubmit }) => {
   const history = useHistory()
@@ -39,6 +40,13 @@ const CreateVehicle = ({ onSubmit }) => {
       ...formState,
       lat: formState.startPosition.lat,
       lon: formState.startPosition.lon,
+      timewindow:
+        formState.timewindow.start && formState.timewindow.end
+          ? {
+              start: moment(formState.timewindow.start).format('HH:mm'),
+              end: moment(formState.timewindow.end).format('HH:mm'),
+            }
+          : formState.timewindow,
     })
 
     history.push('/transports')

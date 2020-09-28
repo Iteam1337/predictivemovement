@@ -33,6 +33,10 @@ const App = () => {
     socket.emit('delete-booking', id)
   }
 
+  const deleteVehicle = (id) => {
+    socket.emit('delete-vehicle', id)
+  }
+
   useSocket('notification', (notification) => {
     updateNotifications((notifications) => [notification, ...notifications])
   })
@@ -51,10 +55,17 @@ const App = () => {
     })
   })
 
-  useSocket('cars', (newCars) => {
+  useSocket('vehicle-deleted', (vehicleId) => {
     dispatch({
-      type: 'setCars',
-      payload: newCars,
+      type: 'deleteVehicle',
+      payload: vehicleId,
+    })
+  })
+
+  useSocket('vehicles', (newVehicles) => {
+    dispatch({
+      type: 'setVehicles',
+      payload: newVehicles,
     })
   })
 
@@ -78,6 +89,7 @@ const App = () => {
         dispatchOffers={dispatchOffers}
         addVehicle={addVehicle}
         deleteBooking={deleteBooking}
+        deleteVehicle={deleteVehicle}
       />
       <Route path="/">
         <Map data={mapData} />

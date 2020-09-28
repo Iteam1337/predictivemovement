@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
 import MainRouteLayout from './layout/MainRouteLayout'
@@ -39,8 +40,13 @@ const RouteTitleWrapper = styled.div`
   }
 `
 
-const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
+const VehicleDetails: React.FC<{
+  vehicles: any
+  deleteVehicle: (id: string) => void
+}> = ({ vehicles, deleteVehicle }) => {
   const { dispatch } = React.useContext(UIStateContext)
+  const history = useHistory()
+
   const [showInfo, setShowInfo] = React.useState({
     route: false,
     bookings: false,
@@ -52,6 +58,13 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
   const vehicle = vehicles.find((v: any) => v.id === vehicleId)
 
   if (!vehicle) return <p>Loading...</p>
+
+  const handleDeleteClick = (vehicleId: string) => {
+    if (window.confirm('Är du säker på att du vill radera transporten?')) {
+      deleteVehicle(vehicleId)
+      return history.push('/transports')
+    }
+  }
 
   const handleOnLinkClick = (id: string) => {
     const activity = vehicle.activities.find(
@@ -188,6 +201,13 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
             </Elements.Layout.MarginBottomContainer>
           </>
         )}
+        <Elements.Layout.MarginTopContainer>
+          <Elements.Buttons.DeleteButton
+            onClick={() => handleDeleteClick(vehicle.id)}
+          >
+            Radera transport
+          </Elements.Buttons.DeleteButton>
+        </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

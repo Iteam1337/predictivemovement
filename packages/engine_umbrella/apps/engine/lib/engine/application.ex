@@ -22,6 +22,7 @@ defmodule Engine.Application do
       Engine.AdminProcessor,
       Engine.BookingUpdatesProcessor,
       Engine.BookingDeleteProcessor,
+      Engine.VehicleDeleteProcessor,
       Engine.BookingStore,
       Engine.VehicleStore,
       {Redix, {Application.fetch_env!(:engine, :redis_url), [name: :redix]}}

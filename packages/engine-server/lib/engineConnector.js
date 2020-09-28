@@ -54,7 +54,7 @@ const bookings = amqp
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
 
-const cars = amqp
+const vehicles = amqp
   .exchange('outgoing_vehicle_updates', 'topic', {
     durable: false,
   })
@@ -62,8 +62,8 @@ const cars = amqp
     durable: false,
   })
   .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
-  .map((cars) => {
-    return cars.json()
+  .map((vehicles) => {
+    return vehicles.json()
   })
 
 const createBooking = (booking) => {
@@ -116,12 +116,22 @@ const deleteBooking = (id) => {
     .then(() => console.log(` [x] Delete booking ${id}`))
 }
 
+const deleteVehicle = (id) => {
+  return amqp
+    .exchange('incoming_vehicle_updates', 'topic', {
+      durable: false,
+    })
+    .publish(id, routingKeys.DELETED)
+    .then(() => console.log(` [x] Delete vehicle ${id}`))
+}
+
 module.exports = {
   addVehicle,
   bookings,
-  cars,
+  vehicles,
   createBooking,
   dispatchOffers,
   plan,
   deleteBooking,
+  deleteVehicle,
 }

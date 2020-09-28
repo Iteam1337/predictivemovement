@@ -39,8 +39,9 @@ const Sidebar = (state) => {
               </Route>
               <Route path="/transports">
                 <Transports
-                  vehicles={state.cars}
+                  vehicles={state.vehicles}
                   addVehicle={state.addVehicle}
+                  deleteVehicle={state.deleteVehicle}
                 />
               </Route>
               <Route path="/plans">

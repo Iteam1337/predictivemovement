@@ -2,15 +2,16 @@ const _ = require('highland')
 const {
   addVehicle,
   bookings,
-  cars,
+  vehicles,
   createBooking,
   dispatchOffers,
   plan,
   deleteBooking,
+  deleteVehicle,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
-const movingCarsCache = new Map()
+const vehiclesCache = new Map()
 const bookingsCache = new Map()
 const planCache = new Map()
 
@@ -24,16 +25,16 @@ function register(io) {
         socket.emit('bookings', bookings)
       })
 
-    _.merge([_(movingCarsCache.values()), cars.fork()])
-      .filter((car) => car.id)
-      .doto((car) => {
-        movingCarsCache.set(car.id, car)
+    _.merge([_(vehiclesCache.values()), vehicles.fork()])
+      .filter((vehicle) => vehicle.id)
+      .doto((vehicle) => {
+        vehiclesCache.set(vehicle.id, vehicle)
       })
       // .pick(['position', 'status', 'id', 'activities', 'current_route'])
       // .tap((car) => car)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
-      .each((cars) => socket.emit('cars', cars))
+      .each((vehicles) => socket.emit('vehicles', vehicles))
 
     _.merge([_(planCache.values()), plan.fork()])
       .doto((data) => {
@@ -113,6 +114,12 @@ function register(io) {
       bookingsCache.delete(id)
       deleteBooking(id)
       socket.emit('delete-booking', id)
+    })
+
+    socket.on('delete-vehicle', (id) => {
+      vehiclesCache.delete(id)
+      deleteVehicle(id)
+      socket.emit('vehicle-deleted', id)
     })
   })
 }

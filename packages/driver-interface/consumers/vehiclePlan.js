@@ -27,12 +27,12 @@ const vehiclePlan = () =>
           )
         )
         .then(() =>
-          ch.consume(ADD_INSTRUCTIONS_TO_VEHICLE, (msg) => {
+          ch.consume(ADD_INSTRUCTIONS_TO_VEHICLE, async (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
-            const currentVehicle = cache.getVehicle(vehicle.id) || {}
+            const currentVehicle = (await cache.getVehicle(vehicle.id)) || {}
             console.log('received plan: ', vehicle)
 
-            cache.addVehicle(vehicle.id, {
+            await cache.addVehicle(vehicle.id, {
               ...currentVehicle,
               ...vehicle,
             })

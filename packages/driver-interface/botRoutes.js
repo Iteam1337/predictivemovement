@@ -6,9 +6,9 @@ const {
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
-function onArrived(msg) {
+async function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 
   return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
     vehicleId,
@@ -16,9 +16,9 @@ function onArrived(msg) {
   )
 }
 
-function onPickup(msg) {
+async function onPickup(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
@@ -42,9 +42,9 @@ function onPickup(msg) {
   return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
-function onDelivered(msg) {
+async function onDelivered(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
@@ -76,9 +76,9 @@ function onOffer(msg) {
 const init = (bot) => {
   bot.start(messaging.onBotStart)
 
-  bot.command('/lista', (ctx) => {
-    const vehicleId = cache.getVehicleIdByTelegramId(ctx.botInfo.id)
-    const vehicleWithPlan = cache.getVehicle(vehicleId)
+  bot.command('/lista', async (ctx) => {
+    const vehicleId = await cache.getVehicleIdByTelegramId(ctx.botInfo.id)
+    const vehicleWithPlan = await cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
       return messaging.onNoInstructionsForVehicle(ctx)

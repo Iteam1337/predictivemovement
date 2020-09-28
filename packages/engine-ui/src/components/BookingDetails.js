@@ -124,8 +124,6 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
     size: { measurement, weight },
   } = booking
 
-  console.log(booking)
-
   return (
     <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
       <Elements.Layout.Container>
@@ -139,19 +137,34 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         <Elements.Layout.MarginBottomContainer />
-        <Elements.Typography.StrongParagraph>
-          {measurement &&
-            measurement.map((item, index) =>
-              measurement.length === index + 1 ? `${item} cm, ` : `${item}x`
+        {cargo && (
+          <Paragraph>
+            <Elements.Typography.SpanBold>
+              Innehåll:{' '}
+            </Elements.Typography.SpanBold>
+            {cargo}
+          </Paragraph>
+        )}
+        <Paragraph>
+          <Elements.Typography.SpanBold>
+            Ömtåligt:{' '}
+          </Elements.Typography.SpanBold>
+          {fragile ? 'Ja' : 'Nej'}
+        </Paragraph>
+        {measurement && (
+          <Paragraph>
+            <Elements.Typography.SpanBold>Mått: </Elements.Typography.SpanBold>
+            {measurement.map((item, index) =>
+              measurement.length === index + 1 ? `${item} cm ` : `${item}x`
             )}
-          {weight && ` ${weight} kg`}
-        </Elements.Typography.StrongParagraph>
-        <Elements.Typography.StrongParagraph>
-          {cargo}
-        </Elements.Typography.StrongParagraph>
-        <Elements.Typography.StrongParagraph>
-          Ömtåligt: {fragile ? 'Ja' : 'Nej'}
-        </Elements.Typography.StrongParagraph>
+          </Paragraph>
+        )}
+        {weight && (
+          <Paragraph>
+            <Elements.Typography.SpanBold>Vikt: </Elements.Typography.SpanBold>
+            {`${weight} kg`}
+          </Paragraph>
+        )}
 
         <Elements.Layout.MarginBottomContainer />
         <Elements.Layout.MarginBottomContainer>

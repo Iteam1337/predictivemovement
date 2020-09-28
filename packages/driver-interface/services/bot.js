@@ -28,7 +28,7 @@ const onLogin = (vehicleId, ctx) => {
   return messaging
     .onDriverLoginSuccessful(ctx)
     .then(() =>
-      handleNextDriverInstruction(vehicleId, ctx.update.message.from.id)
+      handleNextDriverInstruction(telegramId)
     )
 }
 
@@ -53,8 +53,9 @@ const onLocationMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-const handleNextDriverInstruction = (vehicleId, telegramId) => {
+const handleNextDriverInstruction = (telegramId) => {
   try {
+    const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
     const [currentInstruction] = cache.getInstructions(vehicleId)
 
     if (!currentInstruction)

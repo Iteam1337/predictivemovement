@@ -23,7 +23,7 @@ const Content = styled.div`
   overflow: auto;
 `
 
-interface props {
+interface Props {
   bookings: Booking[]
   plan: PlanVehicle[]
   vehicles: any
@@ -34,7 +34,7 @@ interface props {
   deleteVehicle: (id: string) => void
 }
 
-const Sidebar = (state: props) => {
+const Sidebar = (state: Props) => {
   return (
     <Container>
       <Navigation />

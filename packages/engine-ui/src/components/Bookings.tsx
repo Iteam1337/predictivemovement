@@ -9,31 +9,12 @@ import CreateBooking from './CreateBooking'
 import CreateBookings from './CreateBookings'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import styled from 'styled-components'
+import { Booking } from '../types'
 import helpers from '../utils/helpers'
 
 const AddNewContainer = styled.div`
   margin-top: 1rem;
 `
-
-enum BookingStatus {
-  NEW = 'new',
-  ASSIGNED = 'assigned',
-  DELIVERED = 'delivered',
-  PICKED_UP = 'picked_up',
-}
-
-type Booking = {
-  id: string
-  pickup: {
-    lat: string
-    lon: string
-  }
-  delivery: {
-    lat: string
-    lon: string
-  }
-  status: BookingStatus
-}
 
 const sortBookingsByStatus = (bookings: Booking[]) =>
   bookings.reduce<{

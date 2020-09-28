@@ -187,15 +187,21 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             ))}
         </Elements.Layout.MarginBottomContainer>
         {sender.name && (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src={ContactName} style={{ marginRight: '0.5rem' }} />
+          <Elements.Layout.FlexRowBaselineContainer>
+            <Elements.Icons.MarginRightIcon
+              src={ContactName}
+              alt="Contact Avatar"
+            />
             <Paragraph>{sender.name}</Paragraph>
-          </div>
+          </Elements.Layout.FlexRowBaselineContainer>
         )}
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={ContactPhone} style={{ marginRight: '0.5rem' }} />
+        <Elements.Layout.FlexRowBaselineContainer>
+          <Elements.Icons.MarginRightIcon
+            src={ContactPhone}
+            alt="Contact Phone"
+          />
           <Paragraph>{sender.contact}</Paragraph>
-        </div>
+        </Elements.Layout.FlexRowBaselineContainer>
         <Elements.Layout.MarginBottomContainer />
         <Elements.Layout.MarginBottomContainer></Elements.Layout.MarginBottomContainer>
         <Elements.Layout.MarginBottomContainer>
@@ -214,15 +220,21 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
               ))}
           </Elements.Layout.MarginBottomContainer>
           {sender.name && (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <img src={ContactName} style={{ marginRight: '0.5rem' }} />
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactName}
+                alt="Contact Avatar"
+              />
               <Paragraph>{recipient.name}</Paragraph>
-            </div>
+            </Elements.Layout.FlexRowBaselineContainer>
           )}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src={ContactPhone} style={{ marginRight: '0.5rem' }} />
+          <Elements.Layout.FlexRowBaselineContainer>
+            <Elements.Icons.MarginRightIcon
+              src={ContactPhone}
+              alt="Contact Phone"
+            />
             <Paragraph>{recipient.contact}</Paragraph>
-          </div>
+          </Elements.Layout.FlexRowBaselineContainer>
         </Elements.Layout.MarginBottomContainer>
         <Elements.Layout.MarginBottomContainer></Elements.Layout.MarginBottomContainer>
         <Elements.Layout.MarginBottomContainer>
@@ -266,7 +278,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <Paragraph>{booking.status}</Paragraph>
           )}
         </Timeline>
-        <Elements.Layout.MarginTopContainer>
+        <Elements.Layout.MarginTopContainer alignItems="center">
           {booking.status === 'new' && (
             <Elements.Buttons.CancelButton
               onClick={() => handleDeleteClick(id)}

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: engine-server
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  labels:
+    app: engine-server
+spec:
+  tls:
+    - hosts:
+        - engine-server.iteamdev.io
+      secretName: engine-server-prod-tls
+  rules:
+    - host: engine-server.iteamdev.io
+      http:
+        paths:
+          - backend:
+              serviceName: engine-server
+              servicePort: 4000

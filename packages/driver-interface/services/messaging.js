@@ -1,10 +1,7 @@
 const bot = require('../adapters/bot')
-const Markup = require('telegraf/markup')
-const { open } = require('../adapters/amqp')
-const moment = require('moment')
+const helpers = require('../helpers')
 const { getDirectionsFromActivities, getDirectionsUrl } = require('./google')
 const { getAddressFromCoordinate } = require('./pelias')
-const replyQueues = new Map()
 
 const onBotStart = (ctx) => {
   ctx.reply(
@@ -12,82 +9,15 @@ const onBotStart = (ctx) => {
   )
 }
 
-const sendPickupOffer = (
-  chatId,
-  msgOptions,
-  { startingAddress, route, activities, bookingIds }
-) => {
-  replyQueues.set(msgOptions.correlationId, msgOptions.replyQueue)
+const onPromptUserForTransportId = (ctx) => ctx.reply('Ange ditt transport-id')
 
-  const directions = getDirectionsFromActivities(activities)
+const onNoVehicleFoundFromId = (ctx) =>
+  ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
 
-  const message = `${
-    bookingIds.length
-  } paket finns att hämta. Rutten börjar på ${startingAddress}. Turen beräknas att ta cirka ${moment
-    .duration({ seconds: route.duration })
-    .humanize()}. Vill du ha denna order?
-  [Se på kartan](${directions})`
-
-  bot.telegram.sendMessage(parseInt(chatId, 10), message, {
-    parse_mode: 'markdown',
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: 'Nej',
-            callback_data: JSON.stringify({
-              a: false,
-              id: msgOptions.correlationId,
-              e: 'offer',
-            }),
-          },
-          {
-            text: 'Ja',
-            callback_data: JSON.stringify({
-              a: true,
-              id: msgOptions.correlationId,
-              e: 'offer',
-            }),
-          },
-        ],
-      ],
-    },
-  })
-}
-
-const onPickupConfirm = (ctx) => {
-  const { id } = JSON.parse(ctx.update.callback_query.data)
-
-  return ctx.replyWithMarkdown(
-    'Härligt, nu kan du köra paketet till dess destination!',
-    Markup.inlineKeyboard([
-      Markup.callbackButton(
-        'Levererat',
-        JSON.stringify({ e: 'delivered', id })
-      ),
-    ]).extra()
+const onDriverLoginSuccessful = (ctx) =>
+  ctx.reply(
+    'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
   )
-}
-
-const onPickupOfferResponse = (isAccepted, options, msg) => {
-  msg.editMessageReplyMarkup()
-  msg.answerCbQuery()
-  msg.reply(isAccepted ? 'Kul!' : 'Tråkigt, kanske nästa gång!')
-
-  const replyQueue = replyQueues.get(options.id)
-
-  if (!replyQueue)
-    return Promise.reject(`missing reply queue for ${options.id}`)
-
-  return open
-    .then((conn) => conn.createChannel())
-    .then((ch) => {
-      ch.sendToQueue(replyQueue, Buffer.from(isAccepted.toString()), {
-        correlationId: options.id,
-      })
-    })
-    .catch(console.warn)
-}
 
 const onNoInstructionsForVehicle = (ctx) =>
   ctx.reply('Vi kunde inte hitta några instruktioner...')
@@ -109,7 +39,7 @@ const sendPickupInstruction = async (instruction, telegramId, booking) => {
   const pickup =
     booking.pickup.street && booking.pickup.city
       ? `${booking.pickup.street}, ${booking.pickup.city}`
-      : await getAddressFromCoordinate({...booking.pickup})
+      : await getAddressFromCoordinate({ ...booking.pickup })
 
   const delivery =
     booking.delivery.street && booking.delivery.city
@@ -118,7 +48,9 @@ const sendPickupInstruction = async (instruction, telegramId, booking) => {
 
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Hämta paket "${instruction.id}" vid [${pickup}](${getDirectionsUrl(
+    `🎁 Hämta paket "${helpers.getLastFourChars(
+      instruction.id
+    )}" vid [${pickup}](${getDirectionsUrl(
       pickup
     )}) och leverera det sedan till ${delivery}!`.concat(
       `\nTryck på "[Framme]" när du har anlänt till destinationen.`
@@ -138,6 +70,7 @@ const sendPickupInstruction = async (instruction, telegramId, booking) => {
           ],
         ],
       },
+      disable_web_page_preview: true,
     }
   )
 }
@@ -150,9 +83,9 @@ const sendDeliveryInstruction = async (instruction, telegramId, booking) => {
 
   return bot.telegram.sendMessage(
     telegramId,
-    `🎁 Leverera paket "${
+    `🎁 Leverera paket "${helpers.getLastFourChars(
       instruction.id
-    }" till [${delivery}](${getDirectionsUrl(delivery)})!`.concat(
+    )}" till [${delivery}](${getDirectionsUrl(delivery)})!`.concat(
       `\nTryck "[Framme]" när du har anlänt till destinationen.`
     ),
     {
@@ -216,6 +149,7 @@ const sendPickupInformation = (instruction, telegramId, booking) =>
           ],
         ],
       },
+      disable_web_page_preview: true,
     }
   )
 
@@ -226,7 +160,7 @@ const sendDeliveryInformation = (instruction, telegramId, booking) =>
       booking.metadata &&
       booking.metadata.recipient &&
       booking.metadata.recipient.contact
-        ? 'Du kan nu nå mottagern på ' + booking.metadata.recipient.contact
+        ? 'Du kan nu nå mottagaren på ' + booking.metadata.recipient.contact
         : ''
     }`
       .concat(
@@ -260,12 +194,12 @@ module.exports = {
   onNoInstructionsForVehicle,
   onInstructionsForVehicle,
   onBotStart,
-  sendPickupOffer,
   sendPickupInstruction,
   sendPickupInformation,
   sendDeliveryInstruction,
   sendDeliveryInformation,
-  onPickupConfirm,
-  onPickupOfferResponse,
   sendDriverFinishedMessage,
+  onNoVehicleFoundFromId,
+  onDriverLoginSuccessful,
+  onPromptUserForTransportId,
 }

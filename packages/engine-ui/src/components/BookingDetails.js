@@ -122,7 +122,10 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {id}
+            {helpers.withoutLastFourChars(booking.id)}
+            <Elements.Typography.SpanBold>
+              {helpers.getLastFourChars(booking.id)}
+            </Elements.Typography.SpanBold>
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         <Elements.Layout.MarginBottomContainer />
@@ -160,7 +163,10 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <Elements.Links.RoundedLink
               to={`/transports/${booking.assigned_to.id}`}
             >
-              {booking.assigned_to.id}
+              {helpers.withoutLastFourChars(booking.assigned_to.id)}
+              <Elements.Typography.SpanBold>
+                {helpers.getLastFourChars(booking.assigned_to.id)}
+              </Elements.Typography.SpanBold>
             </Elements.Links.RoundedLink>
           </>
         )}

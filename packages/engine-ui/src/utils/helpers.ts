@@ -12,7 +12,6 @@ const findAddress = (query: string) => {
   if (!query) {
     return Promise.resolve({ features: [] })
   }
-
   return fetch(
     `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`
   ).then((res) => res.json())
@@ -41,17 +40,25 @@ const calculateMinTime = (date?: Date, minDate?: Date) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
+const getLastFourChars = (str: string) => str.slice(str.length - 4, str.length)
+
+const withoutLastFourChars = (str: string) => str.slice(0, str.length - 4)
+
 const formatCoordinateToFixedDecimalLength = ({
   lat,
   lon,
+  length,
 }: {
   lat: number
   lon: number
-}) => `${lat.toFixed(6)}, ${lon.toFixed(6)}`
+  length: number
+}) => `${lat.toFixed(length)}, ${lon.toFixed(length)}`
 
 export default {
   findAddress,
   calculateMinTime,
   getAddressFromCoordinate,
+  getLastFourChars,
+  withoutLastFourChars,
   formatCoordinateToFixedDecimalLength,
 }

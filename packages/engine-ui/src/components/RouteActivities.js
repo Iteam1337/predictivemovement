@@ -1,6 +1,7 @@
 import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
 import styled from 'styled-components'
+import helpers from '../utils/helpers'
 import { UIStateContext } from '../utils/UIStateContext'
 import Elements from './Elements'
 
@@ -59,7 +60,7 @@ const RouteActivities = ({ vehicle }) => {
               })
             }
           >
-            {activity.id}
+            ...{helpers.getLastFourChars(activity.id)}
           </Elements.RoundedLink>
         </ActivityInfo>
       ))}

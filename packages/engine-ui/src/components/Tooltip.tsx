@@ -130,7 +130,7 @@ const Component: React.FC<{
   }
 
   const getAddAsInputButton = (pathname: string, inputCode: InputTypes) => (
-    <Elements.Typography.StrongSmallInfo>
+    <Elements.Typography.InfoSmStrong>
       <AddButton
         onClick={() =>
           dispatch({
@@ -143,7 +143,7 @@ const Component: React.FC<{
           tooltipTexts[entityTypeFromPathname(pathname)][inputCode]
         }`}
       </AddButton>
-    </Elements.Typography.StrongSmallInfo>
+    </Elements.Typography.InfoSmStrong>
   )
 
   return (
@@ -153,15 +153,15 @@ const Component: React.FC<{
       </CloseButtonContainer>
       <ContentContainer>
         {loading && (
-          <Elements.Typography.SmallInfo>
+          <Elements.Typography.InfoSm>
             Läser in...
-          </Elements.Typography.SmallInfo>
+          </Elements.Typography.InfoSm>
         )}
 
         {error && (
-          <Elements.Typography.SmallInfo>
+          <Elements.Typography.InfoSm>
             Vi kunde inte hitta någon adress för den angivna koordinaten.
-          </Elements.Typography.SmallInfo>
+          </Elements.Typography.InfoSm>
         )}
 
         {data && (
@@ -169,7 +169,7 @@ const Component: React.FC<{
             <AddressName>{data.name}</AddressName>
             <CountyName>{data.county}</CountyName>
             <Coordinate>
-              {helpers.formatCoordinateToFixedDecimalLength({ lat, lon })}
+              {helpers.formatCoordinateToFixedDecimalLength({ lat, lon, length: 6 })}
             </Coordinate>
 
             {Boolean(lastFocusedInput) &&

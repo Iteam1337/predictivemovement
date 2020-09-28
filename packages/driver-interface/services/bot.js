@@ -1,39 +1,35 @@
+const helpers = require('../helpers')
 const amqp = require('./amqp')
-const {
-  getVehicle,
-  addVehicle,
-  setInstructions,
-  getInstructions,
-} = require('./cache')
-const { getBooking } = require('./cache')
+const cache = require('./cache')
 
 const messaging = require('./messaging')
 
 const onLogin = (vehicleId, ctx) => {
-  const currentVehicle = getVehicle(vehicleId)
-  if (!currentVehicle)
-    return ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
+  const vehicle = cache.getVehicle(vehicleId)
+  if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
 
   const telegramId = ctx.update.message.from.id
+  cache.setVehicleIdByTelegramId(telegramId, vehicleId)
 
-  ctx.metadata.setVehicleIdFromTelegramId(telegramId, vehicleId)
-
-  if (currentVehicle.telegramId) {
+  if (vehicle.telegramId) {
     return
   }
 
-  setInstructions(currentVehicle.id, currentVehicle.activities.slice(1, -1))
+  cache.setInstructions(
+    vehicle.id,
+    helpers.cleanDriverInstructions(vehicle.activities)
+  )
 
-  addVehicle(vehicleId, {
-    ...currentVehicle,
+  cache.addVehicle(vehicleId, {
+    ...vehicle,
     telegramId,
   })
 
-  return ctx
-    .reply(
-      'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
+  return messaging
+    .onDriverLoginSuccessful(ctx)
+    .then(() =>
+      handleNextDriverInstruction(vehicleId, ctx.update.message.from.id)
     )
-    .then(() => handleOnArrive(vehicleId, ctx.update.message.from.id))
 }
 
 const onLocationMessage = (msg, ctx) => {
@@ -57,32 +53,47 @@ const onLocationMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-const handleOnArrive = (vehicleId, telegramId) => {
+const handleNextDriverInstruction = (vehicleId, telegramId) => {
   try {
-    const [current] = getInstructions(vehicleId)
+    const [currentInstruction] = cache.getInstructions(vehicleId)
 
-    if (!current) return messaging.sendDriverFinishedMessage(telegramId)
-    const booking = getBooking(current.id)
+    if (!currentInstruction)
+      return messaging.sendDriverFinishedMessage(telegramId)
 
-    if (current.type === 'pickupShipment')
-      messaging.sendPickupInstruction(current, telegramId, booking)
+    const booking = cache.getBooking(currentInstruction.id)
 
-    if (current.type === 'deliverShipment')
-      messaging.sendDeliveryInstruction(current, telegramId, booking)
+    if (currentInstruction.type === 'pickupShipment')
+      return messaging.sendPickupInstruction(
+        currentInstruction,
+        telegramId,
+        booking
+      )
+
+    if (currentInstruction.type === 'deliverShipment')
+      return messaging.sendDeliveryInstruction(
+        currentInstruction,
+        telegramId,
+        booking
+      )
   } catch (error) {
-    console.log('error in handlePickupInstructions: ', error)
+    console.log(
+      'error in handleDriverArrivedToPickupOrDeliveryPosition: ',
+      error
+    )
     return
   }
 }
 
-const handlePickupInstruction = (vehicleId, telegramId) => {
+const handleDriverArrivedToPickupOrDeliveryPosition = (
+  vehicleId,
+  telegramId
+) => {
   try {
-    const instructions = getInstructions(vehicleId)
-
+    const instructions = cache.getInstructions(vehicleId)
     const [nextInstruction, ...rest] = instructions
 
     if (!nextInstruction) return messaging.sendDriverFinishedMessage(telegramId)
-    const booking = getBooking(nextInstruction.id)
+    const booking = cache.getBooking(nextInstruction.id)
 
     if (nextInstruction.type === 'pickupShipment')
       messaging.sendPickupInformation(nextInstruction, telegramId, booking)
@@ -90,9 +101,9 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
     if (nextInstruction.type === 'deliverShipment')
       messaging.sendDeliveryInformation(nextInstruction, telegramId, booking)
 
-    setInstructions(vehicleId, rest)
+    return cache.setInstructions(vehicleId, [...rest])
   } catch (error) {
-    console.log('error in handlePickupInstructions: ', error)
+    console.log('error in handleNextDriverInstruction: ', error)
     return
   }
 }
@@ -100,6 +111,6 @@ const handlePickupInstruction = (vehicleId, telegramId) => {
 module.exports = {
   onLogin,
   onLocationMessage,
-  handlePickupInstruction,
-  handleOnArrive,
+  handleNextDriverInstruction,
+  handleDriverArrivedToPickupOrDeliveryPosition,
 }

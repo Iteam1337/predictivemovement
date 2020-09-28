@@ -3,10 +3,10 @@ const {
   queues: { ADD_BOOKING_INFO },
   exchanges: { OUTGOING_BOOKING_UPDATES },
 } = require('../adapters/amqp')
-const { addBooking } = require('../services/cache')
+const cache = require('../services/cache')
 
-const pickupInstructions = () => {
-  return open
+const pickupInstructions = () =>
+  open
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
@@ -19,23 +19,18 @@ const pickupInstructions = () => {
           })
         )
         .then(() =>
-          ch.bindQueue(
-            ADD_BOOKING_INFO,
-            OUTGOING_BOOKING_UPDATES,
-            'assigned'
-          )
+          ch.bindQueue(ADD_BOOKING_INFO, OUTGOING_BOOKING_UPDATES, 'assigned')
         )
         .then(() =>
           ch.consume(ADD_BOOKING_INFO, (msg) => {
             const booking = JSON.parse(msg.content.toString())
             console.log('received booking: ', booking)
 
-            addBooking(booking.id, booking)
+            cache.addBooking(booking.id, booking)
 
             ch.ack(msg)
           })
         )
     )
-}
 
 module.exports = pickupInstructions

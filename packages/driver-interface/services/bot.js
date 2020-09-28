@@ -27,9 +27,7 @@ const onLogin = (vehicleId, ctx) => {
 
   return messaging
     .onDriverLoginSuccessful(ctx)
-    .then(() =>
-      handleNextDriverInstruction(telegramId)
-    )
+    .then(() => handleNextDriverInstruction(telegramId))
 }
 
 const onLocationMessage = (msg, ctx) => {

@@ -170,7 +170,9 @@ const sendDeliveryInformation = (instruction, telegramId, booking) =>
           ? `\nPortkod: ${booking.metadata.recipient.doorCode}`
           : ''
       )
-      .concat(`\nTryck "[Levererat]" när du har lämnat paketet, eller [Kunde inte leverera] om du av någon anledninge inte kunde leverera paketet.`),
+      .concat(
+        `\nTryck "[Levererat]" när du har lämnat paketet, eller "Kunde inte leverera" om du av någon anledninge inte kunde leverera paketet.`
+      ),
     {
       parse_mode: 'markdown',
       reply_markup: {

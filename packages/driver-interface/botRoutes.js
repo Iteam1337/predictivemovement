@@ -26,13 +26,14 @@ function onArrived(msg) {
 }
 
 function handleBookingEvent(telegramId, bookingId, event) {
-  return channel.then(openChannel => 
-    openChannel.publish(
-      INCOMING_BOOKING_UPDATES,
-      event,
-      Buffer.from(JSON.stringify({ id: bookingId, status: event }))
+  return channel
+    .then((openChannel) =>
+      openChannel.publish(
+        INCOMING_BOOKING_UPDATES,
+        event,
+        Buffer.from(JSON.stringify({ id: bookingId, status: event }))
+      )
     )
-  )
     .catch(console.warn)
     .then(() => botServices.handleNextDriverInstruction(telegramId))
 }
@@ -100,7 +101,7 @@ const init = (bot) => {
       case 'delivered':
       case 'delivery_failed':
         const { id: telegramId } = msg.update.callback_query.from
-        const {e: event, id: bookingId} = callbackPayload
+        const { e: event, id: bookingId } = callbackPayload
         return handleBookingEvent(telegramId, bookingId, event)
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)

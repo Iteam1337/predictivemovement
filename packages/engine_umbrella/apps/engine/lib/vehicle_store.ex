@@ -10,11 +10,19 @@ defmodule Engine.VehicleStore do
   end
 
   def handle_call({:put, new_vehicle_id}, _from, vehicle_ids) do
-    {:reply, :ok, [new_vehicle_id |vehicle_ids]}
+    {:reply, :ok, [new_vehicle_id | vehicle_ids]}
   end
 
   def handle_call(:get, _from, vehicle_ids) do
     {:reply, vehicle_ids, vehicle_ids}
+  end
+
+  def handle_call({:delete, vehicle_id}, _from, vehicle_ids) do
+    updated_vehicle_ids =
+      vehicle_ids
+      |> Enum.reject(fn id -> id == vehicle_id end)
+
+    {:reply, :ok, updated_vehicle_ids}
   end
 
   def handle_call(:clear, _from, _) do
@@ -27,6 +35,10 @@ defmodule Engine.VehicleStore do
 
   def get_vehicles() do
     GenServer.call(__MODULE__, :get)
+  end
+
+  def delete_vehicle(vehicle_id) do
+    GenServer.call(__MODULE__, {:delete, vehicle_id})
   end
 
   def clear() do

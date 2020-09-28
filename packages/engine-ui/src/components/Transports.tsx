@@ -8,7 +8,8 @@ import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 const Transports: React.FC<{
   vehicles: any
   addVehicle: any
-}> = ({ vehicles, addVehicle }) => {
+  deleteVehicle: (id: string) => void
+}> = ({ vehicles, addVehicle, deleteVehicle }) => {
   const { path, url } = useRouteMatch()
   return (
     <Switch>
@@ -25,7 +26,7 @@ const Transports: React.FC<{
         <AddVehicle onSubmit={addVehicle} />
       </Route>
       <Route path={`${path}/:vehicleId`}>
-        <VehicleDetails vehicles={vehicles} />
+        <VehicleDetails vehicles={vehicles} deleteVehicle={deleteVehicle} />
       </Route>
     </Switch>
   )

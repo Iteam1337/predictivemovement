@@ -20,7 +20,7 @@ const SubmitButton = styled.button<{ justifySelf: string; marginTop?: string }>`
   }
 `
 
-const DeleteButton = styled.button<{ justifySelf: string }>`
+const DeleteButton = styled.button<{ justifySelf?: string }>`
   padding: 0.75rem 2.3rem;
   background: red;
   font-weight: 600;

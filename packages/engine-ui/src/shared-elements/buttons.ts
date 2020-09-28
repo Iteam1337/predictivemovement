@@ -1,6 +1,11 @@
 import styled from 'styled-components'
 
-const SubmitButton = styled.button<{ justifySelf: string; marginTop?: string }>`
+const SubmitButton = styled.button<{
+  justifySelf: string
+  marginTop?: string
+  padding?: string
+  width?: string
+}>`
   padding: 0.75rem 2.3rem;
   background: #ccffcc;
   font-weight: 600;
@@ -10,6 +15,8 @@ const SubmitButton = styled.button<{ justifySelf: string; marginTop?: string }>`
   cursor: pointer;
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
   margin-top: ${({ marginTop }) => marginTop && marginTop};
+  padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
+  width: ${({ width }) => width && width};
 
   :hover {
     background: #c1f5c1;

@@ -215,10 +215,12 @@ const TextInputPairItem = styled.div`
 
 interface SubmitButtonProps {
   justifySelf?: string
+  padding?: string
+  width?: string
 }
 
 const SubmitButton = styled.button<SubmitButtonProps>`
-  padding: 0.75rem 2.3rem;
+  padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
   background: #ccffcc;
   font-weight: 600;
   color: inherit;
@@ -226,6 +228,7 @@ const SubmitButton = styled.button<SubmitButtonProps>`
   border: none;
   cursor: pointer;
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
+  width: ${({ width }) => width && width};
 
   :hover {
     background: #ccffcc;
@@ -234,7 +237,9 @@ const SubmitButton = styled.button<SubmitButtonProps>`
 `
 
 const CancelButton = styled.button`
-  padding: 0.75rem 2.3rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  width: 48.5%;
   background: #fff;
   font-weight: 600;
   color: inherit;

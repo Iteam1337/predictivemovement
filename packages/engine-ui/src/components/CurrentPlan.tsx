@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { PlanVehicle } from '../types'
 import MainRouteLayout from './layout/MainRouteLayout'
 import PlanRouteDetails from './PlanRouteDetails'
-import { IPlanVehicle } from './Plan'
 
 const PlanWrapper = styled.div`
   display: grid;
@@ -10,7 +10,7 @@ const PlanWrapper = styled.div`
 `
 
 interface CurrentPlanProps {
-  plan: IPlanVehicle[]
+  plan: PlanVehicle[]
 }
 
 const CurrentPlan = ({ plan: planVehicles }: CurrentPlanProps) => {

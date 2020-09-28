@@ -16,6 +16,8 @@ const InfoSm = styled.p`
 const SmallInfoBold = styled.p`
   font-weight: bold;
   font-size: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
 `
 const InfoMd = styled.p`
   font-style: italic;

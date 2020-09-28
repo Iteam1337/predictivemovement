@@ -13,6 +13,10 @@ const exchanges = {
   },
 }
 
+const queues = {
+  ADD_NR_OF_HISTORICAL_BOOKINGS: 'add_nr_of_historical_bookings',
+}
+
 const publish = (exchange, routingKey, data) => {
   return amqp
     .then((conn) => conn.createChannel())

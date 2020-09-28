@@ -43,7 +43,7 @@ function register(io) {
       .each((data) => socket.emit('plan-update', data))
 
     _(bookings.fork()).each((booking) => socket.emit('notification', booking))
-    _(cars.fork()).each((car) => socket.emit('notification', car))
+    _(vehicles.fork()).each((car) => socket.emit('notification', car))
 
     socket.on('new-booking', (params) => {
       const booking = {
@@ -90,9 +90,9 @@ function register(io) {
         capacity:
           params.volume && params.weight
             ? {
-                volume: parseInt(params.volume, 10),
-                weight: parseInt(params.weight, 10),
-              }
+              volume: parseInt(params.volume, 10),
+              weight: parseInt(params.weight, 10),
+            }
             : null,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,

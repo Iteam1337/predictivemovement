@@ -1,22 +1,24 @@
 const botServices = require('./services/bot')
 const messaging = require('./services/messaging')
-const { getVehicle } = require('./services/cache')
-
+const cache = require('./services/cache')
 const {
   open,
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
-function onArrive(msg) {
+function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
 
-  return botServices.handlePickupInstruction(vehicleId, telegramId)
+  return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
+    vehicleId,
+    telegramId
+  )
 }
 
 function onPickup(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
@@ -28,22 +30,24 @@ function onPickup(msg) {
       }).then(() => {
         const { id } = callbackPayload
 
-        ch.publish(
+        return ch.publish(
           INCOMING_BOOKING_UPDATES,
           'picked_up',
           Buffer.from(JSON.stringify({ id, status: 'picked_up' }))
         )
       })
     })
+    .catch(console.warn)
 
-  return botServices.handleOnArrive(vehicleId, telegramId)
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onDelivered(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = msg.metadata.getVehicleIdFromTelegramId(telegramId)
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
 
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
+
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {
@@ -51,7 +55,7 @@ function onDelivered(msg) {
         durable: false,
       }).then(() => {
         const { id } = callbackPayload
-        ch.publish(
+        return ch.publish(
           INCOMING_BOOKING_UPDATES,
           'delivered',
           Buffer.from(JSON.stringify({ id, status: 'delivered' }))
@@ -60,7 +64,7 @@ function onDelivered(msg) {
     })
     .catch(console.warn)
 
-  return botServices.handleOnArrive(vehicleId, telegramId)
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onOffer(msg) {
@@ -73,24 +77,23 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', (ctx) => {
-    const vehicleId = ctx.metadata.getVehicleIdFromTelegramId(ctx.botInfo.id)
+    const vehicleId = cache.getVehicleIdByTelegramId(ctx.botInfo.id)
+    const vehicleWithPlan = cache.getVehicle(vehicleId)
 
-    const vehicleWithPlan = getVehicle(vehicleId)
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
       return messaging.onNoInstructionsForVehicle(ctx)
+
     const activities = vehicleWithPlan.activities
     const bookingIds = vehicleWithPlan.booking_ids
 
-    messaging.onInstructionsForVehicle(
+    return messaging.onInstructionsForVehicle(
       activities,
       bookingIds,
       ctx.update.message.from.id
     )
   })
 
-  bot.command('/login', (ctx) => {
-    ctx.reply('Ange ditt transport-id')
-  })
+  bot.command('/login', messaging.onPromptUserForTransportId)
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
@@ -102,7 +105,7 @@ const init = (bot) => {
 
     if (!msg.location) return
 
-    botServices.onLocationMessage(msg, ctx)
+    return botServices.onLocationMessage(msg, ctx)
   })
 
   bot.on('edited_message', (ctx) => {
@@ -111,7 +114,7 @@ const init = (bot) => {
     /** Telegram live location updates. */
     if (!msg.location) return
 
-    botServices.onLocationMessage(msg, ctx)
+    return botServices.onLocationMessage(msg, ctx)
   })
 
   /** Listen for user invoked button clicks. */
@@ -122,7 +125,7 @@ const init = (bot) => {
       case 'picked_up':
         return onPickup(msg)
       case 'arrived':
-        return onArrive(msg)
+        return onArrived(msg)
       case 'delivered':
         return onDelivered(msg)
       case 'offer':

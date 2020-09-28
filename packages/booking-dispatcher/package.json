@@ -27,10 +27,8 @@
   },
   "dependencies": {
     "amqplib": "^0.5.6",
-    "date-fns": "^2.14.0",
     "dotenv": "^8.2.0",
     "id62": "^1.0.0",
-    "node-fetch": "^2.6.0",
     "xlsx": "^0.16.1"
   },
   "devDependencies": {

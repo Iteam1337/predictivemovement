@@ -1,4 +1,4 @@
-const { addVehicle, getVehicle } = require('../services/cache')
+const cache = require('../services/cache')
 
 const {
   open,
@@ -6,8 +6,8 @@ const {
   exchanges: { OUTGOING_VEHICLE_UPDATES },
 } = require('../adapters/amqp')
 
-const vehiclePlan = () => {
-  return open
+const vehiclePlan = () =>
+  open
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
@@ -29,10 +29,10 @@ const vehiclePlan = () => {
         .then(() =>
           ch.consume(ADD_INSTRUCTIONS_TO_VEHICLE, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
-            const currentVehicle = getVehicle(vehicle.id) || {}
+            const currentVehicle = cache.getVehicle(vehicle.id) || {}
             console.log('received plan: ', vehicle)
 
-            addVehicle(vehicle.id, {
+            cache.addVehicle(vehicle.id, {
               ...currentVehicle,
               ...vehicle,
             })
@@ -41,6 +41,5 @@ const vehiclePlan = () => {
           })
         )
     )
-}
 
 module.exports = vehiclePlan

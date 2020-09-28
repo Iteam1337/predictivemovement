@@ -28,6 +28,15 @@ defmodule Engine.RedisAdapter do
     if is_nil(vehicles), do: [], else: vehicles |> Poison.decode!(keys: :atoms)
   end
 
+  def delete_vehicle(vehicle_id) do
+    updated_vehicles =
+      get_vehicles()
+      |> Enum.reject(fn %{id: id} -> id == vehicle_id end)
+      |> Poison.encode!()
+
+    Redix.command(:redix, ["SET", "vehicles", updated_vehicles])
+  end
+
   def clear() do
     Redix.command(:redix, ["DEL", "bookings"])
     Redix.command(:redix, ["DEL", "vehicles"])

@@ -6,18 +6,16 @@
         "lat": 61.738126,
         "hint": "LhQngFcUJ4BIAAAAAAAAAAUWAAD6FAAAYKZIQgAAAABhdHVF9bBpRUgAAAAAAAAABRYAAPoUAACIAQAAxwzzAI4MrgPHDPMAjgyuAzMArw9StUSx"
       },
-      "profile": null,
+      "profile": "time-constrainted",
       "metadata": {},
-      "_latest_end": "2020-09-23T20:07:57.111500Z",
-      "latest_end": "10:00",
+      "latest_end": "19:00",
       "id": "pmv-61dhbail",
       "end_address": {
         "lon": 15.928519,
         "lat": 61.738126,
         "hint": "LhQngFcUJ4BIAAAAAAAAAAUWAAD6FAAAYKZIQgAAAABhdHVF9bBpRUgAAAAAAAAABRYAAPoUAACIAQAAxwzzAI4MrgPHDPMAjgyuAzMArw9StUSx"
       },
-      "_earliest_start": "2020-09-23T14:07:57.110351Z",
-      "earliest_start": "14:00",
+      "earliest_start": "10:00",
       "current_route": null,
       "capacity": {
         "weight": 700,

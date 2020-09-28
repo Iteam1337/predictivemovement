@@ -66,11 +66,11 @@ export const routeAssignedToBooking = (assignedTo) =>
     }
   )
 
-export const carToFeature = (cars) => {
+export const vehicleToFeature = (vehicles) => {
   let index = 0
   try {
     return [
-      ...cars.flatMap(
+      ...vehicles.flatMap(
         ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
           index = i
           if (activities && activities.length) {
@@ -111,11 +111,11 @@ export const carToFeature = (cars) => {
   }
 }
 
-export const vehicleIcon = (cars) => {
+export const vehicleIcon = (vehicles) => {
   let index = 0
   try {
     return [
-      ...cars.flatMap(({ id, tail, start_address }, i) => {
+      ...vehicles.flatMap(({ id, tail, start_address }, i) => {
         index = i
         return [
           point([start_address.lon, start_address.lat], {
@@ -299,7 +299,7 @@ export default {
   point,
   line,
   bookingToFeature,
-  carToFeature,
+  vehicleToFeature,
   toGeoJsonLayer,
   toIconLayer,
   hexToRGB,

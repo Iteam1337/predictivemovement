@@ -62,11 +62,9 @@ public class VRPVehicles {
 
             VehicleStartAndEndTimes startAndEndTimes = timeUtils.getVehicleStartAndEnd(jsonVehicle);
             // earliest start
-//            double earliestStart = timeUtils.getTimeDifferenceFromNow(jsonVehicle, "earliest_start", 0.0);
             vehicleBuilder.setEarliestStart(startAndEndTimes.earliestStart);
 
             // latest arrival
-//            double latestArrival = timeUtils.getTimeDifferenceFromNow(jsonVehicle, "latest_end", Double.MAX_VALUE);
             vehicleBuilder.setLatestArrival(startAndEndTimes.latestEnd);
 
             VehicleImpl vehicle = vehicleBuilder.build();

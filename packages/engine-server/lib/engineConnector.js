@@ -1,5 +1,4 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
-// const { generate } = require('@iteam1337/engine/simulator/cars')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const routingKeys = {
@@ -55,7 +54,7 @@ const bookings = amqp
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
 
-const cars = amqp
+const vehicles = amqp
   .exchange('outgoing_vehicle_updates', 'topic', {
     durable: false,
   })
@@ -63,8 +62,8 @@ const cars = amqp
     durable: false,
   })
   .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
-  .map((cars) => {
-    return cars.json()
+  .map((vehicles) => {
+    return vehicles.json()
   })
 
 const createBooking = (booking) => {
@@ -95,11 +94,6 @@ const addVehicle = (vehicle) => {
       routingKeys.REGISTERED
     )
 }
-const createBookingsFromHistory = (total) => {
-  return amqp
-    .queue('add_nr_of_historical_bookings', { durable: false })
-    .publish(total)
-}
 
 const plan = amqp
   .exchange('outgoing_plan_updates', 'fanout', {
@@ -122,13 +116,22 @@ const deleteBooking = (id) => {
     .then(() => console.log(` [x] Delete booking ${id}`))
 }
 
+const deleteVehicle = (id) => {
+  return amqp
+    .exchange('incoming_vehicle_updates', 'topic', {
+      durable: false,
+    })
+    .publish(id, routingKeys.DELETED)
+    .then(() => console.log(` [x] Delete vehicle ${id}`))
+}
+
 module.exports = {
   addVehicle,
   bookings,
-  cars,
+  vehicles,
   createBooking,
   dispatchOffers,
-  createBookingsFromHistory,
   plan,
   deleteBooking,
+  deleteVehicle,
 }

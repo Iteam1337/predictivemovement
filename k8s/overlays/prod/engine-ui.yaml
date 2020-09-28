@@ -11,10 +11,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - engine-ui.iteamdev.io
+        - admin.predictivemovement.se
       secretName: engine-ui-prod-tls
   rules:
-    - host: engine-ui.iteamdev.io
+    - host: admin.predictivemovement.se
       http:
         paths:
           - backend:

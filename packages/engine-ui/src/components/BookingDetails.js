@@ -16,7 +16,7 @@ const Paragraph = styled.p`
 `
 
 const Timeline = styled.div`
-  margin-top: 2.5rem;
+  margin-top: 1.5rem;
 
   ol {
     list-style-type: none;
@@ -136,75 +136,78 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             </Elements.Typography.SpanBold>
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
-        <Elements.Layout.MarginBottomContainer />
-        {cargo && (
+        <Elements.Layout.SectionWithMargin>
+          {cargo && (
+            <Paragraph>
+              <Elements.Typography.SpanBold>
+                Innehåll:{' '}
+              </Elements.Typography.SpanBold>
+              {cargo}
+            </Paragraph>
+          )}
           <Paragraph>
             <Elements.Typography.SpanBold>
-              Innehåll:{' '}
+              Ömtåligt:{' '}
             </Elements.Typography.SpanBold>
-            {cargo}
+            {fragile ? 'Ja' : 'Nej'}
           </Paragraph>
-        )}
-        <Paragraph>
-          <Elements.Typography.SpanBold>
-            Ömtåligt:{' '}
-          </Elements.Typography.SpanBold>
-          {fragile ? 'Ja' : 'Nej'}
-        </Paragraph>
-        {measurement && (
-          <Paragraph>
-            <Elements.Typography.SpanBold>Mått: </Elements.Typography.SpanBold>
-            {measurement.map((item, index) =>
-              measurement.length === index + 1 ? `${item} cm ` : `${item}x`
-            )}
-          </Paragraph>
-        )}
-        {weight && (
-          <Paragraph>
-            <Elements.Typography.SpanBold>Vikt: </Elements.Typography.SpanBold>
-            {`${weight} kg`}
-          </Paragraph>
-        )}
-
-        <Elements.Layout.MarginBottomContainer />
-        <Elements.Layout.MarginBottomContainer>
-          <Elements.Typography.StrongParagraph>
-            Upphämtning
-          </Elements.Typography.StrongParagraph>
-          <Paragraph>{address.pickup}</Paragraph>
-          {pickup.time_windows &&
-            pickup.time_windows.map((timeWindow) => (
-              <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
-                {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
-                  ? `${moment(timeWindow.earliest).format(
-                      'YYYY-MM-DD, hh:mm'
-                    )} - ${moment(timeWindow.latest).format('hh:mm')}`
-                  : `${moment(timeWindow.earliest).format(
-                      'YYYY-MM-DD, hh:mm'
-                    )} -
+          {measurement && (
+            <Paragraph>
+              <Elements.Typography.SpanBold>
+                Mått:{' '}
+              </Elements.Typography.SpanBold>
+              {measurement.map((item, index) =>
+                measurement.length === index + 1 ? `${item} cm ` : `${item}x`
+              )}
+            </Paragraph>
+          )}
+          {weight && (
+            <Paragraph>
+              <Elements.Typography.SpanBold>
+                Vikt:{' '}
+              </Elements.Typography.SpanBold>
+              {`${weight} kg`}
+            </Paragraph>
+          )}
+        </Elements.Layout.SectionWithMargin>
+        <Elements.Layout.SectionWithMargin>
+          <Elements.Layout.MarginBottomContainer>
+            <Elements.Typography.StrongParagraph>
+              Upphämtning
+            </Elements.Typography.StrongParagraph>
+            <Paragraph>{address.pickup}</Paragraph>
+            {pickup.time_windows &&
+              pickup.time_windows.map((timeWindow) => (
+                <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
+                  {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
+                    ? `${moment(timeWindow.earliest).format(
+                        'YYYY-MM-DD, hh:mm'
+                      )} - ${moment(timeWindow.latest).format('hh:mm')}`
+                    : `${moment(timeWindow.earliest).format(
+                        'YYYY-MM-DD, hh:mm'
+                      )} -
               ${moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}`}
-              </Elements.Typography.SmallInfoBold>
-            ))}
-        </Elements.Layout.MarginBottomContainer>
-        {sender.name && (
+                </Elements.Typography.SmallInfoBold>
+              ))}
+          </Elements.Layout.MarginBottomContainer>
+          {sender.name && (
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactName}
+                alt="Contact Avatar"
+              />
+              <Paragraph>{sender.name}</Paragraph>
+            </Elements.Layout.FlexRowBaselineContainer>
+          )}
           <Elements.Layout.FlexRowBaselineContainer>
             <Elements.Icons.MarginRightIcon
-              src={ContactName}
-              alt="Contact Avatar"
+              src={ContactPhone}
+              alt="Contact Phone"
             />
-            <Paragraph>{sender.name}</Paragraph>
+            <Paragraph>{sender.contact}</Paragraph>
           </Elements.Layout.FlexRowBaselineContainer>
-        )}
-        <Elements.Layout.FlexRowBaselineContainer>
-          <Elements.Icons.MarginRightIcon
-            src={ContactPhone}
-            alt="Contact Phone"
-          />
-          <Paragraph>{sender.contact}</Paragraph>
-        </Elements.Layout.FlexRowBaselineContainer>
-        <Elements.Layout.MarginBottomContainer />
-        <Elements.Layout.MarginBottomContainer></Elements.Layout.MarginBottomContainer>
-        <Elements.Layout.MarginBottomContainer>
+        </Elements.Layout.SectionWithMargin>
+        <Elements.Layout.SectionWithMargin>
           <Elements.Layout.MarginBottomContainer>
             <Elements.Typography.StrongParagraph>
               Avlämning
@@ -235,9 +238,8 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             />
             <Paragraph>{recipient.contact}</Paragraph>
           </Elements.Layout.FlexRowBaselineContainer>
-        </Elements.Layout.MarginBottomContainer>
-        <Elements.Layout.MarginBottomContainer></Elements.Layout.MarginBottomContainer>
-        <Elements.Layout.MarginBottomContainer>
+        </Elements.Layout.SectionWithMargin>
+        <Elements.Layout.MarginTopContainer>
           {booking.assigned_to && (
             <>
               <Elements.Typography.StrongParagraph>
@@ -254,7 +256,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
               </Elements.Links.RoundedLink>
             </>
           )}
-        </Elements.Layout.MarginBottomContainer>
+        </Elements.Layout.MarginTopContainer>
         <Timeline>
           <Elements.Typography.StrongParagraph>
             Status

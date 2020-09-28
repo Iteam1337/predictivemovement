@@ -10,7 +10,9 @@ const FlexRowWrapper = styled.div`
   justify-content: space-between;
   height: 50px;
 `
-
+const SectionWithMargin = styled.section`
+  margin: 1.2rem 0;
+`
 const LinkListContainer = styled.div`
   a:not(:first-child) {
     margin-top: 0.5rem;
@@ -120,4 +122,5 @@ export default {
   MarginLeftContainerSm,
   InlineContainer,
   FlexRowBaselineContainer,
+  SectionWithMargin,
 }

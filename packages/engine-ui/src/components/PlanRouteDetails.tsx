@@ -6,12 +6,12 @@ import Icons from '../assets/Icons'
 import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import Elements from './Elements'
-import { IPlanVehicle } from './Plan'
 import { getColor } from '../utils/palette'
 import helpers from '../utils/helpers'
+import { PlanVehicle } from '../types'
 
 interface Props {
-  vehicle: IPlanVehicle
+  vehicle: PlanVehicle
   routeNumber: number
 }
 

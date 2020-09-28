@@ -74,11 +74,15 @@ const Notifications: React.FC<{
   notifications: NotificationType[]
   updateNotifications: (value: any) => void
 }> = ({ notifications, updateNotifications }) => {
-  const handleOnClose = (itemId: string) => {
-    updateNotifications((notifications: NotificationType[]) =>
-      notifications.filter((notification) => notification.id !== itemId)
-    )
-  }
+  const handleOnClose = React.useCallback(
+    (itemId: string) => {
+      updateNotifications((notifications: NotificationType[]) =>
+        notifications.filter((notification) => notification.id !== itemId)
+      )
+    },
+    [updateNotifications]
+  )
+
   React.useEffect(() => {
     if (notifications.length > 0) {
       setTimeout(() => {
@@ -114,10 +118,9 @@ const Notifications: React.FC<{
 
   return (
     <NotificationsContainer>
-      {notifications &&
-        notifications
-          .map((notification) => notificationType(notification))
-          .reverse()}
+      {notifications
+        .map((notification) => notificationType(notification))
+        .reverse()}
     </NotificationsContainer>
   )
 }

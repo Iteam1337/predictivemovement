@@ -4,23 +4,24 @@ const cache = require('./cache')
 
 const messaging = require('./messaging')
 
-const onLogin = (vehicleId, ctx) => {
-  const vehicle = cache.getVehicle(vehicleId)
+const onLogin = async (vehicleId, ctx) => {
+  const vehicle = await cache.getVehicle(vehicleId)
+  console.log('vehicle', vehicle)
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
 
   const telegramId = ctx.update.message.from.id
-  cache.setVehicleIdByTelegramId(telegramId, vehicleId)
+  await cache.setVehicleIdByTelegramId(telegramId, vehicleId)
 
   if (vehicle.telegramId) {
     return
   }
 
-  cache.setInstructions(
+  await cache.setInstructions(
     vehicle.id,
     helpers.cleanDriverInstructions(vehicle.activities)
   )
 
-  cache.addVehicle(vehicleId, {
+  await cache.addVehicle(vehicleId, {
     ...vehicle,
     telegramId,
   })
@@ -53,14 +54,14 @@ const onLocationMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-const handleNextDriverInstruction = (vehicleId, telegramId) => {
+const handleNextDriverInstruction = async (vehicleId, telegramId) => {
   try {
-    const [currentInstruction] = cache.getInstructions(vehicleId)
+    const [currentInstruction] = await cache.getInstructions(vehicleId)
 
     if (!currentInstruction)
       return messaging.sendDriverFinishedMessage(telegramId)
 
-    const booking = cache.getBooking(currentInstruction.id)
+    const booking = await cache.getBooking(currentInstruction.id)
 
     if (currentInstruction.type === 'pickupShipment')
       return messaging.sendPickupInstruction(
@@ -84,16 +85,16 @@ const handleNextDriverInstruction = (vehicleId, telegramId) => {
   }
 }
 
-const handleDriverArrivedToPickupOrDeliveryPosition = (
+const handleDriverArrivedToPickupOrDeliveryPosition = async (
   vehicleId,
   telegramId
 ) => {
   try {
-    const instructions = cache.getInstructions(vehicleId)
+    const instructions = await cache.getInstructions(vehicleId)
     const [nextInstruction, ...rest] = instructions
 
     if (!nextInstruction) return messaging.sendDriverFinishedMessage(telegramId)
-    const booking = cache.getBooking(nextInstruction.id)
+    const booking = await cache.getBooking(nextInstruction.id)
 
     if (nextInstruction.type === 'pickupShipment')
       messaging.sendPickupInformation(nextInstruction, telegramId, booking)

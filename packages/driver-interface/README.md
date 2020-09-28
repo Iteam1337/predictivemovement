@@ -6,6 +6,11 @@ Create .env file in root with following content:
 
 ```
 BOT_TOKEN=<your telegram bot token>
+
+# OPTIONAL
+
+REDIS_HOST=<your redis host>
+REDIS_KEY_NAMESPACE=<redis key prefix>
 ```
 
 Open `t.me/predictive_movement_bot` from telegram app on you phone. This will add the telegram bot `pm_driver_bot` to your telegram.

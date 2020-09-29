@@ -53,12 +53,12 @@ public class VRPVehicles {
             vehicleBuilder.setEndLocation(vehicleEndAddress);
             vrpSetting.locations.put(endAddress.getString("hint"), vehicleEndAddress);
 
+            // earliest start & latest arrival
             VehicleStartAndEndTimes startAndEndTimes = timeUtils.getVehicleStartAndEnd(jsonVehicle);
-            // earliest start
-            vehicleBuilder.setEarliestStart(startAndEndTimes.earliestStart);
-
-            // latest arrival
-            vehicleBuilder.setLatestArrival(startAndEndTimes.latestEnd);
+            if (startAndEndTimes.isSet()) {
+                vehicleBuilder.setEarliestStart(startAndEndTimes.earliestStart);
+                vehicleBuilder.setLatestArrival(startAndEndTimes.latestEnd);
+            }
 
             VehicleImpl vehicle = vehicleBuilder.build();
             vehicles.add(vehicle);

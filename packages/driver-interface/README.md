@@ -9,7 +9,7 @@ BOT_TOKEN=<your telegram bot token>
 
 # OPTIONAL
 
-REDIS_HOST=<your redis host>
+REDIS_URL=<your redis url>
 REDIS_KEY_NAMESPACE=<redis key prefix>
 ```
 

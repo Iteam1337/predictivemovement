@@ -16,9 +16,7 @@ const App = () => {
   const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
   const [notifications, updateNotifications] = React.useState([])
   const addVehicle = (params) => {
-    socket.emit('add-vehicle', params, (res) =>
-      updateNotifications((notifications) => [res, ...notifications])
-    )
+    socket.emit('add-vehicle', params)
   }
 
   const createBooking = (params) => {

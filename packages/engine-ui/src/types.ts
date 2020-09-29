@@ -2,6 +2,7 @@ export enum BookingStatus {
   NEW = 'new',
   ASSIGNED = 'assigned',
   DELIVERED = 'delivered',
+  DELIVERY_FAILED = 'delivery_failed',
   PICKED_UP = 'picked_up',
 }
 

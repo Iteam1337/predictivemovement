@@ -110,10 +110,12 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
         return 'Upphämtad'
       case 'delivered':
         return 'Levererad'
+      case 'delivery_failed':
+        return 'Kunde ej levereras'
       case 'assigned':
         return 'Tilldelad förare'
       default:
-        return 'Ingen status hittades'
+        return `Okänd status: "${type}"`
     }
   }
 

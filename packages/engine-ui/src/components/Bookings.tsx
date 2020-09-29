@@ -20,6 +20,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
     new: Booking[]
     assigned: Booking[]
     delivered: Booking[]
+    delivery_failed: Booking[]
     picked_up: Booking[]
   }>(
     (prev, current) => ({
@@ -30,6 +31,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
       new: [],
       assigned: [],
       delivered: [],
+      delivery_failed: [],
       picked_up: [],
     }
   )

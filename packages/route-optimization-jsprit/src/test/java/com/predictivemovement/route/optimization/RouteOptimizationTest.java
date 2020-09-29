@@ -1,6 +1,8 @@
 package com.predictivemovement.route.optimization;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -88,6 +90,31 @@ public class RouteOptimizationTest {
                 "src/test/resources/msg/13/13_route_response.json");
     }
 
+    @Test
+    public void wrong_capacity_type_error() throws Exception {
+        RouteOptimizationException exception = assertThrows(RouteOptimizationException.class, () -> {
+            test_route_optimization("src/test/resources/msg/14/14_route_request.json", null);
+        });
+        assertEquals("java.lang.NumberFormatException: For input string: \"10.8\"", exception.getMessage());
+    }
+
+    @Test
+    public void wrong_capacity_type_error_response() throws Exception {
+        try {
+            test_route_optimization("src/test/resources/msg/14/14_route_request.json", null);
+        } catch (RouteOptimizationException exception) {
+            test_error_response(exception, "src/test/resources/msg/14/14_route_response.json");
+            return;
+        }
+        fail("Should have thrown an exception");
+    }
+
+    @Test
+    public void status_response_is_set() throws Exception {
+        test_status_response("src/test/resources/msg/15/15_route_request.json",
+                "src/test/resources/msg/15/15_route_response.json");
+    }
+
     private void test_route_optimization(String requestFilename, String expectedResponseFilename) throws Exception {
         // given
         JSONObject routeRequest = readJsonFromFile(requestFilename);
@@ -97,20 +124,42 @@ public class RouteOptimizationTest {
         JSONObject response = routeOptimization.calculate(routeRequest);
 
         // then
-        JSONObject responseExpected = readJsonFromFile(expectedResponseFilename);
-
-        // assert
         TreeMap<String, Object> responseOrdered = convertToOrderdJson(response);
-        // System.out.println(response);
-        // System.out.println(responseOrdered);
 
+        JSONObject responseExpected = readJsonFromFile(expectedResponseFilename);
         TreeMap<String, Object> responseExpectedOrdered = convertToOrderdJson(responseExpected);
-        // System.out.println(responseExpected);
-        // System.out.println(responseExpectedOrdered);
 
-        // assertEquals(responseExpected.toString(), response.toString());
         assertEquals(responseExpectedOrdered.toString(), responseOrdered.toString());
-        // assertEquals("1", responseExpected);
+    }
+
+    private void test_error_response(RouteOptimizationException exception, String expectedResponseFilename)
+            throws Exception {
+        ErrorResponse errorResponse = new ErrorResponse(exception);
+        errorResponse.create();
+        TreeMap<String, Object> responseOrdered = convertToOrderdJson(errorResponse.response.status);
+
+        JSONObject responseExpected = readJsonFromFile(expectedResponseFilename);
+        TreeMap<String, Object> responseExpectedOrdered = convertToOrderdJson(responseExpected);
+        assertEquals(responseExpectedOrdered, responseOrdered);
+    }
+
+    private void test_status_response(String requestFilename, String expectedResponseFilename) throws Exception {
+        // given
+        JSONObject routeRequest = readJsonFromFile(requestFilename);
+
+        // when
+        RouteOptimization routeOptimization = new RouteOptimization();
+        JSONObject routeSolution = routeOptimization.calculate(routeRequest);
+
+        StatusResponse response = new StatusResponse(routeSolution);
+
+        // then
+        TreeMap<String, Object> responseOrdered = convertToOrderdJson(response.status);
+
+        JSONObject responseExpected = readJsonFromFile(expectedResponseFilename);
+        TreeMap<String, Object> responseExpectedOrdered = convertToOrderdJson(responseExpected);
+
+        assertEquals(responseExpectedOrdered.toString(), responseOrdered.toString());
     }
 
     private JSONObject readJsonFromFile(String filename) throws IOException {

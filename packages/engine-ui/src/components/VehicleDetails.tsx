@@ -201,12 +201,12 @@ const VehicleDetails: React.FC<{
             </Elements.Layout.MarginBottomContainer>
           </>
         )}
-        <Elements.Layout.MarginTopContainer>
-          <Elements.Buttons.DeleteButton
+        <Elements.Layout.MarginTopContainer alignItems="center">
+          <Elements.Buttons.CancelButton
             onClick={() => handleDeleteClick(vehicle.id)}
           >
             Radera transport
-          </Elements.Buttons.DeleteButton>
+          </Elements.Buttons.CancelButton>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

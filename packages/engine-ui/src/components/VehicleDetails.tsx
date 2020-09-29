@@ -53,8 +53,12 @@ const VehicleDetails: React.FC<{
     status: false,
   })
 
-  const { vehicleId } = useParams<{ vehicleId: string }>()
+  React.useEffect(
+    () => () => dispatch({ type: 'highlightTransport', payload: undefined }),
+    [dispatch]
+  )
 
+  const { vehicleId } = useParams<{ vehicleId: string }>()
   const vehicle = vehicles.find((v: any) => v.id === vehicleId)
 
   if (!vehicle) return <p>Loading...</p>

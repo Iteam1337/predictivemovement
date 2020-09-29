@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Bookings from './Bookings'
-import { Switch as RouterSwitch, Route } from 'react-router-dom'
+import { Switch as RouterSwitch, Route, Redirect } from 'react-router-dom'
 import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
@@ -39,7 +39,9 @@ const Sidebar = (state: Props) => {
     <Container>
       <Navigation />
       <RouterSwitch>
-        <Route exact path="/" />
+        <Route exact path="/">
+          <Redirect from="/" to="/bookings" />
+        </Route>
         <Route>
           <Content>
             <RouterSwitch>

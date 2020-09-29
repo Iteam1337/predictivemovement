@@ -31,7 +31,7 @@ const BookingList = styled.ul`
   list-style: none;
   padding-top: 1rem;
   li:not(:last-child) {
-    margin-bottom: 0.875rem;
+    margin-bottom: 0.5rem;
   }
 `
 

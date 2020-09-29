@@ -89,10 +89,7 @@ const VehicleDetails: React.FC<{
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {helpers.withoutLastFourChars(vehicleId)}
-            <Elements.Typography.SpanBold>
-              {helpers.getLastFourChars(vehicleId)}
-            </Elements.Typography.SpanBold>
+            {helpers.getLastFourChars(vehicleId).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.capacity && (
@@ -148,10 +145,7 @@ const VehicleDetails: React.FC<{
                       key={bookingId}
                       onClick={() => handleOnLinkClick(bookingId)}
                     >
-                      {helpers.withoutLastFourChars(bookingId)}
-                      <Elements.Typography.SpanBold>
-                        {helpers.getLastFourChars(bookingId)}
-                      </Elements.Typography.SpanBold>
+                      {helpers.getLastFourChars(bookingId).toUpperCase()}
                     </Elements.Links.RoundedLink>
                   ))}
                 </Elements.Layout.LinkListContainer>

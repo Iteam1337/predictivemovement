@@ -61,7 +61,8 @@ const RoundedLabelDisplay = styled.span<{ margin: string }>`
   text-decoration: none;
   display: inline-block;
   font-size: 1rem;
-  letter-spacing: 0.03rem;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 0.1rem;
   width: fit-content;
   color: #3c3c3c;
   margin: ${({ margin }) => margin && margin};

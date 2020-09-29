@@ -34,28 +34,23 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
     <Elements.Layout.LinkListContainer>
       {vehicles.map((vehicle) => (
         <Elements.Layout.InlineContainer key={vehicle.id}>
-          <Elements.Typography.NoMarginParagraph>
-            ID
-          </Elements.Typography.NoMarginParagraph>
-          <Elements.Layout.MarginLeftContainerSm>
-            <Elements.Links.RoundedLink
-              onMouseOver={() =>
-                dispatch({ type: 'highlightVehicle', payload: vehicle.id })
-              }
-              onMouseLeave={() =>
-                dispatch({ type: 'highlightVehicle', payload: undefined })
-              }
-              to={`/transports/${vehicle.id}`}
-              onClick={() =>
-                onClickHandler(
-                  vehicle.start_address.lat,
-                  vehicle.start_address.lon
-                )
-              }
-            >
-              ...{helpers.getLastFourChars(vehicle.id)}
-            </Elements.Links.RoundedLink>
-          </Elements.Layout.MarginLeftContainerSm>
+          <Elements.Links.RoundedLink
+            onMouseOver={() =>
+              dispatch({ type: 'highlightVehicle', payload: vehicle.id })
+            }
+            onMouseLeave={() =>
+              dispatch({ type: 'highlightVehicle', payload: undefined })
+            }
+            to={`/transports/${vehicle.id}`}
+            onClick={() =>
+              onClickHandler(
+                vehicle.start_address.lat,
+                vehicle.start_address.lon
+              )
+            }
+          >
+            {helpers.getLastFourChars(vehicle.id).toUpperCase()}
+          </Elements.Links.RoundedLink>
         </Elements.Layout.InlineContainer>
       ))}
     </Elements.Layout.LinkListContainer>

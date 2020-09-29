@@ -1,17 +1,17 @@
-const { addVehicle, getVehicle } = require('../services/cache')
+const cache = require('../services/cache')
 
 const {
   open,
-  queues: { SEND_PLAN_TO_VEHICLE },
+  queues: { ADD_INSTRUCTIONS_TO_VEHICLE },
   exchanges: { OUTGOING_VEHICLE_UPDATES },
 } = require('../adapters/amqp')
 
-const vehiclePlan = () => {
-  return open
+const vehiclePlan = () =>
+  open
     .then((conn) => conn.createChannel())
     .then((ch) =>
       ch
-        .assertQueue(SEND_PLAN_TO_VEHICLE, {
+        .assertQueue(ADD_INSTRUCTIONS_TO_VEHICLE, {
           durable: false,
         })
         .then(() =>
@@ -21,23 +21,25 @@ const vehiclePlan = () => {
         )
         .then(() =>
           ch.bindQueue(
-            SEND_PLAN_TO_VEHICLE,
+            ADD_INSTRUCTIONS_TO_VEHICLE,
             OUTGOING_VEHICLE_UPDATES,
-            'plan_updated'
+            'new_instructions'
           )
         )
         .then(() =>
-          ch.consume(SEND_PLAN_TO_VEHICLE, (msg) => {
+          ch.consume(ADD_INSTRUCTIONS_TO_VEHICLE, (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
-            const oldVehicle = getVehicle(vehicle.id)
-            addVehicle(vehicle.id, {
-              ...oldVehicle,
+            const currentVehicle = cache.getVehicle(vehicle.id) || {}
+            console.log('received plan: ', vehicle)
+
+            cache.addVehicle(vehicle.id, {
+              ...currentVehicle,
               ...vehicle,
             })
-            ch.ack(msg)
+
+            return ch.ack(msg)
           })
         )
     )
-}
 
 module.exports = vehiclePlan

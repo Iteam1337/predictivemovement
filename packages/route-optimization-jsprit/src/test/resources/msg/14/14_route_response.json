@@ -1,10 +1,10 @@
 {
-    "status": "error",
-    "status_msg": "Parameter not acceptable",
-    "data": {
-        "error_msg": "java.lang.NumberFormatException: For input string: \"10.8\"",
-        "error_detail": "The weight and volume of vehicles has to be an integer value.",
-        "error_source": "weight",
-        "error_meta": "{\"volume\":0,\"weight\":10.8}"
-    }
+  "status": "error",
+  "status_msg": "Parameter not acceptable",
+  "data": {
+    "error_msg": "java.lang.NumberFormatException: For input string: \"10.8\"",
+    "error_detail": "The weight and volume of vehicles has to be an integer value.",
+    "error_source": "weight",
+    "error_meta": "{\"volume\":0,\"weight\":10.8}"
+  }
 }

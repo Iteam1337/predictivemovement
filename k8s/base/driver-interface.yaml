@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-interface
+  labels:
+    app: driver-interface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: driver-interface
+  template:
+    metadata:
+      labels:
+        app: driver-interface
+    spec:
+      containers:
+        - env:
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: DRIVER_TOKEN
+                  name: driver-token
+            - name: GOOGLE_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: GOOGLE_TOKEN
+                  name: google-token
+          envFrom:
+            - configMapRef:
+                name: common-properties
+          image: iteam1337/pm-driver-interface
+          name: driver-interface
+          resources: {}
+      restartPolicy: Always

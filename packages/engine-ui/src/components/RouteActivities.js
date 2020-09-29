@@ -1,6 +1,7 @@
 import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
 import styled from 'styled-components'
+import helpers from '../utils/helpers'
 import { UIStateContext } from '../utils/UIStateContext'
 import Elements from './Elements'
 
@@ -15,6 +16,11 @@ const ActivityInfo = styled.div`
   a {
     margin-left: auto;
   }
+`
+
+const Wrapper = styled.div`
+  overflow: auto;
+  height: 100%;
 `
 
 const RouteActivities = ({ vehicle }) => {
@@ -33,7 +39,7 @@ const RouteActivities = ({ vehicle }) => {
   }
 
   return (
-    <div>
+    <Wrapper>
       {activities.map((activity, index) => (
         <ActivityInfo key={index}>
           <p>{index + 1}</p>
@@ -54,11 +60,11 @@ const RouteActivities = ({ vehicle }) => {
               })
             }
           >
-            {activity.id}
+            ...{helpers.getLastFourChars(activity.id)}
           </Elements.RoundedLink>
         </ActivityInfo>
       ))}
-    </div>
+    </Wrapper>
   )
 }
 

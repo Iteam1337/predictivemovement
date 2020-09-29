@@ -1,5 +1,4 @@
-const amqp = require('fluent-amqp')(process.env.AMQP_HOST || 'amqp://localhost')
-// const { generate } = require('@iteam1337/engine/simulator/cars')
+const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 const routingKeys = {
@@ -8,7 +7,8 @@ const routingKeys = {
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
   PICKED_UP: 'picked_up',
-  PLANNED: 'plan_updated',
+  NEW_INSTRUCTIONS: 'new_instructions',
+  DELETED: 'deleted',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -30,57 +30,40 @@ amqp
         })
       )
       .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'outgoing_booking_updates',
-          routingKeys.ASSIGNED
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'incoming_booking_updates',
-          routingKeys.PICKED_UP
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'incoming_booking_updates',
-          routingKeys.DELIVERED
-        )
-      )
-      .then(() =>
-        ch.bindQueue(
-          'update_booking_in_admin_ui',
-          'outgoing_booking_updates',
-          routingKeys.NEW
-        )
+        ch.bindQueue('update_booking_in_admin_ui', 'outgoing_booking_updates')
       )
   )
 
 const bookings = amqp
+  .exchange('outgoing_booking_updates', 'topic', {
+    durable: false,
+  })
   .queue('update_booking_in_admin_ui', {
     durable: false,
   })
   /* .subscribe is supposed to default to {noAck: true}, dont know what
    * it means but messages are not acked if i don't specify this
    */
-  .subscribe({ noAck: true }, [])
+  .subscribe({ noAck: true }, [
+    routingKeys.NEW,
+    routingKeys.ASSIGNED,
+    routingKeys.PICKED_UP,
+    routingKeys.DELIVERED,
+  ])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }
   })
 
-const cars = amqp
+const vehicles = amqp
   .exchange('outgoing_vehicle_updates', 'topic', {
     durable: false,
   })
   .queue('update_vehicle_in_admin_ui', {
     durable: false,
   })
-  .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.PLANNED])
-  .map((cars) => {
-    return cars.json()
+  .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
+  .map((vehicles) => {
+    return vehicles.json()
   })
 
 const createBooking = (booking) => {
@@ -111,22 +94,12 @@ const addVehicle = (vehicle) => {
       routingKeys.REGISTERED
     )
 }
-const createBookingsFromHistory = (total) => {
-  return amqp
-    .queue('add_nr_of_historical_bookings', { durable: false })
-    .publish(total)
-}
-
-const resetState = () =>
-  amqp
-    .queue('clear_engine_state', { durable: false })
-    .publish(JUST_DO_IT_MESSAGE)
 
 const plan = amqp
   .exchange('outgoing_plan_updates', 'fanout', {
     durable: false,
   })
-  .queue('planned_vehicles', {
+  .queue('update_plan_in_admin_ui', {
     durable: false,
   })
   .subscribe({ noAck: true })
@@ -134,13 +107,31 @@ const plan = amqp
     return plan.json()
   })
 
+const deleteBooking = (id) => {
+  return amqp
+    .exchange('incoming_booking_updates', 'topic', {
+      durable: false,
+    })
+    .publish(id, routingKeys.DELETED)
+    .then(() => console.log(` [x] Delete booking ${id}`))
+}
+
+const deleteVehicle = (id) => {
+  return amqp
+    .exchange('incoming_vehicle_updates', 'topic', {
+      durable: false,
+    })
+    .publish(id, routingKeys.DELETED)
+    .then(() => console.log(` [x] Delete vehicle ${id}`))
+}
+
 module.exports = {
   addVehicle,
   bookings,
-  cars,
+  vehicles,
   createBooking,
   dispatchOffers,
-  createBookingsFromHistory,
-  resetState,
   plan,
+  deleteBooking,
+  deleteVehicle,
 }

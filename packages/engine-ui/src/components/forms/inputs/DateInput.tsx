@@ -20,26 +20,33 @@ const TimeRestrictionDateInput = React.forwardRef<
     value: string
     placeholder: string
     withIcon: boolean
+    handleFocus?: () => void
   }
->(({ onChange, onClick, value, placeholder, withIcon = true }, ref) => {
-  return (
-    <Elements.Layout.TimeRestrictionDateInputWrapper>
-      <Elements.Layout.InputInnerContainer>
-        {withIcon && (
-          <TimeRestrictionFormInputIcon onClick={onClick} src={arrowIcon} />
-        )}
-        <Elements.Form.DateInput
-          onChange={onChange}
-          onClick={onClick}
-          value={value}
-          ref={ref as React.Ref<HTMLInputElement>}
-          placeholder={placeholder}
-          required
-          iconInset={withIcon}
-        />
-      </Elements.Layout.InputInnerContainer>
-    </Elements.Layout.TimeRestrictionDateInputWrapper>
-  )
-})
+>(
+  (
+    { onChange, onClick, value, placeholder, withIcon = true, handleFocus },
+    ref
+  ) => {
+    return (
+      <Elements.Layout.TimeRestrictionDateInputWrapper>
+        <Elements.Layout.InputInnerContainer>
+          {withIcon && (
+            <TimeRestrictionFormInputIcon onClick={onClick} src={arrowIcon} />
+          )}
+          <Elements.Form.DateInput
+            onFocus={() => handleFocus?.()}
+            onChange={onChange}
+            onClick={onClick}
+            value={value}
+            ref={ref as React.Ref<HTMLInputElement>}
+            placeholder={placeholder}
+            required
+            iconInset={withIcon}
+          />
+        </Elements.Layout.InputInnerContainer>
+      </Elements.Layout.TimeRestrictionDateInputWrapper>
+    )
+  }
+)
 
 export default TimeRestrictionDateInput

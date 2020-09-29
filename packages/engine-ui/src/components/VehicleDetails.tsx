@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
 import MainRouteLayout from './layout/MainRouteLayout'
@@ -8,6 +9,7 @@ import moment from 'moment'
 import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
+import helpers from '../utils/helpers'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -25,7 +27,7 @@ const RouteTitleWrapper = styled.div`
   align-items: baseline;
   justify-items: flex-start;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 
   button {
     background: none;
@@ -38,19 +40,31 @@ const RouteTitleWrapper = styled.div`
   }
 `
 
-const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
+const VehicleDetails: React.FC<{
+  vehicles: any
+  deleteVehicle: (id: string) => void
+}> = ({ vehicles, deleteVehicle }) => {
   const { dispatch } = React.useContext(UIStateContext)
+  const history = useHistory()
+
   const [showInfo, setShowInfo] = React.useState({
     route: false,
     bookings: false,
     status: false,
   })
 
-  const { vehicleId } = useParams()
+  const { vehicleId } = useParams<{ vehicleId: string }>()
 
   const vehicle = vehicles.find((v: any) => v.id === vehicleId)
 
   if (!vehicle) return <p>Loading...</p>
+
+  const handleDeleteClick = (vehicleId: string) => {
+    if (window.confirm('Är du säker på att du vill radera transporten?')) {
+      deleteVehicle(vehicleId)
+      return history.push('/transports')
+    }
+  }
 
   const handleOnLinkClick = (id: string) => {
     const activity = vehicle.activities.find(
@@ -75,7 +89,10 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {vehicle.id}
+            {helpers.withoutLastFourChars(vehicleId)}
+            <Elements.Typography.SpanBold>
+              {helpers.getLastFourChars(vehicleId)}
+            </Elements.Typography.SpanBold>
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.capacity && (
@@ -92,8 +109,11 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {moment(vehicle.earliest_start).format('LT')} -{' '}
-            {moment(vehicle.latest_end).format('LT')}{' '}
+            {vehicle.earliest_start && vehicle.latest_end
+              ? `
+                ${moment(vehicle.earliest_start).format('LT')} -
+                ${moment(vehicle.latest_end).format('LT')} `
+              : 'Inget körschema fastställt'}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.end_address.name && (
@@ -103,71 +123,91 @@ const VehicleDetails: React.FC<{ vehicles: any }> = ({ vehicles }) => {
 
         {vehicle.activities && vehicle.activities.length > 0 && (
           <>
-            <RouteTitleWrapper>
-              <Elements.Typography.StrongParagraph>
-                Bokingar på fordon
-              </Elements.Typography.StrongParagraph>
-              <button
-                onClick={() => {
-                  setShowInfo((showInfo) => ({
-                    bookings: !showInfo.bookings,
-                    route: false,
-                    status: false,
-                  }))
-                }}
-              >
-                <Icons.Arrow active={showInfo.bookings} />
-              </button>
-            </RouteTitleWrapper>
-            {showInfo.bookings && (
-              <Elements.Layout.LinkListContainer>
-                {vehicle.booking_ids.map((bookingId: string) => (
-                  <Elements.Links.RoundedLink
-                    to={`/bookings/${bookingId}`}
-                    key={bookingId}
-                    onClick={() => handleOnLinkClick(bookingId)}
-                  >
-                    {bookingId}
-                  </Elements.Links.RoundedLink>
-                ))}
-              </Elements.Layout.LinkListContainer>
-            )}
-            <RouteTitleWrapper>
-              <Elements.Typography.StrongParagraph>
-                Rutt
-              </Elements.Typography.StrongParagraph>
-              <button
-                onClick={() => {
-                  setShowInfo((showInfo) => ({
-                    route: !showInfo.route,
-                    bookings: false,
-                    status: false,
-                  }))
-                }}
-              >
-                <Icons.Arrow active={showInfo.route} />
-              </button>
-            </RouteTitleWrapper>
-            {showInfo.route && <RouteActivities vehicle={vehicle} />}
-            <RouteTitleWrapper>
-              <Elements.Typography.StrongParagraph>
-                Status
-              </Elements.Typography.StrongParagraph>
-              <button
-                onClick={() => {
-                  setShowInfo((showInfo) => ({
-                    status: !showInfo.status,
-                    bookings: false,
-                    route: false,
-                  }))
-                }}
-              >
-                <Icons.Arrow active={showInfo.status} />
-              </button>
-            </RouteTitleWrapper>
-            {showInfo.status && <h6>Status</h6>}
+            <Elements.Layout.MarginBottomContainer>
+              <RouteTitleWrapper>
+                <Elements.Typography.StrongParagraph>
+                  Bokningar på fordon
+                </Elements.Typography.StrongParagraph>
+                <button
+                  onClick={() => {
+                    setShowInfo((showInfo) => ({
+                      bookings: !showInfo.bookings,
+                      route: false,
+                      status: false,
+                    }))
+                  }}
+                >
+                  <Icons.Arrow active={showInfo.bookings} />
+                </button>
+              </RouteTitleWrapper>
+              {showInfo.bookings && (
+                <Elements.Layout.LinkListContainer>
+                  {vehicle.booking_ids.map((bookingId: string) => (
+                    <Elements.Links.RoundedLink
+                      to={`/bookings/${bookingId}`}
+                      key={bookingId}
+                      onClick={() => handleOnLinkClick(bookingId)}
+                    >
+                      {helpers.withoutLastFourChars(bookingId)}
+                      <Elements.Typography.SpanBold>
+                        {helpers.getLastFourChars(bookingId)}
+                      </Elements.Typography.SpanBold>
+                    </Elements.Links.RoundedLink>
+                  ))}
+                </Elements.Layout.LinkListContainer>
+              )}
+            </Elements.Layout.MarginBottomContainer>
+            <Elements.Layout.MarginBottomContainer>
+              <RouteTitleWrapper>
+                <Elements.Typography.StrongParagraph>
+                  Rutt
+                </Elements.Typography.StrongParagraph>
+                <button
+                  onClick={() => {
+                    setShowInfo((showInfo) => ({
+                      route: !showInfo.route,
+                      bookings: false,
+                      status: false,
+                    }))
+                  }}
+                >
+                  <Icons.Arrow active={showInfo.route} />
+                </button>
+              </RouteTitleWrapper>
+              {showInfo.route && <RouteActivities vehicle={vehicle} />}
+            </Elements.Layout.MarginBottomContainer>
+            <Elements.Layout.MarginBottomContainer>
+              <RouteTitleWrapper>
+                <Elements.Typography.StrongParagraph>
+                  Status
+                </Elements.Typography.StrongParagraph>
+                <button
+                  onClick={() => {
+                    setShowInfo((showInfo) => ({
+                      status: !showInfo.status,
+                      bookings: false,
+                      route: false,
+                    }))
+                  }}
+                >
+                  <Icons.Arrow active={showInfo.status} />
+                </button>
+              </RouteTitleWrapper>
+              {showInfo.status && (
+                <Elements.Typography.NoInfoParagraph>
+                  Det finns ingen status för detta fordonet ännu...
+                </Elements.Typography.NoInfoParagraph>
+              )}
+            </Elements.Layout.MarginBottomContainer>
           </>
         )}
+        <Elements.Layout.MarginTopContainer>
+          <Elements.Buttons.DeleteButton
+            onClick={() => handleDeleteClick(vehicle.id)}
+          >
+            Radera transport
+          </Elements.Buttons.DeleteButton>
+        </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

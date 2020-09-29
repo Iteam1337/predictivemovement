@@ -1,5 +1,5 @@
 const amqp = require('amqplib').connect(
-  process.env.AMQP_HOST || 'amqp://localhost'
+  process.env.AMQP_URL || 'amqp://localhost'
 )
 
 const exchanges = {

@@ -23,6 +23,7 @@
     ],
     "bookings": [
         {
+            "id": "Gammelstad->LTU",
             "pickup": {
                 "lon": 22.015858,
                 "lat": 65.641574,
@@ -34,17 +35,17 @@
                     }
                 ]
             },
-            "metadata": {
-                "start": "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
-            },
-            "id": "Gammelstad->LTU",
             "delivery": {
                 "lon": 22.13488,
                 "lat": 65.61582,
                 "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf"
+            },
+            "metadata": {
+                "start": "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
             }
         },
         {
+            "id": "Gäddvik->LTU",
             "pickup": {
                 "lon": 22.051736,
                 "lat": 65.581598,
@@ -56,14 +57,13 @@
                     }
                 ]
             },
-            "metadata": {
-                "start": "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
-            },
-            "id": "Gäddvik->LTU",
             "delivery": {
                 "lon": 22.13488,
                 "lat": 65.61582,
                 "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf"
+            },
+            "metadata": {
+                "start": "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
             }
         }
     ],

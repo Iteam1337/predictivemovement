@@ -1,15 +1,27 @@
 const botServices = require('./services/bot')
 const messaging = require('./services/messaging')
-const { getBooking, updateBooking, getVehicle } = require('./services/cache')
-
+const cache = require('./services/cache')
 const {
   open,
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
+function onArrived(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+
+  return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
+    vehicleId,
+    telegramId
+  )
+}
+
 function onPickup(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  updateBooking(callbackPayload.id, { status: callbackPayload.e })
+
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {
@@ -17,35 +29,42 @@ function onPickup(msg) {
         durable: false,
       }).then(() => {
         const { id } = callbackPayload
-        ch.publish(
+
+        return ch.publish(
           INCOMING_BOOKING_UPDATES,
           'picked_up',
-          Buffer.from(JSON.stringify(getBooking(id)))
+          Buffer.from(JSON.stringify({ id, status: 'picked_up' }))
         )
       })
     })
+    .catch(console.warn)
 
-  return messaging.onPickupConfirm(msg)
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onDelivered(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+
   const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  updateBooking(callbackPayload.id, { status: callbackPayload.e })
-  return open
+
+  open
     .then((conn) => conn.createChannel())
     .then((ch) => {
       ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
         durable: false,
       }).then(() => {
         const { id } = callbackPayload
-        ch.publish(
+        return ch.publish(
           INCOMING_BOOKING_UPDATES,
           'delivered',
-          Buffer.from(JSON.stringify(getBooking(id)))
+          Buffer.from(JSON.stringify({ id, status: 'delivered' }))
         )
       })
     })
     .catch(console.warn)
+
+  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
 }
 
 function onOffer(msg) {
@@ -58,56 +77,59 @@ const init = (bot) => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', (ctx) => {
-    const id = ctx.metadata.getId(ctx.botInfo.id)
+    const vehicleId = cache.getVehicleIdByTelegramId(ctx.botInfo.id)
+    const vehicleWithPlan = cache.getVehicle(vehicleId)
 
-    const vehicleWithPlan = getVehicle(id)
-    if (!vehicleWithPlan || !vehicleWithPlan.activities ) return messaging.onNoInstructionsForVehicle(ctx)
+    if (!vehicleWithPlan || !vehicleWithPlan.activities)
+      return messaging.onNoInstructionsForVehicle(ctx)
+
     const activities = vehicleWithPlan.activities
     const bookingIds = vehicleWithPlan.booking_ids
 
-    messaging.onInstructionsForVehicle(
+    return messaging.onInstructionsForVehicle(
       activities,
       bookingIds,
       ctx.update.message.from.id
     )
   })
 
-  bot.command('/login', (ctx) => {
-    ctx.reply(`Skriv in ditt transport id`)
-  })
+  bot.command('/login', messaging.onPromptUserForTransportId)
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
 
-    if (msg.text) botServices.onLogin(msg.text, ctx)
+    /** Login attempt from command /login. */
+    if (msg.text && msg.text.includes('pmv-')) {
+      botServices.onLogin(msg.text, ctx)
+    }
 
     if (!msg.location) return
 
-    ctx.reply('Du finns nu tillgänglig för bokningar')
-
-    botServices.onMessage(msg, ctx)
+    return botServices.onLocationMessage(msg, ctx)
   })
 
   bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
+
+    /** Telegram live location updates. */
     if (!msg.location) return
 
-    botServices.onMessage(msg, ctx)
+    return botServices.onLocationMessage(msg, ctx)
   })
 
+  /** Listen for user invoked button clicks. */
   bot.on('callback_query', (msg) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
     switch (callbackPayload.e) {
       case 'picked_up':
         return onPickup(msg)
-
+      case 'arrived':
+        return onArrived(msg)
       case 'delivered':
         return onDelivered(msg)
-
       case 'offer':
         return onOffer(msg)
-
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

@@ -22,10 +22,12 @@ const handleContactInputChange = (
   }))
 }
 
-const handleDropdownSelect = (propertyName, callback) => ({
-  name,
+const handleAddressInput = (propertyName, callback) => ({
+  name = '',
+  street = '',
   lon,
   lat,
+  county = '',
 }) => {
   return callback((currentState) => ({
     ...currentState,
@@ -33,6 +35,8 @@ const handleDropdownSelect = (propertyName, callback) => ({
       name,
       lon,
       lat,
+      city: county,
+      street,
     },
   }))
 }
@@ -40,5 +44,5 @@ const handleDropdownSelect = (propertyName, callback) => ({
 export default {
   handleTextInputChange,
   handleContactInputChange,
-  handleDropdownSelect,
+  handleAddressInput,
 }

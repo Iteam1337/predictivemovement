@@ -1,42 +1,42 @@
 {
-    "metadata": {
-        "note": "Error case: capacity weight is a float (10.8), but only integers are possible"
-    },
-    "vehicles": [
-        {
-            "start_address": {
-                "name": "Brommaplan",
-                "lon": 17.939694,
-                "lat": 59.338283,
-                "hint": "8zACgIZMG4ALAAAAAAAAAKkAAAAAAAAAbV3nQAAAAABbVuFCAAAAAAsAAAAAAAAAqQAAAAAAAACIAQAAI7wRAVxtiQPuvBEBK26JAwMAbwZStUSx"
-            },
-            "profile": null,
-            "metadata": {
-                "profile": "Tesla Model X",
-                "driver": {
-                    "name": "Christian Landgren",
-                    "contact": "0707755831"
-                }
-            },
-            "latest_end": "2020-09-09T13:00:00.000Z",
-            "id": "pmv-6NdZmAZa",
-            "end_address": {
-                "name": "Brommaplan",
-                "lon": 17.939694,
-                "lat": 59.338283,
-                "hint": "8zACgIZMG4ALAAAAAAAAAKkAAAAAAAAAbV3nQAAAAABbVuFCAAAAAAsAAAAAAAAAqQAAAAAAAACIAQAAI7wRAVxtiQPuvBEBK26JAwMAbwZStUSx"
-            },
-            "earliest_start": "2020-09-09T07:00:00.000Z",
-            "current_route": null,
-            "capacity": {
-                "weight": 10.8,
-                "volume": 0
-            },
-            "busy": null,
-            "booking_ids": null,
-            "activities": null
+  "metadata": {
+    "note": "Error case: capacity weight is a float (10.8), but only integers are possible"
+  },
+  "vehicles": [
+    {
+      "start_address": {
+        "name": "Brommaplan",
+        "lon": 17.939694,
+        "lat": 59.338283,
+        "hint": "8zACgIZMG4ALAAAAAAAAAKkAAAAAAAAAbV3nQAAAAABbVuFCAAAAAAsAAAAAAAAAqQAAAAAAAACIAQAAI7wRAVxtiQPuvBEBK26JAwMAbwZStUSx"
+      },
+      "profile": null,
+      "metadata": {
+        "profile": "Tesla Model X",
+        "driver": {
+          "name": "Christian Landgren",
+          "contact": "0707755831"
         }
-    ],
-    "matrix": {},
-    "bookings": []
+      },
+      "latest_end": "2020-09-09T13:00:00.000Z",
+      "id": "pmv-6NdZmAZa",
+      "end_address": {
+        "name": "Brommaplan",
+        "lon": 17.939694,
+        "lat": 59.338283,
+        "hint": "8zACgIZMG4ALAAAAAAAAAKkAAAAAAAAAbV3nQAAAAABbVuFCAAAAAAsAAAAAAAAAqQAAAAAAAACIAQAAI7wRAVxtiQPuvBEBK26JAwMAbwZStUSx"
+      },
+      "earliest_start": "2020-09-09T07:00:00.000Z",
+      "current_route": null,
+      "capacity": {
+        "weight": 10.8,
+        "volume": 0
+      },
+      "busy": null,
+      "booking_ids": null,
+      "activities": null
+    }
+  ],
+  "matrix": {},
+  "bookings": []
 }

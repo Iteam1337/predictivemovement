@@ -8,15 +8,17 @@ import Map from './components/Map'
 import Logotype from './components/Logotype'
 import { UIStateProvider } from './utils/UIStateContext'
 import hooks from './utils/hooks'
+import Notifications from './components/Notifications'
 
 const App = () => {
   const { socket } = useSocket()
   const [state, dispatch] = React.useReducer(reducer, initState)
-
   const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
-
+  const [notifications, updateNotifications] = React.useState([])
   const addVehicle = (params) => {
-    socket.emit('add-vehicle', params)
+    socket.emit('add-vehicle', params, (res) =>
+      updateNotifications((notifications) => [res, ...notifications])
+    )
   }
 
   const createBooking = (params) => {
@@ -24,22 +26,20 @@ const App = () => {
   }
 
   const dispatchOffers = () => {
-    console.log('user pressed the dispatch button')
     socket.emit('dispatch-offers')
   }
 
-  const createBookings = (total) => {
-    socket.emit('new-bookings', {
-      total,
-    })
+  const deleteBooking = (id) => {
+    socket.emit('delete-booking', id)
   }
 
-  const resetState = () => {
-    dispatch({
-      type: 'clearState',
-    })
-    socket.emit('reset-state')
+  const deleteVehicle = (id) => {
+    socket.emit('delete-vehicle', id)
   }
+
+  useSocket('notification', (notification) => {
+    updateNotifications((notifications) => [notification, ...notifications])
+  })
 
   useSocket('bookings', (bookings) => {
     dispatch({
@@ -48,10 +48,24 @@ const App = () => {
     })
   })
 
-  useSocket('cars', (newCars) => {
+  useSocket('delete-booking', (bookingId) => {
     dispatch({
-      type: 'setCars',
-      payload: newCars,
+      type: 'deleteBooking',
+      payload: bookingId,
+    })
+  })
+
+  useSocket('vehicle-deleted', (vehicleId) => {
+    dispatch({
+      type: 'deleteVehicle',
+      payload: vehicleId,
+    })
+  })
+
+  useSocket('vehicles', (newVehicles) => {
+    dispatch({
+      type: 'setVehicles',
+      payload: newVehicles,
     })
   })
 
@@ -65,13 +79,17 @@ const App = () => {
   return (
     <UIStateProvider>
       <Logotype />
+      <Notifications
+        notifications={notifications}
+        updateNotifications={updateNotifications}
+      />
       <Sidebar
         {...state}
         createBooking={createBooking}
         dispatchOffers={dispatchOffers}
-        resetState={resetState}
         addVehicle={addVehicle}
-        createBookings={createBookings}
+        deleteBooking={deleteBooking}
+        deleteVehicle={deleteVehicle}
       />
       <Route path="/">
         <Map data={mapData} />

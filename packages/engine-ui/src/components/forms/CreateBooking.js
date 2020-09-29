@@ -5,13 +5,22 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
+import { UIStateContext } from '../../utils/UIStateContext'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const history = useHistory()
+  const { dispatch: UIStateDispatch } = React.useContext(UIStateContext)
+  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
+
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
+
+  const [showParcelInfo, setShowParcelInfo] = React.useState({
+    pickup: false,
+    delivery: false,
+  })
 
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
@@ -47,74 +56,48 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       : addTimeRestrictionWindow(propertyName)
   }
 
+  const handleToggleParcelDetailsChange = () => {
+    setShowParcelDetails((currentValue) => !currentValue)
+  }
+
+  const handleToggleParcelInfo = (propertyName) => {
+    setShowParcelInfo((currentState) => ({
+      ...currentState,
+      [propertyName]: !currentState[propertyName],
+    }))
+  }
+
+  const handleFragileParcelChange = () => {
+    onChangeHandler((currentState) => ({
+      ...currentState,
+      fragile: !currentState.fragile,
+    }))
+  }
+
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
-      <Elements.Layout.InputBlock>
-        <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="parceldetails" />
-          <FormInputs.TextInput
-            name="id"
-            value={state.id}
-            placeholder="ID"
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'id',
-              onChangeHandler
-            )}
-          />
-        </Elements.Layout.InputContainer>
-        <Elements.Layout.InputContainer>
-          <Elements.Layout.TextInputPairContainer>
-            <Elements.Layout.TextInputPairItem>
-              <FormInputs.TextInput
-                name="measurement"
-                value={state.measurement}
-                placeholder="Mått (BxHxDcm)"
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'measurement',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-            <Elements.Layout.TextInputPairItem>
-              <FormInputs.TextInput
-                step={1}
-                name="weight"
-                value={state.weight}
-                placeholder="Vikt (kg)"
-                type="number"
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'weight',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-          </Elements.Layout.TextInputPairContainer>
-        </Elements.Layout.InputContainer>
-
-        <Elements.Layout.InputContainer>
-          <FormInputs.TextInput
-            name="cargo"
-            value={state.cargo}
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'cargo',
-              onChangeHandler
-            )}
-            placeholder="Innehåll"
-          />
-        </Elements.Layout.InputContainer>
-      </Elements.Layout.InputBlock>
-
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-        <Elements.Form.Label htmlFor="pickup">Upphämtning</Elements.Form.Label>
+        <Elements.Form.Label required htmlFor="pickup">
+          Upphämtning
+        </Elements.Form.Label>
         <FormInputs.AddressSearchInput
-          placeholder="Adress"
-          onChangeHandler={eventHandlers.handleDropdownSelect(
+          required
+          placeholder="Adress (sök eller klicka på karta)"
+          value={state.pickup.name}
+          onFocus={() =>
+            UIStateDispatch({
+              type: 'focusInput',
+              payload: 'start',
+            })
+          }
+          onChangeHandler={eventHandlers.handleAddressInput(
             'pickup',
             onChangeHandler
           )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
         <Elements.Layout.TimeRestrictionWrapper>
@@ -138,6 +121,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               name="sendername"
               value={state.sender.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -153,7 +137,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="sender-contact">
+          <Elements.Form.Label required htmlFor="sender-contact">
             Kontakt
           </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>
@@ -162,6 +146,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               iconInset
               name="sender"
               type="tel"
@@ -172,22 +157,53 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 onChangeHandler
               )}
               placeholder="Telefonnummer"
+              required
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer>
+          <FormInputs.Checkbox
+            label="Portkod"
+            onChangeHandler={() => handleToggleParcelInfo('pickup')}
+          />
+
+          {showParcelInfo.pickup && (
+            <FormInputs.TextInput
+              name="sender-port-code"
+              value={state.sender.doorCode}
+              onChangeHandler={eventHandlers.handleContactInputChange(
+                'sender',
+                'doorCode',
+                onChangeHandler
+              )}
+              placeholder="Portkod"
+            />
+          )}
+        </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+      <Elements.Layout.MarginBottomContainer />
 
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-        <Elements.Form.Label htmlFor="delivery">Avlämning</Elements.Form.Label>
+        <Elements.Form.Label required htmlFor="delivery">
+          Avlämning
+        </Elements.Form.Label>
         <FormInputs.AddressSearchInput
-          placeholder="Adress"
-          onChangeHandler={eventHandlers.handleDropdownSelect(
+          placeholder="Adress (sök eller klicka på karta)"
+          value={state.delivery.name}
+          onFocus={() =>
+            UIStateDispatch({
+              type: 'focusInput',
+              payload: 'end',
+            })
+          }
+          onChangeHandler={eventHandlers.handleAddressInput(
             'delivery',
             onChangeHandler
           )}
         />
         <FormInputs.Checkbox
           label="Tidspassning"
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() =>
             handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
           }
@@ -214,6 +230,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             />
             <FormInputs.TextInput
               iconInset
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               name="recipient-name"
               value={state.recipient.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -228,7 +245,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="recipient-contact">
+          <Elements.Form.Label required htmlFor="recipient-contact">
             Kontakt
           </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>
@@ -241,15 +258,105 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               name="recipient-contact"
               type="tel"
               value={state.recipient.contact}
+              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleContactInputChange(
                 'recipient',
                 'contact',
                 onChangeHandler
               )}
               placeholder="Telefonnummer"
+              required
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer>
+          <FormInputs.Checkbox
+            label="Portkod"
+            onChangeHandler={() => handleToggleParcelInfo('delivery')}
+          />
+
+          {showParcelInfo.delivery && (
+            <FormInputs.TextInput
+              name="recipient-port-code"
+              value={state.recipient.doorCode}
+              onChangeHandler={eventHandlers.handleContactInputChange(
+                'recipient',
+                'doorCode',
+                onChangeHandler
+              )}
+              placeholder="Portkod"
+            />
+          )}
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+
+      <Elements.Layout.InputBlock>
+        <FormInputs.Checkbox
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+          label="Lägg till paketinformation"
+          onChangeHandler={handleToggleParcelDetailsChange}
+        />
+
+        {showParcelDetails && (
+          <>
+            <Elements.Layout.InputContainer>
+              <Elements.Form.Label htmlFor="parceldetails" />
+              <FormInputs.TextInput
+                name="id"
+                value={state.id}
+                placeholder="ID"
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'id',
+                  onChangeHandler
+                )}
+              />
+            </Elements.Layout.InputContainer>
+            <Elements.Layout.InputContainer>
+              <Elements.Layout.TextInputPairContainer>
+                <Elements.Layout.TextInputPairItem>
+                  <FormInputs.TextInput
+                    name="measurement"
+                    value={state.measurement}
+                    placeholder="Mått (BxHxDcm)"
+                    onChangeHandler={eventHandlers.handleTextInputChange(
+                      'measurement',
+                      onChangeHandler
+                    )}
+                  />
+                </Elements.Layout.TextInputPairItem>
+                <Elements.Layout.TextInputPairItem>
+                  <FormInputs.TextInput
+                    step={1}
+                    name="weight"
+                    value={state.weight}
+                    placeholder="Vikt (kg)"
+                    type="number"
+                    onChangeHandler={eventHandlers.handleTextInputChange(
+                      'weight',
+                      onChangeHandler
+                    )}
+                  />
+                </Elements.Layout.TextInputPairItem>
+              </Elements.Layout.TextInputPairContainer>
+            </Elements.Layout.InputContainer>
+
+            <Elements.Layout.InputContainer>
+              <FormInputs.TextInput
+                name="cargo"
+                value={state.cargo}
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'cargo',
+                  onChangeHandler
+                )}
+                placeholder="Innehåll"
+              />
+              <FormInputs.Checkbox
+                label="Paketet är ömtåligt"
+                onChangeHandler={handleFragileParcelChange}
+              />
+            </Elements.Layout.InputContainer>
+          </>
+        )}
       </Elements.Layout.InputBlock>
       <Elements.Layout.ButtonWrapper>
         <Elements.Buttons.CancelButton

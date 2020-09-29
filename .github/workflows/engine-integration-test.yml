@@ -1,0 +1,51 @@
+name: Integration tests
+
+on: [pull_request]
+
+jobs:
+  build-and-push-route-optimization:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build route-optimization-image
+        run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest
+      - name: Push route-optimization-image
+        run: docker push iteam1337/pm-route-optimization-jsprit:latest
+  run-integration-tests:
+    needs: build-and-push-route-optimization
+    env:
+      REDIS_URL: redis://localhost:6379
+      AMQP_HOST: localhost
+    defaults:
+      run:
+        working-directory: packages/engine_umbrella/
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+      route-optmization-jsprit:
+        image: iteam1337/pm-route-optimization-jsprit
+        env:
+          RABBITMQ_HOST: rabbitmq
+          RABBITMQ_PORT: "5672"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1.0.0
+        with:
+          otp-version: "22.2"
+          elixir-version: "1.10.3"
+      - name: Install Dependencies
+        run: mix deps.get
+      - name: Compile
+        run: mix compile
+      - name: Run tests
+        run: mix test

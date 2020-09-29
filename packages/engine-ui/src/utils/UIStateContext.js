@@ -14,8 +14,33 @@ const reducer = (state, action) => {
     case 'lastClickedPosition':
       return {
         ...state,
-        lastClickedPosition: action.payload,
+        showMapTooltip: true,
+        lastClickedPosition: {
+          ...state.lastClickedPosition,
+          ...action.payload,
+        },
       }
+    case 'addAddressToLastClickedPosition':
+      return {
+        ...state,
+        lastClickedPosition: {
+          ...state.lastClickedPosition,
+          address: action.payload,
+        },
+      }
+    case 'hideTooltip':
+      return { ...state, showMapTooltip: false }
+    case 'focusInput': {
+      return { ...state, lastFocusedInput: action.payload }
+    }
+    case 'resetInputClickState':
+      return {
+        ...state,
+        lastClickedPosition: INITIAL_STATE.lastClickedPosition,
+        showMapTooltip: false,
+        lastFocusedInput: undefined,
+      }
+
     default:
       return state
   }
@@ -49,6 +74,14 @@ const INITIAL_STATE = {
     transitionInterpolator: new FlyToInterpolator(),
     transitionEasing: (t) => t * (2 - t),
   },
+  showMapTooltip: false,
   highlightBooking: undefined,
-  lastClickedPosition: { lat: null, lon: null },
+  lastClickedPosition: {
+    x: undefined,
+    y: undefined,
+    lat: undefined,
+    lon: undefined,
+    address: undefined,
+  },
+  lastFocusedInput: undefined,
 }

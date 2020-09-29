@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
-import AddVehicle from './AddVehicle'
+import AddVehicle from './CreateVehicle'
 import Vehicles from './Vehicles'
 import VehicleDetails from './VehicleDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
@@ -8,7 +8,8 @@ import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 const Transports: React.FC<{
   vehicles: any
   addVehicle: any
-}> = ({ vehicles, addVehicle }) => {
+  deleteVehicle: (id: string) => void
+}> = ({ vehicles, addVehicle, deleteVehicle }) => {
   const { path, url } = useRouteMatch()
   return (
     <Switch>
@@ -25,7 +26,7 @@ const Transports: React.FC<{
         <AddVehicle onSubmit={addVehicle} />
       </Route>
       <Route path={`${path}/:vehicleId`}>
-        <VehicleDetails vehicles={vehicles} />
+        <VehicleDetails vehicles={vehicles} deleteVehicle={deleteVehicle} />
       </Route>
     </Switch>
   )

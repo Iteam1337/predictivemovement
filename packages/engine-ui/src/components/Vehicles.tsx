@@ -2,6 +2,7 @@ import React from 'react'
 import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
+import helpers from '../utils/helpers'
 
 type Vehicle = {
   id: string
@@ -32,21 +33,30 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
   return (
     <Elements.Layout.LinkListContainer>
       {vehicles.map((vehicle) => (
-        <Elements.Links.RoundedLink
-          onMouseOver={() =>
-            dispatch({ type: 'highlightVehicle', payload: vehicle.id })
-          }
-          onMouseLeave={() =>
-            dispatch({ type: 'highlightVehicle', payload: undefined })
-          }
-          to={`/transports/${vehicle.id}`}
-          key={vehicle.id}
-          onClick={() =>
-            onClickHandler(vehicle.start_address.lat, vehicle.start_address.lon)
-          }
-        >
-          {vehicle.id}
-        </Elements.Links.RoundedLink>
+        <Elements.Layout.InlineContainer key={vehicle.id}>
+          <Elements.Typography.NoMarginParagraph>
+            ID
+          </Elements.Typography.NoMarginParagraph>
+          <Elements.Layout.MarginLeftContainerSm>
+            <Elements.Links.RoundedLink
+              onMouseOver={() =>
+                dispatch({ type: 'highlightVehicle', payload: vehicle.id })
+              }
+              onMouseLeave={() =>
+                dispatch({ type: 'highlightVehicle', payload: undefined })
+              }
+              to={`/transports/${vehicle.id}`}
+              onClick={() =>
+                onClickHandler(
+                  vehicle.start_address.lat,
+                  vehicle.start_address.lon
+                )
+              }
+            >
+              ...{helpers.getLastFourChars(vehicle.id)}
+            </Elements.Links.RoundedLink>
+          </Elements.Layout.MarginLeftContainerSm>
+        </Elements.Layout.InlineContainer>
       ))}
     </Elements.Layout.LinkListContainer>
   )

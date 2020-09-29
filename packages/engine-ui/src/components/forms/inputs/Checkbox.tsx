@@ -40,10 +40,6 @@ const CustomCheckboxContainer = styled.label`
     opacity: 1;
     border: 2px solid #666666;
   }
-  
-  input:focus ~ .custom-checkbox {
-    border: 2px solid #13c57b;
-  }
 
   input:active ~ .custom-checkbox {
     transform: rotate(0deg) scale(0.95);
@@ -81,10 +77,11 @@ const Checkbox: React.FC<{
   name: string
   onChangeHandler: (event: any) => void
   label: string
-}> = ({ name, onChangeHandler, label }) => {
+  onFocus?: () => void 
+}> = ({ name, onChangeHandler, label, ...rest }) => {
   return (
     <CustomCheckboxContainer>
-      <HiddenCheckbox name={name} type="checkbox" onChange={onChangeHandler} />
+      <HiddenCheckbox name={name} type="checkbox" onChange={onChangeHandler} {...rest} />
       <CheckboxLabel>{label}</CheckboxLabel>
       <span className="custom-checkbox" />
     </CustomCheckboxContainer>

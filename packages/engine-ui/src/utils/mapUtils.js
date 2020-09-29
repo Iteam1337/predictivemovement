@@ -1,4 +1,4 @@
-import palette from './palette'
+import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
 import vehicleSymbol from '../assets/vehicle.svg'
 import parcelIcon from '../assets/parcel.svg'
@@ -66,51 +66,56 @@ export const routeAssignedToBooking = (assignedTo) =>
     }
   )
 
-export const carToFeature = (cars) => {
+export const vehicleToFeature = (vehicles) => {
   let index = 0
   try {
     return [
-      ...cars.flatMap(({ id, activities, current_route: currentRoute }, i) => {
-        index = i
-        if (activities && activities.length) {
-          const route = line(
-            currentRoute.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
-            {
-              id,
-              properties: {
-                color: palette[0][3],
-                offset: 0,
-                type: 'plan',
-              },
-            }
-          )
-
-          const points = activities
-            .filter(({ type }) => type !== 'start')
-            .map(({ address, type }) =>
-              point([address.lon, address.lat], {
+      ...vehicles.flatMap(
+        ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
+          index = i
+          if (activities && activities.length) {
+            const route = line(
+              currentRoute.geometry.coordinates.map(({ lat, lon }) => [
+                lon,
+                lat,
+              ]),
+              {
                 id,
                 properties: {
-                  color: palette[0][4],
+                  color: getColor(routeIndex || 0, 3),
+                  offset: 0,
+                  type: 'plan',
                 },
-              })
+              }
             )
 
-          return [...points, route]
+            const points = activities
+              .filter(({ type }) => type !== 'start')
+              .map(({ address }) =>
+                point([address.lon, address.lat], {
+                  id,
+                  properties: {
+                    color: getColor(routeIndex || 0, 4),
+                  },
+                })
+              )
+
+            return [...points, route]
+          }
+          return []
         }
-        return []
-      }),
+      ),
     ]
   } catch (error) {
     console.log(index, error)
   }
 }
 
-export const vehicleIcon = (cars) => {
+export const vehicleIcon = (vehicles) => {
   let index = 0
   try {
     return [
-      ...cars.flatMap(({ id, tail, start_address }, i) => {
+      ...vehicles.flatMap(({ id, tail, start_address }, i) => {
         index = i
         return [
           point([start_address.lon, start_address.lat], {
@@ -294,7 +299,7 @@ export default {
   point,
   line,
   bookingToFeature,
-  carToFeature,
+  vehicleToFeature,
   toGeoJsonLayer,
   toIconLayer,
   hexToRGB,

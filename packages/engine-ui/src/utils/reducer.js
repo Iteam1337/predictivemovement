@@ -1,14 +1,26 @@
 export const reducer = (state, action) => {
   switch (action.type) {
-    case 'setCars':
+    case 'setVehicles':
       return {
         ...state,
-        cars: [
-          ...state.cars.filter(
+        vehicles: [
+          ...state.vehicles.filter(
             (c) => !action.payload.find((p) => p.id === c.id)
           ),
           ...action.payload,
         ],
+      }
+    case 'deleteVehicle':
+      return {
+        ...state,
+        vehicles: state.vehicles.filter((c) => c.id !== action.payload),
+      }
+    case 'deleteBooking':
+      return {
+        ...state,
+        bookings: state.bookings.filter(
+          (booking) => booking.id !== action.payload
+        ),
       }
     case 'setBookings':
       return {
@@ -36,10 +48,8 @@ export const reducer = (state, action) => {
 }
 
 export const initState = {
-  carBookingLineCollection: [],
   bookings: [],
   assignedBookings: [],
-  cars: [],
-
+  vehicles: [],
   plan: [],
 }

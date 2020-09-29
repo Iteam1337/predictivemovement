@@ -4,16 +4,13 @@ metadata:
   name: pm-mapbox-test
 build:
   artifacts:
-    - image: iteam1337/pm-booking-simulator
-      context: packages/booking-simulator
-    - image: iteam1337/pm-car-simulator
-      context: packages/car-simulator
-    - image: iteam1337/pm-booking-interface
-      context: packages/booking-interface
+    # - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
+    #   context: packages/booking-interface
+
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine
-      context: packages/elixir_umbrella
+      context: packages/engine_umbrella
       sync:
         infer:
           - "**/*.ex"
@@ -26,8 +23,6 @@ build:
         buildArgs:
           REACT_APP_MAPBOX_ACCESS_TOKEN: "{{.REACT_APP_MAPBOX_ACCESS_TOKEN}}"
           REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
-    - image: iteam1337/pm-plan-graphhopper
-      context: packages/plan-graphhopper
     - image: iteam1337/pm-route-optimization-jsprit
       context: packages/route-optimization-jsprit
     - image: iteam1337/pm-vehicle-offer
@@ -37,28 +32,13 @@ build:
     - image: iteam1337/pm-booking-dispatcher
       context: packages/booking-dispatcher
 deploy:
-  kubectl:
-    manifests:
-      # TODO: Disabled since cars from simulator can't accept offers and it blocks the engine from processing items
-      # - k8s/packages/booking-simulator.yaml
-      # - k8s/packages/car-simulator.yaml
-
-      - k8s/packages/booking-interface.yaml
-      - k8s/packages/driver-interface.yaml
-      - k8s/packages/engine.yaml
-      - k8s/packages/engine-server.yaml
-      - k8s/packages/engine-ui.yaml
-      - k8s/packages/plan-graphhopper.yaml
-      - k8s/packages/route-optimization-jsprit.yaml
-      - k8s/packages/vehicle-offer.yaml
-      - k8s/packages/auto-accept-offer.yaml
-      - k8s/packages/booking-dispatcher.yaml
-      # TODO: Disabled because this should be done once and not redeployed every time
-      # - k8s/cicd-rbac.yaml
-      # - k8s/rabbitmq.yaml
-      # - k8s/osrm.yaml
-      # - k8s/redis.yaml
-      # - k8s/cert-manager/issuer.yaml
-      # - k8s/cert-manager/map-certificate.yaml
-      # - k8s/cert-manager/match-route-certificate.yaml
-      # - k8s/traefik/traefik.yaml
+  kustomize:
+    paths:
+      - k8s/base
+  statusCheckDeadlineSeconds: 600
+profiles:
+  - name: prod
+    deploy:
+      kustomize:
+        paths:
+          - k8s/overlays/prod

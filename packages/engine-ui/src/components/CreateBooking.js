@@ -5,6 +5,8 @@ import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
 import MainRouteLayout from './layout/MainRouteLayout'
 
+import hooks from '../utils/hooks'
+
 const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
 
@@ -13,11 +15,28 @@ const CreateBooking = ({ onSubmit }) => {
     measurement: '',
     weight: '',
     cargo: '',
-    pickup: { name: '', lat: '', lon: '', timewindow: null },
-    delivery: { name: '', lat: '', lon: '', timewindow: null },
-    sender: { name: '', contact: '' },
-    recipient: { name: '', contact: '' },
+    fragile: false,
+    pickup: {
+      name: '',
+      lat: undefined,
+      lon: undefined,
+      timewindow: null,
+      street: '',
+      city: '',
+    },
+    delivery: {
+      name: '',
+      lat: undefined,
+      lon: undefined,
+      street: '',
+      city: '',
+      timewindow: null,
+    },
+    sender: { name: '', contact: '', doorCode: '' },
+    recipient: { name: '', contact: '', doorCode: '' },
   })
+
+  hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
   const onSubmitHandler = (event) => {
     event.preventDefault()
@@ -39,7 +58,7 @@ const CreateBooking = ({ onSubmit }) => {
       delivery: formState.delivery,
     })
 
-    history.push('/bookings')
+    return history.push('/bookings')
   }
 
   return (

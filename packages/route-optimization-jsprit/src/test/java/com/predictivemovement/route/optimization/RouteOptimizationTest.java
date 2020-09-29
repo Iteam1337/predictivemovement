@@ -115,6 +115,12 @@ public class RouteOptimizationTest {
                 "src/test/resources/msg/15/15_route_response.json");
     }
 
+    @Test
+    public void vehicle_time_schedule() throws Exception {
+        test_route_optimization("src/test/resources/msg/16/16_route_request.json",
+                "src/test/resources/msg/16/16_route_response.json");
+    }
+
     private void test_route_optimization(String requestFilename, String expectedResponseFilename) throws Exception {
         // given
         JSONObject routeRequest = readJsonFromFile(requestFilename);

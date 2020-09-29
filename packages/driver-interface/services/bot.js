@@ -6,7 +6,7 @@ const messaging = require('./messaging')
 
 const onLogin = async (vehicleId, ctx) => {
   const vehicle = await cache.getVehicle(vehicleId)
-  console.log('vehicle', vehicle)
+
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
 
   const telegramId = ctx.update.message.from.id
@@ -28,9 +28,7 @@ const onLogin = async (vehicleId, ctx) => {
 
   return messaging
     .onDriverLoginSuccessful(ctx)
-    .then(() =>
-      handleNextDriverInstruction(vehicleId, ctx.update.message.from.id)
-    )
+    .then(() => handleNextDriverInstruction(telegramId))
 }
 
 const onLocationMessage = (msg, ctx) => {
@@ -54,8 +52,9 @@ const onLocationMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-const handleNextDriverInstruction = async (vehicleId, telegramId) => {
+const handleNextDriverInstruction = async (telegramId) => {
   try {
+    const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
     const [currentInstruction] = await cache.getInstructions(vehicleId)
 
     if (!currentInstruction)

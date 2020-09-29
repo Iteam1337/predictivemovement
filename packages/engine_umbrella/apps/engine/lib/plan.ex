@@ -1,6 +1,4 @@
 defmodule Plan do
-  @behaviour PlanBehaviour
-
   def find_optimal_routes(vehicle_ids, booking_ids) do
     IO.puts("call calculate_route_optimization")
 

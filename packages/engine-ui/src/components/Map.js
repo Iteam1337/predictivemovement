@@ -32,15 +32,6 @@ const Map = ({ data }) => {
 
   const layers = [
     mapUtils.toIconLayer(
-      mapUtils.bookingIcon(data.bookings),
-      UIState.highlightBooking
-    ),
-    mapUtils.toGeoJsonLayer(
-      'geojson-vehicles-layer',
-      mapUtils.vehicleToFeature(data.plan),
-      handleClickEvent
-    ),
-    mapUtils.toIconLayer(
       mapUtils.vehicleIcon(data.vehicles),
       UIState.highlightVehicle
     ),
@@ -48,6 +39,15 @@ const Map = ({ data }) => {
       'geojson-bookings-layer',
 
       mapUtils.bookingToFeature(data.bookings),
+      handleClickEvent
+    ),
+    mapUtils.toIconLayer(
+      mapUtils.bookingIcon(data.bookings),
+      UIState.highlightBooking
+    ),
+    mapUtils.toGeoJsonLayer(
+      'geojson-vehicles-layer',
+      mapUtils.vehicleToFeature(data.plan),
       handleClickEvent
     ),
   ]

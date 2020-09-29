@@ -113,7 +113,6 @@ const Notifications: React.FC<{
             />
           )
         break
-
       default:
         return
     }

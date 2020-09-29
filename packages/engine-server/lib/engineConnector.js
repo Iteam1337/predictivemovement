@@ -6,6 +6,7 @@ const routingKeys = {
   REGISTERED: 'registered',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
+  DELIVERY_FALIED: 'delivery_failed',
   PICKED_UP: 'picked_up',
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
@@ -49,6 +50,7 @@ const bookings = amqp
     routingKeys.ASSIGNED,
     routingKeys.PICKED_UP,
     routingKeys.DELIVERED,
+    routingKeys.DELIVERY_FALIED,
   ])
   .map((bookings) => {
     return { ...bookings.json(), status: bookings.fields.routingKey }

@@ -99,10 +99,11 @@ const init = (bot) => {
         return onArrived(msg)
       case 'picked_up':
       case 'delivered':
-      case 'delivery_failed':
+      case 'delivery_failed': {
         const { id: telegramId } = msg.update.callback_query.from
         const { e: event, id: bookingId } = callbackPayload
         return handleBookingEvent(telegramId, bookingId, event)
+      }
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

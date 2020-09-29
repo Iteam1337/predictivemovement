@@ -54,8 +54,6 @@ const CreateBooking = ({ onSubmit }) => {
       measurement:
         formState.measurement &&
         formState.measurement.split('x').map(parseFloat),
-      pickup: formState.pickup,
-      delivery: formState.delivery,
     })
 
     return history.push('/bookings')

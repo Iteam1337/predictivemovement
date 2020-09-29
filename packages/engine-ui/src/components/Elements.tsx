@@ -140,7 +140,7 @@ const CustomCheckboxContainer = styled.label`
     width: 18px;
     background-color: #f1f3f5;
     border-radius: 3px;
-    border: 2px solid #666666;
+    border: 1px solid #666666;
     transition: all 50ms ease;
   }
 

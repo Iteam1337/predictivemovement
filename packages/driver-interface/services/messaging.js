@@ -171,7 +171,7 @@ const sendDeliveryInformation = (instruction, telegramId, booking) =>
           : ''
       )
       .concat(
-        `\nTryck "[Levererat]" när du har lämnat paketet, eller "Kunde inte leverera" om du av någon anledninge inte kunde leverera paketet.`
+        `\nTryck "[Levererat]" när du har lämnat paketet, eller "[Kunde inte leverera]" om du av någon anledning inte kunde leverera paketet.`
       ),
     {
       parse_mode: 'markdown',

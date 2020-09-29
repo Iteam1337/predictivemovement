@@ -4,37 +4,39 @@ import Elements from '../shared-elements'
 import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
 import MainRouteLayout from './layout/MainRouteLayout'
-
+import Success from './CreateSuccess'
 import hooks from '../utils/hooks'
 
-const CreateBooking = ({ onSubmit }) => {
-  const history = useHistory()
+const initialState = {
+  id: '',
+  measurement: '',
+  weight: '',
+  cargo: '',
+  fragile: false,
+  pickup: {
+    name: '',
+    lat: undefined,
+    lon: undefined,
+    timewindow: null,
+    street: '',
+    city: '',
+  },
+  delivery: {
+    name: '',
+    lat: undefined,
+    lon: undefined,
+    street: '',
+    city: '',
+    timewindow: null,
+  },
+  sender: { name: '', contact: '', doorCode: '' },
+  recipient: { name: '', contact: '', doorCode: '' },
+}
 
-  const [formState, setState] = React.useState({
-    id: '',
-    measurement: '',
-    weight: '',
-    cargo: '',
-    fragile: false,
-    pickup: {
-      name: '',
-      lat: undefined,
-      lon: undefined,
-      timewindow: null,
-      street: '',
-      city: '',
-    },
-    delivery: {
-      name: '',
-      lat: undefined,
-      lon: undefined,
-      street: '',
-      city: '',
-      timewindow: null,
-    },
-    sender: { name: '', contact: '', doorCode: '' },
-    recipient: { name: '', contact: '', doorCode: '' },
-  })
+const CreateBooking = ({ onSubmit }) => {
+  const [hasCreatedBooking, setHasCreatedBooking] = React.useState(true)
+  const history = useHistory()
+  const [formState, setState] = React.useState(initialState)
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
@@ -56,8 +58,18 @@ const CreateBooking = ({ onSubmit }) => {
         formState.measurement.split('x').map(parseFloat),
     })
 
-    return history.push('/bookings')
+    return setHasCreatedBooking(true)
   }
+
+  const handleOnContinue = () => {
+    setState(initialState)
+    setHasCreatedBooking(false)
+  }
+
+  const handleOnClose = () => history.push('/bookings')
+
+  if (hasCreatedBooking)
+    return <Success onClose={handleOnClose} onContinue={handleOnContinue} />
 
   return (
     <MainRouteLayout redirect="/bookings">

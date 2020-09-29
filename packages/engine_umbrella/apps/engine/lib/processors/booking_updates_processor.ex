@@ -4,6 +4,7 @@ defmodule Engine.BookingUpdatesProcessor do
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
   @picked_up_routing_key "picked_up"
   @delivered_routing_key "delivered"
+  @delivery_failed_routing_key "delivery_failed"
   @update_bookings_statuses_queue "update_booking_status_in_engine"
 
   def start_link(_opts) do
@@ -19,7 +20,8 @@ defmodule Engine.BookingUpdatesProcessor do
            declare: [],
            bindings: [
              {@incoming_booking_exchange, routing_key: @picked_up_routing_key},
-             {@incoming_booking_exchange, routing_key: @delivered_routing_key}
+             {@incoming_booking_exchange, routing_key: @delivered_routing_key},
+             {@incoming_booking_exchange, routing_key: @delivery_failed_routing_key}
            ]},
         concurrency: 1
       ],

@@ -11,6 +11,8 @@ public class RouteOptimization {
   VRPSolution vrpSolution;
 
   public JSONObject calculate(JSONObject routeRequest) throws RouteOptimizationException {
+    VRPVehiclesTypes.clearCache();
+
     VRPSetting vrpProblem = new VRPSetting(routeRequest).set();
     vrpSolution = new VRPSolution(vrpProblem).calculate();
     JSONObject routeSolution = new RouteOptimizationResponse(vrpSolution).toJson();

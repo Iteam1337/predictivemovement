@@ -94,22 +94,23 @@ const Notifications: React.FC<{
   const notificationType = (notification: NotificationType) => {
     switch (notification.id.substr(0, 3)) {
       case 'pmv':
-        return (
-          <VehicleNotification
-            key={notification.id}
-            handleOnClose={handleOnClose}
-            vehicle={notification}
-          />
-        )
-
+        if ((notification as Vehicle).booking_ids === null)
+          return (
+            <VehicleNotification
+              key={notification.id}
+              handleOnClose={handleOnClose}
+              vehicle={notification as Vehicle}
+            />
+          )
       case 'pmb':
-        return (
-          <BookingNotification
-            key={notification.id}
-            handleOnClose={handleOnClose}
-            booking={notification as Booking}
-          />
-        )
+        if ((notification as Booking).status === 'new')
+          return (
+            <BookingNotification
+              key={notification.id}
+              handleOnClose={handleOnClose}
+              booking={notification as Booking}
+            />
+          )
 
       default:
         return

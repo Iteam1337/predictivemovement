@@ -7,7 +7,8 @@ import org.springframework.amqp.rabbit.listener.api.RabbitListenerErrorHandler;
 import org.springframework.amqp.rabbit.support.ListenerExecutionFailedException;
 
 /**
- * This class...
+ * This class wraps incoming exceptions to a JSON error response.<br/>
+ * ATTENTION: It assumes every exception is a RouteOptimizationException!
  */
 public class MessageErrorHandler implements RabbitListenerErrorHandler {
 

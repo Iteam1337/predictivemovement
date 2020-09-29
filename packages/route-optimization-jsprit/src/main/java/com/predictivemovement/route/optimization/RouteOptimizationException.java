@@ -8,11 +8,7 @@ public class RouteOptimizationException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public StatusResponse.Type status;
-
-    // TODO codes and msg as enum
-    public int statusCode = 500;
     public String statusMsg = "";
-
     public String message = "";
     public String source = "";
     public String detail = "";
@@ -21,11 +17,6 @@ public class RouteOptimizationException extends Exception {
     public RouteOptimizationException(Exception ex, StatusResponse.Type status) {
         super(ex);
         this.status = status;
-    }
-
-    public RouteOptimizationException setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-        return this;
     }
 
     public RouteOptimizationException setStatusMsg(String statusMsg) {

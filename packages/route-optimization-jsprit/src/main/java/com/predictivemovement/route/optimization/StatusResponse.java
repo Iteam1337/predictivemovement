@@ -33,7 +33,6 @@ public class StatusResponse {
         status = new JSONObject();
         status.put("data", data);
         status.put("status", SUCCESSS.status);
-        status.put("status_code", "200");
         status.put("status_msg", "well done");
     }
 

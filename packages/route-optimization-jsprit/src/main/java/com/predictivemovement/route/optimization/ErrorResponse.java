@@ -10,6 +10,8 @@ public class ErrorResponse {
 
     private RouteOptimizationException exception;
 
+    protected StatusResponse response;
+
     public ErrorResponse(RouteOptimizationException exception) {
         this.exception = exception;
     }
@@ -22,9 +24,8 @@ public class ErrorResponse {
         errorData.put("error_source", exception.source);
         errorData.put("error_meta", exception.meta);
 
-        StatusResponse response = new StatusResponse(errorData);
+        response = new StatusResponse(errorData);
         response.status.put("status", exception.status.status);
-        response.status.put("status_code", exception.statusCode);
         response.status.put("status_msg", exception.statusMsg);
 
         return response.toString();

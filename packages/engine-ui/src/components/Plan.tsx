@@ -43,7 +43,7 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
               ))}
               <SharedElements.Buttons.SubmitButton
                 alignSelf="center"
-                marginTop="4rem"
+                marginTop="5rem"
                 onClick={dispatchOffers}
               >
                 Bekräfta plan

@@ -90,15 +90,15 @@ function register(io) {
         capacity:
           params.volume && params.weight
             ? {
-              volume: parseInt(params.volume, 10),
-              weight: parseInt(params.weight, 10),
-            }
+                volume: parseInt(params.volume, 10),
+                weight: parseInt(params.weight, 10),
+              }
             : null,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,
         start_address: params.startPosition,
-        end_address: params.endDestination
-          ? params.endDestination
+        end_address: params.endPosition
+          ? params.endPosition
           : params.startPosition,
 
         metadata: {

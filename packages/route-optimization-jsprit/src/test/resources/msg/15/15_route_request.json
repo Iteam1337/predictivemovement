@@ -23,19 +23,19 @@
     ],
     "bookings": [
         {
+            "id": "Bällinge->LTU",
             "pickup": {
                 "lon": 21.92567,
                 "lat": 65.6335,
                 "hint": "2xOsjEgUrIxCAAAAAQAAADsAAAAQAgAAZ0E6Qma2PD0mCyRCdlpxQ0IAAAABAAAAOwAAABACAABQHQEALI9OAd986QMmj04B3HzpAwEAbxMZJKLf"
             },
-            "metadata": {
-                "start": "Bällinge (65.6335,21.92567) -> LTU (65.61582,22.13488)"
-            },
-            "id": "Bällinge->LTU",
             "delivery": {
                 "lon": 22.13488,
                 "lat": 65.61582,
                 "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf"
+            },
+            "metadata": {
+                "start": "Bällinge (65.6335,21.92567) -> LTU (65.61582,22.13488)"
             }
         }
     ],

@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import Elements from './Elements'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
-import SharedElements from '../shared-elements'
+import Elements from '../shared-elements'
 // import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 // import CurrentPlan from './CurrentPlan'
 import PlanRouteDetails from './PlanRouteDetails'
@@ -29,9 +28,9 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
         <PlanWrapper>
           <h3>Föreslagen plan</h3>
           {!activePlanVehicles.length ? (
-            <Elements.NoInfoParagraph>
+            <Elements.Typography.NoInfoParagraph>
               Det finns inga föreslagna rutter...
-            </Elements.NoInfoParagraph>
+            </Elements.Typography.NoInfoParagraph>
           ) : (
             <>
               {activePlanVehicles.map((vehicle, i) => (
@@ -41,13 +40,13 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
                   routeNumber={i + 1}
                 />
               ))}
-              <SharedElements.Buttons.SubmitButton
+              <Elements.Buttons.SubmitButton
                 alignSelf="center"
                 marginTop="5rem"
                 onClick={dispatchOffers}
               >
                 Bekräfta plan
-              </SharedElements.Buttons.SubmitButton>
+              </Elements.Buttons.SubmitButton>
             </>
           )}
           {/* Disabled as we cannot see current plan yet. */}

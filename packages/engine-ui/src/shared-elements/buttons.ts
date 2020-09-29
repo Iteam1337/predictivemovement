@@ -46,6 +46,7 @@ const CancelButton = styled.button`
   font-size: 0.875rem;
   border: 1px solid #c4c4c4;
   cursor: pointer;
+  width: fit-content;
 
   :hover {
     color: #666666;

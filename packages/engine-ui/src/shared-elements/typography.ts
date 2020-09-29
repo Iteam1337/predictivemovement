@@ -13,6 +13,12 @@ const InfoSm = styled.p`
   margin-bottom: 0.25rem;
 `
 
+const SmallInfoBold = styled.p`
+  font-weight: bold;
+  font-size: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+`
 const InfoMd = styled.p`
   font-style: italic;
   font-size: 1rem;
@@ -54,9 +60,10 @@ const RoundedLabelDisplay = styled.span<{ margin: string }>`
   padding: 0.5rem 0.6rem;
   text-decoration: none;
   display: inline-block;
-  font-size: 0.875rem;
+  font-size: 1rem;
+  letter-spacing: 0.03rem;
   width: fit-content;
-  color: black;
+  color: #3c3c3c;
   margin: ${({ margin }) => margin && margin};
 `
 
@@ -68,6 +75,7 @@ export default {
   StrongParagraph,
   RoundedLabelDisplay,
   CleanH4,
+  SmallInfoBold,
   SemiBoldParagraph,
   SpanBold,
   InfoSmStrong,

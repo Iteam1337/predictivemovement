@@ -8,4 +8,8 @@ const FormInputIcon = styled.img`
   left: 12.5px;
 `
 
-export default { FormInputIcon }
+const MarginRightIcon = styled.img`
+  margin-right: 0.5rem;
+`
+
+export default { FormInputIcon, MarginRightIcon }

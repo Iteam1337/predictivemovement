@@ -44,19 +44,19 @@ services:
   vehicle-offer-router:
     build: ./packages/vehicle-offer
     environment:
-      - AMQP_HOST=amqp://rabbitmq
+      - AMQP_URL=amqp://rabbitmq
     networks:
       - predictivemovement
   auto-accept-offer:
     build: ./packages/auto-accept-offer
     environment:
-      - AMQP_HOST=amqp://rabbitmq
+      - AMQP_URL=amqp://rabbitmq
     networks:
       - predictivemovement
   booking-dispatcher:
     build: ./packages/booking-dispatcher
     environment:
-      - AMQP_HOST=amqp://rabbitmq
+      - AMQP_URL=amqp://rabbitmq
     volumes:
       - ./packages/booking-dispatcher/data:/app/data
     networks:

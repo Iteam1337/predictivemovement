@@ -44,7 +44,6 @@ const App = () => {
   })
 
   useSocket('bookings', (bookings) => {
-    console.log('new bookings:', bookings)
     dispatch({
       type: 'setBookings',
       payload: bookings,

@@ -251,7 +251,7 @@ const getIconMappingFromEntityType = (type) => {
         colors: ['#19DE8B', '#ffffff'],
         options: {
           iconAtlas: parcelIcon,
-          size: 4,
+          size: 5,
           activeSize: 7,
         },
       }

@@ -22,11 +22,11 @@ const pickupInstructions = () =>
           ch.bindQueue(ADD_BOOKING_INFO, OUTGOING_BOOKING_UPDATES, 'assigned')
         )
         .then(() =>
-          ch.consume(ADD_BOOKING_INFO, (msg) => {
+          ch.consume(ADD_BOOKING_INFO, async (msg) => {
             const booking = JSON.parse(msg.content.toString())
             console.log('received booking: ', booking)
 
-            cache.addBooking(booking.id, booking)
+            await cache.addBooking(booking.id, booking)
 
             ch.ack(msg)
           })

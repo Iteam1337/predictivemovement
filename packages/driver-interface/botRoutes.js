@@ -15,9 +15,9 @@ const channel = open
     return ch
   })
 
-function onArrived(msg) {
+async function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 
   return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
     vehicleId,
@@ -47,9 +47,9 @@ function onOffer(msg) {
 const init = (bot) => {
   bot.start(messaging.onBotStart)
 
-  bot.command('/lista', (ctx) => {
-    const vehicleId = cache.getVehicleIdByTelegramId(ctx.botInfo.id)
-    const vehicleWithPlan = cache.getVehicle(vehicleId)
+  bot.command('/lista', async (ctx) => {
+    const vehicleId = await cache.getVehicleIdByTelegramId(ctx.botInfo.id)
+    const vehicleWithPlan = await cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
       return messaging.onNoInstructionsForVehicle(ctx)

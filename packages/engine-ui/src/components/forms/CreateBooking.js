@@ -147,9 +147,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             />
             <FormInputs.TextInput
               onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+              pattern="^[0-9]*$"
               iconInset
               name="sender"
-              type="tel"
               value={state.sender.contact}
               onChangeHandler={eventHandlers.handleContactInputChange(
                 'sender',
@@ -256,7 +256,8 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             <FormInputs.TextInput
               iconInset
               name="recipient-contact"
-              type="tel"
+              pattern="^[0-9]*$"
+
               value={state.recipient.contact}
               onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -318,6 +319,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                     name="measurement"
                     value={state.measurement}
                     placeholder="Mått (BxHxDcm)"
+                    pattern="(\d+)x(\d+)x(\d+)"
                     onChangeHandler={eventHandlers.handleTextInputChange(
                       'measurement',
                       onChangeHandler
@@ -365,7 +367,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         >
           Avbryt
         </Elements.Buttons.CancelButton>
-        <Elements.Buttons.SubmitButton type="submit">
+        <Elements.Buttons.SubmitButton
+          width="48.5%"
+          padding="0.75rem 0"
+          type="submit"
+        >
           Lägg till
         </Elements.Buttons.SubmitButton>
       </Elements.Layout.ButtonWrapper>
@@ -374,3 +380,4 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
 }
 
 export default Component
+

@@ -10,7 +10,9 @@ const FlexRowWrapper = styled.div`
   justify-content: space-between;
   height: 50px;
 `
-
+const SectionWithMargin = styled.section`
+  margin: 1.2rem 0;
+`
 const LinkListContainer = styled.div`
   a:not(:first-child) {
     margin-top: 0.5rem;
@@ -38,6 +40,10 @@ const Container = styled.div`
   margin-left: 1rem;
 `
 
+const FlexRowBaselineContainer = styled.div`
+  display: flex;
+  align-items: baseline;
+`
 const MarginBottomContainer = styled.div`
   margin-bottom: 1rem;
   display: flex;
@@ -51,11 +57,12 @@ const InlineContainer = styled.div`
   }
 `
 
-const MarginTopContainer = styled.div`
+const MarginTopContainer = styled.div<{ alignItems?: string }>`
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  align-items: ${({ alignItems }) => alignItems && alignItems};
 `
 
 const MarginLeftContainerSm = styled.div`
@@ -114,4 +121,6 @@ export default {
   MarginTopContainer,
   MarginLeftContainerSm,
   InlineContainer,
+  FlexRowBaselineContainer,
+  SectionWithMargin,
 }

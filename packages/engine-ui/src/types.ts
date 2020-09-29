@@ -20,6 +20,7 @@ export type Booking = {
 
 export type Vehicle = {
   id: string
+  booking_ids: [] | null
 }
 
 export type NotificationType = Vehicle | Booking

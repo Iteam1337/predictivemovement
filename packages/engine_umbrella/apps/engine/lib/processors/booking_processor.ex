@@ -16,12 +16,19 @@ defmodule Engine.BookingProcessor do
         default: [
           concurrency: 100
         ]
+      ],
+      batchers: [
+        default: [
+          batch_size: Application.get_env(:engine, :booking_processor_batch_size),
+          batch_timeout: Application.get_env(:engine, :booking_processor_batch_timeout)
+        ]
       ]
     )
   end
 
-  def calculate_plan(vehicle_ids, booking_ids) when length(vehicle_ids) == 0 or length(booking_ids) == 0, do:
-    IO.puts("No vehicles/bookings to calculate plan for")
+  def calculate_plan(vehicle_ids, booking_ids)
+      when length(vehicle_ids) == 0 or length(booking_ids) == 0,
+      do: IO.puts("No vehicles/bookings to calculate plan for")
 
   def calculate_plan(vehicle_ids, booking_ids) do
     %{solution: %{routes: routes}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
@@ -51,16 +58,10 @@ defmodule Engine.BookingProcessor do
 
   def handle_message(
         _processor,
-        %Message{data: %{booking: booking}} = msg ,
+        %Message{data: %{booking: booking}} = msg,
         _context
       ) do
     IO.inspect(booking, label: "a new booking")
-
-    booking_ids = Engine.BookingStore.get_bookings()
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
-
-    calculate_plan(vehicle_ids, booking_ids)
-
     msg
   end
 
@@ -70,12 +71,20 @@ defmodule Engine.BookingProcessor do
         _context
       ) do
     IO.inspect(vehicle, label: "a new vehicle")
+    msg
+  end
 
+  def handle_batch(
+        _batcher,
+        messages,
+        _batch_info,
+        _context
+      ) do
+    IO.puts("a new batch of data")
     booking_ids = Engine.BookingStore.get_bookings()
     vehicle_ids = Engine.VehicleStore.get_vehicles()
 
     calculate_plan(vehicle_ids, booking_ids)
-
-    msg
+    messages
   end
 end

@@ -42,7 +42,7 @@ const Map = ({ data }) => {
     ),
     mapUtils.toIconLayer(
       mapUtils.vehicleIcon(data.vehicles),
-      UIState.highlightVehicle
+      UIState.highlightTransport
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',

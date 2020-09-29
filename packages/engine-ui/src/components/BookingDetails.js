@@ -8,6 +8,7 @@ import helpers from '../utils/helpers'
 import moment from 'moment'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
+import { UIStateContext } from '../utils/UIStateContext'
 
 const Paragraph = styled.p`
   margin-bottom: 0.25rem;
@@ -65,12 +66,18 @@ const Timeline = styled.div`
   }
 `
 
-const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
+const BookingDetails = ({ bookings, deleteBooking }) => {
   const { bookingId } = useParams()
   const history = useHistory()
+  const { dispatch } = React.useContext(UIStateContext)
 
   const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
+
+  React.useEffect(
+    () => () => dispatch({ type: 'highlightBooking', payload: undefined }),
+    [dispatch]
+  )
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
@@ -128,7 +135,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
   } = booking
 
   return (
-    <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
+    <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>

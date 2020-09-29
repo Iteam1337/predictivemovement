@@ -182,9 +182,6 @@ const Bookings: React.FC<{
 
         <Route path={`${path}/:bookingId`}>
           <BookingDetails
-            onClickHandler={() =>
-              dispatch({ type: 'highlightBooking', payload: undefined })
-            }
             bookings={props.bookings}
             deleteBooking={props.deleteBooking}
           />

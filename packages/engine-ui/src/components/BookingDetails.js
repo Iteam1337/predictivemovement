@@ -12,6 +12,9 @@ import ContactName from '../assets/contact-name.svg'
 const Paragraph = styled.p`
   margin-bottom: 0.25rem;
   margin-top: 0;
+`
+
+const CapitalizeParagraph = styled(Paragraph)`
   text-transform: capitalize;
 `
 
@@ -138,12 +141,12 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
         </Elements.Layout.FlexRowWrapper>
         <Elements.Layout.SectionWithMargin>
           {cargo && (
-            <Paragraph>
+            <CapitalizeParagraph>
               <Elements.Typography.SpanBold>
                 Innehåll:{' '}
               </Elements.Typography.SpanBold>
               {cargo}
-            </Paragraph>
+            </CapitalizeParagraph>
           )}
           <Paragraph>
             <Elements.Typography.SpanBold>
@@ -175,7 +178,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <Elements.Typography.StrongParagraph>
               Upphämtning
             </Elements.Typography.StrongParagraph>
-            <Paragraph>{address.pickup}</Paragraph>
+            <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
             {pickup.time_windows &&
               pickup.time_windows.map((timeWindow) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
@@ -196,7 +199,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
                 src={ContactName}
                 alt="Contact Avatar"
               />
-              <Paragraph>{sender.name}</Paragraph>
+              <CapitalizeParagraph>{sender.name}</CapitalizeParagraph>
             </Elements.Layout.FlexRowBaselineContainer>
           )}
           <Elements.Layout.FlexRowBaselineContainer>
@@ -212,7 +215,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
             <Elements.Typography.StrongParagraph>
               Avlämning
             </Elements.Typography.StrongParagraph>
-            <Paragraph>{address.delivery}</Paragraph>
+            <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
 
             {delivery.time_windows &&
               delivery.time_windows.map((timeWindow) => (
@@ -228,7 +231,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
                 src={ContactName}
                 alt="Contact Avatar"
               />
-              <Paragraph>{recipient.name}</Paragraph>
+              <CapitalizeParagraph>{recipient.name}</CapitalizeParagraph>
             </Elements.Layout.FlexRowBaselineContainer>
           )}
           <Elements.Layout.FlexRowBaselineContainer>
@@ -277,7 +280,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
               ))}
             </ol>
           ) : (
-            <Paragraph>{booking.status}</Paragraph>
+            <CapitalizeParagraph>{booking.status}</CapitalizeParagraph>
           )}
         </Timeline>
         <Elements.Layout.MarginTopContainer alignItems="center">

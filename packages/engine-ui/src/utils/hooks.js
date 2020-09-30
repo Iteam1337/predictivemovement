@@ -4,12 +4,31 @@ import helpers from './helpers'
 import { UIStateContext } from './UIStateContext'
 
 const useFilteredStateFromQueryParams = (state) => {
+  const includeBookings = useRouteMatch(
+    ['/plans', '/bookings', '/bookings/:id'],
+    {
+      exact: true,
+    }
+  )
+
+  const includeTransports = useRouteMatch(
+    ['/plans', '/transports', '/transports/:id'],
+    {
+      exact: true,
+    }
+  )
+
+  const rootView = useRouteMatch({
+    path: '/',
+    exact: true,
+  })
+
   const bookingDetailView = useRouteMatch({
     path: '/bookings/:id',
     exact: true,
   })
 
-  const vehicleDetailView = useRouteMatch({
+  const transportDetailView = useRouteMatch({
     path: '/transports/:id',
     exact: true,
   })
@@ -23,38 +42,44 @@ const useFilteredStateFromQueryParams = (state) => {
     exact: true,
   })
 
-  const includeRoute = (booking) => {
-    const { route, ...rest } = booking
-
+  const includeBookingRouteIfDetailView = (booking) => {
     if (bookingDetailView) {
       return booking
     }
 
+    const { route, ...rest } = booking
+
     return rest
   }
 
-  const includeOneIfDetailView = (booking) => {
-    if (!bookingDetailView) return true
+  const includeOneBookingIfDetailView = (booking) =>
+    bookingDetailView ? bookingDetailView.params.id === booking.id : true
 
-    return booking.id === bookingDetailView.params['id'] || false
-  }
+  const includeOneTransportIfDetailView = (transport) =>
+    transportDetailView ? transportDetailView.params.id === transport.id : true
+
+  const includeOnePlanRouteIfDetailView = (route) =>
+    planRouteDetailsView
+      ? planRouteDetailsView.params.routeId === route.id
+      : true
 
   return {
     data: {
       ...state,
-      bookings: state.bookings.map(includeRoute).filter(includeOneIfDetailView),
-
-      vehicles: state.vehicles.filter((item) =>
-        vehicleDetailView ? vehicleDetailView.params.id === item.id : true
-      ),
+      bookings:
+        includeBookings || rootView
+          ? state.bookings
+              .map(includeBookingRouteIfDetailView)
+              .filter(includeOneBookingIfDetailView)
+          : [],
+      vehicles:
+        includeTransports || rootView
+          ? state.vehicles.filter(includeOneTransportIfDetailView)
+          : [],
       plan: planView
         ? state.plan
             .map((r, i) => ({ ...r, routeIndex: i }))
-            .filter((route) =>
-              planRouteDetailsView
-                ? planRouteDetailsView.params.routeId === route.id
-                : true
-            )
+            .filter(includeOnePlanRouteIfDetailView)
         : [],
     },
   }

@@ -69,6 +69,7 @@ const StyledAddFormFieldButton = styled.button<{
   font-size: ${({ size }) => size || '1rem'};
   margin-top: ${({ marginTop }) => marginTop};
 `
+
 const DisplayTextButton = styled.button``
 
 export default {

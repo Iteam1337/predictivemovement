@@ -53,8 +53,12 @@ const VehicleDetails: React.FC<{
     status: false,
   })
 
-  const { vehicleId } = useParams<{ vehicleId: string }>()
+  React.useEffect(
+    () => () => dispatch({ type: 'highlightTransport', payload: undefined }),
+    [dispatch]
+  )
 
+  const { vehicleId } = useParams<{ vehicleId: string }>()
   const vehicle = vehicles.find((v: any) => v.id === vehicleId)
 
   if (!vehicle) return <p>Loading...</p>
@@ -201,12 +205,12 @@ const VehicleDetails: React.FC<{
             </Elements.Layout.MarginBottomContainer>
           </>
         )}
-        <Elements.Layout.MarginTopContainer>
-          <Elements.Buttons.DeleteButton
+        <Elements.Layout.MarginTopContainer alignItems="center">
+          <Elements.Buttons.CancelButton
             onClick={() => handleDeleteClick(vehicle.id)}
           >
             Radera transport
-          </Elements.Buttons.DeleteButton>
+          </Elements.Buttons.CancelButton>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const SubmitButton = styled.button<{
-  alignSelf: string
+  alignSelf?: string
   marginTop?: string
   padding?: string
   width?: string

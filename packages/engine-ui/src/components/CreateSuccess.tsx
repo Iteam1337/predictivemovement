@@ -28,7 +28,9 @@ const Component: React.FC<{
   const [state, set] = React.useState(false)
 
   React.useEffect(() => {
-    setTimeout(() => set(true), 100)
+    const timeout = window.setTimeout(() => set(true), 100)
+
+    return () => window.clearTimeout(timeout)
   }, [])
 
   return (

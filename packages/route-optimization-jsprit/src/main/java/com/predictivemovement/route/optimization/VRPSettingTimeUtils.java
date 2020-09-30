@@ -49,7 +49,7 @@ public class VRPSettingTimeUtils {
         try {
             VehicleStartAndEndTimes startAndEndTimes = new VehicleStartAndEndTimes();
 
-            if (json.has("earliest_start") && json.has("latest_end")) {
+            if (hasKey(json, "earliest_start") && hasKey(json, "latest_end")) {
 
                 // parse to current date with hours
                 final String earliestStartString = json.getString("earliest_start");

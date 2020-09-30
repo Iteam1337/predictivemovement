@@ -34,8 +34,8 @@ const initialState = {
 }
 
 const CreateBooking = ({ onSubmit }) => {
-  const [hasCreatedBooking, setHasCreatedBooking] = React.useState(true)
   const history = useHistory()
+  const [isFinished, setIsFinished] = React.useState(false)
   const [formState, setState] = React.useState(initialState)
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
@@ -58,18 +58,24 @@ const CreateBooking = ({ onSubmit }) => {
         formState.measurement.split('x').map(parseFloat),
     })
 
-    return setHasCreatedBooking(true)
+    return setIsFinished(true)
   }
 
   const handleOnContinue = () => {
     setState(initialState)
-    setHasCreatedBooking(false)
+    setIsFinished(false)
   }
 
   const handleOnClose = () => history.push('/bookings')
 
-  if (hasCreatedBooking)
-    return <Success onClose={handleOnClose} onContinue={handleOnContinue} />
+  if (isFinished)
+    return (
+      <Success
+        onClose={handleOnClose}
+        onContinue={handleOnContinue}
+        infoText="Bokningen är nu tillagd!"
+      />
+    )
 
   return (
     <MainRouteLayout redirect="/bookings">

@@ -1,12 +1,11 @@
 import styled from 'styled-components'
 
 const SubmitButton = styled.button<{
-  justifySelf: string
+  justifySelf?: string
   marginTop?: string
   padding?: string
   width?: string
 }>`
-  padding: 0.75rem 2.3rem;
   background: #ccffcc;
   font-weight: 600;
   color: inherit;
@@ -38,8 +37,8 @@ const DeleteButton = styled.button<{ justifySelf?: string }>`
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
 `
 
-const CancelButton = styled.button`
-  padding: 0.75rem 2.3rem;
+const CancelButton = styled.button<{ padding?: string }>`
+  padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
   background: #fff;
   font-weight: 600;
   color: inherit;

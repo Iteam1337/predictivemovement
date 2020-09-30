@@ -24,7 +24,7 @@ defmodule Engine.BookingProcessor do
     IO.puts("No vehicles/bookings to calculate plan for")
 
   def calculate_plan(vehicle_ids, booking_ids) do
-    %{solution: %{routes: routes}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
+    %{data: %{solution: %{routes: routes}}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
 
     vehicles =
       routes

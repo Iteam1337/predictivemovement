@@ -41,6 +41,10 @@ public class VRPSettingTimeUtils {
         defaultEnd = Double.MAX_VALUE;
     }
 
+    private boolean hasKey(JSONObject json, String key) {
+        return json.has(key) && !json.isNull(key);
+    }
+    
     public VehicleStartAndEndTimes getVehicleStartAndEnd(JSONObject json) throws RouteOptimizationException {
         try {
             VehicleStartAndEndTimes startAndEndTimes = new VehicleStartAndEndTimes();

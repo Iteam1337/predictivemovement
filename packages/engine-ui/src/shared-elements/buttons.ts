@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 const SubmitButton = styled.button<{
+  alignSelf?: string
   justifySelf?: string
   marginTop?: string
   padding?: string
@@ -13,9 +14,10 @@ const SubmitButton = styled.button<{
   border: none;
   cursor: pointer;
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
+  align-self: ${({ alignSelf }) => alignSelf && alignSelf};
   margin-top: ${({ marginTop }) => marginTop && marginTop};
   padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
-  width: ${({ width }) => width && width};
+  width: ${({ width }) => (width ? width : 'fit-content')};
 
   :hover {
     background: #c1f5c1;

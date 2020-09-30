@@ -3,23 +3,28 @@ import { useHistory } from 'react-router-dom'
 import Elements from '../shared-elements'
 import Form from './forms/CreateVehicle'
 import MainRouteLayout from './layout/MainRouteLayout'
+import Success from './CreateSuccess'
 import hooks from '../utils/hooks'
+import moment from 'moment'
+
+const initialState = {
+  vehicleType: '',
+  id: '',
+  capacity: '',
+  volume: '',
+  weight: '',
+  timewindow: { start: null, end: null },
+  startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
+  endPosition: { lat: undefined, lon: undefined, name: '' },
+  driver: { name: '', contact: '' },
+}
 
 const CreateVehicle = ({ onSubmit }) => {
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
+  const [isFinished, setIsFinished] = React.useState(false)
 
-  const [formState, setState] = React.useState({
-    vehicleType: '',
-    id: '',
-    capacity: '',
-    volume: '',
-    weight: '',
-    timewindow: { start: null, end: null },
-    startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
-    endPosition: { lat: undefined, lon: undefined, name: '' },
-    driver: { name: '', contact: '' },
-  })
+  const [formState, setState] = React.useState(initialState)
 
   hooks.useFormStateWithMapClickControl(
     'startPosition',
@@ -39,10 +44,33 @@ const CreateVehicle = ({ onSubmit }) => {
       ...formState,
       lat: formState.startPosition.lat,
       lon: formState.startPosition.lon,
+      timewindow:
+        formState.timewindow.start && formState.timewindow.end
+          ? {
+              start: moment(formState.timewindow.start).format('HH:mm'),
+              end: moment(formState.timewindow.end).format('HH:mm'),
+            }
+          : formState.timewindow,
     })
 
-    history.push('/transports')
+    return setIsFinished(true)
   }
+
+  const handleOnContinue = () => {
+    setState(initialState)
+    setIsFinished(false)
+  }
+
+  const handleOnClose = () => history.push('/transports')
+
+  if (isFinished)
+    return (
+      <Success
+        onClose={handleOnClose}
+        onContinue={handleOnContinue}
+        infoText="Transport är nu tillagd!"
+      />
+    )
 
   return (
     <MainRouteLayout redirect="/transports">

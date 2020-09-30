@@ -33,7 +33,7 @@ public class MQApplication {
 
 	@Bean
 	public DirectExchange exchange() {
-		return new DirectExchange("");
+		return new DirectExchange("Foo");
 	}
 
 	@Bean
@@ -41,14 +41,21 @@ public class MQApplication {
 		return BindingBuilder.bind(queue).to(exchange).with("rpc");
 	}
 
-	@RabbitListener(queues = QUEUE_NAME)
-	public String listen(final String msg) {
+	@Bean
+	public MessageErrorHandler messageErrorHandler() {
+		return new MessageErrorHandler();
+	}
+
+	@RabbitListener(queues = QUEUE_NAME, errorHandler = "messageErrorHandler", returnExceptions = "true")
+	public String listen(final String msg) throws Exception {
 		log.info("Message read from queue: {}", msg);
 
 		JSONObject routeRequest = new JSONObject(msg);
 		RouteOptimization routeOptimization = new RouteOptimization();
 		JSONObject routeSolution = routeOptimization.calculate(routeRequest);
-		String response = routeSolution.toString();
+
+		StatusResponse statusResponse = new StatusResponse(routeSolution);
+		String response = statusResponse.toString();
 
 		log.info("Publishing result: {}", response);
 		return response;

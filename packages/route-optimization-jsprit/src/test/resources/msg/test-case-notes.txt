@@ -48,3 +48,11 @@ Costs:
 
 1. Could not find 'distances costs' in the response of OSRM time-distance-matrix request?! (only durations)
     http://project-osrm.org/docs/v5.5.1/api/#table-service
+
+
+Notes:
+------
+
+- There is no constraint failure if the time-window for pick-up/delivery is in the past. jsprit does not know the current time!
+
+- There is no constraint failure on conflicting time-windows either!

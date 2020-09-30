@@ -10,7 +10,8 @@ public class RouteOptimization {
   // to get access in test for plotting
   VRPSolution vrpSolution;
 
-  public JSONObject calculate(JSONObject routeRequest) {
+  public JSONObject calculate(JSONObject routeRequest) throws RouteOptimizationException {
+    VRPVehiclesTypes.clearCache();
 
     VRPSetting vrpProblem = new VRPSetting(routeRequest).set();
     vrpSolution = new VRPSolution(vrpProblem).calculate();

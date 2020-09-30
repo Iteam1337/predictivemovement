@@ -184,7 +184,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         >
           Avbryt
         </Elements.Buttons.CancelButton>
-        <Elements.Buttons.SubmitButton type="submit">
+        <Elements.Buttons.SubmitButton
+          width="48.5%"
+          padding="0.75rem 0"
+          type="submit"
+        >
           Lägg till
         </Elements.Buttons.SubmitButton>
       </Elements.Layout.ButtonWrapper>

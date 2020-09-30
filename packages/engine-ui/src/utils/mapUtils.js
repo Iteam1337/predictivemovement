@@ -30,8 +30,8 @@ export const feature = (geometry, props) => ({
 export const line = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
-    type: 'LineString',
-    coordinates,
+    type: 'MultiLineString',
+    coordinates: [coordinates],
   },
   ...props,
 })
@@ -203,7 +203,7 @@ export const toGeoJsonLayer = (id, data, callback) =>
     filled: true,
     extruded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 2,
+    lineWidthMinPixels: 3,
     getFillColor: (d) => hexToRGBA(d.properties.color, 255),
     highlightColor: [19, 197, 123, 255],
     autoHighlight: true,
@@ -213,6 +213,7 @@ export const toGeoJsonLayer = (id, data, callback) =>
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
+    lineJointRounded: true,
     onClick: callback,
   })
 
@@ -250,7 +251,7 @@ const getIconMappingFromEntityType = (type) => {
         colors: ['#19DE8B', '#ffffff'],
         options: {
           iconAtlas: parcelIcon,
-          size: 4,
+          size: 5,
           activeSize: 7,
         },
       }

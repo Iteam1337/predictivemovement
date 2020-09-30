@@ -82,7 +82,7 @@ defmodule Booking do
     GenServer.stop(via_tuple(id))
   end
 
-  def add_event(booking_id, status) when status in ["picked_up", "delivered"],
+  def add_event(booking_id, status) when status in ["picked_up", "delivered", "delivery_failed"],
     do: GenServer.call(via_tuple(booking_id), {:add_event, status})
 
   defp create_event(status), do: %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
@@ -121,6 +121,7 @@ defmodule Booking do
   end
 
   def handle_call({:add_event, status}, _, state) do
+    Logger.info("Received event #{status} for booking: #{state.id} ")
     new_event = create_event(status)
 
     updated_state =

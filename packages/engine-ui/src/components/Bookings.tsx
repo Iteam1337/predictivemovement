@@ -20,6 +20,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
     new: Booking[]
     assigned: Booking[]
     delivered: Booking[]
+    delivery_failed: Booking[]
     picked_up: Booking[]
   }>(
     (prev, current) => ({
@@ -30,6 +31,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
       new: [],
       assigned: [],
       delivered: [],
+      delivery_failed: [],
       picked_up: [],
     }
   )
@@ -40,30 +42,30 @@ const BookingToggleList: React.FC<{
   onClickHandler: (lat: string, lon: string) => void
   onMouseEnterHandler: (id: string) => void
   onMouseLeaveHandler: () => void
+  isOpen: boolean
+  setOpen: () => void
 }> = ({
   bookings,
   text,
   onClickHandler,
   onMouseEnterHandler,
   onMouseLeaveHandler,
+  isOpen,
+  setOpen,
 }) => {
-  const [toggled, set] = React.useState(false)
-
   return (
     <Elements.Layout.MarginBottomContainer>
-      <Elements.Layout.FlexRowWrapper
-        onClick={() => set((currentValue) => !currentValue)}
-      >
+      <Elements.Layout.FlexRowWrapper onClick={setOpen}>
         <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
         <Icons.Arrow
           style={{
             marginLeft: '0.875rem',
-            transform: `rotate(${toggled ? '180deg' : 0})`,
+            transform: `rotate(${isOpen ? '180deg' : 0})`,
           }}
         />
       </Elements.Layout.FlexRowWrapper>
 
-      {toggled && (
+      {isOpen && (
         <Elements.Layout.BookingList>
           {bookings.length === 0 && (
             <Elements.Typography.NoInfoParagraph>
@@ -115,6 +117,12 @@ const Bookings: React.FC<{
     props.bookings,
   ])
 
+  const [expandedSection, setExpandedSection] = React.useState({
+    new: false,
+    assigned: false,
+    delivered: false,
+  })
+
   const onClickHandler = (lat: string, lon: string) =>
     dispatch({
       type: 'viewport',
@@ -128,12 +136,20 @@ const Bookings: React.FC<{
       },
     })
 
+  const handleExpand = (type: 'new' | 'assigned' | 'delivered') =>
+    setExpandedSection((currentState) => ({
+      ...currentState,
+      [type]: !currentState[type],
+    }))
+
   return (
     <Wrapper>
       <Switch>
         <Route exact path={path}>
           <Elements.Layout.MarginTopContainer>
             <BookingToggleList
+              isOpen={expandedSection.new}
+              setOpen={() => handleExpand('new')}
               bookings={bookings.new}
               onClickHandler={onClickHandler}
               text="Öppna bokningar"
@@ -145,6 +161,8 @@ const Bookings: React.FC<{
               }
             />
             <BookingToggleList
+              isOpen={expandedSection.assigned}
+              setOpen={() => handleExpand('assigned')}
               bookings={[...bookings.assigned, ...bookings.picked_up]}
               onClickHandler={onClickHandler}
               text="Bekräftade bokningar"
@@ -156,6 +174,8 @@ const Bookings: React.FC<{
               }
             />
             <BookingToggleList
+              isOpen={expandedSection.delivered}
+              setOpen={() => handleExpand('delivered')}
               bookings={bookings.delivered}
               onClickHandler={onClickHandler}
               text="Levererade bokningar"
@@ -182,9 +202,6 @@ const Bookings: React.FC<{
 
         <Route path={`${path}/:bookingId`}>
           <BookingDetails
-            onClickHandler={() =>
-              dispatch({ type: 'highlightBooking', payload: undefined })
-            }
             bookings={props.bookings}
             deleteBooking={props.deleteBooking}
           />

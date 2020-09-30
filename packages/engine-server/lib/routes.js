@@ -55,14 +55,18 @@ function register(io) {
           weight: params.weight,
         },
         pickup: {
-          time_windows: params.pickup.timewindows,
+          time_windows: params.pickup.timewindow
+            ? [params.pickup.timewindow]
+            : undefined,
           lat: params.pickup.lat,
           lon: params.pickup.lon,
           street: params.pickup.street,
           city: params.pickup.city,
         },
         delivery: {
-          time_windows: params.delivery.timewindows,
+          time_windows: params.delivery.timewindow
+            ? [params.delivery.timewindow]
+            : undefined,
           lat: params.delivery.lat,
           lon: params.delivery.lon,
           street: params.delivery.street,
@@ -90,15 +94,15 @@ function register(io) {
         capacity:
           params.volume && params.weight
             ? {
-              volume: parseInt(params.volume, 10),
-              weight: parseInt(params.weight, 10),
-            }
+                volume: parseInt(params.volume, 10),
+                weight: parseInt(params.weight, 10),
+              }
             : null,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,
         start_address: params.startPosition,
-        end_address: params.endDestination
-          ? params.endDestination
+        end_address: params.endPosition
+          ? params.endPosition
           : params.startPosition,
 
         metadata: {

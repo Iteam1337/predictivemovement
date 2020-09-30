@@ -14,7 +14,7 @@ const CustomCheckboxContainer = styled.label`
     width: 18px;
     background-color: #f1f3f5;
     border-radius: 3px;
-    border: 2px solid #666666;
+    border: 1px solid #666666;
     transition: all 50ms ease;
   }
 
@@ -77,11 +77,16 @@ const Checkbox: React.FC<{
   name: string
   onChangeHandler: (event: any) => void
   label: string
-  onFocus?: () => void 
+  onFocus?: () => void
 }> = ({ name, onChangeHandler, label, ...rest }) => {
   return (
     <CustomCheckboxContainer>
-      <HiddenCheckbox name={name} type="checkbox" onChange={onChangeHandler} {...rest} />
+      <HiddenCheckbox
+        name={name}
+        type="checkbox"
+        onChange={onChangeHandler}
+        {...rest}
+      />
       <CheckboxLabel>{label}</CheckboxLabel>
       <span className="custom-checkbox" />
     </CustomCheckboxContainer>

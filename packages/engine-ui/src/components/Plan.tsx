@@ -6,6 +6,7 @@ import SharedElements from '../shared-elements'
 // import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 // import CurrentPlan from './CurrentPlan'
 import PlanRouteDetails from './PlanRouteDetails'
+import { PlanVehicle } from '../types'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -13,38 +14,8 @@ const PlanWrapper = styled.div`
   height: 100%;
 `
 
-interface Address {
-  lat: string
-  lon: string
-}
-
-interface Activity {
-  address: Address
-  index: number
-  type: string
-}
-
-interface AddressWithName extends Address {
-  name: string
-}
-
-export interface IPlanVehicle {
-  activities: Activity[]
-  booking_ids: string[]
-  busy: any
-  capacity: any
-  current_route: any
-  earliest_start: Date
-  end_address: AddressWithName
-  id: string
-  latest_end: Date
-  metadata: any
-  profile: any
-  start_address: AddressWithName
-}
-
 interface IPlanProps {
-  plan: IPlanVehicle[]
+  plan: PlanVehicle[]
   dispatchOffers: () => void
 }
 

@@ -6,9 +6,18 @@ const {
   exchanges: { INCOMING_BOOKING_UPDATES },
 } = require('./adapters/amqp')
 
-function onArrived(msg) {
+const channel = open
+  .then((conn) => conn.createChannel())
+  .then((ch) => {
+    ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
+      durable: false,
+    })
+    return ch
+  })
+
+async function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 
   return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
     vehicleId,
@@ -16,55 +25,17 @@ function onArrived(msg) {
   )
 }
 
-function onPickup(msg) {
-  const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
-
-  const callbackPayload = JSON.parse(msg.update.callback_query.data)
-
-  open
-    .then((conn) => conn.createChannel())
-    .then((ch) => {
-      ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
-        durable: false,
-      }).then(() => {
-        const { id } = callbackPayload
-
-        return ch.publish(
-          INCOMING_BOOKING_UPDATES,
-          'picked_up',
-          Buffer.from(JSON.stringify({ id, status: 'picked_up' }))
-        )
-      })
-    })
+function handleBookingEvent(telegramId, bookingId, event) {
+  return channel
+    .then((openChannel) =>
+      openChannel.publish(
+        INCOMING_BOOKING_UPDATES,
+        event,
+        Buffer.from(JSON.stringify({ id: bookingId, status: event }))
+      )
+    )
     .catch(console.warn)
-
-  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
-}
-
-function onDelivered(msg) {
-  const telegramId = msg.update.callback_query.from.id
-  const vehicleId = cache.getVehicleIdByTelegramId(telegramId)
-
-  const callbackPayload = JSON.parse(msg.update.callback_query.data)
-
-  open
-    .then((conn) => conn.createChannel())
-    .then((ch) => {
-      ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
-        durable: false,
-      }).then(() => {
-        const { id } = callbackPayload
-        return ch.publish(
-          INCOMING_BOOKING_UPDATES,
-          'delivered',
-          Buffer.from(JSON.stringify({ id, status: 'delivered' }))
-        )
-      })
-    })
-    .catch(console.warn)
-
-  return botServices.handleNextDriverInstruction(vehicleId, telegramId)
+    .then(() => botServices.handleNextDriverInstruction(telegramId))
 }
 
 function onOffer(msg) {
@@ -76,9 +47,9 @@ function onOffer(msg) {
 const init = (bot) => {
   bot.start(messaging.onBotStart)
 
-  bot.command('/lista', (ctx) => {
-    const vehicleId = cache.getVehicleIdByTelegramId(ctx.botInfo.id)
-    const vehicleWithPlan = cache.getVehicle(vehicleId)
+  bot.command('/lista', async (ctx) => {
+    const vehicleId = await cache.getVehicleIdByTelegramId(ctx.botInfo.id)
+    const vehicleWithPlan = await cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
       return messaging.onNoInstructionsForVehicle(ctx)
@@ -122,14 +93,17 @@ const init = (bot) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
 
     switch (callbackPayload.e) {
-      case 'picked_up':
-        return onPickup(msg)
-      case 'arrived':
-        return onArrived(msg)
-      case 'delivered':
-        return onDelivered(msg)
       case 'offer':
         return onOffer(msg)
+      case 'arrived':
+        return onArrived(msg)
+      case 'picked_up':
+      case 'delivered':
+      case 'delivery_failed': {
+        const { id: telegramId } = msg.update.callback_query.from
+        const { e: event, id: bookingId } = callbackPayload
+        return handleBookingEvent(telegramId, bookingId, event)
+      }
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

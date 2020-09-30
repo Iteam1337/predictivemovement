@@ -10,7 +10,6 @@ import { UIStateContext } from '../../utils/UIStateContext'
 const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
   const history = useHistory()
   const { dispatch: UIStateDispatch } = React.useContext(UIStateContext)
-  const [showParcelDetails, setShowParcelDetails] = React.useState(false)
 
   const [
     showBookingTimeRestriction,
@@ -56,10 +55,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       : addTimeRestrictionWindow(propertyName)
   }
 
-  const handleToggleParcelDetailsChange = () => {
-    setShowParcelDetails((currentValue) => !currentValue)
-  }
-
   const handleToggleParcelInfo = (propertyName) => {
     setShowParcelInfo((currentState) => ({
       ...currentState,
@@ -76,6 +71,66 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label htmlFor="parceldetails" />
+          <FormInputs.TextInput
+            name="id"
+            value={state.id}
+            placeholder="ID"
+            onChangeHandler={eventHandlers.handleTextInputChange(
+              'id',
+              onChangeHandler
+            )}
+          />
+        </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer>
+          <Elements.Layout.TextInputPairContainer>
+            <Elements.Layout.TextInputPairItem>
+              <FormInputs.TextInput
+                name="measurement"
+                value={state.measurement}
+                placeholder="Mått (BxHxDcm)"
+                pattern="(\d+)x(\d+)x(\d+)"
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'measurement',
+                  onChangeHandler
+                )}
+              />
+            </Elements.Layout.TextInputPairItem>
+            <Elements.Layout.TextInputPairItem>
+              <FormInputs.TextInput
+                step={1}
+                name="weight"
+                value={state.weight}
+                placeholder="Vikt (kg)"
+                type="number"
+                onChangeHandler={eventHandlers.handleTextInputChange(
+                  'weight',
+                  onChangeHandler
+                )}
+              />
+            </Elements.Layout.TextInputPairItem>
+          </Elements.Layout.TextInputPairContainer>
+        </Elements.Layout.InputContainer>
+
+        <Elements.Layout.InputContainer>
+          <FormInputs.TextInput
+            name="cargo"
+            value={state.cargo}
+            onChangeHandler={eventHandlers.handleTextInputChange(
+              'cargo',
+              onChangeHandler
+            )}
+            placeholder="Innehåll"
+          />
+          <FormInputs.Checkbox
+            label="Paketet är ömtåligt"
+            onChangeHandler={handleFragileParcelChange}
+          />
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <Elements.Form.Label required htmlFor="pickup">
           Upphämtning
@@ -147,9 +202,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             />
             <FormInputs.TextInput
               onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+              pattern="^[0-9]*$"
               iconInset
               name="sender"
-              type="tel"
               value={state.sender.contact}
               onChangeHandler={eventHandlers.handleContactInputChange(
                 'sender',
@@ -256,7 +311,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             <FormInputs.TextInput
               iconInset
               name="recipient-contact"
-              type="tel"
+              pattern="^[0-9]*$"
               value={state.recipient.contact}
               onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -289,75 +344,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
-
-      <Elements.Layout.InputBlock>
-        <FormInputs.Checkbox
-          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
-          label="Lägg till paketinformation"
-          onChangeHandler={handleToggleParcelDetailsChange}
-        />
-
-        {showParcelDetails && (
-          <>
-            <Elements.Layout.InputContainer>
-              <Elements.Form.Label htmlFor="parceldetails" />
-              <FormInputs.TextInput
-                name="id"
-                value={state.id}
-                placeholder="ID"
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'id',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.InputContainer>
-            <Elements.Layout.InputContainer>
-              <Elements.Layout.TextInputPairContainer>
-                <Elements.Layout.TextInputPairItem>
-                  <FormInputs.TextInput
-                    name="measurement"
-                    value={state.measurement}
-                    placeholder="Mått (BxHxDcm)"
-                    onChangeHandler={eventHandlers.handleTextInputChange(
-                      'measurement',
-                      onChangeHandler
-                    )}
-                  />
-                </Elements.Layout.TextInputPairItem>
-                <Elements.Layout.TextInputPairItem>
-                  <FormInputs.TextInput
-                    step={1}
-                    name="weight"
-                    value={state.weight}
-                    placeholder="Vikt (kg)"
-                    type="number"
-                    onChangeHandler={eventHandlers.handleTextInputChange(
-                      'weight',
-                      onChangeHandler
-                    )}
-                  />
-                </Elements.Layout.TextInputPairItem>
-              </Elements.Layout.TextInputPairContainer>
-            </Elements.Layout.InputContainer>
-
-            <Elements.Layout.InputContainer>
-              <FormInputs.TextInput
-                name="cargo"
-                value={state.cargo}
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'cargo',
-                  onChangeHandler
-                )}
-                placeholder="Innehåll"
-              />
-              <FormInputs.Checkbox
-                label="Paketet är ömtåligt"
-                onChangeHandler={handleFragileParcelChange}
-              />
-            </Elements.Layout.InputContainer>
-          </>
-        )}
-      </Elements.Layout.InputBlock>
       <Elements.Layout.ButtonWrapper>
         <Elements.Buttons.CancelButton
           type="button"
@@ -365,7 +351,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         >
           Avbryt
         </Elements.Buttons.CancelButton>
-        <Elements.Buttons.SubmitButton type="submit">
+        <Elements.Buttons.SubmitButton
+          width="48.5%"
+          padding="0.75rem 0"
+          type="submit"
+        >
           Lägg till
         </Elements.Buttons.SubmitButton>
       </Elements.Layout.ButtonWrapper>

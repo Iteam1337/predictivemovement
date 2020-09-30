@@ -170,7 +170,9 @@ const sendDeliveryInformation = (instruction, telegramId, booking) =>
           ? `\nPortkod: ${booking.metadata.recipient.doorCode}`
           : ''
       )
-      .concat(`\nTryck "[Levererat]" när du har lämnat paketet.`),
+      .concat(
+        `\nTryck "[Levererat]" när du har lämnat paketet, eller "[Kunde inte leverera]" om du av någon anledning inte kunde leverera paketet.`
+      ),
     {
       parse_mode: 'markdown',
       reply_markup: {
@@ -180,6 +182,13 @@ const sendDeliveryInformation = (instruction, telegramId, booking) =>
               text: 'Levererat',
               callback_data: JSON.stringify({
                 e: 'delivered',
+                id: instruction.id,
+              }),
+            },
+            {
+              text: 'Kunde inte leverera',
+              callback_data: JSON.stringify({
+                e: 'delivery_failed',
                 id: instruction.id,
               }),
             },

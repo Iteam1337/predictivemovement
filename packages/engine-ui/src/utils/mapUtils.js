@@ -230,7 +230,6 @@ const getIconMappingFromEntityType = (type) => {
             mask: true,
           },
         },
-        colors: ['#9DFFF9', '#ffffff'],
         options: {
           iconAtlas: vehicleSymbol,
           size: 6,
@@ -270,11 +269,15 @@ export const toIconLayer = (data, activeId) => {
     data[0].properties.type
   )
 
-  const iconData = data.map((feature) => ({
+  const iconData = data.map((feature, index) => ({
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
-      color: activeId === feature.id ? colors[0] : colors[1],
+      color: !colors
+        ? getColor(index, 0)
+        : activeId === feature.id
+        ? colors[0]
+        : colors[1],
     },
   }))
 

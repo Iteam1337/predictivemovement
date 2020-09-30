@@ -5,11 +5,11 @@ import Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams } from 'react-router-dom'
-import moment from 'moment'
 import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
+import { getColor } from '../utils/palette'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -63,6 +63,11 @@ const VehicleDetails: React.FC<{
 
   if (!vehicle) return <p>Loading...</p>
 
+  const color = getColor(
+    vehicles.findIndex((v: any) => v.id === vehicleId),
+    0
+  )
+
   const handleDeleteClick = (vehicleId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
       deleteVehicle(vehicleId)
@@ -92,7 +97,10 @@ const VehicleDetails: React.FC<{
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
-          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
+          <Elements.Typography.RoundedLabelDisplay
+            backgroundColor={color}
+            margin="0 0.5rem"
+          >
             {helpers.withoutLastFourChars(vehicleId)}
             <Elements.Typography.SpanBold>
               {helpers.getLastFourChars(vehicleId)}
@@ -115,8 +123,8 @@ const VehicleDetails: React.FC<{
           <Paragraph>
             {vehicle.earliest_start && vehicle.latest_end
               ? `
-                ${moment(vehicle.earliest_start).format('LT')} -
-                ${moment(vehicle.latest_end).format('LT')} `
+                ${vehicle.earliest_start} -
+                ${vehicle.latest_end} `
               : 'Inget körschema fastställt'}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>

@@ -55,8 +55,11 @@ const CleanH4 = styled.h4`
   cursor: default;
 `
 
-const RoundedLabelDisplay = styled.span<{ margin: string }>`
-  background: #e6ffe6;
+const RoundedLabelDisplay = styled.span<{
+  margin: string
+  backgroundColor?: string
+}>`
+  background: ${({ backgroundColor }) => backgroundColor ?? '#e6ffe6'};
   border-radius: 0.75rem;
   padding: 0.5rem 0.6rem;
   text-decoration: none;

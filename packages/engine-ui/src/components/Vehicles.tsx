@@ -3,10 +3,13 @@ import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
+import { getColor } from '../utils/palette'
 
 type Vehicle = {
   id: string
   start_address: { lon: number; lat: number }
+  name?: string
+  metadata: { profile?: string }
 }
 
 const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
@@ -30,15 +33,17 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
         transitionEasing: (t: number) => t * (2 - t),
       },
     })
+
   return (
     <Elements.Layout.LinkListContainer>
-      {vehicles.map((vehicle) => (
+      {vehicles.map((vehicle, i) => (
         <Elements.Layout.InlineContainer key={vehicle.id}>
           <Elements.Typography.NoMarginParagraph>
             ID
           </Elements.Typography.NoMarginParagraph>
           <Elements.Layout.MarginLeftContainerSm>
             <Elements.Links.RoundedLink
+              color={getColor(i, 0)}
               onMouseOver={() =>
                 dispatch({ type: 'highlightTransport', payload: vehicle.id })
               }
@@ -53,7 +58,7 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
                 )
               }
             >
-              ...{helpers.getLastFourChars(vehicle.id)}
+              {vehicle.metadata.profile || helpers.getLastFourChars(vehicle.id)}
             </Elements.Links.RoundedLink>
           </Elements.Layout.MarginLeftContainerSm>
         </Elements.Layout.InlineContainer>

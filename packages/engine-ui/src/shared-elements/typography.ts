@@ -19,6 +19,7 @@ const SmallInfoBold = styled.p`
   margin-top: 0;
   margin-bottom: 0.25rem;
 `
+
 const InfoMd = styled.p`
   font-style: italic;
   font-size: 1rem;

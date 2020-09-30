@@ -57,6 +57,10 @@ const InlineContainer = styled.div`
   }
 `
 
+const MarginTopContainerSm = styled.div`
+  margin-top: 1rem;
+`
+
 const MarginTopContainer = styled.div<{ alignItems?: string }>`
   margin-top: 2rem;
   display: flex;
@@ -123,4 +127,5 @@ export default {
   InlineContainer,
   FlexRowBaselineContainer,
   SectionWithMargin,
+  MarginTopContainerSm,
 }

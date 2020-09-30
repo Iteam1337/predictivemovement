@@ -12,14 +12,12 @@
                     "senderId": 928830524
                 }
             },
-            "latest_end": null,
             "id": "pmv-5EFrWAbt",
             "end_address": {
                 "lon": 17.897412,
                 "lat": 59.338982,
                 "hint": "U9kbgNPZG4AWAAAACAAAAB4AAAB9AAAA2YR7QYOwpEBp4qVBThmtQhYAAAAIAAAAHgAAAH0AAACIAQAAAxcRAZJwiQPEFxEB5nCJAwEA_xNStUSx"
             },
-            "earliest_start": null,
             "current_route": null,
             "capacity": null,
             "busy": null,
@@ -41,7 +39,6 @@
                     "contact": "0707755831"
                 }
             },
-            "latest_end": "2020-09-09T17:00:00.000Z",
             "id": "pmv-6CXvUnrr",
             "end_address": {
                 "name": "Börjesonsvägen 6",
@@ -49,7 +46,6 @@
                 "lat": 59.338873,
                 "hint": "U9kbgNPZG4AZAAAABQAAAAAAAACbAAAAcgCNQbEPR0AAAAAA8dTWQhkAAAAFAAAAAAAAAJsAAACIAQAA2xcRARJwiQPBGBEBeXCJAwAA7xNStUSx"
             },
-            "earliest_start": "2020-09-09T07:00:00.000Z",
             "current_route": null,
             "capacity": null,
             "busy": null,
@@ -71,7 +67,6 @@
                     "contact": "0707755831"
                 }
             },
-            "latest_end": "2020-09-09T13:00:00.000Z",
             "id": "pmv-6NdZmAZa",
             "end_address": {
                 "name": "Brommaplan",
@@ -79,7 +74,6 @@
                 "lat": 59.338283,
                 "hint": "8zACgIZMG4ALAAAAAAAAAKkAAAAAAAAAbV3nQAAAAABbVuFCAAAAAAsAAAAAAAAAqQAAAAAAAACIAQAAI7wRAVxtiQPuvBEBK26JAwMAbwZStUSx"
             },
-            "earliest_start": "2020-09-09T07:00:00.000Z",
             "current_route": null,
             "capacity": {
                 "weight": 10,

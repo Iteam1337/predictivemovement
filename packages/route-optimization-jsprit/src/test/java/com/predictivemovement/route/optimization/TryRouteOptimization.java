@@ -12,6 +12,7 @@ import java.util.List;
 import com.graphhopper.jsprit.analysis.toolbox.Plotter;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
+import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
 import com.graphhopper.jsprit.core.util.Solutions;
 
 import org.json.JSONObject;
@@ -21,18 +22,20 @@ public class TryRouteOptimization {
     private RouteOptimization routeOptimization;
     private JSONObject response;
 
-    public static void main(final String args[]) throws IOException {
+    public static void main(final String args[]) throws Exception {
         TryRouteOptimization tryOut = new TryRouteOptimization();
-        tryOut.jsprit();
+        try {
+            tryOut.jsprit();
+        } catch (RouteOptimizationException exception) {
+            String errorResponse = new ErrorResponse(exception).create();
+            System.out.println(errorResponse);
+            throw exception;
+        }
     }
 
-    public void jsprit() throws IOException {
-
+    public void jsprit() throws Exception {
         // given
-        // Path fileName = Path.of("src/test/resources/msg/03/03_route_request.json");
-        // Path fileName = Path.of("src/test/resources/msg/05/05_route_request.json");
-        // Path fileName = Path.of("src/test/resources/msg/06/06_route_request.json");
-        Path fileName = Path.of("src/test/resources/msg/11/11_route_request.json");
+        Path fileName = Path.of("src/test/resources/msg/01/01_route_request.json");
         String msg = Files.readString(fileName);
         JSONObject routeRequest = new JSONObject(msg);
 
@@ -78,9 +81,23 @@ public class TryRouteOptimization {
 
         System.out.println("Number of solutions: " + routeOptimization.vrpSolution.solutions.size());
 
+        int i = 0;
         for (VehicleRoutingProblemSolution solution : routeOptimization.vrpSolution.solutions) {
-            System.out.println("\n--- next solution");
+            System.out.println("\n--- solution: " + i);
             System.out.println(solution);
+            for (VehicleRoute route : solution.getRoutes()) {
+                // System.out.println(route);
+                // System.out.println(route.getStart());
+                // System.out.println(route.getEnd());
+                for (TourActivity activity : route.getActivities()) {
+                    System.out.println("-- activity");
+                    System.out.println(activity);
+                    System.out.println(activity.getArrTime());
+                    System.out.println(activity.getEndTime());
+                    System.out.println(activity.getOperationTime());
+                }
+            }
+            i++;
         }
     }
 }

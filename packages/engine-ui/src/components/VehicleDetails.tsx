@@ -121,7 +121,12 @@ const VehicleDetails: React.FC<{
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.end_address.name && (
-          <Paragraph>Slutposition: {vehicle.end_address.name}</Paragraph>
+          <>
+            <Elements.Typography.StrongParagraph>
+              Slutposition
+            </Elements.Typography.StrongParagraph>
+            <Paragraph>{vehicle.end_address.name}</Paragraph>
+          </>
         )}
         <Line />
 

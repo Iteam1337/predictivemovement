@@ -70,9 +70,7 @@ defmodule Booking do
     booking.id
   end
 
-  def get(id) do
-    GenServer.call(via_tuple(id), :get)
-  end
+  def get(id), do: GenServer.call(via_tuple(id), :get)
 
   def assign(booking_id, vehicle), do: GenServer.call(via_tuple(booking_id), {:assign, vehicle})
 
@@ -85,21 +83,15 @@ defmodule Booking do
   def add_event(booking_id, status) when status in ["picked_up", "delivered", "delivery_failed"],
     do: GenServer.call(via_tuple(booking_id), {:add_event, status})
 
-  defp create_event(status), do: %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
-
   defp via_tuple(id) when is_integer(id), do: via_tuple(Integer.to_string(id))
 
-  defp via_tuple(id) when is_binary(id) do
-    {:via, :gproc, {:n, :l, {:booking_id, id}}}
-  end
+  defp via_tuple(id) when is_binary(id), do: {:via, :gproc, {:n, :l, {:booking_id, id}}}
 
   def init(init_arg) do
     {:ok, init_arg}
   end
 
-  def handle_call(:get, _from, state) do
-    {:reply, state, state}
-  end
+  def handle_call(:get, _from, state), do: {:reply, state, state}
 
   def handle_call({:assign, vehicle}, _from, state) do
     updated_state =
@@ -130,4 +122,6 @@ defmodule Booking do
 
     {:reply, true, updated_state}
   end
+
+  defp create_event(status), do: %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
 end

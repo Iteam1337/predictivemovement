@@ -42,7 +42,6 @@ Or start RabbitMQ locally and the packages manually:
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 
-
 ## Release
 
 You will need:
@@ -53,6 +52,8 @@ You will need:
 - login with your Docker account
 - access to Iteam Kubernetes cluster
 - mapbox access token from `Predictivemovement` LastPass folder
+
+Set environment variables that are used by Docker at build time (for the UI) and run the skaffold command with a profile:
 
 ```sh
 export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>

@@ -16,11 +16,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
     setShowBookingTimeRestriction,
   ] = React.useState({ pickup: false, delivery: false })
 
-  const [showParcelInfo, setShowParcelInfo] = React.useState({
-    pickup: false,
-    delivery: false,
-  })
-
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
       return {
@@ -53,13 +48,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           [propertyName]: { ...currentState[propertyName], timewindow: null },
         }))
       : addTimeRestrictionWindow(propertyName)
-  }
-
-  const handleToggleParcelInfo = (propertyName) => {
-    setShowParcelInfo((currentState) => ({
-      ...currentState,
-      [propertyName]: !currentState[propertyName],
-    }))
   }
 
   const handleFragileParcelChange = () => {
@@ -131,7 +119,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.MarginBottomContainer />
-      <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
+      <Elements.Layout.InputContainer>
         <Elements.Form.Label required htmlFor="pickup">
           Upphämtning
         </Elements.Form.Label>
@@ -150,6 +138,20 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             onChangeHandler
           )}
         />
+      </Elements.Layout.InputContainer>
+      <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
+        <FormInputs.TextInput
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+          name="sender-info"
+          value={state.sender.info}
+          onChangeHandler={eventHandlers.handleContactInputChange(
+            'sender',
+            'info',
+            onChangeHandler
+          )}
+          placeholder="Ytterligare information, t.ex. portkod"
+        />
+
         <FormInputs.Checkbox
           label="Tidspassning"
           onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
@@ -216,25 +218,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
-        <Elements.Layout.InputContainer>
-          <FormInputs.Checkbox
-            label="Portkod"
-            onChangeHandler={() => handleToggleParcelInfo('pickup')}
-          />
-
-          {showParcelInfo.pickup && (
-            <FormInputs.TextInput
-              name="sender-port-code"
-              value={state.sender.doorCode}
-              onChangeHandler={eventHandlers.handleContactInputChange(
-                'sender',
-                'doorCode',
-                onChangeHandler
-              )}
-              placeholder="Portkod"
-            />
-          )}
-        </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.MarginBottomContainer />
 
@@ -255,6 +238,19 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             'delivery',
             onChangeHandler
           )}
+        />
+      </Elements.Layout.InputContainer>
+      <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
+        <FormInputs.TextInput
+          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+          name="recipient-info"
+          value={state.recipient.info}
+          onChangeHandler={eventHandlers.handleContactInputChange(
+            'recipient',
+            'info',
+            onChangeHandler
+          )}
+          placeholder="Ytterligare information, t.ex. portkod"
         />
         <FormInputs.Checkbox
           label="Tidspassning"
@@ -323,25 +319,6 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
               required
             />
           </Elements.Layout.InputInnerContainer>
-        </Elements.Layout.InputContainer>
-        <Elements.Layout.InputContainer>
-          <FormInputs.Checkbox
-            label="Portkod"
-            onChangeHandler={() => handleToggleParcelInfo('delivery')}
-          />
-
-          {showParcelInfo.delivery && (
-            <FormInputs.TextInput
-              name="recipient-port-code"
-              value={state.recipient.doorCode}
-              onChangeHandler={eventHandlers.handleContactInputChange(
-                'recipient',
-                'doorCode',
-                onChangeHandler
-              )}
-              placeholder="Portkod"
-            />
-          )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.ButtonWrapper>

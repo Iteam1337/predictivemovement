@@ -37,6 +37,8 @@ defmodule MessageGenerator do
     |> Map.put(:id, Enum.random(0..100_000))
     |> Map.put_new(:capacity, %{volume: 15, weight: 700})
     |> Map.put_new(:start_address, Address.random(@ljusdal))
+    |> Map.put(:earliest_start, "00:00")
+    |> Map.put(:latest_end, "23:59")
   end
 
   def random_car(location) do

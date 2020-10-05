@@ -10,6 +10,7 @@ import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
 import { getColor } from '../utils/palette'
+import { Vehicle, PlanVehicle } from '../types'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -41,7 +42,7 @@ const RouteTitleWrapper = styled.div`
 `
 
 const VehicleDetails: React.FC<{
-  vehicles: any
+  vehicles: (Vehicle | PlanVehicle)[]
   deleteVehicle: (id: string) => void
 }> = ({ vehicles, deleteVehicle }) => {
   const { dispatch } = React.useContext(UIStateContext)
@@ -64,7 +65,8 @@ const VehicleDetails: React.FC<{
   if (!vehicle) return <p>Loading...</p>
 
   const color = getColor(
-    vehicles.findIndex((v: any) => v.id === vehicleId),
+    vehicles.findIndex((v) => v.id === vehicleId),
+
     0
   )
 
@@ -75,15 +77,16 @@ const VehicleDetails: React.FC<{
     }
   }
 
-  const handleOnLinkClick = (id: string) => {
-    const activity = vehicle.activities.find(
+  const handleBookingClick = (id: string) => {
+    const activity = (vehicle as PlanVehicle).activities.find(
       (activity: { id: string }) => activity.id === id
     )
+
     dispatch({
       type: 'viewport',
       payload: {
-        latitude: activity.address.lat,
-        longitude: activity.address.lon,
+        latitude: activity?.address.lat,
+        longitude: activity?.address.lon,
         zoom: 14,
         transitionDuration: 2000,
         transitionInterpolator: new FlyToInterpolator(),
@@ -121,11 +124,7 @@ const VehicleDetails: React.FC<{
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {vehicle.earliest_start && vehicle.latest_end
-              ? `
-                ${vehicle.earliest_start} -
-                ${vehicle.latest_end} `
-              : 'Inget körschema fastställt'}
+            {vehicle.earliest_start} - {vehicle.latest_end}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.end_address.name && (
@@ -154,11 +153,11 @@ const VehicleDetails: React.FC<{
               </RouteTitleWrapper>
               {showInfo.bookings && (
                 <Elements.Layout.LinkListContainer>
-                  {vehicle.booking_ids.map((bookingId: string) => (
+                  {vehicle.booking_ids?.map((bookingId) => (
                     <Elements.Links.RoundedLink
                       to={`/bookings/${bookingId}`}
                       key={bookingId}
-                      onClick={() => handleOnLinkClick(bookingId)}
+                      onClick={() => handleBookingClick(bookingId)}
                     >
                       {helpers.withoutLastFourChars(bookingId)}
                       <Elements.Typography.SpanBold>

@@ -4,13 +4,7 @@ import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
 import { getColor } from '../utils/palette'
-
-type Vehicle = {
-  id: string
-  start_address: { lon: number; lat: number }
-  name?: string
-  metadata: { profile?: string }
-}
+import { Vehicle } from '../types'
 
 const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
   const { dispatch } = React.useContext(UIStateContext)

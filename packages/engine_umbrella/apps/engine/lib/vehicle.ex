@@ -104,7 +104,7 @@ defmodule Vehicle do
       |> Map.put_new(:metadata, %{})
 
     struct(Vehicle, vehicle_fields)
-    |> put_vehicle_in_memory()
+    |> apply_vehicle_to_state()
     |> MQ.publish(Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
     |> (&%VehicleRegistered{vehicle: &1}).()
     |> ES.add_event()
@@ -112,7 +112,7 @@ defmodule Vehicle do
     vehicle_fields.id
   end
 
-  def put_vehicle_in_memory(%Vehicle{id: id} = vehicle) do
+  def apply_vehicle_to_state(%Vehicle{id: id} = vehicle) do
     GenServer.start_link(
       __MODULE__,
       vehicle,

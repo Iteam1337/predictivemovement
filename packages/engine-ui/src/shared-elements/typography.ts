@@ -36,7 +36,21 @@ const InfoSmStrong = styled(InfoSm)`
   font-weight: bold;
 `
 
-const StrongParagraph = styled.label`
+const StrongParagraph = styled.label<{ dotColor?: string }>`
+  ${({ dotColor }) =>
+    dotColor &&
+    `
+  &::before {
+    border-radius: 50%;
+    background-color: ${dotColor};
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    content: '';
+    margin-right: 5px;
+  }`}
+
+  width: 100%;
   margin-bottom: 0.5rem;
   display: block;
   font-weight: bold;

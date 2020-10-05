@@ -115,12 +115,13 @@ export const vehicleIcon = (vehicles) => {
   let index = 0
   try {
     return [
-      ...vehicles.flatMap(({ id, tail, start_address }, i) => {
+      ...vehicles.flatMap(({ id, tail, start_address, color }, i) => {
         index = i
         return [
           point([start_address.lon, start_address.lat], {
             properties: {
-              color: '#00ff00',
+              color,
+              highlightColor: color,
               size: 80,
               type: 'vehicle',
             },
@@ -144,7 +145,8 @@ export const bookingIcon = (bookings) => {
         return [
           point([pickup.lon, pickup.lat], {
             properties: {
-              color: '#ccffcc',
+              color: '#ffffff',
+              highlightColor: '#19DE8B',
               size: 80,
               type: 'booking',
             },
@@ -217,8 +219,8 @@ export const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
-const getIconMappingFromEntityType = (type) => {
-  switch (type) {
+const getIconMappingFromEntity = (entityType) => {
+  switch (entityType) {
     case 'vehicle':
       return {
         ICON_MAPPING: {
@@ -247,7 +249,6 @@ const getIconMappingFromEntityType = (type) => {
             mask: true,
           },
         },
-        colors: ['#19DE8B', '#ffffff'],
         options: {
           iconAtlas: parcelIcon,
           size: 5,
@@ -260,24 +261,21 @@ const getIconMappingFromEntityType = (type) => {
   }
 }
 
-export const toIconLayer = (data, activeId) => {
+export const toIconLayer = (data, activeId, entityType) => {
   if (!data.length) {
     return
   }
 
-  const { ICON_MAPPING, colors, options } = getIconMappingFromEntityType(
-    data[0].properties.type
-  )
+  const { ICON_MAPPING, options } = getIconMappingFromEntity(entityType)
 
-  const iconData = data.map((feature, index) => ({
+  const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
-      color: !colors
-        ? getColor(index, 0)
-        : activeId === feature.id
-        ? colors[0]
-        : colors[1],
+      color:
+        activeId === feature.id
+          ? feature.properties.highlightColor
+          : feature.properties.color,
     },
   }))
 
@@ -287,7 +285,7 @@ export const toIconLayer = (data, activeId) => {
     pickable: true,
     iconAtlas: options.iconAtlas,
     iconMapping: ICON_MAPPING,
-    getIcon: (d) => 'marker',
+    getIcon: () => 'marker',
     sizeScale: options.size,
     getPosition: (d) => d.coordinates,
     transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },

@@ -3,7 +3,7 @@ import { FlyToInterpolator } from 'react-map-gl'
 import styled from 'styled-components'
 import helpers from '../utils/helpers'
 import { UIStateContext } from '../utils/UIStateContext'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 
 const ActivityInfo = styled.div`
   display: flex;
@@ -44,7 +44,7 @@ const RouteActivities = ({ vehicle }) => {
         <ActivityInfo key={index}>
           <p>{index + 1}</p>
           <p>{getLabelForActivities(activity.type)}</p>
-          <Elements.RoundedLink
+          <Elements.Links.RoundedLink
             to={`/bookings/${activity.id}`}
             onClick={() =>
               dispatch({
@@ -61,7 +61,7 @@ const RouteActivities = ({ vehicle }) => {
             }
           >
             ...{helpers.getLastFourChars(activity.id)}
-          </Elements.RoundedLink>
+          </Elements.Links.RoundedLink>
         </ActivityInfo>
       ))}
     </Wrapper>

@@ -9,8 +9,7 @@ import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
-import { getColor } from '../utils/palette'
-import { Vehicle, PlanVehicle } from '../types'
+import { Vehicle } from '../types'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -42,7 +41,7 @@ const RouteTitleWrapper = styled.div`
 `
 
 const VehicleDetails: React.FC<{
-  vehicles: (Vehicle | PlanVehicle)[]
+  vehicles: Vehicle[]
   deleteVehicle: (id: string) => void
 }> = ({ vehicles, deleteVehicle }) => {
   const { dispatch } = React.useContext(UIStateContext)
@@ -60,15 +59,9 @@ const VehicleDetails: React.FC<{
   )
 
   const { vehicleId } = useParams<{ vehicleId: string }>()
-  const vehicle = vehicles.find((v: any) => v.id === vehicleId)
+  const vehicle = vehicles.find((v) => v.id === vehicleId)
 
   if (!vehicle) return <p>Loading...</p>
-
-  const color = getColor(
-    vehicles.findIndex((v) => v.id === vehicleId),
-
-    0
-  )
 
   const handleDeleteClick = (vehicleId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
@@ -77,12 +70,12 @@ const VehicleDetails: React.FC<{
     }
   }
 
-  const handleBookingClick = (id: string) => {
-    const activity = (vehicle as PlanVehicle).activities.find(
-      (activity: { id: string }) => activity.id === id
+  const handleBookingClick = (bookingId: string) => {
+    const activity = vehicle?.activities?.find(
+      (activity) => activity.id === bookingId
     )
 
-    dispatch({
+    return dispatch({
       type: 'viewport',
       payload: {
         latitude: activity?.address.lat,
@@ -101,7 +94,7 @@ const VehicleDetails: React.FC<{
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
           <Elements.Typography.RoundedLabelDisplay
-            backgroundColor={color}
+            backgroundColor={vehicle.color}
             margin="0 0.5rem"
           >
             {helpers.withoutLastFourChars(vehicleId)}

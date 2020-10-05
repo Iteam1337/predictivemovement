@@ -33,7 +33,8 @@ const Map = ({ data }) => {
   const layers = [
     mapUtils.toIconLayer(
       mapUtils.vehicleIcon(data.vehicles),
-      UIState.highlightTransport
+      UIState.highlightTransport,
+      'vehicle'
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
@@ -43,7 +44,8 @@ const Map = ({ data }) => {
     ),
     mapUtils.toIconLayer(
       mapUtils.bookingIcon(data.bookings),
-      UIState.highlightBooking
+      UIState.highlightBooking,
+      'booking'
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-vehicles-layer',

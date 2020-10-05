@@ -19,6 +19,8 @@ export type Booking = {
   status: BookingStatus
 }
 
+export type InAppColor = string
+
 export type Vehicle = {
   id: string
   name?: string
@@ -30,6 +32,7 @@ export type Vehicle = {
   capacity?: { weight?: number; volume?: number }
   end_address: Address
   start_address: Address
+  color: InAppColor
 }
 
 export type NotificationType = Vehicle | Booking

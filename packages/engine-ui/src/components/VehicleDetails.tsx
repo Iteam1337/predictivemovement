@@ -5,7 +5,6 @@ import Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams } from 'react-router-dom'
-import moment from 'moment'
 import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
@@ -112,17 +111,22 @@ const VehicleDetails: React.FC<{
           <Paragraph>
             {vehicle.earliest_start && vehicle.latest_end
               ? `
-                ${moment(vehicle.earliest_start).format('LT')} -
-                ${moment(vehicle.latest_end).format('LT')} `
+                ${vehicle.earliest_start} -
+                ${vehicle.latest_end} `
               : 'Inget körschema fastställt'}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.end_address.name && (
-          <Paragraph>Slutposition: {vehicle.end_address.name}</Paragraph>
+          <>
+            <Elements.Typography.StrongParagraph>
+              Slutposition
+            </Elements.Typography.StrongParagraph>
+            <Paragraph>{vehicle.end_address.name}</Paragraph>
+          </>
         )}
         <Line />
 
-        {vehicle.activities && vehicle.activities.length > 0 && (
+        {vehicle.activities && vehicle.activities.length > 0 ? (
           <>
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>
@@ -197,6 +201,22 @@ const VehicleDetails: React.FC<{
                 </Elements.Typography.NoInfoParagraph>
               )}
             </Elements.Layout.MarginBottomContainer>
+          </>
+        ) : (
+          <>
+            <Elements.Typography.StrongParagraph>
+              Bokningar på fordon
+            </Elements.Typography.StrongParagraph>
+            <Elements.Typography.NoInfoParagraph>
+              Inga bekräftade bokningar
+            </Elements.Typography.NoInfoParagraph>
+            <Line />
+            <Elements.Typography.StrongParagraph>
+              Rutt
+            </Elements.Typography.StrongParagraph>
+            <Elements.Typography.NoInfoParagraph>
+              Ingen rutt planerad
+            </Elements.Typography.NoInfoParagraph>
           </>
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">

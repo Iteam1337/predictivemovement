@@ -45,7 +45,13 @@ const RouteActivities = ({ vehicle }) => {
           <p>{index + 1}</p>
           <p>{getLabelForActivities(activity.type)}</p>
           <Elements.RoundedLink
-            to={`/bookings/${activity.id}`}
+            onMouseOver={() =>
+              dispatch({ type: 'highlightBooking', payload: activity.id })
+            }
+            onMouseLeave={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
+            to={`/plans/routes/${vehicle.id}/booking/${activity.id}`}
             onClick={() =>
               dispatch({
                 type: 'viewport',

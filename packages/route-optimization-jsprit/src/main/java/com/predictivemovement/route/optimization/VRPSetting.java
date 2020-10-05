@@ -30,7 +30,7 @@ public class VRPSetting {
         this.routeRequest = routeRequest;
     }
 
-    VRPSetting set() {
+    VRPSetting set() throws RouteOptimizationException {
         locations = new HashMap<>();
 
         vehicles = new VRPVehicles(this).createVehicles();

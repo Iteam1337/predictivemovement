@@ -36,10 +36,10 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
         <Elements.Layout.InlineContainer key={vehicle.id}>
           <Elements.Links.RoundedLink
             onMouseOver={() =>
-              dispatch({ type: 'highlightVehicle', payload: vehicle.id })
+              dispatch({ type: 'highlightTransport', payload: vehicle.id })
             }
             onMouseLeave={() =>
-              dispatch({ type: 'highlightVehicle', payload: undefined })
+              dispatch({ type: 'highlightTransport', payload: undefined })
             }
             to={`/transports/${vehicle.id}`}
             onClick={() =>

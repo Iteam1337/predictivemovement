@@ -107,8 +107,10 @@ defmodule BookingProcessorTest do
     channel: channel
   } do
     AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    earliest_start = DateTime.utc_now()
-    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
+    now = DateTime.utc_now()
+    later = now |> DateTime.add(60 * 60 * 6)
+    {:ok, earliest_start} = Engine.Cldr.DateTime.to_string(now, format: "HH:mm")
+    {:ok, latest_end} = Engine.Cldr.DateTime.to_string(later, format: "HH:mm")
 
     MessageGenerator.add_random_car(%{earliest_start: earliest_start, latest_end: latest_end})
     MessageGenerator.add_random_booking()
@@ -119,10 +121,10 @@ defmodule BookingProcessorTest do
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
     assert first_vehicle |> Map.get(:earliest_start) ==
-             earliest_start |> DateTime.to_iso8601()
+             earliest_start
 
     assert first_vehicle |> Map.get(:latest_end) ==
-             latest_end |> DateTime.to_iso8601()
+             latest_end
   end
 
   test "capacity is included in the plan", %{

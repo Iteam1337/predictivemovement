@@ -102,7 +102,7 @@ const Notifications: React.FC<{
               vehicle={notification as Vehicle}
             />
           )
-      break
+        break
       case 'pmb':
         if ((notification as Booking).status === 'new')
           return (
@@ -112,7 +112,7 @@ const Notifications: React.FC<{
               booking={notification as Booking}
             />
           )
-      break
+        break
       default:
         return
     }

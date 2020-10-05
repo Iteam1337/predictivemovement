@@ -41,3 +41,21 @@ Or start RabbitMQ locally and the packages manually:
     # etc..
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
+
+
+## Release
+
+You will need:
+
+- [docker installed](https://docs.docker.com/engine/install/)
+- [kubectl installed](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [skaffold installed](https://skaffold.dev/docs/install/)
+- login with your Docker account
+- access to Iteam Kubernetes cluster
+- mapbox access token from `Predictivemovement` LastPass folder
+
+```sh
+export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
+export REACT_APP_ENGINE_SERVER=https://engine-server.iteamdev.io
+skaffold run --profile prod
+```

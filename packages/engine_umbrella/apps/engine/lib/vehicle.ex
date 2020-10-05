@@ -1,6 +1,8 @@
 defmodule Vehicle do
   use GenServer
   require Logger
+  alias Engine.ES
+  @derive Jason.Encoder
 
   defstruct [
     :id,
@@ -101,19 +103,25 @@ defmodule Vehicle do
       |> Map.put_new(:capacity, %{volume: 15, weight: 700})
       |> Map.put_new(:metadata, %{})
 
-    vehicle = struct(Vehicle, vehicle_fields)
-    unless options[:added_from_restore], do: Engine.RedisAdapter.add_vehicle(vehicle)
+    struct(Vehicle, vehicle_fields)
+    |> put_vehicle_in_memory()
+    |> MQ.publish(Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
+    |> (&%VehicleRegistered{vehicle: &1}).()
+    |> ES.add_event()
 
+    vehicle_fields.id
+  end
+
+  def put_vehicle_in_memory(%Vehicle{id: id} = vehicle) do
     GenServer.start_link(
       __MODULE__,
       vehicle,
-      name: via_tuple(vehicle.id)
+      name: via_tuple(id)
     )
 
-    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
+    Engine.VehicleStore.put_vehicle(id)
 
-    Engine.VehicleStore.put_vehicle(vehicle.id)
-    vehicle.id
+    vehicle
   end
 
   def delete(id) do

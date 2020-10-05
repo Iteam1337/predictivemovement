@@ -25,7 +25,8 @@ defmodule Engine.Application do
       Engine.VehicleDeleteProcessor,
       Engine.BookingStore,
       Engine.VehicleStore,
-      {Redix, {Application.fetch_env!(:engine, :redis_url), [name: :redix]}}
+      {Redix, {Application.fetch_env!(:engine, :redis_url), [name: :redix]}},
+      Engine.ES
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

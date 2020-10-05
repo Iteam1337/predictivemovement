@@ -29,8 +29,8 @@ const initialState = {
     city: '',
     timewindow: null,
   },
-  sender: { name: '', contact: '', doorCode: '' },
-  recipient: { name: '', contact: '', doorCode: '' },
+  sender: { name: '', contact: '', info: '' },
+  recipient: { name: '', contact: '', info: '' },
 }
 
 const CreateBooking = ({ onSubmit }) => {

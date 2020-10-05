@@ -30,31 +30,26 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
 
   return (
     <Elements.Layout.LinkListContainer>
-      {vehicles.map((vehicle, i) => (
+      {vehicles.map((vehicle) => (
         <Elements.Layout.InlineContainer key={vehicle.id}>
-          <Elements.Typography.NoMarginParagraph>
-            ID
-          </Elements.Typography.NoMarginParagraph>
-          <Elements.Layout.MarginLeftContainerSm>
-            <Elements.Links.RoundedLink
-              color={getColor(i, 0)}
-              onMouseOver={() =>
-                dispatch({ type: 'highlightTransport', payload: vehicle.id })
-              }
-              onMouseLeave={() =>
-                dispatch({ type: 'highlightTransport', payload: undefined })
-              }
-              to={`/transports/${vehicle.id}`}
-              onClick={() =>
-                onClickHandler(
-                  vehicle.start_address.lat,
-                  vehicle.start_address.lon
-                )
-              }
-            >
-              {vehicle.metadata.profile || helpers.getLastFourChars(vehicle.id)}
-            </Elements.Links.RoundedLink>
-          </Elements.Layout.MarginLeftContainerSm>
+          <Elements.Links.RoundedLink
+            color={vehicle.color}
+            onMouseOver={() =>
+              dispatch({ type: 'highlightTransport', payload: vehicle.id })
+            }
+            onMouseLeave={() =>
+              dispatch({ type: 'highlightTransport', payload: undefined })
+            }
+            to={`/transports/${vehicle.id}`}
+            onClick={() =>
+              onClickHandler(
+                vehicle.start_address.lat,
+                vehicle.start_address.lon
+              )
+            }
+          >
+            {helpers.getLastFourChars(vehicle.id).toUpperCase()}
+          </Elements.Links.RoundedLink>
         </Elements.Layout.InlineContainer>
       ))}
     </Elements.Layout.LinkListContainer>

@@ -11,6 +11,8 @@ const RoundedLink = styled(Link)<{ margin?: string; color?: string }>`
   font-size: 0.875rem;
   width: fit-content;
   color: black;
+  font-family: 'Roboto Mono', monospace;
+  letter-spacing: 0.1rem;
   :visited {
     color: black;
   }

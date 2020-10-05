@@ -60,7 +60,7 @@ const RouteActivities = ({ vehicle }) => {
               })
             }
           >
-            ...{helpers.getLastFourChars(activity.id)}
+            {helpers.getLastFourChars(activity.id).toUpperCase()}
           </Elements.Links.RoundedLink>
         </ActivityInfo>
       ))}

@@ -93,14 +93,8 @@ const VehicleDetails: React.FC<{
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
-          <Elements.Typography.RoundedLabelDisplay
-            backgroundColor={vehicle.color}
-            margin="0 0.5rem"
-          >
-            {helpers.withoutLastFourChars(vehicleId)}
-            <Elements.Typography.SpanBold>
-              {helpers.getLastFourChars(vehicleId)}
-            </Elements.Typography.SpanBold>
+          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem" backgroundColor={vehicle.color}>
+            {helpers.getLastFourChars(vehicleId).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.capacity && (
@@ -121,11 +115,16 @@ const VehicleDetails: React.FC<{
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {vehicle.end_address.name && (
-          <Paragraph>Slutposition: {vehicle.end_address.name}</Paragraph>
+          <>
+            <Elements.Typography.StrongParagraph>
+              Slutposition
+            </Elements.Typography.StrongParagraph>
+            <Paragraph>{vehicle.end_address.name}</Paragraph>
+          </>
         )}
         <Line />
 
-        {vehicle.activities && vehicle.activities.length > 0 && (
+        {vehicle.activities && vehicle.activities.length > 0 ? (
           <>
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>
@@ -152,10 +151,7 @@ const VehicleDetails: React.FC<{
                       key={bookingId}
                       onClick={() => handleBookingClick(bookingId)}
                     >
-                      {helpers.withoutLastFourChars(bookingId)}
-                      <Elements.Typography.SpanBold>
-                        {helpers.getLastFourChars(bookingId)}
-                      </Elements.Typography.SpanBold>
+                      {helpers.getLastFourChars(bookingId).toUpperCase()}
                     </Elements.Links.RoundedLink>
                   ))}
                 </Elements.Layout.LinkListContainer>
@@ -203,6 +199,22 @@ const VehicleDetails: React.FC<{
                 </Elements.Typography.NoInfoParagraph>
               )}
             </Elements.Layout.MarginBottomContainer>
+          </>
+        ) : (
+          <>
+            <Elements.Typography.StrongParagraph>
+              Bokningar på fordon
+            </Elements.Typography.StrongParagraph>
+            <Elements.Typography.NoInfoParagraph>
+              Inga bekräftade bokningar
+            </Elements.Typography.NoInfoParagraph>
+            <Line />
+            <Elements.Typography.StrongParagraph>
+              Rutt
+            </Elements.Typography.StrongParagraph>
+            <Elements.Typography.NoInfoParagraph>
+              Ingen rutt planerad
+            </Elements.Typography.NoInfoParagraph>
           </>
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">

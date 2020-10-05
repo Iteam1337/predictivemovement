@@ -23,11 +23,9 @@ defmodule Vehicle do
     {:ok, init_arg}
   end
 
-  def handle_call(:get, _from, state) do
-    {:reply, state, state}
-  end
+  def handle_call(:get, _from, state), do: {:reply, state, state}
 
-  def handle_cast(
+  def handle_call(
         {:offer,
          %Vehicle{id: vehicle_id, activities: activities, booking_ids: booking_ids} = vehicle},
         state
@@ -130,15 +128,9 @@ defmodule Vehicle do
     GenServer.stop(via_tuple(id))
   end
 
-  defp via_tuple(id) do
-    {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
-  end
+  defp via_tuple(id), do: {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
 
-  def get(id) do
-    GenServer.call(via_tuple(id), :get)
-  end
+  def get(id), do: GenServer.call(via_tuple(id), :get)
 
-  def offer(%Vehicle{id: id} = vehicle) do
-    GenServer.cast(via_tuple(id), {:offer, vehicle})
-  end
+  def offer(%Vehicle{id: id} = vehicle), do: GenServer.call(via_tuple(id), {:offer, vehicle})
 end

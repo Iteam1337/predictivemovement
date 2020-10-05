@@ -221,7 +221,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.MarginBottomContainer />
 
-      <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
+      <Elements.Layout.InputContainer>
         <Elements.Form.Label required htmlFor="delivery">
           Avlämning
         </Elements.Form.Label>

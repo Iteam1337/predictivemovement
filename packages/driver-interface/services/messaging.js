@@ -121,8 +121,8 @@ const sendPickupInformation = (instruction, telegramId, booking) =>
       .concat(
         booking.metadata &&
           booking.metadata.sender &&
-          booking.metadata.sender.doorCode
-          ? `\nPortkod: ${booking.metadata.sender.doorCode}`
+          booking.metadata.sender.info
+          ? `\nExtra information vid upphämtning: ${booking.metadata.sender.info}`
           : ''
       )
       .concat('\n\n***Paketinformation***')
@@ -166,8 +166,8 @@ const sendDeliveryInformation = (instruction, telegramId, booking) =>
       .concat(
         booking.metadata &&
           booking.metadata.recipient &&
-          booking.metadata.recipient.doorCode
-          ? `\nPortkod: ${booking.metadata.recipient.doorCode}`
+          booking.metadata.recipient.info
+          ? `\nExtra information vid avlämning: ${booking.metadata.recipient.info}`
           : ''
       )
       .concat(

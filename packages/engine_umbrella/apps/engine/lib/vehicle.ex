@@ -62,23 +62,28 @@ defmodule Vehicle do
 
   def handle_driver_response(
         {:ok, true},
-        proposed_state,
+        offer_information,
         current_state
       ) do
     Logger.info("Driver #{current_state.id} accepted")
 
-    proposed_state.booking_ids
-    |> Enum.map(fn booking_id ->
-      Booking.assign(booking_id, current_state)
-    end)
-
     updated_state =
       current_state
-      |> Map.merge(proposed_state)
+      |> Map.merge(offer_information)
       |> MQ.publish(
         Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
         "new_instructions"
       )
+
+    updated_state
+    |> Map.get(:booking_ids)
+    |> Enum.map(fn booking_id ->
+      Booking.assign(booking_id, current_state)
+    end)
+
+    updated_state
+    |> (&%DriverAcceptedBooking{vehicle: &1}).()
+    |> ES.add_event()
 
     updated_state
   end
@@ -123,7 +128,6 @@ defmodule Vehicle do
   end
 
   def delete(id) do
-    Engine.RedisAdapter.delete_vehicle(id)
     Engine.VehicleStore.delete_vehicle(id)
     GenServer.stop(via_tuple(id))
   end

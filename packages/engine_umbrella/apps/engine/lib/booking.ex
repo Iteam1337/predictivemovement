@@ -29,8 +29,6 @@ defmodule Booking do
       route: Osrm.route(pickup, delivery)
     }
 
-    Engine.RedisAdapter.add_booking(booking)
-
     GenServer.start_link(
       __MODULE__,
       booking,
@@ -48,7 +46,6 @@ defmodule Booking do
   def assign(booking_id, vehicle), do: GenServer.call(via_tuple(booking_id), {:assign, vehicle})
 
   def delete(id) do
-    Engine.RedisAdapter.delete_booking(id)
     Engine.BookingStore.delete_booking(id)
     GenServer.stop(via_tuple(id))
   end

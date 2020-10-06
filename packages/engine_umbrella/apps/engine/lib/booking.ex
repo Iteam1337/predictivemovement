@@ -51,12 +51,25 @@ defmodule Booking do
 
   def get(id), do: GenServer.call(via_tuple(id), :get)
 
-  def assign(booking_id, vehicle), do: GenServer.call(via_tuple(booking_id), {:assign, vehicle})
-
   def delete(id) do
     Engine.BookingStore.delete_booking(id)
     GenServer.stop(via_tuple(id))
   end
+
+  def assign(booking_id, vehicle) do
+    time_stamp = DateTime.utc_now()
+    apply_assign_to_state(booking_id, vehicle, time_stamp)
+
+    %BookingAssigned{
+      booking_id: booking_id,
+      vehicle: vehicle,
+      time_stamp: time_stamp
+    }
+    |> ES.add_event()
+  end
+
+  def apply_assign_to_state(booking_id, vehicle, time_stamp),
+    do: GenServer.call(via_tuple(booking_id), {:assign, vehicle, time_stamp})
 
   def add_event(booking_id, status)
       when status in ["picked_up", "delivered", "delivery_failed"] do
@@ -83,14 +96,14 @@ defmodule Booking do
 
   def handle_call(:get, _from, state), do: {:reply, state, state}
 
-  def handle_call({:assign, vehicle}, _from, state) do
+  def handle_call({:assign, vehicle, time_stamp}, _from, state) do
     updated_state =
       state
       |> Map.put(:assigned_to, %{
         id: vehicle.id,
         metadata: vehicle.metadata
       })
-      |> add_event_to_events_list("assigned")
+      |> add_event_to_events_list("assigned", time_stamp)
       |> MQ.publish(
         Application.fetch_env!(:engine, :outgoing_booking_exchange),
         "assigned"

@@ -1,5 +1,6 @@
 import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
+import { useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import helpers from '../utils/helpers'
 import { UIStateContext } from '../utils/UIStateContext'
@@ -26,6 +27,9 @@ const Wrapper = styled.div`
 const RouteActivities = ({ vehicle }) => {
   const { dispatch } = React.useContext(UIStateContext)
   const activities = vehicle.activities.slice(1, -1)
+  const isProposedPlan = useRouteMatch({
+    path: ['/plans/routes/:routeId'],
+  })
 
   const getLabelForActivities = (type) => {
     switch (type) {
@@ -38,6 +42,12 @@ const RouteActivities = ({ vehicle }) => {
     }
   }
 
+  const redirectTo = (activityId) => {
+    return isProposedPlan
+      ? `/plans/routes/${vehicle.id}/booking/${activityId}`
+      : `/bookings/${activityId}`
+  }
+
   return (
     <Wrapper>
       {activities.map((activity, index) => (
@@ -45,7 +55,7 @@ const RouteActivities = ({ vehicle }) => {
           <p>{index + 1}</p>
           <p>{getLabelForActivities(activity.type)}</p>
           <Elements.RoundedLink
-            to={`/bookings/${activity.id}`}
+            to={() => redirectTo(activity.id)}
             onClick={() =>
               dispatch({
                 type: 'viewport',

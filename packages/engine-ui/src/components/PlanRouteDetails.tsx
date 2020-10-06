@@ -8,10 +8,10 @@ import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import Elements from './Elements'
 import { getColor } from '../utils/palette'
 import helpers from '../utils/helpers'
-import { PlanVehicle } from '../types'
+import { Route } from '../types'
 
 interface Props {
-  vehicle: PlanVehicle
+  route: Route
   routeNumber: number
 }
 
@@ -29,7 +29,7 @@ const Chevron = styled(Icons.Arrow)`
   justify-self: flex-end;
 `
 
-const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
+const PlanRouteDetails = ({ route, routeNumber }: Props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
@@ -49,28 +49,28 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
     <>
       <RouteTitleWrapper
         onClick={() => {
-          toggle(vehicle.id)
+          toggle(route.id)
         }}
       >
         <Elements.StrongParagraph dotColor={getColor(routeNumber - 1, 3)}>
           Rutt {routeNumber}
         </Elements.StrongParagraph>
-        <Chevron active={routeId === vehicle.id ? true : undefined} />
+        <Chevron active={routeId === route.id ? true : undefined} />
       </RouteTitleWrapper>
 
-      {routeId === vehicle.id && (
+      {routeId === route.id && (
         <>
           <Elements.FlexRowWrapper>
             <Elements.StrongParagraph>Transport</Elements.StrongParagraph>
             <Elements.RoundedLink
               margin="0 0.5rem"
-              to={`/transports/${vehicle.id}`}
+              to={`/transports/${route.id}`}
               onClick={() =>
                 dispatch({
                   type: 'viewport',
                   payload: {
-                    latitude: vehicle.start_address.lat,
-                    longitude: vehicle.start_address.lon,
+                    latitude: route.start_address.lat,
+                    longitude: route.start_address.lon,
                     zoom: 10,
                     transitionDuration: 3000,
                     transitionInterpolator: new FlyToInterpolator(),
@@ -79,10 +79,10 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
                 })
               }
             >
-              {helpers.getLastFourChars(vehicle.id).toUpperCase()}
+              {helpers.getLastFourChars(route.id).toUpperCase()}
             </Elements.RoundedLink>
           </Elements.FlexRowWrapper>
-          <RouteActivities vehicle={vehicle} />
+          <RouteActivities route={route} />
         </>
       )}
     </>

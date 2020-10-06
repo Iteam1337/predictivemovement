@@ -26,7 +26,7 @@ export type Vehicle = {
 
 export type NotificationType = Vehicle | Booking
 
-export interface PlanVehicle {
+export interface Route {
   activities: Activity[]
   booking_ids: string[]
   busy: any
@@ -46,10 +46,11 @@ interface Address {
   lon: string
 }
 
-interface Activity {
+export interface Activity {
   address: Address
   index: number
   type: string
+  id: string
 }
 
 interface AddressWithName extends Address {

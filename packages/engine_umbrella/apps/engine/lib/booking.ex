@@ -31,7 +31,7 @@ defmodule Booking do
       size: size,
       route: Osrm.route(pickup, delivery)
     }
-    |> add_event_to_events_list("new")
+    |> add_event_to_events_list("new", DateTime.utc_now())
     |> apply_booking_to_state()
     |> (&ES.add_event(%BookingRegistered{booking: &1})).()
 
@@ -60,15 +60,16 @@ defmodule Booking do
 
   def add_event(booking_id, status)
       when status in ["picked_up", "delivered", "delivery_failed"] do
-    apply_event_to_state(booking_id, status)
+    time_stamp = DateTime.utc_now()
+    apply_event_to_state(booking_id, status, time_stamp)
 
-    booking_id
-    |> event_to_event_store_struct(status)
+    status
+    |> event_to_event_store_struct(booking_id, time_stamp)
     |> ES.add_event()
   end
 
-  def apply_event_to_state(booking_id, status),
-    do: GenServer.call(via_tuple(booking_id), {:add_event, status})
+  def apply_event_to_state(booking_id, status, time_stamp),
+    do: GenServer.call(via_tuple(booking_id), {:add_event, status, time_stamp})
 
   ### Internal
 
@@ -89,42 +90,40 @@ defmodule Booking do
         id: vehicle.id,
         metadata: vehicle.metadata
       })
-      |> Map.put(:events, [%{timestamp: DateTime.utc_now(), type: :assigned} | state.events])
-
-    updated_state
-    |> MQ.publish(
-      Application.fetch_env!(:engine, :outgoing_booking_exchange),
-      "assigned"
-    )
+      |> add_event_to_events_list("assigned")
+      |> MQ.publish(
+        Application.fetch_env!(:engine, :outgoing_booking_exchange),
+        "assigned"
+      )
 
     Logger.debug("booking was assigned", updated_state)
     {:reply, true, updated_state}
   end
 
-  def handle_call({:add_event, status}, _, state) do
+  def handle_call({:add_event, status, time_stamp}, _, state) do
     Logger.info("Received event #{status} for booking: #{state.id} ")
 
     updated_state =
       state
-      |> add_event_to_events_list(status)
+      |> add_event_to_events_list(status, time_stamp)
       |> MQ.publish(@outgoing_booking_exchange, status)
 
     {:reply, true, updated_state}
   end
 
-  defp add_event_to_events_list(booking, status) do
-    new_event = %{timestamp: DateTime.utc_now(), type: String.to_atom(status)}
+  defp add_event_to_events_list(booking, status, time_stamp) do
+    new_event = %{timestamp: time_stamp, type: String.to_atom(status)}
 
     booking
     |> Map.update!(:events, fn events -> [new_event | events] end)
   end
 
-  defp event_to_event_store_struct(booking_id, "picked_up"),
-    do: %BookingPickedUp{booking_id: booking_id}
+  defp event_to_event_store_struct("picked_up", booking_id, time_stamp),
+    do: %BookingPickedUp{booking_id: booking_id, time_stamp: time_stamp}
 
-  defp event_to_event_store_struct(booking_id, "delivered"),
-    do: %BookingDelivered{booking_id: booking_id}
+  defp event_to_event_store_struct("delivered", booking_id, time_stamp),
+    do: %BookingDelivered{booking_id: booking_id, time_stamp: time_stamp}
 
-  defp event_to_event_store_struct(booking_id, "delivery_failed"),
-    do: %BookingDeliveryFailed{booking_id: booking_id}
+  defp event_to_event_store_struct("delivery_failed", booking_id, time_stamp),
+    do: %BookingDeliveryFailed{booking_id: booking_id, time_stamp: time_stamp}
 end

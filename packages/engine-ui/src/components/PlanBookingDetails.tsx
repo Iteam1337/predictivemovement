@@ -40,7 +40,7 @@ const PlanBookingDetails = ({ bookings }: Props) => {
 
   const [booking] = bookings.filter((d: any) => d.id === bookingId)
 
-  const handleDeleteClick = (bookingId: string) => {
+  const handleDeleteClick = (_bookingId: string) => {
     if (
       window.confirm(
         'Är du säker på att du vill ta bort bokningen från den föreslagna planen?'

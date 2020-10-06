@@ -91,7 +91,13 @@ const RouteActivities = ({ route }: Props) => {
             {activityGroup.map((activity, i) => (
               <Elements.RoundedLink
                 key={i}
-                to={`/bookings/${activity.id}`}
+                onMouseOver={() =>
+                  dispatch({ type: 'highlightBooking', payload: activity.id })
+                }
+                onMouseLeave={() =>
+                  dispatch({ type: 'highlightBooking', payload: undefined })
+                }
+                to={`/plans/routes/${route.id}/booking/${activity.id}`}
                 onClick={() =>
                   dispatch({
                     type: 'viewport',

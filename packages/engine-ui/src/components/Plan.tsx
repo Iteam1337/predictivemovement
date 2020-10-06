@@ -59,7 +59,7 @@ const Plan = ({ plan: planVehicles, dispatchOffers, bookings }: IPlanProps) => {
         </PlanWrapper>
       </Route>
       <Route exact path={`${path}/routes/:routeId/booking/:bookingId`}>
-        <PlanBookingDetails plan={planVehicles} bookings={bookings} />
+        <PlanBookingDetails bookings={bookings} />
       </Route>
       <Route
         exact

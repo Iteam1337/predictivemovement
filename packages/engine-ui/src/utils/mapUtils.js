@@ -3,6 +3,7 @@ import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
 import transportIcon from '../assets/vehicle.svg'
 import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
+import helpers from './helpers'
 
 export const point = (coordinates, props) => ({
   type: 'Feature',
@@ -36,24 +37,6 @@ export const line = (coordinates, props) => ({
   },
   ...props,
 })
-
-export const hexToRGBA = (hex, opacity) => {
-  hex = hex.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
-
-  return [r, g, b, opacity]
-}
-
-export const hexToRGB = (hex) => {
-  hex = hex.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
-
-  return [r, g, b]
-}
 
 export const routeAssignedToBooking = (assignedTo) =>
   line(
@@ -207,10 +190,10 @@ export const toGeoJsonLayer = (id, data, callback) =>
     extruded: true,
     lineWidthScale: 1,
     lineWidthMinPixels: 3,
-    getFillColor: (d) => hexToRGBA(d.properties.color, 255),
+    getFillColor: (d) => helpers.hexToRGBA(d.properties.color),
     highlightColor: [19, 197, 123, 255],
     autoHighlight: true,
-    getLineColor: (d) => hexToRGBA(d.properties.color, 255),
+    getLineColor: (d) => helpers.hexToRGBA(d.properties.color),
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
@@ -263,7 +246,7 @@ export const toTransportIconLayer = (data, activeId) => {
       d.properties.id === activeId
         ? d.properties.highlightSize
         : d.properties.size,
-    getColor: (d) => hexToRGB(d.properties.color),
+    getColor: (d) => helpers.hexToRGBA(d.properties.color),
   })
 }
 
@@ -305,7 +288,7 @@ export const toBookingIconLayer = (data, activeId) => {
       d.properties.id === activeId
         ? d.properties.activeSize
         : d.properties.size,
-    getColor: (d) => hexToRGB(d.properties.color),
+    getColor: (d) => helpers.hexToRGBA(d.properties.color),
   })
 }
 
@@ -318,7 +301,6 @@ export default {
   vehicleToFeature,
   toGeoJsonLayer,
   toBookingIconLayer,
-  hexToRGB,
   vehicleIcon,
   bookingIcon,
   toTransportIconLayer,

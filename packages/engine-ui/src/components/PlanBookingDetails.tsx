@@ -38,7 +38,7 @@ const PlanBookingDetails = ({ bookings }: Props) => {
     [dispatch]
   )
 
-  const [booking] = bookings.filter((d: any) => d.id === bookingId)
+  const [booking] = bookings.filter((d) => d.id === bookingId)
 
   const handleDeleteClick = (_bookingId: string) => {
     if (

@@ -86,7 +86,7 @@ const PlanBookingDetails = ({ bookings }: Props) => {
                 Mått:{' '}
               </Elements.Typography.SpanBold>
               {booking.size.measurement.map((item, index) =>
-                booking.size.measurement.length === index + 1
+                booking.size.measurement?.length === index + 1
                   ? `${item} cm `
                   : `${item}x`
               )}
@@ -155,7 +155,7 @@ const PlanBookingDetails = ({ bookings }: Props) => {
                 </Elements.Typography.SmallInfoBold>
               ))}
           </Elements.Layout.MarginBottomContainer>
-          {booking.metadata.sender.name && (
+          {booking.metadata.recipient.name && (
             <Elements.Layout.FlexRowBaselineContainer>
               <Elements.Icons.MarginRightIcon
                 src={ContactName}

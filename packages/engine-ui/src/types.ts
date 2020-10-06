@@ -6,39 +6,38 @@ export enum BookingStatus {
   PICKED_UP = 'picked_up',
 }
 
-export type Booking = {
+export interface Booking {
   id: string
-  pickup: {
-    lat: string
-    lon: string
-    street: string
-    city: string
-    time_windows: {
-      earliest: string
-      latest: string
-    }[]
-  }
-  delivery: {
-    lat: string
-    lon: string
-    street: string
-    city: string
-    time_windows: {
-      earliest: string
-      latest: string
-    }[]
-  }
-  metadata: {
-    cargo: string
-    fragile: boolean
-    sender: { name: string; contact: string }
-    recipient: { name: string; contact: string }
-  }
-  size: {
-    weight: number
-    measurement: number[]
-  }
+  pickup: ParcelAddress
+  delivery: ParcelAddress
+  metadata: Metadata
+  size: Size
   status: BookingStatus
+}
+
+type ParcelAddress = {
+  lat: string
+  lon: string
+  street: string
+  city: string
+  time_windows: TimeWindow[] | null
+}
+
+type Size = {
+  weight?: number
+  measurement?: number[]
+}
+
+type Metadata = {
+  cargo?: string
+  fragile: boolean
+  sender: { name?: string; contact: string }
+  recipient: { name?: string; contact: string }
+}
+
+type TimeWindow = {
+  earliest: string
+  latest: string
 }
 
 export type Vehicle = {

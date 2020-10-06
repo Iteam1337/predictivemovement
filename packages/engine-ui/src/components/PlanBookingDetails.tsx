@@ -8,6 +8,7 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
 import moment from 'moment'
+import { UIStateContext } from '../utils/UIStateContext'
 
 interface Props {
   bookings: Booking[]
@@ -23,11 +24,19 @@ const CapitalizeParagraph = styled(Paragraph)`
 `
 
 const PlanBookingDetails = ({ bookings }: Props) => {
+  const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
   const { routeId, bookingId } = useParams<{
     routeId: string
     bookingId: string
   }>()
+
+  React.useEffect(
+    () => () => {
+      dispatch({ type: 'highlightBooking', payload: undefined })
+    },
+    [dispatch]
+  )
 
   const [booking] = bookings.filter((d: any) => d.id === bookingId)
 

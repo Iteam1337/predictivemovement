@@ -61,8 +61,11 @@ const MarginTopContainerSm = styled.div`
   margin-top: 1rem;
 `
 
-const MarginTopContainer = styled.div<{ alignItems?: string }>`
-  margin-top: 2rem;
+const MarginTopContainer = styled.div<{
+  alignItems?: string
+  marginTop?: string
+}>`
+  margin-top: ${({ marginTop }) => marginTop || '2rem'};
   display: flex;
   flex-direction: column;
   overflow: hidden;

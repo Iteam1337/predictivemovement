@@ -5,7 +5,8 @@ import Elements from '../shared-elements'
 // import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 // import CurrentPlan from './CurrentPlan'
 import PlanRouteDetails from './PlanRouteDetails'
-import { PlanVehicle } from '../types'
+import { Booking, PlanVehicle } from '../types'
+import PlanBookingDetails from './PlanBookingDetails'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -16,12 +17,12 @@ const PlanWrapper = styled.div`
 interface IPlanProps {
   plan: PlanVehicle[]
   dispatchOffers: () => void
+  bookings: Booking[]
 }
 
-const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
+const Plan = ({ plan: planVehicles, dispatchOffers, bookings }: IPlanProps) => {
   const activePlanVehicles = planVehicles.filter((d) => d.activities.length > 0)
   const { path } = useRouteMatch()
-
   return (
     <Switch>
       <Route exact path={[path, `${path}/routes/:routeId`]}>
@@ -56,6 +57,9 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
             </AddFormFieldButton>
           </StyledLink> */}
         </PlanWrapper>
+      </Route>
+      <Route exact path={`${path}/routes/:routeId/booking/:bookingId`}>
+        <PlanBookingDetails plan={planVehicles} bookings={bookings} />
       </Route>
       <Route
         exact

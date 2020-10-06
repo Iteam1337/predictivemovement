@@ -96,7 +96,7 @@ export const toTextLayer = (data) =>
     id: 'text-layer',
     data,
     fontFamily: 'Roboto Mono',
-    getText: (d) => d.routeIndex + '5',
+    getText: (d) => d.routeIndex,
     getPosition: (d) => d.geometry.coordinates,
     getSize: 20,
   })

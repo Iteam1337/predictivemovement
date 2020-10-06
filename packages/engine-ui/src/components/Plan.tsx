@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
 import Elements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
-import { PlanVehicle, Vehicle } from '../types'
+import { PlanVehicle, Transport } from '../types'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -13,11 +13,11 @@ const PlanWrapper = styled.div`
 
 interface IPlanProps {
   plan: PlanVehicle[]
-  vehicles: Vehicle[]
+  transports: Transport[]
   dispatchOffers: () => void
 }
 
-const Plan = ({ plan: planVehicles, dispatchOffers, vehicles }: IPlanProps) => {
+const Plan = ({ plan: planVehicles, dispatchOffers, transports }: IPlanProps) => {
   const activePlanVehicles = planVehicles.filter((d) => d.activities.length > 0)
   const { path } = useRouteMatch()
 
@@ -38,8 +38,8 @@ const Plan = ({ plan: planVehicles, dispatchOffers, vehicles }: IPlanProps) => {
                   vehicle={activePlanVehicle}
                   routeNumber={i + 1}
                   color={
-                    vehicles.find(
-                      (vehicle) => vehicle.id === activePlanVehicle.id
+                    transports.find(
+                      (transport) => transport.id === activePlanVehicle.id
                     )?.color
                   }
                 />

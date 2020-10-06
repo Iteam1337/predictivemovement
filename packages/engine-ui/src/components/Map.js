@@ -32,7 +32,7 @@ const Map = ({ data }) => {
 
   const layers = [
     mapUtils.toTransportIconLayer(
-      mapUtils.vehicleIcon(data.vehicles),
+      mapUtils.transportIcon(data.vehicles),
       UIState.highlightTransport
     ),
     mapUtils.toGeoJsonLayer(
@@ -47,7 +47,7 @@ const Map = ({ data }) => {
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-vehicles-layer',
-      mapUtils.vehicleToFeature(data.plan),
+      mapUtils.transportToFeature(data.plan),
       handleClickEvent
     ),
   ]

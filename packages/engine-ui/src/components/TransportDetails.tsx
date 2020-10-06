@@ -9,7 +9,7 @@ import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
-import { Vehicle } from '../types'
+import { Transport } from '../types'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -40,10 +40,10 @@ const RouteTitleWrapper = styled.div`
   }
 `
 
-const VehicleDetails: React.FC<{
-  vehicles: Vehicle[]
-  deleteVehicle: (id: string) => void
-}> = ({ vehicles, deleteVehicle }) => {
+const TransportDetails: React.FC<{
+  transports: Transport[]
+  deleteTransport: (id: string) => void
+}> = ({ transports, deleteTransport }) => {
   const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
 
@@ -59,19 +59,19 @@ const VehicleDetails: React.FC<{
   )
 
   const { vehicleId } = useParams<{ vehicleId: string }>()
-  const vehicle = vehicles.find((v) => v.id === vehicleId)
+  const transport = transports.find((v) => v.id === vehicleId)
 
-  if (!vehicle) return <p>Loading...</p>
+  if (!transport) return <p>Loading...</p>
 
   const handleDeleteClick = (vehicleId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
-      deleteVehicle(vehicleId)
+      deleteTransport(vehicleId)
       return history.push('/transports')
     }
   }
 
   const handleBookingClick = (bookingId: string) => {
-    const activity = vehicle?.activities?.find(
+    const activity = transport?.activities?.find(
       (activity) => activity.id === bookingId
     )
 
@@ -95,18 +95,18 @@ const VehicleDetails: React.FC<{
           <h3>Transport</h3>
           <Elements.Typography.RoundedLabelDisplay
             margin="0 0.5rem"
-            backgroundColor={vehicle.color}
+            backgroundColor={transport.color}
           >
             {helpers.getLastFourChars(vehicleId).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
-        {vehicle.capacity && (
+        {transport.capacity && (
           <>
             <Elements.Typography.StrongParagraph>
               Kapacitet
             </Elements.Typography.StrongParagraph>
-            <Paragraph>Maxvolym: {vehicle.capacity.volume}kbm</Paragraph>
-            <Paragraph>Maxvikt: {vehicle.capacity.weight}kg</Paragraph>
+            <Paragraph>Maxvolym: {transport.capacity.volume}kbm</Paragraph>
+            <Paragraph>Maxvikt: {transport.capacity.weight}kg</Paragraph>
           </>
         )}
         <Elements.Typography.StrongParagraph>
@@ -114,20 +114,20 @@ const VehicleDetails: React.FC<{
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {vehicle.earliest_start} - {vehicle.latest_end}
+            {transport.earliest_start} - {transport.latest_end}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
-        {vehicle.end_address.name && (
+        {transport.end_address.name && (
           <>
             <Elements.Typography.StrongParagraph>
               Slutposition
             </Elements.Typography.StrongParagraph>
-            <Paragraph>{vehicle.end_address.name}</Paragraph>
+            <Paragraph>{transport.end_address.name}</Paragraph>
           </>
         )}
         <Line />
 
-        {vehicle.activities && vehicle.activities.length > 0 ? (
+        {transport.activities && transport.activities.length > 0 ? (
           <>
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>
@@ -148,7 +148,7 @@ const VehicleDetails: React.FC<{
               </RouteTitleWrapper>
               {showInfo.bookings && (
                 <Elements.Layout.LinkListContainer>
-                  {vehicle.booking_ids?.map((bookingId) => (
+                  {transport.booking_ids?.map((bookingId) => (
                     <Elements.Links.RoundedLink
                       to={`/bookings/${bookingId}`}
                       key={bookingId}
@@ -177,7 +177,7 @@ const VehicleDetails: React.FC<{
                   <Icons.Arrow active={showInfo.route} />
                 </button>
               </RouteTitleWrapper>
-              {showInfo.route && <RouteActivities vehicle={vehicle} />}
+              {showInfo.route && <RouteActivities vehicle={transport} />}
             </Elements.Layout.MarginBottomContainer>
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>
@@ -222,7 +222,7 @@ const VehicleDetails: React.FC<{
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">
           <Elements.Buttons.CancelButton
-            onClick={() => handleDeleteClick(vehicle.id)}
+            onClick={() => handleDeleteClick(transport.id)}
           >
             Radera transport
           </Elements.Buttons.CancelButton>
@@ -232,4 +232,4 @@ const VehicleDetails: React.FC<{
   )
 }
 
-export default VehicleDetails
+export default TransportDetails

@@ -2,7 +2,7 @@ import { getColor } from './palette'
 
 export const reducer = (state, action) => {
   switch (action.type) {
-    case 'setVehicles':
+    case 'setTransports':
       return {
         ...state,
         vehicles: [

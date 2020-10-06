@@ -21,7 +21,7 @@ export type Booking = {
 
 export type InAppColor = string
 
-export type Vehicle = {
+export type Transport = {
   id: string
   name?: string
   activities: Activity[] | null
@@ -35,7 +35,7 @@ export type Vehicle = {
   color: InAppColor
 }
 
-export type NotificationType = Vehicle | Booking
+export type NotificationType = Transport | Booking
 
 export interface PlanVehicle {
   activities: Activity[]

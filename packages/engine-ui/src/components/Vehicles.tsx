@@ -3,9 +3,9 @@ import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
-import { Vehicle } from '../types'
+import { Transport } from '../types'
 
-const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
+const Vehicles: React.FC<{ vehicles: Transport[] }> = ({ vehicles }) => {
   const { dispatch } = React.useContext(UIStateContext)
   if (!vehicles.length)
     return (

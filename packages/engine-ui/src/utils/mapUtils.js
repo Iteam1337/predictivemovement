@@ -1,6 +1,6 @@
 import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
-import transportIcon from '../assets/vehicle.svg'
+import transportIcon1 from '../assets/transport.svg'
 import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
 import helpers from './helpers'
@@ -50,11 +50,11 @@ export const routeAssignedToBooking = (assignedTo) =>
     }
   )
 
-export const vehicleToFeature = (vehicles) => {
+export const transportToFeature = (transports) => {
   let index = 0
   try {
     return [
-      ...vehicles.flatMap(
+      ...transports.flatMap(
         ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
           index = i
           if (activities && activities.length) {
@@ -95,11 +95,11 @@ export const vehicleToFeature = (vehicles) => {
   }
 }
 
-export const vehicleIcon = (vehicles) => {
+export const transportIcon = (transports) => {
   let index = 0
   try {
     return [
-      ...vehicles.flatMap(({ id, tail, start_address, color }, i) => {
+      ...transports.flatMap(({ id, tail, start_address, color }, i) => {
         index = i
         return [
           point([start_address.lon, start_address.lat], {
@@ -107,7 +107,6 @@ export const vehicleIcon = (vehicles) => {
               color,
               highlightColor: color,
               size: 80,
-              type: 'vehicle',
             },
             id,
             tail,
@@ -132,7 +131,6 @@ export const bookingIcon = (bookings) => {
               color: '#ffffff',
               highlightColor: '#19DE8B',
               size: 80,
-              type: 'booking',
             },
             id,
           }),
@@ -216,7 +214,7 @@ export const toTransportIconLayer = (data, activeId) => {
         activeId === feature.id
           ? feature.properties.highlightColor
           : feature.properties.color,
-      icon: transportIcon,
+      icon: transportIcon1,
       highlightIcon: transportSelectedIcon,
       size: 7,
       highlightSize: 9,
@@ -298,10 +296,10 @@ export default {
   point,
   line,
   bookingToFeature,
-  vehicleToFeature,
+  transportToFeature,
   toGeoJsonLayer,
   toBookingIconLayer,
-  vehicleIcon,
-  bookingIcon,
+  transportIcon,
   toTransportIconLayer,
+  bookingIcon,
 }

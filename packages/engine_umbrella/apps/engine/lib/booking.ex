@@ -26,10 +26,10 @@ defmodule Booking do
       pickup: pickup,
       external_id: external_id,
       delivery: delivery,
-      metadata: metadata,
+      metadata: metadata |> Jason.encode!(),
       events: [],
       size: size,
-      route: Osrm.route(pickup, delivery)
+      route: Osrm.route(pickup, delivery) |> Jason.encode!()
     }
     |> add_event_to_events_list("new", DateTime.utc_now())
     |> apply_booking_to_state()

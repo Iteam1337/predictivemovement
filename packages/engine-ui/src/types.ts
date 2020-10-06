@@ -11,10 +11,32 @@ export type Booking = {
   pickup: {
     lat: string
     lon: string
+    street: string
+    city: string
+    time_windows: {
+      earliest: string
+      latest: string
+    }[]
   }
   delivery: {
     lat: string
     lon: string
+    street: string
+    city: string
+    time_windows: {
+      earliest: string
+      latest: string
+    }[]
+  }
+  metadata: {
+    cargo: string
+    fragile: boolean
+    sender: { name: string; contact: string }
+    recipient: { name: string; contact: string }
+  }
+  size: {
+    weight: number
+    measurement: number[]
   }
   status: BookingStatus
 }

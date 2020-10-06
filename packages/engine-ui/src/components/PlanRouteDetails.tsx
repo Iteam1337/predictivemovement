@@ -67,6 +67,12 @@ const PlanRouteDetails = ({ vehicle, routeNumber, color }: Props) => {
             <Elements.Links.RoundedLink
               color={color}
               margin="0 0.5rem"
+              onMouseOver={() =>
+                dispatch({ type: 'highlightTransport', payload: vehicle.id })
+              }
+              onMouseLeave={() =>
+                dispatch({ type: 'highlightTransport', payload: undefined })
+              }
               to={`/transports/${vehicle.id}`}
               onClick={() =>
                 dispatch({

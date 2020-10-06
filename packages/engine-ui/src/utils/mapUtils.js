@@ -1,6 +1,6 @@
 import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
-import transportIcon1 from '../assets/transport.svg'
+import transportDefaultIcon from '../assets/transport.svg'
 import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
 import helpers from './helpers'
@@ -214,7 +214,7 @@ export const toTransportIconLayer = (data, activeId) => {
         activeId === feature.id
           ? feature.properties.highlightColor
           : feature.properties.color,
-      icon: transportIcon1,
+      icon: transportDefaultIcon,
       highlightIcon: transportSelectedIcon,
       size: 7,
       highlightSize: 9,

@@ -108,7 +108,7 @@ const PlanBookingDetails = ({ bookings }: Props) => {
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{booking.pickup.street}</CapitalizeParagraph>
             {booking.pickup.time_windows &&
-              booking.pickup.time_windows.map((timeWindow: any) => (
+              booking.pickup.time_windows.map((timeWindow) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
                   {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
                     ? `${moment(timeWindow.earliest).format(

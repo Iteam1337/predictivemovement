@@ -26,9 +26,9 @@ const CapitalizeParagraph = styled(Paragraph)`
 const PlanBookingDetails = ({ bookings }: Props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
-  const { routeId, bookingId } = useParams<{
+  const { routeId, activityId } = useParams<{
     routeId: string
-    bookingId: string
+    activityId: string
   }>()
 
   React.useEffect(
@@ -38,9 +38,9 @@ const PlanBookingDetails = ({ bookings }: Props) => {
     [dispatch]
   )
 
-  const [booking] = bookings.filter((d) => d.id === bookingId)
+  const [booking] = bookings.filter((d) => d.id === activityId)
 
-  const handleDeleteClick = (_bookingId: string) => {
+  const handleDeleteClick = (_activityId: string) => {
     if (
       window.confirm(
         'Är du säker på att du vill ta bort bokningen från den föreslagna planen?'
@@ -59,9 +59,9 @@ const PlanBookingDetails = ({ bookings }: Props) => {
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {helpers.withoutLastFourChars(bookingId)}
+            {helpers.withoutLastFourChars(activityId)}
             <Elements.Typography.SpanBold>
-              {helpers.getLastFourChars(bookingId)}
+              {helpers.getLastFourChars(activityId)}
             </Elements.Typography.SpanBold>
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
@@ -192,7 +192,7 @@ const PlanBookingDetails = ({ bookings }: Props) => {
           marginTop={'4rem'}
         >
           <Elements.Buttons.CancelButton
-            onClick={() => handleDeleteClick(bookingId)}
+            onClick={() => handleDeleteClick(activityId)}
           >
             Ta bort från rutt
           </Elements.Buttons.CancelButton>

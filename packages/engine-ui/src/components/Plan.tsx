@@ -58,7 +58,7 @@ const Plan = ({ plan: planVehicles, dispatchOffers, bookings }: IPlanProps) => {
           </StyledLink> */}
         </PlanWrapper>
       </Route>
-      <Route exact path={`${path}/routes/:routeId/booking/:bookingId`}>
+      <Route exact path={`${path}/routes/:routeId/:activityId`}>
         <PlanBookingDetails bookings={bookings} />
       </Route>
       <Route

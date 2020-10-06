@@ -44,7 +44,7 @@ const RouteActivities = ({ vehicle }) => {
 
   const redirectTo = (activityId) => {
     return isProposedPlan
-      ? `/plans/routes/${vehicle.id}/booking/${activityId}`
+      ? `/plans/routes/${vehicle.id}/${activityId}`
       : `/bookings/${activityId}`
   }
 

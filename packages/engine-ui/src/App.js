@@ -62,7 +62,7 @@ const App = () => {
 
   useSocket('vehicles', (newVehicles) => {
     dispatch({
-      type: 'setVehicles',
+      type: 'setTransports',
       payload: newVehicles,
     })
   })

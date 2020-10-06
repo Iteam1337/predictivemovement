@@ -29,4 +29,18 @@ const Label = styled.label<{ required?: boolean }>`
   }`}
 `
 
-export default { DateInput, Label }
+const TextInput = styled.input<{ iconInset?: boolean }>`
+  border: none;
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.875rem;
+  padding: ${({ iconInset }) =>
+    iconInset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+
+  :focus {
+    outline-color: #13c57b;
+  }
+`
+
+export default { DateInput, Label, TextInput }

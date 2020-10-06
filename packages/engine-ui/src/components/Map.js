@@ -31,8 +31,8 @@ const Map = ({ data }) => {
     })
 
   const layers = [
-    mapUtils.toIconLayer(
-      mapUtils.vehicleIcon(data.vehicles),
+    mapUtils.toTransportIconLayer(
+      mapUtils.transportIcon(data.vehicles),
       UIState.highlightTransport
     ),
     mapUtils.toGeoJsonLayer(
@@ -41,13 +41,13 @@ const Map = ({ data }) => {
       mapUtils.bookingToFeature(data.bookings),
       handleClickEvent
     ),
-    mapUtils.toIconLayer(
+    mapUtils.toBookingIconLayer(
       mapUtils.bookingIcon(data.bookings),
       UIState.highlightBooking
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-vehicles-layer',
-      mapUtils.vehicleToFeature(data.plan),
+      mapUtils.transportToFeature(data.plan),
       handleClickEvent
     ),
   ]

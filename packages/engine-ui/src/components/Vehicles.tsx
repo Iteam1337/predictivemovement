@@ -3,13 +3,9 @@ import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
+import { Transport } from '../types'
 
-type Vehicle = {
-  id: string
-  start_address: { lon: number; lat: number }
-}
-
-const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
+const Vehicles: React.FC<{ vehicles: Transport[] }> = ({ vehicles }) => {
   const { dispatch } = React.useContext(UIStateContext)
   if (!vehicles.length)
     return (
@@ -30,11 +26,13 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
         transitionEasing: (t: number) => t * (2 - t),
       },
     })
+
   return (
     <Elements.Layout.LinkListContainer>
       {vehicles.map((vehicle) => (
         <Elements.Layout.InlineContainer key={vehicle.id}>
           <Elements.Links.RoundedLink
+            color={vehicle.color}
             onMouseOver={() =>
               dispatch({ type: 'highlightTransport', payload: vehicle.id })
             }

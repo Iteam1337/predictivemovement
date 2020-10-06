@@ -85,7 +85,7 @@ const PlanBookingDetails = ({ bookings }: Props) => {
               <Elements.Typography.SpanBold>
                 Mått:{' '}
               </Elements.Typography.SpanBold>
-              {booking.size.measurement.map((item: number, index: number) =>
+              {booking.size.measurement.map((item, index) =>
                 booking.size.measurement.length === index + 1
                   ? `${item} cm `
                   : `${item}x`

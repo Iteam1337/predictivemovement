@@ -1,5 +1,5 @@
 import palette, { getColor } from './palette'
-import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
 import vehicleSymbol from '../assets/vehicle.svg'
 import parcelIcon from '../assets/parcel.svg'
 
@@ -36,6 +36,15 @@ export const line = (coordinates, props) => ({
   ...props,
 })
 
+export const text = (coordinates, props) => ({
+  type: 'Feature',
+  geometry: {
+    type: 'Text',
+    coordinates,
+  },
+  ...props,
+})
+
 export const hexToRGBA = (hex, opacity) => {
   hex = hex.replace('#', '')
   const r = parseInt(hex.substring(0, 2), 16)
@@ -65,6 +74,32 @@ export const routeAssignedToBooking = (assignedTo) =>
       },
     }
   )
+
+export const routeActivitiesToFeature = (plan) => {
+  return [
+    ...plan.flatMap(({ activities, id }) => {
+      const routeActivities = activities
+        .filter(({ type }) => type !== 'start')
+        .map(({ address }, index) =>
+          text([address.lon, address.lat], {
+            id,
+            routeIndex: String(index + 1),
+          })
+        )
+      return [...routeActivities]
+    }),
+  ]
+}
+
+export const toTextLayer = (data) =>
+  new TextLayer({
+    id: 'text-layer',
+    data,
+    fontFamily: 'Roboto Mono',
+    getText: (d) => d.routeIndex + '5',
+    getPosition: (d) => d.geometry.coordinates,
+    getSize: 20,
+  })
 
 export const vehicleToFeature = (vehicles) => {
   let index = 0
@@ -306,4 +341,6 @@ export default {
   hexToRGB,
   vehicleIcon,
   bookingIcon,
+  toTextLayer,
+  routeActivitiesToFeature,
 }

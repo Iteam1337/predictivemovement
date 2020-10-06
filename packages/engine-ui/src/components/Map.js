@@ -50,6 +50,7 @@ const Map = ({ data }) => {
       mapUtils.vehicleToFeature(data.plan),
       handleClickEvent
     ),
+    mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan)),
   ]
 
   const handleDragEvent = () =>

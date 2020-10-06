@@ -3,7 +3,6 @@ import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
-import { getColor } from '../utils/palette'
 import { Vehicle } from '../types'
 
 const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {

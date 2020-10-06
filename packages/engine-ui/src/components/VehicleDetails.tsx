@@ -93,7 +93,10 @@ const VehicleDetails: React.FC<{
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
-          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem" backgroundColor={vehicle.color}>
+          <Elements.Typography.RoundedLabelDisplay
+            margin="0 0.5rem"
+            backgroundColor={vehicle.color}
+          >
             {helpers.getLastFourChars(vehicleId).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>

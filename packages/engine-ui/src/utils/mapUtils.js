@@ -1,6 +1,7 @@
 import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
-import vehicleSymbol from '../assets/vehicle.svg'
+import transportIcon from '../assets/vehicle.svg'
+import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
 
 export const point = (coordinates, props) => ({
@@ -219,54 +220,10 @@ export const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
-const getIconMappingFromEntity = (entityType) => {
-  switch (entityType) {
-    case 'vehicle':
-      return {
-        ICON_MAPPING: {
-          marker: {
-            x: 0,
-            y: 0,
-            width: 131,
-            height: 150,
-            mask: true,
-          },
-        },
-        options: {
-          iconAtlas: vehicleSymbol,
-          size: 6,
-          activeSize: 7,
-        },
-      }
-    case 'booking':
-      return {
-        ICON_MAPPING: {
-          marker: {
-            x: 0,
-            y: 0,
-            width: 150,
-            height: 150,
-            mask: true,
-          },
-        },
-        options: {
-          iconAtlas: parcelIcon,
-          size: 5,
-          activeSize: 7,
-        },
-      }
-
-    default:
-      return
-  }
-}
-
-export const toIconLayer = (data, activeId, entityType) => {
+export const toTransportIconLayer = (data, activeId) => {
   if (!data.length) {
     return
   }
-
-  const { ICON_MAPPING, options } = getIconMappingFromEntity(entityType)
 
   const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
@@ -276,21 +233,78 @@ export const toIconLayer = (data, activeId, entityType) => {
         activeId === feature.id
           ? feature.properties.highlightColor
           : feature.properties.color,
+      icon: transportIcon,
+      highlightIcon: transportSelectedIcon,
+      size: 7,
+      highlightSize: 9,
     },
   }))
 
   return new IconLayer({
-    id: data[0].id,
+    id: 'transport-icon',
     data: iconData,
     pickable: true,
-    iconAtlas: options.iconAtlas,
-    iconMapping: ICON_MAPPING,
-    getIcon: () => 'marker',
-    sizeScale: options.size,
+
+    getIcon: (d) => {
+      return {
+        url:
+          d.properties.id === activeId
+            ? d.properties.highlightIcon
+            : d.properties.icon,
+        mask: true,
+        width: 128,
+        height: 128,
+      }
+    },
+    sizeScale: 5,
     getPosition: (d) => d.coordinates,
     transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
     getSize: (d) =>
-      d.properties.id === activeId ? options.activeSize : options.size,
+      d.properties.id === activeId
+        ? d.properties.highlightSize
+        : d.properties.size,
+    getColor: (d) => hexToRGB(d.properties.color),
+  })
+}
+
+export const toBookingIconLayer = (data, activeId) => {
+  if (!data.length) {
+    return
+  }
+
+  const iconData = data.map((feature) => ({
+    coordinates: feature.geometry.coordinates,
+    properties: {
+      id: feature.id,
+      color:
+        activeId === feature.id
+          ? feature.properties.highlightColor
+          : feature.properties.color,
+      size: 5,
+      activeSize: 7,
+      icon: parcelIcon,
+    },
+  }))
+
+  return new IconLayer({
+    id: 'booking-icon',
+    data: iconData,
+    pickable: true,
+    getIcon: (d) => {
+      return {
+        url: d.properties.icon,
+        mask: true,
+        width: 128,
+        height: 128,
+      }
+    },
+    sizeScale: 5,
+    getPosition: (d) => d.coordinates,
+    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
+    getSize: (d) =>
+      d.properties.id === activeId
+        ? d.properties.activeSize
+        : d.properties.size,
     getColor: (d) => hexToRGB(d.properties.color),
   })
 }
@@ -303,8 +317,9 @@ export default {
   bookingToFeature,
   vehicleToFeature,
   toGeoJsonLayer,
-  toIconLayer,
+  toBookingIconLayer,
   hexToRGB,
   vehicleIcon,
   bookingIcon,
+  toTransportIconLayer,
 }

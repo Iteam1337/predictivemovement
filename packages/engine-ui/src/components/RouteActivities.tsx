@@ -10,6 +10,7 @@ const ActivityGroup = styled.div`
   margin-left: auto;
   display: flex;
   flex-direction: column;
+  margin-bottom: 2rem;
 `
 const ActivityInfo = styled.div`
   display: flex;

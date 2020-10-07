@@ -4,19 +4,13 @@ import helpers from './helpers'
 import { UIStateContext } from './UIStateContext'
 
 const useFilteredStateFromQueryParams = (state) => {
-  const includeBookings = useRouteMatch(
-    ['/plans', '/bookings', '/bookings/:id'],
-    {
-      exact: true,
-    }
-  )
+  const includeBookings = useRouteMatch(['/bookings', '/bookings/:id'], {
+    exact: true,
+  })
 
-  const includeTransports = useRouteMatch(
-    ['/plans', '/transports', '/transports/:id'],
-    {
-      exact: true,
-    }
-  )
+  const includeTransports = useRouteMatch(['/transports', '/transports/:id'], {
+    exact: true,
+  })
 
   const rootView = useRouteMatch({
     path: '/',

@@ -52,8 +52,11 @@ const bookings = amqp
     routingKeys.DELIVERED,
     routingKeys.DELIVERY_FALIED,
   ])
-  .map((bookings) => {
-    return { ...bookings.json(), status: bookings.fields.routingKey }
+  .map((bookingsRes) => {
+    const bookings = bookingsRes.json()
+    bookings.route = JSON.parse(bookings.route)
+    bookings.metadata = JSON.parse(bookings.metadata)
+    return { ...bookings, status: bookingsRes.fields.routingKey }
   })
 
 const vehicles = amqp
@@ -64,8 +67,12 @@ const vehicles = amqp
     durable: false,
   })
   .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
-  .map((vehicles) => {
-    return vehicles.json()
+  .map((vehicleRes) => {
+    const vehicle = vehicleRes.json()
+    vehicle.current_route = JSON.parse(vehicle.current_route)
+    vehicle.metadata =
+      vehicle.metadata === {} ? JSON.parse(vehicle.metadata) : vehicle.metadata
+    return vehicle
   })
 
 const createBooking = (booking) => {

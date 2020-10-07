@@ -26,72 +26,43 @@ defmodule Vehicle do
   def handle_call(:get, _from, state), do: {:reply, state, state}
 
   def handle_call(
-        {:offer,
-         %Vehicle{id: vehicle_id, activities: activities, booking_ids: booking_ids} = vehicle},
+        {:offer, %{} = offer},
         _from,
-        state
+        vehicle
       ) do
-    Logger.debug("offer to vehicle #{vehicle}")
+    Logger.debug("offer to vehicle #{vehicle.id}")
 
-    current_route =
-      activities
-      |> Enum.map(fn %{address: address} -> address end)
-      |> Osrm.route()
-
-    updated_state =
+    response =
       MQ.call(
         %{
-          vehicle: %{id: vehicle_id, metadata: state.metadata},
-          current_route: current_route,
-          activities: activities,
-          booking_ids: booking_ids
+          vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
+          current_route: offer.current_route,
+          activities: offer.activities,
+          booking_ids: offer.booking_ids
         },
         "offer_booking_to_vehicle"
       )
       |> Poison.decode()
-      |> handle_driver_response(
-        %{
-          booking_ids: booking_ids,
-          activities: activities,
-          current_route: current_route
-        },
-        state
-      )
 
-    {:reply, updated_state, updated_state}
+    {:reply, response, vehicle}
   end
 
-  def handle_driver_response(
-        {:ok, true},
-        offer_information,
-        current_state
+  def handle_call(
+        {:apply_offer_accepted, offer},
+        _from,
+        current_vehicle
       ) do
-    Logger.info("Driver #{current_state.id} accepted")
+    Logger.info("Driver #{current_vehicle.id} accepted")
 
-    updated_state =
-      current_state
-      |> Map.merge(offer_information)
+    updated_vehicle =
+      current_vehicle
+      |> Map.merge(offer)
       |> MQ.publish(
         Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
         "new_instructions"
       )
 
-    updated_state
-    |> Map.get(:booking_ids)
-    |> Enum.map(fn booking_id ->
-      Booking.assign(booking_id, current_state)
-    end)
-
-    updated_state
-    |> (&%DriverAcceptedBooking{vehicle: &1}).()
-    |> ES.add_event()
-
-    updated_state
-  end
-
-  def handle_driver_response({:ok, false}, _, state) do
-    Logger.info("Driver didnt want the booking :(")
-    state
+    {:reply, updated_vehicle, updated_vehicle}
   end
 
   def handle_info({:basic_cancel_ok, _}, state), do: {:noreply, state}
@@ -116,6 +87,9 @@ defmodule Vehicle do
     vehicle_fields.id
   end
 
+  def apply_offer_accepted(id, offer),
+    do: GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
+
   def apply_vehicle_to_state(%Vehicle{id: id} = vehicle) do
     GenServer.start_link(
       __MODULE__,
@@ -137,5 +111,26 @@ defmodule Vehicle do
 
   def get(id), do: GenServer.call(via_tuple(id), :get)
 
-  def offer(%Vehicle{id: id} = vehicle), do: GenServer.call(via_tuple(id), {:offer, vehicle})
+  def offer(%Vehicle{id: id, activities: activities, booking_ids: booking_ids}) do
+    offer = %{
+      booking_ids: booking_ids,
+      activities: activities,
+      current_route:
+        activities
+        |> Enum.map(fn %{address: address} -> address end)
+        |> Osrm.route()
+    }
+
+    case GenServer.call(via_tuple(id), {:offer, offer}) do
+      {:ok, true} ->
+        updated_state = apply_offer_accepted(id, offer)
+
+        ES.add_event(%DriverAcceptedOffer{vehicle_id: id, offer: offer})
+
+        Enum.each(booking_ids, &Booking.assign(&1, updated_state))
+
+      {:ok, false} ->
+        Logger.info("Driver didnt want the booking :(")
+    end
+  end
 end

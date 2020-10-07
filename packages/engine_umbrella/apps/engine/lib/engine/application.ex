@@ -23,7 +23,8 @@ defmodule Engine.Application do
   defp apply_event(%VehicleRegistered{vehicle: vehicle}),
     do: struct(Vehicle, vehicle) |> Vehicle.apply_vehicle_to_state()
 
-  defp apply_event(%DriverAcceptedBooking{vehicle: _vehicle}), do: nil
+  defp apply_event(%DriverAcceptedOffer{vehicle_id: vehicle_id, offer: offer}),
+    do: Vehicle.apply_offer_accepted(vehicle_id, offer)
 
   def init_from_eventstore() do
     Logger.info("Restoring Vehicles & Bookings from storage")

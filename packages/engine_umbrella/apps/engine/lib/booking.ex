@@ -29,7 +29,7 @@ defmodule Booking do
       metadata: metadata |> Jason.encode!(),
       events: [],
       size: size,
-      route: Osrm.route(pickup, delivery) |> Jason.encode!()
+      route: Osrm.route(pickup, delivery)
     }
     |> add_event_to_events_list("new", DateTime.utc_now())
     |> apply_booking_to_state()
@@ -44,6 +44,8 @@ defmodule Booking do
       booking,
       name: via_tuple(id)
     )
+
+    MQ.publish(booking, @outgoing_booking_exchange, "new")
 
     Engine.BookingStore.put_booking(id)
     booking

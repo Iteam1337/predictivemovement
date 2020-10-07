@@ -28,6 +28,7 @@ defmodule Osrm do
     |> Enum.sort(fn a, b -> a.duration < b.duration end)
     |> List.first()
     |> Map.update!(:geometry, &decode_polyline/1)
+    |> Jason.encode!()
   end
 
   defp decode_polyline(geometry) do

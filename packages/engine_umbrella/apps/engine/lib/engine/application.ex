@@ -5,13 +5,34 @@ defmodule Engine.Application do
   require Logger
   use Application
 
-  def init_from_storage() do
+  defp apply_event(%BookingRegistered{booking: booking}),
+    do: struct(Booking, booking) |> Booking.apply_booking_to_state()
+
+  defp apply_event(%BookingAssigned{booking_id: id, vehicle: vehicle, time_stamp: time}),
+    do: Booking.apply_assign_to_state(id, vehicle, time)
+
+  defp apply_event(%BookingPickedUp{booking_id: id, time_stamp: time}),
+    do: Booking.apply_event_to_state(id, "picked_up", time)
+
+  defp apply_event(%BookingDelivered{booking_id: id, time_stamp: time}),
+    do: Booking.apply_event_to_state(id, "delivered", time)
+
+  defp apply_event(%BookingDeliveryFailed{booking_id: id, time_stamp: time}),
+    do: Booking.apply_event_to_state(id, "delivery_failed", time)
+
+  defp apply_event(%VehicleRegistered{vehicle: vehicle}),
+    do: struct(Vehicle, vehicle) |> Vehicle.apply_vehicle_to_state()
+
+  defp apply_event(%DriverAcceptedBooking{vehicle: _vehicle}), do: nil
+
+  def init_from_eventstore() do
     Logger.info("Restoring Vehicles & Bookings from storage")
-    booking_ids = Engine.RedisAdapter.get_bookings() |> Enum.map(&Booking.make/1)
 
-    vehicle_ids =
-      Engine.RedisAdapter.get_vehicles() |> Enum.map(&Vehicle.make(&1, added_from_restore: true))
+    Engine.ES.get_events()
+    |> Enum.each(&apply_event/1)
 
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
     Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
   end
 
@@ -34,7 +55,7 @@ defmodule Engine.Application do
     opts = [strategy: :one_for_one, name: Engine.Supervisor]
     proccesses = Supervisor.start_link(children, opts)
 
-    if Application.get_env(:engine, :init_from_storage, false), do: init_from_storage()
+    if Application.get_env(:engine, :init_from_eventstore, false), do: init_from_eventstore()
     proccesses
   end
 end

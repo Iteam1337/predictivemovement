@@ -30,4 +30,11 @@ defmodule Engine.ES do
     @stream
     |> append_to_stream(get_stream_version(), events)
   end
+
+  def get_events() do
+    case read_stream_forward(@stream) do
+      {:error, :stream_not_found} -> []
+      {:ok, events} -> events |> Enum.map(fn e -> e.data end)
+    end
+  end
 end

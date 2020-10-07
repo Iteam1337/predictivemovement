@@ -36,7 +36,7 @@ services:
   admin-server:
     build: ./packages/engine-server
     environment:
-      - AMQP_HOST=amqp://rabbitmq
+      - AMQP_URL=amqp://rabbitmq
     ports:
       - 4000:4000
     networks:

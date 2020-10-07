@@ -69,7 +69,6 @@ export const planToFeature = (plan) => {
               .map(({ address }) =>
                 point([address.lon, address.lat], {
                   id,
-                  icon: transportDefaultIcon,
                   properties: {
                     color: getColor(routeIndex || 0, 4),
                   },

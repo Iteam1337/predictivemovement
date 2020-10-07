@@ -6,8 +6,14 @@ config :engine, :init_from_eventstore, System.get_env("INIT_FROM_EVENTSTORE") ==
 
 config :engine,
        :booking_processor_batch_size,
-       System.get_env("BOOKING_PROCESSOR_BATCH_SIZE") |> String.to_integer() || 100
+       if(System.get_env("BOOKING_PROCESSOR_BATCH_SIZE") != nil,
+        do: System.get_env("BOOKING_PROCESSOR_BATCH_SIZE") |> String.to_integer(),
+        else: 100
+       )
 
 config :engine,
        :booking_processor_batch_timeout,
-       System.get_env("BOOKING_PROCESSOR_BATCH_TIMEOUT") |> String.to_integer() || 1000
+       if(System.get_env("BOOKING_PROCESSOR_BATCH_TIMEOUT") != nil,
+         do: System.get_env("BOOKING_PROCESSOR_BATCH_TIMEOUT") |> String.to_integer(),
+         else: 100
+       )

@@ -2,10 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
 import Elements from '../shared-elements'
-// import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
-// import CurrentPlan from './CurrentPlan'
 import PlanRouteDetails from './PlanRouteDetails'
-import { PlanVehicle } from '../types'
+import { PlanVehicle, Transport } from '../types'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -15,10 +13,11 @@ const PlanWrapper = styled.div`
 
 interface IPlanProps {
   plan: PlanVehicle[]
+  transports: Transport[]
   dispatchOffers: () => void
 }
 
-const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
+const Plan = ({ plan: planVehicles, dispatchOffers, transports }: IPlanProps) => {
   const activePlanVehicles = planVehicles.filter((d) => d.activities.length > 0)
   const { path } = useRouteMatch()
 
@@ -33,11 +32,16 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
             </Elements.Typography.NoInfoParagraph>
           ) : (
             <>
-              {activePlanVehicles.map((vehicle, i) => (
+              {activePlanVehicles.map((activePlanVehicle, i) => (
                 <PlanRouteDetails
                   key={i}
-                  vehicle={vehicle}
+                  vehicle={activePlanVehicle}
                   routeNumber={i + 1}
+                  color={
+                    transports.find(
+                      (transport) => transport.id === activePlanVehicle.id
+                    )?.color
+                  }
                 />
               ))}
               <Elements.Buttons.SubmitButton
@@ -49,20 +53,12 @@ const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
               </Elements.Buttons.SubmitButton>
             </>
           )}
-          {/* Disabled as we cannot see current plan yet. */}
-          {/* <StyledLink to={`${path}/current-plan`}>
-            <AddFormFieldButton onClickHandler={null}>
-              Aktuell plan
-            </AddFormFieldButton>
-          </StyledLink> */}
         </PlanWrapper>
       </Route>
       <Route
         exact
         path={[`${path}/current-plan`, `${path}/current-plan/:routeId`]}
-      >
-        {/* <CurrentPlan plan={planVehicles} /> */}
-      </Route>
+      ></Route>
     </Switch>
   )
 }

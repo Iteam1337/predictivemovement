@@ -54,7 +54,10 @@ defmodule MessageGenerator do
     |> add_random_id_and_time()
     |> add_addresses()
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: 13.7})
-    |> Map.put(:metadata, %{sender: %{contact: "0701234567"}, recipient: %{contact: "0701234567"}})
+    |> Map.put_new(:metadata, %{
+      sender: %{contact: "0701234567"},
+      recipient: %{contact: "0701234567"}
+    })
   end
 
   def random_booking(location) do

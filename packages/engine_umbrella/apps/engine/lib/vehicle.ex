@@ -28,6 +28,7 @@ defmodule Vehicle do
   def handle_call(
         {:offer,
          %Vehicle{id: vehicle_id, activities: activities, booking_ids: booking_ids} = vehicle},
+        _from,
         state
       ) do
     Logger.debug("offer to vehicle #{vehicle}")
@@ -57,7 +58,7 @@ defmodule Vehicle do
         state
       )
 
-    {:noreply, updated_state}
+    {:reply, updated_state, updated_state}
   end
 
   def handle_driver_response(

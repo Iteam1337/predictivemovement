@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Activity, Route } from '../types'
 import helpers from '../utils/helpers'
 import { UIStateContext } from '../utils/UIStateContext'
-import Elements from './Elements'
+import Elements from '../shared-elements'
 
 const ActivityGroup = styled.div`
   margin-left: auto;
@@ -74,7 +74,7 @@ const groupByLocation = (activities: Activity[]) => {
 
 const RouteActivities = ({ route }: Props) => {
   const { dispatch } = React.useContext(UIStateContext)
-  const activities = route.activities.slice(1, -1)
+  const activities = route.activities ? route.activities.slice(1, -1) : []
 
   const getLabelForActivities = (type: string) => {
     switch (type) {
@@ -95,7 +95,7 @@ const RouteActivities = ({ route }: Props) => {
           <p>{getLabelForActivities(activityGroup[0].type)}</p>
           <ActivityGroup>
             {activityGroup.map((activity, i) => (
-              <Elements.RoundedLink
+              <Elements.Links.RoundedLink
                 key={i}
                 onMouseOver={() =>
                   dispatch({ type: 'highlightBooking', payload: activity.id })
@@ -119,7 +119,7 @@ const RouteActivities = ({ route }: Props) => {
                 }
               >
                 {helpers.getLastFourChars(activity.id).toUpperCase()}
-              </Elements.RoundedLink>
+              </Elements.Links.RoundedLink>
             ))}
           </ActivityGroup>
         </ActivityInfo>

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
 import Elements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
-import { Route as PlanRoute } from '../types'
+import { Route as PlanRoute, Transport } from '../types'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -13,11 +13,15 @@ const PlanWrapper = styled.div`
 
 interface IPlanProps {
   plan: PlanRoute[]
+  transports: Transport[]
   dispatchOffers: () => void
 }
 
-const Plan = ({ plan: routes, dispatchOffers }: IPlanProps) => {
-  const activeRoutes = routes.filter((d) => d.activities.length > 0)
+const Plan = ({ plan: routes, dispatchOffers, transports }: IPlanProps) => {
+  const activeRoutes = routes.filter(
+    (d) => d.activities && d.activities.length > 0
+  )
+
   const { path } = useRouteMatch()
 
   return (
@@ -32,7 +36,15 @@ const Plan = ({ plan: routes, dispatchOffers }: IPlanProps) => {
           ) : (
             <>
               {activeRoutes.map((route, i) => (
-                <PlanRouteDetails key={i} route={route} routeNumber={i + 1} />
+                <PlanRouteDetails
+                  key={i}
+                  route={route}
+                  routeNumber={i + 1}
+                  color={
+                    transports.find((transport) => transport.id === route.id)
+                      ?.color
+                  }
+                />
               ))}
               <Elements.Buttons.SubmitButton
                 alignSelf="center"

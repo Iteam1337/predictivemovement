@@ -3,7 +3,7 @@ import Alert from '@material-ui/lab/Alert'
 import Zoom from '@material-ui/core/Zoom'
 import styled from 'styled-components'
 import Elements from '../shared-elements'
-import { Booking, NotificationType, Vehicle } from '../types'
+import { Booking, NotificationType, Transport } from '../types'
 import CheckIcon from '../assets/check-icon.svg'
 
 const NotificationsContainer = styled.div`
@@ -49,7 +49,7 @@ const BookingNotification: React.FC<{
 )
 
 const VehicleNotification: React.FC<{
-  vehicle: Vehicle
+  vehicle: Transport
   handleOnClose: (value: string) => void
 }> = ({ vehicle, handleOnClose }) => (
   <Zoom in={Boolean(vehicle)}>
@@ -94,12 +94,12 @@ const Notifications: React.FC<{
   const notificationType = (notification: NotificationType) => {
     switch (notification.id.substr(0, 3)) {
       case 'pmv':
-        if ((notification as Vehicle).booking_ids === null)
+        if ((notification as Transport).booking_ids === null)
           return (
             <VehicleNotification
               key={notification.id}
               handleOnClose={handleOnClose}
-              vehicle={notification as Vehicle}
+              vehicle={notification as Transport}
             />
           )
         break

@@ -1,5 +1,5 @@
 import React from 'react'
-import Elements from '../../Elements'
+import Elements from '../../../shared-elements'
 import locationIcon from '../../../assets/location.svg'
 import styled from 'styled-components'
 import hooks from '../../../utils/hooks'
@@ -49,12 +49,12 @@ const Component = ({ onChangeHandler, placeholder, value, ...rest }) => {
   }
 
   return (
-    <Elements.InputInnerContainer>
-      <Elements.FormInputIcon
+    <Elements.Layout.InputInnerContainer>
+      <Elements.Icons.FormInputIcon
         alt="Location pickup icon"
         src={`${locationIcon}`}
       />
-      <Elements.TextInput
+      <Elements.Form.TextInput
         {...rest}
         name="pickup"
         type="text"
@@ -77,7 +77,7 @@ const Component = ({ onChangeHandler, placeholder, value, ...rest }) => {
           ))}
         </DropdownWrapper>
       )}
-    </Elements.InputInnerContainer>
+    </Elements.Layout.InputInnerContainer>
   )
 }
 

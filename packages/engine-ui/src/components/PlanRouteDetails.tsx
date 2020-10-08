@@ -5,13 +5,13 @@ import RouteActivities from './RouteActivities'
 import Icons from '../assets/Icons'
 import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
-import Elements from './Elements'
-import { getColor } from '../utils/palette'
+import Elements from '../shared-elements'
 import helpers from '../utils/helpers'
-import { Route } from '../types'
+import { Route, InAppColor } from '../types'
 
 interface Props {
   route: Route
+  color?: InAppColor
   routeNumber: number
 }
 
@@ -29,7 +29,7 @@ const Chevron = styled(Icons.Arrow)`
   justify-self: flex-end;
 `
 
-const PlanRouteDetails = ({ route, routeNumber }: Props) => {
+const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
@@ -52,17 +52,20 @@ const PlanRouteDetails = ({ route, routeNumber }: Props) => {
           toggle(route.id)
         }}
       >
-        <Elements.StrongParagraph dotColor={getColor(routeNumber - 1, 3)}>
+        <Elements.Typography.StrongParagraph dotColor={color}>
           Rutt {routeNumber}
-        </Elements.StrongParagraph>
+        </Elements.Typography.StrongParagraph>
         <Chevron active={routeId === route.id ? true : undefined} />
       </RouteTitleWrapper>
 
       {routeId === route.id && (
         <>
-          <Elements.FlexRowWrapper>
-            <Elements.StrongParagraph>Transport</Elements.StrongParagraph>
-            <Elements.RoundedLink
+          <Elements.Layout.FlexRowWrapper>
+            <Elements.Typography.StrongParagraph>
+              Transport
+            </Elements.Typography.StrongParagraph>
+            <Elements.Links.RoundedLink
+              color={color}
               margin="0 0.5rem"
               onMouseOver={() =>
                 dispatch({ type: 'highlightTransport', payload: route.id })
@@ -86,8 +89,8 @@ const PlanRouteDetails = ({ route, routeNumber }: Props) => {
               }
             >
               {helpers.getLastFourChars(route.id).toUpperCase()}
-            </Elements.RoundedLink>
-          </Elements.FlexRowWrapper>
+            </Elements.Links.RoundedLink>
+          </Elements.Layout.FlexRowWrapper>
           <RouteActivities route={route} />
         </>
       )}

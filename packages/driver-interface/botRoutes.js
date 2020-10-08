@@ -25,13 +25,17 @@ async function onArrived(msg) {
   )
 }
 
-function handleBookingEvent(telegramId, bookingId, event) {
+function handleBookingEvent(telegramId, bookingIds, event) {
   return channel
     .then((openChannel) =>
-      openChannel.publish(
-        INCOMING_BOOKING_UPDATES,
-        event,
-        Buffer.from(JSON.stringify({ id: bookingId, status: event }))
+      Promise.all(
+        bookingIds.map((id) =>
+          openChannel.publish(
+            INCOMING_BOOKING_UPDATES,
+            event,
+            Buffer.from(JSON.stringify({ id, status: event }))
+          )
+        )
       )
     )
     .catch(console.warn)
@@ -89,9 +93,8 @@ const init = (bot) => {
   })
 
   /** Listen for user invoked button clicks. */
-  bot.on('callback_query', (msg) => {
+  bot.on('callback_query', async (msg) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
-
     switch (callbackPayload.e) {
       case 'offer':
         return onOffer(msg)
@@ -101,8 +104,18 @@ const init = (bot) => {
       case 'delivered':
       case 'delivery_failed': {
         const { id: telegramId } = msg.update.callback_query.from
-        const { e: event, id: bookingId } = callbackPayload
-        return handleBookingEvent(telegramId, bookingId, event)
+
+        const { e: event, id: instructionGroupId } = callbackPayload
+
+        const instructionGroup = await cache.getAndDeleteInstructionGroup(
+          instructionGroupId
+        )
+
+        return handleBookingEvent(
+          telegramId,
+          instructionGroup.map((ig) => ig.id),
+          event
+        )
       }
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)

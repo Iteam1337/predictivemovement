@@ -25,21 +25,24 @@ export type Transport = {
   id: string
   name?: string
   activities: Activity[] | null
+  busy: any
   metadata: { profile?: string }
   booking_ids: string[] | null
+  current_route: any
   earliest_start: Date
   latest_end: Date
   capacity?: { weight?: number; volume?: number }
   end_address: Address
+  profile: any
   start_address: Address
   color: InAppColor
 }
 
 export type NotificationType = Transport | Booking
 
-export interface PlanVehicle {
-  activities: Activity[]
-  booking_ids: string[]
+export interface Route {
+  activities: Activity[] | null
+  booking_ids: string[] | null
   busy: any
   capacity?: { weight?: number; volume?: number }
   current_route: any
@@ -58,7 +61,7 @@ export interface Address {
   name?: string
 }
 
-interface Activity {
+export interface Activity {
   address: Address
   index: number
   type: string

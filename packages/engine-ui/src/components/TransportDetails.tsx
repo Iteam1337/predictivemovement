@@ -177,7 +177,7 @@ const TransportDetails: React.FC<{
                   <Icons.Arrow active={showInfo.route} />
                 </button>
               </RouteTitleWrapper>
-              {showInfo.route && <RouteActivities vehicle={transport} />}
+              {showInfo.route && <RouteActivities route={transport} />}
             </Elements.Layout.MarginBottomContainer>
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>

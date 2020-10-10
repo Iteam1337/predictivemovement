@@ -58,10 +58,31 @@ defmodule Engine.BookingProcessor do
 
   def handle_message(
         _processor,
-        %Message{data: %{booking: booking}} = msg,
+        %Message{
+          data: %{
+            booking: %{
+              pickup: pickup,
+              delivery: delivery,
+              id: external_id,
+              metadata: metadata,
+              size: size
+            }
+          }
+        } = msg,
         _context
       ) do
-    IO.inspect(booking, label: "a new booking")
+    IO.inspect(
+      %{
+        pickup: pickup,
+        delivery: delivery,
+        id: external_id,
+        metadata: metadata,
+        size: size
+      },
+      label: "a new booking"
+    )
+
+    Booking.make(pickup, delivery, external_id, metadata, size)
     msg
   end
 
@@ -71,6 +92,7 @@ defmodule Engine.BookingProcessor do
         _context
       ) do
     IO.inspect(vehicle, label: "a new vehicle")
+    vehicle |> Vehicle.make()
     msg
   end
 

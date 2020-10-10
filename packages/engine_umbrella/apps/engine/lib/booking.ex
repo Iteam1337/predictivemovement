@@ -18,7 +18,13 @@ defmodule Booking do
     :route
   ]
 
-  def make(pickup, delivery, external_id, metadata, size) do
+  def make(%{
+        pickup: pickup,
+        delivery: delivery,
+        external_id: external_id,
+        metadata: metadata,
+        size: size
+      }) do
     id = "pmb-" <> (Base62UUID.generate() |> String.downcase() |> String.slice(0, 8))
 
     %Booking{

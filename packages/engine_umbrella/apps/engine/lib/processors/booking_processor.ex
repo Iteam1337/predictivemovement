@@ -60,29 +60,17 @@ defmodule Engine.BookingProcessor do
         _processor,
         %Message{
           data: %{
-            booking: %{
-              pickup: pickup,
-              delivery: delivery,
-              id: external_id,
-              metadata: metadata,
-              size: size
-            }
+            booking: booking
           }
         } = msg,
         _context
       ) do
     IO.inspect(
-      %{
-        pickup: pickup,
-        delivery: delivery,
-        id: external_id,
-        metadata: metadata,
-        size: size
-      },
+      booking,
       label: "a new booking"
     )
 
-    Booking.make(pickup, delivery, external_id, metadata, size)
+    Booking.make(booking)
     msg
   end
 

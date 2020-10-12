@@ -86,7 +86,7 @@ defmodule Vehicle do
       |> Map.put_new(:end_address, Map.get(vehicle_info, :start_address))
       |> Map.put(:id, generate_id())
       |> Map.put_new(:capacity, %{volume: 15, weight: 700})
-      |> Map.put_new(:metadata, %{})
+      |> Map.update(:metadata, nil, &Jason.encode!/1)
 
     struct(Vehicle, vehicle_fields)
     |> apply_vehicle_to_state()

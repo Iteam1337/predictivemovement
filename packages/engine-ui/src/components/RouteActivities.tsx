@@ -5,6 +5,7 @@ import { Activity, Route } from '../types'
 import helpers from '../utils/helpers'
 import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements'
+import { useRouteMatch } from 'react-router-dom'
 
 const ActivityGroup = styled.div`
   margin-left: auto;
@@ -75,6 +76,9 @@ const groupByLocation = (activities: Activity[]) => {
 const RouteActivities = ({ route }: Props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const activities = route.activities ? route.activities.slice(1, -1) : []
+  const isProposedPlan = useRouteMatch({
+    path: ['/plans/routes/:routeId'],
+  })
 
   const getLabelForActivities = (type: string) => {
     switch (type) {
@@ -85,6 +89,12 @@ const RouteActivities = ({ route }: Props) => {
       default:
         return
     }
+  }
+
+  const redirectTo = (activityId: string) => {
+    return isProposedPlan
+      ? `/plans/routes/${route.id}/${activityId}`
+      : `/bookings/${activityId}`
   }
 
   return (
@@ -103,7 +113,7 @@ const RouteActivities = ({ route }: Props) => {
                 onMouseLeave={() =>
                   dispatch({ type: 'highlightBooking', payload: undefined })
                 }
-                to={`/plans/routes/${route.id}/booking/${activity.id}`}
+                to={() => redirectTo(activity.id)}
                 onClick={() =>
                   dispatch({
                     type: 'viewport',

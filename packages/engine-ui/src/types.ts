@@ -40,7 +40,6 @@ type TimeWindow = {
   latest: string
 }
 
-export type Vehicle = {
 export type InAppColor = string
 
 export type Transport = {

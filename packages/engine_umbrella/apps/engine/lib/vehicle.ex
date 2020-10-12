@@ -80,7 +80,7 @@ defmodule Vehicle do
     "pmv-" <> generated
   end
 
-  def make(vehicle_info, options \\ []) do
+  def make(vehicle_info) do
     vehicle_fields =
       vehicle_info
       |> Map.put_new(:end_address, Map.get(vehicle_info, :start_address))

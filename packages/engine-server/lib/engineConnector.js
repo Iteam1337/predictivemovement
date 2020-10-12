@@ -56,6 +56,7 @@ const bookings = amqp
     const booking = bookingRes.json()
     booking.route = JSON.parse(booking.route)
     booking.metadata = JSON.parse(booking.metadata)
+
     return { ...booking, status: bookingRes.fields.routingKey }
   })
 
@@ -70,8 +71,8 @@ const vehicles = amqp
   .map((vehicleRes) => {
     const vehicle = vehicleRes.json()
     vehicle.current_route = JSON.parse(vehicle.current_route)
-    vehicle.metadata =
-      vehicle.metadata === {} ? JSON.parse(vehicle.metadata) : vehicle.metadata
+    vehicle.metadata = JSON.parse(vehicle.metadata)
+
     return vehicle
   })
 

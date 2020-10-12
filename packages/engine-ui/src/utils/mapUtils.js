@@ -1,5 +1,5 @@
 import palette, { getColor } from './palette'
-import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
+import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
 import transportDefaultIcon from '../assets/transport.svg'
 import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
@@ -38,6 +38,15 @@ export const line = (coordinates, props) => ({
   ...props,
 })
 
+export const text = (coordinates, props) => ({
+  type: 'Feature',
+  geometry: {
+    type: 'Text',
+    coordinates,
+  },
+  ...props,
+})
+
 export const routeAssignedToBooking = (assignedTo) =>
   line(
     assignedTo.route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
@@ -49,6 +58,32 @@ export const routeAssignedToBooking = (assignedTo) =>
       },
     }
   )
+
+export const routeActivitiesToFeature = (plan) => {
+  return [
+    ...plan.flatMap(({ activities, id }) => {
+      const routeActivities = activities
+        .filter(({ type }) => type !== 'start')
+        .map(({ address }, index) =>
+          text([address.lon, address.lat], {
+            id,
+            routeIndex: String(index + 1),
+          })
+        )
+      return [...routeActivities]
+    }),
+  ]
+}
+
+export const toTextLayer = (data) =>
+  new TextLayer({
+    id: 'text-layer',
+    data,
+    fontFamily: 'Roboto Mono',
+    getText: (d) => d.routeIndex,
+    getPosition: (d) => d.geometry.coordinates,
+    getSize: 20,
+  })
 
 export const transportToFeature = (transports) => {
   let index = 0
@@ -302,4 +337,6 @@ export default {
   transportIcon,
   toTransportIconLayer,
   bookingIcon,
+  toTextLayer,
+  routeActivitiesToFeature,
 }

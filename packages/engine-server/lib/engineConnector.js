@@ -52,11 +52,11 @@ const bookings = amqp
     routingKeys.DELIVERED,
     routingKeys.DELIVERY_FALIED,
   ])
-  .map((bookingsRes) => {
-    const bookings = bookingsRes.json()
-    bookings.route = JSON.parse(bookings.route)
-    bookings.metadata = JSON.parse(bookings.metadata)
-    return { ...bookings, status: bookingsRes.fields.routingKey }
+  .map((bookingRes) => {
+    const booking = bookingRes.json()
+    booking.route = JSON.parse(booking.route)
+    booking.metadata = JSON.parse(booking.metadata)
+    return { ...booking, status: bookingRes.fields.routingKey }
   })
 
 const vehicles = amqp

@@ -30,18 +30,10 @@ const Map = ({ data }) => {
     })
 
   const layers = [
-    mapUtils.toTransportIconLayer(
-      mapUtils.transportIcon(data.vehicles),
-      UIState.highlightTransport
-    ),
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
       mapUtils.bookingToFeature(data.bookings),
       handleClickEvent
-    ),
-    mapUtils.toBookingIconLayer(
-      mapUtils.bookingIcon(data.bookings),
-      UIState.highlightBooking
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-plan-layer',
@@ -54,6 +46,14 @@ const Map = ({ data }) => {
         UIState.highlightBooking,
         { offset: [40, 0] }
       )
+    ),
+    mapUtils.toTransportIconLayer(
+      mapUtils.transportIcon(data.vehicles),
+      UIState.highlightTransport
+    ),
+    mapUtils.toBookingIconLayer(
+      mapUtils.bookingIcon(data.bookings),
+      UIState.highlightBooking
     ),
   ]
 

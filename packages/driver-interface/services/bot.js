@@ -1,6 +1,7 @@
 const helpers = require('../helpers')
 const amqp = require('./amqp')
 const cache = require('./cache')
+const { v4: uuid } = require('uuid')
 
 const messaging = require('./messaging')
 
@@ -8,7 +9,6 @@ const onLogin = async (vehicleId, ctx) => {
   const vehicle = await cache.getVehicle(vehicleId)
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
-
   const telegramId = ctx.update.message.from.id
   await cache.setVehicleIdByTelegramId(telegramId, vehicleId)
 
@@ -16,10 +16,11 @@ const onLogin = async (vehicleId, ctx) => {
     return
   }
 
-  await cache.setInstructions(
-    vehicle.id,
+  const groupedInstructions = helpers.groupDriverInstructions(
     helpers.cleanDriverInstructions(vehicle.activities)
   )
+
+  await cache.setInstructions(vehicle.id, groupedInstructions)
 
   await cache.addVehicle(vehicleId, {
     ...vehicle,
@@ -55,25 +56,29 @@ const onLocationMessage = (msg, ctx) => {
 const handleNextDriverInstruction = async (telegramId) => {
   try {
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
-    const [currentInstruction] = await cache.getInstructions(vehicleId)
+    const [currentInstructionGroup] = await cache.getInstructions(vehicleId)
 
-    if (!currentInstruction)
+    if (!currentInstructionGroup)
       return messaging.sendDriverFinishedMessage(telegramId)
 
-    const booking = await cache.getBooking(currentInstruction.id)
+    const bookings = await cache.getBookings(
+      currentInstructionGroup.map((g) => g.id)
+    )
 
-    if (currentInstruction.type === 'pickupShipment')
+    const type = currentInstructionGroup[0].type
+
+    if (type === 'pickupShipment')
       return messaging.sendPickupInstruction(
-        currentInstruction,
+        currentInstructionGroup,
         telegramId,
-        booking
+        bookings
       )
 
-    if (currentInstruction.type === 'deliverShipment')
+    if (type === 'deliverShipment')
       return messaging.sendDeliveryInstruction(
-        currentInstruction,
+        currentInstructionGroup,
         telegramId,
-        booking
+        bookings
       )
   } catch (error) {
     console.log(
@@ -89,18 +94,31 @@ const handleDriverArrivedToPickupOrDeliveryPosition = async (
   telegramId
 ) => {
   try {
-    const instructions = await cache.getInstructions(vehicleId)
-    const [nextInstruction, ...rest] = instructions
+    const instructionGroups = await cache.getInstructions(vehicleId)
 
-    if (!nextInstruction) return messaging.sendDriverFinishedMessage(telegramId)
-    const booking = await cache.getBooking(nextInstruction.id)
+    const [nextInstructionGroup, ...rest] = instructionGroups
 
-    if (nextInstruction.type === 'pickupShipment')
-      messaging.sendPickupInformation(nextInstruction, telegramId, booking)
+    const instructionGroupId = uuid().slice(0, 8)
 
-    if (nextInstruction.type === 'deliverShipment')
-      messaging.sendDeliveryInformation(nextInstruction, telegramId, booking)
+    if (!nextInstructionGroup)
+      return messaging.sendDriverFinishedMessage(telegramId)
 
+    await cache.setInstructionGroup(instructionGroupId, nextInstructionGroup)
+
+    const bookings = await cache.getBookings(
+      nextInstructionGroup.map((ig) => ig.id)
+    )
+
+    if (nextInstructionGroup[0].type === 'pickupShipment')
+      messaging.sendPickupInformation(instructionGroupId, telegramId, bookings)
+
+    if (nextInstructionGroup[0].type === 'deliverShipment')
+      messaging.sendDeliveryInformation(
+        nextInstructionGroup,
+        instructionGroupId,
+        telegramId,
+        bookings
+      )
     return cache.setInstructions(vehicleId, [...rest])
   } catch (error) {
     console.log('error in handleNextDriverInstruction: ', error)

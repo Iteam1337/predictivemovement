@@ -42,7 +42,7 @@ const Map = ({ data }) => {
     ),
     data.plan.map((route) =>
       mapUtils.toBookingIconLayer(
-        mapUtils.planActivityIcon(route),
+        mapUtils.routeActivityIcon(route),
         UIState.highlightBooking,
         { offset: [40, 0] }
       )

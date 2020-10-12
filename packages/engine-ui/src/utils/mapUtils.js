@@ -86,13 +86,13 @@ export const planToFeature = (plan) => {
   }
 }
 
-export const planActivityIcon = (plan) => {
-  if (!plan || !plan.activities) return
+export const routeActivityIcon = (route) => {
+  if (!route || !route.activities) return
 
   let index = 0
   try {
     return [
-      ...plan.activities.slice(1, -1).flatMap(({ id, address }, i) => {
+      ...route.activities.slice(1, -1).flatMap(({ id, address }, i) => {
         index = i
         return [
           point([address.lon, address.lat], {
@@ -323,5 +323,5 @@ export default {
   transportIcon,
   toTransportIconLayer,
   bookingIcon,
-  planActivityIcon,
+  routeActivityIcon,
 }

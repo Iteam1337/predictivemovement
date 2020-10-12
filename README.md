@@ -40,7 +40,7 @@ Start dependencies
 
 create event_store database
     
-    cd packages/engine-elixir/
+    cd packages/engine_umbrella/
     mix do event_store.create, event_store.init
 
 run the engine

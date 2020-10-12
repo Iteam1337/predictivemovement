@@ -48,5 +48,7 @@ jobs:
         run: mix deps.get
       - name: Compile
         run: mix compile
+      - name: create database
+        run: mix do event_store.create, event_store.init
       - name: Run tests
         run: mix test

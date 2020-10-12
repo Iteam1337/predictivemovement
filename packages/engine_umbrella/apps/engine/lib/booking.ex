@@ -18,6 +18,19 @@ defmodule Booking do
     :route
   ]
 
+  def generate_id do
+    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
+
+    generated =
+      UUID.uuid4()
+      |> Base.encode64(padding: false)
+      |> String.replace(["+", "/"], Enum.random(alphabet))
+      |> String.slice(0, 8)
+      |> String.downcase()
+
+    "pmb-" <> generated
+  end
+
   def make(%{
         pickup: pickup,
         delivery: delivery,
@@ -25,7 +38,7 @@ defmodule Booking do
         metadata: metadata,
         size: size
       }) do
-    id = "pmb-" <> (Base62UUID.generate() |> String.downcase() |> String.slice(0, 8))
+    id = generate_id()
 
     %Booking{
       id: id,

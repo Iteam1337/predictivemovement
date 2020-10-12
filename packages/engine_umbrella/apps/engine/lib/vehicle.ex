@@ -67,8 +67,18 @@ defmodule Vehicle do
 
   def handle_info({:basic_cancel_ok, _}, state), do: {:noreply, state}
 
-  defp generate_id,
-    do: "pmv-" <> (Base62UUID.generate() |> String.downcase() |> String.slice(0, 8))
+  def generate_id do
+    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
+
+    generated =
+      UUID.uuid4()
+      |> Base.encode64(padding: false)
+      |> String.replace(["+", "/"], Enum.random(alphabet))
+      |> String.slice(0, 8)
+      |> String.downcase()
+
+    "pmv-" <> generated
+  end
 
   def make(vehicle_info, options \\ []) do
     vehicle_fields =

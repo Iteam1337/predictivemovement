@@ -126,7 +126,6 @@ const sendPickupInformation = (instructionGroupId, telegramId, bookings) => {
     (prev, curr) => prev + curr.size.weight || 0,
     0
   )
-  console.log('booking', JSON.stringify(bookings[0].size, null, 2))
   const heaviestPackage = Math.max(...bookings.map((b) => b.size.weight || 0))
 
   const packageInfos = bookings

@@ -53,7 +53,7 @@ defmodule MessageGenerator do
     properties
     |> add_random_id_and_time()
     |> add_booking_addresses()
-    |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: 13.7})
+    |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
     |> Map.put_new(:metadata, %{
       sender: %{contact: "0701234567"},
       recipient: %{contact: "0701234567"}
@@ -64,7 +64,7 @@ defmodule MessageGenerator do
     %{}
     |> add_booking_addresses(location)
     |> add_random_id_and_time()
-    |> Map.put(:size, %{measurements: [105, 55, 26], weight: 13.7})
+    |> Map.put(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
   end
 
   def add_random_car(), do: GenServer.call(__MODULE__, :add_random_car)

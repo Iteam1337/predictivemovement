@@ -2,6 +2,9 @@
   "extends": ["@iteam/eslint-config-node"],
   "overrides": [
     {
+      "parserOptions": {
+        "ecmaVersion": 2020
+      },
       "files": ["**/*.js"],
       "rules": {
         "no-unused-vars": [

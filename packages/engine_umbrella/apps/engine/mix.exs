@@ -22,7 +22,6 @@ defmodule Engine.MixProject do
       env: [
         amqp_host: "localhost",
         osrm_url: "https://osrm.iteamdev.io",
-        redis_url: "redis://localhost:6379",
         init_from_eventstore: false
       ],
       extra_applications: [:logger, :gproc],
@@ -47,7 +46,6 @@ defmodule Engine.MixProject do
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
       {:gproc, "~> 0.8.0"},
       {:base62_uuid, "~> 2.0.2"},
-      {:redix, ">= 0.11.2"},
       {:ex_cldr_dates_times, "~> 2.0"},
       {:eventstore, "~> 1.1"}
       # {:dep_from_hexpm, "~> 0.3.0"},

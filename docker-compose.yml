@@ -15,6 +15,14 @@ services:
       - 6379:6379
     networks:
       - predictivemovement
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    networks:
+      - predictivemovement
   admin-ui:
     build:
       context: ./packages/engine-ui
@@ -28,7 +36,7 @@ services:
   admin-server:
     build: ./packages/engine-server
     environment:
-      - AMQP_HOST=amqp://rabbitmq
+      - AMQP_URL=amqp://rabbitmq
     ports:
       - 4000:4000
     networks:

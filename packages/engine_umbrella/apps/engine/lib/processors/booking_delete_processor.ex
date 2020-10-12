@@ -32,8 +32,8 @@ defmodule Engine.BookingDeleteProcessor do
 
   defp delete_booking(id) do
     Booking.delete(id)
-    booking_ids = Engine.RedisAdapter.get_bookings() |> Enum.map(&Map.get(&1, :id))
-    vehicle_ids = Engine.RedisAdapter.get_vehicles() |> Enum.map(&Map.get(&1, :id))
+    booking_ids = Engine.BookingStore.get_bookings()
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
 
     Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
   end

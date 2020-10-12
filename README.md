@@ -32,13 +32,20 @@ To debug run:
 
     skaffold dev
 
-Or start RabbitMQ locally and the packages manually:
+### Running Predictive Movement locally
 
-    docker-compose -f docker-compose.dev.yml up
+Start dependencies
 
+    docker-compose up -d
+
+create event_store database
+    
     cd packages/engine-elixir/
-    mix start
-    # etc..
+    mix do event_store.create, event_store.init
+
+run the engine
+    
+    iex -S mix
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 

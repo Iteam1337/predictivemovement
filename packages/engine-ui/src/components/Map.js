@@ -3,12 +3,15 @@ import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import mapUtils from '../utils/mapUtils'
 import { UIStateContext } from '../utils/UIStateContext'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
 
 const Map = ({ data }) => {
   const history = useHistory()
   const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
+  const showTextLayer = useRouteMatch({
+    path: ['/plans/routes/:routeId'],
+  })
 
   const handleClickEvent = (event) => {
     if (!event.object) return
@@ -47,6 +50,8 @@ const Map = ({ data }) => {
         { offset: [40, 0] }
       )
     ),
+    showTextLayer &&
+      mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan)),
     mapUtils.toTransportIconLayer(
       mapUtils.transportIcon(data.vehicles),
       UIState.highlightTransport

@@ -21,7 +21,7 @@ defmodule Booking do
   def make(%{
         pickup: pickup,
         delivery: delivery,
-        external_id: external_id,
+        id: external_id,
         metadata: metadata,
         size: size
       }) do

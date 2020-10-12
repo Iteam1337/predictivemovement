@@ -74,7 +74,7 @@ defmodule Vehicle do
     vehicle_fields =
       vehicle_info
       |> Map.put_new(:end_address, Map.get(vehicle_info, :start_address))
-      |> Map.put_new(:id, generate_id())
+      |> Map.put(:id, generate_id())
       |> Map.put_new(:capacity, %{volume: 15, weight: 700})
       |> Map.put_new(:metadata, %{})
 

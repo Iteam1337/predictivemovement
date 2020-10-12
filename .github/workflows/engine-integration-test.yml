@@ -16,7 +16,6 @@ jobs:
   run-integration-tests:
     needs: build-and-push-route-optimization
     env:
-      REDIS_URL: redis://localhost:6379
       AMQP_HOST: localhost
     defaults:
       run:
@@ -28,10 +27,12 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
-      redis:
-        image: redis
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
         ports:
-          - 6379:6379
+          - 5432:5432
       route-optmization-jsprit:
         image: iteam1337/pm-route-optimization-jsprit
         env:

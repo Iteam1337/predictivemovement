@@ -5,13 +5,13 @@ import RouteActivities from './RouteActivities'
 import Icons from '../assets/Icons'
 import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
-import Elements from './Elements'
-import { getColor } from '../utils/palette'
+import Elements from '../shared-elements'
 import helpers from '../utils/helpers'
-import { PlanVehicle } from '../types'
+import { Route, InAppColor } from '../types'
 
 interface Props {
-  vehicle: PlanVehicle
+  route: Route
+  color?: InAppColor
   routeNumber: number
 }
 
@@ -29,7 +29,7 @@ const Chevron = styled(Icons.Arrow)`
   justify-self: flex-end;
 `
 
-const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
+const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
   const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
@@ -49,34 +49,37 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
     <>
       <RouteTitleWrapper
         onClick={() => {
-          toggle(vehicle.id)
+          toggle(route.id)
         }}
       >
-        <Elements.StrongParagraph dotColor={getColor(routeNumber - 1, 3)}>
+        <Elements.Typography.StrongParagraph dotColor={color}>
           Rutt {routeNumber}
-        </Elements.StrongParagraph>
-        <Chevron active={routeId === vehicle.id ? true : undefined} />
+        </Elements.Typography.StrongParagraph>
+        <Chevron active={routeId === route.id ? true : undefined} />
       </RouteTitleWrapper>
 
-      {routeId === vehicle.id && (
+      {routeId === route.id && (
         <>
-          <Elements.FlexRowWrapper>
-            <Elements.StrongParagraph>Transport</Elements.StrongParagraph>
-            <Elements.RoundedLink
+          <Elements.Layout.FlexRowWrapper>
+            <Elements.Typography.StrongParagraph>
+              Transport
+            </Elements.Typography.StrongParagraph>
+            <Elements.Links.RoundedLink
+              color={color}
               margin="0 0.5rem"
               onMouseOver={() =>
-                dispatch({ type: 'highlightTransport', payload: vehicle.id })
+                dispatch({ type: 'highlightTransport', payload: route.id })
               }
               onMouseLeave={() =>
                 dispatch({ type: 'highlightTransport', payload: undefined })
               }
-              to={`/transports/${vehicle.id}`}
+              to={`/transports/${route.id}`}
               onClick={() =>
                 dispatch({
                   type: 'viewport',
                   payload: {
-                    latitude: vehicle.start_address.lat,
-                    longitude: vehicle.start_address.lon,
+                    latitude: route.start_address.lat,
+                    longitude: route.start_address.lon,
                     zoom: 10,
                     transitionDuration: 3000,
                     transitionInterpolator: new FlyToInterpolator(),
@@ -85,10 +88,10 @@ const PlanRouteDetails = ({ vehicle, routeNumber }: Props) => {
                 })
               }
             >
-              {helpers.getLastFourChars(vehicle.id).toUpperCase()}
-            </Elements.RoundedLink>
-          </Elements.FlexRowWrapper>
-          <RouteActivities vehicle={vehicle} />
+              {helpers.getLastFourChars(route.id).toUpperCase()}
+            </Elements.Links.RoundedLink>
+          </Elements.Layout.FlexRowWrapper>
+          <RouteActivities route={route} />
         </>
       )}
     </>

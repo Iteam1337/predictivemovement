@@ -39,14 +39,14 @@ const Map = ({ data }) => {
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-vehicles-layer',
-      mapUtils.vehicleToFeature(data.plan),
+      mapUtils.transportToFeature(data.plan),
       handleClickEvent
     ),
-    mapUtils.toIconLayer(
-      mapUtils.vehicleIcon(data.vehicles),
+    mapUtils.toTransportIconLayer(
+      mapUtils.transportIcon(data.vehicles),
       UIState.highlightTransport
     ),
-    mapUtils.toIconLayer(
+    mapUtils.toBookingIconLayer(
       mapUtils.bookingIcon(data.bookings),
       UIState.highlightBooking
     ),

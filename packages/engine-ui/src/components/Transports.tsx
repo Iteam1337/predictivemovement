@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
 import AddVehicle from './CreateVehicle'
 import Vehicles from './Vehicles'
-import VehicleDetails from './VehicleDetails'
+import TransportDetails from './TransportDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 
 const Transports: React.FC<{
@@ -26,7 +26,7 @@ const Transports: React.FC<{
         <AddVehicle onSubmit={addVehicle} />
       </Route>
       <Route path={`${path}/:vehicleId`}>
-        <VehicleDetails vehicles={vehicles} deleteVehicle={deleteVehicle} />
+        <TransportDetails transports={vehicles} deleteTransport={deleteVehicle} />
       </Route>
     </Switch>
   )

@@ -78,32 +78,32 @@ defmodule Booking do
   end
 
   def assign(booking_id, vehicle) do
-    time_stamp = DateTime.utc_now()
-    apply_assign_to_state(booking_id, vehicle, time_stamp)
+    timestamp = DateTime.utc_now()
+    apply_assign_to_state(booking_id, vehicle, timestamp)
 
     %BookingAssigned{
       booking_id: booking_id,
       vehicle: vehicle,
-      time_stamp: time_stamp
+      timestamp: timestamp
     }
     |> ES.add_event()
   end
 
-  def apply_assign_to_state(booking_id, vehicle, time_stamp),
-    do: GenServer.call(via_tuple(booking_id), {:assign, vehicle, time_stamp})
+  def apply_assign_to_state(booking_id, vehicle, timestamp),
+    do: GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
 
   def add_event(booking_id, status)
       when status in ["picked_up", "delivered", "delivery_failed"] do
-    time_stamp = DateTime.utc_now()
-    apply_event_to_state(booking_id, status, time_stamp)
+    timestamp = DateTime.utc_now()
+    apply_event_to_state(booking_id, status, timestamp)
 
     status
-    |> event_to_event_store_struct(booking_id, time_stamp)
+    |> event_to_event_store_struct(booking_id, timestamp)
     |> ES.add_event()
   end
 
-  def apply_event_to_state(booking_id, status, time_stamp),
-    do: GenServer.call(via_tuple(booking_id), {:add_event, status, time_stamp})
+  def apply_event_to_state(booking_id, status, timestamp),
+    do: GenServer.call(via_tuple(booking_id), {:add_event, status, timestamp})
 
   ### Internal
 
@@ -117,14 +117,14 @@ defmodule Booking do
 
   def handle_call(:get, _from, state), do: {:reply, state, state}
 
-  def handle_call({:assign, vehicle, time_stamp}, _from, state) do
+  def handle_call({:assign, vehicle, timestamp}, _from, state) do
     updated_state =
       state
       |> Map.put(:assigned_to, %{
         id: vehicle.id,
         metadata: vehicle.metadata
       })
-      |> add_event_to_events_list("assigned", time_stamp)
+      |> add_event_to_events_list("assigned", timestamp)
       |> MQ.publish(
         Application.fetch_env!(:engine, :outgoing_booking_exchange),
         "assigned"
@@ -134,30 +134,30 @@ defmodule Booking do
     {:reply, true, updated_state}
   end
 
-  def handle_call({:add_event, status, time_stamp}, _, state) do
+  def handle_call({:add_event, status, timestamp}, _, state) do
     Logger.info("Received event #{status} for booking: #{state.id} ")
 
     updated_state =
       state
-      |> add_event_to_events_list(status, time_stamp)
+      |> add_event_to_events_list(status, timestamp)
       |> MQ.publish(@outgoing_booking_exchange, status)
 
     {:reply, true, updated_state}
   end
 
-  defp add_event_to_events_list(booking, status, time_stamp) do
-    new_event = %{timestamp: time_stamp, type: String.to_atom(status)}
+  defp add_event_to_events_list(booking, status, timestamp) do
+    new_event = %{timestamp: timestamp, type: String.to_atom(status)}
 
     booking
     |> Map.update!(:events, fn events -> [new_event | events] end)
   end
 
-  defp event_to_event_store_struct("picked_up", booking_id, time_stamp),
-    do: %BookingPickedUp{booking_id: booking_id, time_stamp: time_stamp}
+  defp event_to_event_store_struct("picked_up", booking_id, timestamp),
+    do: %BookingPickedUp{booking_id: booking_id, timestamp: timestamp}
 
-  defp event_to_event_store_struct("delivered", booking_id, time_stamp),
-    do: %BookingDelivered{booking_id: booking_id, time_stamp: time_stamp}
+  defp event_to_event_store_struct("delivered", booking_id, timestamp),
+    do: %BookingDelivered{booking_id: booking_id, timestamp: timestamp}
 
-  defp event_to_event_store_struct("delivery_failed", booking_id, time_stamp),
-    do: %BookingDeliveryFailed{booking_id: booking_id, time_stamp: time_stamp}
+  defp event_to_event_store_struct("delivery_failed", booking_id, timestamp),
+    do: %BookingDeliveryFailed{booking_id: booking_id, timestamp: timestamp}
 end

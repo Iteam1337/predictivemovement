@@ -8,16 +8,16 @@ defmodule Engine.Application do
   defp apply_event(%BookingRegistered{booking: booking}),
     do: struct(Booking, booking) |> Booking.apply_booking_to_state()
 
-  defp apply_event(%BookingAssigned{booking_id: id, vehicle: vehicle, time_stamp: time}),
+  defp apply_event(%BookingAssigned{booking_id: id, vehicle: vehicle, timestamp: time}),
     do: Booking.apply_assign_to_state(id, vehicle, time)
 
-  defp apply_event(%BookingPickedUp{booking_id: id, time_stamp: time}),
+  defp apply_event(%BookingPickedUp{booking_id: id, timestamp: time}),
     do: Booking.apply_event_to_state(id, "picked_up", time)
 
-  defp apply_event(%BookingDelivered{booking_id: id, time_stamp: time}),
+  defp apply_event(%BookingDelivered{booking_id: id, timestamp: time}),
     do: Booking.apply_event_to_state(id, "delivered", time)
 
-  defp apply_event(%BookingDeliveryFailed{booking_id: id, time_stamp: time}),
+  defp apply_event(%BookingDeliveryFailed{booking_id: id, timestamp: time}),
     do: Booking.apply_event_to_state(id, "delivery_failed", time)
 
   defp apply_event(%VehicleRegistered{vehicle: vehicle}),

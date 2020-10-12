@@ -8,7 +8,6 @@ import Tooltip from './Tooltip'
 
 const Map = ({ data }) => {
   const history = useHistory()
-
   const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
   const showTextLayer = useRouteMatch({
     path: ['/plans/routes/:routeId'],
@@ -36,14 +35,20 @@ const Map = ({ data }) => {
   const layers = [
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
-
       mapUtils.bookingToFeature(data.bookings),
       handleClickEvent
     ),
     mapUtils.toGeoJsonLayer(
-      'geojson-vehicles-layer',
-      mapUtils.transportToFeature(data.plan),
+      'geojson-plan-layer',
+      mapUtils.planToFeature(data.plan),
       handleClickEvent
+    ),
+    data.plan.map((route) =>
+      mapUtils.toBookingIconLayer(
+        mapUtils.routeActivityIcon(route),
+        UIState.highlightBooking,
+        { offset: [40, 0] }
+      )
     ),
     showTextLayer &&
       mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan)),

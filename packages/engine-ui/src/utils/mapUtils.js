@@ -14,15 +14,6 @@ export const point = (coordinates, props) => ({
   ...props,
 })
 
-export const multiPoint = (coordinates, props) => ({
-  type: 'Feature',
-  geometry: {
-    type: 'MultiPoint',
-    coordinates,
-  },
-  ...props,
-})
-
 export const feature = (geometry, props) => ({
   type: 'Feature',
   geometry,
@@ -85,11 +76,11 @@ export const toTextLayer = (data) =>
     getSize: 20,
   })
 
-export const transportToFeature = (transports) => {
+export const planToFeature = (plan) => {
   let index = 0
   try {
     return [
-      ...transports.flatMap(
+      ...plan.flatMap(
         ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
           index = i
           if (activities && activities.length) {
@@ -124,6 +115,31 @@ export const transportToFeature = (transports) => {
           return []
         }
       ),
+    ]
+  } catch (error) {
+    console.log(index, error)
+  }
+}
+
+export const routeActivityIcon = (route) => {
+  if (!route || !route.activities) return
+
+  let index = 0
+  try {
+    return [
+      ...route.activities.slice(1, -1).flatMap(({ id, address }, i) => {
+        index = i
+        return [
+          point([address.lon, address.lat], {
+            properties: {
+              color: '#ffffff',
+              highlightColor: '#19DE8B',
+              size: 80,
+            },
+            id,
+          }),
+        ]
+      }),
     ]
   } catch (error) {
     console.log(index, error)
@@ -213,6 +229,7 @@ export const bookingToFeature = (bookings) => {
     return route ? points : []
   })
 }
+
 export const toGeoJsonLayer = (id, data, callback) =>
   new GeoJsonLayer({
     id,
@@ -260,7 +277,6 @@ export const toTransportIconLayer = (data, activeId) => {
     id: 'transport-icon',
     data: iconData,
     pickable: true,
-
     getIcon: (d) => {
       return {
         url:
@@ -283,8 +299,12 @@ export const toTransportIconLayer = (data, activeId) => {
   })
 }
 
-export const toBookingIconLayer = (data, activeId) => {
-  if (!data.length) {
+export const toBookingIconLayer = (
+  data,
+  activeId,
+  options = { offset: [0, 0] }
+) => {
+  if (!data || !data.length) {
     return
   }
 
@@ -306,6 +326,7 @@ export const toBookingIconLayer = (data, activeId) => {
     id: 'booking-icon',
     data: iconData,
     pickable: true,
+    getPixelOffset: options.offset,
     getIcon: (d) => {
       return {
         url: d.properties.icon,
@@ -315,6 +336,7 @@ export const toBookingIconLayer = (data, activeId) => {
       }
     },
     sizeScale: 5,
+
     getPosition: (d) => d.coordinates,
     transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
     getSize: (d) =>
@@ -327,16 +349,16 @@ export const toBookingIconLayer = (data, activeId) => {
 
 export default {
   feature,
-  multiPoint,
   point,
   line,
   bookingToFeature,
-  transportToFeature,
+  planToFeature,
   toGeoJsonLayer,
   toBookingIconLayer,
   transportIcon,
   toTransportIconLayer,
   bookingIcon,
+  routeActivityIcon,
   toTextLayer,
   routeActivitiesToFeature,
 }

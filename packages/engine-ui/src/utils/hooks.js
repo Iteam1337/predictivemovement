@@ -8,9 +8,12 @@ const useFilteredStateFromQueryParams = (state) => {
     exact: true,
   })
 
-  const includeTransports = useRouteMatch(['/transports', '/transports/:id'], {
-    exact: true,
-  })
+  const includeTransports = useRouteMatch(
+    ['/plans', '/transports', '/transports/:id'],
+    {
+      exact: true,
+    }
+  )
 
   const rootView = useRouteMatch({
     path: '/',

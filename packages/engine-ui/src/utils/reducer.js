@@ -1,6 +1,8 @@
+import { getColor } from './palette'
+
 export const reducer = (state, action) => {
   switch (action.type) {
-    case 'setVehicles':
+    case 'setTransports':
       return {
         ...state,
         vehicles: [
@@ -8,7 +10,7 @@ export const reducer = (state, action) => {
             (c) => !action.payload.find((p) => p.id === c.id)
           ),
           ...action.payload,
-        ],
+        ].map((v, i) => ({ ...v, color: getColor(i, 0) })),
       }
     case 'deleteVehicle':
       return {

@@ -6,17 +6,38 @@ export enum BookingStatus {
   PICKED_UP = 'picked_up',
 }
 
-export type Booking = {
+export interface Booking {
   id: string
-  pickup: {
-    lat: string
-    lon: string
-  }
-  delivery: {
-    lat: string
-    lon: string
-  }
+  pickup: ParcelAddress
+  delivery: ParcelAddress
+  metadata: Metadata
+  size: Size
   status: BookingStatus
+}
+
+type ParcelAddress = {
+  lat: string
+  lon: string
+  street: string
+  city: string
+  time_windows: TimeWindow[] | null
+}
+
+type Size = {
+  weight?: number
+  measurement?: number[]
+}
+
+type Metadata = {
+  cargo?: string
+  fragile: boolean
+  sender: { name?: string; contact: string }
+  recipient: { name?: string; contact: string }
+}
+
+type TimeWindow = {
+  earliest: string
+  latest: string
 }
 
 export type InAppColor = string
@@ -25,21 +46,24 @@ export type Transport = {
   id: string
   name?: string
   activities: Activity[] | null
+  busy: any
   metadata: { profile?: string }
   booking_ids: string[] | null
+  current_route: any
   earliest_start: Date
   latest_end: Date
   capacity?: { weight?: number; volume?: number }
   end_address: Address
+  profile: any
   start_address: Address
   color: InAppColor
 }
 
 export type NotificationType = Transport | Booking
 
-export interface PlanVehicle {
-  activities: Activity[]
-  booking_ids: string[]
+export interface Route {
+  activities: Activity[] | null
+  booking_ids: string[] | null
   busy: any
   capacity?: { weight?: number; volume?: number }
   current_route: any
@@ -58,7 +82,7 @@ export interface Address {
   name?: string
 }
 
-interface Activity {
+export interface Activity {
   address: Address
   index: number
   type: string

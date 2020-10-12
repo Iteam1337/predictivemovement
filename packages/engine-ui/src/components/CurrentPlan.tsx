@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { PlanVehicle } from '../types'
+import { Route } from '../types'
 import MainRouteLayout from './layout/MainRouteLayout'
 import PlanRouteDetails from './PlanRouteDetails'
 
@@ -10,20 +10,16 @@ const PlanWrapper = styled.div`
 `
 
 interface CurrentPlanProps {
-  plan: PlanVehicle[]
+  plan: Route[]
 }
 
-const CurrentPlan = ({ plan: planVehicles }: CurrentPlanProps) => {
+const CurrentPlan = ({ plan: routes }: CurrentPlanProps) => {
   return (
     <MainRouteLayout redirect="/plans">
       <PlanWrapper>
         <h3>Aktuell plan</h3>
-        {planVehicles.map((vehicle, index) => (
-          <PlanRouteDetails
-            key={index}
-            vehicle={vehicle}
-            routeNumber={index + 1}
-          />
+        {routes.map((route, index) => (
+          <PlanRouteDetails key={index} route={route} routeNumber={index + 1} />
         ))}
       </PlanWrapper>
     </MainRouteLayout>

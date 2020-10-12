@@ -60,7 +60,12 @@ const Sidebar = (state: Props) => {
                 />
               </Route>
               <Route path="/plans">
-                <Plan plan={state.plan} dispatchOffers={state.dispatchOffers} transports={state.vehicles} />
+                <Plan
+                  plan={state.plan}
+                  dispatchOffers={state.dispatchOffers}
+                  transports={state.vehicles}
+                  bookings={state.bookings}
+                />
               </Route>
             </RouterSwitch>
           </Content>

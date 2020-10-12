@@ -31,24 +31,24 @@ const Map = ({ data }) => {
     })
 
   const layers = [
-    mapUtils.toTransportIconLayer(
-      mapUtils.transportIcon(data.vehicles),
-      UIState.highlightTransport
-    ),
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',
 
       mapUtils.bookingToFeature(data.bookings),
       handleClickEvent
     ),
-    mapUtils.toBookingIconLayer(
-      mapUtils.bookingIcon(data.bookings),
-      UIState.highlightBooking
-    ),
     mapUtils.toGeoJsonLayer(
       'geojson-vehicles-layer',
       mapUtils.transportToFeature(data.plan),
       handleClickEvent
+    ),
+    mapUtils.toTransportIconLayer(
+      mapUtils.transportIcon(data.vehicles),
+      UIState.highlightTransport
+    ),
+    mapUtils.toBookingIconLayer(
+      mapUtils.bookingIcon(data.bookings),
+      UIState.highlightBooking
     ),
   ]
 

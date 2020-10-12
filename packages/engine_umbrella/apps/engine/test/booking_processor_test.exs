@@ -4,7 +4,6 @@ defmodule BookingProcessorTest do
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
-  @tag :only
   test "creates a plan for one vehicle and one booking" do
     MessageGenerator.random_car()
     |> Vehicle.make()
@@ -23,7 +22,6 @@ defmodule BookingProcessorTest do
     assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:earliest_start) == nil
   end
 
-  @tag :only
   test "creates a plan where one vehicle gets two bookings and one gets zero" do
     MessageGenerator.random_car()
     |> MessageGenerator.add_vehicle_addresses(:stockholm)
@@ -51,7 +49,6 @@ defmodule BookingProcessorTest do
     assert plan |> Map.get(:booking_ids) |> length() == 2
   end
 
-  @tag :only
   test "creates a plan for two vehicles, where each vehicle gets one" do
     MessageGenerator.random_car()
     |> MessageGenerator.add_vehicle_addresses(:stockholm)
@@ -88,7 +85,6 @@ defmodule BookingProcessorTest do
            |> length() == 1
   end
 
-  @tag :only
   test "vehicle with no end_address defined gets start_address as end_address" do
     MessageGenerator.random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
     |> Vehicle.make()
@@ -108,7 +104,6 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:end_address) == %{lat: 61.829182, lon: 16.0896213}
   end
 
-  @tag :only
   test "vehicle with end_address defined" do
     MessageGenerator.random_car(%{
       start_address: %{lat: 61.829182, lon: 16.0896213},
@@ -131,7 +126,6 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:end_address) == %{lat: 51.829182, lon: 17.0896213}
   end
 
-  @tag :only
   test "time window constrains is passed on from vehicle to plan" do
     now = DateTime.utc_now()
     later = now |> DateTime.add(60 * 60 * 6)
@@ -160,7 +154,6 @@ defmodule BookingProcessorTest do
              latest_end
   end
 
-  @tag :only
   test "capacity is included in the plan" do
     MessageGenerator.random_car(%{
       capacity: %{weight: 731, volume: 18}
@@ -184,7 +177,6 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:capacity) == %{weight: 731, volume: 18}
   end
 
-  @tag :only
   test "vehicle with too small storage doesn't get assigned" do
     MessageGenerator.random_car(%{
       capacity: %{weight: 700, volume: 1}
@@ -205,7 +197,6 @@ defmodule BookingProcessorTest do
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
 
-  @tag :only
   test "vehicle with too little weight capabilities doesn't get assigned" do
     MessageGenerator.random_car(%{
       capacity: %{weight: 50, volume: 18}
@@ -226,7 +217,6 @@ defmodule BookingProcessorTest do
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
 
-  @tag :only
   test "bookings with same pickup should work just fine" do
     MessageGenerator.random_booking(%{
       pickup: %{lat: 61.829182, lon: 16.0896213}

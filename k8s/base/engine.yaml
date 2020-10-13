@@ -23,5 +23,11 @@ spec:
                 name: common-properties
             - configMapRef:
                 name: engine-properties
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgres-password
           resources: {}
       restartPolicy: Always

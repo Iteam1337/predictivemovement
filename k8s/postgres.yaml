@@ -17,11 +17,13 @@ spec:
         app.kubernetes.io/name: postgres
     spec:
       containers:
-        - image: postgres
+        - image: postgres:13
           name: postgres
           env:
-            - name: PGDATA 
+            - name: PGDATA
               value: /data
+            - name: POSTGRES_DB
+              value: eventstore
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

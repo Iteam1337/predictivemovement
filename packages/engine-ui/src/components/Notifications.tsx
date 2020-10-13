@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Elements from '../shared-elements'
 import { Booking, NotificationType, Transport } from '../types'
 import CheckIcon from '../assets/check-icon.svg'
+import helpers from '../utils/helpers'
 
 const NotificationsContainer = styled.div`
   width: 25%;
@@ -42,7 +43,7 @@ const BookingNotification: React.FC<{
         margin="0 0.5rem"
         to={`/bookings/${booking.id}`}
       >
-        {booking.id}
+        {helpers.getLastFourChars(booking.id)}
       </Elements.Links.RoundedLink>
     </Alert>
   </Zoom>

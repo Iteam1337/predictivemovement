@@ -10,6 +10,7 @@ COPY mix.exs .
 COPY mix.lock .
 
 COPY ./apps/engine/lib ./apps/engine/lib
+COPY ./apps/engine/mix_tasks ./apps/engine/mix_tasks
 COPY ./apps/engine/mix.exs ./apps/engine/mix.exs
 COPY ./apps/engine/mix.lock ./apps/engine/mix.lock
 

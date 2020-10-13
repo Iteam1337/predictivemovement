@@ -83,7 +83,7 @@ export const planToFeature = (plan) => {
       ...plan.flatMap(
         ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
           index = i
-          if (activities && activities.length) {
+          if (currentRoute && activities && activities.length) {
             const route = line(
               currentRoute.geometry.coordinates.map(({ lat, lon }) => [
                 lon,

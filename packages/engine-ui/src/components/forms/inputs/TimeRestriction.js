@@ -77,8 +77,6 @@ const VehicleTimeRestriction = ({
         timeCaption="time"
         dateFormat="H:mm"
         excludeOutOfBoundsTimes
-        minTime={helpers.calculateMinTime(selected, minDate)}
-        maxTime={moment().endOf('day').toDate()}
         timeFormat="HH:mm"
         placeholderText={placeholderText}
         customInput={inputElement}

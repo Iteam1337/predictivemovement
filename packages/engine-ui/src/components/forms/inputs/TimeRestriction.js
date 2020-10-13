@@ -63,7 +63,6 @@ const VehicleTimeRestriction = ({
   onChangeHandler,
   placeholderText,
   inputElement,
-  minDate = new Date(),
 }) => {
   return (
     <Wrapper>
@@ -126,7 +125,6 @@ const VehicleTimeRestrictionPair = ({
   handleFocus,
 }) => {
   const timeRestrictionInputRef = React.useRef()
-
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
@@ -138,6 +136,7 @@ const VehicleTimeRestrictionPair = ({
             <DateInput
               handleFocus={handleFocus}
               ref={timeRestrictionInputRef}
+              shouldBeRequired={false}
             />
           }
         />
@@ -150,6 +149,7 @@ const VehicleTimeRestrictionPair = ({
           placeholderText="Sluttid"
           inputElement={
             <DateInput
+              shouldBeRequired={false}
               handleFocus={handleFocus}
               ref={timeRestrictionInputRef}
             />

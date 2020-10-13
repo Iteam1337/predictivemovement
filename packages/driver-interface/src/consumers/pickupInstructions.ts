@@ -1,11 +1,16 @@
-const {
+import { Replies } from 'amqplib'
+import {
   open,
-  queues: { ADD_BOOKING_INFO },
-  exchanges: { OUTGOING_BOOKING_UPDATES },
-} = require('../adapters/amqp')
-const cache = require('../services/cache')
+  queues,
+  exchanges,
+} from '../adapters/amqp'
 
-const pickupInstructions = () =>
+import cache from '../services/cache'
+
+const { ADD_BOOKING_INFO } = queues
+const { OUTGOING_BOOKING_UPDATES } = exchanges
+
+const pickupInstructions = (): Promise<Replies.Consume> =>
   open
     .then((conn) => conn.createChannel())
     .then((ch) =>
@@ -33,4 +38,4 @@ const pickupInstructions = () =>
         )
     )
 
-module.exports = pickupInstructions
+export default pickupInstructions

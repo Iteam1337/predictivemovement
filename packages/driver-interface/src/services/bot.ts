@@ -1,16 +1,18 @@
-const helpers = require('../helpers')
-const amqp = require('./amqp')
-const cache = require('./cache')
-const { v4: uuid } = require('uuid')
+import * as helpers from '../helpers'
+import * as amqp from './amqp'
+import cache from './cache'
+import { v4 as uuid } from 'uuid'
 
-const messaging = require('./messaging')
+import * as messaging from './messaging'
+import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
+import { TelegrafContext } from 'telegraf/typings/context'
 
-const onLogin = async (vehicleId, ctx) => {
+export const onLogin = async (vehicleId: string, ctx: TelegrafContext): Promise<void> => {
   const vehicle = await cache.getVehicle(vehicleId)
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
   const telegramId = ctx.update.message.from.id
-  await cache.setVehicleIdByTelegramId(telegramId, vehicleId)
+  await cache.setVehicleIdByTelegramId(telegramId.toString(), vehicleId)
 
   if (vehicle.telegramId) {
     return
@@ -29,10 +31,10 @@ const onLogin = async (vehicleId, ctx) => {
 
   return messaging
     .onDriverLoginSuccessful(ctx)
-    .then(() => handleNextDriverInstruction(telegramId))
+    .then(() => handleNextDriverInstruction(telegramId.toString()))
 }
 
-const onLocationMessage = (msg, ctx) => {
+export const onLocationMessage = (msg: IncomingMessage, ctx: TelegrafContext): void => {
   const position = {
     lon: msg.location.longitude,
     lat: msg.location.latitude,
@@ -53,7 +55,7 @@ const onLocationMessage = (msg, ctx) => {
   amqp.updateLocation(message, ctx)
 }
 
-const handleNextDriverInstruction = async (telegramId) => {
+export const handleNextDriverInstruction = async (telegramId: string): Promise<Message> => {
   try {
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
     const [currentInstructionGroup] = await cache.getInstructions(vehicleId)
@@ -89,14 +91,12 @@ const handleNextDriverInstruction = async (telegramId) => {
   }
 }
 
-const handleDriverArrivedToPickupOrDeliveryPosition = async (
-  vehicleId,
-  telegramId
-) => {
+export const handleDriverArrivedToPickupOrDeliveryPosition = async (
+  vehicleId: string,
+  telegramId: string
+): Promise<Message | string> => {
   try {
-    const instructionGroups = await cache.getInstructions(vehicleId)
-
-    const [nextInstructionGroup, ...rest] = instructionGroups
+    const [nextInstructionGroup, ...rest] = await cache.getInstructions(vehicleId)
 
     const instructionGroupId = uuid().slice(0, 8)
 
@@ -124,11 +124,4 @@ const handleDriverArrivedToPickupOrDeliveryPosition = async (
     console.log('error in handleNextDriverInstruction: ', error)
     return
   }
-}
-
-module.exports = {
-  onLogin,
-  onLocationMessage,
-  handleNextDriverInstruction,
-  handleDriverArrivedToPickupOrDeliveryPosition,
 }

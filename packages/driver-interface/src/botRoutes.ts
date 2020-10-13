@@ -1,10 +1,11 @@
-const botServices = require('./services/bot')
-const messaging = require('./services/messaging')
-const cache = require('./services/cache')
-const {
-  open,
-  exchanges: { INCOMING_BOOKING_UPDATES },
-} = require('./adapters/amqp')
+import * as botServices from './services/bot'
+import * as messaging from './services/messaging'
+import cache from './services/cache'
+import { open, exchanges } from './adapters/amqp'
+import Telegraf from 'telegraf'
+import { TelegrafContext } from 'telegraf/typings/context'
+
+const { INCOMING_BOOKING_UPDATES } = exchanges
 
 const channel = open
   .then((conn) => conn.createChannel())
@@ -42,17 +43,18 @@ function handleBookingEvent(telegramId, bookingIds, event) {
     .then(() => botServices.handleNextDriverInstruction(telegramId))
 }
 
-function onOffer(msg) {
-  const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  const { a: isAccepted, ...options } = callbackPayload
-  return messaging.onPickupOfferResponse(isAccepted, options, msg)
+function onOffer(_msg) {
+  // messaging.onPickupOfferResponse has been removed
+  // const callbackPayload = JSON.parse(msg.update.callback_query.data)
+  // const { a: isAccepted, ...options } = callbackPayload
+  // return messaging.onPickupOfferResponse(isAccepted, options, msg)
 }
 
-const init = (bot) => {
+export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
-  bot.command('/lista', async (ctx) => {
-    const vehicleId = await cache.getVehicleIdByTelegramId(ctx.botInfo.id)
+  bot.command("/lista", async (ctx) => {
+    const vehicleId = await cache.getVehicleIdByTelegramId(ctx.botInfo.id.toString())
     const vehicleWithPlan = await cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
@@ -122,5 +124,3 @@ const init = (bot) => {
     }
   })
 }
-
-module.exports = { init }

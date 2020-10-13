@@ -1,9 +1,15 @@
-const getLastFourChars = (str) => str.slice(str.length - 4, str.length)
+import { Instruction } from "./types"
 
-const cleanDriverInstructions = (arr) => arr.slice(1, -1)
+export const getLastFourChars = (str: string): string => str.slice(str.length - 4, str.length)
 
-const groupDriverInstructions = (instructions) => {
-  const { data } = instructions.reduce(
+export const cleanDriverInstructions = <T>(arr: T[]): T[] => arr.slice(1, -1)
+
+export const groupDriverInstructions = (instructions: Instruction[]): Instruction[][] => {
+  const { data } = instructions.reduce<{
+    type: string
+    address: string
+    data: Instruction[][]
+  }>(
     (prev, curr) => {
       const currAddress = JSON.stringify(curr.address)
       if (prev.type === curr.type && prev.address === currAddress) {

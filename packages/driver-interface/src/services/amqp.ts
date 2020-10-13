@@ -1,6 +1,6 @@
-const { open, exchanges } = require('../adapters/amqp')
+import { open, exchanges } from '../adapters/amqp'
 
-const updateLocation = (msg, _ctx) => {
+export const updateLocation = (msg: any, _ctx: any) => {
   // Publisher
   open
     .then((conn) => conn.createChannel())
@@ -14,5 +14,3 @@ const updateLocation = (msg, _ctx) => {
 
     .catch(console.warn)
 }
-
-module.exports = { updateLocation }

@@ -113,8 +113,19 @@ const plan = amqp
     durable: false,
   })
   .subscribe({ noAck: true })
-  .map((plan) => {
-    return plan.json()
+  .map((msg) => {
+    const planFromMsg = msg.json()
+
+    const plan = {
+      ...planFromMsg,
+      vehicles: planFromMsg.vehicles.map((route) => ({
+        ...route,
+        current_route: JSON.parse(route.current_route),
+        metadata: JSON.parse(route.metadata),
+      })),
+    }
+
+    return plan
   })
 
 const deleteBooking = (id) => {

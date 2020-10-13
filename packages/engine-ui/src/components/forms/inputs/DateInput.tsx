@@ -40,7 +40,6 @@ const TimeRestrictionDateInput = React.forwardRef<
             value={value}
             ref={ref as React.Ref<HTMLInputElement>}
             placeholder={placeholder}
-            required
             iconInset={withIcon}
           />
         </Elements.Layout.InputInnerContainer>

@@ -6,6 +6,7 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 
 import static com.predictivemovement.route.optimization.StatusResponse.Type.ERROR;
+import static com.predictivemovement.route.optimization.StatusResponse.Type.FAILURE;
 
 /**
  * Data object to carry a time range, start to end.
@@ -82,7 +83,8 @@ public class VRPSettingTimeUtils {
         }
     }
 
-    public double getTimeDifferenceFromNow(final JSONObject json, final String field, final double defaultSeconds) {
+    public double getTimeDifferenceFromNow(final JSONObject json, final String field, final double defaultSeconds)
+            throws RouteOptimizationException {
         if (!json.has(field))
             return defaultSeconds;
 
@@ -93,8 +95,13 @@ public class VRPSettingTimeUtils {
         final ZonedDateTime dateTime = ZonedDateTime.parse(dateTimeString);
         double seconds = ChronoUnit.SECONDS.between(zonedNow, dateTime);
 
-        // TODO should throw an error because time window is not possible anymore?
-        seconds = seconds > 0 ? seconds : defaultSeconds;
+        if (seconds <= 0) {
+            throw new RouteOptimizationException(FAILURE).setStatusMsg("Time of time window constraint is in the past!")
+                    .setSource(this.getClass().toString())
+                    // .setDetail("Difference to current time " + zonedNow + " in seconds is " +
+                    // seconds)
+                    .setMeta(json.toString());
+        }
 
         return seconds;
     }

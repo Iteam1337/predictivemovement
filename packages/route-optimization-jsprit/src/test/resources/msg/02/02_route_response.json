@@ -1,64 +1,69 @@
 {
-    "solution": {
-        "routes": [
-            {
-                "number": 1,
-                "activities": [
-                    {
-                        "address": {
-                            "lon": 21.925670623779297,
-                            "lat": 65.63349914550781
+    "data": {
+        "solution": {
+            "excluded": [],
+            "routes": [
+                {
+                    "number": 1,
+                    "activities": [
+                        {
+                            "address": {
+                                "lon": 21.925670623779297,
+                                "lat": 65.63349914550781
+                            },
+                            "index": -1,
+                            "type": "start"
                         },
-                        "index": -1,
-                        "type": "start"
-                    },
-                    {
-                        "address": {
-                            "lon": 22.015857696533203,
-                            "lat": 65.64157104492188
+                        {
+                            "address": {
+                                "lon": 22.015857696533203,
+                                "lat": 65.64157104492188
+                            },
+                            "index": 1,
+                            "id": "Gammelstad->LTU",
+                            "type": "pickupShipment"
                         },
-                        "index": 1,
-                        "id": "Gammelstad->LTU",
-                        "type": "pickupShipment"
-                    },
-                    {
-                        "address": {
-                            "lon": 22.05173683166504,
-                            "lat": 65.58159637451172
+                        {
+                            "address": {
+                                "lon": 22.05173683166504,
+                                "lat": 65.58159637451172
+                            },
+                            "index": 2,
+                            "id": "Gäddvik->LTU",
+                            "type": "pickupShipment"
                         },
-                        "index": 2,
-                        "id": "Gäddvik->LTU",
-                        "type": "pickupShipment"
-                    },
-                    {
-                        "address": {
-                            "lon": 22.13488006591797,
-                            "lat": 65.6158218383789
+                        {
+                            "address": {
+                                "lon": 22.13488006591797,
+                                "lat": 65.6158218383789
+                            },
+                            "index": 3,
+                            "id": "Gäddvik->LTU",
+                            "type": "deliverShipment"
                         },
-                        "index": 3,
-                        "id": "Gäddvik->LTU",
-                        "type": "deliverShipment"
-                    },
-                    {
-                        "address": {
-                            "lon": 22.13488006591797,
-                            "lat": 65.6158218383789
+                        {
+                            "address": {
+                                "lon": 22.13488006591797,
+                                "lat": 65.6158218383789
+                            },
+                            "index": 4,
+                            "id": "Gammelstad->LTU",
+                            "type": "deliverShipment"
                         },
-                        "index": 4,
-                        "id": "Gammelstad->LTU",
-                        "type": "deliverShipment"
-                    },
-                    {
-                        "address": {
-                            "lon": 21.925670623779297,
-                            "lat": 65.63349914550781
-                        },
-                        "index": -2,
-                        "type": "end"
-                    }
-                ],
-                "vehicle_id": "vehicle-1"
-            }
-        ]
-    }
+                        {
+                            "address": {
+                                "lon": 21.925670623779297,
+                                "lat": 65.63349914550781
+                            },
+                            "index": -2,
+                            "type": "end"
+                        }
+                    ],
+                    "vehicle_id": "vehicle-1"
+                }
+            ]
+        }
+    },
+    "status_msg": "well done",
+    "status": "success"
 }

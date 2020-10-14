@@ -14,6 +14,11 @@ public class RouteOptimizationException extends Exception {
     public String detail = "";
     public String meta = "";
 
+    public RouteOptimizationException(StatusResponse.Type status) {
+        super();
+        this.status = status;
+    }
+
     public RouteOptimizationException(Exception ex, StatusResponse.Type status) {
         super(ex);
         this.status = status;

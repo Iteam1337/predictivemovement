@@ -19,7 +19,7 @@ import org.json.JSONObject;
 
 public class TryRouteOptimization {
 
-    private RouteOptimization routeOptimization;
+    private VRPSolution vrpSolution;
     private JSONObject response;
 
     public static void main(final String args[]) throws Exception {
@@ -40,8 +40,10 @@ public class TryRouteOptimization {
         JSONObject routeRequest = new JSONObject(msg);
 
         // when
-        routeOptimization = new RouteOptimization();
-        response = routeOptimization.calculate(routeRequest);
+        RouteOptimization routeOptimization = new RouteOptimization();
+        vrpSolution = routeOptimization.calculate(routeRequest);
+        StatusResponse statusResponse = new StatusResponse(vrpSolution);
+        response = statusResponse.status;
 
         // then
         debugOutput();
@@ -57,16 +59,15 @@ public class TryRouteOptimization {
 
     private void plot() {
         // plot shipments
-        Plotter problemPlotter = new Plotter(routeOptimization.vrpSolution.problem);
+        Plotter problemPlotter = new Plotter(vrpSolution.problem);
         problemPlotter.plotShipments(true);
         problemPlotter.plot("tmp/route_problem.png", "Route Problem");
 
         // plot solution
-        Iterator<VehicleRoute> solutionsIterator = Solutions.bestOf(routeOptimization.vrpSolution.solutions).getRoutes()
-                .iterator();
+        Iterator<VehicleRoute> solutionsIterator = Solutions.bestOf(vrpSolution.solutions).getRoutes().iterator();
         List<VehicleRoute> solutionsList = Arrays.asList(solutionsIterator.next());
 
-        Plotter solutionPlotter = new Plotter(routeOptimization.vrpSolution.problem, solutionsList);
+        Plotter solutionPlotter = new Plotter(vrpSolution.problem, solutionsList);
         solutionPlotter.plotShipments(true);
         solutionPlotter.plot("tmp/route_solution.png", "Route Solution");
     }
@@ -77,12 +78,12 @@ public class TryRouteOptimization {
     }
 
     private void dump() {
-        System.out.println(routeOptimization.vrpSolution.solutions);
+        System.out.println(vrpSolution.solutions);
 
-        System.out.println("Number of solutions: " + routeOptimization.vrpSolution.solutions.size());
+        System.out.println("Number of solutions: " + vrpSolution.solutions.size());
 
         int i = 0;
-        for (VehicleRoutingProblemSolution solution : routeOptimization.vrpSolution.solutions) {
+        for (VehicleRoutingProblemSolution solution : vrpSolution.solutions) {
             System.out.println("\n--- solution: " + i);
             System.out.println(solution);
             for (VehicleRoute route : solution.getRoutes()) {

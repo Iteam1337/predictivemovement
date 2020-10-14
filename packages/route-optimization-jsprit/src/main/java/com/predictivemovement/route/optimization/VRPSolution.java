@@ -23,8 +23,11 @@ public class VRPSolution {
 
     VehicleRoutingProblemSolution bestSolution;
 
+    ExcludedBookings excludedBookings;
+
     VRPSolution(VRPSetting vrpSetting) {
         this.vrpSetting = vrpSetting;
+        this.excludedBookings = vrpSetting.excludedBookings;
     }
 
     VRPSolution calculate() throws RouteOptimizationException {

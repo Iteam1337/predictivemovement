@@ -50,13 +50,19 @@ public class VRPShipments {
             vrpSetting.locations.put(jsonDelivery.getString("hint"), deliveryLocation);
 
             // time windows
-            VRPSettingTimeWindows timeWindows = new VRPSettingTimeWindows();
-            timeWindows.add(jsonPickup, (timeWindow) -> {
-                shipmentBuilder.addPickupTimeWindow(timeWindow);
-            });
-            timeWindows.add(jsonDelivery, (timeWindow) -> {
-                shipmentBuilder.addDeliveryTimeWindow(timeWindow);
-            });
+            try {
+                VRPSettingTimeWindows timeWindows = new VRPSettingTimeWindows();
+                timeWindows.add(jsonPickup, (timeWindow) -> {
+                    shipmentBuilder.addPickupTimeWindow(timeWindow);
+                });
+                timeWindows.add(jsonDelivery, (timeWindow) -> {
+                    shipmentBuilder.addDeliveryTimeWindow(timeWindow);
+                });
+            } catch (RouteOptimizationException e) {
+                e.setMessage("Booking has excluded because time constaint is in the past");
+                this.vrpSetting.excludedBookings.add(jsonBooking, e);
+                continue;
+            }
 
             // weight and volumes
             JSONObject size = jsonBooking.optJSONObject("size");

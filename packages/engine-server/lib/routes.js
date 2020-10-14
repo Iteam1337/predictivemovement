@@ -11,11 +11,7 @@ const {
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
-const vehiclesCache = new Map()
-const bookingsCache = new Map()
-const planCache = new Map()
-
-function register(io) {
+module.exports = ({ io, bookingsCache, vehiclesCache, planCache }) => {
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto((booking) => bookingsCache.set(booking.id, booking))
@@ -126,8 +122,4 @@ function register(io) {
       socket.emit('vehicle-deleted', id)
     })
   })
-}
-
-module.exports = {
-  register,
 }

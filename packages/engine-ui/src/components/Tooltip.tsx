@@ -1,11 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import Elements from '../shared-elements'
-
 import helpers from '../utils/helpers'
 import { useRouteMatch } from 'react-router-dom'
 import selectors from '../utils/state/selectors'
-
 import { useRecoilState } from 'recoil'
 
 const Container = styled.div<{ x: number; y: number }>`
@@ -122,8 +120,7 @@ const Component: React.FC<{
     },
   }
 
-  const handleClose = () =>
-    setUIState((current) => ({ ...current, showMapTooltip: false }))
+  const handleClose = () => setUIState({ type: 'hideTooltip' })
 
   const entityTypeFromPathname = (pathname: string): EntityTypes => {
     const [, type] = pathname.split('add-')

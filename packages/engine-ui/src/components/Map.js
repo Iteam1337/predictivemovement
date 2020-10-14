@@ -16,6 +16,7 @@ const Map = ({ data }) => {
   const showTextLayer = useRouteMatch({
     path: ['/plans/routes/:routeId'],
   })
+
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type

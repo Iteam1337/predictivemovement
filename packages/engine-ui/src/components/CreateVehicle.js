@@ -6,6 +6,9 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './CreateSuccess'
 import hooks from '../utils/hooks'
 import moment from 'moment'
+import atoms from '../utils/state/atoms'
+import selectors from '../utils/state/selectors'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 
 const initialState = {
   vehicleType: '',
@@ -23,8 +26,9 @@ const CreateVehicle = ({ onSubmit }) => {
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
   const [isFinished, setIsFinished] = React.useState(false)
-
   const [formState, setState] = React.useState(initialState)
+  const [UIState, setUIState] = useRecoilState(selectors.UIState)
+  console.log(UIState)
 
   hooks.useFormStateWithMapClickControl(
     'startPosition',
@@ -79,7 +83,8 @@ const CreateVehicle = ({ onSubmit }) => {
         <Form
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}
-          state={formState}
+          formState={formState}
+          dispatch={setUIState}
         />
       </Elements.Layout.Container>
     </MainRouteLayout>

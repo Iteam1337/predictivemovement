@@ -9,6 +9,7 @@ import Logotype from './components/Logotype'
 import { UIStateProvider } from './utils/UIStateContext'
 import hooks from './utils/hooks'
 import Notifications from './components/Notifications'
+import { RecoilRoot } from 'recoil'
 
 const App = () => {
   const { socket } = useSocket()
@@ -76,22 +77,24 @@ const App = () => {
 
   return (
     <UIStateProvider>
-      <Logotype />
-      <Notifications
-        notifications={notifications}
-        updateNotifications={updateNotifications}
-      />
-      <Sidebar
-        {...state}
-        createBooking={createBooking}
-        dispatchOffers={dispatchOffers}
-        addVehicle={addVehicle}
-        deleteBooking={deleteBooking}
-        deleteVehicle={deleteVehicle}
-      />
-      <Route path="/">
-        <Map data={mapData} />
-      </Route>
+      <RecoilRoot>
+        <Logotype />
+        <Notifications
+          notifications={notifications}
+          updateNotifications={updateNotifications}
+        />
+        <Sidebar
+          {...state}
+          createBooking={createBooking}
+          dispatchOffers={dispatchOffers}
+          addVehicle={addVehicle}
+          deleteBooking={deleteBooking}
+          deleteVehicle={deleteVehicle}
+        />
+        <Route path="/">
+          <Map data={mapData} />
+        </Route>
+      </RecoilRoot>
     </UIStateProvider>
   )
 }

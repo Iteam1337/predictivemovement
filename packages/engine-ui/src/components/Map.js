@@ -2,17 +2,20 @@ import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import mapUtils from '../utils/mapUtils'
-import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
+import { useRecoilState } from 'recoil'
+import atoms from '../utils/state/atoms'
+import selectors from '../utils/state/selectors'
 
 const Map = ({ data }) => {
   const history = useHistory()
-  const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
+  const [viewState, setViewState] = useRecoilState(atoms.map)
+  const [UIState, setUIState] = useRecoilState(selectors.UIState)
+
   const showTextLayer = useRouteMatch({
     path: ['/plans/routes/:routeId'],
   })
-
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type
@@ -27,7 +30,7 @@ const Map = ({ data }) => {
   }
 
   const onMapClick = ({ lngLat: [lon, lat], x, y }) =>
-    dispatch({
+    setUIState({
       type: 'lastClickedPosition',
       payload: { lat, lon, x, y },
     })
@@ -63,7 +66,7 @@ const Map = ({ data }) => {
   ]
 
   const handleDragEvent = () =>
-    UIState.showMapTooltip && dispatch({ type: 'hideTooltip' })
+    UIState.showMapTooltip && setUIState({ type: 'hideTooltip' })
 
   return (
     <>
@@ -74,11 +77,8 @@ const Map = ({ data }) => {
           onMapClick(e)
           handleClickEvent(e)
         }}
-        viewState={UIState.viewport}
-        onViewStateChange={({ viewState }) =>
-          dispatch({ type: 'viewport', payload: viewState })
-        }
-        onLoad={onLoad}
+        viewState={viewState}
+        onViewStateChange={({ viewState }) => setViewState(viewState)}
         onDrag={handleDragEvent}
       >
         <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />

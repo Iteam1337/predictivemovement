@@ -90,7 +90,6 @@ defmodule Vehicle do
 
     struct(Vehicle, vehicle_fields)
     |> apply_vehicle_to_state()
-    |> MQ.publish(Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
     |> (&%VehicleRegistered{vehicle: &1}).()
     |> ES.add_event()
 
@@ -108,6 +107,8 @@ defmodule Vehicle do
     )
 
     Engine.VehicleStore.put_vehicle(id)
+
+    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
 
     vehicle
   end

@@ -9,16 +9,21 @@ const keys = {
   VEHICLE_ID_BY_TELEGRAM_ID: 'vehicle-id-by-telegram-id',
 }
 
-
- export default {
-  getBooking: (id: string): Promise<Booking> => redis.get(`${keys.BOOKINGS}:${id}`).then(JSON.parse),
+export default {
+  getBooking: (id: string): Promise<Booking> =>
+    redis.get(`${keys.BOOKINGS}:${id}`).then(JSON.parse),
   getBookings: (bookingIds: string[]): Promise<Booking[]> =>
     redis
       .mget(...bookingIds.map((bookingId) => `${keys.BOOKINGS}:${bookingId}`))
-      .then((bookings: string[]) => bookings.map((booking: string) => JSON.parse(booking))),
+      .then((bookings: string[]) =>
+        bookings.map((booking: string) => JSON.parse(booking))
+      ),
   addBooking: (id: string, booking: Booking): Promise<string> =>
     redis.set(`${keys.BOOKINGS}:${id}`, JSON.stringify(booking)),
-  setInstructions: (vehicleId: string, instructions: Instruction[][]): Promise<string> =>
+  setInstructions: (
+    vehicleId: string,
+    instructions: Instruction[][]
+  ): Promise<string> =>
     redis.set(
       `${keys.INSTRUCTIONS}:${vehicleId}`,
       JSON.stringify(instructions)
@@ -33,7 +38,10 @@ const keys = {
     redis.get(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`),
   setVehicleIdByTelegramId: (telegramId: string, id: string): Promise<string> =>
     redis.set(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`, id),
-  setInstructionGroup: (id: string, instructionGroup: Instruction[]): Promise<string> =>
+  setInstructionGroup: (
+    id: string,
+    instructionGroup: Instruction[]
+  ): Promise<string> =>
     redis.set(
       `${keys.INSTRUCTION_GROUPS}:${id}`,
       JSON.stringify(instructionGroup)

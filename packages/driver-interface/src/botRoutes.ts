@@ -53,8 +53,10 @@ function onOffer(_msg) {
 export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
-  bot.command("/lista", async (ctx) => {
-    const vehicleId = await cache.getVehicleIdByTelegramId(ctx.botInfo.id.toString())
+  bot.command('/lista', async (ctx) => {
+    const vehicleId = await cache.getVehicleIdByTelegramId(
+      ctx.botInfo.id.toString()
+    )
     const vehicleWithPlan = await cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)

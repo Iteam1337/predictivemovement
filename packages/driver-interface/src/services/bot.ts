@@ -7,7 +7,10 @@ import * as messaging from './messaging'
 import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 
-export const onLogin = async (vehicleId: string, ctx: TelegrafContext): Promise<void> => {
+export const onLogin = async (
+  vehicleId: string,
+  ctx: TelegrafContext
+): Promise<Message | void> => {
   const vehicle = await cache.getVehicle(vehicleId)
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
@@ -34,28 +37,26 @@ export const onLogin = async (vehicleId: string, ctx: TelegrafContext): Promise<
     .then(() => handleNextDriverInstruction(telegramId.toString()))
 }
 
-export const onLocationMessage = (msg: IncomingMessage, ctx: TelegrafContext): void => {
-  const position = {
-    lon: msg.location.longitude,
-    lat: msg.location.latitude,
-  }
-
-  const telegramMetadata = {
-    username: msg.from.username,
-    senderId: msg.from.id,
-  }
+export const onLocationMessage = async (
+  msg: IncomingMessage,
+  ctx: TelegrafContext
+): Promise<void> => {
+  const vehicleId = await cache.getVehicleIdByTelegramId(msg.from.id.toString())
 
   const message = {
-    start_address: position,
-    metadata: {
-      telegram: telegramMetadata,
+    location: {
+      lon: msg.location.longitude,
+      lat: msg.location.latitude,
     },
+    id: vehicleId,
   }
 
   amqp.updateLocation(message, ctx)
 }
 
-export const handleNextDriverInstruction = async (telegramId: string): Promise<Message> => {
+export const handleNextDriverInstruction = async (
+  telegramId: string
+): Promise<Message> => {
   try {
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
     const [currentInstructionGroup] = await cache.getInstructions(vehicleId)
@@ -83,10 +84,7 @@ export const handleNextDriverInstruction = async (telegramId: string): Promise<M
         bookings
       )
   } catch (error) {
-    console.log(
-      'error in handleDriverArrivedToPickupOrDeliveryPosition: ',
-      error
-    )
+    console.log('error in handleNextDriverInstruction: ', error)
     return
   }
 }
@@ -96,7 +94,9 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
   telegramId: string
 ): Promise<Message | string> => {
   try {
-    const [nextInstructionGroup, ...rest] = await cache.getInstructions(vehicleId)
+    const [nextInstructionGroup, ...rest] = await cache.getInstructions(
+      vehicleId
+    )
 
     const instructionGroupId = uuid().slice(0, 8)
 
@@ -121,7 +121,10 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
       )
     return cache.setInstructions(vehicleId, [...rest])
   } catch (error) {
-    console.log('error in handleNextDriverInstruction: ', error)
+    console.log(
+      'error in handleDriverArrivedToPickupOrDeliveryPosition: ',
+      error
+    )
     return
   }
 }

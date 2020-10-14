@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import { Instruction } from '../types'
 
 interface GeocodeResponse {
   results: {
@@ -6,10 +7,10 @@ interface GeocodeResponse {
   }[]
 }
 
-const toGeocodeQuery = ({ lat, lon }: { lat: string, lon: string}): string =>
+const toGeocodeQuery = ({ lat, lon }: { lat: string; lon: string }): string =>
   `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat}, ${lon}&key=${process.env.GOOGLE_API_TOKEN}`
 
-const trimCountrySpec = (address: string) => {
+const trimCountrySpec = (address: string): string => {
   const [addressName, postalCode, _country] = address
     .split(',')
     .map((str) => str.trim())
@@ -17,7 +18,10 @@ const trimCountrySpec = (address: string) => {
   return `${addressName}, ${postalCode}`
 }
 
-export const getAddressFromCoordinate = (coordinate: { lat: string, lon: string}): Promise<string | void> =>
+export const getAddressFromCoordinate = (coordinate: {
+  lat: string
+  lon: string
+}): Promise<string | void> =>
   fetch(toGeocodeQuery(coordinate))
     .then((res) => res.json())
     .then(({ results }: GeocodeResponse) => {
@@ -31,7 +35,9 @@ export const getAddressFromCoordinate = (coordinate: { lat: string, lon: string}
       console.log('Error getting google geocode data: ', err.message)
     )
 
-export const getDirectionsFromActivities = (activities: { address: { lat: string, lon: string }}[]): string =>
+export const getDirectionsFromActivities = (
+  activities: Instruction[]
+): string =>
   activities.reduce(
     (result, { address }) => result.concat(`/${address.lat},${address.lon}`),
     'https://www.google.com/maps/dir'

@@ -1,9 +1,5 @@
 import { Replies } from 'amqplib'
-import {
-  open,
-  queues,
-  exchanges,
-} from '../adapters/amqp'
+import { open, queues, exchanges } from '../adapters/amqp'
 
 import cache from '../services/cache'
 

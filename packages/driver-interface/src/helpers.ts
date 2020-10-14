@@ -32,9 +32,3 @@ export const groupDriverInstructions = (instructions: Instruction[]): Instructio
 
   return data
 }
-
-module.exports = {
-  getLastFourChars,
-  cleanDriverInstructions,
-  groupDriverInstructions,
-}

@@ -1,3 +1,10 @@
+export interface LocationMessage {
+  id: string
+  location: {
+    lat: number
+    lon: number
+  }
+}
 
 export interface Address {
   lat: string
@@ -13,7 +20,6 @@ export interface Instruction {
   type: string
   id: string
 }
-
 
 export interface Vehicle {
   activities?: Instruction[]

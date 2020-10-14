@@ -1,10 +1,6 @@
 import cache from '../services/cache'
 
-import {
-  open,
-  queues,
-  exchanges,
-} from '../adapters/amqp'
+import { open, queues, exchanges } from '../adapters/amqp'
 import { Replies } from 'amqplib'
 
 const { ADD_INSTRUCTIONS_TO_VEHICLE } = queues

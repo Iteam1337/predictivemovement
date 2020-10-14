@@ -1,8 +1,6 @@
 import { connect } from 'amqplib'
 
-export const open = connect(
-  process.env.AMQP_URL || 'amqp://localhost'
-)
+export const open = connect(process.env.AMQP_URL || 'amqp://localhost')
 
 export const exchanges = {
   INCOMING_BOOKING_UPDATES: 'incoming_booking_updates',

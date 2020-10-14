@@ -150,20 +150,28 @@ export const transportIcon = (transports) => {
   let index = 0
   try {
     return [
-      ...transports.flatMap(({ id, tail, start_address, color }, i) => {
-        index = i
-        return [
-          point([start_address.lon, start_address.lat], {
-            properties: {
-              color,
-              highlightColor: color,
-              size: 80,
-            },
-            id,
-            tail,
-          }),
-        ]
-      }),
+      ...transports.flatMap(
+        ({ id, tail, start_address, location, color }, i) => {
+          index = i
+          return [
+            point(
+              [
+                location?.lon || start_address.lon,
+                location?.lat || start_address.lat,
+              ],
+              {
+                properties: {
+                  color,
+                  highlightColor: color,
+                  size: 80,
+                },
+                id,
+                tail,
+              }
+            ),
+          ]
+        }
+      ),
     ]
   } catch (error) {
     console.log(index, error)

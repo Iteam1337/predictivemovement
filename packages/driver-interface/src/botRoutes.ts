@@ -43,13 +43,6 @@ function handleBookingEvent(telegramId, bookingIds, event) {
     .then(() => botServices.handleNextDriverInstruction(telegramId))
 }
 
-function onOffer(_msg) {
-  // messaging.onPickupOfferResponse has been removed
-  // const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  // const { a: isAccepted, ...options } = callbackPayload
-  // return messaging.onPickupOfferResponse(isAccepted, options, msg)
-}
-
 export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
@@ -100,8 +93,6 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.on('callback_query', async (msg) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
     switch (callbackPayload.e) {
-      case 'offer':
-        return onOffer(msg)
       case 'arrived':
         return onArrived(msg)
       case 'picked_up':

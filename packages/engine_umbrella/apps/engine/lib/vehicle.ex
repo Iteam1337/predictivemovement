@@ -1,5 +1,6 @@
 defmodule Vehicle do
   use GenServer
+  use Vex.Struct
   require Logger
   alias Engine.ES
   @derive Jason.Encoder
@@ -18,6 +19,8 @@ defmodule Vehicle do
     :profile,
     :capacity
   ]
+
+  validates(:start_address, presence: true)
 
   def init(init_arg) do
     {:ok, init_arg}
@@ -88,12 +91,21 @@ defmodule Vehicle do
       |> Map.put_new(:capacity, %{volume: 15, weight: 700})
       |> Map.update(:metadata, nil, &Jason.encode!/1)
 
-    struct(Vehicle, vehicle_fields)
-    |> apply_vehicle_to_state()
-    |> (&%VehicleRegistered{vehicle: &1}).()
-    |> ES.add_event()
+    vehicle = struct(Vehicle, vehicle_fields)
 
-    vehicle_fields.id
+    case Vex.valid?(vehicle) do
+      true ->
+        vehicle
+        |> apply_vehicle_to_state()
+        |> (&%VehicleRegistered{vehicle: &1}).()
+        |> ES.add_event()
+
+        vehicle_fields.id
+
+      false ->
+        IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")
+        Vex.errors(vehicle)
+    end
   end
 
   def apply_offer_accepted(id, offer),

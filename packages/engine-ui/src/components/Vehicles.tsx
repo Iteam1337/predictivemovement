@@ -1,12 +1,13 @@
 import React from 'react'
-import { UIStateContext } from '../utils/UIStateContext'
+import stores from '../utils/state/stores'
 import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
 import { Transport } from '../types'
 
 const Vehicles: React.FC<{ vehicles: Transport[] }> = ({ vehicles }) => {
-  const { dispatch } = React.useContext(UIStateContext)
+  const setMap = stores.map((state) => state.set)
+  const dispatch = stores.ui((state) => state.dispatch)
   if (!vehicles.length)
     return (
       <Elements.Typography.NoInfoParagraph>
@@ -15,16 +16,13 @@ const Vehicles: React.FC<{ vehicles: Transport[] }> = ({ vehicles }) => {
     )
 
   const onClickHandler = (lat: number, lon: number) =>
-    dispatch({
-      type: 'viewport',
-      payload: {
-        latitude: lat,
-        longitude: lon,
-        zoom: 10,
-        transitionDuration: 2000,
-        transitionInterpolator: new FlyToInterpolator(),
-        transitionEasing: (t: number) => t * (2 - t),
-      },
+    setMap({
+      latitude: lat,
+      longitude: lon,
+      zoom: 10,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: (t: number) => t * (2 - t),
     })
 
   return (

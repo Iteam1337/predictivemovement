@@ -1,5 +1,4 @@
 import React from 'react'
-import { UIStateContext } from '../utils/UIStateContext'
 import { FlyToInterpolator } from 'react-map-gl'
 import Elements from '../shared-elements/'
 import Icons from '../assets/Icons'
@@ -107,14 +106,13 @@ const Bookings: React.FC<{
   createBooking: () => void
   deleteBooking: () => void
 }> = (props) => {
-  const { dispatch } = React.useContext(UIStateContext)
-  const setMap = stores.map((state) => state)
+  const setMap = stores.map((state) => state.set)
+  const dispatch = stores.ui((state) => state.dispatch)
   const { path, url } = useRouteMatch()
+
   const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
     props.bookings,
   ])
-
-  console.log('ok')
 
   const [expandedSection, setExpandedSection] = React.useState({
     new: false,
@@ -123,7 +121,7 @@ const Bookings: React.FC<{
   })
 
   const onClickHandler = (latitude: number, longitude: number) =>
-    setMap.set({
+    setMap({
       latitude,
       longitude,
       zoom: 10,
@@ -200,6 +198,9 @@ const Bookings: React.FC<{
           <BookingDetails
             bookings={props.bookings}
             deleteBooking={props.deleteBooking}
+            onUnmount={() =>
+              dispatch({ type: 'highlightBooking', payload: undefined })
+            }
           />
         </Route>
       </Switch>

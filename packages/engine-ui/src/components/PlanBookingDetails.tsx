@@ -8,7 +8,7 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
 import moment from 'moment'
-import { UIStateContext } from '../utils/UIStateContext'
+import stores from '../utils/state/stores'
 
 interface Props {
   bookings: Booking[]
@@ -24,7 +24,7 @@ const CapitalizeParagraph = styled(Paragraph)`
 `
 
 const PlanBookingDetails = ({ bookings }: Props) => {
-  const { dispatch } = React.useContext(UIStateContext)
+  const dispatch = stores.ui((state) => state.dispatch)
   const history = useHistory()
   const { routeId, activityId } = useParams<{
     routeId: string

@@ -6,7 +6,7 @@ const {
   createBooking,
   dispatchOffers,
   plan,
-  deleteBooking,
+  publishDeleteBooking,
   deleteVehicle,
 } = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
@@ -112,7 +112,7 @@ module.exports = ({ io, bookingsCache, vehiclesCache, planCache }) => {
     socket.on('delete-booking', (id) => {
       console.log('about to delete booking: ', id)
       bookingsCache.delete(id)
-      deleteBooking(id)
+      publishDeleteBooking(id)
       socket.emit('delete-booking', id)
     })
 

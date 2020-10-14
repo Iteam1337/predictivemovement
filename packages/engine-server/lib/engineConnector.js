@@ -14,26 +14,7 @@ const routingKeys = {
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
-// Bind update_booking_in_admin_ui queue to exchanges, this is done here since fluent-amqp doesnt support
-// binding to different exchanges.
-
-amqp
-  .connect()
-  .then((amqpConnection) => amqpConnection.createChannel())
-  .then((ch) =>
-    ch
-      .assertQueue('update_booking_in_admin_ui', {
-        durable: false,
-      })
-      .then(() =>
-        ch.assertExchange('outgoing_booking_updates', 'topic', {
-          durable: false,
-        })
-      )
-      .then(() =>
-        ch.bindQueue('update_booking_in_admin_ui', 'outgoing_booking_updates')
-      )
-  )
+amqp.connect().then((amqpConnection) => amqpConnection.createChannel())
 
 const bookings = amqp
   .exchange('outgoing_booking_updates', 'topic', {
@@ -42,9 +23,6 @@ const bookings = amqp
   .queue('update_booking_in_admin_ui', {
     durable: false,
   })
-  /* .subscribe is supposed to default to {noAck: true}, dont know what
-   * it means but messages are not acked if i don't specify this
-   */
   .subscribe({ noAck: true }, [
     routingKeys.NEW,
     routingKeys.ASSIGNED,
@@ -128,7 +106,7 @@ const plan = amqp
     return plan
   })
 
-const deleteBooking = (id) => {
+const publishDeleteBooking = (id) => {
   return amqp
     .exchange('incoming_booking_updates', 'topic', {
       durable: false,
@@ -153,6 +131,6 @@ module.exports = {
   createBooking,
   dispatchOffers,
   plan,
-  deleteBooking,
+  publishDeleteBooking,
   deleteVehicle,
 }

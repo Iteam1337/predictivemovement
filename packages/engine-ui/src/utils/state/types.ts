@@ -1,14 +1,5 @@
 import { FlyToInterpolator } from 'react-map-gl'
 
-export type MapState = {
-  latitude: number
-  longitude: number
-  zoom: number
-  transitionDuration: number
-  transitionInterpolator: FlyToInterpolator
-  transitionEasing: (t: number) => number
-}
-
 export type UIState = {
   showMapTooltip: boolean
   highlightBooking?: string
@@ -24,7 +15,7 @@ export type UIState = {
       county: string
     }
   }
-}
+} & { dispatch: (action: UIStateReducerAction) => void }
 
 export type UIStateReducerAction =
   | { type: 'focusInput'; payload: UIState['lastFocusedInput'] }
@@ -38,3 +29,12 @@ export type UIStateReducerAction =
       type: 'addAddressToLastClickedPosition'
       payload: UIState['lastClickedPosition']['address']
     }
+
+export type MapState = {
+  latitude: number
+  longitude: number
+  zoom: number
+  transitionDuration: number
+  transitionInterpolator: FlyToInterpolator
+  transitionEasing: (t: number) => number
+} & { set: (args: Partial<MapState>) => void }

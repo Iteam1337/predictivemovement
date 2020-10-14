@@ -6,6 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './CreateSuccess'
 import hooks from '../utils/hooks'
+import stores from '../utils/state/stores'
 
 const initialState = {
   id: '',
@@ -37,6 +38,7 @@ const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
   const [isFinished, setIsFinished] = React.useState(false)
   const [formState, setState] = React.useState(initialState)
+  const setUIState = stores.ui((state) => state.dispatch)
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
@@ -85,6 +87,7 @@ const CreateBooking = ({ onSubmit }) => {
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}
           state={formState}
+          dispatch={setUIState}
         />
       </Elements.Layout.Container>
     </MainRouteLayout>

@@ -4,14 +4,13 @@ import DeckGL from '@deck.gl/react'
 import mapUtils from '../utils/mapUtils'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
-import { useRecoilState } from 'recoil'
-import atoms from '../utils/state/atoms'
-import selectors from '../utils/state/selectors'
+
+import stores from '../utils/state/stores'
 
 const Map = ({ data }) => {
   const history = useHistory()
-  const [viewState, setViewState] = useRecoilState(atoms.map)
-  const [UIState, setUIState] = useRecoilState(selectors.UIState)
+  const [viewState, setViewState] = stores.map((state) => [state, state.set])
+  const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
   const showTextLayer = useRouteMatch({
     path: ['/plans/routes/:routeId'],

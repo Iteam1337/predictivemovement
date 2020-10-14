@@ -3,8 +3,7 @@ import styled from 'styled-components'
 import Elements from '../shared-elements'
 import helpers from '../utils/helpers'
 import { useRouteMatch } from 'react-router-dom'
-import selectors from '../utils/state/selectors'
-import { useRecoilState } from 'recoil'
+import stores from '../utils/state/stores'
 
 const Container = styled.div<{ x: number; y: number }>`
   position: absolute;
@@ -92,17 +91,16 @@ enum EntityTypes {
   BOOKING = 'booking',
 }
 
-enum InputTypes {
-  START = 'start',
-  END = 'end',
-}
-
 const Component: React.FC<{
   position: { x: number; y: number; lat: number; lon: number }
 }> = ({ position: { lat, lon, ...rest } }) => {
   const { data, error, loading } = useAddressFromCoordinate({ lat, lon })
+  // const [{ lastFocusedInput }, setUIState] = useRecoilState(selectors.UIState)
 
-  const [{ lastFocusedInput }, setUIState] = useRecoilState(selectors.UIState)
+  const [lastFocusedInput, setUIState] = stores.ui((state) => [
+    state.lastFocusedInput,
+    state.dispatch,
+  ])
 
   const createBookingOrVehicleView = useRouteMatch<{}>({
     path: ['/bookings/add-booking', '/transports/add-vehicle'],
@@ -127,14 +125,14 @@ const Component: React.FC<{
     return type as EntityTypes
   }
 
-  const getAddAsInputButton = (pathname: string, inputCode: InputTypes) => (
+  const getAddAsInputButton = (
+    pathname: string,
+    inputCode: 'start' | 'end'
+  ) => (
     <Elements.Typography.InfoSmStrong>
       <AddButton
         onClick={() =>
-          setUIState((current) => ({
-            ...current,
-            address: data,
-          }))
+          setUIState({ type: 'addAddressToLastClickedPosition', payload: data })
         }
       >
         {`Lägg till som ${
@@ -176,7 +174,7 @@ const Component: React.FC<{
               createBookingOrVehicleView &&
               getAddAsInputButton(
                 createBookingOrVehicleView.path,
-                lastFocusedInput as InputTypes
+                lastFocusedInput as 'start' | 'end'
               )}
           </>
         )}

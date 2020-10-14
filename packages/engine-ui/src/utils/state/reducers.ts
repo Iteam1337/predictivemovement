@@ -1,6 +1,6 @@
 import * as types from './types'
 
-const UIState = (state: types.UIState, action: types.UIStateReducerAction) => {
+const ui = (state: types.UIState, action: types.UIStateReducerAction) => {
   switch (action.type) {
     case 'focusInput':
       return { ...state, lastFocusedInput: action.payload }
@@ -40,10 +40,9 @@ const UIState = (state: types.UIState, action: types.UIStateReducerAction) => {
       }
     case 'hideTooltip':
       return { ...state, showMapTooltip: false }
-
     default:
       return state
   }
 }
 
-export default { UIState }
+export default { ui }

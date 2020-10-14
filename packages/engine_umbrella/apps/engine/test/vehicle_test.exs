@@ -26,13 +26,13 @@ defmodule VehicleTest do
     assert vehicle_ids |> length() == 0
   end
 
-  # test "does not allow malformed time constraints" do
-  #   MessageGenerator.random_car(%{ earliest_start: "foo", latest_end: "bar"})
-  #   |> Vehicle.make()
+  test "does not allow malformed time constraints" do
+    MessageGenerator.random_car(%{ earliest_start: "foo", latest_end: "bar"})
+    |> Vehicle.make()
 
-  #   vehicle_ids = Engine.VehicleStore.get_vehicles()
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
 
-  #   clear_state()
-  #   assert vehicle_ids |> length() == 0
-  # end
+    clear_state()
+    assert vehicle_ids |> length() == 0
+  end
 end

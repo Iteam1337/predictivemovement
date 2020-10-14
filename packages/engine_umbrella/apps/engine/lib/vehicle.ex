@@ -20,7 +20,11 @@ defmodule Vehicle do
     :capacity
   ]
 
+  @hour_and_minutes_format ~r/^((?:[01]\d|2[0-3]):[0-5]\d$)/
+
   validates(:start_address, presence: true)
+  validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
+  validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
 
   def init(init_arg) do
     {:ok, init_arg}

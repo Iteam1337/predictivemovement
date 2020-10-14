@@ -1,6 +1,7 @@
 defmodule Engine.BookingProcessor do
   use Broadway
   alias Broadway.Message
+  require Logger
   @plan Application.get_env(:engine, :plan)
 
   def start_link(_opts) do
@@ -70,7 +71,9 @@ defmodule Engine.BookingProcessor do
       label: "a new booking"
     )
 
-    Booking.make(booking)
+    id = Booking.make(booking)
+    Logger.info("Booking with id: #{id} created")
+
     msg
   end
 
@@ -79,8 +82,12 @@ defmodule Engine.BookingProcessor do
         %Message{data: %{vehicle: vehicle}} = msg,
         _context
       ) do
-    IO.inspect(vehicle, label: "a new vehicle")
-    vehicle |> Vehicle.make()
+    id =
+      vehicle
+      |> IO.inspect(label: "creating a new vehicle")
+      |> Vehicle.make()
+
+    Logger.info("Vehicle with id: #{id} created")
     msg
   end
 

@@ -14,123 +14,163 @@ const routingKeys = {
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
-amqp.connect().then((amqpConnection) => amqpConnection.createChannel())
+module.exports = ({ io, bookingsCache, vehiclesCache }) => {
+  amqp.connect().then((amqpConnection) => amqpConnection.createChannel())
 
-const bookings = amqp
-  .exchange('outgoing_booking_updates', 'topic', {
-    durable: false,
-  })
-  .queue('update_booking_in_admin_ui', {
-    durable: false,
-  })
-  .subscribe({ noAck: true }, [
-    routingKeys.NEW,
-    routingKeys.ASSIGNED,
-    routingKeys.PICKED_UP,
-    routingKeys.DELIVERED,
-    routingKeys.DELIVERY_FALIED,
-  ])
-  .map((bookingRes) => {
-    const booking = bookingRes.json()
-    booking.route = JSON.parse(booking.route)
-    booking.metadata = JSON.parse(booking.metadata)
+  /////// Listeners
 
-    return { ...booking, status: bookingRes.fields.routingKey }
-  })
-
-const vehicles = amqp
-  .exchange('outgoing_vehicle_updates', 'topic', {
-    durable: false,
-  })
-  .queue('update_vehicle_in_admin_ui', {
-    durable: false,
-  })
-  .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
-  .map((vehicleRes) => {
-    const vehicle = vehicleRes.json()
-    vehicle.current_route = JSON.parse(vehicle.current_route)
-    vehicle.metadata = JSON.parse(vehicle.metadata)
-
-    return vehicle
-  })
-
-const createBooking = (booking) => {
-  return amqp
-    .exchange('incoming_booking_updates', 'topic', {
+  const bookings = amqp
+    .exchange('outgoing_booking_updates', 'topic', {
       durable: false,
     })
-    .publish({ ...booking, assigned_to: null }, routingKeys.REGISTERED)
-    .then(() =>
-      console.log(` [x] Created booking '${JSON.stringify(booking, null, 2)}'`)
-    )
-}
-
-const dispatchOffers = () => {
-  return amqp
-    .queue('dispatch_offers', { durable: false })
-    .publish(JUST_DO_IT_MESSAGE)
-}
-
-const addVehicle = (vehicle) => {
-  return amqp
-    .exchange('incoming_vehicle_updates', 'topic', { durable: false })
-    .publish(
-      {
-        id: id62(),
-        ...vehicle,
-      },
-      routingKeys.REGISTERED
-    )
-}
-
-const plan = amqp
-  .exchange('outgoing_plan_updates', 'fanout', {
-    durable: false,
-  })
-  .queue('update_plan_in_admin_ui', {
-    durable: false,
-  })
-  .subscribe({ noAck: true })
-  .map((msg) => {
-    const planFromMsg = msg.json()
-
-    const plan = {
-      ...planFromMsg,
-      vehicles: planFromMsg.vehicles.map((route) => ({
-        ...route,
-        current_route: JSON.parse(route.current_route),
-        metadata: JSON.parse(route.metadata),
-      })),
-    }
-
-    return plan
-  })
-
-const publishDeleteBooking = (id) => {
-  return amqp
-    .exchange('incoming_booking_updates', 'topic', {
+    .queue('update_booking_in_admin_ui', {
       durable: false,
     })
-    .publish(id, routingKeys.DELETED)
-    .then(() => console.log(` [x] Delete booking ${id}`))
-}
+    .subscribe({ noAck: true }, [
+      routingKeys.NEW,
+      routingKeys.ASSIGNED,
+      routingKeys.PICKED_UP,
+      routingKeys.DELIVERED,
+      routingKeys.DELIVERY_FALIED,
+    ])
+    .map((bookingRes) => {
+      const booking = bookingRes.json()
+      booking.route = JSON.parse(booking.route)
+      booking.metadata = JSON.parse(booking.metadata)
 
-const deleteVehicle = (id) => {
-  return amqp
-    .exchange('incoming_vehicle_updates', 'topic', {
+      return { ...booking, status: bookingRes.fields.routingKey }
+    })
+
+  const vehicles = amqp
+    .exchange('outgoing_vehicle_updates', 'topic', {
       durable: false,
     })
-    .publish(id, routingKeys.DELETED)
-    .then(() => console.log(` [x] Delete vehicle ${id}`))
-}
+    .queue('update_vehicle_in_admin_ui', {
+      durable: false,
+    })
+    .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
+    .map((vehicleRes) => {
+      const vehicle = vehicleRes.json()
+      vehicle.current_route = JSON.parse(vehicle.current_route)
+      vehicle.metadata = JSON.parse(vehicle.metadata)
 
-module.exports = {
-  addVehicle,
-  bookings,
-  vehicles,
-  createBooking,
-  dispatchOffers,
-  plan,
-  publishDeleteBooking,
-  deleteVehicle,
+      return vehicle
+    })
+
+  const createBooking = (booking) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', {
+        durable: false,
+      })
+      .publish({ ...booking, assigned_to: null }, routingKeys.REGISTERED)
+      .then(() =>
+        console.log(
+          ` [x] Created booking '${JSON.stringify(booking, null, 2)}'`
+        )
+      )
+  }
+
+  const plan = amqp
+    .exchange('outgoing_plan_updates', 'fanout', {
+      durable: false,
+    })
+    .queue('update_plan_in_admin_ui', {
+      durable: false,
+    })
+    .subscribe({ noAck: true })
+    .map((msg) => {
+      const planFromMsg = msg.json()
+
+      const plan = {
+        ...planFromMsg,
+        vehicles: planFromMsg.vehicles.map((route) => ({
+          ...route,
+          current_route: JSON.parse(route.current_route),
+          metadata: JSON.parse(route.metadata),
+        })),
+      }
+
+      return plan
+    })
+
+  amqp
+    .exchange('outgoing_booking_updates', 'topic', {
+      durable: false,
+    })
+    .queue('delete_booking_in_admin_ui', {
+      durable: false,
+    })
+    .subscribe({ noAck: true }, [routingKeys.DELETED])
+    .map((bookingData) => bookingData.json())
+    .each(deleteBooking)
+
+  function deleteBooking(id) {
+    bookingsCache.delete(id)
+    io.emit('delete-booking', id)
+    console.log('deleted')
+  }
+
+  amqp
+    .exchange('outgoing_vehicle_updates', 'topic', {
+      durable: false,
+    })
+    .queue('delete_vehicle_in_admin_ui', {
+      durable: false,
+    })
+    .subscribe({ noAck: true }, [routingKeys.DELETED])
+    .map((vehicleData) => vehicleData.json())
+    .each(deleteVehicle)
+
+  function deleteVehicle(id) {
+    vehiclesCache.delete(id)
+    io.emit('delete-vehicle', id)
+  }
+
+  ///////// Publishers
+
+  const dispatchOffers = () => {
+    return amqp
+      .queue('dispatch_offers', { durable: false })
+      .publish(JUST_DO_IT_MESSAGE)
+  }
+
+  const addVehicle = (vehicle) => {
+    return amqp
+      .exchange('incoming_vehicle_updates', 'topic', { durable: false })
+      .publish(
+        {
+          id: id62(),
+          ...vehicle,
+        },
+        routingKeys.REGISTERED
+      )
+  }
+
+  const publishDeleteBooking = (id) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', {
+        durable: false,
+      })
+      .publish(id, routingKeys.DELETED)
+      .then(() => console.log(` [x] Delete booking ${id}`))
+  }
+
+  const publishDeleteVehicle = (id) => {
+    return amqp
+      .exchange('incoming_vehicle_updates', 'topic', {
+        durable: false,
+      })
+      .publish(id, routingKeys.DELETED)
+      .then(() => console.log(` [x] Delete vehicle ${id}`))
+  }
+  return {
+    bookings,
+    vehicles,
+    plan,
+    publishDeleteBooking,
+    publishDeleteVehicle,
+    dispatchOffers,
+    addVehicle,
+    createBooking,
+  }
 }

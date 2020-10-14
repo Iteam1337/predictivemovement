@@ -51,8 +51,7 @@ public class RouteOptimizationTest {
                 "src/test/resources/msg/05/05_route_response.json");
     }
 
-    // TODO
-    // @Test
+    @Test
     public void two_pickup_time_constraint_in_conflict() throws Exception {
         test_route_optimization("src/test/resources/msg/06/06_route_request.json",
                 "src/test/resources/msg/06/06_route_response.json");

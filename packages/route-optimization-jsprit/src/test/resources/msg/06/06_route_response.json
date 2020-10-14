@@ -1,1 +1,63 @@
-{}
+{
+    "data": {
+        "solution": {
+            "excluded": [
+                {
+                    "delivery": {
+                        "lon": 22.13488006591797,
+                        "lat": 65.6158218383789
+                    },
+                    "pickup": {
+                        "lon": 22.015857696533203,
+                        "lat": 65.64157104492188
+                    },
+                    "id": "Gammelstad->LTU"
+                }
+            ],
+            "routes": [
+                {
+                    "number": 1,
+                    "activities": [
+                        {
+                            "address": {
+                                "lon": 21.925670623779297,
+                                "lat": 65.63349914550781
+                            },
+                            "index": -1,
+                            "type": "start"
+                        },
+                        {
+                            "address": {
+                                "lon": 22.05173683166504,
+                                "lat": 65.58159637451172
+                            },
+                            "index": 1,
+                            "id": "Gäddvik->LTU",
+                            "type": "pickupShipment"
+                        },
+                        {
+                            "address": {
+                                "lon": 22.13488006591797,
+                                "lat": 65.6158218383789
+                            },
+                            "index": 2,
+                            "id": "Gäddvik->LTU",
+                            "type": "deliverShipment"
+                        },
+                        {
+                            "address": {
+                                "lon": 21.925670623779297,
+                                "lat": 65.63349914550781
+                            },
+                            "index": -2,
+                            "type": "end"
+                        }
+                    ],
+                    "vehicle_id": "vehicle-1"
+                }
+            ]
+        }
+    },
+    "status_msg": "Some bookings are excluded!",
+    "status": "failure"
+}

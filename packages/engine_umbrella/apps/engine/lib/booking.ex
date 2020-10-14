@@ -80,6 +80,12 @@ defmodule Booking do
   def apply_delete_to_state(id) do
     Engine.BookingStore.delete_booking(id)
     GenServer.stop(via_tuple(id))
+
+    MQ.publish(
+      id,
+      Application.fetch_env!(:engine, :outgoing_booking_exchange),
+      "deleted"
+    )
   end
 
   def assign(booking_id, vehicle) do

@@ -42,11 +42,15 @@ public class VRPSettingTimeUtils {
         defaultEnd = Double.MAX_VALUE;
     }
 
+    private boolean hasKey(JSONObject json, String key) {
+        return json.has(key) && !json.isNull(key);
+    }
+    
     public VehicleStartAndEndTimes getVehicleStartAndEnd(JSONObject json) throws RouteOptimizationException {
         try {
             VehicleStartAndEndTimes startAndEndTimes = new VehicleStartAndEndTimes();
 
-            if (json.has("earliest_start") && json.has("latest_end")) {
+            if (hasKey(json, "earliest_start") && hasKey(json, "latest_end")) {
 
                 // parse to current date with hours
                 final String earliestStartString = json.getString("earliest_start");
@@ -85,6 +89,7 @@ public class VRPSettingTimeUtils {
 
     public double getTimeDifferenceFromNow(final JSONObject json, final String field, final double defaultSeconds)
             throws RouteOptimizationException {
+      
         if (!json.has(field))
             return defaultSeconds;
 

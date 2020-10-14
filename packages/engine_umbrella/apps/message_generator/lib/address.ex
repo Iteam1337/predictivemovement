@@ -9,6 +9,12 @@ defmodule MessageGenerator.Address do
     parse(Osrm.nearest(position), position)
   end
 
+  # Useful for testing multiple packages at the same location
+  def not_random(%{lon: lon, lat: lat}) do
+    position = %{lon: lon, lat: lat}
+    parse(Osrm.nearest(position), position)
+  end
+
   def parse(%{waypoints: [first | _tail]}, _position) do
     first.location |> (fn [lon, lat] -> %{lon: lon, lat: lat} end).()
   end

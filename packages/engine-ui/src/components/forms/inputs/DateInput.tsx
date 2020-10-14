@@ -8,7 +8,7 @@ const TimeRestrictionFormInputIcon = styled.img`
   height: 10px;
   position: absolute;
   top: 14px;
-  left: 89%;
+  left: 82%;
 `
 
 // eslint-disable-next-line react/display-name

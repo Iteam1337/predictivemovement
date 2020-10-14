@@ -22,8 +22,7 @@ defmodule Engine.MixProject do
       env: [
         amqp_host: "localhost",
         osrm_url: "https://osrm.iteamdev.io",
-        redis_url: "redis://localhost:6379",
-        init_from_storage: false
+        init_from_eventstore: false
       ],
       extra_applications: [:logger, :gproc],
       mod: {Engine.Application, []}
@@ -43,18 +42,15 @@ defmodule Engine.MixProject do
       {:jason, "~> 1.2"},
       {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
       {:math, "~> 0.4.0"},
-      {:mox, "~> 0.5"},
       {:poison, "~> 3.1"},
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
+      {:elixir_uuid, "~> 1.2"},
       {:gproc, "~> 0.8.0"},
-      {:base62_uuid, "~> 2.0.2"},
-      {:redix, ">= 0.11.2"}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:ex_cldr_dates_times, "~> 2.0"},
+      {:eventstore, "~> 1.1"}
     ]
   end
 
-  # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/mocks"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(_), do: ["lib", "mix_tasks"]
 end

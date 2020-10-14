@@ -44,16 +44,12 @@ defmodule Engine.MatchProducer do
     vehicle_string
     |> Poison.decode!(keys: :atoms)
     |> Map.delete(:id)
-    |> Vehicle.make()
   end
 
   defp string_to_booking_transform(booking_string) do
-    %{pickup: pickup, delivery: delivery, id: external_id, metadata: metadata, size: size} =
       Poison.decode!(booking_string, keys: :atoms)
       |> Map.put_new(:metadata, %{})
       |> Map.put_new(:size, nil)
-
-    Booking.make(pickup, delivery, external_id, metadata, size)
   end
 
   # Rabbitmq callbacks

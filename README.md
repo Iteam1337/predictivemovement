@@ -32,12 +32,38 @@ To debug run:
 
     skaffold dev
 
-Or start RabbitMQ locally and the packages manually:
+### Running Predictive Movement locally
 
-    docker-compose -f docker-compose.dev.yml up
+Start dependencies
 
-    cd packages/engine-elixir/
-    mix start
-    # etc..
+    docker-compose up -d
+
+create event_store database
+    
+    cd packages/engine_umbrella/
+    mix do event_store.create, event_store.init
+
+run the engine
+    
+    iex -S mix
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
+
+## Release
+
+You will need:
+
+- [docker installed](https://docs.docker.com/engine/install/)
+- [kubectl installed](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+- [skaffold installed](https://skaffold.dev/docs/install/)
+- login with your Docker account
+- access to Iteam Kubernetes cluster
+- mapbox access token from `Predictivemovement` LastPass folder
+
+Set environment variables that are used by Docker at build time (for the UI) and run the skaffold command with a profile:
+
+```sh
+export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
+export REACT_APP_ENGINE_SERVER=https://engine-server.iteamdev.io
+skaffold run --profile prod
+```

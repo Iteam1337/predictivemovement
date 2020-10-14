@@ -36,6 +36,5 @@ defmodule TestHelper do
   def clear_state() do
     Engine.VehicleStore.clear()
     Engine.BookingStore.clear()
-    Engine.RedisAdapter.clear()
   end
 end

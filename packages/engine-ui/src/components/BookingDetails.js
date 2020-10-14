@@ -6,15 +6,21 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams, useHistory } from 'react-router-dom'
 import helpers from '../utils/helpers'
 import moment from 'moment'
+import ContactPhone from '../assets/contact-phone.svg'
+import ContactName from '../assets/contact-name.svg'
+import { UIStateContext } from '../utils/UIStateContext'
 
 const Paragraph = styled.p`
-  margin: 0;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+`
+
+const CapitalizeParagraph = styled(Paragraph)`
   text-transform: capitalize;
 `
 
 const Timeline = styled.div`
-  margin-top: 2.5rem;
+  margin-top: 1.5rem;
 
   ol {
     list-style-type: none;
@@ -60,12 +66,18 @@ const Timeline = styled.div`
   }
 `
 
-const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
+const BookingDetails = ({ bookings, deleteBooking }) => {
   const { bookingId } = useParams()
   const history = useHistory()
+  const { dispatch } = React.useContext(UIStateContext)
 
   const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
+
+  React.useEffect(
+    () => () => dispatch({ type: 'highlightBooking', payload: undefined }),
+    [dispatch]
+  )
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
@@ -96,6 +108,7 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
       return history.push('/bookings')
     }
   }
+
   const parseEventTypeToHumanReadable = (type) => {
     switch (type) {
       case 'new':
@@ -104,51 +117,152 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
         return 'Upphämtad'
       case 'delivered':
         return 'Levererad'
+      case 'delivery_failed':
+        return 'Kunde ej levereras'
       case 'assigned':
         return 'Tilldelad förare'
       default:
-        return 'Ingen status hittades'
+        return `Okänd status: "${type}"`
     }
   }
 
   if (!booking || !address) return <p>Laddar bokning...</p>
 
+  const {
+    pickup,
+    delivery,
+    id,
+    metadata: { cargo, fragile, sender, recipient },
+    size: { measurement, weight },
+  } = booking
+
   return (
-    <MainRouteLayout redirect="/bookings" onClickHandler={onClickHandler}>
+    <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Bokning</h3>
           <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {helpers.withoutLastFourChars(booking.id)}
-            <Elements.Typography.SpanBold>
-              {helpers.getLastFourChars(booking.id)}
-            </Elements.Typography.SpanBold>
+            {helpers.getLastFourChars(booking.id).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
-        <Elements.Typography.StrongParagraph>
-          Upphämtning
-        </Elements.Typography.StrongParagraph>
-        <Paragraph>{address.pickup}</Paragraph>
-        <Elements.Typography.StrongParagraph>
-          Avlämning
-        </Elements.Typography.StrongParagraph>
-        <Paragraph>{address.delivery}</Paragraph>
-        {booking.assigned_to && (
-          <>
-            <Elements.Typography.StrongParagraph>
-              Bokad transport
-            </Elements.Typography.StrongParagraph>
-
-            <Elements.Links.RoundedLink
-              to={`/transports/${booking.assigned_to.id}`}
-            >
-              {helpers.withoutLastFourChars(booking.assigned_to.id)}
+        <Elements.Layout.SectionWithMargin>
+          {cargo && (
+            <CapitalizeParagraph>
               <Elements.Typography.SpanBold>
-                {helpers.getLastFourChars(booking.assigned_to.id)}
+                Innehåll:{' '}
               </Elements.Typography.SpanBold>
-            </Elements.Links.RoundedLink>
-          </>
-        )}
+              {cargo}
+            </CapitalizeParagraph>
+          )}
+          <Paragraph>
+            <Elements.Typography.SpanBold>
+              Ömtåligt:{' '}
+            </Elements.Typography.SpanBold>
+            {fragile ? 'Ja' : 'Nej'}
+          </Paragraph>
+          {measurement && (
+            <Paragraph>
+              <Elements.Typography.SpanBold>
+                Mått:{' '}
+              </Elements.Typography.SpanBold>
+              {measurement.map((item, index) =>
+                measurement.length === index + 1 ? `${item} cm ` : `${item}x`
+              )}
+            </Paragraph>
+          )}
+          {weight && (
+            <Paragraph>
+              <Elements.Typography.SpanBold>
+                Vikt:{' '}
+              </Elements.Typography.SpanBold>
+              {`${weight} kg`}
+            </Paragraph>
+          )}
+        </Elements.Layout.SectionWithMargin>
+        <Elements.Layout.SectionWithMargin>
+          <Elements.Layout.MarginBottomContainer>
+            <Elements.Typography.StrongParagraph>
+              Upphämtning
+            </Elements.Typography.StrongParagraph>
+            <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
+            {pickup.time_windows &&
+              pickup.time_windows.map((timeWindow) => (
+                <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
+                  {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
+                    ? `${moment(timeWindow.earliest).format(
+                        'YYYY-MM-DD, hh:mm'
+                      )} - ${moment(timeWindow.latest).format('hh:mm')}`
+                    : `${moment(timeWindow.earliest).format(
+                        'YYYY-MM-DD, hh:mm'
+                      )} -
+              ${moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}`}
+                </Elements.Typography.SmallInfoBold>
+              ))}
+          </Elements.Layout.MarginBottomContainer>
+          {sender.name && (
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactName}
+                alt="Contact Avatar"
+              />
+              <CapitalizeParagraph>{sender.name}</CapitalizeParagraph>
+            </Elements.Layout.FlexRowBaselineContainer>
+          )}
+          <Elements.Layout.FlexRowBaselineContainer>
+            <Elements.Icons.MarginRightIcon
+              src={ContactPhone}
+              alt="Contact Phone"
+            />
+            <Paragraph>{sender.contact}</Paragraph>
+          </Elements.Layout.FlexRowBaselineContainer>
+        </Elements.Layout.SectionWithMargin>
+        <Elements.Layout.SectionWithMargin>
+          <Elements.Layout.MarginBottomContainer>
+            <Elements.Typography.StrongParagraph>
+              Avlämning
+            </Elements.Typography.StrongParagraph>
+            <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
+
+            {delivery.time_windows &&
+              delivery.time_windows.map((timeWindow) => (
+                <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
+                  {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
+                  {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}
+                </Elements.Typography.SmallInfoBold>
+              ))}
+          </Elements.Layout.MarginBottomContainer>
+          {sender.name && (
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactName}
+                alt="Contact Avatar"
+              />
+              <CapitalizeParagraph>{recipient.name}</CapitalizeParagraph>
+            </Elements.Layout.FlexRowBaselineContainer>
+          )}
+          <Elements.Layout.FlexRowBaselineContainer>
+            <Elements.Icons.MarginRightIcon
+              src={ContactPhone}
+              alt="Contact Phone"
+            />
+            <Paragraph>{recipient.contact}</Paragraph>
+          </Elements.Layout.FlexRowBaselineContainer>
+        </Elements.Layout.SectionWithMargin>
+        <Elements.Layout.MarginTopContainer>
+          {booking.assigned_to && (
+            <>
+              <Elements.Typography.StrongParagraph>
+                Bokad transport
+              </Elements.Typography.StrongParagraph>
+
+              <Elements.Links.RoundedLink
+                to={`/transports/${booking.assigned_to.id}`}
+              >
+                {helpers.getLastFourChars(booking.assigned_to.id).toUpperCase()}
+              </Elements.Links.RoundedLink>
+            </>
+          )}
+        </Elements.Layout.MarginTopContainer>
         <Timeline>
           <Elements.Typography.StrongParagraph>
             Status
@@ -169,15 +283,17 @@ const BookingDetails = ({ bookings, onClickHandler, deleteBooking }) => {
               ))}
             </ol>
           ) : (
-            <Paragraph>{booking.status}</Paragraph>
+            <CapitalizeParagraph>{booking.status}</CapitalizeParagraph>
           )}
         </Timeline>
-        <Elements.Layout.MarginTopContainer>
-          <Elements.Buttons.DeleteButton
-            onClick={() => handleDeleteClick(booking.id)}
-          >
-            Radera bokning
-          </Elements.Buttons.DeleteButton>
+        <Elements.Layout.MarginTopContainer alignItems="center">
+          {booking.status === 'new' && (
+            <Elements.Buttons.CancelButton
+              onClick={() => handleDeleteClick(id)}
+            >
+              Radera bokning
+            </Elements.Buttons.CancelButton>
+          )}
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

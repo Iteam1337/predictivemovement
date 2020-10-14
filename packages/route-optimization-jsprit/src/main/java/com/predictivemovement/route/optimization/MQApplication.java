@@ -53,7 +53,7 @@ public class MQApplication {
 		JSONObject routeRequest = new JSONObject(msg);
 		RouteOptimization routeOptimization = new RouteOptimization();
 		VRPSolution vrpSolution = routeOptimization.calculate(routeRequest);
-
+    
 		StatusResponse statusResponse = new StatusResponse(vrpSolution);
 		String response = statusResponse.toString();
 

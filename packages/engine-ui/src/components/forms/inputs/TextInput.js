@@ -1,5 +1,5 @@
 import React from 'react'
-import Elements from '../../Elements'
+import Elements from '../../../shared-elements'
 
 const Component = ({
   value,
@@ -9,7 +9,7 @@ const Component = ({
   type = 'text',
   ...rest
 }) => (
-  <Elements.TextInput
+  <Elements.Form.TextInput
     {...rest}
     type={type}
     value={value}

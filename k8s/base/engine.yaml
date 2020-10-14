@@ -14,6 +14,24 @@ spec:
       labels:
         app: engine
     spec:
+      initContainers:
+        - name: engine-migrations
+          image: iteam1337/pm-engine
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: common-properties
+            - configMapRef:
+                name: engine-properties
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgres-password
+          args:
+            - eval
+            - "Engine.ReleaseTasks.init_event_store"
       containers:
         - name: engine
           image: iteam1337/pm-engine
@@ -23,5 +41,11 @@ spec:
                 name: common-properties
             - configMapRef:
                 name: engine-properties
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgres-password
           resources: {}
       restartPolicy: Always

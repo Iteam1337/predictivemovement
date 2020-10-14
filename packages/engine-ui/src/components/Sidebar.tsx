@@ -1,10 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import Bookings from './Bookings'
-import { Switch as RouterSwitch, Route } from 'react-router-dom'
+import { Switch as RouterSwitch, Route, Redirect } from 'react-router-dom'
 import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
+import { Booking, Route as PlanRoute } from '../types'
 
 const Container = styled.div`
   position: absolute;
@@ -19,14 +20,28 @@ const Container = styled.div`
 const Content = styled.div`
   padding: 2rem;
   width: 350px;
+  overflow: auto;
 `
 
-const Sidebar = (state) => {
+interface Props {
+  bookings: Booking[]
+  plan: PlanRoute[]
+  vehicles: any
+  createBooking: () => void
+  deleteBooking: () => void
+  dispatchOffers: () => void
+  addVehicle: () => void
+  deleteVehicle: (id: string) => void
+}
+
+const Sidebar = (state: Props) => {
   return (
     <Container>
       <Navigation />
       <RouterSwitch>
-        <Route exact path="/" />
+        <Route exact path="/">
+          <Redirect from="/" to="/bookings" />
+        </Route>
         <Route>
           <Content>
             <RouterSwitch>
@@ -45,7 +60,12 @@ const Sidebar = (state) => {
                 />
               </Route>
               <Route path="/plans">
-                <Plan plan={state.plan} dispatchOffers={state.dispatchOffers} />
+                <Plan
+                  plan={state.plan}
+                  dispatchOffers={state.dispatchOffers}
+                  transports={state.vehicles}
+                  bookings={state.bookings}
+                />
               </Route>
             </RouterSwitch>
           </Content>

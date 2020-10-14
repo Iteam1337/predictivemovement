@@ -28,7 +28,7 @@
                 "lon": 22.015858,
                 "lat": 65.641574,
                 "hint": "51w8gT9dPIENAAAAAgAAACwAAABVAAAA4zJ8Qb0Btz_bd0dCkebyQQ0AAAACAAAALAAAAFUAAABQHQEAP-9PAUSc6QNy708BZpzpAwMA7xIZJKLf",
-                "time_windows": [
+                "_time_windows": [
                     {
                         "earliest": "1979-08-01T10:00:00.000Z",
                         "latest": "1979-08-01T11:00:00.000Z"

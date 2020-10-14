@@ -1,21 +1,14 @@
 import palette, { getColor } from './palette'
-import { GeoJsonLayer, IconLayer } from '@deck.gl/layers'
-import vehicleSymbol from '../assets/vehicle.svg'
+import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
+import transportDefaultIcon from '../assets/transport.svg'
+import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
+import helpers from './helpers'
 
 export const point = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
     type: 'Point',
-    coordinates,
-  },
-  ...props,
-})
-
-export const multiPoint = (coordinates, props) => ({
-  type: 'Feature',
-  geometry: {
-    type: 'MultiPoint',
     coordinates,
   },
   ...props,
@@ -30,29 +23,20 @@ export const feature = (geometry, props) => ({
 export const line = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
-    type: 'LineString',
-    coordinates,
+    type: 'MultiLineString',
+    coordinates: [coordinates],
   },
   ...props,
 })
 
-export const hexToRGBA = (hex, opacity) => {
-  hex = hex.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
-
-  return [r, g, b, opacity]
-}
-
-export const hexToRGB = (hex) => {
-  hex = hex.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
-
-  return [r, g, b]
-}
+export const text = (coordinates, props) => ({
+  type: 'Feature',
+  geometry: {
+    type: 'Text',
+    coordinates,
+  },
+  ...props,
+})
 
 export const routeAssignedToBooking = (assignedTo) =>
   line(
@@ -66,11 +50,37 @@ export const routeAssignedToBooking = (assignedTo) =>
     }
   )
 
-export const vehicleToFeature = (vehicles) => {
+export const routeActivitiesToFeature = (plan) => {
+  return [
+    ...plan.flatMap(({ activities, id }) => {
+      const routeActivities = activities
+        .filter(({ type }) => type !== 'start')
+        .map(({ address }, index) =>
+          text([address.lon, address.lat], {
+            id,
+            routeIndex: String(index + 1),
+          })
+        )
+      return [...routeActivities]
+    }),
+  ]
+}
+
+export const toTextLayer = (data) =>
+  new TextLayer({
+    id: 'text-layer',
+    data,
+    fontFamily: 'Roboto Mono',
+    getText: (d) => d.routeIndex,
+    getPosition: (d) => d.geometry.coordinates,
+    getSize: 20,
+  })
+
+export const planToFeature = (plan) => {
   let index = 0
   try {
     return [
-      ...vehicles.flatMap(
+      ...plan.flatMap(
         ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
           index = i
           if (activities && activities.length) {
@@ -111,18 +121,43 @@ export const vehicleToFeature = (vehicles) => {
   }
 }
 
-export const vehicleIcon = (vehicles) => {
+export const routeActivityIcon = (route) => {
+  if (!route || !route.activities) return
+
   let index = 0
   try {
     return [
-      ...vehicles.flatMap(({ id, tail, start_address }, i) => {
+      ...route.activities.slice(1, -1).flatMap(({ id, address }, i) => {
+        index = i
+        return [
+          point([address.lon, address.lat], {
+            properties: {
+              color: '#ffffff',
+              highlightColor: '#19DE8B',
+              size: 80,
+            },
+            id,
+          }),
+        ]
+      }),
+    ]
+  } catch (error) {
+    console.log(index, error)
+  }
+}
+
+export const transportIcon = (transports) => {
+  let index = 0
+  try {
+    return [
+      ...transports.flatMap(({ id, tail, start_address, color }, i) => {
         index = i
         return [
           point([start_address.lon, start_address.lat], {
             properties: {
-              color: '#00ff00',
+              color,
+              highlightColor: color,
               size: 80,
-              type: 'vehicle',
             },
             id,
             tail,
@@ -144,9 +179,9 @@ export const bookingIcon = (bookings) => {
         return [
           point([pickup.lon, pickup.lat], {
             properties: {
-              color: '#ccffcc',
+              color: '#ffffff',
+              highlightColor: '#19DE8B',
               size: 80,
-              type: 'booking',
             },
             id,
           }),
@@ -194,6 +229,7 @@ export const bookingToFeature = (bookings) => {
     return route ? points : []
   })
 }
+
 export const toGeoJsonLayer = (id, data, callback) =>
   new GeoJsonLayer({
     id,
@@ -203,106 +239,126 @@ export const toGeoJsonLayer = (id, data, callback) =>
     filled: true,
     extruded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 2,
-    getFillColor: (d) => hexToRGBA(d.properties.color, 255),
+    lineWidthMinPixels: 3,
+    getFillColor: (d) => helpers.hexToRGBA(d.properties.color),
     highlightColor: [19, 197, 123, 255],
     autoHighlight: true,
-    getLineColor: (d) => hexToRGBA(d.properties.color, 255),
+    getLineColor: (d) => helpers.hexToRGBA(d.properties.color),
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
+    lineJointRounded: true,
     onClick: callback,
   })
 
-const getIconMappingFromEntityType = (type) => {
-  switch (type) {
-    case 'vehicle':
-      return {
-        ICON_MAPPING: {
-          marker: {
-            x: 0,
-            y: 0,
-            width: 131,
-            height: 150,
-            mask: true,
-          },
-        },
-        colors: ['#9DFFF9', '#ffffff'],
-        options: {
-          iconAtlas: vehicleSymbol,
-          size: 6,
-          activeSize: 7,
-        },
-      }
-    case 'booking':
-      return {
-        ICON_MAPPING: {
-          marker: {
-            x: 0,
-            y: 0,
-            width: 150,
-            height: 150,
-            mask: true,
-          },
-        },
-        colors: ['#19DE8B', '#ffffff'],
-        options: {
-          iconAtlas: parcelIcon,
-          size: 4,
-          activeSize: 7,
-        },
-      }
-
-    default:
-      return
-  }
-}
-
-export const toIconLayer = (data, activeId) => {
+export const toTransportIconLayer = (data, activeId) => {
   if (!data.length) {
     return
   }
-
-  const { ICON_MAPPING, colors, options } = getIconMappingFromEntityType(
-    data[0].properties.type
-  )
 
   const iconData = data.map((feature) => ({
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
-      color: activeId === feature.id ? colors[0] : colors[1],
+      color:
+        activeId === feature.id
+          ? feature.properties.highlightColor
+          : feature.properties.color,
+      icon: transportDefaultIcon,
+      highlightIcon: transportSelectedIcon,
+      size: 7,
+      highlightSize: 9,
     },
   }))
 
   return new IconLayer({
-    id: data[0].id,
+    id: 'transport-icon',
     data: iconData,
     pickable: true,
-    iconAtlas: options.iconAtlas,
-    iconMapping: ICON_MAPPING,
-    getIcon: (d) => 'marker',
-    sizeScale: options.size,
+    getIcon: (d) => {
+      return {
+        url:
+          d.properties.id === activeId
+            ? d.properties.highlightIcon
+            : d.properties.icon,
+        mask: true,
+        width: 128,
+        height: 128,
+      }
+    },
+    sizeScale: 5,
     getPosition: (d) => d.coordinates,
     transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
     getSize: (d) =>
-      d.properties.id === activeId ? options.activeSize : options.size,
-    getColor: (d) => hexToRGB(d.properties.color),
+      d.properties.id === activeId
+        ? d.properties.highlightSize
+        : d.properties.size,
+    getColor: (d) => helpers.hexToRGBA(d.properties.color),
+  })
+}
+
+export const toBookingIconLayer = (
+  data,
+  activeId,
+  options = { offset: [0, 0] }
+) => {
+  if (!data || !data.length) {
+    return
+  }
+
+  const iconData = data.map((feature) => ({
+    coordinates: feature.geometry.coordinates,
+    properties: {
+      id: feature.id,
+      color:
+        activeId === feature.id
+          ? feature.properties.highlightColor
+          : feature.properties.color,
+      size: 5,
+      activeSize: 7,
+      icon: parcelIcon,
+    },
+  }))
+
+  return new IconLayer({
+    id: 'booking-icon',
+    data: iconData,
+    pickable: true,
+    getPixelOffset: options.offset,
+    getIcon: (d) => {
+      return {
+        url: d.properties.icon,
+        mask: true,
+        width: 128,
+        height: 128,
+      }
+    },
+    sizeScale: 5,
+
+    getPosition: (d) => d.coordinates,
+    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
+    getSize: (d) =>
+      d.properties.id === activeId
+        ? d.properties.activeSize
+        : d.properties.size,
+    getColor: (d) => helpers.hexToRGBA(d.properties.color),
   })
 }
 
 export default {
   feature,
-  multiPoint,
   point,
   line,
   bookingToFeature,
-  vehicleToFeature,
+  planToFeature,
   toGeoJsonLayer,
-  toIconLayer,
-  hexToRGB,
-  vehicleIcon,
+  toBookingIconLayer,
+  transportIcon,
+  toTransportIconLayer,
   bookingIcon,
+  routeActivityIcon,
+  toTextLayer,
+  routeActivitiesToFeature,
 }

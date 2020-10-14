@@ -6,6 +6,7 @@ const routingKeys = {
   REGISTERED: 'registered',
   ASSIGNED: 'assigned',
   DELIVERED: 'delivered',
+  DELIVERY_FALIED: 'delivery_failed',
   PICKED_UP: 'picked_up',
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
@@ -49,9 +50,14 @@ const bookings = amqp
     routingKeys.ASSIGNED,
     routingKeys.PICKED_UP,
     routingKeys.DELIVERED,
+    routingKeys.DELIVERY_FALIED,
   ])
-  .map((bookings) => {
-    return { ...bookings.json(), status: bookings.fields.routingKey }
+  .map((bookingRes) => {
+    const booking = bookingRes.json()
+    booking.route = JSON.parse(booking.route)
+    booking.metadata = JSON.parse(booking.metadata)
+
+    return { ...booking, status: bookingRes.fields.routingKey }
   })
 
 const vehicles = amqp
@@ -62,8 +68,12 @@ const vehicles = amqp
     durable: false,
   })
   .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
-  .map((vehicles) => {
-    return vehicles.json()
+  .map((vehicleRes) => {
+    const vehicle = vehicleRes.json()
+    vehicle.current_route = JSON.parse(vehicle.current_route)
+    vehicle.metadata = JSON.parse(vehicle.metadata)
+
+    return vehicle
   })
 
 const createBooking = (booking) => {
@@ -103,8 +113,19 @@ const plan = amqp
     durable: false,
   })
   .subscribe({ noAck: true })
-  .map((plan) => {
-    return plan.json()
+  .map((msg) => {
+    const planFromMsg = msg.json()
+
+    const plan = {
+      ...planFromMsg,
+      vehicles: planFromMsg.vehicles.map((route) => ({
+        ...route,
+        current_route: JSON.parse(route.current_route),
+        metadata: JSON.parse(route.metadata),
+      })),
+    }
+
+    return plan
   })
 
 const deleteBooking = (id) => {

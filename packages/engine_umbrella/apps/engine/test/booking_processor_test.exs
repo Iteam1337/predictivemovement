@@ -4,26 +4,17 @@ defmodule BookingProcessorTest do
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
-  setup_all do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
-    {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.declare(channel, "get_plan", durable: false)
-    AMQP.Queue.bind(channel, "get_plan", @outgoing_plan_exchange, routing_key: "")
+  test "creates a plan for one vehicle and one booking" do
+    MessageGenerator.random_car()
+    |> Vehicle.make()
 
-    on_exit(fn ->
-      clear_state()
-      AMQP.Channel.close(channel)
-      AMQP.Connection.close(connection)
-    end)
+    MessageGenerator.random_booking()
+    |> Booking.make()
 
-    %{channel: channel}
-  end
-
-  test "creates a plan for one vehicle and one booking", %{channel: channel} do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    MessageGenerator.add_random_car()
-    MessageGenerator.add_random_booking()
-    plan = wait_for_message(channel)
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
     clear_state()
 
     assert Map.get(plan, :booking_ids) |> length() == 1
@@ -31,31 +22,54 @@ defmodule BookingProcessorTest do
     assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:earliest_start) == nil
   end
 
-  test "creates a plan where one vehicle gets two bookings and one gets zero", %{channel: channel} do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    MessageGenerator.add_random_booking(:stockholm)
-    MessageGenerator.add_random_booking(:stockholm)
-    MessageGenerator.add_random_car(:stockholm)
-    MessageGenerator.add_random_car(:gothenburg)
+  test "creates a plan where one vehicle gets two bookings and one gets zero" do
+    MessageGenerator.random_car()
+    |> MessageGenerator.add_vehicle_addresses(:stockholm)
+    |> Vehicle.make()
 
-    plan = wait_for_x_messages(2, channel)
+    MessageGenerator.random_car()
+    |> MessageGenerator.add_vehicle_addresses(:gothenburg)
+    |> Vehicle.make()
+
+    MessageGenerator.random_booking()
+    |> MessageGenerator.add_booking_addresses(:stockholm)
+    |> Booking.make()
+
+    MessageGenerator.random_booking()
+    |> MessageGenerator.add_booking_addresses(:stockholm)
+    |> Booking.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
 
     clear_state()
-    assert plan |> List.first() |> Map.get(:vehicles) |> length() == 1
-    assert plan |> List.first() |> Map.get(:booking_ids) |> length() == 2
+    assert plan |> Map.get(:vehicles) |> length() == 1
+    assert plan |> Map.get(:booking_ids) |> length() == 2
   end
 
-  test "creates a plan for two vehicles, where each vehicle gets one", %{channel: channel} do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    MessageGenerator.add_random_booking(:stockholm)
-    MessageGenerator.add_random_booking(:gothenburg)
-    MessageGenerator.add_random_car(:stockholm)
-    MessageGenerator.add_random_car(:gothenburg)
+  test "creates a plan for two vehicles, where each vehicle gets one" do
+    MessageGenerator.random_car()
+    |> MessageGenerator.add_vehicle_addresses(:stockholm)
+    |> Vehicle.make()
 
-    plan =
-      wait_for_x_messages(2, channel)
-      |> Enum.sort(&(length(&1.vehicles) > length(&2.vehicles)))
-      |> List.first()
+    MessageGenerator.random_car()
+    |> MessageGenerator.add_vehicle_addresses(:gothenburg)
+    |> Vehicle.make()
+
+    MessageGenerator.random_booking()
+    |> MessageGenerator.add_booking_addresses(:stockholm)
+    |> Booking.make()
+
+    MessageGenerator.random_booking()
+    |> MessageGenerator.add_booking_addresses(:gothenburg)
+    |> Booking.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
 
     clear_state()
 
@@ -71,14 +85,18 @@ defmodule BookingProcessorTest do
            |> length() == 1
   end
 
-  test "vehicle with no end_address defined gets start_address as end_address", %{
-    channel: channel
-  } do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
+  test "vehicle with no end_address defined gets start_address as end_address" do
+    MessageGenerator.random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
+    |> Vehicle.make()
 
-    MessageGenerator.add_random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
-    MessageGenerator.add_random_booking()
-    plan = wait_for_message(channel)
+    MessageGenerator.random_booking()
+    |> Booking.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
+
     clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
@@ -86,16 +104,21 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:end_address) == %{lat: 61.829182, lon: 16.0896213}
   end
 
-  test "vehicle with end_address defined", %{channel: channel} do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-
-    MessageGenerator.add_random_car(%{
+  test "vehicle with end_address defined" do
+    MessageGenerator.random_car(%{
       start_address: %{lat: 61.829182, lon: 16.0896213},
       end_address: %{lat: 51.829182, lon: 17.0896213}
     })
+    |> Vehicle.make()
 
-    MessageGenerator.add_random_booking()
-    plan = wait_for_message(channel)
+    MessageGenerator.random_booking()
+    |> Booking.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
+
     clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
@@ -103,42 +126,50 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:end_address) == %{lat: 51.829182, lon: 17.0896213}
   end
 
-  test "time window constrains is passed on from vehicle to plan", %{
-    channel: channel
-  } do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-    earliest_start = DateTime.utc_now()
-    latest_end = DateTime.utc_now() |> DateTime.add(60 * 60 * 6)
+  test "time window constrains is passed on from vehicle to plan" do
+    now = DateTime.utc_now()
+    later = now |> DateTime.add(60 * 60 * 6)
+    {:ok, earliest_start} = Engine.Cldr.DateTime.to_string(now, format: "HH:mm")
+    {:ok, latest_end} = Engine.Cldr.DateTime.to_string(later, format: "HH:mm")
 
-    MessageGenerator.add_random_car(%{earliest_start: earliest_start, latest_end: latest_end})
-    MessageGenerator.add_random_booking()
+    MessageGenerator.random_car(%{earliest_start: earliest_start, latest_end: latest_end})
+    |> Vehicle.make()
 
-    plan = wait_for_message(channel)
+    MessageGenerator.random_booking()
+    |> Booking.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
+
     clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
     assert first_vehicle |> Map.get(:earliest_start) ==
-             earliest_start |> DateTime.to_iso8601()
+             earliest_start
 
     assert first_vehicle |> Map.get(:latest_end) ==
-             latest_end |> DateTime.to_iso8601()
+             latest_end
   end
 
-  test "capacity is included in the plan", %{
-    channel: channel
-  } do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-
-    MessageGenerator.add_random_car(%{
+  test "capacity is included in the plan" do
+    MessageGenerator.random_car(%{
       capacity: %{weight: 731, volume: 18}
     })
+    |> Vehicle.make()
 
-    MessageGenerator.add_random_booking(%{
+    MessageGenerator.random_booking(%{
       size: %{measurements: [14, 12, 10], weight: 1}
     })
+    |> Booking.make()
 
-    plan = wait_for_message(channel)
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
+
     clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
@@ -146,67 +177,69 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:capacity) == %{weight: 731, volume: 18}
   end
 
-  @tag :skip
-  test "vehicle with too small storage doesn't get assigned", %{
-    channel: channel
-  } do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-
-    MessageGenerator.add_random_car(%{
+  test "vehicle with too small storage doesn't get assigned" do
+    MessageGenerator.random_car(%{
       capacity: %{weight: 700, volume: 1}
     })
+    |> Vehicle.make()
 
-    MessageGenerator.add_random_booking(%{
+    MessageGenerator.random_booking(%{
       size: %{measurements: [100, 100, 101], weight: 2}
     })
+    |> Booking.make()
 
-    plan = wait_for_message(channel)
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
     clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
 
-  @tag :skip
-  test "vehicle with too little weight capabilities doesn't get assigned", %{
-    channel: channel
-  } do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-
-    MessageGenerator.add_random_car(%{
+  test "vehicle with too little weight capabilities doesn't get assigned" do
+    MessageGenerator.random_car(%{
       capacity: %{weight: 50, volume: 18}
     })
+    |> Vehicle.make()
 
-    MessageGenerator.add_random_booking(%{
+    MessageGenerator.random_booking(%{
       size: %{measurements: [14, 12, 10], weight: 100}
     })
+    |> Booking.make()
 
-    plan = wait_for_message(channel)
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
     clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
 
-  test "bookings with same pickup should work just fine", %{
-    channel: channel
-  } do
-    AMQP.Basic.consume(channel, "get_plan", nil, no_ack: true)
-
-    MessageGenerator.add_random_booking(%{
+  test "bookings with same pickup should work just fine" do
+    MessageGenerator.random_booking(%{
       pickup: %{lat: 61.829182, lon: 16.0896213}
     })
+    |> Booking.make()
 
-    MessageGenerator.add_random_booking(%{
+    MessageGenerator.random_booking(%{
       pickup: %{lat: 61.829182, lon: 16.0896213}
     })
+    |> Booking.make()
 
-    MessageGenerator.add_random_booking(%{
+    MessageGenerator.random_booking(%{
       delivery: %{lat: 61.829182, lon: 16.0896213}
     })
+    |> Booking.make()
 
-    MessageGenerator.add_random_car(%{start_address: %{lat: 60.1111, lon: 16.07544}})
+    MessageGenerator.random_car(%{start_address: %{lat: 60.1111, lon: 16.07544}})
+    |> Vehicle.make()
 
-    plan = wait_for_message(channel)
-
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
     clear_state()
 
     assert Map.get(plan, :vehicles) |> length() == 1

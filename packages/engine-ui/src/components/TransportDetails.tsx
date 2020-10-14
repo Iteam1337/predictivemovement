@@ -5,11 +5,11 @@ import Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams } from 'react-router-dom'
-import moment from 'moment'
 import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import { UIStateContext } from '../utils/UIStateContext'
 import helpers from '../utils/helpers'
+import { Transport } from '../types'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -40,10 +40,10 @@ const RouteTitleWrapper = styled.div`
   }
 `
 
-const VehicleDetails: React.FC<{
-  vehicles: any
-  deleteVehicle: (id: string) => void
-}> = ({ vehicles, deleteVehicle }) => {
+const TransportDetails: React.FC<{
+  transports: Transport[]
+  deleteTransport: (id: string) => void
+}> = ({ transports, deleteTransport }) => {
   const { dispatch } = React.useContext(UIStateContext)
   const history = useHistory()
 
@@ -53,28 +53,33 @@ const VehicleDetails: React.FC<{
     status: false,
   })
 
+  React.useEffect(
+    () => () => dispatch({ type: 'highlightTransport', payload: undefined }),
+    [dispatch]
+  )
+
   const { vehicleId } = useParams<{ vehicleId: string }>()
+  const transport = transports.find((v) => v.id === vehicleId)
 
-  const vehicle = vehicles.find((v: any) => v.id === vehicleId)
-
-  if (!vehicle) return <p>Loading...</p>
+  if (!transport) return <p>Loading...</p>
 
   const handleDeleteClick = (vehicleId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
-      deleteVehicle(vehicleId)
+      deleteTransport(vehicleId)
       return history.push('/transports')
     }
   }
 
-  const handleOnLinkClick = (id: string) => {
-    const activity = vehicle.activities.find(
-      (activity: { id: string }) => activity.id === id
+  const handleBookingClick = (bookingId: string) => {
+    const activity = transport?.activities?.find(
+      (activity) => activity.id === bookingId
     )
-    dispatch({
+
+    return dispatch({
       type: 'viewport',
       payload: {
-        latitude: activity.address.lat,
-        longitude: activity.address.lon,
+        latitude: activity?.address.lat,
+        longitude: activity?.address.lon,
         zoom: 14,
         transitionDuration: 2000,
         transitionInterpolator: new FlyToInterpolator(),
@@ -88,20 +93,20 @@ const VehicleDetails: React.FC<{
       <Elements.Layout.Container>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
-          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {helpers.withoutLastFourChars(vehicleId)}
-            <Elements.Typography.SpanBold>
-              {helpers.getLastFourChars(vehicleId)}
-            </Elements.Typography.SpanBold>
+          <Elements.Typography.RoundedLabelDisplay
+            margin="0 0.5rem"
+            backgroundColor={transport.color}
+          >
+            {helpers.getLastFourChars(vehicleId).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
-        {vehicle.capacity && (
+        {transport.capacity && (
           <>
             <Elements.Typography.StrongParagraph>
               Kapacitet
             </Elements.Typography.StrongParagraph>
-            <Paragraph>Maxvolym: {vehicle.capacity.volume}kbm</Paragraph>
-            <Paragraph>Maxvikt: {vehicle.capacity.weight}kg</Paragraph>
+            <Paragraph>Maxvolym: {transport.capacity.volume}kbm</Paragraph>
+            <Paragraph>Maxvikt: {transport.capacity.weight}kg</Paragraph>
           </>
         )}
         <Elements.Typography.StrongParagraph>
@@ -109,19 +114,20 @@ const VehicleDetails: React.FC<{
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {vehicle.earliest_start && vehicle.latest_end
-              ? `
-                ${moment(vehicle.earliest_start).format('LT')} -
-                ${moment(vehicle.latest_end).format('LT')} `
-              : 'Inget körschema fastställt'}
+            {transport.earliest_start} - {transport.latest_end}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
-        {vehicle.end_address.name && (
-          <Paragraph>Slutposition: {vehicle.end_address.name}</Paragraph>
+        {transport.end_address.name && (
+          <>
+            <Elements.Typography.StrongParagraph>
+              Slutposition
+            </Elements.Typography.StrongParagraph>
+            <Paragraph>{transport.end_address.name}</Paragraph>
+          </>
         )}
         <Line />
 
-        {vehicle.activities && vehicle.activities.length > 0 && (
+        {transport.activities && transport.activities.length > 0 ? (
           <>
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>
@@ -142,16 +148,13 @@ const VehicleDetails: React.FC<{
               </RouteTitleWrapper>
               {showInfo.bookings && (
                 <Elements.Layout.LinkListContainer>
-                  {vehicle.booking_ids.map((bookingId: string) => (
+                  {transport.booking_ids?.map((bookingId) => (
                     <Elements.Links.RoundedLink
                       to={`/bookings/${bookingId}`}
                       key={bookingId}
-                      onClick={() => handleOnLinkClick(bookingId)}
+                      onClick={() => handleBookingClick(bookingId)}
                     >
-                      {helpers.withoutLastFourChars(bookingId)}
-                      <Elements.Typography.SpanBold>
-                        {helpers.getLastFourChars(bookingId)}
-                      </Elements.Typography.SpanBold>
+                      {helpers.getLastFourChars(bookingId).toUpperCase()}
                     </Elements.Links.RoundedLink>
                   ))}
                 </Elements.Layout.LinkListContainer>
@@ -174,7 +177,7 @@ const VehicleDetails: React.FC<{
                   <Icons.Arrow active={showInfo.route} />
                 </button>
               </RouteTitleWrapper>
-              {showInfo.route && <RouteActivities vehicle={vehicle} />}
+              {showInfo.route && <RouteActivities route={transport} />}
             </Elements.Layout.MarginBottomContainer>
             <Elements.Layout.MarginBottomContainer>
               <RouteTitleWrapper>
@@ -200,17 +203,33 @@ const VehicleDetails: React.FC<{
               )}
             </Elements.Layout.MarginBottomContainer>
           </>
+        ) : (
+          <>
+            <Elements.Typography.StrongParagraph>
+              Bokningar på fordon
+            </Elements.Typography.StrongParagraph>
+            <Elements.Typography.NoInfoParagraph>
+              Inga bekräftade bokningar
+            </Elements.Typography.NoInfoParagraph>
+            <Line />
+            <Elements.Typography.StrongParagraph>
+              Rutt
+            </Elements.Typography.StrongParagraph>
+            <Elements.Typography.NoInfoParagraph>
+              Ingen rutt planerad
+            </Elements.Typography.NoInfoParagraph>
+          </>
         )}
-        <Elements.Layout.MarginTopContainer>
-          <Elements.Buttons.DeleteButton
-            onClick={() => handleDeleteClick(vehicle.id)}
+        <Elements.Layout.MarginTopContainer alignItems="center">
+          <Elements.Buttons.CancelButton
+            onClick={() => handleDeleteClick(transport.id)}
           >
             Radera transport
-          </Elements.Buttons.DeleteButton>
+          </Elements.Buttons.CancelButton>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>
   )
 }
 
-export default VehicleDetails
+export default TransportDetails

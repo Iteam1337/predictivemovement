@@ -3,13 +3,9 @@ import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
+import { Transport } from '../types'
 
-type Vehicle = {
-  id: string
-  start_address: { lon: number; lat: number }
-}
-
-const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
+const Vehicles: React.FC<{ vehicles: Transport[] }> = ({ vehicles }) => {
   const { dispatch } = React.useContext(UIStateContext)
   if (!vehicles.length)
     return (
@@ -30,32 +26,29 @@ const Vehicles: React.FC<{ vehicles: Vehicle[] }> = ({ vehicles }) => {
         transitionEasing: (t: number) => t * (2 - t),
       },
     })
+
   return (
     <Elements.Layout.LinkListContainer>
       {vehicles.map((vehicle) => (
         <Elements.Layout.InlineContainer key={vehicle.id}>
-          <Elements.Typography.NoMarginParagraph>
-            ID
-          </Elements.Typography.NoMarginParagraph>
-          <Elements.Layout.MarginLeftContainerSm>
-            <Elements.Links.RoundedLink
-              onMouseOver={() =>
-                dispatch({ type: 'highlightVehicle', payload: vehicle.id })
-              }
-              onMouseLeave={() =>
-                dispatch({ type: 'highlightVehicle', payload: undefined })
-              }
-              to={`/transports/${vehicle.id}`}
-              onClick={() =>
-                onClickHandler(
-                  vehicle.start_address.lat,
-                  vehicle.start_address.lon
-                )
-              }
-            >
-              ...{helpers.getLastFourChars(vehicle.id)}
-            </Elements.Links.RoundedLink>
-          </Elements.Layout.MarginLeftContainerSm>
+          <Elements.Links.RoundedLink
+            color={vehicle.color}
+            onMouseOver={() =>
+              dispatch({ type: 'highlightTransport', payload: vehicle.id })
+            }
+            onMouseLeave={() =>
+              dispatch({ type: 'highlightTransport', payload: undefined })
+            }
+            to={`/transports/${vehicle.id}`}
+            onClick={() =>
+              onClickHandler(
+                vehicle.start_address.lat,
+                vehicle.start_address.lon
+              )
+            }
+          >
+            {helpers.getLastFourChars(vehicle.id).toUpperCase()}
+          </Elements.Links.RoundedLink>
         </Elements.Layout.InlineContainer>
       ))}
     </Elements.Layout.LinkListContainer>

@@ -1,11 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
-import Elements from './Elements'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
-import SharedElements from '../shared-elements'
-// import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
-// import CurrentPlan from './CurrentPlan'
+import Elements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
+import PlanBookingDetails from './PlanBookingDetails'
+import { Route as PlanRoute, Transport, Booking } from '../types'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -13,86 +12,64 @@ const PlanWrapper = styled.div`
   height: 100%;
 `
 
-interface Address {
-  lat: string
-  lon: string
-}
-
-interface Activity {
-  address: Address
-  index: number
-  type: string
-}
-
-interface AddressWithName extends Address {
-  name: string
-}
-
-export interface IPlanVehicle {
-  activities: Activity[]
-  booking_ids: string[]
-  busy: any
-  capacity: any
-  current_route: any
-  earliest_start: Date
-  end_address: AddressWithName
-  id: string
-  latest_end: Date
-  metadata: any
-  profile: any
-  start_address: AddressWithName
-}
-
 interface IPlanProps {
-  plan: IPlanVehicle[]
+  plan: PlanRoute[]
+  transports: Transport[]
   dispatchOffers: () => void
+  bookings: Booking[]
 }
 
-const Plan = ({ plan: planVehicles, dispatchOffers }: IPlanProps) => {
-  const activePlanVehicles = planVehicles.filter((d) => d.activities.length > 0)
-  const { path } = useRouteMatch()
+const Plan = ({
+  plan: routes,
+  dispatchOffers,
+  transports,
+  bookings,
+}: IPlanProps) => {
+  const activeRoutes = routes.filter(
+    (d) => d.activities && d.activities.length > 0
+  )
 
+  const { path } = useRouteMatch()
   return (
     <Switch>
       <Route exact path={[path, `${path}/routes/:routeId`]}>
         <PlanWrapper>
           <h3>Föreslagen plan</h3>
-          {!activePlanVehicles.length ? (
-            <Elements.NoInfoParagraph>
+          {!activeRoutes.length ? (
+            <Elements.Typography.NoInfoParagraph>
               Det finns inga föreslagna rutter...
-            </Elements.NoInfoParagraph>
+            </Elements.Typography.NoInfoParagraph>
           ) : (
             <>
-              {activePlanVehicles.map((vehicle, i) => (
+              {activeRoutes.map((route, i) => (
                 <PlanRouteDetails
                   key={i}
-                  vehicle={vehicle}
+                  route={route}
                   routeNumber={i + 1}
+                  color={
+                    transports.find((transport) => transport.id === route.id)
+                      ?.color
+                  }
                 />
               ))}
-              <SharedElements.Buttons.SubmitButton
-                justifySelf="center"
-                marginTop="20px"
+              <Elements.Buttons.SubmitButton
+                alignSelf="center"
+                marginTop="5rem"
                 onClick={dispatchOffers}
               >
                 Bekräfta plan
-              </SharedElements.Buttons.SubmitButton>
+              </Elements.Buttons.SubmitButton>
             </>
           )}
-          {/* Disabled as we cannot see current plan yet. */}
-          {/* <StyledLink to={`${path}/current-plan`}>
-            <AddFormFieldButton onClickHandler={null}>
-              Aktuell plan
-            </AddFormFieldButton>
-          </StyledLink> */}
         </PlanWrapper>
+      </Route>
+      <Route exact path={`${path}/routes/:routeId/:activityId`}>
+        <PlanBookingDetails bookings={bookings} />
       </Route>
       <Route
         exact
         path={[`${path}/current-plan`, `${path}/current-plan/:routeId`]}
-      >
-        {/* <CurrentPlan plan={planVehicles} /> */}
-      </Route>
+      />
     </Switch>
   )
 }

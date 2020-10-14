@@ -1,7 +1,12 @@
 import styled from 'styled-components'
 
-const SubmitButton = styled.button<{ justifySelf: string; marginTop?: string }>`
-  padding: 0.75rem 2.3rem;
+const SubmitButton = styled.button<{
+  alignSelf?: string
+  justifySelf?: string
+  marginTop?: string
+  padding?: string
+  width?: string
+}>`
   background: #ccffcc;
   font-weight: 600;
   color: inherit;
@@ -9,7 +14,10 @@ const SubmitButton = styled.button<{ justifySelf: string; marginTop?: string }>`
   border: none;
   cursor: pointer;
   justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
+  align-self: ${({ alignSelf }) => alignSelf && alignSelf};
   margin-top: ${({ marginTop }) => marginTop && marginTop};
+  padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
+  width: ${({ width }) => (width ? width : 'fit-content')};
 
   :hover {
     background: #c1f5c1;
@@ -20,25 +28,15 @@ const SubmitButton = styled.button<{ justifySelf: string; marginTop?: string }>`
   }
 `
 
-const DeleteButton = styled.button<{ justifySelf?: string }>`
-  padding: 0.75rem 2.3rem;
-  background: red;
-  font-weight: 600;
-  color: white;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  justify-self: ${({ justifySelf }) => justifySelf && justifySelf};
-`
-
-const CancelButton = styled.button`
-  padding: 0.75rem 2.3rem;
+const CancelButton = styled.button<{ padding?: string }>`
+  padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
   background: #fff;
   font-weight: 600;
   color: inherit;
   font-size: 0.875rem;
   border: 1px solid #c4c4c4;
   cursor: pointer;
+  width: fit-content;
 
   :hover {
     color: #666666;
@@ -62,6 +60,7 @@ const StyledAddFormFieldButton = styled.button<{
   font-size: ${({ size }) => size || '1rem'};
   margin-top: ${({ marginTop }) => marginTop};
 `
+
 const DisplayTextButton = styled.button``
 
 export default {
@@ -69,5 +68,4 @@ export default {
   CancelButton,
   StyledAddFormFieldButton,
   DisplayTextButton,
-  DeleteButton,
 }

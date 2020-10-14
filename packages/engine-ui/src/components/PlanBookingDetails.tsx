@@ -8,10 +8,10 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
 import moment from 'moment'
-import stores from '../utils/state/stores'
 
 interface Props {
   bookings: Booking[]
+  onUnmount: () => void
 }
 
 const Paragraph = styled.p`
@@ -23,20 +23,12 @@ const CapitalizeParagraph = styled(Paragraph)`
   text-transform: capitalize;
 `
 
-const PlanBookingDetails = ({ bookings }: Props) => {
-  const dispatch = stores.ui((state) => state.dispatch)
+const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
   const history = useHistory()
   const { routeId, activityId } = useParams<{
     routeId: string
     activityId: string
   }>()
-
-  React.useEffect(
-    () => () => {
-      dispatch({ type: 'highlightBooking', payload: undefined })
-    },
-    [dispatch]
-  )
 
   const [booking] = bookings.filter((d) => d.id === activityId)
 
@@ -50,6 +42,8 @@ const PlanBookingDetails = ({ bookings }: Props) => {
       return history.push(`/plans/routes/${routeId}`)
     }
   }
+
+  React.useEffect(() => () => onUnmount(), [onUnmount])
 
   if (!booking || !bookings) return <p>Laddar bokning...</p>
 

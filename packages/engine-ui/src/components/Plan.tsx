@@ -5,6 +5,7 @@ import Elements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
 import PlanBookingDetails from './PlanBookingDetails'
 import { Route as PlanRoute, Transport, Booking } from '../types'
+import stores from '../utils/state/stores'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -28,8 +29,9 @@ const Plan = ({
   const activeRoutes = routes.filter(
     (d) => d.activities && d.activities.length > 0
   )
-
   const { path } = useRouteMatch()
+  const dispatch = stores.ui((state) => state.dispatch)
+
   return (
     <Switch>
       <Route exact path={[path, `${path}/routes/:routeId`]}>
@@ -64,7 +66,12 @@ const Plan = ({
         </PlanWrapper>
       </Route>
       <Route exact path={`${path}/routes/:routeId/:activityId`}>
-        <PlanBookingDetails bookings={bookings} />
+        <PlanBookingDetails
+          bookings={bookings}
+          onUnmount={() =>
+            dispatch({ type: 'highlightBooking', payload: undefined })
+          }
+        />
       </Route>
       <Route
         exact

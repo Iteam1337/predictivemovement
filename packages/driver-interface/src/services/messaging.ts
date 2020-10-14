@@ -25,7 +25,9 @@ export const onDriverLoginSuccessful = (
   ctx: TelegrafContext
 ): Promise<Message> =>
   ctx.reply(
-    'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
+    'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'.concat(
+      '\nKlicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :)'
+    )
   )
 
 export const onNoInstructionsForVehicle = (

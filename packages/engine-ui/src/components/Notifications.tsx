@@ -43,7 +43,7 @@ const BookingNotification: React.FC<{
         margin="0 0.5rem"
         to={`/bookings/${booking.id}`}
       >
-        {helpers.getLastFourChars(booking.id)}
+        {helpers.getLastFourChars(booking.id).toUpperCase()}
       </Elements.Links.RoundedLink>
     </Alert>
   </Zoom>

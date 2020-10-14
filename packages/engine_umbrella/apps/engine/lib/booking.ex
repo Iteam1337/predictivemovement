@@ -73,6 +73,11 @@ defmodule Booking do
   def get(id), do: GenServer.call(via_tuple(id), :get)
 
   def delete(id) do
+    ES.add_event(%BookingDeleted{id: id})
+    apply_delete_to_state(id)
+  end
+
+  def apply_delete_to_state(id) do
     Engine.BookingStore.delete_booking(id)
     GenServer.stop(via_tuple(id))
   end

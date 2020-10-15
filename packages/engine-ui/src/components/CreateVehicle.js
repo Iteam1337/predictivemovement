@@ -16,7 +16,7 @@ const initialState = {
   timewindow: { start: null, end: null },
   startPosition: { lat: 61.8172594, lon: 16.0561472, name: undefined },
   endPosition: { lat: undefined, lon: undefined, name: undefined },
-  driver: { name: undefined, contact: undefined },
+  driver: { name: '', contact: '' },
 }
 
 const CreateVehicle = ({ onSubmit }) => {

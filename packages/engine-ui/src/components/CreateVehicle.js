@@ -14,8 +14,8 @@ const initialState = {
   volume: '',
   weight: '',
   timewindow: { start: null, end: null },
-  startPosition: { lat: 61.8172594, lon: 16.0561472, name: undefined },
-  endPosition: { lat: undefined, lon: undefined, name: undefined },
+  startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
+  endPosition: { lat: undefined, lon: undefined, name: '' },
   driver: { name: '', contact: '' },
 }
 

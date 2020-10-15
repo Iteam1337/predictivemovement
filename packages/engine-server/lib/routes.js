@@ -115,9 +115,11 @@ function register(io) {
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,
         start_address: params.startPosition,
-        end_address: params.endPosition
-          ? params.endPosition
-          : params.startPosition,
+        end_address:
+          params.endPosition.hasOwnProperty('lon') &&
+          params.endPosition.hasOwnProperty('lat')
+            ? params.endPosition
+            : params.startPosition,
 
         metadata: {
           driver: params.driver,

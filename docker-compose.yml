@@ -18,9 +18,11 @@ services:
   postgres:
     image: postgres
     environment:
+      - PGDATA=/pgtmpfs
       - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
+    tmpfs: /pgtmpfs
     networks:
       - predictivemovement
   admin-ui:

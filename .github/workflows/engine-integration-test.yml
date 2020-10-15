@@ -10,7 +10,7 @@ jobs:
       - name: Login to DockerHub Registry
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build route-optimization-image
-        run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest
+        run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:$GITHUB_RUN_ID
       - name: Push route-optimization-image
         run: docker push iteam1337/pm-route-optimization-jsprit:$GITHUB_RUN_ID
   run-integration-tests:

@@ -15,7 +15,7 @@ export const onLogin = async (
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
   const telegramId = ctx.update.message.from.id
-  await cache.setVehicleIdByTelegramId(telegramId.toString(), vehicleId)
+  await cache.setVehicleIdByTelegramId(telegramId, vehicleId)
 
   if (vehicle.telegramId) {
     return
@@ -34,14 +34,14 @@ export const onLogin = async (
 
   return messaging
     .onDriverLoginSuccessful(ctx)
-    .then(() => handleNextDriverInstruction(telegramId.toString()))
+    .then(() => handleNextDriverInstruction(telegramId))
 }
 
 export const onLocationMessage = async (
   msg: IncomingMessage,
   ctx: TelegrafContext
 ): Promise<void> => {
-  const vehicleId = await cache.getVehicleIdByTelegramId(msg.from.id.toString())
+  const vehicleId = await cache.getVehicleIdByTelegramId(msg.from.id)
 
   const message = {
     location: {
@@ -55,7 +55,7 @@ export const onLocationMessage = async (
 }
 
 export const handleNextDriverInstruction = async (
-  telegramId: string
+  telegramId: number
 ): Promise<Message> => {
   try {
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
@@ -91,7 +91,7 @@ export const handleNextDriverInstruction = async (
 
 export const handleDriverArrivedToPickupOrDeliveryPosition = async (
   vehicleId: string,
-  telegramId: string
+  telegramId: number
 ): Promise<Message | string> => {
   try {
     const [nextInstructionGroup, ...rest] = await cache.getInstructions(

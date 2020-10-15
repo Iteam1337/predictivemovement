@@ -49,13 +49,13 @@ export const onInstructionsForVehicle = (
 }
 
 export const sendDriverFinishedMessage = (
-  telegramId: string
+  telegramId: number
 ): Promise<Message> =>
   bot.telegram.sendMessage(telegramId, 'Bra jobbat! Tack för idag!')
 
 export const sendPickupInstruction = async (
   instructionGroup: Instruction[],
-  telegramId: string,
+  telegramId: number,
   bookings: Booking[]
 ): Promise<Message> => {
   const [firstBooking] = bookings
@@ -101,7 +101,7 @@ ${instructionGroup
 
 export const sendDeliveryInstruction = async (
   instructionGroup: Instruction[],
-  telegramId: string,
+  telegramId: number,
   bookings: Booking[]
 ): Promise<Message> => {
   const [firstBooking] = bookings
@@ -141,7 +141,7 @@ export const sendDeliveryInstruction = async (
 
 export const sendPickupInformation = (
   instructionGroupId: string,
-  telegramId: string,
+  telegramId: number,
   bookings: Booking[]
 ): Promise<Message> => {
   const totalWeight = bookings.reduce(
@@ -210,7 +210,7 @@ export const sendPickupInformation = (
 export const sendDeliveryInformation = (
   instructionGroup: Instruction[],
   instructionGroupId: string,
-  telegramId: string,
+  telegramId: number,
   bookings: Booking[]
 ): Promise<Message> => {
   const [firstBooking] = bookings

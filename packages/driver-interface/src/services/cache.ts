@@ -34,9 +34,9 @@ export default {
     redis.set(`${keys.VEHICLES}:${vehicleId}`, JSON.stringify(vehicle)),
   getVehicle: (vehicleId: string): Promise<Vehicle | null> =>
     redis.get(`${keys.VEHICLES}:${vehicleId}`).then(JSON.parse),
-  getVehicleIdByTelegramId: (telegramId: string): Promise<string> =>
+  getVehicleIdByTelegramId: (telegramId: number): Promise<string> =>
     redis.get(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`),
-  setVehicleIdByTelegramId: (telegramId: string, id: string): Promise<string> =>
+  setVehicleIdByTelegramId: (telegramId: number, id: string): Promise<string> =>
     redis.set(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`, id),
   setInstructionGroup: (
     id: string,

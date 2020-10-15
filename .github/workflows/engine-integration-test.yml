@@ -16,6 +16,7 @@ jobs:
   run-integration-tests:
     needs: build-and-push-route-optimization
     env:
+      IMAGE_TAG: $GITHUB_RUN_ID
       AMQP_HOST: localhost
     defaults:
       run:
@@ -28,13 +29,13 @@ jobs:
           - 5672:5672
           - 15672:15672
       postgres:
-        image: postgres
+        image: postgres:13
         env:
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
       route-optmization-jsprit:
-        image: iteam1337/pm-route-optimization-jsprit:$GITHUB_RUN_ID
+        image: iteam1337/pm-route-optimization-jsprit:$IMAGE_TAG
         env:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"

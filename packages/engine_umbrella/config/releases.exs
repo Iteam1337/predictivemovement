@@ -18,7 +18,7 @@ config :engine,
        )
 
 config :engine, Engine.ES,
-  serializer: EventStore.JsonSerializer,
+  serializer: Engine.JsonSerializer,
   username: System.get_env("POSTGRES_USER"),
   password: System.get_env("POSTGRES_PASSWORD"),
   database: System.get_env("POSTGRES_DB"),

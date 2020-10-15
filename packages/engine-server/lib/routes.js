@@ -1,5 +1,4 @@
 const _ = require('highland')
-
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 
 module.exports = ({ io, bookingsCache, vehiclesCache, planCache }) => {
@@ -28,8 +27,6 @@ module.exports = ({ io, bookingsCache, vehiclesCache, planCache }) => {
       .doto((vehicle) => {
         vehiclesCache.set(vehicle.id, vehicle)
       })
-      // .pick(['position', 'status', 'id', 'activities', 'current_route'])
-      // .tap((car) => car)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each((vehicles) => socket.emit('vehicles', vehicles))
@@ -39,6 +36,21 @@ module.exports = ({ io, bookingsCache, vehiclesCache, planCache }) => {
         planCache.set('plan', data)
       })
       .each((data) => socket.emit('plan-update', data))
+
+    _(transportLocationUpdates.fork()).each(({ id, location }) => {
+      if (!vehiclesCache.has(id)) return
+
+      const transport = vehiclesCache.get(id)
+
+      const updatedTransport = {
+        ...transport,
+        location,
+      }
+
+      vehiclesCache.set(id, updatedTransport)
+
+      return socket.emit('transport-updated', transportLocationUpdate)
+    })
 
     _(bookings.fork()).each((booking) => socket.emit('notification', booking))
     _(vehicles.fork()).each((car) => socket.emit('notification', car))

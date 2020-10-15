@@ -35,6 +35,8 @@ const BookingList = styled.ul`
   }
 `
 
+const TransportsList = styled(BookingList)``
+
 const Container = styled.div`
   margin-bottom: 2rem;
   margin-left: 1rem;
@@ -131,4 +133,5 @@ export default {
   FlexRowBaselineContainer,
   SectionWithMargin,
   MarginTopContainerSm,
+  TransportsList,
 }

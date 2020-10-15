@@ -1,4 +1,5 @@
-const redis = require('../adapters/redis')
+import redis from '../adapters/redis'
+import { Booking, Instruction, Vehicle } from '../types'
 
 const keys = {
   BOOKINGS: 'bookings',
@@ -8,35 +9,44 @@ const keys = {
   VEHICLE_ID_BY_TELEGRAM_ID: 'vehicle-id-by-telegram-id',
 }
 
-module.exports = {
-  getBooking: (id) => redis.get(`${keys.BOOKINGS}:${id}`).then(JSON.parse),
-  getBookings: (bookingIds) =>
+export default {
+  getBooking: (id: string): Promise<Booking> =>
+    redis.get(`${keys.BOOKINGS}:${id}`).then(JSON.parse),
+  getBookings: (bookingIds: string[]): Promise<Booking[]> =>
     redis
       .mget(...bookingIds.map((bookingId) => `${keys.BOOKINGS}:${bookingId}`))
-      .then((bookings) => bookings.map(JSON.parse)),
-  addBooking: (id, booking) =>
+      .then((bookings: string[]) =>
+        bookings.map((booking: string) => JSON.parse(booking))
+      ),
+  addBooking: (id: string, booking: Booking): Promise<string> =>
     redis.set(`${keys.BOOKINGS}:${id}`, JSON.stringify(booking)),
-  setInstructions: (vehicleId, instructions) =>
+  setInstructions: (
+    vehicleId: string,
+    instructions: Instruction[][]
+  ): Promise<string> =>
     redis.set(
       `${keys.INSTRUCTIONS}:${vehicleId}`,
       JSON.stringify(instructions)
     ),
-  getInstructions: (vehicleId) =>
+  getInstructions: (vehicleId: string): Promise<Instruction[][]> =>
     redis.get(`${keys.INSTRUCTIONS}:${vehicleId}`).then(JSON.parse),
-  addVehicle: (vehicleId, vehicle) =>
+  addVehicle: <T>(vehicleId: string, vehicle: T): Promise<string> =>
     redis.set(`${keys.VEHICLES}:${vehicleId}`, JSON.stringify(vehicle)),
-  getVehicle: (vehicleId) =>
+  getVehicle: (vehicleId: string): Promise<Vehicle | null> =>
     redis.get(`${keys.VEHICLES}:${vehicleId}`).then(JSON.parse),
-  getVehicleIdByTelegramId: (telegramId) =>
+  getVehicleIdByTelegramId: (telegramId: number): Promise<string> =>
     redis.get(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`),
-  setVehicleIdByTelegramId: (telegramId, id) =>
+  setVehicleIdByTelegramId: (telegramId: number, id: string): Promise<string> =>
     redis.set(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`, id),
-  setInstructionGroup: (id, instructionGroup) =>
+  setInstructionGroup: (
+    id: string,
+    instructionGroup: Instruction[]
+  ): Promise<string> =>
     redis.set(
       `${keys.INSTRUCTION_GROUPS}:${id}`,
       JSON.stringify(instructionGroup)
     ),
-  getAndDeleteInstructionGroup: (id) =>
+  getAndDeleteInstructionGroup: (id: string): Promise<Instruction[]> =>
     redis
       .pipeline()
       .get(`${keys.INSTRUCTION_GROUPS}:${id}`)

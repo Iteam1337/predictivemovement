@@ -1,10 +1,11 @@
-const botServices = require('./services/bot')
-const messaging = require('./services/messaging')
-const cache = require('./services/cache')
-const {
-  open,
-  exchanges: { INCOMING_BOOKING_UPDATES },
-} = require('./adapters/amqp')
+import * as botServices from './services/bot'
+import * as messaging from './services/messaging'
+import cache from './services/cache'
+import { open, exchanges } from './adapters/amqp'
+import Telegraf from 'telegraf'
+import { TelegrafContext } from 'telegraf/typings/context'
+
+const { INCOMING_BOOKING_UPDATES } = exchanges
 
 const channel = open
   .then((conn) => conn.createChannel())
@@ -42,13 +43,7 @@ function handleBookingEvent(telegramId, bookingIds, event) {
     .then(() => botServices.handleNextDriverInstruction(telegramId))
 }
 
-function onOffer(msg) {
-  const callbackPayload = JSON.parse(msg.update.callback_query.data)
-  const { a: isAccepted, ...options } = callbackPayload
-  return messaging.onPickupOfferResponse(isAccepted, options, msg)
-}
-
-const init = (bot) => {
+export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', async (ctx) => {
@@ -74,7 +69,7 @@ const init = (bot) => {
     const msg = ctx.message
 
     /** Login attempt from command /login. */
-    if (msg.text && msg.text.includes('pmv-')) {
+    if (msg.text && msg.text.toLowerCase().includes('pmv-')) {
       botServices.onLogin(msg.text, ctx)
     }
 
@@ -96,8 +91,6 @@ const init = (bot) => {
   bot.on('callback_query', async (msg) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
     switch (callbackPayload.e) {
-      case 'offer':
-        return onOffer(msg)
       case 'arrived':
         return onArrived(msg)
       case 'picked_up':
@@ -122,5 +115,3 @@ const init = (bot) => {
     }
   })
 }
-
-module.exports = { init }

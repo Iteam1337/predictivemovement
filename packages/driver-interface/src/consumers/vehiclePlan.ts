@@ -1,12 +1,12 @@
-const cache = require('../services/cache')
+import cache from '../services/cache'
 
-const {
-  open,
-  queues: { ADD_INSTRUCTIONS_TO_VEHICLE },
-  exchanges: { OUTGOING_VEHICLE_UPDATES },
-} = require('../adapters/amqp')
+import { open, queues, exchanges } from '../adapters/amqp'
+import { Replies } from 'amqplib'
 
-const vehiclePlan = () =>
+const { ADD_INSTRUCTIONS_TO_VEHICLE } = queues
+const { OUTGOING_VEHICLE_UPDATES } = exchanges
+
+const vehiclePlan = (): Promise<Replies.Consume> =>
   open
     .then((conn) => conn.createChannel())
     .then((ch) =>
@@ -42,4 +42,4 @@ const vehiclePlan = () =>
         )
     )
 
-module.exports = vehiclePlan
+export default vehiclePlan

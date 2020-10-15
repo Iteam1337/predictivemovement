@@ -110,6 +110,16 @@ module.exports = ({ io, bookingsCache, vehiclesCache }) => {
     console.log('deleted')
   }
 
+  const transportLocationUpdates = amqp
+    .exchange('incoming_vehicle_updates', 'topic', {
+      durable: false,
+    })
+    .queue('update_location.admin_ui', {
+      durable: false,
+    })
+    .subscribe({ noAck: true }, ['incoming.updated.location'])
+    .map((res) => res.json())
+
   amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: false,
@@ -172,5 +182,6 @@ module.exports = ({ io, bookingsCache, vehiclesCache }) => {
     dispatchOffers,
     addVehicle,
     createBooking,
+    transportLocationUpdates,
   }
 }

@@ -1,13 +1,15 @@
 import React from 'react'
 import { UIStateContext } from '../utils/UIStateContext'
-import Elements from '../shared-elements/'
+import Elements from '../shared-elements'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
 import { Transport } from '../types'
 
-const Vehicles: React.FC<{ vehicles: Transport[] }> = ({ vehicles }) => {
+const TransportsList: React.FC<{ transports: Transport[] }> = ({
+  transports,
+}) => {
   const { dispatch } = React.useContext(UIStateContext)
-  if (!vehicles.length)
+  if (!transports.length)
     return (
       <Elements.Typography.NoInfoParagraph>
         Det finns inga aktuella transporter...
@@ -28,31 +30,31 @@ const Vehicles: React.FC<{ vehicles: Transport[] }> = ({ vehicles }) => {
     })
 
   return (
-    <Elements.Layout.LinkListContainer>
-      {vehicles.map((vehicle) => (
-        <Elements.Layout.InlineContainer key={vehicle.id}>
+    <Elements.Layout.TransportsList>
+      {transports.map((transport) => (
+        <li key={transport.id}>
           <Elements.Links.RoundedLink
-            color={vehicle.color}
+            color={transport.color}
             onMouseOver={() =>
-              dispatch({ type: 'highlightTransport', payload: vehicle.id })
+              dispatch({ type: 'highlightTransport', payload: transport.id })
             }
             onMouseLeave={() =>
               dispatch({ type: 'highlightTransport', payload: undefined })
             }
-            to={`/transports/${vehicle.id}`}
+            to={`/transports/${transport.id}`}
             onClick={() =>
               onClickHandler(
-                vehicle.start_address.lat,
-                vehicle.start_address.lon
+                transport.start_address.lat,
+                transport.start_address.lon
               )
             }
           >
-            {helpers.getLastFourChars(vehicle.id).toUpperCase()}
+            {helpers.getLastFourChars(transport.id).toUpperCase()}
           </Elements.Links.RoundedLink>
-        </Elements.Layout.InlineContainer>
+        </li>
       ))}
-    </Elements.Layout.LinkListContainer>
+    </Elements.Layout.TransportsList>
   )
 }
 
-export default Vehicles
+export default TransportsList

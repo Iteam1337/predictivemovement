@@ -26,6 +26,14 @@ defmodule Vehicle do
   validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
   validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
 
+  validates([:capacity, :weight],
+    by: [function: &Kernel.is_integer/1, message: "must be an integer"]
+  )
+
+  validates([:capacity, :volume],
+    by: [function: &Kernel.is_integer/1, message: "must be an integer"]
+  )
+
   def init(init_arg) do
     {:ok, init_arg}
   end

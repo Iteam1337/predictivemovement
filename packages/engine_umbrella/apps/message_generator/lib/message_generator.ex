@@ -35,7 +35,6 @@ defmodule MessageGenerator do
   def random_car(properties) when is_map(properties) do
     properties
     |> Map.put(:id, Enum.random(0..100_000))
-    |> Map.put_new(:capacity, %{volume: 15, weight: 700})
     |> Map.put_new(:start_address, Address.random(@ljusdal))
   end
 
@@ -43,7 +42,6 @@ defmodule MessageGenerator do
     %{}
     |> Map.put(:start_address, Address.random(location))
     |> Map.put(:end_address, Address.random(location))
-    |> Map.put(:capacity, %{volume: 15, weight: 700})
     |> Map.put(:id, Enum.random(0..100_000))
   end
 

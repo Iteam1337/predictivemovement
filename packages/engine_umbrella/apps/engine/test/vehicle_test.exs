@@ -13,7 +13,6 @@ defmodule VehicleTest do
     assert vehicle_ids |> length() == 1
   end
 
-
   test "required start address" do
     %{
       id: 87147
@@ -26,8 +25,33 @@ defmodule VehicleTest do
     assert vehicle_ids |> length() == 0
   end
 
+  @tag :only
   test "does not allow malformed time constraints" do
-    MessageGenerator.random_car(%{ earliest_start: "foo", latest_end: "bar"})
+    errors = MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
+    |> Vehicle.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+
+    clear_state()
+    assert vehicle_ids |> length() == 0
+  end
+
+  test "does not allow non integer weight capacity" do
+    errors =
+      MessageGenerator.random_car(%{
+        capacity: %{volume: 2, weight: 13.4}
+      })
+      |> Vehicle.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+
+    clear_state()
+    assert vehicle_ids |> length() == 0
+    assert errors == [{:error, [:capacity, :weight], :by, "must be an integer"}]
+  end
+
+  test "does not allow non integer volume capacity" do
+    MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
     |> Vehicle.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()

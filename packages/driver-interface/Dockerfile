@@ -9,7 +9,7 @@ RUN npm ci --quiet
 
 COPY . .
 
-CMD npm run build
+RUN npm run build
 
 
 ## --
@@ -23,6 +23,6 @@ COPY package-lock.json .
 
 RUN npm ci --quiet
 
-COPY --from=base /app/dist ./dist/
+COPY --from=base /app/dist ./dist
 
 CMD npm start

@@ -12,6 +12,24 @@ export const reducer = (state, action) => {
           ...action.payload,
         ].map((v, i) => ({ ...v, color: getColor(i, 0) })),
       }
+    case 'updateTransport':
+      const { id, ...rest } = action.payload
+
+      return {
+        ...state,
+        vehicles: [
+          ...state.vehicles.map((t) => {
+            if (t.id !== id) {
+              return t
+            }
+
+            return {
+              ...t,
+              ...rest,
+            }
+          }),
+        ],
+      }
     case 'deleteVehicle':
       return {
         ...state,

@@ -1,5 +1,6 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
+const { bookingsCache, vehiclesCache } = require('./cache')
 
 const routingKeys = {
   NEW: 'new',
@@ -14,7 +15,7 @@ const routingKeys = {
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
-module.exports = ({ io, bookingsCache, vehiclesCache }) => {
+module.exports = (io) => {
   amqp.connect().then((amqpConnection) => amqpConnection.createChannel())
 
   /////// Listeners

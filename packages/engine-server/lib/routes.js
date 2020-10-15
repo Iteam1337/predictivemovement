@@ -1,7 +1,8 @@
 const _ = require('highland')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
+const { bookingsCache, vehiclesCache, planCache } = require('./cache')
 
-module.exports = ({ io, bookingsCache, vehiclesCache, planCache }) => {
+module.exports = (io) => {
   const {
     bookings,
     vehicles,
@@ -11,7 +12,8 @@ module.exports = ({ io, bookingsCache, vehiclesCache, planCache }) => {
     dispatchOffers,
     publishDeleteBooking,
     publishDeleteVehicle,
-  } = require('./engineConnector')({ io, bookingsCache, vehiclesCache })
+    transportLocationUpdates,
+  } = require('./engineConnector')(io)
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])

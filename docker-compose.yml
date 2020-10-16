@@ -16,7 +16,7 @@ services:
     networks:
       - predictivemovement
   postgres:
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:

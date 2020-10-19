@@ -38,14 +38,10 @@ Start dependencies
 
     docker-compose up -d
 
-create event_store database
-    
-    cd packages/engine_umbrella/
-    mix do event_store.create, event_store.init
+run event_store migrations and start the engine
 
-run the engine
-    
-    iex -S mix
+    cd packages/engine_umbrella/
+    mix dev
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 

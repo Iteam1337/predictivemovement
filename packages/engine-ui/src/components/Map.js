@@ -46,6 +46,12 @@ const Map = ({ data }) => {
       mapUtils.planToFeature(data.plan),
       handleClickEvent
     ),
+
+    mapUtils.toGeoJsonLayer(
+      'geojson-transport-layer',
+      mapUtils.planToFeature(data.vehicles),
+      handleClickEvent
+    ),
     data.plan.map((route) =>
       mapUtils.toBookingIconLayer(
         mapUtils.routeActivityIcon(route),

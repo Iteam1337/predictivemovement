@@ -21,7 +21,7 @@ WORKDIR /app
 COPY package.json .
 COPY package-lock.json .
 
-RUN npm ci --quiet
+RUN npm ci --only=production --no-optional --no-fund
 
 COPY --from=base /app/dist ./dist
 

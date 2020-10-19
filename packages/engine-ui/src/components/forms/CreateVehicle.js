@@ -26,7 +26,7 @@ const Component = ({
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label required>Körschema</Elements.Form.Label>
+          <Elements.Form.Label>Körschema</Elements.Form.Label>
           <Elements.Layout.InputContainer>
             <Elements.Layout.TimeRestrictionWrapper>
               <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
@@ -37,8 +37,9 @@ const Component = ({
             </Elements.Layout.TimeRestrictionWrapper>
           </Elements.Layout.InputContainer>
           <Elements.Layout.InputContainer>
-            <Elements.Form.Label>Startposition</Elements.Form.Label>
+            <Elements.Form.Label required>Startposition</Elements.Form.Label>
             <FormInputs.AddressSearchInput
+              required
               placeholder="Adress (sök eller klicka på karta)"
               value={formState.startPosition.name}
               onChangeHandler={eventHandlers.handleAddressInput(
@@ -74,7 +75,7 @@ const Component = ({
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="vehicleType">
+          <Elements.Form.Label htmlFor="vehicleType" required>
             Namn på transport
           </Elements.Form.Label>
           <FormInputs.TextInput

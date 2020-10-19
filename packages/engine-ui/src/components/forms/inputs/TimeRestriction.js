@@ -63,7 +63,6 @@ const VehicleTimeRestriction = ({
   onChangeHandler,
   placeholderText,
   inputElement,
-  minDate = new Date(),
 }) => {
   return (
     <Wrapper>
@@ -77,8 +76,6 @@ const VehicleTimeRestriction = ({
         timeCaption="time"
         dateFormat="H:mm"
         excludeOutOfBoundsTimes
-        minTime={helpers.calculateMinTime(selected, minDate)}
-        maxTime={moment().endOf('day').toDate()}
         timeFormat="HH:mm"
         placeholderText={placeholderText}
         customInput={inputElement}
@@ -128,7 +125,6 @@ const VehicleTimeRestrictionPair = ({
   handleFocus,
 }) => {
   const timeRestrictionInputRef = React.useRef()
-
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
@@ -140,6 +136,7 @@ const VehicleTimeRestrictionPair = ({
             <DateInput
               handleFocus={handleFocus}
               ref={timeRestrictionInputRef}
+              isRequired={false}
             />
           }
         />
@@ -152,6 +149,7 @@ const VehicleTimeRestrictionPair = ({
           placeholderText="Sluttid"
           inputElement={
             <DateInput
+              isRequired={false}
               handleFocus={handleFocus}
               ref={timeRestrictionInputRef}
             />

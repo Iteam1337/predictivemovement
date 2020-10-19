@@ -1,7 +1,5 @@
 defmodule VehicleTest do
   import TestHelper
-  def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   test "it allows vehicle creation" do
@@ -25,10 +23,10 @@ defmodule VehicleTest do
     assert vehicle_ids |> length() == 0
   end
 
-  @tag :only
   test "does not allow malformed time constraints" do
-    errors = MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
-    |> Vehicle.make()
+    errors =
+      MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
+      |> Vehicle.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
 

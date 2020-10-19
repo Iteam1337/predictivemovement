@@ -21,7 +21,7 @@ const TimeRestrictionDateInput = React.forwardRef<
     placeholder: string
     withIcon: boolean
     handleFocus?: () => void
-    shouldBeRequired: boolean
+    isRequired: boolean
   }
 >(
   (
@@ -32,7 +32,7 @@ const TimeRestrictionDateInput = React.forwardRef<
       placeholder,
       withIcon = true,
       handleFocus,
-      shouldBeRequired = true,
+      isRequired = true,
     },
     ref
   ) => {
@@ -50,7 +50,7 @@ const TimeRestrictionDateInput = React.forwardRef<
             ref={ref as React.Ref<HTMLInputElement>}
             placeholder={placeholder}
             iconInset={withIcon}
-            required={shouldBeRequired}
+            required={isRequired}
           />
         </Elements.Layout.InputInnerContainer>
       </Elements.Layout.TimeRestrictionDateInputWrapper>

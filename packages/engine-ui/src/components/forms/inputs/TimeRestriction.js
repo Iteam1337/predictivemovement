@@ -136,7 +136,7 @@ const VehicleTimeRestrictionPair = ({
             <DateInput
               handleFocus={handleFocus}
               ref={timeRestrictionInputRef}
-              shouldBeRequired={false}
+              isRequired={false}
             />
           }
         />
@@ -149,7 +149,7 @@ const VehicleTimeRestrictionPair = ({
           placeholderText="Sluttid"
           inputElement={
             <DateInput
-              shouldBeRequired={false}
+              isRequired={false}
               handleFocus={handleFocus}
               ref={timeRestrictionInputRef}
             />

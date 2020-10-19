@@ -4,6 +4,7 @@ import Elements from '../shared-elements'
 import helpers from '../utils/helpers'
 import { useRouteMatch } from 'react-router-dom'
 import stores from '../utils/state/stores'
+import * as UIStateTypes from '../utils/state/types'
 
 const Container = styled.div<{ x: number; y: number }>`
   position: absolute;
@@ -95,7 +96,6 @@ const Component: React.FC<{
   position: { x: number; y: number; lat: number; lon: number }
 }> = ({ position: { lat, lon, ...rest } }) => {
   const { data, error, loading } = useAddressFromCoordinate({ lat, lon })
-  // const [{ lastFocusedInput }, setUIState] = useRecoilState(selectors.UIState)
 
   const [lastFocusedInput, setUIState] = stores.ui((state) => [
     state.lastFocusedInput,
@@ -127,7 +127,7 @@ const Component: React.FC<{
 
   const getAddAsInputButton = (
     pathname: string,
-    inputCode: 'start' | 'end'
+    inputCode: UIStateTypes.lastFocusedInput
   ) => (
     <Elements.Typography.InfoSmStrong>
       <AddButton
@@ -170,11 +170,11 @@ const Component: React.FC<{
               })}
             </Coordinate>
 
-            {Boolean(lastFocusedInput) &&
+            {lastFocusedInput &&
               createBookingOrVehicleView &&
               getAddAsInputButton(
                 createBookingOrVehicleView.path,
-                lastFocusedInput as 'start' | 'end'
+                lastFocusedInput
               )}
           </>
         )}

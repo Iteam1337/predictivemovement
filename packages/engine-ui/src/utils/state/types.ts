@@ -1,10 +1,15 @@
 import { FlyToInterpolator } from 'react-map-gl'
 
+export enum lastFocusedInput {
+  START = 'start',
+  END = 'end',
+}
+
 export type UIState = {
   showMapTooltip: boolean
   highlightBooking?: string
   highlightTransport?: string
-  lastFocusedInput?: 'start' | 'end'
+  lastFocusedInput?: lastFocusedInput
   lastClickedPosition: {
     x?: number
     y?: number

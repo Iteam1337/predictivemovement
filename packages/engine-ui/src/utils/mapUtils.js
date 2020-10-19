@@ -256,7 +256,8 @@ export const toGeoJsonLayer = (id, data, callback) =>
     getLineWidth: 5,
     getElevation: 30,
     pointRadiusScale: 1,
-    pointRadiusMaxPixels: 10,
+    pointRadiusMaxPixels: 17,
+    pointRadiusMinPixels: 7,
     lineJointRounded: true,
     onClick: callback,
   })

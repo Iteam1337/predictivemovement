@@ -1,45 +1,63 @@
-const bot = require('../adapters/bot')
-const helpers = require('../helpers')
-const { getDirectionsFromActivities, getDirectionsUrl } = require('./google')
-const { getAddressFromCoordinate } = require('./pelias')
+import { TelegrafContext } from 'telegraf/typings/context'
+import { Message } from 'telegraf/typings/telegram-types'
+import bot from '../adapters/bot'
+import * as helpers from '../helpers'
+import { Booking, Instruction } from '../types'
+import { getDirectionsFromActivities, getDirectionsUrl } from './google'
+import { getAddressFromCoordinate } from './pelias'
 
-const onBotStart = (ctx) => {
+export const onBotStart = (ctx: TelegrafContext): void => {
   ctx.reply(
     "Välkommen till Predictive Movement. När du loggat in kan du agera som förare och hämta och leverera paket i vårt system. Logga in genom att skriva '/login'."
   )
 }
 
-const onPromptUserForTransportId = (ctx) => ctx.reply('Ange ditt transport-id')
+export const onPromptUserForTransportId = (
+  ctx: TelegrafContext
+): Promise<Message> => ctx.reply('Ange ditt transport-id')
 
-const onNoVehicleFoundFromId = (ctx) =>
+export const onNoVehicleFoundFromId = (
+  ctx: TelegrafContext
+): Promise<Message> =>
   ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
 
-const onDriverLoginSuccessful = (ctx) =>
+export const onDriverLoginSuccessful = (
+  ctx: TelegrafContext
+): Promise<Message> =>
   ctx.reply(
-    'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'
+    'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'.concat(
+      '\nKlicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :)'
+    )
   )
 
-const onNoInstructionsForVehicle = (ctx) =>
-  ctx.reply('Vi kunde inte hitta några instruktioner...')
+export const onNoInstructionsForVehicle = (
+  ctx: TelegrafContext
+): Promise<Message> => ctx.reply('Vi kunde inte hitta några instruktioner...')
 
-const onInstructionsForVehicle = (activities, bookingIds, id) => {
+export const onInstructionsForVehicle = (
+  activities: Instruction[],
+  bookingIds: string[],
+  id: number
+): Promise<Message> => {
   const directions = getDirectionsFromActivities(activities)
 
   return bot.telegram.sendMessage(
     id,
     `${bookingIds.length} paket finns att hämta. [Se på kartan](${directions}).`,
-    { parse_mode: 'markdown' }
+    { parse_mode: 'Markdown' }
   )
 }
 
-const sendDriverFinishedMessage = (telegramId) =>
+export const sendDriverFinishedMessage = (
+  telegramId: number
+): Promise<Message> =>
   bot.telegram.sendMessage(telegramId, 'Bra jobbat! Tack för idag!')
 
-const sendPickupInstruction = async (
-  instructionGroup,
-  telegramId,
-  bookings
-) => {
+export const sendPickupInstruction = async (
+  instructionGroup: Instruction[],
+  telegramId: number,
+  bookings: Booking[]
+): Promise<Message> => {
   const [firstBooking] = bookings
   const pickup =
     firstBooking.pickup.street && firstBooking.pickup.city
@@ -64,7 +82,7 @@ ${instructionGroup
   ).concat('\nTryck på "[Framme]" när du har anlänt till destinationen.')
 
   return bot.telegram.sendMessage(telegramId, message, {
-    parse_mode: 'markdown',
+    parse_mode: 'Markdown',
     reply_markup: {
       inline_keyboard: [
         [
@@ -81,11 +99,11 @@ ${instructionGroup
   })
 }
 
-const sendDeliveryInstruction = async (
-  instructionGroup,
-  telegramId,
-  bookings
-) => {
+export const sendDeliveryInstruction = async (
+  instructionGroup: Instruction[],
+  telegramId: number,
+  bookings: Booking[]
+): Promise<Message> => {
   const [firstBooking] = bookings
   const delivery =
     firstBooking.delivery.street && firstBooking.delivery.city
@@ -104,7 +122,7 @@ const sendDeliveryInstruction = async (
     .concat(`till [${delivery}](${getDirectionsUrl(delivery)})!\n`)
     .concat('Tryck "[Framme]" när du har anlänt till destinationen.')
   return bot.telegram.sendMessage(telegramId, message, {
-    parse_mode: 'markdown',
+    parse_mode: 'Markdown',
     reply_markup: {
       inline_keyboard: [
         [
@@ -121,7 +139,11 @@ const sendDeliveryInstruction = async (
   })
 }
 
-const sendPickupInformation = (instructionGroupId, telegramId, bookings) => {
+export const sendPickupInformation = (
+  instructionGroupId: string,
+  telegramId: number,
+  bookings: Booking[]
+): Promise<Message> => {
   const totalWeight = bookings.reduce(
     (prev, curr) => prev + curr.size.weight || 0,
     0
@@ -167,7 +189,7 @@ const sendPickupInformation = (instructionGroupId, telegramId, bookings) => {
     )
 
   return bot.telegram.sendMessage(telegramId, message, {
-    parse_mode: 'markdown',
+    parse_mode: 'Markdown',
     reply_markup: {
       inline_keyboard: [
         [
@@ -185,12 +207,12 @@ const sendPickupInformation = (instructionGroupId, telegramId, bookings) => {
   })
 }
 
-const sendDeliveryInformation = (
-  instructionGroup,
-  instructionGroupId,
-  telegramId,
-  bookings
-) => {
+export const sendDeliveryInformation = (
+  instructionGroup: Instruction[],
+  instructionGroupId: string,
+  telegramId: number,
+  bookings: Booking[]
+): Promise<Message> => {
   const [firstBooking] = bookings
   return bot.telegram.sendMessage(
     telegramId,
@@ -213,7 +235,7 @@ const sendDeliveryInformation = (
         }.`
       ),
     {
-      parse_mode: 'markdown',
+      parse_mode: 'Markdown',
       reply_markup: {
         inline_keyboard: [
           [
@@ -237,18 +259,4 @@ const sendDeliveryInformation = (
       disable_web_page_preview: true,
     }
   )
-}
-
-module.exports = {
-  onNoInstructionsForVehicle,
-  onInstructionsForVehicle,
-  onBotStart,
-  sendPickupInstruction,
-  sendPickupInformation,
-  sendDeliveryInstruction,
-  sendDeliveryInformation,
-  sendDriverFinishedMessage,
-  onNoVehicleFoundFromId,
-  onDriverLoginSuccessful,
-  onPromptUserForTransportId,
 }

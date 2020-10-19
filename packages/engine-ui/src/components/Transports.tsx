@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
 import AddVehicle from './CreateVehicle'
-import Vehicles from './Vehicles'
+import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import stores from '../utils/state/stores'
@@ -18,7 +18,7 @@ const Transports: React.FC<{
     <Switch>
       <Route exact path={path}>
         <h3>Aktuella transporter</h3>
-        <Vehicles vehicles={vehicles} />
+        <TransportsList transports={vehicles} />
         <Link to={`${url}/add-vehicle`}>
           <AddFormFieldButton onClickHandler={null}>
             + Lägg till transport

@@ -76,6 +76,16 @@ const vehicles = amqp
     return vehicle
   })
 
+const transportLocationUpdates = amqp
+  .exchange('incoming_vehicle_updates', 'topic', {
+    durable: false,
+  })
+  .queue('update_location.admin_ui', {
+    durable: false,
+  })
+  .subscribe({ noAck: true }, ['incoming.updated.location'])
+  .map((res) => res.json())
+
 const createBooking = (booking) => {
   return amqp
     .exchange('incoming_booking_updates', 'topic', {
@@ -155,4 +165,5 @@ module.exports = {
   plan,
   deleteBooking,
   deleteVehicle,
+  transportLocationUpdates,
 }

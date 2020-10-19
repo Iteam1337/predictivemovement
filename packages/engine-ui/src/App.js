@@ -52,6 +52,13 @@ const App = () => {
     })
   })
 
+  useSocket('transport-updated', (msg) => {
+    dispatch({
+      type: 'updateTransport',
+      payload: msg,
+    })
+  })
+
   useSocket('vehicle-deleted', (vehicleId) => {
     dispatch({
       type: 'deleteVehicle',

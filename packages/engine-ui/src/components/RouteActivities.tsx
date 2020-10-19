@@ -75,7 +75,7 @@ const groupByLocation = (activities: Activity[]) => {
 
 const RouteActivities = ({ route }: Props) => {
   const dispatch = stores.ui((state) => state.dispatch)
-  const mapSet = stores.map((state) => state.set)
+  const setMap = stores.map((state) => state.set)
 
   const activities = route.activities ? route.activities.slice(1, -1) : []
   const isProposedPlan = useRouteMatch({
@@ -117,7 +117,7 @@ const RouteActivities = ({ route }: Props) => {
                 }
                 to={() => redirectTo(activity.id)}
                 onClick={() =>
-                  mapSet({
+                  setMap({
                     latitude: activity.address.lat,
                     longitude: activity.address.lon,
                     zoom: 10,

@@ -31,7 +31,7 @@ const Chevron = styled(Icons.Arrow)`
 
 const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
   const dispatch = stores.ui((state) => state.dispatch)
-  const mapSet = stores.map((state) => state.set)
+  const setMap = stores.map((state) => state.set)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
@@ -76,7 +76,7 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
               }
               to={`/transports/${route.id}`}
               onClick={() =>
-                mapSet({
+                setMap({
                   latitude: route.start_address.lat,
                   longitude: route.start_address.lon,
                   zoom: 10,

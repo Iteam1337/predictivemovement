@@ -37,7 +37,7 @@ defmodule BookingUpdatesProcessorTest do
     booking_id =
       Booking.make(%{
         id: 1,
-        size: 2,
+        size: %{weight: 1, measurements: [1, 1, 1]},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
         delivery: %{lat: 61.80762475411504, lon: 17.05761905846783},
         metadata: %{senderId: "telegramIdString"}
@@ -63,7 +63,7 @@ defmodule BookingUpdatesProcessorTest do
     booking_id =
       Booking.make(%{
         id: 1,
-        size: 2,
+        size: %{weight: 1, measurements: [1, 1, 1]},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
         delivery: %{lat: 61.80762475411504, lon: 17.05761905846783},
         metadata: %{senderId: "telegramIdString"}
@@ -93,7 +93,7 @@ defmodule BookingUpdatesProcessorTest do
         id: booking_id,
         metadata: %{},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
-        size: nil,
+        size: %{weight: 1, measurements: [1, 1, 1]},
         status: status
       },
       @incoming_booking_exchange,

@@ -35,7 +35,7 @@ jobs:
         ports:
           - 5432:5432
       route-optmization-jsprit:
-        image: iteam1337/pm-route-optimization-jsprit:${{IMAGE_TAG}}
+        image: iteam1337/pm-route-optimization-jsprit:${{ env.IMAGE_TAG }} 
         env:
           RABBITMQ_HOST: rabbitmq
           RABBITMQ_PORT: "5672"

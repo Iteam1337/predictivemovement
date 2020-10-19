@@ -107,7 +107,7 @@ const Bookings: React.FC<{
   deleteBooking: () => void
 }> = (props) => {
   const setMap = stores.map((state) => state.set)
-  const dispatch = stores.ui((state) => state.dispatch)
+  const setUIState = stores.ui((state) => state.dispatch)
   const { path, url } = useRouteMatch()
 
   const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
@@ -148,10 +148,10 @@ const Bookings: React.FC<{
               onClickHandler={onClickHandler}
               text="Öppna bokningar"
               onMouseEnterHandler={(id: string) =>
-                dispatch({ type: 'highlightBooking', payload: id })
+                setUIState({ type: 'highlightBooking', payload: id })
               }
               onMouseLeaveHandler={() =>
-                dispatch({ type: 'highlightBooking', payload: undefined })
+                setUIState({ type: 'highlightBooking', payload: undefined })
               }
             />
             <BookingToggleList
@@ -161,10 +161,10 @@ const Bookings: React.FC<{
               onClickHandler={onClickHandler}
               text="Bekräftade bokningar"
               onMouseEnterHandler={(id: string) =>
-                dispatch({ type: 'highlightBooking', payload: id })
+                setUIState({ type: 'highlightBooking', payload: id })
               }
               onMouseLeaveHandler={() =>
-                dispatch({ type: 'highlightBooking', payload: undefined })
+                setUIState({ type: 'highlightBooking', payload: undefined })
               }
             />
             <BookingToggleList
@@ -174,10 +174,10 @@ const Bookings: React.FC<{
               onClickHandler={onClickHandler}
               text="Levererade bokningar"
               onMouseEnterHandler={(id: string) =>
-                dispatch({ type: 'highlightBooking', payload: id })
+                setUIState({ type: 'highlightBooking', payload: id })
               }
               onMouseLeaveHandler={() =>
-                dispatch({ type: 'highlightBooking', payload: undefined })
+                setUIState({ type: 'highlightBooking', payload: undefined })
               }
             />
           </Elements.Layout.MarginTopContainer>
@@ -199,7 +199,7 @@ const Bookings: React.FC<{
             bookings={props.bookings}
             deleteBooking={props.deleteBooking}
             onUnmount={() =>
-              dispatch({ type: 'highlightBooking', payload: undefined })
+              setUIState({ type: 'highlightBooking', payload: undefined })
             }
           />
         </Route>

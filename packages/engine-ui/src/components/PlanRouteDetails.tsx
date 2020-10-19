@@ -30,7 +30,7 @@ const Chevron = styled(Icons.Arrow)`
 `
 
 const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
-  const dispatch = stores.ui((state) => state.dispatch)
+  const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
@@ -69,10 +69,10 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
               color={color}
               margin="0 0.5rem"
               onMouseOver={() =>
-                dispatch({ type: 'highlightTransport', payload: route.id })
+                setUIState({ type: 'highlightTransport', payload: route.id })
               }
               onMouseLeave={() =>
-                dispatch({ type: 'highlightTransport', payload: undefined })
+                setUIState({ type: 'highlightTransport', payload: undefined })
               }
               to={`/transports/${route.id}`}
               onClick={() =>

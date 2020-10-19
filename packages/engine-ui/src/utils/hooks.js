@@ -126,10 +126,7 @@ const useGetSuggestedAddresses = (initialState) => {
 }
 
 const useFormStateWithMapClickControl = (start, end, set) => {
-  const [UIState, UIStateDispatch] = stores.ui((state) => [
-    state,
-    state.dispatch,
-  ])
+  const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
   React.useEffect(() => {
     /**
@@ -176,10 +173,10 @@ const useFormStateWithMapClickControl = (start, end, set) => {
           break
       }
 
-      return UIStateDispatch({ type: 'resetInputClickState' })
+      return setUIState({ type: 'resetInputClickState' })
     }
   }, [
-    UIStateDispatch,
+    setUIState,
     UIState.lastClickedPosition,
     UIState.lastFocusedInput,
     set,
@@ -188,8 +185,8 @@ const useFormStateWithMapClickControl = (start, end, set) => {
   ])
 
   React.useEffect(() => {
-    return () => UIStateDispatch({ type: 'resetInputClickState' })
-  }, [UIStateDispatch])
+    return () => setUIState({ type: 'resetInputClickState' })
+  }, [setUIState])
 }
 
 export default {

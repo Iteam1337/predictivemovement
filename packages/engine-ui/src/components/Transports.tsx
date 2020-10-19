@@ -13,7 +13,7 @@ const Transports: React.FC<{
   deleteVehicle: (id: string) => void
 }> = ({ transports, addVehicle, deleteVehicle }) => {
   const { path, url } = useRouteMatch()
-  const dispatch = stores.ui((state) => state.dispatch)
+  const setUIState = stores.ui((state) => state.dispatch)
 
   return (
     <Switch>
@@ -34,7 +34,7 @@ const Transports: React.FC<{
           transports={transports}
           deleteTransport={deleteVehicle}
           onUnmount={() =>
-            dispatch({ type: 'highlightTransport', payload: undefined })
+            setUIState({ type: 'highlightTransport', payload: undefined })
           }
         />
       </Route>

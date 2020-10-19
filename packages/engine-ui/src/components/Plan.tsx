@@ -30,7 +30,7 @@ const Plan = ({
     (d) => d.activities && d.activities.length > 0
   )
   const { path } = useRouteMatch()
-  const dispatch = stores.ui((state) => state.dispatch)
+  const setUIState = stores.ui((state) => state.dispatch)
 
   return (
     <Switch>
@@ -69,7 +69,7 @@ const Plan = ({
         <PlanBookingDetails
           bookings={bookings}
           onUnmount={() =>
-            dispatch({ type: 'highlightBooking', payload: undefined })
+            setUIState({ type: 'highlightBooking', payload: undefined })
           }
         />
       </Route>

@@ -74,7 +74,7 @@ const groupByLocation = (activities: Activity[]) => {
 }
 
 const RouteActivities = ({ route }: Props) => {
-  const dispatch = stores.ui((state) => state.dispatch)
+  const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
 
   const activities = route.activities ? route.activities.slice(1, -1) : []
@@ -110,10 +110,10 @@ const RouteActivities = ({ route }: Props) => {
               <Elements.Links.RoundedLink
                 key={i}
                 onMouseOver={() =>
-                  dispatch({ type: 'highlightBooking', payload: activity.id })
+                  setUIState({ type: 'highlightBooking', payload: activity.id })
                 }
                 onMouseLeave={() =>
-                  dispatch({ type: 'highlightBooking', payload: undefined })
+                  setUIState({ type: 'highlightBooking', payload: undefined })
                 }
                 to={() => redirectTo(activity.id)}
                 onClick={() =>

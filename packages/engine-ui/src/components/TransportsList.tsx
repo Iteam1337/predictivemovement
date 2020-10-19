@@ -9,7 +9,7 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
   transports,
 }) => {
   const setMap = stores.map((state) => state.set)
-  const dispatch = stores.ui((state) => state.dispatch)
+  const setUIState = stores.ui((state) => state.dispatch)
 
   if (!transports.length)
     return (
@@ -35,10 +35,10 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
           <Elements.Links.RoundedLink
             color={transport.color}
             onMouseOver={() =>
-              dispatch({ type: 'highlightTransport', payload: transport.id })
+              setUIState({ type: 'highlightTransport', payload: transport.id })
             }
             onMouseLeave={() =>
-              dispatch({ type: 'highlightTransport', payload: undefined })
+              setUIState({ type: 'highlightTransport', payload: undefined })
             }
             to={`/transports/${transport.id}`}
             onClick={() =>

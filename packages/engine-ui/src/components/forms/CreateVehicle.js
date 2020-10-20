@@ -23,7 +23,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label required>Körschema</Elements.Form.Label>
+          <Elements.Form.Label>Körschema</Elements.Form.Label>
           <Elements.Layout.InputContainer>
             <Elements.Layout.TimeRestrictionWrapper>
               <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
@@ -36,8 +36,9 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
             </Elements.Layout.TimeRestrictionWrapper>
           </Elements.Layout.InputContainer>
           <Elements.Layout.InputContainer>
-            <Elements.Form.Label>Startposition</Elements.Form.Label>
+            <Elements.Form.Label required>Startposition</Elements.Form.Label>
             <FormInputs.AddressSearchInput
+              required
               placeholder="Adress (sök eller klicka på karta)"
               value={state.startPosition.name}
               onChangeHandler={eventHandlers.handleAddressInput(
@@ -73,10 +74,11 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="vehicleType">
+          <Elements.Form.Label htmlFor="vehicleType" required>
             Namn på transport
           </Elements.Form.Label>
           <FormInputs.TextInput
+            required
             onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
             name="vehicleType"
             value={state.vehicleType}

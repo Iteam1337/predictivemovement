@@ -52,6 +52,14 @@ const useFilteredStateFromQueryParams = (state) => {
   const includeOneBookingIfDetailView = (booking) =>
     bookingDetailView ? bookingDetailView.params.id === booking.id : true
 
+  const includeTransportRouteIfDetailView = (transport) => {
+    if (transportDetailView) {
+      return transport
+    }
+    const { current_route, ...rest } = transport
+
+    return rest
+  }
   const includeOneTransportIfDetailView = (transport) =>
     transportDetailView ? transportDetailView.params.id === transport.id : true
 
@@ -71,7 +79,9 @@ const useFilteredStateFromQueryParams = (state) => {
           : [],
       vehicles:
         includeTransports || rootView
-          ? state.vehicles.filter(includeOneTransportIfDetailView)
+          ? state.vehicles
+              .map(includeTransportRouteIfDetailView)
+              .filter(includeOneTransportIfDetailView)
           : [],
       plan: planView
         ? state.plan

@@ -39,15 +39,15 @@ defmodule Engine.Application do
 
   def start(_type, _args) do
     children = [
-      Engine.BookingProcessor,
+      Engine.BookingStore,
+      Engine.VehicleStore,
+      Engine.ES,
       PlanStore,
+      Engine.BookingProcessor,
       Engine.AdminProcessor,
       Engine.BookingUpdatesProcessor,
       Engine.BookingDeleteProcessor,
-      Engine.VehicleDeleteProcessor,
-      Engine.BookingStore,
-      Engine.VehicleStore,
-      Engine.ES
+      Engine.VehicleDeleteProcessor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

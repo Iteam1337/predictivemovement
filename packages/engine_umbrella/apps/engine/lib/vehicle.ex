@@ -137,8 +137,14 @@ defmodule Vehicle do
   end
 
   def delete(id) do
+    ES.add_event(%VehicleDeleted{id: id})
+    apply_delete_to_state(id)
+  end
+
+  def apply_delete_to_state(id) do
     Engine.VehicleStore.delete_vehicle(id)
     GenServer.stop(via_tuple(id))
+    MQ.publish(id, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "deleted")
   end
 
   defp via_tuple(id), do: {:via, :gproc, {:n, :l, {:vehicle_id, id}}}

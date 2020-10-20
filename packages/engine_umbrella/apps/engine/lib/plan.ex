@@ -13,7 +13,7 @@ defmodule Plan do
     )
     |> insert_time_matrix()
     |> MQ.call("calculate_route_optimization")
-    |> Poison.decode!(keys: :atoms)
+    |> Jason.decode!(keys: :atoms)
   end
 
   def insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do

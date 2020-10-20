@@ -42,7 +42,6 @@ defmodule Engine.MixProject do
       {:jason, "~> 1.2"},
       {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
       {:math, "~> 0.4.0"},
-      {:poison, "~> 3.1"},
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
       {:elixir_uuid, "~> 1.2"},
       {:gproc, "~> 0.8.0"},

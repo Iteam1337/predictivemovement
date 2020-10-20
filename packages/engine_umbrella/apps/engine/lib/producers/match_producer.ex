@@ -42,12 +42,12 @@ defmodule Engine.MatchProducer do
 
   defp string_to_vehicle_transform(vehicle_string) do
     vehicle_string
-    |> Poison.decode!(keys: :atoms)
+    |> Jason.decode!(keys: :atoms)
     |> Map.delete(:id)
   end
 
   defp string_to_booking_transform(booking_string) do
-      Poison.decode!(booking_string, keys: :atoms)
+      Jason.decode!(booking_string, keys: :atoms)
       |> Map.put_new(:metadata, %{})
       |> Map.put_new(:size, nil)
   end

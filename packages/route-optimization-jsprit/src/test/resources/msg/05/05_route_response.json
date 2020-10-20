@@ -1,1 +1,82 @@
-{}
+{
+    "data": {
+        "solution": {
+            "excluded": [
+                {
+                    "delivery": {
+                        "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf",
+                        "lon": 22.13488,
+                        "lat": 65.61582
+                    },
+                    "metadata": {
+                        "start": "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
+                    },
+                    "failure": {
+                        "meta": "{\"earliest\":\"1979-08-01T10:00:00.000Z\",\"latest\":\"1979-08-01T11:00:00.000Z\"}",
+                        "status_msg": "Time of time window constraint is in the past!",
+                        "detail": "",
+                        "source": "class com.predictivemovement.route.optimization.VRPSettingTimeUtils",
+                        "message": "Booking has excluded because time constaint is in the past",
+                        "status": "FAILURE"
+                    },
+                    "pickup": {
+                        "time_windows": [
+                            {
+                                "earliest": "1979-08-01T10:00:00.000Z",
+                                "latest": "1979-08-01T11:00:00.000Z"
+                            }
+                        ],
+                        "hint": "51w8gT9dPIENAAAAAgAAACwAAABVAAAA4zJ8Qb0Btz_bd0dCkebyQQ0AAAACAAAALAAAAFUAAABQHQEAP-9PAUSc6QNy708BZpzpAwMA7xIZJKLf",
+                        "lon": 22.015858,
+                        "lat": 65.641574
+                    },
+                    "id": "Gammelstad->LTU"
+                }
+            ],
+            "routes": [
+                {
+                    "number": 1,
+                    "activities": [
+                        {
+                            "address": {
+                                "lon": 21.925670623779297,
+                                "lat": 65.63349914550781
+                            },
+                            "index": -1,
+                            "type": "start"
+                        },
+                        {
+                            "address": {
+                                "lon": 22.05173683166504,
+                                "lat": 65.58159637451172
+                            },
+                            "index": 1,
+                            "id": "Gäddvik->LTU",
+                            "type": "pickupShipment"
+                        },
+                        {
+                            "address": {
+                                "lon": 22.13488006591797,
+                                "lat": 65.6158218383789
+                            },
+                            "index": 2,
+                            "id": "Gäddvik->LTU",
+                            "type": "deliverShipment"
+                        },
+                        {
+                            "address": {
+                                "lon": 21.925670623779297,
+                                "lat": 65.63349914550781
+                            },
+                            "index": -2,
+                            "type": "end"
+                        }
+                    ],
+                    "vehicle_id": "vehicle-1"
+                }
+            ]
+        }
+    },
+    "status_msg": "Some bookings are excluded!",
+    "status": "failure"
+}

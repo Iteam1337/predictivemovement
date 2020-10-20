@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.graphhopper.jsprit.analysis.toolbox.Plotter;
+import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
@@ -19,7 +20,7 @@ import org.json.JSONObject;
 
 public class TryRouteOptimization {
 
-    private RouteOptimization routeOptimization;
+    private VRPSolution vrpSolution;
     private JSONObject response;
 
     public static void main(final String args[]) throws Exception {
@@ -35,13 +36,15 @@ public class TryRouteOptimization {
 
     public void jsprit() throws Exception {
         // given
-        Path fileName = Path.of("src/test/resources/msg/01/01_route_request.json");
+        Path fileName = Path.of("src/test/resources/msg/06/06_route_request.json");
         String msg = Files.readString(fileName);
         JSONObject routeRequest = new JSONObject(msg);
 
         // when
-        routeOptimization = new RouteOptimization();
-        response = routeOptimization.calculate(routeRequest);
+        RouteOptimization routeOptimization = new RouteOptimization();
+        vrpSolution = routeOptimization.calculate(routeRequest);
+        StatusResponse statusResponse = new StatusResponse(vrpSolution);
+        response = statusResponse.status;
 
         // then
         debugOutput();
@@ -50,23 +53,25 @@ public class TryRouteOptimization {
 
     private void debugOutput() throws IOException {
         new File("tmp").mkdirs();
+        dump();
         plot();
         writeJsonFile();
-        dump();
     }
 
     private void plot() {
         // plot shipments
-        Plotter problemPlotter = new Plotter(routeOptimization.vrpSolution.problem);
+        Plotter problemPlotter = new Plotter(vrpSolution.problem);
         problemPlotter.plotShipments(true);
         problemPlotter.plot("tmp/route_problem.png", "Route Problem");
 
         // plot solution
-        Iterator<VehicleRoute> solutionsIterator = Solutions.bestOf(routeOptimization.vrpSolution.solutions).getRoutes()
-                .iterator();
+        Iterator<VehicleRoute> solutionsIterator = Solutions.bestOf(vrpSolution.solutions).getRoutes().iterator();
+        if (!solutionsIterator.hasNext())
+            return;
+
         List<VehicleRoute> solutionsList = Arrays.asList(solutionsIterator.next());
 
-        Plotter solutionPlotter = new Plotter(routeOptimization.vrpSolution.problem, solutionsList);
+        Plotter solutionPlotter = new Plotter(vrpSolution.problem, solutionsList);
         solutionPlotter.plotShipments(true);
         solutionPlotter.plot("tmp/route_solution.png", "Route Solution");
     }
@@ -77,12 +82,12 @@ public class TryRouteOptimization {
     }
 
     private void dump() {
-        System.out.println(routeOptimization.vrpSolution.solutions);
+        System.out.println(vrpSolution.solutions);
 
-        System.out.println("Number of solutions: " + routeOptimization.vrpSolution.solutions.size());
+        System.out.println("Number of solutions: " + vrpSolution.solutions.size());
 
         int i = 0;
-        for (VehicleRoutingProblemSolution solution : routeOptimization.vrpSolution.solutions) {
+        for (VehicleRoutingProblemSolution solution : vrpSolution.solutions) {
             System.out.println("\n--- solution: " + i);
             System.out.println(solution);
             for (VehicleRoute route : solution.getRoutes()) {
@@ -97,6 +102,17 @@ public class TryRouteOptimization {
                     System.out.println(activity.getOperationTime());
                 }
             }
+
+            for (Job job : solution.getUnassignedJobs()) {
+                System.out.println("-- job");
+                System.out.println(job);
+                System.out.println(job.getId());
+                System.out.println(job.getIndex());
+                System.out.println(job.getMaxTimeInVehicle());
+                System.out.println(job.getSize());
+                System.out.println(job.getActivities());
+            }
+
             i++;
         }
     }

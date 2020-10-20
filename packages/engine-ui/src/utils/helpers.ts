@@ -40,9 +40,12 @@ const calculateMinTime = (date?: Date, minDate?: Date) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
-const getLastFourChars = (str: string) => str.slice(str.length - 4, str.length)
+const getLastFourChars = (str: string): string =>
+  str.slice(str.length - 4, str.length)
 
 const withoutLastFourChars = (str: string) => str.slice(0, str.length - 4)
+
+const formatIdForEndUser = (id: string) => getLastFourChars(id).toUpperCase()
 
 const formatCoordinateToFixedDecimalLength = ({
   lat,
@@ -63,6 +66,12 @@ export const hexToRGBA = (hex: string, opacity: number = 255) => {
   return [r, g, b, opacity]
 }
 
+export const isOfType = <T>(
+  varToBeChecked: any,
+  propertyToCheckFor: keyof T
+): varToBeChecked is T =>
+  (varToBeChecked as T)[propertyToCheckFor] !== undefined
+
 export default {
   findAddress,
   calculateMinTime,
@@ -71,4 +80,6 @@ export default {
   withoutLastFourChars,
   formatCoordinateToFixedDecimalLength,
   hexToRGBA,
+  formatIdForEndUser,
+  isOfType,
 }

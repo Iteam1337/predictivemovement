@@ -27,10 +27,10 @@ interface Props {
   bookings: Booking[]
   plan: PlanRoute[]
   vehicles: any
-  createBooking: () => void
-  deleteBooking: () => void
-  dispatchOffers: () => void
-  addVehicle: () => void
+  createBooking: (params: any) => void
+  deleteBooking: (params: any) => void
+  dispatchOffers: (params: any) => void
+  addVehicle: (params: any) => void
   deleteVehicle: (id: string) => void
 }
 

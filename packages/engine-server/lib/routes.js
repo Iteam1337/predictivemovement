@@ -1,4 +1,6 @@
 const _ = require('highland')
+const helpers = require('./helpers')
+
 const {
   addVehicle,
   bookings,
@@ -56,8 +58,13 @@ function register(io) {
       return socket.emit('transport-updated', transportLocationUpdate)
     })
 
-    _(bookings.fork()).each((booking) => socket.emit('notification', booking))
-    _(vehicles.fork()).each((car) => socket.emit('notification', car))
+    _(bookings.fork()).each((booking) =>
+      socket.emit('notification', helpers.bookingToNotification(booking))
+    )
+
+    _(vehicles.fork()).each((transport) =>
+      socket.emit('notification', helpers.transportToNotification(transport))
+    )
 
     socket.on('new-booking', (params) => {
       const booking = {

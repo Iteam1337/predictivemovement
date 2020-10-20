@@ -5,6 +5,8 @@ import java.util.Collection;
 import com.graphhopper.jsprit.core.algorithm.VehicleRoutingAlgorithm;
 import com.graphhopper.jsprit.core.algorithm.box.SchrimpfFactory;
 import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem;
+import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
+import com.graphhopper.jsprit.core.problem.job.Job;
 import com.graphhopper.jsprit.core.problem.job.Shipment;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
@@ -23,13 +25,17 @@ public class VRPSolution {
 
     VehicleRoutingProblemSolution bestSolution;
 
+    ExcludedBookings excludedBookings;
+
     VRPSolution(VRPSetting vrpSetting) {
         this.vrpSetting = vrpSetting;
+        this.excludedBookings = vrpSetting.excludedBookings;
     }
 
     VRPSolution calculate() throws RouteOptimizationException {
         createVRP();
         findBestSolution();
+        addExcludedBookings();
         return this;
     }
 
@@ -38,6 +44,7 @@ public class VRPSolution {
 
         for (VehicleImpl vehicle : vrpSetting.vehicles) {
             vrpBuilder.addVehicle(vehicle);
+            vrpBuilder.setFleetSize(FleetSize.FINITE);
         }
 
         for (Shipment shipment : vrpSetting.shipments) {
@@ -56,5 +63,13 @@ public class VRPSolution {
 
         solutions = algorithm.searchSolutions();
         bestSolution = Solutions.bestOf(solutions);
+    }
+
+    private void addExcludedBookings() {
+        if (bestSolution.getUnassignedJobs().size() > 0) {
+            for (Job job : bestSolution.getUnassignedJobs()) {
+                excludedBookings.add(job);
+            }
+        }
     }
 }

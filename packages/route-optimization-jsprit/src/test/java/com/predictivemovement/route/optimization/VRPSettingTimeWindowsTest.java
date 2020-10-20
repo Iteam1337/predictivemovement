@@ -1,6 +1,7 @@
 package com.predictivemovement.route.optimization;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.ZonedDateTime;
@@ -13,7 +14,7 @@ public class VRPSettingTimeWindowsTest {
     private static TimeWindow timeWindowToAdd;
 
     @Test
-    public void no_time_window_is_add() {
+    public void no_time_window_is_add() throws Exception {
         // init
         timeWindowToAdd = null;
 
@@ -32,27 +33,26 @@ public class VRPSettingTimeWindowsTest {
     }
 
     @Test
-    public void default_time_window_is_add() {
+    public void excpetion_on_times_in_the_past() throws Exception {
         // init
         timeWindowToAdd = null;
 
         // given
-        String jsonString = "{ \"time_windows\": [{\"latest\":\"2020-08-12T15:21:28.251Z\"}]}";
+        String jsonString = "{ \"time_windows\": [{\"latest\":\"1979-08-12T15:21:28.251Z\"}]}";
         JSONObject routeRequest = new JSONObject(jsonString);
 
         // when
         VRPSettingTimeWindows settingTimeWindows = new VRPSettingTimeWindows();
-        settingTimeWindows.add(routeRequest, (timeWindow) -> {
-            timeWindowToAdd = timeWindow;
+        RouteOptimizationException exception = assertThrows(RouteOptimizationException.class, () -> {
+            settingTimeWindows.add(routeRequest, (timeWindow) -> {
+                timeWindowToAdd = timeWindow;
+            });
         });
-
-        // then
-        assertEquals(0.0, timeWindowToAdd.getStart(), 0.01);
-        assertEquals(Double.MAX_VALUE, timeWindowToAdd.getEnd(), 0.01);
+        assertEquals("Time of time window constraint is in the past!", exception.statusMsg);
     }
 
     @Test
-    public void given_time_window_is_add() {
+    public void given_time_window_is_add() throws Exception {
         // init
         timeWindowToAdd = null;
 

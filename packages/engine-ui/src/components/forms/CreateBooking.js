@@ -80,6 +80,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
                 value={state.measurement}
                 placeholder="Mått (BxHxDcm)"
                 pattern="(\d+)x(\d+)x(\d+)"
+                title="BxHxD cm"
                 onChangeHandler={eventHandlers.handleTextInputChange(
                   'measurement',
                   onChangeHandler

@@ -243,4 +243,73 @@ defmodule BookingProcessorTest do
     assert Map.get(plan, :vehicles) |> length() == 1
     assert Map.get(plan, :booking_ids) |> length() == 3
   end
+
+  test "constraints failures leads to excluded bookings" do
+    expected_id =
+      MessageGenerator.random_booking(%{
+        id: "Gammelstad->LTU",
+        pickup: %{
+          lon: 22.015858,
+          lat: 65.641574,
+          time_windows: [
+            %{
+              earliest: ~U[1979-08-01 10:00:00.000Z],
+              latest: ~U[1979-08-01 11:00:00.000Z]
+            }
+          ]
+        },
+        delivery: %{
+          lon: 22.13488,
+          lat: 65.61582
+        },
+        metadata: %{
+          start: "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
+        }
+      })
+      |> Booking.make()
+
+    MessageGenerator.random_booking(%{
+      id: "Gäddvik->LTU",
+      pickup: %{
+        lon: 22.051736,
+        lat: 65.581598
+      },
+      delivery: %{
+        lon: 22.13488,
+        lat: 65.61582
+      },
+      metadata: %{
+        start: "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
+      }
+    })
+    |> Booking.make()
+
+    MessageGenerator.random_car(%{
+      id: "vehicle-1",
+      start_address: %{
+        lon: 21.92567,
+        lat: 65.6335
+      },
+      end_address: %{
+        lon: 21.92567,
+        lat: 65.6335
+      },
+      metadata: %{
+        start: "Bällinge (65.6335,21.92567)"
+      }
+    })
+    |> Vehicle.make()
+
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    booking_ids = Engine.BookingStore.get_bookings()
+    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    plan = PlanStore.get_plan()
+    clear_state()
+
+    assert Map.get(plan, :vehicles) |> length() == 1
+    assert Map.get(plan, :excluded_booking_ids) |> length() == 1
+
+    assert Map.get(plan, :excluded_booking_ids) |> List.first() |> Map.get(:id) ==
+             expected_id
+  end
 end

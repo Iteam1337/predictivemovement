@@ -155,8 +155,8 @@ defmodule MessageGenerator do
 
   defp do_add_vehicle_addresses(map, location) do
     map
-    |> Map.put(:start_address, Address.random(location))
-    |> Map.put(:end_address, Address.random(location))
+    |> Map.put_new(:start_address, Address.random(location))
+    |> Map.put_new(:end_address, Address.random(location))
   end
 
   def add_booking_addresses(map), do: do_add_booking_addresses(map, @ljusdal)
@@ -165,13 +165,13 @@ defmodule MessageGenerator do
 
   defp do_add_booking_addresses(map, location) do
     map
-    |> Map.put(:pickup, Address.random(location))
-    |> Map.put(:delivery, Address.random(location))
+    |> Map.put_new(:pickup, Address.random(location))
+    |> Map.put_new(:delivery, Address.random(location))
   end
 
   def add_random_id_and_time(map) do
     map
-    |> Map.put(:id, Enum.random(0..100_000))
+    |> Map.put_new(:id, Enum.random(0..100_000))
     |> Map.put(:bookingDate, DateTime.utc_now())
   end
 end

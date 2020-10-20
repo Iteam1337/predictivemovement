@@ -32,7 +32,8 @@ defmodule Engine.BookingProcessor do
       do: IO.puts("No vehicles/bookings to calculate plan for")
 
   def calculate_plan(vehicle_ids, booking_ids) do
-    %{data: %{solution: %{routes: routes}}} = @plan.find_optimal_routes(vehicle_ids, booking_ids)
+    %{data: %{solution: %{routes: routes, excluded: excluded}}} =
+      @plan.find_optimal_routes(vehicle_ids, booking_ids)
 
     vehicles =
       routes
@@ -54,7 +55,11 @@ defmodule Engine.BookingProcessor do
         )
       end)
 
-    PlanStore.put_plan(%{vehicles: vehicles, booking_ids: booking_ids})
+    PlanStore.put_plan(%{
+      vehicles: vehicles,
+      booking_ids: booking_ids,
+      excluded_booking_ids: Enum.map(excluded, &Map.take(&1, [:id, :failure]))
+    })
   end
 
   def handle_message(

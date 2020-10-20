@@ -105,16 +105,15 @@ defmodule Vehicle do
 
     vehicle = struct(Vehicle, vehicle_fields)
 
-    case Vex.valid?(vehicle) do
-      true ->
-        vehicle
-        |> apply_vehicle_to_state()
-        |> (&%VehicleRegistered{vehicle: &1}).()
-        |> ES.add_event()
+    with true <- Vex.valid?(vehicle) do
+      vehicle
+      |> apply_vehicle_to_state()
+      |> (&%VehicleRegistered{vehicle: &1}).()
+      |> ES.add_event()
 
-        vehicle_fields.id
-
-      false ->
+      vehicle_fields.id
+    else
+      _ ->
         IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")
         Vex.errors(vehicle)
     end

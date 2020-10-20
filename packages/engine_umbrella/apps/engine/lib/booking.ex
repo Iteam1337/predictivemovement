@@ -74,16 +74,15 @@ defmodule Booking do
       route: Osrm.route(pickup, delivery)
     }
 
-    case Vex.valid?(booking) do
-      true ->
-        booking
-        |> add_event_to_events_list("new", DateTime.utc_now())
-        |> apply_booking_to_state()
-        |> (&ES.add_event(%BookingRegistered{booking: &1})).()
+    with true <- Vex.valid?(booking) do
+      booking
+      |> add_event_to_events_list("new", DateTime.utc_now())
+      |> apply_booking_to_state()
+      |> (&ES.add_event(%BookingRegistered{booking: &1})).()
 
-        id
-
-      false ->
+      id
+    else
+      _ ->
         IO.inspect(Vex.errors(booking), label: "booking validation errors")
         Vex.errors(booking)
     end

@@ -23,7 +23,7 @@ defmodule Booking do
   validates(:delivery, presence: true)
 
   validates([:size, :weight],
-    by: [function: &Kernel.is_integer/1, message: "must be an integer"]
+    by: [function: &is_integer/1, message: "must be an integer"]
   )
 
   validates([:size, :measurements],
@@ -32,9 +32,9 @@ defmodule Booking do
   )
 
   def valid_measurements(measurements) do
-    case Kernel.is_list(measurements) do
+    case is_list(measurements) do
       true ->
-        measurements |> Enum.all?(&Kernel.is_integer/1)
+        measurements |> Enum.all?(&is_integer/1)
 
       _ ->
         false

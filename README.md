@@ -1,7 +1,6 @@
 # Predictive Movement
 
-[![Build Status](https://travis-ci.com/Iteam1337/pm-mapbox-test.svg?branch=master)](https://travis-ci.com/Iteam1337/pm-mapbox-test)
-
+[![Build Status](https://github.com/iteam1337/predictivemovement/workflows/Build%20&%20Deploy%20to%20Dev/badge.svg)](https://github.com/iteam1337/predictivemovement/actions)
 This is the source code for the collaborative open source project Predictive Movement.
 
 ## About

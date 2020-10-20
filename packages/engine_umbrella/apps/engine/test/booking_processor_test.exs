@@ -126,7 +126,6 @@ defmodule BookingProcessorTest do
     assert first_vehicle |> Map.get(:end_address) == %{lat: 51.829182, lon: 17.0896213}
   end
 
-  @tag :only
   test "time window constrains is passed on from vehicle to plan" do
     earliest_start = "12:05"
     latest_end = "18:05"

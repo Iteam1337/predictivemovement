@@ -41,7 +41,7 @@ Start dependencies
 run event_store migrations and start the engine
 
     cd packages/engine_umbrella/
-    mix dev
+    iex -S mix dev
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 

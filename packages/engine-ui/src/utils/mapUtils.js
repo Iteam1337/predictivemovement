@@ -249,7 +249,6 @@ export const toGeoJsonLayer = (id, data, callback) =>
     lineWidthScale: 1,
     lineWidthMinPixels: 3,
     getFillColor: (d) => helpers.hexToRGBA(d.properties.color),
-    highlightColor: [19, 197, 123, 255],
     autoHighlight: true,
     getLineColor: (d) => helpers.hexToRGBA(d.properties.color),
     getRadius: (d) => d.properties.size || 300,
@@ -257,7 +256,7 @@ export const toGeoJsonLayer = (id, data, callback) =>
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 17,
-    pointRadiusMinPixels: 7,
+    pointRadiusMinPixels: 5,
     lineJointRounded: true,
     onClick: callback,
   })

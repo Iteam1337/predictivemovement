@@ -19,6 +19,10 @@ const SmallInfoBold = styled.p`
   margin-top: 0;
   margin-bottom: 0.25rem;
 `
+const ErrorMessage = styled(InfoSm)`
+color: red;
+margin-top: 0.25rem;
+`
 
 const InfoMd = styled.p`
   font-style: italic;
@@ -98,4 +102,5 @@ export default {
   SemiBoldParagraph,
   SpanBold,
   InfoSmStrong,
+  ErrorMessage
 }

@@ -4,6 +4,7 @@ import locationIcon from '../../../assets/location.svg'
 import styled from 'styled-components'
 import hooks from '../../../utils/hooks'
 import debounce from 'lodash.debounce'
+import warningIcon from '../../../assets/warning.svg'
 
 const DropdownWrapper = styled.div`
   width: 100%;
@@ -21,7 +22,13 @@ const DropdownButton = styled.button`
   }
 `
 
-const Component = ({ onChangeHandler, placeholder, value, ...rest }) => {
+const Component = ({
+  onChangeHandler,
+  placeholder,
+  value,
+  showErrorMessage,
+  ...rest
+}) => {
   const [showDropdown, setShowDropdown] = React.useState(false)
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
 
@@ -50,12 +57,20 @@ const Component = ({ onChangeHandler, placeholder, value, ...rest }) => {
 
   return (
     <Elements.Layout.InputInnerContainer>
-      <Elements.Icons.FormInputIcon
-        alt="Location pickup icon"
-        src={`${locationIcon}`}
-      />
+      {showErrorMessage ? (
+        <Elements.Icons.FormInputIcon
+          alt="Warning icon"
+          src={`${warningIcon}`}
+        />
+      ) : (
+        <Elements.Icons.FormInputIcon
+          alt="Location pickup icon"
+          src={`${locationIcon}`}
+        />
+      )}
       <Elements.Form.TextInput
         {...rest}
+        error={showErrorMessage}
         name="pickup"
         type="text"
         value={value}

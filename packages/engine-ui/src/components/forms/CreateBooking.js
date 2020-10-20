@@ -7,7 +7,13 @@ import eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
 import { UIStateContext } from '../../utils/UIStateContext'
 
-const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
+const Component = ({
+  onChangeHandler,
+  onSubmitHandler,
+  state,
+  showErrorMessage,
+  setErrorState,
+}) => {
   const history = useHistory()
   const { dispatch: UIStateDispatch } = React.useContext(UIStateContext)
 
@@ -125,6 +131,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           required
+          showErrorMessage={showErrorMessage.pickup}
           placeholder="Adress (sök eller klicka på karta)"
           value={state.pickup.name}
           onFocus={() =>
@@ -135,9 +142,15 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           }
           onChangeHandler={eventHandlers.handleAddressInput(
             'pickup',
-            onChangeHandler
+            onChangeHandler,
+            setErrorState
           )}
         />
+        {showErrorMessage.pickup && (
+          <Elements.Typography.ErrorMessage>
+            Kunde inte hitta adressen, försök igen
+          </Elements.Typography.ErrorMessage>
+        )}
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <FormInputs.TextInput
@@ -228,6 +241,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
         <FormInputs.AddressSearchInput
           placeholder="Adress (sök eller klicka på karta)"
           value={state.delivery.name}
+          showErrorMessage={showErrorMessage.delivery}
           onFocus={() =>
             UIStateDispatch({
               type: 'focusInput',
@@ -236,9 +250,15 @@ const Component = ({ onChangeHandler, onSubmitHandler, state }) => {
           }
           onChangeHandler={eventHandlers.handleAddressInput(
             'delivery',
-            onChangeHandler
+            onChangeHandler,
+            setErrorState
           )}
         />
+        {showErrorMessage.delivery && (
+          <Elements.Typography.ErrorMessage>
+            Kunde inte hitta adressen, försök igen
+          </Elements.Typography.ErrorMessage>
+        )}
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <FormInputs.TextInput

@@ -22,13 +22,14 @@ const handleContactInputChange = (
   }))
 }
 
-const handleAddressInput = (propertyName, callback) => ({
+const handleAddressInput = (propertyName, callback, setErrorState) => ({
   name = '',
   street = '',
   lon,
   lat,
   county = '',
 }) => {
+  setErrorState((prev) => ({ ...prev, [propertyName]: false }))
   return callback((currentState) => ({
     ...currentState,
     [propertyName]: {

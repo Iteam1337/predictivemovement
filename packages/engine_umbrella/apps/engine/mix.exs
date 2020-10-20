@@ -34,7 +34,6 @@ defmodule Engine.MixProject do
     [
       {:message_generator, in_umbrella: true, only: :test},
       {:amqp, "~> 1.5"},
-      {:flow, "~> 1.0.0"},
       {:broadway, "~> 0.6.0"},
       {:broadway_rabbitmq, "~> 0.6.0"},
       {:httpoison, "~> 1.6"},

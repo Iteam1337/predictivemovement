@@ -35,8 +35,8 @@ defmodule Plan do
   defp add_hints_from_matrix(%{bookings: bookings} = map) do
     {booking_hints, vehicle_hints} =
       map
-      |> get_in([:matrix, :sources])
-      |> Enum.map(fn %{hint: hint} -> hint end)
+      |> get_in([:matrix, "sources"])
+      |> Enum.map(fn %{"hint" => hint} -> hint end)
       |> Enum.split(length(bookings) * 2)
 
     map

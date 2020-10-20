@@ -8,6 +8,9 @@ defmodule Engine.Application do
   defp apply_event(%BookingRegistered{booking: booking}),
     do: struct(Booking, booking) |> Booking.apply_booking_to_state()
 
+  defp apply_event(%BookingDeleted{id: id}),
+    do: Booking.apply_delete_to_state(id)
+
   defp apply_event(%BookingAssigned{booking_id: id, vehicle: vehicle, timestamp: time}),
     do: Booking.apply_assign_to_state(id, vehicle, time)
 
@@ -22,6 +25,9 @@ defmodule Engine.Application do
 
   defp apply_event(%VehicleRegistered{vehicle: vehicle}),
     do: struct(Vehicle, vehicle) |> Vehicle.apply_vehicle_to_state()
+
+  defp apply_event(%VehicleDeleted{id: id}),
+    do: Vehicle.apply_delete_to_state(id)
 
   defp apply_event(%DriverAcceptedOffer{vehicle_id: vehicle_id, offer: offer}),
     do: Vehicle.apply_offer_accepted(vehicle_id, offer)
@@ -39,15 +45,15 @@ defmodule Engine.Application do
 
   def start(_type, _args) do
     children = [
-      Engine.BookingProcessor,
+      Engine.BookingStore,
+      Engine.VehicleStore,
+      Engine.ES,
       PlanStore,
+      Engine.BookingProcessor,
       Engine.AdminProcessor,
       Engine.BookingUpdatesProcessor,
       Engine.BookingDeleteProcessor,
-      Engine.VehicleDeleteProcessor,
-      Engine.BookingStore,
-      Engine.VehicleStore,
-      Engine.ES
+      Engine.VehicleDeleteProcessor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

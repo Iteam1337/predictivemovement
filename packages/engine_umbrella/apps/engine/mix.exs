@@ -34,7 +34,6 @@ defmodule Engine.MixProject do
     [
       {:message_generator, in_umbrella: true, only: :test},
       {:amqp, "~> 1.5"},
-      {:flow, "~> 1.0.0"},
       {:broadway, "~> 0.6.0"},
       {:broadway_rabbitmq, "~> 0.6.0"},
       {:httpoison, "~> 1.6"},
@@ -46,8 +45,8 @@ defmodule Engine.MixProject do
       {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
       {:elixir_uuid, "~> 1.2"},
       {:gproc, "~> 0.8.0"},
-      {:ex_cldr_dates_times, "~> 2.0"},
-      {:eventstore, "~> 1.1"}
+      {:eventstore, "~> 1.1"},
+      {:vex, "~> 0.8.0"}
     ]
   end
 

@@ -127,10 +127,8 @@ defmodule BookingProcessorTest do
   end
 
   test "time window constrains is passed on from vehicle to plan" do
-    now = DateTime.utc_now()
-    later = now |> DateTime.add(60 * 60 * 6)
-    {:ok, earliest_start} = Engine.Cldr.DateTime.to_string(now, format: "HH:mm")
-    {:ok, latest_end} = Engine.Cldr.DateTime.to_string(later, format: "HH:mm")
+    earliest_start = "12:05"
+    latest_end = "18:05"
 
     MessageGenerator.random_car(%{earliest_start: earliest_start, latest_end: latest_end})
     |> Vehicle.make()

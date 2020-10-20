@@ -1,24 +1,21 @@
 const _ = require('highland')
 const helpers = require('./helpers')
-
-const {
-  addVehicle,
-  bookings,
-  vehicles,
-  createBooking,
-  dispatchOffers,
-  plan,
-  deleteBooking,
-  deleteVehicle,
-  transportLocationUpdates,
-} = require('./engineConnector')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
+const { bookingsCache, vehiclesCache, planCache } = require('./cache')
 
-const vehiclesCache = new Map()
-const bookingsCache = new Map()
-const planCache = new Map()
+module.exports = (io) => {
+  const {
+    bookings,
+    vehicles,
+    plan,
+    addVehicle,
+    createBooking,
+    dispatchOffers,
+    publishDeleteBooking,
+    publishDeleteVehicle,
+    transportLocationUpdates,
+  } = require('./engineConnector')(io)
 
-function register(io) {
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto((booking) => bookingsCache.set(booking.id, booking))
@@ -139,18 +136,14 @@ function register(io) {
     socket.on('delete-booking', (id) => {
       console.log('about to delete booking: ', id)
       bookingsCache.delete(id)
-      deleteBooking(id)
+      publishDeleteBooking(id)
       socket.emit('delete-booking', id)
     })
 
     socket.on('delete-vehicle', (id) => {
       vehiclesCache.delete(id)
-      deleteVehicle(id)
+      publishDeleteVehicle(id)
       socket.emit('vehicle-deleted', id)
     })
   })
-}
-
-module.exports = {
-  register,
 }

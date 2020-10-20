@@ -1,5 +1,6 @@
 defmodule Vehicle do
   use GenServer
+  use Vex.Struct
   require Logger
   alias Engine.ES
   @derive Jason.Encoder
@@ -18,6 +19,20 @@ defmodule Vehicle do
     :profile,
     :capacity
   ]
+
+  @hour_and_minutes_format ~r/^((?:[01]\d|2[0-3]):[0-5]\d$)/
+
+  validates(:start_address, presence: true)
+  validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
+  validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
+
+  validates([:capacity, :weight],
+    by: [function: &is_integer/1, message: "must be an integer"]
+  )
+
+  validates([:capacity, :volume],
+    by: [function: &is_integer/1, message: "must be an integer"]
+  )
 
   def init(init_arg) do
     {:ok, init_arg}
@@ -88,12 +103,20 @@ defmodule Vehicle do
       |> Map.put_new(:capacity, %{volume: 15, weight: 700})
       |> Map.update(:metadata, nil, &Jason.encode!/1)
 
-    struct(Vehicle, vehicle_fields)
-    |> apply_vehicle_to_state()
-    |> (&%VehicleRegistered{vehicle: &1}).()
-    |> ES.add_event()
+    vehicle = struct(Vehicle, vehicle_fields)
 
-    vehicle_fields.id
+    with true <- Vex.valid?(vehicle) do
+      vehicle
+      |> apply_vehicle_to_state()
+      |> (&%VehicleRegistered{vehicle: &1}).()
+      |> ES.add_event()
+
+      vehicle_fields.id
+    else
+      _ ->
+        IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")
+        Vex.errors(vehicle)
+    end
   end
 
   def apply_offer_accepted(id, offer),
@@ -114,8 +137,14 @@ defmodule Vehicle do
   end
 
   def delete(id) do
+    ES.add_event(%VehicleDeleted{id: id})
+    apply_delete_to_state(id)
+  end
+
+  def apply_delete_to_state(id) do
     Engine.VehicleStore.delete_vehicle(id)
     GenServer.stop(via_tuple(id))
+    MQ.publish(id, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "deleted")
   end
 
   defp via_tuple(id), do: {:via, :gproc, {:n, :l, {:vehicle_id, id}}}

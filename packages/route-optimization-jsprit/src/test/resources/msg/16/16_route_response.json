@@ -1,46 +1,51 @@
 {
-  "solution": {
-    "routes": [
-      {
-        "number": 1,
-        "activities": [
-          {
-            "address": {
-              "lon": 15.928519248962402,
-              "lat": 61.73812484741211
+  "data": {
+    "solution": {
+      "excluded": [],
+      "routes": [
+        {
+          "number": 1,
+          "activities": [
+            {
+              "address": {
+                "lon": 15.928519248962402,
+                "lat": 61.73812484741211
+              },
+              "index": -1,
+              "type": "start"
             },
-            "index": -1,
-            "type": "start"
-          },
-          {
-            "address": {
-              "lon": 16.001251220703125,
-              "lat": 61.78224182128906
+            {
+              "address": {
+                "lon": 16.001251220703125,
+                "lat": 61.78224182128906
+              },
+              "index": 1,
+              "id": "pmb-5yotugxm",
+              "type": "pickupShipment"
             },
-            "index": 1,
-            "id": "pmb-5yotugxm",
-            "type": "pickupShipment"
-          },
-          {
-            "address": {
-              "lon": 16.016462326049805,
-              "lat": 61.86483383178711
+            {
+              "address": {
+                "lon": 16.016462326049805,
+                "lat": 61.86483383178711
+              },
+              "index": 2,
+              "id": "pmb-5yotugxm",
+              "type": "deliverShipment"
             },
-            "index": 2,
-            "id": "pmb-5yotugxm",
-            "type": "deliverShipment"
-          },
-          {
-            "address": {
-              "lon": 15.928519248962402,
-              "lat": 61.73812484741211
-            },
-            "index": -2,
-            "type": "end"
-          }
-        ],
-        "vehicle_id": "pmv-61dhbail"
-      }
-    ]
-  }
+            {
+              "address": {
+                "lon": 15.928519248962402,
+                "lat": 61.73812484741211
+              },
+              "index": -2,
+              "type": "end"
+            }
+          ],
+          "vehicle_id": "pmv-61dhbail"
+        }
+      ]
+    }
+  },
+  "status_msg": "well done",
+  "status": "success"
 }

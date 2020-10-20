@@ -6,6 +6,7 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './CreateSuccess'
 import hooks from '../utils/hooks'
 import moment from 'moment'
+import stores from '../utils/state/stores'
 
 const initialState = {
   vehicleType: '',
@@ -14,17 +15,17 @@ const initialState = {
   volume: '',
   weight: '',
   timewindow: { start: null, end: null },
-  startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
-  endPosition: { lat: undefined, lon: undefined, name: '' },
-  driver: { name: '', contact: '' },
+  startPosition: { lat: 61.8172594, lon: 16.0561472, name: undefined },
+  endPosition: { lat: undefined, lon: undefined, name: undefined },
+  driver: { name: undefined, contact: undefined },
 }
 
 const CreateVehicle = ({ onSubmit }) => {
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
   const [isFinished, setIsFinished] = React.useState(false)
-
   const [formState, setState] = React.useState(initialState)
+  const setUIState = stores.ui((state) => state.dispatch)
 
   hooks.useFormStateWithMapClickControl(
     'startPosition',
@@ -79,7 +80,8 @@ const CreateVehicle = ({ onSubmit }) => {
         <Form
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}
-          state={formState}
+          formState={formState}
+          dispatch={setUIState}
         />
       </Elements.Layout.Container>
     </MainRouteLayout>

@@ -6,7 +6,6 @@ import { reducer, initState } from './utils/reducer'
 import { Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import { UIStateProvider } from './utils/UIStateContext'
 import hooks from './utils/hooks'
 import Notifications from './components/Notifications'
 import * as notificationTypes from './notificationTypes'
@@ -133,7 +132,7 @@ const App = () => {
   })
 
   return (
-    <UIStateProvider>
+    <>
       <Logotype />
       <Notifications
         notifications={notifications}
@@ -150,7 +149,7 @@ const App = () => {
       <Route path="/">
         <Map data={mapData} />
       </Route>
-    </UIStateProvider>
+    </>
   )
 }
 

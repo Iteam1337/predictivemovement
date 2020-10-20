@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import helpers from './helpers'
-import { UIStateContext } from './UIStateContext'
+import stores from '../utils/state/stores'
 
 const useFilteredStateFromQueryParams = (state) => {
   const includeBookings = useRouteMatch(['/bookings', '/bookings/:id'], {
@@ -126,9 +126,8 @@ const useGetSuggestedAddresses = (initialState) => {
 }
 
 const useFormStateWithMapClickControl = (start, end, set) => {
-  const { state: UIState, dispatch: UIStateDispatch } = React.useContext(
-    UIStateContext
-  )
+  const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
+
   React.useEffect(() => {
     /**
      * Listen for a combination of clicks on an
@@ -174,10 +173,10 @@ const useFormStateWithMapClickControl = (start, end, set) => {
           break
       }
 
-      return UIStateDispatch({ type: 'resetInputClickState' })
+      return setUIState({ type: 'resetInputClickState' })
     }
   }, [
-    UIStateDispatch,
+    setUIState,
     UIState.lastClickedPosition,
     UIState.lastFocusedInput,
     set,
@@ -186,8 +185,8 @@ const useFormStateWithMapClickControl = (start, end, set) => {
   ])
 
   React.useEffect(() => {
-    return () => UIStateDispatch({ type: 'resetInputClickState' })
-  }, [UIStateDispatch])
+    return () => setUIState({ type: 'resetInputClickState' })
+  }, [setUIState])
 }
 
 export default {

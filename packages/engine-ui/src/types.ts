@@ -16,8 +16,8 @@ export interface Booking {
 }
 
 type ParcelAddress = {
-  lat: string
-  lon: string
+  lat: number
+  lon: number
   street: string
   city: string
   time_windows: TimeWindow[] | null

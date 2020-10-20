@@ -1,5 +1,6 @@
 defmodule Booking do
   use GenServer
+  use Vex.Struct
   require Logger
   alias Engine.ES
   @derive Jason.Encoder
@@ -17,6 +18,28 @@ defmodule Booking do
     :size,
     :route
   ]
+
+  validates(:pickup, presence: true)
+  validates(:delivery, presence: true)
+
+  validates([:size, :weight],
+    by: [function: &is_integer/1, message: "must be an integer"]
+  )
+
+  validates([:size, :measurements],
+    by: [function: &Booking.valid_measurements/1, message: "must be an integer"],
+    length: [is: 3]
+  )
+
+  def valid_measurements(measurements) do
+    case is_list(measurements) do
+      true ->
+        measurements |> Enum.all?(&is_integer/1)
+
+      _ ->
+        false
+    end
+  end
 
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
@@ -40,7 +63,7 @@ defmodule Booking do
       }) do
     id = generate_id()
 
-    %Booking{
+    booking = %Booking{
       id: id,
       pickup: pickup,
       external_id: external_id,
@@ -50,11 +73,19 @@ defmodule Booking do
       size: size,
       route: Osrm.route(pickup, delivery)
     }
-    |> add_event_to_events_list("new", DateTime.utc_now())
-    |> apply_booking_to_state()
-    |> (&ES.add_event(%BookingRegistered{booking: &1})).()
 
-    id
+    with true <- Vex.valid?(booking) do
+      booking
+      |> add_event_to_events_list("new", DateTime.utc_now())
+      |> apply_booking_to_state()
+      |> (&ES.add_event(%BookingRegistered{booking: &1})).()
+
+      id
+    else
+      _ ->
+        IO.inspect(Vex.errors(booking), label: "booking validation errors")
+        Vex.errors(booking)
+    end
   end
 
   def apply_booking_to_state(%Booking{id: id} = booking) do

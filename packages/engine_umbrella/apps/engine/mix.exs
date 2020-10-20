@@ -47,7 +47,8 @@ defmodule Engine.MixProject do
       {:elixir_uuid, "~> 1.2"},
       {:gproc, "~> 0.8.0"},
       {:ex_cldr_dates_times, "~> 2.0"},
-      {:eventstore, "~> 1.1"}
+      {:eventstore, "~> 1.1"},
+      {:vex, "~> 0.8.0"}
     ]
   end
 

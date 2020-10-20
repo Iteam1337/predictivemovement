@@ -13,10 +13,11 @@ defmodule Engine.VehicleDeleteProcessor do
         module:
           {BroadwayRabbitMQ.Producer,
            queue: @delete_vehicle_queue,
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           on_failure: :reject,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ],
-           declare: [],
            bindings: [
              {@incoming_vehicle_exchange, routing_key: @deleted_routing_key}
            ]},

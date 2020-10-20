@@ -17,7 +17,8 @@ defmodule Engine.BookingUpdatesProcessor do
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ],
-           declare: [],
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           on_failure: :reject,
            bindings: [
              {@incoming_booking_exchange, routing_key: @picked_up_routing_key},
              {@incoming_booking_exchange, routing_key: @delivered_routing_key},

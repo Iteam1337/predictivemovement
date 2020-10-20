@@ -10,6 +10,8 @@ defmodule Engine.AdminProcessor do
         module:
           {BroadwayRabbitMQ.Producer,
            queue: "dispatch_offers",
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           on_failure: :reject,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ]}

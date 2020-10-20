@@ -3,58 +3,58 @@ defmodule VehicleTest do
   use ExUnit.Case
 
   test "it allows vehicle creation" do
-    MessageGenerator.random_car()
-    |> Vehicle.make()
+    result =
+      MessageGenerator.random_car()
+      |> Vehicle.make()
 
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
+    assert is_binary(result)
     clear_state()
-    assert vehicle_ids |> length() == 1
   end
 
   test "required start address" do
-    %{
-      id: 87147
-    }
-    |> Vehicle.make()
+    result =
+      %{
+        id: 87147
+      }
+      |> Vehicle.make()
 
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
-
-    clear_state()
-    assert vehicle_ids |> length() == 0
+    assert result == [{:error, :start_address, :presence, "must be present"}]
   end
 
   test "does not allow malformed time constraints" do
-    errors =
+    result =
       MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
       |> Vehicle.make()
 
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
-
-    clear_state()
-    assert vehicle_ids |> length() == 0
+    assert result == [
+             {
+               :error,
+               :earliest_start,
+               :format,
+               "must have the correct format"
+             },
+             {:error, :latest_end, :format, "must have the correct format"}
+           ]
   end
 
   test "does not allow non integer weight capacity" do
-    errors =
+    result =
       MessageGenerator.random_car(%{
         capacity: %{volume: 2, weight: 13.4}
       })
       |> Vehicle.make()
 
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
-
-    clear_state()
-    assert vehicle_ids |> length() == 0
-    assert errors == [{:error, [:capacity, :weight], :by, "must be an integer"}]
+    assert result == [{:error, [:capacity, :weight], :by, "must be an integer"}]
   end
 
   test "does not allow non integer volume capacity" do
-    MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
-    |> Vehicle.make()
+    result =
+      MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
+      |> Vehicle.make()
 
-    vehicle_ids = Engine.VehicleStore.get_vehicles()
-
-    clear_state()
-    assert vehicle_ids |> length() == 0
+    assert result == [
+             {:error, :earliest_start, :format, "must have the correct format"},
+             {:error, :latest_end, :format, "must have the correct format"}
+           ]
   end
 end

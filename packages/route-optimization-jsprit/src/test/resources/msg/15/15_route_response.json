@@ -1,6 +1,7 @@
 {
     "data": {
         "solution": {
+            "excluded": [],
             "routes": [
                 {
                     "number": 1,

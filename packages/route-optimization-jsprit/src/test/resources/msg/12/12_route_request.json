@@ -1,7 +1,7 @@
 {
     "metadata": {
-        "note": "Time constraints on the pickup to delivery are set to a 15 minutes window for both bookings. This is not enough time to fulfill both bockings with one car. Only one is possible.",
-        "maps": "https://www.google.de/maps/dir/65.630583,21.928603/65.581598,+22.051736/65.641574,+22.015858/65.613636,+22.136855/@65.6114975,21.9979542,13z/data=!3m1!4b1!4m15!4m14!1m0!1m3!2m2!1d22.051736!2d65.581598!1m3!2m2!1d22.015858!2d65.641574!1m3!2m2!1d22.136855!2d65.613636!3e0"
+        "note": "Simpel case of one booking, where time constraint on pickup is set in the past. It's not achievable anymore.",
+        "maps": "https://www.google.de/maps/dir/65.630583,21.928603/65.641574,+22.015858/65.613636,+22.136855/@65.6141445,21.9979542,13z/data=!3m1!4b1!4m11!4m10!1m0!1m3!2m2!1d22.015858!2d65.641574!1m3!2m2!1d22.136855!2d65.613636!3e0"
     },
     "vehicles": [
         {
@@ -17,7 +17,8 @@
                 "hint": "2xOsjEgUrIxCAAAAAQAAADsAAAAQAgAAZ0E6Qma2PD0mCyRCdlpxQ0IAAAABAAAAOwAAABACAABQHQEALI9OAd986QMmj04B3HzpAwEAbxMZJKLf"
             },
             "metadata": {
-                "start": "Bällinge (65.6335,21.92567)"
+                "start": "Bällinge (65.6335,21.92567)",
+                "end": "Bällinge (65.6335,21.92567)"
             }
         }
     ],
@@ -30,48 +31,18 @@
                 "hint": "51w8gT9dPIENAAAAAgAAACwAAABVAAAA4zJ8Qb0Btz_bd0dCkebyQQ0AAAACAAAALAAAAFUAAABQHQEAP-9PAUSc6QNy708BZpzpAwMA7xIZJKLf",
                 "time_windows": [
                     {
-                        "earliest": "2222-08-01T11:00:00.000Z"
+                        "earliest": "1979-08-01T10:00:00.000Z",
+                        "latest": "1979-08-01T11:00:00.000Z"
                     }
                 ]
             },
             "delivery": {
                 "lon": 22.13488,
                 "lat": 65.61582,
-                "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf",
-                "time_windows": [
-                    {
-                        "latest": "2222-08-01T11:15:00.000Z"
-                    }
-                ]
+                "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf"
             },
             "metadata": {
                 "start": "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
-            }
-        },
-        {
-            "id": "Gäddvik->LTU",
-            "pickup": {
-                "lon": 22.051736,
-                "lat": 65.581598,
-                "hint": "hxasjJ8WrIwLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAABQHQEAmHtQAR6y6AOYe1ABHrLoAwoA3wUZJKLf",
-                "time_windows": [
-                    {
-                        "earliest": "2222-08-01T11:00:00.000Z"
-                    }
-                ]
-            },
-            "delivery": {
-                "lon": 22.13488,
-                "lat": 65.61582,
-                "hint": "nHqsjKt6rIwBAAAAQAAAAAAAAAAPAAAAhRNvP5CyMEIAAAAA3W40QgEAAABAAAAAAAAAAA8AAABQHQEAUcBRAco36QNgwFEBzDfpAwAALwoZJKLf",
-                "time_windows": [
-                    {
-                        "latest": "2222-08-01T11:15:00.000Z"
-                    }
-                ]
-            },
-            "metadata": {
-                "start": "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
             }
         }
     ],
@@ -80,25 +51,16 @@
             [
                 0,
                 1071.8,
-                1119.1,
-                640.6
+                1119.1
             ],
             [
                 1057.7,
                 0,
-                516.4,
-                588.3
+                516.4
             ],
             [
                 1169.8,
                 503.4,
-                0,
-                691.4
-            ],
-            [
-                639.8,
-                595.3,
-                642.6,
                 0
             ]
         ],
@@ -123,13 +85,6 @@
                     22.134865,
                     65.615818
                 ]
-            },
-            {
-                "hint": "hxasjJ8WrIwLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAABQHQEAmHtQAR6y6AOYe1ABHrLoAwoA3wUZJKLf",
-                "location": [
-                    22.051736,
-                    65.581598
-                ]
             }
         ],
         "destinations": [
@@ -152,13 +107,6 @@
                 "location": [
                     22.134865,
                     65.615818
-                ]
-            },
-            {
-                "hint": "hxasjJ8WrIwLAAAACgAAAEkBAAAnAAAA6MaVQVEJZkGWtABEyg8IQwsAAAAKAAAASQEAACcAAABQHQEAmHtQAR6y6AOYe1ABHrLoAwoA3wUZJKLf",
-                "location": [
-                    22.051736,
-                    65.581598
                 ]
             }
         ]

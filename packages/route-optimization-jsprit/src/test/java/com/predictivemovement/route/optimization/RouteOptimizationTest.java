@@ -45,15 +45,13 @@ public class RouteOptimizationTest {
                 "src/test/resources/msg/04/04_route_response.json");
     }
 
-    // TODO
-    // @Test
+    @Test
     public void pickup_time_constraint_in_the_past_not_achievable() throws Exception {
         test_route_optimization("src/test/resources/msg/05/05_route_request.json",
                 "src/test/resources/msg/05/05_route_response.json");
     }
 
-    // TODO
-    // @Test
+    @Test
     public void two_pickup_time_constraint_in_conflict() throws Exception {
         test_route_optimization("src/test/resources/msg/06/06_route_request.json",
                 "src/test/resources/msg/06/06_route_response.json");
@@ -111,7 +109,7 @@ public class RouteOptimizationTest {
 
     @Test
     public void status_response_is_set() throws Exception {
-        test_status_response("src/test/resources/msg/15/15_route_request.json",
+        test_route_optimization("src/test/resources/msg/15/15_route_request.json",
                 "src/test/resources/msg/15/15_route_response.json");
     }
 
@@ -127,7 +125,9 @@ public class RouteOptimizationTest {
 
         // when
         RouteOptimization routeOptimization = new RouteOptimization();
-        JSONObject response = routeOptimization.calculate(routeRequest);
+        VRPSolution vrpSolution = routeOptimization.calculate(routeRequest);
+        StatusResponse statusResponse = new StatusResponse(vrpSolution);
+        JSONObject response = statusResponse.status;
 
         // then
         TreeMap<String, Object> responseOrdered = convertToOrderdJson(response);
@@ -147,25 +147,6 @@ public class RouteOptimizationTest {
         JSONObject responseExpected = readJsonFromFile(expectedResponseFilename);
         TreeMap<String, Object> responseExpectedOrdered = convertToOrderdJson(responseExpected);
         assertEquals(responseExpectedOrdered, responseOrdered);
-    }
-
-    private void test_status_response(String requestFilename, String expectedResponseFilename) throws Exception {
-        // given
-        JSONObject routeRequest = readJsonFromFile(requestFilename);
-
-        // when
-        RouteOptimization routeOptimization = new RouteOptimization();
-        JSONObject routeSolution = routeOptimization.calculate(routeRequest);
-
-        StatusResponse response = new StatusResponse(routeSolution);
-
-        // then
-        TreeMap<String, Object> responseOrdered = convertToOrderdJson(response.status);
-
-        JSONObject responseExpected = readJsonFromFile(expectedResponseFilename);
-        TreeMap<String, Object> responseExpectedOrdered = convertToOrderdJson(responseExpected);
-
-        assertEquals(responseExpectedOrdered.toString(), responseOrdered.toString());
     }
 
     private JSONObject readJsonFromFile(String filename) throws IOException {

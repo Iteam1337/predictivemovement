@@ -18,9 +18,11 @@ public class RouteOptimizationResponse {
     private int routeCounter;
     private int activityCounter;
 
+    private VRPSolution vrpSolution;
     private VehicleRoutingProblemSolution solution;
 
     RouteOptimizationResponse(VRPSolution vrpSolution) {
+        this.vrpSolution = vrpSolution;
         solution = vrpSolution.bestSolution;
     }
 
@@ -33,6 +35,7 @@ public class RouteOptimizationResponse {
     private JSONObject solution() {
         JSONObject solution = new JSONObject();
         solution.put("routes", routes());
+        solution.put("excluded", excluded());
         return solution;
     }
 
@@ -112,5 +115,11 @@ public class RouteOptimizationResponse {
         address.put("lon", location.getCoordinate().getX());
         address.put("lat", location.getCoordinate().getY());
         return address;
+    }
+
+    private JSONArray excluded() {
+        ExcludedBookings excludedBookings = vrpSolution.excludedBookings;
+        JSONArray excludeResponse = excludedBookings.toJsonArray();
+        return excludeResponse;
     }
 }

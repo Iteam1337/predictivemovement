@@ -1,46 +1,51 @@
 {
-    "solution": {
-        "routes": [
-            {
-                "number": 1,
-                "activities": [
-                    {
-                        "address": {
-                            "lon": 17.939693450927734,
-                            "lat": 59.33828353881836
+    "data": {
+        "solution": {
+            "excluded": [],
+            "routes": [
+                {
+                    "number": 1,
+                    "activities": [
+                        {
+                            "address": {
+                                "lon": 17.939693450927734,
+                                "lat": 59.33828353881836
+                            },
+                            "index": -1,
+                            "type": "start"
                         },
-                        "index": -1,
-                        "type": "start"
-                    },
-                    {
-                        "address": {
-                            "lon": 13.179110527038574,
-                            "lat": 56.665138244628906
+                        {
+                            "address": {
+                                "lon": 13.179110527038574,
+                                "lat": 56.665138244628906
+                            },
+                            "index": 1,
+                            "id": "pmb-7ULAn1HU",
+                            "type": "pickupShipment"
                         },
-                        "index": 1,
-                        "id": "pmb-7ULAn1HU",
-                        "type": "pickupShipment"
-                    },
-                    {
-                        "address": {
-                            "lon": 19.028642654418945,
-                            "lat": 57.8538932800293
+                        {
+                            "address": {
+                                "lon": 19.028642654418945,
+                                "lat": 57.8538932800293
+                            },
+                            "index": 2,
+                            "id": "pmb-7ULAn1HU",
+                            "type": "deliverShipment"
                         },
-                        "index": 2,
-                        "id": "pmb-7ULAn1HU",
-                        "type": "deliverShipment"
-                    },
-                    {
-                        "address": {
-                            "lon": 17.939693450927734,
-                            "lat": 59.33828353881836
-                        },
-                        "index": -2,
-                        "type": "end"
-                    }
-                ],
-                "vehicle_id": "pmv-6NdZmAZa"
-            }
-        ]
-    }
+                        {
+                            "address": {
+                                "lon": 17.939693450927734,
+                                "lat": 59.33828353881836
+                            },
+                            "index": -2,
+                            "type": "end"
+                        }
+                    ],
+                    "vehicle_id": "pmv-6NdZmAZa"
+                }
+            ]
+        }
+    },
+    "status_msg": "well done",
+    "status": "success"
 }

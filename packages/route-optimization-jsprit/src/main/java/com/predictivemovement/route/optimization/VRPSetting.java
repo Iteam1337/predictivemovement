@@ -23,6 +23,8 @@ public class VRPSetting {
     List<Shipment> shipments;
     VehicleRoutingTransportCosts routingCosts;
 
+    ExcludedBookings excludedBookings = new ExcludedBookings();
+
     protected JSONObject routeRequest;
     protected Map<String, Location> locations;
 

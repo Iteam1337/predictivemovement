@@ -12,7 +12,7 @@ import org.json.JSONObject;
  */
 public class VRPSettingTimeWindows {
 
-    public void add(JSONObject json, Consumer<TimeWindow> addTimeWindowFunction) {
+    public void add(JSONObject json, Consumer<TimeWindow> addTimeWindowFunction) throws RouteOptimizationException {
 
         if (!json.has("time_windows"))
             return;

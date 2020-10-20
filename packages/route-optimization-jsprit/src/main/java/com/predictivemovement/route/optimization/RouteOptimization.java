@@ -7,16 +7,12 @@ import org.json.JSONObject;
  */
 public class RouteOptimization {
 
-  // to get access in test for plotting
-  VRPSolution vrpSolution;
-
-  public JSONObject calculate(JSONObject routeRequest) throws RouteOptimizationException {
+  public VRPSolution calculate(JSONObject routeRequest) throws RouteOptimizationException {
     VRPVehiclesTypes.clearCache();
 
     VRPSetting vrpProblem = new VRPSetting(routeRequest).set();
-    vrpSolution = new VRPSolution(vrpProblem).calculate();
-    JSONObject routeSolution = new RouteOptimizationResponse(vrpSolution).toJson();
+    VRPSolution vrpSolution = new VRPSolution(vrpProblem).calculate();
 
-    return routeSolution;
+    return vrpSolution;
   }
 }

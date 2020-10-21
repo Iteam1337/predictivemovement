@@ -15,11 +15,11 @@ defmodule MessageGenerator.Address do
     parse(Osrm.nearest(position), position)
   end
 
-  def parse(%{waypoints: [first | _tail]}, _position) do
-    first.location |> (fn [lon, lat] -> %{lon: lon, lat: lat} end).()
+  def parse(%{"waypoints" => [first | _tail]}, _position) do
+    first["location"] |> (fn [lon, lat] -> %{lon: lon, lat: lat} end).()
   end
 
-  def parse(%{waypoints: []}, position) do
+  def parse(%{"waypoints" => []}, position) do
     parse(nil, position)
   end
 

@@ -43,7 +43,7 @@ defmodule MQ do
       |> :erlang.integer_to_binary()
       |> Base.encode64()
 
-    request = Poison.encode!(data)
+    request = Jason.encode!(data)
 
     AMQP.Basic.publish(
       channel,
@@ -63,7 +63,7 @@ defmodule MQ do
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Exchange.declare(channel, exchange_name, :fanout)
 
-    AMQP.Basic.publish(channel, exchange_name, "", Poison.encode!(data),
+    AMQP.Basic.publish(channel, exchange_name, "", Jason.encode!(data),
       content_type: "application/json"
     )
 
@@ -78,7 +78,7 @@ defmodule MQ do
 
     AMQP.Exchange.declare(channel, exchange_name, :topic)
 
-    AMQP.Basic.publish(channel, exchange_name, routing_key, Poison.encode!(data),
+    AMQP.Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
       content_type: "application/json"
     )
 

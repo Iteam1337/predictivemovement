@@ -34,9 +34,9 @@ defmodule Engine.BookingUpdatesProcessor do
   end
 
   def handle_message(_, %Broadway.Message{data: booking_update} = msg, _) do
-    %{id: id, status: status} =
+    %{"id" => id, "status" => status} =
       booking_update
-      |> Poison.decode!(keys: :atoms)
+      |> Jason.decode!
 
     Booking.add_event(id, status)
 

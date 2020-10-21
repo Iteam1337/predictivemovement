@@ -1,15 +1,17 @@
 defmodule Engine.Adapters.RMQ do
   use GenServer
+  require Logger
   defp amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
-  @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
-  @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
   @outgoing_vehicle_exchange Application.compile_env!(:engine, :outgoing_vehicle_exchange)
   @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
+  @reconnect_interval 5_000
 
-  def init() do
-    create_outgoing_exchanges()
+  def init(_) do
+    send(self(), :connect)
+
+    {:ok, nil}
   end
 
   def wait_for_messages(channel, correlation_id) do
@@ -59,78 +61,48 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def publish(data, exchange_name) do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
-
-    {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Exchange.declare(channel, exchange_name, :fanout)
-
-    AMQP.Basic.publish(channel, exchange_name, "", Poison.encode!(data),
-      content_type: "application/json"
-    )
-
-    AMQP.Connection.close(connection)
-    data
+    GenServer.call(__MODULE__, {:publish, data, exchange_name, ""})
   end
 
   def publish(data, exchange_name, routing_key) do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
+    GenServer.call(__MODULE__, {:publish, data, exchange_name, routing_key})
+  end
 
-    {:ok, channel} = AMQP.Channel.open(connection)
-
-    AMQP.Exchange.declare(channel, exchange_name, :topic)
-
+  def handle_call({:publish, data, exchange_name, routing_key}, {_conn, channel} = state) do
     AMQP.Basic.publish(channel, exchange_name, routing_key, Poison.encode!(data),
       content_type: "application/json"
     )
 
-    AMQP.Connection.close(connection)
-
-    data
+    {:reply, data, state}
   end
 
-  def declare_queue(queue) do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
-
-    {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.declare(channel, queue, durable: false)
+  def handle_call(:get_conn, {conn, _channel} = state) do
+    {:reply, conn, state}
   end
 
-  defp open_channel() do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
-    {:ok, channel} = AMQP.Channel.open(connection)
-    channel
+  def handle_info(:connect, _) do
+    with {:ok, conn} <- AMQP.Connection.open(amqp_url()),
+         {:ok, channel} <- AMQP.Channel.open(conn),
+         :ok <- setup_resources(channel) do
+      Process.monitor(conn.pid)
+      {:noreply, channel}
+    else
+      _ ->
+        Logger.error("Failed to connect #{amqp_url()}. Reconnecting later...")
+        Process.send_after(self(), :connect, @reconnect_interval)
+        {:noreply, nil}
+    end
   end
 
-  defp create_outgoing_exchanges() do
-    channel = open_channel()
+  def handle_info({:DOWN, _, :process, _pid, reason}, _) do
+    {:stop, {:connection_lost, reason}, nil}
+  end
+
+  def setup_resources(channel) do
+    AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :topic, durable: false)
     AMQP.Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
     AMQP.Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
-  end
-
-  def create_match_producer_resources do
-    channel = open_channel()
-
-    # Ensure that exchanges are created
-    AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
-    AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
-    AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
-
-    # Create queues
-    register_new_booking_queue = "register_new_booking"
-    register_new_vehicle_queue = "register_new_vehicle"
-    AMQP.Queue.declare(channel, register_new_vehicle_queue, durable: false)
-    AMQP.Queue.declare(channel, register_new_booking_queue, durable: false)
-
-    # Bind queues to exchange
-    AMQP.Queue.bind(channel, register_new_vehicle_queue, @incoming_vehicle_exchange(),
-      routing_key: "registered"
-    )
-
-    AMQP.Queue.bind(channel, register_new_booking_queue, @incoming_booking_exchange,
-      routing_key: "registered"
-    )
-
-    AMQP.Basic.consume(channel, register_new_vehicle_queue, nil, no_ack: true)
-    AMQP.Basic.consume(channel, register_new_booking_queue, nil, no_ack: true)
+    # Setup DLX also
+    :ok
   end
 end

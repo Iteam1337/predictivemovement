@@ -1,16 +1,19 @@
 defmodule Engine.MatchProducer do
   use GenStage
   alias Broadway.Message
+  require Logger
+
+  defp amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
+  @reconnect_interval 5_000
 
   def start_link(_) do
     GenStage.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
-    MQ.create_match_producer_resources()
     {:producer, %{}}
   end
 
@@ -47,9 +50,50 @@ defmodule Engine.MatchProducer do
   end
 
   defp string_to_booking_transform(booking_string) do
-      Poison.decode!(booking_string, keys: :atoms)
-      |> Map.put_new(:metadata, %{})
-      |> Map.put_new(:size, nil)
+    Poison.decode!(booking_string, keys: :atoms)
+    |> Map.put_new(:metadata, %{})
+    |> Map.put_new(:size, nil)
+  end
+
+  def setup_resources(channel) do
+    AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
+    AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
+
+    register_new_booking_queue = "register_new_booking"
+    register_new_vehicle_queue = "register_new_vehicle"
+    AMQP.Queue.declare(channel, register_new_vehicle_queue, durable: false)
+    AMQP.Queue.declare(channel, register_new_booking_queue, durable: false)
+
+    AMQP.Queue.bind(channel, register_new_vehicle_queue, @incoming_vehicle_exchange,
+      routing_key: "registered"
+    )
+
+    AMQP.Queue.bind(channel, register_new_booking_queue, @incoming_booking_exchange,
+      routing_key: "registered"
+    )
+
+    AMQP.Basic.consume(channel, register_new_vehicle_queue, nil, no_ack: true)
+    AMQP.Basic.consume(channel, register_new_booking_queue, nil, no_ack: true)
+
+    :ok
+  end
+
+  def handle_info(:connect, _) do
+    with {:ok, conn} <- AMQP.Connection.open(amqp_url()),
+         {:ok, channel} <- AMQP.Channel.open(conn),
+         :ok <- setup_resources(channel) do
+      Process.monitor(conn.pid)
+      {:noreply, channel}
+    else
+      _ ->
+        Logger.error("Failed to connect #{amqp_url()}. Reconnecting later...")
+        Process.send_after(self(), :connect, @reconnect_interval)
+        {:noreply, nil}
+    end
+  end
+
+  def handle_info({:DOWN, _, :process, _pid, reason}, _) do
+    {:stop, {:connection_lost, reason}, nil}
   end
 
   # Rabbitmq callbacks

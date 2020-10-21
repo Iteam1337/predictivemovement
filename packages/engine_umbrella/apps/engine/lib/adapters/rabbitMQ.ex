@@ -8,6 +8,10 @@ defmodule Engine.Adapters.RMQ do
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   @reconnect_interval 5_000
 
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  end
+
   def init(_) do
     send(self(), :connect)
 
@@ -68,16 +72,12 @@ defmodule Engine.Adapters.RMQ do
     GenServer.call(__MODULE__, {:publish, data, exchange_name, routing_key})
   end
 
-  def handle_call({:publish, data, exchange_name, routing_key}, {_conn, channel} = state) do
+  def handle_call({:publish, data, exchange_name, routing_key}, _, channel) do
     AMQP.Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
       content_type: "application/json"
     )
 
-    {:reply, data, state}
-  end
-
-  def handle_call(:get_conn, {conn, _channel} = state) do
-    {:reply, conn, state}
+    {:reply, data, channel}
   end
 
   def handle_info(:connect, _) do

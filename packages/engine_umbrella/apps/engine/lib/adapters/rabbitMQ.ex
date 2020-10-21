@@ -46,7 +46,7 @@ defmodule Engine.Adapters.RMQ do
       |> :erlang.integer_to_binary()
       |> Base.encode64()
 
-    request = Poison.encode!(data)
+    request = Jason.encode!(data)
 
     AMQP.Basic.publish(
       channel,
@@ -69,7 +69,7 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def handle_call({:publish, data, exchange_name, routing_key}, {_conn, channel} = state) do
-    AMQP.Basic.publish(channel, exchange_name, routing_key, Poison.encode!(data),
+    AMQP.Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
       content_type: "application/json"
     )
 

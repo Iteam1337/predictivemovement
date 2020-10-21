@@ -58,7 +58,7 @@ defmodule Vehicle do
         },
         "offer_booking_to_vehicle"
       )
-      |> Poison.decode()
+      |> Jason.decode
 
     {:reply, response, vehicle}
   end

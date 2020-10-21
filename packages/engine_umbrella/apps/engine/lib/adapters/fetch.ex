@@ -2,12 +2,12 @@ defmodule Fetch do
   def json(url) do
     HTTPoison.get!(url)
     |> Map.get(:body)
-    |> Poison.decode!(keys: :atoms)
+    |> Jason.decode!
   end
 
   def json_post(url, body) do
-    HTTPoison.post!(url, Poison.encode!(body), [{"Content-Type", "application/json"}])
+    HTTPoison.post!(url, Jason.encode!(body), [{"Content-Type", "application/json"}])
     |> Map.get(:body)
-    |> Poison.decode!(keys: :atoms)
+    |> Jason.decode!
   end
 end

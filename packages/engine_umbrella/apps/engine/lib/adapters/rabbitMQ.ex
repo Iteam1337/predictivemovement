@@ -1,6 +1,8 @@
 defmodule Engine.Adapters.RMQ do
   use GenServer
   require Logger
+  alias AMQP.{Exchange, Queue, Channel, Basic, Connection}
+
   defp amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
   @outgoing_vehicle_exchange Application.compile_env!(:engine, :outgoing_vehicle_exchange)
@@ -21,7 +23,7 @@ defmodule Engine.Adapters.RMQ do
   def wait_for_messages(channel, correlation_id) do
     receive do
       {:basic_deliver, payload, %{correlation_id: ^correlation_id} = msg} ->
-        AMQP.Queue.unsubscribe(channel, Map.get(msg, :consumer_tag))
+        Queue.unsubscribe(channel, Map.get(msg, :consumer_tag))
         payload
 
       _ ->
@@ -30,19 +32,19 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def call(data, queue) do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
+    {:ok, connection} = Connection.open(amqp_url())
 
-    {:ok, channel} = AMQP.Channel.open(connection)
+    {:ok, channel} = Channel.open(connection)
 
     {:ok, %{queue: queue_name}} =
-      AMQP.Queue.declare(
+      Queue.declare(
         channel,
         "",
         exclusive: true,
         auto_delete: true
       )
 
-    AMQP.Basic.consume(channel, queue_name, nil, no_ack: false)
+    Basic.consume(channel, queue_name, nil, no_ack: false)
     IO.puts("Engine wants response from #{queue} to #{queue_name}")
 
     correlation_id =
@@ -52,7 +54,7 @@ defmodule Engine.Adapters.RMQ do
 
     request = Jason.encode!(data)
 
-    AMQP.Basic.publish(
+    Basic.publish(
       channel,
       "",
       queue,
@@ -73,7 +75,7 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def handle_call({:publish, data, exchange_name, routing_key}, _, channel) do
-    AMQP.Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
+    Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
       content_type: "application/json"
     )
 
@@ -81,8 +83,8 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def handle_info(:connect, _) do
-    with {:ok, conn} <- AMQP.Connection.open(amqp_url()),
-         {:ok, channel} <- AMQP.Channel.open(conn),
+    with {:ok, conn} <- Connection.open(amqp_url()),
+         {:ok, channel} <- Channel.open(conn),
          :ok <- setup_resources(channel) do
       Process.monitor(conn.pid)
       Logger.info("#{__MODULE__} connected to rabbitmq")
@@ -100,13 +102,13 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def setup_resources(channel) do
-    AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
-    AMQP.Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
-    AMQP.Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
-    AMQP.Exchange.declare(channel, "engine_DLX", :direct, durable: true)
+    Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
+    Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
+    Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
+    Exchange.declare(channel, "engine_DLX", :direct, durable: true)
 
-    AMQP.Queue.declare(channel, "store_dead_letters.engine", durable: true)
-    AMQP.Queue.bind(channel, "store_dead_letters.engine", "engine_DLX")
+    Queue.declare(channel, "store_dead_letters.engine", durable: true)
+    Queue.bind(channel, "store_dead_letters.engine", "engine_DLX")
 
     :ok
   end

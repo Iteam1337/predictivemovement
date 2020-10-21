@@ -2,6 +2,7 @@ defmodule Engine.MatchProducer do
   use GenStage
   alias Broadway.Message
   require Logger
+  alias AMQP.{Exchange, Queue, Channel, Basic, Connection}
 
   defp amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
@@ -58,31 +59,31 @@ defmodule Engine.MatchProducer do
   end
 
   def setup_resources(channel) do
-    AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
-    AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
+    Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
+    Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
 
     register_new_booking_queue = "register_new_booking"
     register_new_vehicle_queue = "register_new_vehicle"
-    AMQP.Queue.declare(channel, register_new_vehicle_queue, durable: false)
-    AMQP.Queue.declare(channel, register_new_booking_queue, durable: false)
+    Queue.declare(channel, register_new_vehicle_queue, durable: false)
+    Queue.declare(channel, register_new_booking_queue, durable: false)
 
-    AMQP.Queue.bind(channel, register_new_vehicle_queue, @incoming_vehicle_exchange,
+    Queue.bind(channel, register_new_vehicle_queue, @incoming_vehicle_exchange,
       routing_key: "registered"
     )
 
-    AMQP.Queue.bind(channel, register_new_booking_queue, @incoming_booking_exchange,
+    Queue.bind(channel, register_new_booking_queue, @incoming_booking_exchange,
       routing_key: "registered"
     )
 
-    AMQP.Basic.consume(channel, register_new_vehicle_queue, nil, no_ack: true)
-    AMQP.Basic.consume(channel, register_new_booking_queue, nil, no_ack: true)
+    Basic.consume(channel, register_new_vehicle_queue, nil, no_ack: true)
+    Basic.consume(channel, register_new_booking_queue, nil, no_ack: true)
 
     :ok
   end
 
   def handle_info(:connect, state) do
-    with {:ok, conn} <- AMQP.Connection.open(amqp_url()),
-         {:ok, channel} <- AMQP.Channel.open(conn),
+    with {:ok, conn} <- Connection.open(amqp_url()),
+         {:ok, channel} <- Channel.open(conn),
          :ok <- setup_resources(channel) do
       Logger.info("#{__MODULE__} connected to rabbitmq")
       Process.monitor(conn.pid)

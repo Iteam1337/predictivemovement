@@ -25,7 +25,7 @@ const transportToNotification = (transport) => ({
   /* We currently
    * only have notifications for when a transport
    * has been created, hence the 'success' severity status
-   * and the 'new' event.event.
+   * and the 'new' event.status.
    */
   severity: severityByEventStatus('new'),
   type: 'transport',

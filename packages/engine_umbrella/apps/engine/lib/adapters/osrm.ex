@@ -24,17 +24,17 @@ defmodule Osrm do
       "#{osrm_url()}/route/v1/driving/#{coordinates}?steps=true&alternatives=false&overview=full&annotations=true"
 
     Fetch.json(url)
-    |> Map.get(:routes)
-    |> Enum.sort(fn a, b -> a.duration < b.duration end)
+    |> Map.get("routes")
+    |> Enum.sort(fn a, b -> a["duration"] < b["duration"] end)
     |> List.first()
-    |> Map.update!(:geometry, &decode_polyline/1)
+    |> Map.update!("geometry", &decode_polyline/1)
     |> Jason.encode!()
   end
 
   defp decode_polyline(geometry) do
     %{
-      coordinates:
-        Polyline.decode(geometry) |> Enum.map(fn {lon, lat} -> %{lon: lon, lat: lat} end)
+      "coordinates" =>
+        Polyline.decode(geometry) |> Enum.map(fn {lon, lat} -> %{"lon" => lon, "lat" => lat} end)
     }
   end
 end

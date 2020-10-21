@@ -1,4 +1,6 @@
 defmodule Plan do
+  alias Engine.Adapters.RMQ
+
   def find_optimal_routes(vehicle_ids, booking_ids) do
     IO.puts("call calculate_route_optimization")
 
@@ -12,7 +14,7 @@ defmodule Plan do
       end)
     )
     |> insert_time_matrix()
-    |> MQ.call("calculate_route_optimization")
+    |> RMQ.call("calculate_route_optimization")
     |> Poison.decode!(keys: :atoms)
   end
 

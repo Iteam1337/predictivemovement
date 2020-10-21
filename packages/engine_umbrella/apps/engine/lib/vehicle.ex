@@ -3,6 +3,7 @@ defmodule Vehicle do
   use Vex.Struct
   require Logger
   alias Engine.ES
+  alias Engine.Adapters.RMQ
   @derive Jason.Encoder
 
   defstruct [
@@ -48,7 +49,7 @@ defmodule Vehicle do
     Logger.debug("offer to vehicle #{vehicle.id}")
 
     response =
-      MQ.call(
+      RMQ.call(
         %{
           vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
           current_route: offer.current_route,
@@ -72,7 +73,7 @@ defmodule Vehicle do
     updated_vehicle =
       current_vehicle
       |> Map.merge(offer)
-      |> MQ.publish(
+      |> RMQ.publish(
         Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
         "new_instructions"
       )
@@ -131,7 +132,11 @@ defmodule Vehicle do
 
     Engine.VehicleStore.put_vehicle(id)
 
-    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
+    RMQ.publish(
+      vehicle,
+      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+      "new"
+    )
 
     vehicle
   end
@@ -144,7 +149,12 @@ defmodule Vehicle do
   def apply_delete_to_state(id) do
     Engine.VehicleStore.delete_vehicle(id)
     GenServer.stop(via_tuple(id))
-    MQ.publish(id, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "deleted")
+
+    RMQ.publish(
+      id,
+      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+      "deleted"
+    )
   end
 
   defp via_tuple(id), do: {:via, :gproc, {:n, :l, {:vehicle_id, id}}}

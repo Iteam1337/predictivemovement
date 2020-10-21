@@ -2,8 +2,6 @@ defmodule Engine.AdminProcessor do
   use Broadway
 
   def start_link(_opts) do
-    MQ.declare_queue("dispatch_offers")
-
     Broadway.start_link(__MODULE__,
       name: __MODULE__,
       producer: [

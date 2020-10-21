@@ -1,4 +1,4 @@
-defmodule MQ do
+defmodule Engine.Adapters.RMQ do
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
 
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)

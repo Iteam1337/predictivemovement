@@ -33,7 +33,7 @@ const notificationMessages = {
     [BookingStatus.DELIVERED]: 'En bokning har levererats:',
     [BookingStatus.PICKED_UP]:
       'En bokning har hämtats upp av sin tilldelade transport:',
-    [BookingStatus.DELIVERY_FAILED]: 'Bokning  kunde inte levereras:',
+    [BookingStatus.DELIVERY_FAILED]: 'En bokning kunde inte levereras:',
   },
   [EntityType.TRANSPORT]: {
     [TransportStatus.NEW]: 'En ny transport har lags till:',

@@ -57,7 +57,7 @@ const Notifications: React.FC<{
 }> = ({ notifications, updateNotifications }) => {
   const handleOnClose = React.useCallback(
     (id: string) => {
-      updateNotifications((notifications: Notification[]) =>
+      updateNotifications((notifications) =>
         notifications.filter((notification) => notification.event.id !== id)
       )
     },

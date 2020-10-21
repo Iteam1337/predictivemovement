@@ -100,7 +100,7 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def setup_resources(channel) do
-    AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :topic, durable: false)
+    AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
     AMQP.Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
     AMQP.Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
     # Setup DLX also

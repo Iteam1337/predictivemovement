@@ -141,7 +141,10 @@ module.exports = (io) => {
 
   const dispatchOffers = () => {
     return amqp
-      .queue('dispatch_offers', { durable: false })
+      .queue('dispatch_offers', {
+        durable: false,
+        arguments: { 'x-dead-letter-exchange': 'engine_DLX' },
+      })
       .publish(JUST_DO_IT_MESSAGE)
   }
 

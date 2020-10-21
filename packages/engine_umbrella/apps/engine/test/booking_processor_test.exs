@@ -248,40 +248,46 @@ defmodule BookingProcessorTest do
     expected_id =
       MessageGenerator.random_booking(%{
         id: "Gammelstad->LTU",
-        pickup: %{
-          lon: 22.015858,
-          lat: 65.641574,
-          time_windows: [
-            %{
-              earliest: ~U[1979-08-01 10:00:00.000Z],
-              latest: ~U[1979-08-01 11:00:00.000Z]
-            }
-          ]
-        },
-        delivery: %{
-          lon: 22.13488,
-          lat: 65.61582
-        },
         metadata: %{
           start: "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
         }
       })
+      |> Map.put(:pickup, %{
+        lon: 22.015858,
+        lat: 65.641574,
+        time_windows: [
+          %{
+            earliest: ~U[1979-08-01 10:00:00.000Z],
+            latest: ~U[1979-08-01 11:00:00.000Z]
+          }
+        ]
+      })
+      |> Map.put(
+        :delivery,
+        %{
+          lon: 22.13488,
+          lat: 65.61582
+        }
+      )
       |> Booking.make()
 
     MessageGenerator.random_booking(%{
       id: "Gäddvik->LTU",
-      pickup: %{
-        lon: 22.051736,
-        lat: 65.581598
-      },
-      delivery: %{
-        lon: 22.13488,
-        lat: 65.61582
-      },
       metadata: %{
         start: "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
       }
     })
+    |> Map.put(:pickup, %{
+      lon: 22.051736,
+      lat: 65.581598
+    })
+    |> Map.put(
+      :delivery,
+      %{
+        lon: 22.13488,
+        lat: 65.61582
+      }
+    )
     |> Booking.make()
 
     MessageGenerator.random_car(%{

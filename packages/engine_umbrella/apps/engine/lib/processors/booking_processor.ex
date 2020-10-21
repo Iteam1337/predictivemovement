@@ -31,10 +31,14 @@ defmodule Engine.BookingProcessor do
     status =
       case failure.status_msg do
         "Time of time window constraint is in the past!" -> "TIME_CONSTRAINTS_EXPIRED"
-        _ -> failure.status_msg
+        _ -> handle_booking_failure(%{id: id})
       end
 
     %{id: id, status: status}
+  end
+
+  defp handle_booking_failure(%{id: id}) do
+    %{id: id, status: "CONSTRAINTS_FAILURE"}
   end
 
   def calculate_plan(vehicle_ids, booking_ids)

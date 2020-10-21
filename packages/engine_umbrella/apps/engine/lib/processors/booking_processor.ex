@@ -27,6 +27,16 @@ defmodule Engine.BookingProcessor do
     )
   end
 
+  defp handle_booking_failure(%{id: id, failure: failure}) do
+    status =
+      case failure.status_msg do
+        "Time of time window constraint is in the past!" -> "TIME_CONSTRAINTS_EXPIRED"
+        _ -> failure.status_msg
+      end
+
+    %{id: id, status: status}
+  end
+
   def calculate_plan(vehicle_ids, booking_ids)
       when length(vehicle_ids) == 0 or length(booking_ids) == 0,
       do: IO.puts("No vehicles/bookings to calculate plan for")
@@ -58,7 +68,8 @@ defmodule Engine.BookingProcessor do
     PlanStore.put_plan(%{
       vehicles: vehicles,
       booking_ids: booking_ids,
-      excluded_booking_ids: Enum.map(excluded, &Map.take(&1, [:id, :failure]))
+      excluded_booking_ids:
+        Enum.map(excluded, &Map.take(&1, [:id, :failure])) |> Enum.map(&handle_booking_failure/1)
     })
   end
 

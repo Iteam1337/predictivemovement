@@ -40,8 +40,7 @@ const calculateMinTime = (date?: Date, minDate?: Date) => {
   return moment().startOf('day').toDate() // set to 12:00 am today
 }
 
-const getLastFourChars = (str: string) =>
-  str.slice(str.length - 4, str.length)
+const getLastFourChars = (str: string) => str.slice(str.length - 4, str.length)
 
 const withoutLastFourChars = (str: string) => str.slice(0, str.length - 4)
 
@@ -66,13 +65,6 @@ export const hexToRGBA = (hex: string, opacity: number = 255) => {
   return [r, g, b, opacity]
 }
 
-export const isOfTypeFromStringComparison = <T>(
-  varToBeChecked: any,
-  propertyToCheck: keyof T,
-  varThatPropertyShouldEqualTo: any
-): varToBeChecked is T =>
-  (varToBeChecked as T)[propertyToCheck] === varThatPropertyShouldEqualTo
-
 export default {
   findAddress,
   calculateMinTime,
@@ -82,5 +74,4 @@ export default {
   formatCoordinateToFixedDecimalLength,
   hexToRGBA,
   formatIdForEndUser,
-  isOfTypeFromStringComparison,
 }

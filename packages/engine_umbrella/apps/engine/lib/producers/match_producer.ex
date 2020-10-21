@@ -14,6 +14,8 @@ defmodule Engine.MatchProducer do
   end
 
   def init(_) do
+    send(self(), :connect)
+
     {:producer, %{}}
   end
 
@@ -78,17 +80,17 @@ defmodule Engine.MatchProducer do
     :ok
   end
 
-  def handle_info(:connect, _) do
+  def handle_info(:connect, state) do
     with {:ok, conn} <- AMQP.Connection.open(amqp_url()),
          {:ok, channel} <- AMQP.Channel.open(conn),
          :ok <- setup_resources(channel) do
       Process.monitor(conn.pid)
-      {:noreply, channel}
+      {:noreply, [], state}
     else
       _ ->
         Logger.error("Failed to connect #{amqp_url()}. Reconnecting later...")
         Process.send_after(self(), :connect, @reconnect_interval)
-        {:noreply, nil}
+        {:noreply, [], state}
     end
   end
 
@@ -106,7 +108,6 @@ defmodule Engine.MatchProducer do
     do: handle_new_booking(booking, state)
 
   ## handle backpressure
-
   def handle_demand(_demand, state) do
     {:noreply, [], state}
   end

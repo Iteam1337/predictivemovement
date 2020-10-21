@@ -1,22 +1,22 @@
-const getSeverityByEvent = (status) => {
-  switch (status) {
-    case 'new':
-    case 'assigned':
-    case 'delivered':
-    case 'picked_up':
-      return 'success'
-    case 'delivery_failed':
-      return 'error'
+const severityByEventStatus = (status) => {
+  const map = {
+    new: 'success',
+    assigned: 'success',
+    delivered: 'success',
+    picked_up: 'success',
+    delivery_failed: 'error',
+    default: 'info',
   }
+
+  return map[status] ?? map.default
 }
 
 const bookingToNotification = (booking) => ({
-  severity: getSeverityByEvent(booking.status),
+  severity: severityByEventStatus(booking.status),
   type: 'booking',
   event: {
-    type: 'booking',
     id: booking.id,
-    event: booking.status,
+    status: booking.status,
   },
   booking,
 })
@@ -27,18 +27,17 @@ const transportToNotification = (transport) => ({
    * has been created, hence the 'success' severity status
    * and the 'new' event.event.
    */
-  severity: getSeverityByEvent(booking.status),
+  severity: severityByEventStatus('new'),
   type: 'transport',
   event: {
-    type: 'transport',
     id: transport.id,
-    event: 'new',
+    status: 'new',
   },
   transport,
 })
 
 module.exports = {
-  getSeverityByEvent,
+  severityByEventStatus,
   bookingToNotification,
   transportToNotification,
 }

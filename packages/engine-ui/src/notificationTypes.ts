@@ -1,12 +1,6 @@
 import * as types from './types'
 
-export enum Severity {
-  SUCCESS = 'success',
-  ERROR = 'error',
-  WARNING = 'warning',
-}
-
-export enum BookingStatuses {
+export enum BookingStatus {
   NEW = 'new',
   ASSIGNED = 'assigned',
   DELIVERED = 'delivered',
@@ -14,13 +8,19 @@ export enum BookingStatuses {
   PICKED_UP = 'picked_up',
 }
 
-export enum TransportStatuses {
+export enum TransportStatus {
   NEW = 'new',
 }
 
-export enum EntityTypes {
+export enum EntityType {
   TRANSPORT = 'transport',
   BOOKING = 'booking',
+}
+
+export enum Severity {
+  SUCCESS = 'success',
+  ERROR = 'error',
+  WARNING = 'warning',
 }
 
 export enum Events {
@@ -29,29 +29,25 @@ export enum Events {
 }
 
 export type BookingEvent = {
-  type: Events.BOOKING
   id: types.Booking['id']
-  event: BookingStatuses
-  booking: types.Booking
+  status: BookingStatus
 }
 
 export type TransportEvent = {
-  type: Events.TRANSPORT
   id: types.Transport['id']
-  event: TransportStatuses
-  transport: types.Transport
+  status: TransportStatus
 }
 
 export type BookingNotification = {
   severity: Severity
-  entityType: EntityTypes.BOOKING
+  type: EntityType.BOOKING
   event: BookingEvent
   booking: types.Booking
 }
 
 export type TransportNotification = {
   severity: Severity
-  type: EntityTypes.TRANSPORT
+  type: EntityType.TRANSPORT
   event: TransportEvent
   transport: types.Transport
 }

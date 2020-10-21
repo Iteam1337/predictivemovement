@@ -14,6 +14,7 @@ module.exports = (io) => {
     publishDeleteBooking,
     publishDeleteVehicle,
     transportLocationUpdates,
+    transportNotifications,
   } = require('./engineConnector')(io)
 
   io.on('connection', function (socket) {
@@ -55,13 +56,13 @@ module.exports = (io) => {
       return socket.emit('transport-updated', transportLocationUpdate)
     })
 
-    _(bookings.fork()).each((booking) =>
+    _(bookings.fork()).each((booking) => {
       socket.emit('notification', helpers.bookingToNotification(booking))
-    )
+    })
 
-    _(vehicles.fork()).each((transport) =>
+    _(transportNotifications.fork()).each((transport) => {
       socket.emit('notification', helpers.transportToNotification(transport))
-    )
+    })
 
     socket.on('new-booking', (params) => {
       const booking = {

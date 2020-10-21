@@ -66,11 +66,12 @@ export const hexToRGBA = (hex: string, opacity: number = 255) => {
   return [r, g, b, opacity]
 }
 
-export const isOfType = <T>(
+export const isOfTypeFromStringComparison = <T>(
   varToBeChecked: any,
-  propertyToCheckFor: keyof T
+  propertyToCheck: keyof T,
+  varThatPropertyShouldEqualTo: any
 ): varToBeChecked is T =>
-  (varToBeChecked as T)[propertyToCheckFor] !== undefined
+  (varToBeChecked as T)[propertyToCheck] === varThatPropertyShouldEqualTo
 
 export default {
   findAddress,
@@ -81,5 +82,5 @@ export default {
   formatCoordinateToFixedDecimalLength,
   hexToRGBA,
   formatIdForEndUser,
-  isOfType,
+  isOfTypeFromStringComparison,
 }

@@ -174,6 +174,23 @@ module.exports = (io) => {
       .publish(id, routingKeys.DELETED)
       .then(() => console.log(` [x] Delete vehicle ${id}`))
   }
+
+  const transportNotifications = amqp
+    .exchange('outgoing_vehicle_updates', 'topic', {
+      durable: false,
+    })
+    .queue('outgoing_transport_notifications', {
+      durable: false,
+    })
+    .subscribe({ noAck: true }, [routingKeys.NEW])
+    .map((vehicleRes) => {
+      const vehicle = vehicleRes.json()
+      vehicle.current_route = JSON.parse(vehicle.current_route)
+      vehicle.metadata = JSON.parse(vehicle.metadata)
+
+      return vehicle
+    })
+
   return {
     bookings,
     vehicles,
@@ -184,5 +201,6 @@ module.exports = (io) => {
     addVehicle,
     createBooking,
     transportLocationUpdates,
+    transportNotifications,
   }
 }

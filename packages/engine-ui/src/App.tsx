@@ -9,8 +9,6 @@ import Logotype from './components/Logotype'
 import hooks from './utils/hooks'
 import Notifications from './components/Notifications'
 import * as notificationTypes from './notificationTypes'
-import * as types from './types'
-import helpers from './utils/helpers'
 
 const App = () => {
   const { socket } = useSocket()
@@ -40,53 +38,8 @@ const App = () => {
     socket.emit('delete-vehicle', id)
   }
 
-  const getSeverityByEvent = (
-    event: notificationTypes.BookingEvents | notificationTypes.TransportEvents
-  ) => {
-    switch (event) {
-      case notificationTypes.BookingEvents.NEW:
-      case notificationTypes.BookingEvents.ASSIGNED:
-      case notificationTypes.BookingEvents.DELIVERED:
-      case notificationTypes.BookingEvents.PICKED_UP:
-      case notificationTypes.TransportEvents.NEW:
-        return notificationTypes.Severity.SUCCESS
-      case notificationTypes.BookingEvents.DELIVERY_FAILED:
-        return notificationTypes.Severity.ERROR
-    }
-  }
-
-  const transportToNotificationEvent = (
-    data: types.Transport
-  ): notificationTypes.TransportEvent => ({
-    type: notificationTypes.Events.TRANSPORT,
-    id: data.id,
-    event: notificationTypes.TransportEvents.NEW,
-    transport: data,
-  })
-
-  const bookingToNotificationEvent = (
-    data: types.Booking
-  ): notificationTypes.BookingEvent => ({
-    type: notificationTypes.Events.BOOKING,
-    id: data.id,
-    event: notificationTypes.BookingEvents.NEW,
-    booking: data,
-  })
-
   useSocket('notification', (data: notificationTypes.Notification) => {
-    console.log('incoming: ', data)
-    const event = helpers.isOfType<types.Transport>(data, 'busy')
-      ? transportToNotificationEvent(data)
-      : bookingToNotificationEvent(data as types.Booking)
-
-    const notification: notificationTypes.Notification = {
-      event,
-      entityType: notificationTypes.EntityTypes.BOOKING,
-      severity: getSeverityByEvent(event.event),
-    }
-    console.log(notification)
-
-    updateNotifications((notifications) => [notification, ...notifications])
+    updateNotifications((notifications) => [data, ...notifications])
   })
 
   useSocket('bookings', (bookings) => {

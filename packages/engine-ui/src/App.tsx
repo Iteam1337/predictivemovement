@@ -39,7 +39,7 @@ const App = () => {
   }
 
   useSocket('notification', (data: notificationTypes.Notification) => {
-    updateNotifications((notifications) => [data, ...notifications])
+    updateNotifications((notifications) => notifications.concat(data))
   })
 
   useSocket('bookings', (bookings) => {

@@ -90,21 +90,19 @@ const Notifications: React.FC<{
 
   return (
     <Container>
-      {notifications
-        .map((notification, index) => (
-          <NotificationComponent
-            key={index}
-            notification={notification}
-            handleOnClose={() => handleOnClose(notification.event.id)}
-          >
-            {withLinkElement(
-              notification.event.id,
-              notification.type,
-              messageElementFromNotification(notification)
-            )}
-          </NotificationComponent>
-        ))
-        .reverse()}
+      {notifications.map((notification, index) => (
+        <NotificationComponent
+          key={index}
+          notification={notification}
+          handleOnClose={() => handleOnClose(notification.event.id)}
+        >
+          {withLinkElement(
+            notification.event.id,
+            notification.type,
+            messageElementFromNotification(notification)
+          )}
+        </NotificationComponent>
+      ))}
     </Container>
   )
 }

@@ -85,6 +85,7 @@ defmodule Engine.Adapters.RMQ do
          {:ok, channel} <- AMQP.Channel.open(conn),
          :ok <- setup_resources(channel) do
       Process.monitor(conn.pid)
+      Logger.info("#{__MODULE__} connected to rabbitmq")
       {:noreply, channel}
     else
       _ ->

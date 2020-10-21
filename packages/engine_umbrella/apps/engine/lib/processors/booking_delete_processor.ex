@@ -1,5 +1,6 @@
 defmodule Engine.BookingDeleteProcessor do
   use Broadway
+  require Logger
 
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
   @deleted_routing_key "deleted"
@@ -12,6 +13,10 @@ defmodule Engine.BookingDeleteProcessor do
       producer: [
         module:
           {BroadwayRabbitMQ.Producer,
+           after_connect: fn %AMQP.Channel{} = channel ->
+             Logger.info("#{__MODULE__} connected to rabbitmq")
+             AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
+           end,
            queue: @delete_booking_queue,
            declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
            on_failure: :reject,

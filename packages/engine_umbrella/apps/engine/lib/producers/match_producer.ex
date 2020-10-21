@@ -84,6 +84,7 @@ defmodule Engine.MatchProducer do
     with {:ok, conn} <- AMQP.Connection.open(amqp_url()),
          {:ok, channel} <- AMQP.Channel.open(conn),
          :ok <- setup_resources(channel) do
+      Logger.info("#{__MODULE__} connected to rabbitmq")
       Process.monitor(conn.pid)
       {:noreply, [], state}
     else

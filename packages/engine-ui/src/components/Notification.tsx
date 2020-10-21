@@ -9,7 +9,7 @@ const StyledAlert = styled(Alert)`
 `
 
 const Component: React.FC<
-  { notification: Notification } & { handleOnClose: (id: string) => void }
+  { notification: Notification, handleOnClose: (id: string) => void }
 > = ({ notification: { severity, event }, children, handleOnClose }) => (
   <Zoom in={true}>
     <StyledAlert

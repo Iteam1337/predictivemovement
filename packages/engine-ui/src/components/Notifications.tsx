@@ -28,7 +28,7 @@ const Container = styled.div`
 
 const notificationMessages = {
   [EntityType.BOOKING]: {
-    [BookingStatus.NEW]: 'En bokning har lags till:',
+    [BookingStatus.NEW]: 'En ny bokning har lags till:',
     [BookingStatus.ASSIGNED]: 'En bokning har tilldelats transport:',
     [BookingStatus.DELIVERED]: 'En bokning har levererats:',
     [BookingStatus.PICKED_UP]:

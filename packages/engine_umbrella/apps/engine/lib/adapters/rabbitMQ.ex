@@ -103,7 +103,11 @@ defmodule Engine.Adapters.RMQ do
     AMQP.Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
     AMQP.Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
     AMQP.Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
-    # Setup DLX also
+    AMQP.Exchange.declare(channel, "engine_DLX", :direct, durable: true)
+
+    AMQP.Queue.declare(channel, "store_dead_letters.engine", durable: true)
+    AMQP.Queue.bind(channel, "store_dead_letters.engine", "engine_DLX")
+
     :ok
   end
 end

@@ -64,12 +64,12 @@ defmodule Engine.BookingProcessor do
         } = msg,
         _context
       ) do
-    IO.inspect(
-      booking,
-      label: "a new booking"
-    )
+    id =
+      booking
+      |> string_to_booking_transform()
+      |> IO.inspect(label: "a new booking")
+      |> Booking.make()
 
-    id = Booking.make(booking)
     Logger.info("Booking with id: #{id} created")
 
     msg
@@ -82,6 +82,7 @@ defmodule Engine.BookingProcessor do
       ) do
     id =
       vehicle
+      |> string_to_vehicle_transform()
       |> IO.inspect(label: "creating a new vehicle")
       |> Vehicle.make()
 
@@ -101,5 +102,17 @@ defmodule Engine.BookingProcessor do
 
     calculate_plan(vehicle_ids, booking_ids)
     messages
+  end
+
+  defp string_to_vehicle_transform(vehicle_string) do
+    vehicle_string
+    |> Jason.decode!(keys: :atoms)
+    |> Map.delete(:id)
+  end
+
+  defp string_to_booking_transform(booking_string) do
+    Jason.decode!(booking_string, keys: :atoms)
+    |> Map.put_new(:metadata, %{})
+    |> Map.put_new(:size, nil)
   end
 end

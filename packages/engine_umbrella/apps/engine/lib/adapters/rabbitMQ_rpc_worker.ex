@@ -12,9 +12,11 @@ defmodule Engine.Adapters.RMQRPCWorker do
     {:ok, pid} = GenServer.start_link(__MODULE__, [])
 
     try do
-      GenServer.call(pid, {:call, data, queue})
+      {:ok, GenServer.call(pid, {:call, data, queue})}
     catch
-      :exit, {:timeout, _} -> Logger.error("RPC call to #{queue} timed out")
+      :exit, {:timeout, _} ->
+        Logger.error("RPC call to #{queue} timed out")
+        {:error, :timeout}
     end
   end
 

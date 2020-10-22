@@ -48,19 +48,22 @@ defmodule Vehicle do
       ) do
     Logger.debug("offer to vehicle #{vehicle.id}")
 
-    response =
-      RMQRPCWorker.call(
-        %{
-          vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
-          current_route: offer.current_route,
-          activities: offer.activities,
-          booking_ids: offer.booking_ids
-        },
-        "offer_booking_to_vehicle"
-      )
-      |> Jason.decode()
+    RMQRPCWorker.call(
+      %{
+        vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
+        current_route: offer.current_route,
+        activities: offer.activities,
+        booking_ids: offer.booking_ids
+      },
+      "offer_booking_to_vehicle"
+    )
+    |> case do
+      {:ok, response} ->
+        {:reply, Jason.decode(response), vehicle}
 
-    {:reply, response, vehicle}
+      _ ->
+        {:reply, false, vehicle}
+    end
   end
 
   def handle_call(

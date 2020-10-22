@@ -15,7 +15,13 @@ defmodule Plan do
     )
     |> insert_time_matrix()
     |> RMQRPCWorker.call("calculate_route_optimization")
-    |> Jason.decode!(keys: :atoms)
+    |> case do
+      {:ok, response} ->
+        Jason.decode!(response, keys: :atoms)
+
+      _ ->
+        nil
+    end
   end
 
   def insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do

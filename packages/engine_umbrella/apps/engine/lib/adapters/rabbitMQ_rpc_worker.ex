@@ -1,5 +1,6 @@
 defmodule Engine.Adapters.RMQRPCWorker do
   use GenServer
+  require Logger
   alias AMQP.{Queue, Channel, Basic}
   alias Engine.Adapters.RMQ
 
@@ -10,7 +11,11 @@ defmodule Engine.Adapters.RMQRPCWorker do
   def call(data, queue) do
     {:ok, pid} = GenServer.start_link(__MODULE__, [])
 
-    GenServer.call(pid, {:call, data, queue})
+    try do
+      GenServer.call(pid, {:call, data, queue})
+    catch
+      :exit, {:timeout, _} -> Logger.error("RPC call to #{queue} timed out")
+    end
   end
 
   def handle_call({:call, data, queue}, _from, conn) do

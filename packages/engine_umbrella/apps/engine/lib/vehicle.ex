@@ -3,7 +3,7 @@ defmodule Vehicle do
   use Vex.Struct
   require Logger
   alias Engine.ES
-  alias Engine.Adapters.RMQ
+  alias Engine.Adapters.{RMQ, RMQRPCWorker}
   @derive Jason.Encoder
 
   defstruct [
@@ -49,7 +49,7 @@ defmodule Vehicle do
     Logger.debug("offer to vehicle #{vehicle.id}")
 
     response =
-      RMQ.call(
+      RMQRPCWorker.call(
         %{
           vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
           current_route: offer.current_route,

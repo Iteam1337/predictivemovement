@@ -2,13 +2,16 @@ import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import mapUtils from '../utils/mapUtils'
-import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
 
+import stores from '../utils/state/stores'
+
 const Map = ({ data }) => {
   const history = useHistory()
-  const { state: UIState, dispatch, onLoad } = React.useContext(UIStateContext)
+  const [viewState, setViewState] = stores.map((state) => [state, state.set])
+  const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
+
   const showTextLayer = useRouteMatch({
     path: ['/plans/routes/:routeId'],
   })
@@ -27,7 +30,7 @@ const Map = ({ data }) => {
   }
 
   const onMapClick = ({ lngLat: [lon, lat], x, y }) =>
-    dispatch({
+    setUIState({
       type: 'lastClickedPosition',
       payload: { lat, lon, x, y },
     })
@@ -69,7 +72,7 @@ const Map = ({ data }) => {
   ]
 
   const handleDragEvent = () =>
-    UIState.showMapTooltip && dispatch({ type: 'hideTooltip' })
+    UIState.showMapTooltip && setUIState({ type: 'hideTooltip' })
 
   return (
     <>
@@ -80,11 +83,8 @@ const Map = ({ data }) => {
           onMapClick(e)
           handleClickEvent(e)
         }}
-        viewState={UIState.viewport}
-        onViewStateChange={({ viewState }) =>
-          dispatch({ type: 'viewport', payload: viewState })
-        }
-        onLoad={onLoad}
+        viewState={viewState}
+        onViewStateChange={({ viewState }) => setViewState(viewState)}
         onDrag={handleDragEvent}
       >
         <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />

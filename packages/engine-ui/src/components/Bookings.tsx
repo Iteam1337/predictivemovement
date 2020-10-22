@@ -1,5 +1,4 @@
 import React from 'react'
-import { UIStateContext } from '../utils/UIStateContext'
 import { FlyToInterpolator } from 'react-map-gl'
 import Elements from '../shared-elements/'
 import Icons from '../assets/Icons'
@@ -10,6 +9,7 @@ import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import styled from 'styled-components'
 import { Booking } from '../types'
 import helpers from '../utils/helpers'
+import stores from '../utils/state/stores'
 
 const AddNewContainer = styled.div`
   margin-top: 1rem;
@@ -39,7 +39,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
 const BookingToggleList: React.FC<{
   bookings: Booking[]
   text: string
-  onClickHandler: (lat: string, lon: string) => void
+  onClickHandler: (lat: number, lon: number) => void
   onMouseEnterHandler: (id: string) => void
   onMouseLeaveHandler: () => void
   isOpen: boolean
@@ -106,8 +106,10 @@ const Bookings: React.FC<{
   createBooking: () => void
   deleteBooking: () => void
 }> = (props) => {
-  const { dispatch } = React.useContext(UIStateContext)
+  const setMap = stores.map((state) => state.set)
+  const setUIState = stores.ui((state) => state.dispatch)
   const { path, url } = useRouteMatch()
+
   const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
     props.bookings,
   ])
@@ -118,17 +120,14 @@ const Bookings: React.FC<{
     delivered: false,
   })
 
-  const onClickHandler = (lat: string, lon: string) =>
-    dispatch({
-      type: 'viewport',
-      payload: {
-        latitude: lat,
-        longitude: lon,
-        zoom: 10,
-        transitionDuration: 2000,
-        transitionInterpolator: new FlyToInterpolator(),
-        transitionEasing: (t: number) => t * (2 - t),
-      },
+  const onClickHandler = (latitude: number, longitude: number) =>
+    setMap({
+      latitude,
+      longitude,
+      zoom: 10,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: (t: number) => t * (2 - t),
     })
 
   const handleExpand = (type: 'new' | 'assigned' | 'delivered') =>
@@ -149,10 +148,10 @@ const Bookings: React.FC<{
               onClickHandler={onClickHandler}
               text="Öppna bokningar"
               onMouseEnterHandler={(id: string) =>
-                dispatch({ type: 'highlightBooking', payload: id })
+                setUIState({ type: 'highlightBooking', payload: id })
               }
               onMouseLeaveHandler={() =>
-                dispatch({ type: 'highlightBooking', payload: undefined })
+                setUIState({ type: 'highlightBooking', payload: undefined })
               }
             />
             <BookingToggleList
@@ -162,10 +161,10 @@ const Bookings: React.FC<{
               onClickHandler={onClickHandler}
               text="Bekräftade bokningar"
               onMouseEnterHandler={(id: string) =>
-                dispatch({ type: 'highlightBooking', payload: id })
+                setUIState({ type: 'highlightBooking', payload: id })
               }
               onMouseLeaveHandler={() =>
-                dispatch({ type: 'highlightBooking', payload: undefined })
+                setUIState({ type: 'highlightBooking', payload: undefined })
               }
             />
             <BookingToggleList
@@ -175,10 +174,10 @@ const Bookings: React.FC<{
               onClickHandler={onClickHandler}
               text="Levererade bokningar"
               onMouseEnterHandler={(id: string) =>
-                dispatch({ type: 'highlightBooking', payload: id })
+                setUIState({ type: 'highlightBooking', payload: id })
               }
               onMouseLeaveHandler={() =>
-                dispatch({ type: 'highlightBooking', payload: undefined })
+                setUIState({ type: 'highlightBooking', payload: undefined })
               }
             />
           </Elements.Layout.MarginTopContainer>
@@ -199,6 +198,9 @@ const Bookings: React.FC<{
           <BookingDetails
             bookings={props.bookings}
             deleteBooking={props.deleteBooking}
+            onUnmount={() =>
+              setUIState({ type: 'highlightBooking', payload: undefined })
+            }
           />
         </Route>
       </Switch>

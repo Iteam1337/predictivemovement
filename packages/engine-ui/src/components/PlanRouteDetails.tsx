@@ -3,11 +3,11 @@ import styled from 'styled-components'
 import { FlyToInterpolator } from 'react-map-gl'
 import RouteActivities from './RouteActivities'
 import Icons from '../assets/Icons'
-import { UIStateContext } from '../utils/UIStateContext'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import Elements from '../shared-elements'
 import helpers from '../utils/helpers'
 import { Route, InAppColor } from '../types'
+import stores from '../utils/state/stores'
 
 interface Props {
   route: Route
@@ -30,7 +30,8 @@ const Chevron = styled(Icons.Arrow)`
 `
 
 const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
-  const { dispatch } = React.useContext(UIStateContext)
+  const setUIState = stores.ui((state) => state.dispatch)
+  const setMap = stores.map((state) => state.set)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
@@ -68,23 +69,20 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
               color={color}
               margin="0 0.5rem"
               onMouseOver={() =>
-                dispatch({ type: 'highlightTransport', payload: route.id })
+                setUIState({ type: 'highlightTransport', payload: route.id })
               }
               onMouseLeave={() =>
-                dispatch({ type: 'highlightTransport', payload: undefined })
+                setUIState({ type: 'highlightTransport', payload: undefined })
               }
               to={`/transports/${route.id}`}
               onClick={() =>
-                dispatch({
-                  type: 'viewport',
-                  payload: {
-                    latitude: route.start_address.lat,
-                    longitude: route.start_address.lon,
-                    zoom: 10,
-                    transitionDuration: 3000,
-                    transitionInterpolator: new FlyToInterpolator(),
-                    transitionEasing: (t: number) => t * (2 - t),
-                  },
+                setMap({
+                  latitude: route.start_address.lat,
+                  longitude: route.start_address.lon,
+                  zoom: 10,
+                  transitionDuration: 3000,
+                  transitionInterpolator: new FlyToInterpolator(),
+                  transitionEasing: (t: number) => t * (2 - t),
                 })
               }
             >

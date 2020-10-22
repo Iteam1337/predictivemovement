@@ -54,7 +54,7 @@ const Sidebar = (state: Props) => {
               </Route>
               <Route path="/transports">
                 <Transports
-                  vehicles={state.vehicles}
+                  transports={state.vehicles}
                   addVehicle={state.addVehicle}
                   deleteVehicle={state.deleteVehicle}
                 />

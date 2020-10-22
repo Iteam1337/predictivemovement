@@ -1,6 +1,6 @@
 import React from 'react'
-import { UIStateContext } from '../utils/UIStateContext'
-import Elements from '../shared-elements'
+import stores from '../utils/state/stores'
+import Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
 import helpers from '../utils/helpers'
 import { Transport } from '../types'
@@ -8,7 +8,9 @@ import { Transport } from '../types'
 const TransportsList: React.FC<{ transports: Transport[] }> = ({
   transports,
 }) => {
-  const { dispatch } = React.useContext(UIStateContext)
+  const setMap = stores.map((state) => state.set)
+  const setUIState = stores.ui((state) => state.dispatch)
+
   if (!transports.length)
     return (
       <Elements.Typography.NoInfoParagraph>
@@ -17,16 +19,13 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
     )
 
   const onClickHandler = (lat: number, lon: number) =>
-    dispatch({
-      type: 'viewport',
-      payload: {
-        latitude: lat,
-        longitude: lon,
-        zoom: 10,
-        transitionDuration: 2000,
-        transitionInterpolator: new FlyToInterpolator(),
-        transitionEasing: (t: number) => t * (2 - t),
-      },
+    setMap({
+      latitude: lat,
+      longitude: lon,
+      zoom: 10,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: (t: number) => t * (2 - t),
     })
 
   return (
@@ -36,10 +35,10 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
           <Elements.Links.RoundedLink
             color={transport.color}
             onMouseOver={() =>
-              dispatch({ type: 'highlightTransport', payload: transport.id })
+              setUIState({ type: 'highlightTransport', payload: transport.id })
             }
             onMouseLeave={() =>
-              dispatch({ type: 'highlightTransport', payload: undefined })
+              setUIState({ type: 'highlightTransport', payload: undefined })
             }
             to={`/transports/${transport.id}`}
             onClick={() =>

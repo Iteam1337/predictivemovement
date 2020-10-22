@@ -3,9 +3,9 @@ import { FlyToInterpolator } from 'react-map-gl'
 import styled from 'styled-components'
 import { Activity, Route } from '../types'
 import helpers from '../utils/helpers'
-import { UIStateContext } from '../utils/UIStateContext'
 import Elements from '../shared-elements'
 import { useRouteMatch } from 'react-router-dom'
+import stores from '../utils/state/stores'
 
 const ActivityGroup = styled.div`
   margin-left: auto;
@@ -74,7 +74,9 @@ const groupByLocation = (activities: Activity[]) => {
 }
 
 const RouteActivities = ({ route }: Props) => {
-  const { dispatch } = React.useContext(UIStateContext)
+  const setUIState = stores.ui((state) => state.dispatch)
+  const setMap = stores.map((state) => state.set)
+
   const activities = route.activities ? route.activities.slice(1, -1) : []
   const isProposedPlan = useRouteMatch({
     path: ['/plans/routes/:routeId'],
@@ -108,23 +110,20 @@ const RouteActivities = ({ route }: Props) => {
               <Elements.Links.RoundedLink
                 key={i}
                 onMouseOver={() =>
-                  dispatch({ type: 'highlightBooking', payload: activity.id })
+                  setUIState({ type: 'highlightBooking', payload: activity.id })
                 }
                 onMouseLeave={() =>
-                  dispatch({ type: 'highlightBooking', payload: undefined })
+                  setUIState({ type: 'highlightBooking', payload: undefined })
                 }
                 to={() => redirectTo(activity.id)}
                 onClick={() =>
-                  dispatch({
-                    type: 'viewport',
-                    payload: {
-                      latitude: activity.address.lat,
-                      longitude: activity.address.lon,
-                      zoom: 10,
-                      transitionDuration: 2000,
-                      transitionInterpolator: new FlyToInterpolator(),
-                      transitionEasing: (t: number) => t * (2 - t),
-                    },
+                  setMap({
+                    latitude: activity.address.lat,
+                    longitude: activity.address.lon,
+                    zoom: 10,
+                    transitionDuration: 2000,
+                    transitionInterpolator: new FlyToInterpolator(),
+                    transitionEasing: (t: number) => t * (2 - t),
                   })
                 }
               >

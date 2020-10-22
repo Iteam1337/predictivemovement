@@ -14,6 +14,7 @@ defmodule Engine.Adapters.RMQ do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
+  @impl true
   def init(_) do
     send(self(), :connect)
 
@@ -35,16 +36,19 @@ defmodule Engine.Adapters.RMQ do
     end
   end
 
-  def handle_call(:get_connection, %{conn: conn}), do: conn
+  @impl true
+  def handle_call(:get_connection, _, %{conn: conn} = state), do: {:reply, conn, state}
 
-  def handle_call({:publish, data, exchange_name, routing_key}, _, %{channel: channel}) do
+  @impl true
+  def handle_call({:publish, data, exchange_name, routing_key}, _, %{channel: channel} = state) do
     Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
       content_type: "application/json"
     )
 
-    {:reply, data, channel}
+    {:reply, data, state}
   end
 
+  @impl true
   def handle_info(:connect, current_state) do
     with {:ok, conn} <- Connection.open(amqp_url()),
          {:ok, channel} <- Channel.open(conn),
@@ -60,6 +64,7 @@ defmodule Engine.Adapters.RMQ do
     end
   end
 
+  @impl true
   def handle_info({:DOWN, _, :process, _pid, reason}, _) do
     {:stop, {:connection_lost, reason}, nil}
   end

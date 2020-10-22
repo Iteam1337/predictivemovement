@@ -3,15 +3,14 @@ defmodule Engine.Adapters.RMQRPCWorker do
   alias AMQP.{Queue, Channel, Basic}
   alias Engine.Adapters.RMQ
 
-  def init(conn) do
-    {:ok, conn}
+  def init(_) do
+    RMQ.get_connection()
   end
 
   def call(data, queue) do
-    {:ok, conn} = RMQ.get_connection()
+    {:ok, pid} = GenServer.start_link(__MODULE__, [])
 
-    GenServer.start_link(__MODULE__, conn)
-    |> GenServer.call({:call, data, queue})
+    GenServer.call(pid, {:call, data, queue})
   end
 
   def handle_call({:call, data, queue}, _from, conn) do
@@ -42,7 +41,9 @@ defmodule Engine.Adapters.RMQRPCWorker do
       correlation_id: correlation_id
     )
 
-    wait_for_messages(channel, correlation_id)
+    msg = wait_for_messages(channel, correlation_id)
+
+    {:stop, :normal, msg, conn}
   end
 
   defp wait_for_messages(channel, correlation_id) do

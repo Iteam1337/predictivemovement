@@ -73,7 +73,7 @@ defmodule Engine.Adapters.RMQ do
     Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
     Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
     Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
-    Exchange.declare(channel, "engine_DLX", :direct, durable: true)
+    Exchange.declare(channel, "engine_DLX", :fanout, durable: true)
 
     Queue.declare(channel, "store_dead_letters.engine", durable: true)
     Queue.bind(channel, "store_dead_letters.engine", "engine_DLX")

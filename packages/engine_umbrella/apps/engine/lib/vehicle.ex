@@ -58,7 +58,7 @@ defmodule Vehicle do
         },
         "offer_booking_to_vehicle"
       )
-      |> Jason.decode
+      |> Jason.decode()
 
     {:reply, response, vehicle}
   end
@@ -80,8 +80,6 @@ defmodule Vehicle do
 
     {:reply, updated_vehicle, updated_vehicle}
   end
-
-  def handle_info({:basic_cancel_ok, _}, state), do: {:noreply, state}
 
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)

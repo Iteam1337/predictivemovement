@@ -17,53 +17,7 @@ defmodule Engine.Adapters.RMQ do
   def init(_) do
     send(self(), :connect)
 
-    {:ok, nil}
-  end
-
-  def wait_for_messages(channel, correlation_id) do
-    receive do
-      {:basic_deliver, payload, %{correlation_id: ^correlation_id} = msg} ->
-        Queue.unsubscribe(channel, Map.get(msg, :consumer_tag))
-        payload
-
-      _ ->
-        wait_for_messages(channel, correlation_id)
-    end
-  end
-
-  def call(data, queue) do
-    {:ok, connection} = Connection.open(amqp_url())
-
-    {:ok, channel} = Channel.open(connection)
-
-    {:ok, %{queue: queue_name}} =
-      Queue.declare(
-        channel,
-        "",
-        exclusive: true,
-        auto_delete: true
-      )
-
-    Basic.consume(channel, queue_name, nil, no_ack: false)
-    IO.puts("Engine wants response from #{queue} to #{queue_name}")
-
-    correlation_id =
-      :erlang.unique_integer()
-      |> :erlang.integer_to_binary()
-      |> Base.encode64()
-
-    request = Jason.encode!(data)
-
-    Basic.publish(
-      channel,
-      "",
-      queue,
-      request,
-      reply_to: queue_name,
-      correlation_id: correlation_id
-    )
-
-    wait_for_messages(channel, correlation_id)
+    {:ok, %{conn: nil, channel: nil}}
   end
 
   def publish(data, exchange_name) do
@@ -74,7 +28,16 @@ defmodule Engine.Adapters.RMQ do
     GenServer.call(__MODULE__, {:publish, data, exchange_name, routing_key})
   end
 
-  def handle_call({:publish, data, exchange_name, routing_key}, _, channel) do
+  def get_connection do
+    case GenServer.call(__MODULE__, :get_connection) do
+      nil -> {:error, :not_connected}
+      conn -> {:ok, conn}
+    end
+  end
+
+  def handle_call(:get_connection, %{conn: conn}), do: conn
+
+  def handle_call({:publish, data, exchange_name, routing_key}, _, %{channel: channel}) do
     Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
       content_type: "application/json"
     )
@@ -82,18 +45,18 @@ defmodule Engine.Adapters.RMQ do
     {:reply, data, channel}
   end
 
-  def handle_info(:connect, _) do
+  def handle_info(:connect, current_state) do
     with {:ok, conn} <- Connection.open(amqp_url()),
          {:ok, channel} <- Channel.open(conn),
          :ok <- setup_resources(channel) do
       Process.monitor(conn.pid)
       Logger.info("#{__MODULE__} connected to rabbitmq")
-      {:noreply, channel}
+      {:noreply, %{conn: conn, channel: channel}}
     else
       _ ->
         Logger.error("Failed to connect #{amqp_url()}. Reconnecting later...")
         Process.send_after(self(), :connect, @reconnect_interval)
-        {:noreply, nil}
+        {:noreply, current_state}
     end
   end
 

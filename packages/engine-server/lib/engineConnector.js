@@ -177,6 +177,44 @@ module.exports = (io) => {
       .publish(id, routingKeys.DELETED)
       .then(() => console.log(` [x] Delete vehicle ${id}`))
   }
+
+  const transportNotifications = amqp
+    .exchange('outgoing_vehicle_updates', 'topic', {
+      durable: false,
+    })
+    .queue('transport_notifications.admin_ui', {
+      durable: false,
+    })
+    .subscribe({ noAck: true }, [routingKeys.NEW])
+    .map((vehicleRes) => {
+      const vehicle = vehicleRes.json()
+      vehicle.current_route = JSON.parse(vehicle.current_route)
+      vehicle.metadata = JSON.parse(vehicle.metadata)
+
+      return vehicle
+    })
+
+  const bookingNotifications = amqp
+    .exchange('outgoing_booking_updates', 'topic', {
+      durable: false,
+    })
+    .queue('booking_notifications.admin_ui', {
+      durable: false,
+    })
+    .subscribe({ noAck: true }, [
+      routingKeys.NEW,
+      routingKeys.PICKED_UP,
+      routingKeys.DELIVERED,
+      routingKeys.DELIVERY_FALIED,
+    ])
+    .map((bookingRes) => {
+      const booking = bookingRes.json()
+      booking.route = JSON.parse(booking.route)
+      booking.metadata = JSON.parse(booking.metadata)
+
+      return { ...booking, status: bookingRes.fields.routingKey }
+    })
+
   return {
     bookings,
     vehicles,
@@ -187,5 +225,7 @@ module.exports = (io) => {
     addVehicle,
     createBooking,
     transportLocationUpdates,
+    transportNotifications,
+    bookingNotifications,
   }
 }

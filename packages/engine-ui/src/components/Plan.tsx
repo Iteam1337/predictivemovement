@@ -16,7 +16,7 @@ const PlanWrapper = styled.div`
 interface IPlanProps {
   plan: PlanRoute[]
   transports: Transport[]
-  dispatchOffers: () => void
+  dispatchOffers: (params: any) => void
   bookings: Booking[]
 }
 

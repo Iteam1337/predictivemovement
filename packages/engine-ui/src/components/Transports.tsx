@@ -9,7 +9,7 @@ import { Transport } from '../types'
 
 const Transports: React.FC<{
   transports: Transport[]
-  addVehicle: () => void
+  addVehicle: (params: any) => void
   deleteVehicle: (id: string) => void
 }> = ({ transports, addVehicle, deleteVehicle }) => {
   const { path, url } = useRouteMatch()

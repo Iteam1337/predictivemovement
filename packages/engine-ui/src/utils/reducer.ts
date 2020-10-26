@@ -1,18 +1,19 @@
 import { getColor } from './palette'
+import * as types from '../types'
 
-export const reducer = (state, action) => {
+export const reducer = (state: State, action: any) => {
   switch (action.type) {
     case 'setTransports':
       return {
         ...state,
         vehicles: [
           ...state.vehicles.filter(
-            (c) => !action.payload.find((p) => p.id === c.id)
+            (c) => !action.payload.find((p: any) => p.id === c.id)
           ),
           ...action.payload,
         ].map((v, i) => ({ ...v, color: getColor(i, 0) })),
       }
-    case 'updateTransport':
+    case 'updateTransport': {
       const { id, ...rest } = action.payload
 
       return {
@@ -30,6 +31,7 @@ export const reducer = (state, action) => {
           }),
         ],
       }
+    }
     case 'deleteVehicle':
       return {
         ...state,
@@ -47,7 +49,7 @@ export const reducer = (state, action) => {
         ...state,
         bookings: [
           ...state.bookings.filter(
-            (b) => !action.payload.find((p) => p.id === b.id)
+            (b) => !action.payload.find((p: any) => p.id === b.id)
           ),
           ...action.payload,
         ],
@@ -67,7 +69,14 @@ export const reducer = (state, action) => {
   }
 }
 
-export const initState = {
+type State = {
+  bookings: types.Booking[]
+  assignedBookings: types.Booking[]
+  vehicles: types.Transport[]
+  plan: any[]
+}
+
+export const initState: State = {
   bookings: [],
   assignedBookings: [],
   vehicles: [],

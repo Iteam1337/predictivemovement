@@ -171,7 +171,7 @@ defmodule MessageGenerator do
 
   def add_random_id_and_time(map) do
     map
-    |> Map.put(:id, Enum.random(0..100_000))
+    |> Map.put_new(:id, Enum.random(0..100_000))
     |> Map.put(:bookingDate, DateTime.utc_now())
   end
 end

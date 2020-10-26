@@ -35,7 +35,9 @@ const BookingList = styled.ul`
   }
 `
 
-const TransportsList = styled(BookingList)``
+const TransportsList = styled(BookingList)`
+height: auto;
+`
 
 const Container = styled.div`
   margin-bottom: 2rem;

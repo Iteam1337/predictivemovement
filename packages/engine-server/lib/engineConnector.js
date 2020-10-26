@@ -195,7 +195,7 @@ module.exports = (io) => {
     .exchange('outgoing_booking_updates', 'topic', {
       durable: false,
     })
-    .queue('update_booking_in_admin_ui', {
+    .queue('outgoing_booking_notifications', {
       durable: false,
     })
     .subscribe({ noAck: true }, [

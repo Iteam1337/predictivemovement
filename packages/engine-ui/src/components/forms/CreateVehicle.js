@@ -103,7 +103,7 @@ const Component = ({
                 min="0"
                 name="volume"
                 value={formState.volume}
-                placeholder="Lastvolym (kbm)"
+                placeholder="Lastvolym (m3)"
                 type="number"
                 onChangeHandler={eventHandlers.handleTextInputChange(
                   'volume',

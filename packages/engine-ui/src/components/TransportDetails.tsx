@@ -100,7 +100,7 @@ const TransportDetails: React.FC<{
             <Elements.Typography.StrongParagraph>
               Kapacitet
             </Elements.Typography.StrongParagraph>
-            <Paragraph>Maxvolym: {transport.capacity.volume}kbm</Paragraph>
+            <Paragraph>Maxvolym: {transport.capacity.volume}m3</Paragraph>
             <Paragraph>Maxvikt: {transport.capacity.weight}kg</Paragraph>
           </>
         )}

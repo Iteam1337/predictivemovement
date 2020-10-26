@@ -179,7 +179,7 @@ module.exports = (io) => {
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: false,
     })
-    .queue('outgoing_transport_notifications', {
+    .queue('transport_notifications.admin_ui', {
       durable: false,
     })
     .subscribe({ noAck: true }, [routingKeys.NEW])
@@ -195,7 +195,7 @@ module.exports = (io) => {
     .exchange('outgoing_booking_updates', 'topic', {
       durable: false,
     })
-    .queue('outgoing_booking_notifications', {
+    .queue('booking_notifications.admin_ui', {
       durable: false,
     })
     .subscribe({ noAck: true }, [

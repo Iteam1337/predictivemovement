@@ -64,7 +64,6 @@ defmodule Engine.BookingProcessor do
       vehicles: vehicles,
       booking_ids: booking_ids,
       excluded_booking_ids:
-        # Enum.map(excluded, &Map.take(&1, [:id, :failure])) |> Enum.map(&handle_booking_failure/1)
         Enum.map(excluded, &handle_booking_failure/1)
 
     })

@@ -103,8 +103,8 @@ const Wrapper = styled.div`
 
 const Bookings: React.FC<{
   bookings: Booking[]
-  createBooking: () => void
-  deleteBooking: () => void
+  createBooking: (params: any) => void
+  deleteBooking: (params: any) => void
 }> = (props) => {
   const setMap = stores.map((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)

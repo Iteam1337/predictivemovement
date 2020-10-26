@@ -44,6 +44,8 @@ const getLastFourChars = (str: string) => str.slice(str.length - 4, str.length)
 
 const withoutLastFourChars = (str: string) => str.slice(0, str.length - 4)
 
+const formatIdForEndUser = (id: string) => getLastFourChars(id).toUpperCase()
+
 const formatCoordinateToFixedDecimalLength = ({
   lat,
   lon,
@@ -71,4 +73,5 @@ export default {
   withoutLastFourChars,
   formatCoordinateToFixedDecimalLength,
   hexToRGBA,
+  formatIdForEndUser,
 }

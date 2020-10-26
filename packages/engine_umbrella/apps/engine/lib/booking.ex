@@ -1,6 +1,7 @@
 defmodule Booking do
   use GenServer
   use Vex.Struct
+  alias Engine.Adapters.RMQ
   require Logger
   alias Engine.ES
   @derive Jason.Encoder
@@ -95,7 +96,7 @@ defmodule Booking do
       name: via_tuple(id)
     )
 
-    MQ.publish(booking, @outgoing_booking_exchange, "new")
+    RMQ.publish(booking, @outgoing_booking_exchange, "new")
 
     Engine.BookingStore.put_booking(id)
     booking
@@ -112,7 +113,7 @@ defmodule Booking do
     Engine.BookingStore.delete_booking(id)
     GenServer.stop(via_tuple(id))
 
-    MQ.publish(
+    RMQ.publish(
       id,
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "deleted"
@@ -167,7 +168,7 @@ defmodule Booking do
         metadata: vehicle.metadata
       })
       |> add_event_to_events_list("assigned", timestamp)
-      |> MQ.publish(
+      |> RMQ.publish(
         Application.fetch_env!(:engine, :outgoing_booking_exchange),
         "assigned"
       )
@@ -182,7 +183,7 @@ defmodule Booking do
     updated_state =
       state
       |> add_event_to_events_list(status, timestamp)
-      |> MQ.publish(@outgoing_booking_exchange, status)
+      |> RMQ.publish(@outgoing_booking_exchange, status)
 
     {:reply, true, updated_state}
   end

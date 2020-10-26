@@ -1,4 +1,5 @@
 const _ = require('highland')
+const helpers = require('./helpers')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, vehiclesCache, planCache } = require('./cache')
 
@@ -13,6 +14,8 @@ module.exports = (io) => {
     publishDeleteBooking,
     publishDeleteVehicle,
     transportLocationUpdates,
+    transportNotifications,
+    bookingNotifications,
   } = require('./engineConnector')(io)
 
   io.on('connection', function (socket) {
@@ -54,8 +57,13 @@ module.exports = (io) => {
       return socket.emit('transport-updated', transportLocationUpdate)
     })
 
-    _(bookings.fork()).each((booking) => socket.emit('notification', booking))
-    _(vehicles.fork()).each((car) => socket.emit('notification', car))
+    _(bookingNotifications.fork()).each((booking) => {
+      socket.emit('notification', helpers.bookingToNotification(booking))
+    })
+
+    _(transportNotifications.fork()).each((transport) => {
+      socket.emit('notification', helpers.transportToNotification(transport))
+    })
 
     socket.on('new-booking', (params) => {
       const booking = {

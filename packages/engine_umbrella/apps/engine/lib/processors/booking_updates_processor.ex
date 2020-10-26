@@ -1,5 +1,6 @@
 defmodule Engine.BookingUpdatesProcessor do
   use Broadway
+  require Logger
 
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
   @picked_up_routing_key "picked_up"
@@ -13,11 +14,16 @@ defmodule Engine.BookingUpdatesProcessor do
       producer: [
         module:
           {BroadwayRabbitMQ.Producer,
+           after_connect: fn %AMQP.Channel{} = channel ->
+             Logger.info("#{__MODULE__} connected to rabbitmq")
+             AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
+           end,
            queue: @update_bookings_statuses_queue,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ],
-           declare: [],
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           on_failure: :reject,
            bindings: [
              {@incoming_booking_exchange, routing_key: @picked_up_routing_key},
              {@incoming_booking_exchange, routing_key: @delivered_routing_key},
@@ -36,7 +42,7 @@ defmodule Engine.BookingUpdatesProcessor do
   def handle_message(_, %Broadway.Message{data: booking_update} = msg, _) do
     %{"id" => id, "status" => status} =
       booking_update
-      |> Jason.decode!
+      |> Jason.decode!()
 
     Booking.add_event(id, status)
 

@@ -72,8 +72,7 @@ const BookingToggleList: React.FC<{
 
       {isOpen && (
         <Elements.Layout.BookingList>
-          {excludedBookings.length > 0 &&
-            excludedBookings.map((booking) => (
+          {excludedBookings.map((booking) => (
               <li key={booking.id}>
                 <Elements.Layout.InlineContainer>
                   <Elements.Links.RoundedLink
@@ -143,7 +142,7 @@ const Plan = ({
                   }
                 />
               ))}
-            {plan.excludedBookings &&
+            {plan.excludedBookings.length > 0 &&
             <BookingToggleList
               excludedBookings={plan.excludedBookings}
               text="Exkluderade bokningar"

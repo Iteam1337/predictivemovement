@@ -28,7 +28,7 @@ defmodule Booking do
   )
 
   validates([:size, :measurements],
-    by: [function: &Booking.valid_measurements/1, message: "must be a list of 3 integers"],
+    by: [function: &Booking.valid_measurements/1, message: "must be a list of integers"],
     length: [is: 3]
   )
 

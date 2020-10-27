@@ -42,7 +42,7 @@ defmodule BookingTest do
       |> Booking.make()
 
     assert result == [
-             {:error, [:size, :measurements], :by, "must be an integer"},
+             {:error, [:size, :measurements], :by, "must be a list of integers"},
              {:error, [:size, :measurements], :length, "must have a length of 3"}
            ]
   end

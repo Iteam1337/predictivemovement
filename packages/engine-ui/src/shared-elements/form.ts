@@ -29,8 +29,8 @@ const Label = styled.label<{ required?: boolean }>`
   }`}
 `
 
-const TextInput = styled.input<{ iconInset?: boolean, error?: boolean }>`
-  border: ${({error}) => error ? "1px solid red" : 'none'};
+const TextInput = styled.input<{ iconInset?: boolean; error?: boolean }>`
+  border: ${({ error }) => (error ? '1px solid red' : 'none')};
   background-color: #f1f3f5;
   border-radius: 0.25rem;
   width: 100%;

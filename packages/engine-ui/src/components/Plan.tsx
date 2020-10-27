@@ -19,6 +19,23 @@ const onClickHandler = (latitude: number, longitude: number) =>
 //   transitionEasing: (t: number) => t * (2 - t),
 // })
 
+const bookingStatusToReadable = (status: string) => {
+  switch (status) {
+    case "TIME_CONSTRAINTS_EXPIRED":
+      return "Tidsfönster passerat";
+    case "CONSTRAINTS_FAILURE":
+    default:
+      return "Okänd anledning"
+  }
+}
+
+const Paragraph = styled.p`
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+  margin-left: 10px;
+`
+
+
 const PlanWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -72,12 +89,15 @@ const BookingToggleList: React.FC<{
                     onMouseOver={() => onMouseEnterHandler(booking.id)}
                     onMouseLeave={() => onMouseLeaveHandler()}
                     to={`/bookings/${booking.id}`}
-                    onClick={() => 
+                    onClick={() =>
                       onClickHandler(123, 423)
                     }
                   >
                     {helpers.getLastFourChars(booking.id).toUpperCase()}
                   </Elements.Links.RoundedLink>
+                  <Paragraph>
+                    {bookingStatusToReadable(booking.status)}
+                  </Paragraph>
                 </Elements.Layout.InlineContainer>
               </li>
             ))}

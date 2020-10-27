@@ -24,6 +24,7 @@ const Component = ({
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
+      <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label>Körschema</Elements.Form.Label>

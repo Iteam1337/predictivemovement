@@ -55,7 +55,6 @@ const CreateBooking = ({ onSubmit }) => {
       pickup: isValidAddress(formState.pickup),
       delivery: isValidAddress(formState.delivery),
     }
-    console.log('validationresult', validationResult)
 
     if (!validationResult.pickup || !validationResult.delivery) {
       setFormErrors((formErrors) => ({

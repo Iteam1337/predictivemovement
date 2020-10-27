@@ -97,7 +97,6 @@ module.exports = (io) => {
         },
       }
 
-      console.log('this is the booking: ', booking)
 
       createBooking(booking)
     })

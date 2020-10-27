@@ -32,6 +32,7 @@ const handleAddressInput = (propertyName, callback) => ({
   return callback((currentState) => ({
     ...currentState,
     [propertyName]: {
+      ...currentState[propertyName],
       name,
       lon,
       lat,

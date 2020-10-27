@@ -25,9 +25,9 @@ const handleContactInputChange = (
 const handleAddressInputForBooking = (
   propertyName,
   callback,
-  setErrorState
+  setFormErrors
 ) => ({ name = '', street = '', lon, lat, county = '' }) => {
-  setErrorState((prev) => ({ ...prev, [propertyName]: false }))
+  setFormErrors((prev) => ({ ...prev, [propertyName]: false }))
   return callback((currentState) => ({
     ...currentState,
     [propertyName]: {

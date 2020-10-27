@@ -26,7 +26,7 @@ const Component = ({
   onChangeHandler,
   placeholder,
   value,
-  showErrorMessage,
+  formError,
   ...rest
 }) => {
   const [showDropdown, setShowDropdown] = React.useState(false)
@@ -57,7 +57,7 @@ const Component = ({
 
   return (
     <Elements.Layout.InputInnerContainer>
-      {showErrorMessage ? (
+      {formError ? (
         <Elements.Icons.FormInputIcon
           alt="Warning icon"
           src={`${warningIcon}`}
@@ -70,7 +70,7 @@ const Component = ({
       )}
       <Elements.Form.TextInput
         {...rest}
-        error={showErrorMessage}
+        error={formError}
         name="pickup"
         type="text"
         value={value}

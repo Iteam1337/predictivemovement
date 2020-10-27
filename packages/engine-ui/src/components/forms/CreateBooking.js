@@ -11,8 +11,8 @@ const Component = ({
   onSubmitHandler,
   state,
   dispatch,
-  showErrorMessage,
-  setErrorState,
+  formErrors,
+  setFormErrors,
 }) => {
   const history = useHistory()
 
@@ -131,7 +131,7 @@ const Component = ({
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           required
-          showErrorMessage={showErrorMessage.pickup}
+          formErrors={formErrors.pickup}
           placeholder="Adress (sök eller klicka på karta)"
           value={state.pickup.name}
           onFocus={() =>
@@ -143,10 +143,10 @@ const Component = ({
           onChangeHandler={eventHandlers.handleAddressInputForBooking(
             'pickup',
             onChangeHandler,
-            setErrorState
+            setFormErrors
           )}
         />
-        {showErrorMessage.pickup && (
+        {formErrors.pickup && (
           <Elements.Typography.ErrorMessage>
             Kunde inte hitta adressen, försök igen
           </Elements.Typography.ErrorMessage>
@@ -241,7 +241,7 @@ const Component = ({
         <FormInputs.AddressSearchInput
           placeholder="Adress (sök eller klicka på karta)"
           value={state.delivery.name}
-          showErrorMessage={showErrorMessage.delivery}
+          formErrors={formErrors.delivery}
           onFocus={() =>
             dispatch({
               type: 'focusInput',
@@ -251,10 +251,10 @@ const Component = ({
           onChangeHandler={eventHandlers.handleAddressInputForBooking(
             'delivery',
             onChangeHandler,
-            setErrorState
+            setFormErrors
           )}
         />
-        {showErrorMessage.delivery && (
+        {formErrors.delivery && (
           <Elements.Typography.ErrorMessage>
             Kunde inte hitta adressen, försök igen
           </Elements.Typography.ErrorMessage>

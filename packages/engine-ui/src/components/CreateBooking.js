@@ -34,11 +34,13 @@ const initialState = {
   recipient: { name: '', contact: '', info: '' },
 }
 
+const isValidAddress = ({ lat, lon }) => !!(lat && lon)
+
 const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
   const [isFinished, setIsFinished] = React.useState(false)
   const [formState, setState] = React.useState(initialState)
-  const [showErrorMessage, setErrorState] = React.useState({
+  const [formErrors, setFormErrors] = React.useState({
     pickup: false,
     delivery: false,
   })
@@ -46,27 +48,22 @@ const CreateBooking = ({ onSubmit }) => {
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
-  const validateAddresses = () => {
-    const pickup = !formState.pickup.lat || !formState.pickup.lon
-    const delivery = !formState.delivery.lat || !formState.delivery.lon
-
-    if (pickup || delivery) {
-      setErrorState((showErrorMessage) => ({
-        ...showErrorMessage,
-        pickup,
-        delivery,
-      }))
-
-      return false
-    }
-
-    return true
-  }
-
   const onSubmitHandler = (event) => {
     event.preventDefault()
 
-    if (!validateAddresses()) {
+    const validationResult = {
+      pickup: isValidAddress(formState.pickup),
+      delivery: isValidAddress(formState.delivery),
+    }
+    console.log('validationresult', validationResult)
+
+    if (!validationResult.pickup || !validationResult.delivery) {
+      setFormErrors((formErrors) => ({
+        ...formErrors,
+        pickup: !validationResult.pickup,
+        delivery: !validationResult.delivery,
+      }))
+
       return false
     }
 
@@ -101,8 +98,8 @@ const CreateBooking = ({ onSubmit }) => {
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
         <Form
-          setErrorState={setErrorState}
-          showErrorMessage={showErrorMessage}
+          setFormErrors={setFormErrors}
+          formErrors={formErrors}
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}
           state={formState}

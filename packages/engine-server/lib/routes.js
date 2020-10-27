@@ -97,7 +97,6 @@ module.exports = (io) => {
         },
       }
 
-
       createBooking(booking)
     })
 
@@ -109,13 +108,7 @@ module.exports = (io) => {
     socket.on('add-vehicle', (params) => {
       const vehicle = {
         id: params.id || id62(),
-        capacity:
-          params.volume && params.weight
-            ? {
-                volume: parseInt(params.volume, 10),
-                weight: parseInt(params.weight, 10),
-              }
-            : null,
+        capacity: params.capacity,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,
         start_address: params.startPosition,
@@ -130,6 +123,7 @@ module.exports = (io) => {
           profile: params.vehicleType,
         },
       }
+
       addVehicle(vehicle)
     })
 

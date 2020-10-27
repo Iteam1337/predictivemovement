@@ -10,8 +10,6 @@ import stores from '../utils/state/stores'
 
 const initialState = {
   id: '',
-  measurement: '',
-  weight: '',
   cargo: '',
   fragile: false,
   pickup: {
@@ -29,6 +27,10 @@ const initialState = {
     street: '',
     city: '',
     timewindow: null,
+  },
+  size: {
+    measurements: '',
+    weight: '',
   },
   sender: { name: '', contact: '', info: '' },
   recipient: { name: '', contact: '', info: '' },
@@ -55,9 +57,13 @@ const CreateBooking = ({ onSubmit }) => {
 
     onSubmit({
       ...formState,
-      measurement:
-        formState.measurement &&
-        formState.measurement.split('x').map(parseFloat),
+      size: {
+        ...formState.size,
+        measurements: formState.size.measurements
+          ? formState.size.measurements.split('x').map(parseFloat)
+          : null,
+        weight: parseInt(formState.size.weight) || 0,
+      },
     })
 
     return setIsFinished(true)

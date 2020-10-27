@@ -143,7 +143,7 @@ const Component = ({
               iconInset
               name="driver"
               value={formState.driver.name}
-              onChangeHandler={eventHandlers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleNestedInputChange(
                 'driver',
                 'name',
                 onChangeHandler
@@ -164,7 +164,7 @@ const Component = ({
               iconInset
               name="contact"
               value={formState.driver.contact}
-              onChangeHandler={eventHandlers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleNestedInputChange(
                 'driver',
                 'contact',
                 onChangeHandler

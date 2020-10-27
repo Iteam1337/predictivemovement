@@ -11,7 +11,7 @@ const channel = open
   .then((conn) => conn.createChannel())
   .then((ch) => {
     ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
-      durable: false,
+      durable: true,
     })
     return ch
   })

@@ -15,7 +15,7 @@ defmodule Engine.BookingDeleteProcessor do
           {BroadwayRabbitMQ.Producer,
            after_connect: fn %AMQP.Channel{} = channel ->
              Logger.info("#{__MODULE__} connected to rabbitmq")
-             AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
+             AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: true)
            end,
            queue: @delete_booking_queue,
            declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],

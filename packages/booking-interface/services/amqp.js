@@ -6,13 +6,13 @@ const createBooking = (booking) => {
     .then((ch) =>
       ch
         .assertExchange(exchanges.INCOMING_BOOKING_UPDATES, 'topic', {
-          durable: false,
+          durable: true,
         })
         .then(() =>
           ch.publish(
             exchanges.INCOMING_BOOKING_UPDATES,
-            "registered",
-            Buffer.from(JSON.stringify({...booking, assigned_to: null}))
+            'registered',
+            Buffer.from(JSON.stringify({ ...booking, assigned_to: null }))
           )
         )
     )

@@ -43,19 +43,19 @@ defmodule Engine.MatchProducer do
   end
 
   def setup_resources(channel) do
-    Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
-    Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
+    Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: true)
+    Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: true)
 
     register_new_booking_queue = "register_new_booking"
     register_new_vehicle_queue = "register_new_vehicle"
 
     Queue.declare(channel, register_new_vehicle_queue,
-      durable: false,
+      durable: true,
       arguments: [{"x-dead-letter-exchange", "engine_DLX"}]
     )
 
     Queue.declare(channel, register_new_booking_queue,
-      durable: false,
+      durable: true,
       arguments: [{"x-dead-letter-exchange", "engine_DLX"}]
     )
 

@@ -10,7 +10,7 @@ export const updateLocation = (
     .then((conn) => conn.createChannel())
     .then((ch) => {
       ch.assertExchange(exchanges.INCOMING_VEHICLE_UPDATES, 'topic', {
-        durable: false,
+        durable: true,
       }).then(() =>
         ch.publish(
           exchanges.INCOMING_VEHICLE_UPDATES,

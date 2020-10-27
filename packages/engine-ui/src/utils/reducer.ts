@@ -73,12 +73,14 @@ type State = {
   bookings: types.Booking[]
   assignedBookings: types.Booking[]
   vehicles: types.Transport[]
-  plan: any[]
+  plan: types.Plan
 }
 
 export const initState: State = {
   bookings: [],
   assignedBookings: [],
   vehicles: [],
-  plan: [],
+  plan: {
+    routes: []
+  },
 }

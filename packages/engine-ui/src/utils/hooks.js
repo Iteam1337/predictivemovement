@@ -84,7 +84,7 @@ const useFilteredStateFromQueryParams = (state) => {
               .filter(includeOneTransportIfDetailView)
           : [],
       plan: planView
-        ? state.plan
+        ? state.plan.routes
             .map((r, i) => ({ ...r, routeIndex: i }))
             .filter(includeOnePlanRouteIfDetailView)
         : [],

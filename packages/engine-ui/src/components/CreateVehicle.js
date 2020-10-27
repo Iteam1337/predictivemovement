@@ -54,8 +54,8 @@ const CreateVehicle = ({ onSubmit }) => {
             }
           : formState.timewindow,
       capacity: {
-        weight: parseInt(formState.capacity.weight) || null,
-        volume: parseInt(formState.capacity.volume) || null,
+        weight: parseInt(formState.capacity.weight),
+        volume: parseInt(formState.capacity.volume),
       },
       startPosition: {
         ...formState.startPosition,

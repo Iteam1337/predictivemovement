@@ -6,18 +6,9 @@ import PlanRouteDetails from './PlanRouteDetails'
 import Icons from '../assets/Icons'
 import helpers from '../utils/helpers'
 import PlanBookingDetails from './PlanBookingDetails'
-import { Plan as IPlan, Transport, Booking } from '../types'
+import { Plan as IPlan, Transport, Booking, ExcludedBooking } from '../types'
 import stores from '../utils/state/stores'
-const onClickHandler = (latitude: number, longitude: number) =>
-() => ({})
-// setMap({
-//   latitude,
-//   longitude,
-//   zoom: 10,
-//   transitionDuration: 2000,
-//   transitionInterpolator: new FlyToInterpolator(),
-//   transitionEasing: (t: number) => t * (2 - t),
-// })
+import { FlyToInterpolator } from 'react-map-gl'
 
 const bookingStatusToReadable = (status: string) => {
   switch (status) {
@@ -51,7 +42,7 @@ interface IPlanProps {
 
 
 const BookingToggleList: React.FC<{
-  excludedBookings: [{status: string, id: string }]
+  excludedBookings: ExcludedBooking[]
   text: string
   onClickHandler: (lat: number, lon: number) => void
   onMouseEnterHandler: (id: string) => void
@@ -89,9 +80,7 @@ const BookingToggleList: React.FC<{
                     onMouseOver={() => onMouseEnterHandler(booking.id)}
                     onMouseLeave={() => onMouseLeaveHandler()}
                     to={`/bookings/${booking.id}`}
-                    onClick={() =>
-                      onClickHandler(123, 423)
-                    }
+                    onClick={() => onClickHandler(booking.lat, booking.lon)}
                   >
                     {helpers.getLastFourChars(booking.id).toUpperCase()}
                   </Elements.Links.RoundedLink>
@@ -119,12 +108,19 @@ const Plan = ({
   const [expandedSection, setExpandedSection] = React.useState({isOpen: false})
   const { path } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
-
+  const setMap = stores.map((state) => state.set)
+  const onClickHandler = (latitude: number, longitude: number) => setMap({
+    latitude,
+    longitude,
+    zoom: 10,
+    transitionDuration: 2000,
+    transitionInterpolator: new FlyToInterpolator(),
+    transitionEasing: (t: number) => t * (2 - t),
+  })
   const handleExpand = () => setExpandedSection((currentState) => ({
     ...currentState,
     isOpen: !currentState.isOpen,
   }))
-
   return (
     <Switch>
       <Route exact path={[path, `${path}/routes/:routeId`]}>
@@ -147,9 +143,9 @@ const Plan = ({
                   }
                 />
               ))}
-            {plan.excludedBookingIds &&
+            {plan.excludedBookings &&
             <BookingToggleList
-              excludedBookings={plan.excludedBookingIds}
+              excludedBookings={plan.excludedBookings}
               text="Exkluderade bokningar"
               onClickHandler={onClickHandler}
               onMouseEnterHandler={(id: string) =>

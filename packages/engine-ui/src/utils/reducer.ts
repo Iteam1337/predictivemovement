@@ -81,6 +81,7 @@ export const initState: State = {
   assignedBookings: [],
   vehicles: [],
   plan: {
+    excludedBookings: [],
     routes: []
   },
 }

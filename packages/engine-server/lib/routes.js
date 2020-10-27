@@ -37,6 +37,18 @@ module.exports = (io) => {
       .each((vehicles) => socket.emit('vehicles', vehicles))
 
     _.merge([_(planCache.values()), plan.fork()])
+      .map((plan) => ({
+        ...plan,
+        excluded_booking_ids: plan.excluded_booking_ids.map((booking) => {
+          const b = bookingsCache.get(booking.id)
+          if (!b) return booking
+          return {
+            ...booking,
+            lat: b.pickup.lat,
+            lon: b.pickup.lon,
+          }
+        }),
+      }))
       .doto((data) => {
         planCache.set('plan', data)
       })

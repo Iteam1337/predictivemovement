@@ -82,7 +82,7 @@ const App = () => {
       type: 'setPlan',
       payload: {
         routes: plan.vehicles,
-        excludedBookingIds: plan.excluded_booking_ids
+        excludedBookings: plan.excluded_booking_ids
       },
     })
   })

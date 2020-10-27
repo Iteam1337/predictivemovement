@@ -39,6 +39,12 @@ interface PlanProps {
   bookings: Booking[]
 }
 
+const Wrapper = styled.div`
+  display: flex;
+  height: 20%;
+  flex-direction: column;
+`
+
 const BookingToggleList: React.FC<{
   excludedBookings: ExcludedBooking[]
   text: string
@@ -54,37 +60,39 @@ const BookingToggleList: React.FC<{
   isOpen,
   setOpen,
 }) => (
-  <Elements.Layout.MarginBottomContainer>
-    <Elements.Layout.FlexRowWrapper onClick={setOpen}>
-      <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
-      <Icons.Arrow
-        style={{
-          marginLeft: '0.875rem',
-          transform: `rotate(${isOpen ? '180deg' : 0})`,
-        }}
-      />
-    </Elements.Layout.FlexRowWrapper>
+  <Wrapper>
+    <Elements.Layout.MarginBottomContainer>
+      <Elements.Layout.FlexRowWrapper onClick={setOpen}>
+        <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
+        <Icons.Arrow
+          style={{
+            marginLeft: '0.875rem',
+            transform: `rotate(${isOpen ? '180deg' : 0})`,
+          }}
+        />
+      </Elements.Layout.FlexRowWrapper>
 
-    {isOpen && (
-      <Elements.Layout.BookingList>
-        {excludedBookings.map((booking) => (
-          <li key={booking.id}>
-            <Elements.Layout.InlineContainer>
-              <Elements.Links.RoundedLink
-                onMouseOver={() => onMouseEnterHandler(booking.id)}
-                onMouseLeave={() => onMouseEnterHandler()}
-                to={`/bookings/${booking.id}`}
-                onClick={() => onClickHandler(booking.lat, booking.lon)}
-              >
-                {helpers.getLastFourChars(booking.id).toUpperCase()}
-              </Elements.Links.RoundedLink>
-              <Paragraph>{bookingStatusToReadable(booking.status)}</Paragraph>
-            </Elements.Layout.InlineContainer>
-          </li>
-        ))}
-      </Elements.Layout.BookingList>
-    )}
-  </Elements.Layout.MarginBottomContainer>
+      {isOpen && (
+        <Elements.Layout.BookingList>
+          {excludedBookings.map((booking) => (
+            <li key={booking.id}>
+              <Elements.Layout.InlineContainer>
+                <Elements.Links.RoundedLink
+                  onMouseOver={() => onMouseEnterHandler(booking.id)}
+                  onMouseLeave={() => onMouseEnterHandler()}
+                  to={`/bookings/${booking.id}`}
+                  onClick={() => onClickHandler(booking.lat, booking.lon)}
+                >
+                  {helpers.getLastFourChars(booking.id).toUpperCase()}
+                </Elements.Links.RoundedLink>
+                <Paragraph>{bookingStatusToReadable(booking.status)}</Paragraph>
+              </Elements.Layout.InlineContainer>
+            </li>
+          ))}
+        </Elements.Layout.BookingList>
+      )}
+    </Elements.Layout.MarginBottomContainer>
+  </Wrapper>
 )
 
 export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {

@@ -37,7 +37,6 @@ const ActivityInfo = styled.div`
 
 const Wrapper = styled.div`
   overflow: auto;
-  height: 100%;
 `
 
 interface Props {

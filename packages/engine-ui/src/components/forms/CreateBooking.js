@@ -308,8 +308,7 @@ const Component = ({ onChangeHandler, onSubmitHandler, state, dispatch }) => {
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
-      </Elements.Layout.InputBlock>
-      <Elements.Layout.InputBlock>
+
         <Elements.Layout.InputContainer>
           <Elements.Form.Label required htmlFor="recipient-contact">
             Kontakt

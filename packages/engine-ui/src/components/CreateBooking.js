@@ -46,21 +46,27 @@ const CreateBooking = ({ onSubmit }) => {
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
+  const validateAddresses = () => {
+    const pickup = !formState.pickup.lat || !formState.pickup.lon
+    const delivery = !formState.delivery.lat || !formState.delivery.lon
+
+    if (pickup || delivery) {
+      setErrorState((showErrorMessage) => ({
+        ...showErrorMessage,
+        pickup,
+        delivery,
+      }))
+
+      return false
+    }
+
+    return true
+  }
+
   const onSubmitHandler = (event) => {
     event.preventDefault()
 
-    if (!formState.pickup.lat || !formState.pickup.lon) {
-      setErrorState((showErrorMessage) => ({
-        ...showErrorMessage,
-        pickup: true,
-      }))
-      return false
-    }
-    if (!formState.delivery.lat || !formState.delivery.lon) {
-      setErrorState((showErrorMessage) => ({
-        ...showErrorMessage,
-        delivery: true,
-      }))
+    if (!validateAddresses()) {
       return false
     }
 

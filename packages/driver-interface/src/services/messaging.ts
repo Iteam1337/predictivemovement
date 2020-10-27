@@ -59,6 +59,7 @@ export const sendPickupInstruction = async (
   bookings: Booking[]
 ): Promise<Message> => {
   const [firstBooking] = bookings
+
   const pickup =
     firstBooking.pickup.street && firstBooking.pickup.city
       ? `${firstBooking.pickup.street}, ${firstBooking.pickup.city}`
@@ -70,16 +71,23 @@ export const sendPickupInstruction = async (
       : await getAddressFromCoordinate({ ...firstBooking.delivery })
 
   const message = (instructionGroup.length === 1
-    ? `🎁 Hämta paket "${helpers
-        .getLastFourChars(instructionGroup[0].id)
-        .toUpperCase()}" vid [${pickup}](${getDirectionsUrl(
+    ? `🎁 Din nästa destination är [${pickup}](${getDirectionsUrl(
         pickup
-      )}) och leverera det sedan till ${delivery}!`
+      )}) där du ska hämta paket "${helpers
+        .getLastFourChars(instructionGroup[0].id)
+        .toUpperCase()}". Paketet ska sedan vidare till ${delivery}.`
     : `🎁 Hämta följande paket:
 ${instructionGroup
   .map((ig, i) => `${++i}. ${helpers.getLastFourChars(ig.id).toUpperCase()}`)
   .join('\n')}\nvid [${pickup}](${getDirectionsUrl(pickup)})`
-  ).concat('\nTryck på "[Framme]" när du har anlänt till destinationen.')
+  )
+    .concat(
+      firstBooking.metadata.sender?.contact &&
+        `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
+    )
+    .concat(
+      '\nTryck på "[Framme]" när du har kommit till upphämtningsadressen.'
+    )
 
   return bot.telegram.sendMessage(telegramId, message, {
     parse_mode: 'Markdown',
@@ -120,7 +128,11 @@ export const sendDeliveryInstruction = async (
     .join('\n')}\n`
   )
     .concat(`till [${delivery}](${getDirectionsUrl(delivery)})!\n`)
-    .concat('Tryck "[Framme]" när du har anlänt till destinationen.')
+    .concat(
+      firstBooking.metadata.recipient?.contact &&
+        `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
+    )
+    .concat('\nTryck "[Framme]" när du har anlänt till destinationen.')
   return bot.telegram.sendMessage(telegramId, message, {
     parse_mode: 'Markdown',
     reply_markup: {
@@ -168,11 +180,7 @@ export const sendPickupInformation = (
     )
     .join('\n')
 
-  const message = (bookings[0].metadata?.sender?.contact
-    ? `Du kan nu nå avsändaren på ${bookings[0].metadata.sender.contact}`
-    : ''
-  )
-    .concat('\n\n***Paketinformation***')
+  const message = '***Paketinformation***'
     .concat(
       bookings.length > 1
         ? `\nTotal vikt: ${Math.round(totalWeight * 100) / 100}kg`.concat(
@@ -219,7 +227,8 @@ export const sendDeliveryInformation = (
     ` ${
       firstBooking.metadata?.recipient?.contact
         ? 'Du kan nu nå mottagaren på ' +
-          firstBooking.metadata.recipient.contact
+          firstBooking.metadata.recipient.contact +
+          '\n'
         : ''
     }`
       .concat(

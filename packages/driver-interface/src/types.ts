@@ -36,7 +36,7 @@ export interface Booking {
     measurement?: number[]
   }
   id: string
-  metadata?: {
+  metadata: {
     recipient?: {
       contact?: string
       info?: string

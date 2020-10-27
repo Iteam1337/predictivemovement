@@ -11,13 +11,14 @@ import stores from '../utils/state/stores'
 const initialState = {
   vehicleType: '',
   id: '',
-  capacity: '',
-  volume: '',
-  weight: '',
+  capacity: {
+    volume: '',
+    weight: '',
+  },
   timewindow: { start: null, end: null },
-  startPosition: { lat: 61.8172594, lon: 16.0561472, name: undefined },
-  endPosition: { lat: undefined, lon: undefined, name: undefined },
-  driver: { name: undefined, contact: undefined },
+  startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
+  endPosition: { lat: undefined, lon: undefined, name: '' },
+  driver: { name: '', contact: '' },
 }
 
 const CreateVehicle = ({ onSubmit }) => {
@@ -52,6 +53,22 @@ const CreateVehicle = ({ onSubmit }) => {
               end: moment(formState.timewindow.end).format('HH:mm'),
             }
           : formState.timewindow,
+      capacity: {
+        weight: parseInt(formState.capacity.weight) || null,
+        volume: parseInt(formState.capacity.volume) || null,
+      },
+      startPosition: {
+        ...formState.startPosition,
+        name: formState.startPosition.name || undefined,
+      },
+      endPosition: {
+        ...formState.startPosition,
+        name: formState.endPosition.name || undefined,
+      },
+      driver: {
+        name: formState.driver.name || undefined,
+        contact: formState.driver.contact || undefined,
+      },
     })
 
     return setIsFinished(true)

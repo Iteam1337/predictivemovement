@@ -102,10 +102,11 @@ const Component = ({
                 step={1}
                 min="0"
                 name="volume"
-                value={formState.volume}
+                value={formState.capacity.volume}
                 placeholder="Lastvolym (m3)"
                 type="number"
-                onChangeHandler={eventHandlers.handleTextInputChange(
+                onChangeHandler={eventHandlers.handleNestedInputChange(
+                  'capacity',
                   'volume',
                   onChangeHandler
                 )}
@@ -118,8 +119,9 @@ const Component = ({
                 min="0"
                 type="number"
                 name="weight"
-                value={formState.weight}
-                onChangeHandler={eventHandlers.handleTextInputChange(
+                value={formState.capacity.weight}
+                onChangeHandler={eventHandlers.handleNestedInputChange(
+                  'capacity',
                   'weight',
                   onChangeHandler
                 )}

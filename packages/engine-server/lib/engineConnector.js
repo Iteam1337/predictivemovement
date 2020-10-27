@@ -58,19 +58,6 @@ module.exports = (io) => {
       return vehicle
     })
 
-  const createBooking = (booking) => {
-    return amqp
-      .exchange('incoming_booking_updates', 'topic', {
-        durable: true,
-      })
-      .publish({ ...booking, assigned_to: null }, routingKeys.REGISTERED)
-      .then(() =>
-        console.log(
-          ` [x] Created booking '${JSON.stringify(booking, null, 2)}'`
-        )
-      )
-  }
-
   const plan = amqp
     .exchange('outgoing_plan_updates', 'fanout', {
       durable: true,
@@ -139,6 +126,21 @@ module.exports = (io) => {
 
   ///////// Publishers
 
+  const createBooking = (booking) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', {
+        durable: true,
+      })
+      .publish({ ...booking, assigned_to: null }, routingKeys.REGISTERED, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(
+          ` [x] Created booking '${JSON.stringify(booking, null, 2)}'`
+        )
+      )
+  }
+
   const dispatchOffers = () => {
     return amqp
       .queue('dispatch_offers', {
@@ -156,7 +158,10 @@ module.exports = (io) => {
           id: id62(),
           ...vehicle,
         },
-        routingKeys.REGISTERED
+        routingKeys.REGISTERED,
+        {
+          persistent: true,
+        }
       )
   }
 
@@ -165,7 +170,9 @@ module.exports = (io) => {
       .exchange('incoming_booking_updates', 'topic', {
         durable: true,
       })
-      .publish(id, routingKeys.DELETED)
+      .publish(id, routingKeys.DELETED, {
+        persistent: true,
+      })
       .then(() => console.log(` [x] Delete booking ${id}`))
   }
 
@@ -174,7 +181,9 @@ module.exports = (io) => {
       .exchange('incoming_vehicle_updates', 'topic', {
         durable: true,
       })
-      .publish(id, routingKeys.DELETED)
+      .publish(id, routingKeys.DELETED, {
+        persistent: true,
+      })
       .then(() => console.log(` [x] Delete vehicle ${id}`))
   }
 

@@ -45,7 +45,8 @@ defmodule Engine.Adapters.RMQRPCWorker do
       queue,
       Jason.encode!(data),
       reply_to: queue_name,
-      correlation_id: correlation_id
+      correlation_id: correlation_id,
+      persistent: true
     )
 
     msg = wait_for_messages(channel, correlation_id)

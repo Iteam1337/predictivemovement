@@ -15,7 +15,10 @@ export const updateLocation = (
         ch.publish(
           exchanges.INCOMING_VEHICLE_UPDATES,
           'incoming.updated.location',
-          Buffer.from(JSON.stringify(msg))
+          Buffer.from(JSON.stringify(msg)),
+          {
+            persistent: true,
+          }
         )
       )
     })

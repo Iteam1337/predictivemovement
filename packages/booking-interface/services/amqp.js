@@ -12,7 +12,10 @@ const createBooking = (booking) => {
           ch.publish(
             exchanges.INCOMING_BOOKING_UPDATES,
             'registered',
-            Buffer.from(JSON.stringify({ ...booking, assigned_to: null }))
+            Buffer.from(JSON.stringify({ ...booking, assigned_to: null })),
+            {
+              persistent: true,
+            }
           )
         )
     )

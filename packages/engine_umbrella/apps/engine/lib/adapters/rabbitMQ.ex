@@ -42,7 +42,8 @@ defmodule Engine.Adapters.RMQ do
   @impl true
   def handle_call({:publish, data, exchange_name, routing_key}, _, %{channel: channel} = state) do
     Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
-      content_type: "application/json"
+      content_type: "application/json",
+      persistent: true
     )
 
     {:reply, data, state}

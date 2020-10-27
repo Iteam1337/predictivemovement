@@ -28,19 +28,14 @@ defmodule Booking do
   )
 
   validates([:size, :measurements],
-    by: [function: &Booking.valid_measurements/1, message: "must be an integer"],
+    by: [function: &Booking.valid_measurements/1, message: "must be a list of 3 integers"],
     length: [is: 3]
   )
 
-  def valid_measurements(measurements) do
-    case is_list(measurements) do
-      true ->
-        measurements |> Enum.all?(&is_integer/1)
+  def valid_measurements(measurements) when is_list(measurements),
+    do: Enum.all?(measurements, &is_integer/1)
 
-      _ ->
-        false
-    end
-  end
+  def valid_measurements(_), do: false
 
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)

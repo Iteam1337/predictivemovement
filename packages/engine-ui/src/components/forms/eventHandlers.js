@@ -22,13 +22,11 @@ const handleContactInputChange = (
   }))
 }
 
-const handleAddressInput = (propertyName, callback, setErrorState) => ({
-  name = '',
-  street = '',
-  lon,
-  lat,
-  county = '',
-}) => {
+const handleAddressInputForBooking = (
+  propertyName,
+  callback,
+  setErrorState
+) => ({ name = '', street = '', lon, lat, county = '' }) => {
   setErrorState((prev) => ({ ...prev, [propertyName]: false }))
   return callback((currentState) => ({
     ...currentState,
@@ -42,8 +40,27 @@ const handleAddressInput = (propertyName, callback, setErrorState) => ({
   }))
 }
 
+const handleAddressInput = (propertyName, callback) => ({
+  name = '',
+  street = '',
+  lon,
+  lat,
+  county = '',
+}) =>
+  callback((currentState) => ({
+    ...currentState,
+    [propertyName]: {
+      name,
+      lon,
+      lat,
+      city: county,
+      street,
+    },
+  }))
+
 export default {
   handleTextInputChange,
   handleContactInputChange,
   handleAddressInput,
+  handleAddressInputForBooking,
 }

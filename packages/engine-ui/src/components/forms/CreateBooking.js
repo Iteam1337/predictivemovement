@@ -140,7 +140,7 @@ const Component = ({
               payload: 'start',
             })
           }
-          onChangeHandler={eventHandlers.handleAddressInput(
+          onChangeHandler={eventHandlers.handleAddressInputForBooking(
             'pickup',
             onChangeHandler,
             setErrorState
@@ -248,7 +248,7 @@ const Component = ({
               payload: 'end',
             })
           }
-          onChangeHandler={eventHandlers.handleAddressInput(
+          onChangeHandler={eventHandlers.handleAddressInputForBooking(
             'delivery',
             onChangeHandler,
             setErrorState

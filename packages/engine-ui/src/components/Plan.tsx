@@ -43,8 +43,7 @@ const BookingToggleList: React.FC<{
   excludedBookings: ExcludedBooking[]
   text: string
   onClickHandler: (lat: number, lon: number) => void
-  onMouseEnterHandler: (id: string) => void
-  onMouseLeaveHandler: () => void
+  onMouseEnterHandler: (id?: string) => void
   isOpen: boolean
   setOpen: () => void
 }> = ({
@@ -52,7 +51,6 @@ const BookingToggleList: React.FC<{
   text,
   onClickHandler,
   onMouseEnterHandler,
-  onMouseLeaveHandler,
   isOpen,
   setOpen,
 }) => (
@@ -74,7 +72,7 @@ const BookingToggleList: React.FC<{
             <Elements.Layout.InlineContainer>
               <Elements.Links.RoundedLink
                 onMouseOver={() => onMouseEnterHandler(booking.id)}
-                onMouseLeave={() => onMouseLeaveHandler()}
+                onMouseLeave={() => onMouseEnterHandler()}
                 to={`/bookings/${booking.id}`}
                 onClick={() => onClickHandler(booking.lat, booking.lon)}
               >
@@ -108,6 +106,9 @@ export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {
       transitionInterpolator: new FlyToInterpolator(),
       transitionEasing: (t: number) => t * (2 - t),
     })
+  const onMouseEnter = (id?: string) =>
+    setUIState({ type: 'highlightBooking', payload: id })
+
   const handleExpand = () =>
     setExpandedSection((currentState) => ({
       ...currentState,
@@ -140,12 +141,7 @@ export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {
                   excludedBookings={plan.excludedBookings}
                   text="Exkluderade bokningar"
                   onClickHandler={onClickHandler}
-                  onMouseEnterHandler={(id: string) =>
-                    setUIState({ type: 'highlightBooking', payload: id })
-                  }
-                  onMouseLeaveHandler={() =>
-                    setUIState({ type: 'highlightBooking', payload: undefined })
-                  }
+                  onMouseEnterHandler={onMouseEnter}
                   isOpen={expandedSection.isOpen}
                   setOpen={handleExpand}
                 />

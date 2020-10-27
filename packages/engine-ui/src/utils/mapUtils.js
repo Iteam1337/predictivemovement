@@ -121,6 +121,32 @@ export const planToFeature = (plan) => {
   }
 }
 
+export const toExcludedBookingIcon = (booking, highlightedBooking) => {
+  return toBookingIconLayer(
+    excludedBookingIcon(booking),
+    highlightedBooking,
+    {
+      offset: [40, 0],
+    },
+    'excluded-booking-icon'
+  )
+}
+
+export const excludedBookingIcon = (booking) => {
+  if (!booking) return
+
+  return [
+    point([booking.lon, booking.lat], {
+      properties: {
+        color: '#ffffff',
+        highlightColor: '#19DE8B',
+        size: 80,
+      },
+      id: booking.id,
+    }),
+  ]
+}
+
 export const routeActivityIcon = (route) => {
   if (!route || !route.activities) return
 
@@ -310,7 +336,8 @@ export const toTransportIconLayer = (data, activeId) => {
 export const toBookingIconLayer = (
   data,
   activeId,
-  options = { offset: [0, 0] }
+  options = { offset: [0, 0] },
+  layerId = 'booking-icon'
 ) => {
   if (!data || !data.length) {
     return
@@ -331,7 +358,7 @@ export const toBookingIconLayer = (
   }))
 
   return new IconLayer({
-    id: 'booking-icon',
+    id: layerId,
     data: iconData,
     pickable: true,
     getPixelOffset: options.offset,
@@ -369,4 +396,5 @@ export default {
   routeActivityIcon,
   toTextLayer,
   routeActivitiesToFeature,
+  toExcludedBookingIcon,
 }

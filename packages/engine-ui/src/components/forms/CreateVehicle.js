@@ -24,55 +24,59 @@ const Component = ({
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
+      <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label>Körschema</Elements.Form.Label>
-          <Elements.Layout.InputContainer>
-            <Elements.Layout.TimeRestrictionWrapper>
-              <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
-                handleFocus={() => dispatch({ type: 'resetInputClickState' })}
-                timewindow={formState.timewindow}
-                onChangeHandler={handleDriverTimeRestrictionChange}
-              />
-            </Elements.Layout.TimeRestrictionWrapper>
-          </Elements.Layout.InputContainer>
-          <Elements.Layout.InputContainer>
-            <Elements.Form.Label required>Startposition</Elements.Form.Label>
-            <FormInputs.AddressSearchInput
-              required
-              placeholder="Adress (sök eller klicka på karta)"
-              value={formState.startPosition.name}
-              onChangeHandler={eventHandlers.handleAddressInput(
-                'startPosition',
-                onChangeHandler
-              )}
-              onFocus={() =>
-                dispatch({
-                  type: 'focusInput',
-                  payload: 'start',
-                })
-              }
+          <Elements.Layout.TimeRestrictionWrapper>
+            <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
+              handleFocus={() => dispatch({ type: 'resetInputClickState' })}
+              timewindow={formState.timewindow}
+              onChangeHandler={handleDriverTimeRestrictionChange}
             />
-          </Elements.Layout.InputContainer>
-          <Elements.Layout.InputContainer>
-            <Elements.Form.Label>Slutposition</Elements.Form.Label>
-            <FormInputs.AddressSearchInput
-              value={formState.endPosition.name}
-              placeholder="Adress (sök eller klicka på karta)"
-              onChangeHandler={eventHandlers.handleAddressInput(
-                'endPosition',
-                onChangeHandler
-              )}
-              onFocus={() =>
-                dispatch({
-                  type: 'focusInput',
-                  payload: 'end',
-                })
-              }
-            />
-          </Elements.Layout.InputContainer>
+          </Elements.Layout.TimeRestrictionWrapper>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label required>Startposition</Elements.Form.Label>
+          <FormInputs.AddressSearchInput
+            required
+            placeholder="Adress (sök eller klicka på karta)"
+            value={formState.startPosition.name}
+            onChangeHandler={eventHandlers.handleAddressInput(
+              'startPosition',
+              onChangeHandler
+            )}
+            onFocus={() =>
+              dispatch({
+                type: 'focusInput',
+                payload: 'start',
+              })
+            }
+          />
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label>Slutposition</Elements.Form.Label>
+          <FormInputs.AddressSearchInput
+            value={formState.endPosition.name}
+            placeholder="Adress (sök eller klicka på karta)"
+            onChangeHandler={eventHandlers.handleAddressInput(
+              'endPosition',
+              onChangeHandler
+            )}
+            onFocus={() =>
+              dispatch({
+                type: 'focusInput',
+                payload: 'end',
+              })
+            }
+          />
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label htmlFor="vehicleType" required>
@@ -80,6 +84,7 @@ const Component = ({
           </Elements.Form.Label>
           <FormInputs.TextInput
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
+            required
             name="vehicleType"
             value={formState.vehicleType}
             placeholder="Paketbil"
@@ -92,34 +97,41 @@ const Component = ({
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="capacity">
-            Kapacitet
-          </Elements.Form.Label>
           <Elements.Layout.TextInputPairContainer>
             <Elements.Layout.TextInputPairItem>
+              <Elements.Form.Label required htmlFor="volume">
+                Volym
+              </Elements.Form.Label>
               <FormInputs.TextInput
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
                 step={1}
                 min="0"
+                required
                 name="volume"
-                value={formState.volume}
+                value={formState.capacity.volume}
                 placeholder="Lastvolym (m3)"
                 type="number"
-                onChangeHandler={eventHandlers.handleTextInputChange(
+                onChangeHandler={eventHandlers.handleNestedInputChange(
+                  'capacity',
                   'volume',
                   onChangeHandler
                 )}
               />
             </Elements.Layout.TextInputPairItem>
             <Elements.Layout.TextInputPairItem>
+              <Elements.Form.Label required htmlFor="weight">
+                Vikt
+              </Elements.Form.Label>
               <FormInputs.TextInput
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
                 step={1}
                 min="0"
                 type="number"
+                required
                 name="weight"
-                value={formState.weight}
-                onChangeHandler={eventHandlers.handleTextInputChange(
+                value={formState.capacity.weight}
+                onChangeHandler={eventHandlers.handleNestedInputChange(
+                  'capacity',
                   'weight',
                   onChangeHandler
                 )}
@@ -143,7 +155,7 @@ const Component = ({
               iconInset
               name="driver"
               value={formState.driver.name}
-              onChangeHandler={eventHandlers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleNestedInputChange(
                 'driver',
                 'name',
                 onChangeHandler
@@ -164,7 +176,7 @@ const Component = ({
               iconInset
               name="contact"
               value={formState.driver.contact}
-              onChangeHandler={eventHandlers.handleContactInputChange(
+              onChangeHandler={eventHandlers.handleNestedInputChange(
                 'driver',
                 'contact',
                 onChangeHandler

@@ -29,7 +29,9 @@ const Label = styled.label<{ required?: boolean }>`
   }`}
 `
 
-const TextInput = styled.input<{ iconInset?: boolean }>`
+const TextInput = styled.input<{
+  iconInset?: boolean
+}>`
   border: none;
   background-color: #f1f3f5;
   border-radius: 0.25rem;

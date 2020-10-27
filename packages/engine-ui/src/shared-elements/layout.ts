@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 
-const TimeRestrictionDateInputWrapper = styled.div`
-  margin-bottom: 0.25rem;
-`
+const TimeRestrictionDateInputWrapper = styled.div``
 
 const FlexRowWrapper = styled.div`
   display: flex;
@@ -36,7 +34,7 @@ const BookingList = styled.ul`
 `
 
 const TransportsList = styled(BookingList)`
-height: auto;
+  height: auto;
 `
 
 const Container = styled.div`

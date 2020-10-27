@@ -70,10 +70,7 @@ module.exports = (io) => {
         id: params.id || id62(),
         senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
         bookingDate: new Date().toISOString(),
-        size: {
-          measurement: params.measurement,
-          weight: params.weight,
-        },
+        size: params.size,
         pickup: {
           time_windows: params.pickup.timewindow
             ? [params.pickup.timewindow]
@@ -111,13 +108,7 @@ module.exports = (io) => {
     socket.on('add-vehicle', (params) => {
       const vehicle = {
         id: params.id || id62(),
-        capacity:
-          params.volume && params.weight
-            ? {
-                volume: parseInt(params.volume, 10),
-                weight: parseInt(params.weight, 10),
-              }
-            : null,
+        capacity: params.capacity,
         earliest_start: params.timewindow.start,
         latest_end: params.timewindow.end,
         start_address: params.startPosition,
@@ -132,6 +123,7 @@ module.exports = (io) => {
           profile: params.vehicleType,
         },
       }
+
       addVehicle(vehicle)
     })
 

@@ -132,7 +132,7 @@ export const sendDeliveryInstruction = async (
       firstBooking.metadata.recipient?.contact &&
         `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
     )
-    .concat('\nTryck "[Framme]" när du har anlänt till destinationen.')
+    .concat('\nTryck "[Framme]" när du har anlänt till upphämtningsplatsen.')
   return bot.telegram.sendMessage(telegramId, message, {
     parse_mode: 'Markdown',
     reply_markup: {

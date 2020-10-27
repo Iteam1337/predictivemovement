@@ -45,6 +45,7 @@ defmodule Engine.Application do
 
   def start(_type, _args) do
     children = [
+      Engine.Adapters.RMQ,
       Engine.BookingStore,
       Engine.VehicleStore,
       Engine.ES,

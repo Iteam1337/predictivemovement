@@ -13,6 +13,7 @@
     {
       "files": ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js"],
       "rules": {
+        "react/display-name": "off",
         "no-undef": "off",
         "no-unused-vars": "off",
         "react/prop-types": "off",

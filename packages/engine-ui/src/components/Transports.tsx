@@ -4,18 +4,22 @@ import AddVehicle from './CreateVehicle'
 import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
+import stores from '../utils/state/stores'
+import { Transport } from '../types'
 
 const Transports: React.FC<{
-  vehicles: any
-  addVehicle: any
+  transports: Transport[]
+  addVehicle: (params: any) => void
   deleteVehicle: (id: string) => void
-}> = ({ vehicles, addVehicle, deleteVehicle }) => {
+}> = ({ transports, addVehicle, deleteVehicle }) => {
   const { path, url } = useRouteMatch()
+  const setUIState = stores.ui((state) => state.dispatch)
+
   return (
     <Switch>
       <Route exact path={path}>
         <h3>Aktuella transporter</h3>
-        <TransportsList transports={vehicles} />
+        <TransportsList transports={transports} />
         <Link to={`${url}/add-vehicle`}>
           <AddFormFieldButton onClickHandler={null}>
             + Lägg till transport
@@ -27,8 +31,11 @@ const Transports: React.FC<{
       </Route>
       <Route path={`${path}/:vehicleId`}>
         <TransportDetails
-          transports={vehicles}
+          transports={transports}
           deleteTransport={deleteVehicle}
+          onUnmount={() =>
+            setUIState({ type: 'highlightTransport', payload: undefined })
+          }
         />
       </Route>
     </Switch>

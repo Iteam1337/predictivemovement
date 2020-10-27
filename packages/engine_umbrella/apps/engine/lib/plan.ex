@@ -1,4 +1,6 @@
 defmodule Plan do
+  alias Engine.Adapters.RMQRPCWorker
+
   def find_optimal_routes(vehicle_ids, booking_ids) do
     IO.puts("call calculate_route_optimization")
 
@@ -12,8 +14,14 @@ defmodule Plan do
       end)
     )
     |> insert_time_matrix()
-    |> MQ.call("calculate_route_optimization")
-    |> Poison.decode!(keys: :atoms)
+    |> RMQRPCWorker.call("calculate_route_optimization")
+    |> case do
+      {:ok, response} ->
+        Jason.decode!(response, keys: :atoms)
+
+      _ ->
+        nil
+    end
   end
 
   def insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do
@@ -35,8 +43,8 @@ defmodule Plan do
   defp add_hints_from_matrix(%{bookings: bookings} = map) do
     {booking_hints, vehicle_hints} =
       map
-      |> get_in([:matrix, :sources])
-      |> Enum.map(fn %{hint: hint} -> hint end)
+      |> get_in([:matrix, "sources"])
+      |> Enum.map(fn %{"hint" => hint} -> hint end)
       |> Enum.split(length(bookings) * 2)
 
     map

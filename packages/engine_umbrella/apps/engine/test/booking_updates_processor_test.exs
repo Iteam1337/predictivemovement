@@ -1,7 +1,7 @@
 defmodule BookingUpdatesProcessorTest do
   use ExUnit.Case
   import TestHelper
-
+  alias Engine.Adapters.RMQ
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
   @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
@@ -82,7 +82,7 @@ defmodule BookingUpdatesProcessorTest do
   end
 
   def send_status_msg(booking_id, vehicle_id, status) do
-    MQ.publish(
+    RMQ.publish(
       %{
         assigned_to: %{
           id: vehicle_id,

@@ -1,5 +1,6 @@
 defmodule PlanStore do
   use GenServer
+  alias Engine.Adapters.RMQ
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
 
   def start_link(_) do
@@ -7,12 +8,12 @@ defmodule PlanStore do
   end
 
   def init(_) do
-    {:ok, %{ vehicles: []}}
+    {:ok, %{vehicles: []}}
   end
 
   def handle_call({:put, new_plan}, _from, _state) do
     IO.puts("publishing new plan")
-    MQ.publish(new_plan, @outgoing_plan_exchange)
+    RMQ.publish(new_plan, @outgoing_plan_exchange)
     {:reply, :ok, new_plan}
   end
 

@@ -1,5 +1,6 @@
 defmodule Engine.VehicleDeleteProcessor do
   use Broadway
+  require Logger
 
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
   @deleted_routing_key "deleted"
@@ -12,11 +13,16 @@ defmodule Engine.VehicleDeleteProcessor do
       producer: [
         module:
           {BroadwayRabbitMQ.Producer,
+           after_connect: fn %AMQP.Channel{} = channel ->
+             Logger.info("#{__MODULE__} connected to rabbitmq")
+             AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: false)
+           end,
            queue: @delete_vehicle_queue,
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           on_failure: :reject,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ],
-           declare: [],
            bindings: [
              {@incoming_vehicle_exchange, routing_key: @deleted_routing_key}
            ]},

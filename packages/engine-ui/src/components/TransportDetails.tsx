@@ -7,7 +7,7 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams } from 'react-router-dom'
 import Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
-import { UIStateContext } from '../utils/UIStateContext'
+import stores from '../utils/state/stores'
 import helpers from '../utils/helpers'
 import { Transport } from '../types'
 
@@ -43,8 +43,9 @@ const RouteTitleWrapper = styled.div`
 const TransportDetails: React.FC<{
   transports: Transport[]
   deleteTransport: (id: string) => void
-}> = ({ transports, deleteTransport }) => {
-  const { dispatch } = React.useContext(UIStateContext)
+  onUnmount: () => void
+}> = ({ transports, deleteTransport, onUnmount }) => {
+  const setMap = stores.map((state) => state.set)
   const history = useHistory()
 
   const [showInfo, setShowInfo] = React.useState({
@@ -53,10 +54,7 @@ const TransportDetails: React.FC<{
     status: false,
   })
 
-  React.useEffect(
-    () => () => dispatch({ type: 'highlightTransport', payload: undefined }),
-    [dispatch]
-  )
+  React.useEffect(() => () => onUnmount(), [onUnmount])
 
   const { vehicleId } = useParams<{ vehicleId: string }>()
   const transport = transports.find((v) => v.id === vehicleId)
@@ -75,16 +73,13 @@ const TransportDetails: React.FC<{
       (activity) => activity.id === bookingId
     )
 
-    return dispatch({
-      type: 'viewport',
-      payload: {
-        latitude: activity?.address.lat,
-        longitude: activity?.address.lon,
-        zoom: 14,
-        transitionDuration: 2000,
-        transitionInterpolator: new FlyToInterpolator(),
-        transitionEasing: (t: number) => t * (2 - t),
-      },
+    return setMap({
+      latitude: activity?.address.lat,
+      longitude: activity?.address.lon,
+      zoom: 14,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: (t: number) => t * (2 - t),
     })
   }
 
@@ -105,7 +100,7 @@ const TransportDetails: React.FC<{
             <Elements.Typography.StrongParagraph>
               Kapacitet
             </Elements.Typography.StrongParagraph>
-            <Paragraph>Maxvolym: {transport.capacity.volume}kbm</Paragraph>
+            <Paragraph>Maxvolym: {transport.capacity.volume}m3</Paragraph>
             <Paragraph>Maxvikt: {transport.capacity.weight}kg</Paragraph>
           </>
         )}

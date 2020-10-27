@@ -1,25 +1,24 @@
 import React from 'react'
-import Alert from '@material-ui/lab/Alert'
-import Zoom from '@material-ui/core/Zoom'
 import styled from 'styled-components'
 import Elements from '../shared-elements'
-import { Booking, NotificationType, Transport } from '../types'
-import CheckIcon from '../assets/check-icon.svg'
 import helpers from '../utils/helpers'
+import {
+  Notification,
+  EntityType,
+  BookingStatus,
+  TransportStatus,
+} from '../notificationTypes'
+import NotificationComponent from './Notification'
 
-const NotificationsContainer = styled.div`
-  width: 25%;
+const Container = styled.div`
   position: absolute;
   z-index: 30;
   bottom: 0;
   right: 0;
   margin: 2rem 2rem;
 
-  & > * + * {
-    margin-top: 2rem;
-  }
-
   > div {
+    margin-top: 1rem;
     display: flex;
     align-items: center;
     background-color: white;
@@ -27,104 +26,84 @@ const NotificationsContainer = styled.div`
   }
 `
 
-const BookingNotification: React.FC<{
-  booking: Booking
-  handleOnClose: (value: string) => void
-}> = ({ booking, handleOnClose }) => (
-  <Zoom in={Boolean(booking)}>
-    <Alert
-      icon={<img src={CheckIcon} alt="Success" />}
-      onClose={() => handleOnClose(booking.id)}
-      key={booking.id}
-      severity="success"
-    >
-      En ny bokning har lags till
-      <Elements.Links.RoundedLink
-        margin="0 0.5rem"
-        to={`/bookings/${booking.id}`}
-      >
-        {helpers.getLastFourChars(booking.id).toUpperCase()}
-      </Elements.Links.RoundedLink>
-    </Alert>
-  </Zoom>
-)
+const notificationMessages = {
+  [EntityType.BOOKING]: {
+    [BookingStatus.NEW]: 'En ny bokning har lags till:',
+    [BookingStatus.ASSIGNED]: 'En bokning har tilldelats transport:',
+    [BookingStatus.DELIVERED]: 'En bokning har levererats:',
+    [BookingStatus.PICKED_UP]:
+      'En bokning har hämtats upp av sin tilldelade transport:',
+    [BookingStatus.DELIVERY_FAILED]: 'En bokning kunde inte levereras:',
+  },
+  [EntityType.TRANSPORT]: {
+    [TransportStatus.NEW]: 'En ny transport har lags till:',
+  },
+}
 
-const VehicleNotification: React.FC<{
-  vehicle: Transport
-  handleOnClose: (value: string) => void
-}> = ({ vehicle, handleOnClose }) => (
-  <Zoom in={Boolean(vehicle)}>
-    <Alert
-      icon={<img src={CheckIcon} alt="Success" />}
-      onClose={() => handleOnClose(vehicle.id)}
-      key={vehicle.id}
-      severity="success"
-    >
-      En ny transport har lags till
-      <Elements.Links.RoundedLink
-        margin="0 0.5rem"
-        to={`/transports/${vehicle.id}`}
-      >
-        {vehicle.id}
-      </Elements.Links.RoundedLink>
-    </Alert>
-  </Zoom>
-)
+const messageElementFromNotification = (notification: Notification) => {
+  switch (notification.type) {
+    case EntityType.BOOKING:
+      return notificationMessages[EntityType.BOOKING][notification.event.status]
+    case EntityType.TRANSPORT:
+      return notificationMessages[EntityType.TRANSPORT][
+        notification.event.status
+      ]
+  }
+}
 
 const Notifications: React.FC<{
-  notifications: NotificationType[]
-  updateNotifications: (value: any) => void
+  notifications: Notification[]
+  updateNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
 }> = ({ notifications, updateNotifications }) => {
   const handleOnClose = React.useCallback(
-    (itemId: string) => {
-      updateNotifications((notifications: NotificationType[]) =>
-        notifications.filter((notification) => notification.id !== itemId)
+    (id: string) => {
+      updateNotifications((notifications) =>
+        notifications.filter((notification) => notification.event.id !== id)
       )
     },
     [updateNotifications]
   )
 
   React.useEffect(() => {
-    if (notifications.length > 0) {
+    if (notifications.length) {
       setTimeout(() => {
-        handleOnClose(notifications[0].id)
+        handleOnClose(notifications[0].event.id)
       }, 20000)
     }
   }, [notifications, updateNotifications, handleOnClose])
 
-  const notificationType = (notification: NotificationType) => {
-    switch (notification.id.substr(0, 3)) {
-      case 'pmv':
-        if ((notification as Transport).booking_ids === null)
-          return (
-            <VehicleNotification
-              key={notification.id}
-              handleOnClose={handleOnClose}
-              vehicle={notification as Transport}
-            />
-          )
-        break
-      case 'pmb':
-        if ((notification as Booking).status === 'new')
-          return (
-            <BookingNotification
-              key={notification.id}
-              handleOnClose={handleOnClose}
-              booking={notification as Booking}
-            />
-          )
-        break
-      default:
-        return
-    }
+  const withLinkElement = (
+    id: string,
+    entityType: EntityType,
+    text: string
+  ) => {
+    const path = entityType === EntityType.BOOKING ? 'bookings' : 'transports'
+    return (
+      <>
+        {text}
+        <Elements.Links.RoundedLink margin="0 0.5rem" to={`/${path}/${id}`}>
+          {helpers.formatIdForEndUser(id)}
+        </Elements.Links.RoundedLink>
+      </>
+    )
   }
 
   return (
-    <NotificationsContainer>
-      {notifications
-        .map((notification) => notificationType(notification))
-        .reverse()}
-    </NotificationsContainer>
+    <Container>
+      {notifications.map((notification, index) => (
+        <NotificationComponent
+          key={index}
+          notification={notification}
+          handleOnClose={() => handleOnClose(notification.event.id)}
+        >
+          {withLinkElement(
+            notification.event.id,
+            notification.type,
+            messageElementFromNotification(notification)
+          )}
+        </NotificationComponent>
+      ))}
+    </Container>
   )
 }
 

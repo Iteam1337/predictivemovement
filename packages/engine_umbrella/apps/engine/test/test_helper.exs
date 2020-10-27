@@ -19,7 +19,7 @@ defmodule TestHelper do
       {:basic_deliver, payload, %{consumer_tag: ^consumer_tag}} ->
         decoded =
           payload
-          |> Poison.decode!(%{keys: :atoms})
+          |> Jason.decode!(%{keys: :atoms})
 
         messages
         |> List.insert_at(-1, decoded)

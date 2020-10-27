@@ -5,17 +5,16 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
-import { UIStateContext } from '../../utils/UIStateContext'
 
 const Component = ({
   onChangeHandler,
   onSubmitHandler,
   state,
+  dispatch,
   showErrorMessage,
   setErrorState,
 }) => {
   const history = useHistory()
-  const { dispatch: UIStateDispatch } = React.useContext(UIStateContext)
 
   const [
     showBookingTimeRestriction,
@@ -86,6 +85,7 @@ const Component = ({
                 value={state.measurement}
                 placeholder="Mått (BxHxDcm)"
                 pattern="(\d+)x(\d+)x(\d+)"
+                title="BxHxD cm"
                 onChangeHandler={eventHandlers.handleTextInputChange(
                   'measurement',
                   onChangeHandler
@@ -135,7 +135,7 @@ const Component = ({
           placeholder="Adress (sök eller klicka på karta)"
           value={state.pickup.name}
           onFocus={() =>
-            UIStateDispatch({
+            dispatch({
               type: 'focusInput',
               payload: 'start',
             })
@@ -154,7 +154,7 @@ const Component = ({
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <FormInputs.TextInput
-          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+          onFocus={() => dispatch({ type: 'resetInputClickState' })}
           name="sender-info"
           value={state.sender.info}
           onChangeHandler={eventHandlers.handleContactInputChange(
@@ -167,7 +167,7 @@ const Component = ({
 
         <FormInputs.Checkbox
           label="Tidspassning"
-          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+          onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
         <Elements.Layout.TimeRestrictionWrapper>
@@ -191,7 +191,7 @@ const Component = ({
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
-              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+              onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="sendername"
               value={state.sender.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -216,7 +216,7 @@ const Component = ({
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
-              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+              onFocus={() => dispatch({ type: 'resetInputClickState' })}
               pattern="^[0-9]*$"
               iconInset
               name="sender"
@@ -243,7 +243,7 @@ const Component = ({
           value={state.delivery.name}
           showErrorMessage={showErrorMessage.delivery}
           onFocus={() =>
-            UIStateDispatch({
+            dispatch({
               type: 'focusInput',
               payload: 'end',
             })
@@ -262,7 +262,7 @@ const Component = ({
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
         <FormInputs.TextInput
-          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+          onFocus={() => dispatch({ type: 'resetInputClickState' })}
           name="recipient-info"
           value={state.recipient.info}
           onChangeHandler={eventHandlers.handleContactInputChange(
@@ -274,7 +274,7 @@ const Component = ({
         />
         <FormInputs.Checkbox
           label="Tidspassning"
-          onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+          onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() =>
             handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
           }
@@ -301,7 +301,7 @@ const Component = ({
             />
             <FormInputs.TextInput
               iconInset
-              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+              onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="recipient-name"
               value={state.recipient.name}
               onChangeHandler={eventHandlers.handleContactInputChange(
@@ -329,7 +329,7 @@ const Component = ({
               name="recipient-contact"
               pattern="^[0-9]*$"
               value={state.recipient.contact}
-              onFocus={() => UIStateDispatch({ type: 'resetInputClickState' })}
+              onFocus={() => dispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleContactInputChange(
                 'recipient',
                 'contact',

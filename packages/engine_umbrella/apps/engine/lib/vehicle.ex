@@ -3,6 +3,7 @@ defmodule Vehicle do
   use Vex.Struct
   require Logger
   alias Engine.ES
+  alias Engine.Adapters.{RMQ, RMQRPCWorker}
   @derive Jason.Encoder
 
   defstruct [
@@ -27,11 +28,11 @@ defmodule Vehicle do
   validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
 
   validates([:capacity, :weight],
-    by: [function: &is_integer/1, message: "must be an integer"]
+    by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
   )
 
   validates([:capacity, :volume],
-    by: [function: &is_integer/1, message: "must be an integer"]
+    by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
   )
 
   def init(init_arg) do
@@ -47,19 +48,22 @@ defmodule Vehicle do
       ) do
     Logger.debug("offer to vehicle #{vehicle.id}")
 
-    response =
-      MQ.call(
-        %{
-          vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
-          current_route: offer.current_route,
-          activities: offer.activities,
-          booking_ids: offer.booking_ids
-        },
-        "offer_booking_to_vehicle"
-      )
-      |> Poison.decode()
+    RMQRPCWorker.call(
+      %{
+        vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
+        current_route: offer.current_route,
+        activities: offer.activities,
+        booking_ids: offer.booking_ids
+      },
+      "offer_booking_to_vehicle"
+    )
+    |> case do
+      {:ok, response} ->
+        {:reply, Jason.decode(response), vehicle}
 
-    {:reply, response, vehicle}
+      _ ->
+        {:reply, false, vehicle}
+    end
   end
 
   def handle_call(
@@ -72,15 +76,13 @@ defmodule Vehicle do
     updated_vehicle =
       current_vehicle
       |> Map.merge(offer)
-      |> MQ.publish(
+      |> RMQ.publish(
         Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
         "new_instructions"
       )
 
     {:reply, updated_vehicle, updated_vehicle}
   end
-
-  def handle_info({:basic_cancel_ok, _}, state), do: {:noreply, state}
 
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
@@ -131,7 +133,11 @@ defmodule Vehicle do
 
     Engine.VehicleStore.put_vehicle(id)
 
-    MQ.publish(vehicle, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "new")
+    RMQ.publish(
+      vehicle,
+      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+      "new"
+    )
 
     vehicle
   end
@@ -144,7 +150,12 @@ defmodule Vehicle do
   def apply_delete_to_state(id) do
     Engine.VehicleStore.delete_vehicle(id)
     GenServer.stop(via_tuple(id))
-    MQ.publish(id, Application.fetch_env!(:engine, :outgoing_vehicle_exchange), "deleted")
+
+    RMQ.publish(
+      id,
+      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+      "deleted"
+    )
   end
 
   defp via_tuple(id), do: {:via, :gproc, {:n, :l, {:vehicle_id, id}}}

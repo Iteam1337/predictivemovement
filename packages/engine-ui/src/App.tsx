@@ -6,20 +6,23 @@ import { reducer, initState } from './utils/reducer'
 import { Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import { UIStateProvider } from './utils/UIStateContext'
 import hooks from './utils/hooks'
 import Notifications from './components/Notifications'
+import * as notificationTypes from './notificationTypes'
 
 const App = () => {
   const { socket } = useSocket()
   const [state, dispatch] = React.useReducer(reducer, initState)
   const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
-  const [notifications, updateNotifications] = React.useState([])
-  const addVehicle = (params) => {
+  const [notifications, updateNotifications] = React.useState<
+    notificationTypes.Notification[]
+  >([])
+
+  const addVehicle = (params: any) => {
     socket.emit('add-vehicle', params)
   }
 
-  const createBooking = (params) => {
+  const createBooking = (params: any) => {
     socket.emit('new-booking', params)
   }
 
@@ -27,16 +30,16 @@ const App = () => {
     socket.emit('dispatch-offers')
   }
 
-  const deleteBooking = (id) => {
+  const deleteBooking = (id: string) => {
     socket.emit('delete-booking', id)
   }
 
-  const deleteVehicle = (id) => {
+  const deleteVehicle = (id: string) => {
     socket.emit('delete-vehicle', id)
   }
 
-  useSocket('notification', (notification) => {
-    updateNotifications((notifications) => [notification, ...notifications])
+  useSocket('notification', (data: notificationTypes.Notification) => {
+    updateNotifications((notifications) => notifications.concat(data))
   })
 
   useSocket('bookings', (bookings) => {
@@ -82,7 +85,7 @@ const App = () => {
   })
 
   return (
-    <UIStateProvider>
+    <>
       <Logotype />
       <Notifications
         notifications={notifications}
@@ -99,7 +102,7 @@ const App = () => {
       <Route path="/">
         <Map data={mapData} />
       </Route>
-    </UIStateProvider>
+    </>
   )
 }
 

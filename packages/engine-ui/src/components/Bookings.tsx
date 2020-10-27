@@ -115,7 +115,7 @@ const Bookings: React.FC<{
   ])
 
   const [expandedSection, setExpandedSection] = React.useState({
-    new: false,
+    new: true,
     assigned: false,
     delivered: false,
   })

@@ -62,7 +62,7 @@ const CreateVehicle = ({ onSubmit }) => {
         name: formState.startPosition.name || undefined,
       },
       endPosition: {
-        ...formState.startPosition,
+        ...formState.endPosition,
         name: formState.endPosition.name || undefined,
       },
       driver: {

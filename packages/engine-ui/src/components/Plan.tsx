@@ -40,6 +40,7 @@ interface PlanProps {
 }
 
 const Wrapper = styled.div`
+  margin-top: 10px;
   display: flex;
   height: 23%;
   flex-direction: column;

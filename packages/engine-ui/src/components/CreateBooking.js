@@ -9,7 +9,7 @@ import hooks from '../utils/hooks'
 import stores from '../utils/state/stores'
 
 const initialState = {
-  id: '',
+  externalId: '',
   cargo: '',
   fragile: false,
   pickup: {

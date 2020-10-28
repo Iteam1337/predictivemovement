@@ -4,7 +4,7 @@ import AddVehicle from './CreateVehicle'
 import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 import { Transport } from '../types'
 
 const Transports: React.FC<{

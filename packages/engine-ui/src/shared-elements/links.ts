@@ -22,4 +22,4 @@ const RoundedLink = styled(Link)<{ margin?: string; color?: string }>`
   margin: ${({ margin }) => margin && margin};
 `
 
-export default { RoundedLink }
+export { RoundedLink }

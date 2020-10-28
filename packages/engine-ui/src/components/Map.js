@@ -1,11 +1,11 @@
 import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
-import mapUtils from '../utils/mapUtils'
+import * as mapUtils from '../utils/mapUtils'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
 
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 
 const Map = ({ data }) => {
   const history = useHistory()

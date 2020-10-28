@@ -63,7 +63,7 @@ const StyledAddFormFieldButton = styled.button<{
 
 const DisplayTextButton = styled.button``
 
-export default {
+export {
   SubmitButton,
   CancelButton,
   StyledAddFormFieldButton,

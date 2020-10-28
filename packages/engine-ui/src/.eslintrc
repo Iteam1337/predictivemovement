@@ -1,5 +1,5 @@
 {
-  "extends": ["@iteam/eslint-config-react"],
+  // "extends": ["@iteam/eslint-config-react"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "parserOptions": {
@@ -11,12 +11,34 @@
   },
   "overrides": [
     {
-      "files": ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js"],
+      "files": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx"],
       "rules": {
         "react/display-name": "off",
-        "no-undef": "off",
-        "no-unused-vars": "off",
-        "react/prop-types": "off",
+        "no-undef": "warn",
+        "no-unused-vars": "warn",
+
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "vars": "all",
+            "args": "after-used",
+            "ignoreRestSiblings": true,
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.jsx", "**/*.js"],
+      "rules": {
+        "react/jsx-uses-react": "error",
+        "react/react-in-jsx-scope": "error",
+        "react/display-name": "off",
+        "no-undef": "error",
+        "no-unused-vars": "warn",
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "warn",
         "@typescript-eslint/no-unused-vars": [
           "error",
           {

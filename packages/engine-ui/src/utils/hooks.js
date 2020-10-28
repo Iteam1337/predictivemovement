@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouteMatch } from 'react-router-dom'
-import helpers from './helpers'
-import stores from '../utils/state/stores'
+import * as helpers from './helpers'
+import * as stores from '../utils/state/stores'
 
 const useFilteredStateFromQueryParams = (state) => {
   const includeBookings = useRouteMatch(['/bookings', '/bookings/:id'], {
@@ -189,7 +189,7 @@ const useFormStateWithMapClickControl = (start, end, set) => {
   }, [setUIState])
 }
 
-export default {
+export {
   useFilteredStateFromQueryParams,
   useGetSuggestedAddresses,
   useFormStateWithMapClickControl,

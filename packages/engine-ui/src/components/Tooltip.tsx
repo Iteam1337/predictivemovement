@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import Elements from '../shared-elements'
-import helpers from '../utils/helpers'
+import * as Elements from '../shared-elements'
+import * as helpers from '../utils/helpers'
 import { useRouteMatch } from 'react-router-dom'
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 import * as UIStateTypes from '../utils/state/types'
 
 const Container = styled.div<{ x: number; y: number }>`

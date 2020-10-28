@@ -1,4 +1,4 @@
-const handleTextInputChange = (propertyName, callback) => (event) => {
+export const handleTextInputChange = (propertyName, callback) => (event) => {
   event.persist()
 
   return callback((currentState) => ({
@@ -7,7 +7,7 @@ const handleTextInputChange = (propertyName, callback) => (event) => {
   }))
 }
 
-const handleNestedInputChange = (
+export const handleNestedInputChange = (
   propertyName,
   nestedPropertyName,
   callback
@@ -22,7 +22,7 @@ const handleNestedInputChange = (
   }))
 }
 
-const handleAddressInput = (propertyName, callback) => ({
+export const handleAddressInput = (propertyName, callback) => ({
   name = '',
   street = '',
   lon,
@@ -40,10 +40,4 @@ const handleAddressInput = (propertyName, callback) => ({
       street,
     },
   }))
-}
-
-export default {
-  handleTextInputChange,
-  handleNestedInputChange,
-  handleAddressInput,
 }

@@ -86,7 +86,7 @@ const RoundedLabelDisplay = styled.span<{
   margin: ${({ margin }) => margin && margin};
 `
 
-export default {
+export {
   NoInfoParagraph,
   NoMarginParagraph,
   InfoSm,

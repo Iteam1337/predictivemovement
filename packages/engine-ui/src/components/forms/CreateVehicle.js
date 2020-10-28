@@ -2,9 +2,9 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import nameIcon from '../../assets/contact-name.svg'
 import phoneIcon from '../../assets/contact-phone.svg'
-import Elements from '../../shared-elements'
-import FormInputs from './inputs'
-import eventHandlers from './eventHandlers'
+import * as Elements from '../../shared-elements'
+import * as FormInputs from './inputs'
+import * as eventHandlers from './eventHandlers'
 
 const Component = ({
   onChangeHandler,

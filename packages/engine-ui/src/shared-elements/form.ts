@@ -45,4 +45,4 @@ const TextInput = styled.input<{
   }
 `
 
-export default { DateInput, Label, TextInput }
+export { DateInput, Label, TextInput }

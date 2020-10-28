@@ -3,9 +3,9 @@ import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
 import transportDefaultIcon from '../assets/transport.svg'
 import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
-import helpers from './helpers'
+import * as helpers from './helpers'
 
-export const point = (coordinates, props) => ({
+const point = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
     type: 'Point',
@@ -14,13 +14,13 @@ export const point = (coordinates, props) => ({
   ...props,
 })
 
-export const feature = (geometry, props) => ({
+const feature = (geometry, props) => ({
   type: 'Feature',
   geometry,
   ...props,
 })
 
-export const line = (coordinates, props) => ({
+const line = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
     type: 'MultiLineString',
@@ -29,7 +29,7 @@ export const line = (coordinates, props) => ({
   ...props,
 })
 
-export const text = (coordinates, props) => ({
+const text = (coordinates, props) => ({
   type: 'Feature',
   geometry: {
     type: 'Text',
@@ -38,7 +38,7 @@ export const text = (coordinates, props) => ({
   ...props,
 })
 
-export const routeAssignedToBooking = (assignedTo) =>
+const routeAssignedToBooking = (assignedTo) =>
   line(
     assignedTo.route.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
     {
@@ -50,7 +50,7 @@ export const routeAssignedToBooking = (assignedTo) =>
     }
   )
 
-export const routeActivitiesToFeature = (plan) => {
+const routeActivitiesToFeature = (plan) => {
   return [
     ...plan.flatMap(({ activities, id }) => {
       const routeActivities = activities
@@ -66,7 +66,7 @@ export const routeActivitiesToFeature = (plan) => {
   ]
 }
 
-export const toTextLayer = (data) =>
+const toTextLayer = (data) =>
   new TextLayer({
     id: 'text-layer',
     data,
@@ -76,7 +76,7 @@ export const toTextLayer = (data) =>
     getSize: 20,
   })
 
-export const planToFeature = (plan) => {
+const planToFeature = (plan) => {
   let index = 0
   try {
     return [
@@ -121,7 +121,7 @@ export const planToFeature = (plan) => {
   }
 }
 
-export const routeActivityIcon = (route) => {
+const routeActivityIcon = (route) => {
   if (!route || !route.activities) return
 
   let index = 0
@@ -146,7 +146,7 @@ export const routeActivityIcon = (route) => {
   }
 }
 
-export const transportIcon = (transports) => {
+const transportIcon = (transports) => {
   let index = 0
   try {
     return [
@@ -178,7 +178,7 @@ export const transportIcon = (transports) => {
   }
 }
 
-export const bookingIcon = (bookings) => {
+const bookingIcon = (bookings) => {
   let index = 0
   try {
     return [
@@ -201,7 +201,7 @@ export const bookingIcon = (bookings) => {
   }
 }
 
-export const bookingToFeature = (bookings) => {
+const bookingToFeature = (bookings) => {
   return bookings.flatMap(({ id, pickup, delivery, status, route }) => {
     const points = [
       point([delivery.lon, delivery.lat], {
@@ -238,7 +238,7 @@ export const bookingToFeature = (bookings) => {
   })
 }
 
-export const toGeoJsonLayer = (id, data, callback) =>
+const toGeoJsonLayer = (id, data, callback) =>
   new GeoJsonLayer({
     id,
     data,
@@ -261,7 +261,7 @@ export const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
-export const toTransportIconLayer = (data, activeId) => {
+const toTransportIconLayer = (data, activeId) => {
   if (!data.length) {
     return
   }
@@ -307,11 +307,7 @@ export const toTransportIconLayer = (data, activeId) => {
   })
 }
 
-export const toBookingIconLayer = (
-  data,
-  activeId,
-  options = { offset: [0, 0] }
-) => {
+const toBookingIconLayer = (data, activeId, options = { offset: [0, 0] }) => {
   if (!data || !data.length) {
     return
   }
@@ -355,7 +351,7 @@ export const toBookingIconLayer = (
   })
 }
 
-export default {
+export {
   feature,
   point,
   line,

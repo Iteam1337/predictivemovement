@@ -6,7 +6,7 @@ import { reducer, initState } from './utils/reducer'
 import { Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import hooks from './utils/hooks'
+import * as hooks from './utils/hooks'
 import Notifications from './components/Notifications'
 import * as notificationTypes from './notificationTypes'
 

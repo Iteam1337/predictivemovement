@@ -1,9 +1,9 @@
 import React from 'react'
-import Elements from '../../shared-elements'
-import FormInputs from './inputs'
+import * as Elements from '../../shared-elements'
+import * as FormInputs from './inputs'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
-import eventHandlers from './eventHandlers'
+import * as eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
 
 const Component = ({ onChangeHandler, onSubmitHandler, state, dispatch }) => {
@@ -12,7 +12,10 @@ const Component = ({ onChangeHandler, onSubmitHandler, state, dispatch }) => {
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
-  ] = React.useState({ pickup: false, delivery: false })
+  ] = React.useState({
+    pickup: false,
+    delivery: false,
+  })
 
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {

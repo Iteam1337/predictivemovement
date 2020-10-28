@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
-import Elements from '../shared-elements'
+import * as Elements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
 import PlanBookingDetails from './PlanBookingDetails'
 import { Route as PlanRoute, Transport, Booking } from '../types'
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 
 const PlanWrapper = styled.div`
   display: flex;

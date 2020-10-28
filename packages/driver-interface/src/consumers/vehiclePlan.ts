@@ -12,11 +12,11 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
     .then((ch) =>
       ch
         .assertQueue(ADD_INSTRUCTIONS_TO_VEHICLE, {
-          durable: false,
+          durable: true,
         })
         .then(() =>
           ch.assertExchange(OUTGOING_VEHICLE_UPDATES, 'topic', {
-            durable: false,
+            durable: true,
           })
         )
         .then(() =>

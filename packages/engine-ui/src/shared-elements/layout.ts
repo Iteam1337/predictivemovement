@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 
-const TimeRestrictionDateInputWrapper = styled.div`
-  margin-bottom: 0.25rem;
-`
+const TimeRestrictionDateInputWrapper = styled.div``
 
 const FlexRowWrapper = styled.div`
   display: flex;
@@ -21,6 +19,11 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
+const FlexRowInCenter = styled.div`
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+`
 const BookingList = styled.ul`
   overflow: auto;
   height: 100%;
@@ -36,7 +39,7 @@ const BookingList = styled.ul`
 `
 
 const TransportsList = styled(BookingList)`
-height: auto;
+  height: auto;
 `
 
 const Container = styled.div`
@@ -136,4 +139,5 @@ export default {
   SectionWithMargin,
   MarginTopContainerSm,
   TransportsList,
+  FlexRowInCenter
 }

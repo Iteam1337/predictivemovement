@@ -28,11 +28,11 @@ defmodule Vehicle do
   validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
 
   validates([:capacity, :weight],
-    by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
+    by: [function: &is_integer/1, message: "must be an integer"]
   )
 
   validates([:capacity, :volume],
-    by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
+    by: [function: &is_integer/1, message: "must be an integer"]
   )
 
   def init(init_arg) do

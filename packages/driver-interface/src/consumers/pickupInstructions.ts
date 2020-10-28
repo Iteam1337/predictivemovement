@@ -12,11 +12,11 @@ const pickupInstructions = (): Promise<Replies.Consume> =>
     .then((ch) =>
       ch
         .assertQueue(ADD_BOOKING_INFO, {
-          durable: false,
+          durable: true,
         })
         .then(() =>
           ch.assertExchange(OUTGOING_BOOKING_UPDATES, 'topic', {
-            durable: false,
+            durable: true,
           })
         )
         .then(() =>

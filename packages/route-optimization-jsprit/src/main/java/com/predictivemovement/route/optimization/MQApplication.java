@@ -28,7 +28,7 @@ public class MQApplication {
 
 	@Bean
 	public Queue queue() {
-		return new Queue(QUEUE_NAME, false);
+		return new Queue(QUEUE_NAME, true);
 	}
 
 	@Bean

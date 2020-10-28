@@ -5,15 +5,10 @@ import Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
-import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import styled from 'styled-components'
 import { Booking } from '../types'
 import helpers from '../utils/helpers'
 import stores from '../utils/state/stores'
-
-const AddNewContainer = styled.div`
-  margin-top: 1rem;
-`
 
 const sortBookingsByStatus = (bookings: Booking[]) =>
   bookings.reduce<{
@@ -115,7 +110,7 @@ const Bookings: React.FC<{
   ])
 
   const [expandedSection, setExpandedSection] = React.useState({
-    new: false,
+    new: true,
     assigned: false,
     delivered: false,
   })
@@ -181,13 +176,13 @@ const Bookings: React.FC<{
               }
             />
           </Elements.Layout.MarginTopContainer>
-          <AddNewContainer>
+          <Elements.Layout.FlexRowInCenter>
             <Link to={`${url}/add-booking`}>
-              <AddFormFieldButton onClickHandler={null}>
+              <Elements.Buttons.SubmitButton color="#666666">
                 + Lägg till bokning
-              </AddFormFieldButton>
+              </Elements.Buttons.SubmitButton>
             </Link>
-          </AddNewContainer>
+          </Elements.Layout.FlexRowInCenter>
         </Route>
 
         <Route exact path={`${path}/add-booking`}>

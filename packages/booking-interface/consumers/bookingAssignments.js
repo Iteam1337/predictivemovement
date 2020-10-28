@@ -11,26 +11,31 @@ const bookingAssignments = () => {
     .then((ch) =>
       ch
         .assertQueue(SET_BOOKING_ASSIGNED, {
-          durable: false,
+          durable: true,
         })
         .then(() =>
           ch.assertExchange(OUTGOING_BOOKING_UPDATES, 'topic', {
-            durable: false,
+            durable: true,
           })
         )
-        .then(() => ch.bindQueue(SET_BOOKING_ASSIGNED, OUTGOING_BOOKING_UPDATES, 'assigned'))
-        .then(
-          () =>
-            ch.consume(SET_BOOKING_ASSIGNED, (msg) => {
-              const message = JSON.parse(msg.content.toString())
-              ch.ack(msg)
-              notifyBooker(message)
-            })
+        .then(() =>
+          ch.bindQueue(
+            SET_BOOKING_ASSIGNED,
+            OUTGOING_BOOKING_UPDATES,
+            'assigned'
+          )
+        )
+        .then(() =>
+          ch.consume(SET_BOOKING_ASSIGNED, (msg) => {
+            const message = JSON.parse(msg.content.toString())
+            ch.ack(msg)
+            notifyBooker(message)
+          })
         )
     )
 }
 
-function notifyBooker (booking) {
+function notifyBooker(booking) {
   if (booking.metadata.telegram) {
     console.log('Telegram BOOKING ASSIGNED, notifying booker', booking)
     messaging.onBookingConfirmed(

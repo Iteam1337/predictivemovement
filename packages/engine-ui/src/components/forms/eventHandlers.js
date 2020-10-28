@@ -7,7 +7,7 @@ const handleTextInputChange = (propertyName, callback) => (event) => {
   }))
 }
 
-const handleContactInputChange = (
+const handleNestedInputChange = (
   propertyName,
   nestedPropertyName,
   callback
@@ -50,6 +50,7 @@ const handleAddressInput = (propertyName, callback) => ({
   callback((currentState) => ({
     ...currentState,
     [propertyName]: {
+      ...currentState[propertyName],
       name,
       lon,
       lat,
@@ -60,7 +61,7 @@ const handleAddressInput = (propertyName, callback) => ({
 
 export default {
   handleTextInputChange,
-  handleContactInputChange,
+  handleNestedInputChange,
   handleAddressInput,
   handleAddressInputForBooking,
 }

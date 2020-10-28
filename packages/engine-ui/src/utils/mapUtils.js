@@ -3,6 +3,7 @@ import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
 import transportDefaultIcon from '../assets/transport.svg'
 import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
+import excludedParcelIcon from '../assets/excluded-parcel.svg'
 import helpers from './helpers'
 
 export const point = (coordinates, props) => ({
@@ -122,13 +123,13 @@ export const planToFeature = (plan) => {
 }
 
 export const toExcludedBookingIcon = (booking, highlightedBooking) => {
-  return toBookingIconLayer(
+  return toExcludedBookingIconLayer(
     excludedBookingIcon(booking),
     highlightedBooking,
     {
       offset: [0, 0],
     },
-    'excluded-booking-icon'
+    `excluded-booking-icon-${booking.id}`
   )
 }
 
@@ -138,9 +139,6 @@ export const excludedBookingIcon = (booking) => {
   return [
     point([booking.lon, booking.lat], {
       properties: {
-        color: '#f00',
-        highlightColor: '#f00',
-        opacity: 150,
         size: 80,
       },
       id: booking.id,
@@ -338,6 +336,54 @@ export const toTransportIconLayer = (data, activeId) => {
   })
 }
 
+const toExcludedBookingIconLayer = (
+  data,
+  activeId,
+  options = { offset: [0, 0] },
+  layerId
+) => {
+  if (!data || !data.length) {
+    return
+  }
+
+  const iconData = data.map((feature) => ({
+    coordinates: feature.geometry.coordinates,
+    properties: {
+      id: feature.id,
+      opacity: activeId === feature.id ? null : feature.properties.opacity,
+      color:
+        activeId === feature.id
+          ? feature.properties.highlightColor
+          : feature.properties.color,
+      size: 8,
+      activeSize: 10,
+      icon: excludedParcelIcon,
+    },
+  }))
+
+  return new IconLayer({
+    id: layerId,
+    data: iconData,
+    pickable: true,
+    getPixelOffset: options.offset,
+    getIcon: (d) => {
+      return {
+        url: d.properties.icon,
+        mask: false,
+        width: 128,
+        height: 128,
+      }
+    },
+    sizeScale: 5,
+    getPosition: (d) => d.coordinates,
+    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
+    getSize: (d) =>
+      d.properties.id === activeId
+        ? d.properties.activeSize
+        : d.properties.size,
+  })
+}
+
 export const toBookingIconLayer = (
   data,
   activeId,
@@ -377,7 +423,6 @@ export const toBookingIconLayer = (
       }
     },
     sizeScale: 5,
-
     getPosition: (d) => d.coordinates,
     transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
     getSize: (d) =>

@@ -1,5 +1,4 @@
 {
-  // "extends": ["@iteam/eslint-config-react"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "parserOptions": {

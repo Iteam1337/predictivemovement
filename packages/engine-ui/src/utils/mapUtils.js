@@ -138,8 +138,9 @@ export const excludedBookingIcon = (booking) => {
   return [
     point([booking.lon, booking.lat], {
       properties: {
-        color: '#ffffff',
-        highlightColor: '#19DE8B',
+        color: '#f00',
+        highlightColor: '#f00',
+        opacity: 150,
         size: 80,
       },
       id: booking.id,
@@ -275,9 +276,11 @@ export const toGeoJsonLayer = (id, data, callback) =>
     extruded: true,
     lineWidthScale: 1,
     lineWidthMinPixels: 3,
-    getFillColor: (d) => helpers.hexToRGBA(d.properties.color),
+    getFillColor: ({ properties }) =>
+      helpers.hexToRGBA(properties.color, properties.opacity),
     getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 150),
-    highlightColor: (d) => helpers.hexToRGBA(d.object.properties.color),
+    highlightColor: ({ object: { properties } }) =>
+      helpers.hexToRGBA(properties.color, properties.opacity),
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
@@ -296,6 +299,7 @@ export const toTransportIconLayer = (data, activeId) => {
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
+      opacity: activeId === feature.id ? null : feature.properties.opacity,
       color:
         activeId === feature.id
           ? feature.properties.highlightColor
@@ -329,7 +333,8 @@ export const toTransportIconLayer = (data, activeId) => {
       d.properties.id === activeId
         ? d.properties.highlightSize
         : d.properties.size,
-    getColor: (d) => helpers.hexToRGBA(d.properties.color),
+    getColor: (d) =>
+      helpers.hexToRGBA(d.properties.color, d.properties.opacity),
   })
 }
 
@@ -347,6 +352,7 @@ export const toBookingIconLayer = (
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
+      opacity: activeId === feature.id ? null : feature.properties.opacity,
       color:
         activeId === feature.id
           ? feature.properties.highlightColor
@@ -378,7 +384,8 @@ export const toBookingIconLayer = (
       d.properties.id === activeId
         ? d.properties.activeSize
         : d.properties.size,
-    getColor: (d) => helpers.hexToRGBA(d.properties.color),
+    getColor: (d) =>
+      helpers.hexToRGBA(d.properties.color, d.properties.opacity),
   })
 }
 

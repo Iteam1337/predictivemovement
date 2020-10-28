@@ -126,7 +126,7 @@ export const toExcludedBookingIcon = (booking, highlightedBooking) => {
     excludedBookingIcon(booking),
     highlightedBooking,
     {
-      offset: [40, 0],
+      offset: [0, 0],
     },
     'excluded-booking-icon'
   )

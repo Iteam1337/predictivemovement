@@ -19,6 +19,11 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
+const FlexRowInCenter = styled.div`
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+`
 const BookingList = styled.ul`
   overflow: auto;
   height: 100%;
@@ -134,4 +139,5 @@ export default {
   SectionWithMargin,
   MarginTopContainerSm,
   TransportsList,
+  FlexRowInCenter
 }

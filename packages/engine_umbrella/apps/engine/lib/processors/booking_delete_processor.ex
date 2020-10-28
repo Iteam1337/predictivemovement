@@ -18,7 +18,7 @@ defmodule Engine.BookingDeleteProcessor do
              AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: true)
            end,
            queue: @delete_booking_queue,
-           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}], durable: true],
            on_failure: :reject,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)

@@ -18,7 +18,7 @@ defmodule Engine.VehicleDeleteProcessor do
              AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: true)
            end,
            queue: @delete_vehicle_queue,
-           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}], durable: true],
            on_failure: :reject,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)

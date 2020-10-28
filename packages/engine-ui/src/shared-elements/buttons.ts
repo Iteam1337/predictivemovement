@@ -6,10 +6,11 @@ const SubmitButton = styled.button<{
   marginTop?: string
   padding?: string
   width?: string
+  color?: string
 }>`
   background: #ccffcc;
   font-weight: 600;
-  color: inherit;
+  color: ${({ color }) => color || 'inherit'};
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
@@ -57,6 +58,7 @@ const StyledAddFormFieldButton = styled.button<{
   background: transparent;
   font-weight: bold;
   padding: 0;
+  cursor: pointer;
   font-size: ${({ size }) => size || '1rem'};
   margin-top: ${({ marginTop }) => marginTop};
 `

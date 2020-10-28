@@ -1,13 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: rabbitmq
-  namespace: predictivemovement
 spec:
   replicas: 1
   selector:
     matchLabels:
       name: rabbitmq
+  serviceName: rabbitmq
   template:
     metadata:
       labels:
@@ -19,15 +19,24 @@ spec:
           ports:
             - containerPort: 5672
             - containerPort: 15672
+          volumeMounts:
+            - name: rabbitmq-data
+              mountPath: "/var/lib/rabbitmq/mnesia"
           resources: {}
-      restartPolicy: Always
-status: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: rabbitmq-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: "5Gi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: rabbitmq
-  namespace: predictivemovement
 spec:
   ports:
     - name: "5672"

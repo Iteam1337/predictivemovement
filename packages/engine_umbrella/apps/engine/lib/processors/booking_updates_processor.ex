@@ -16,13 +16,13 @@ defmodule Engine.BookingUpdatesProcessor do
           {BroadwayRabbitMQ.Producer,
            after_connect: fn %AMQP.Channel{} = channel ->
              Logger.info("#{__MODULE__} connected to rabbitmq")
-             AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: false)
+             AMQP.Exchange.declare(channel, @incoming_booking_exchange, :topic, durable: true)
            end,
            queue: @update_bookings_statuses_queue,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ],
-           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}]],
+           declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}], durable: true],
            on_failure: :reject,
            bindings: [
              {@incoming_booking_exchange, routing_key: @picked_up_routing_key},

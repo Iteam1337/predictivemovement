@@ -41,7 +41,7 @@ interface PlanProps {
 
 const Wrapper = styled.div`
   display: flex;
-  height: 20%;
+  height: 23%;
   flex-direction: column;
 `
 

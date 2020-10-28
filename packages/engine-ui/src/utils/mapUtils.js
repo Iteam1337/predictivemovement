@@ -122,17 +122,6 @@ export const planToFeature = (plan) => {
   }
 }
 
-export const toExcludedBookingIcon = (booking, highlightedBooking) => {
-  return toExcludedBookingIconLayer(
-    excludedBookingIcon(booking),
-    highlightedBooking,
-    {
-      offset: [0, 0],
-    },
-    `excluded-booking-icon-${booking.id}`
-  )
-}
-
 export const excludedBookingIcon = (booking) => {
   if (!booking) return
 
@@ -336,39 +325,26 @@ export const toTransportIconLayer = (data, activeId) => {
   })
 }
 
-const toExcludedBookingIconLayer = (
-  data,
-  activeId,
-  options = { offset: [0, 0] },
-  layerId
-) => {
-  if (!data || !data.length) {
+const toExcludedBookingIcon = (booking, activeId) => {
+  if (!booking) {
     return
   }
-
-  const iconData = data.map((feature) => ({
+  const iconData = excludedBookingIcon(booking).map((feature) => ({
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
-      opacity: activeId === feature.id ? null : feature.properties.opacity,
-      color:
-        activeId === feature.id
-          ? feature.properties.highlightColor
-          : feature.properties.color,
       size: 8,
       activeSize: 10,
-      icon: excludedParcelIcon,
     },
   }))
 
   return new IconLayer({
-    id: layerId,
+    id: `excluded-booking-icon-${booking.id}`,
     data: iconData,
     pickable: true,
-    getPixelOffset: options.offset,
     getIcon: (d) => {
       return {
-        url: d.properties.icon,
+        url: excludedParcelIcon,
         mask: false,
         width: 128,
         height: 128,

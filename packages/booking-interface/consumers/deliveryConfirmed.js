@@ -7,27 +7,26 @@ const deliveryConfirmed = () =>
     .then((ch) =>
       ch
         .assertQueue(queues.NOTIFY_DELIVERY, {
-          durable: false,
+          durable: true,
         })
         .then(() =>
           ch.assertExchange(exchanges.OUTGOING_BOOKING_UPDATES, 'topic', {
-            durable: false,
+            durable: true,
           })
         )
         .then(() =>
           ch.bindQueue(
             queues.NOTIFY_DELIVERY,
             exchanges.OUTGOING_BOOKING_UPDATES,
-            "delivered"
+            'delivered'
           )
         )
-        .then(
-          () =>
-              ch.consume(queues.NOTIFY_DELIVERY, (msg) => {
-                const message = JSON.parse(msg.content.toString())
-                ch.ack(msg)
-                notifyBooker(message)
-              })
+        .then(() =>
+          ch.consume(queues.NOTIFY_DELIVERY, (msg) => {
+            const message = JSON.parse(msg.content.toString())
+            ch.ack(msg)
+            notifyBooker(message)
+          })
         )
     )
 

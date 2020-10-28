@@ -42,7 +42,8 @@ defmodule Engine.Adapters.RMQ do
   @impl true
   def handle_call({:publish, data, exchange_name, routing_key}, _, %{channel: channel} = state) do
     Basic.publish(channel, exchange_name, routing_key, Jason.encode!(data),
-      content_type: "application/json"
+      content_type: "application/json",
+      persistent: true
     )
 
     {:reply, data, state}
@@ -70,9 +71,9 @@ defmodule Engine.Adapters.RMQ do
   end
 
   def setup_resources(channel) do
-    Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: false)
-    Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: false)
-    Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: false)
+    Exchange.declare(channel, @outgoing_plan_exchange, :fanout, durable: true)
+    Exchange.declare(channel, @outgoing_vehicle_exchange, :topic, durable: true)
+    Exchange.declare(channel, @outgoing_booking_exchange, :topic, durable: true)
     Exchange.declare(channel, "engine_DLX", :fanout, durable: true)
 
     Queue.declare(channel, "store_dead_letters.engine", durable: true)

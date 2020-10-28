@@ -22,10 +22,10 @@ module.exports = (io) => {
 
   const bookings = amqp
     .exchange('outgoing_booking_updates', 'topic', {
-      durable: false,
+      durable: true,
     })
     .queue('update_booking_in_admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true }, [
       routingKeys.NEW,
@@ -44,10 +44,10 @@ module.exports = (io) => {
 
   const vehicles = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
-      durable: false,
+      durable: true,
     })
     .queue('update_vehicle_in_admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
     .map((vehicleRes) => {
@@ -58,25 +58,12 @@ module.exports = (io) => {
       return vehicle
     })
 
-  const createBooking = (booking) => {
-    return amqp
-      .exchange('incoming_booking_updates', 'topic', {
-        durable: false,
-      })
-      .publish({ ...booking, assigned_to: null }, routingKeys.REGISTERED)
-      .then(() =>
-        console.log(
-          ` [x] Created booking '${JSON.stringify(booking, null, 2)}'`
-        )
-      )
-  }
-
   const plan = amqp
     .exchange('outgoing_plan_updates', 'fanout', {
-      durable: false,
+      durable: true,
     })
     .queue('update_plan_in_admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true })
     .map((msg) => {
@@ -96,10 +83,10 @@ module.exports = (io) => {
 
   amqp
     .exchange('outgoing_booking_updates', 'topic', {
-      durable: false,
+      durable: true,
     })
     .queue('delete_booking_in_admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true }, [routingKeys.DELETED])
     .map((bookingData) => bookingData.json())
@@ -113,20 +100,20 @@ module.exports = (io) => {
 
   const transportLocationUpdates = amqp
     .exchange('incoming_vehicle_updates', 'topic', {
-      durable: false,
+      durable: true,
     })
     .queue('update_location.admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true }, ['incoming.updated.location'])
     .map((res) => res.json())
 
   amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
-      durable: false,
+      durable: true,
     })
     .queue('delete_vehicle_in_admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true }, [routingKeys.DELETED])
     .map((vehicleData) => vehicleData.json())
@@ -139,10 +126,25 @@ module.exports = (io) => {
 
   ///////// Publishers
 
+  const createBooking = (booking) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', {
+        durable: true,
+      })
+      .publish({ ...booking, assigned_to: null }, routingKeys.REGISTERED, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(
+          ` [x] Created booking '${JSON.stringify(booking, null, 2)}'`
+        )
+      )
+  }
+
   const dispatchOffers = () => {
     return amqp
       .queue('dispatch_offers', {
-        durable: false,
+        durable: true,
         arguments: { 'x-dead-letter-exchange': 'engine_DLX' },
       })
       .publish(JUST_DO_IT_MESSAGE)
@@ -150,40 +152,47 @@ module.exports = (io) => {
 
   const addVehicle = (vehicle) => {
     return amqp
-      .exchange('incoming_vehicle_updates', 'topic', { durable: false })
+      .exchange('incoming_vehicle_updates', 'topic', { durable: true })
       .publish(
         {
           id: id62(),
           ...vehicle,
         },
-        routingKeys.REGISTERED
+        routingKeys.REGISTERED,
+        {
+          persistent: true,
+        }
       )
   }
 
   const publishDeleteBooking = (id) => {
     return amqp
       .exchange('incoming_booking_updates', 'topic', {
-        durable: false,
+        durable: true,
       })
-      .publish(id, routingKeys.DELETED)
+      .publish(id, routingKeys.DELETED, {
+        persistent: true,
+      })
       .then(() => console.log(` [x] Delete booking ${id}`))
   }
 
   const publishDeleteVehicle = (id) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', {
-        durable: false,
+        durable: true,
       })
-      .publish(id, routingKeys.DELETED)
+      .publish(id, routingKeys.DELETED, {
+        persistent: true,
+      })
       .then(() => console.log(` [x] Delete vehicle ${id}`))
   }
 
   const transportNotifications = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
-      durable: false,
+      durable: true,
     })
     .queue('transport_notifications.admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true }, [routingKeys.NEW])
     .map((vehicleRes) => {
@@ -196,10 +205,10 @@ module.exports = (io) => {
 
   const bookingNotifications = amqp
     .exchange('outgoing_booking_updates', 'topic', {
-      durable: false,
+      durable: true,
     })
     .queue('booking_notifications.admin_ui', {
-      durable: false,
+      durable: true,
     })
     .subscribe({ noAck: true }, [
       routingKeys.NEW,

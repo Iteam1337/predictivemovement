@@ -24,8 +24,8 @@ defmodule MessageGenerator do
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
 
-    AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: false)
-    AMQP.Exchange.declare(channel, @cars_exchange, :topic, durable: false)
+    AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: true)
+    AMQP.Exchange.declare(channel, @cars_exchange, :topic, durable: true)
 
     {:ok, channel}
   end
@@ -86,7 +86,7 @@ defmodule MessageGenerator do
   def handle_call(:add_random_booking, _, %{channel: channel} = state) do
     payload =
       random_booking()
-      |> Jason.encode!
+      |> Jason.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
 
@@ -97,7 +97,7 @@ defmodule MessageGenerator do
       when is_map(properties) do
     payload =
       random_booking(properties)
-      |> Jason.encode!
+      |> Jason.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
 
@@ -109,7 +109,7 @@ defmodule MessageGenerator do
       %{}
       |> add_booking_addresses(city)
       |> random_booking()
-      |> Jason.encode!
+      |> Jason.encode!()
 
     AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
 
@@ -119,7 +119,7 @@ defmodule MessageGenerator do
   def handle_call(:add_random_car, _, %{channel: channel} = state) do
     payload =
       random_car()
-      |> Jason.encode!
+      |> Jason.encode!()
 
     AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
 
@@ -130,7 +130,7 @@ defmodule MessageGenerator do
       when is_map(properties) do
     payload =
       random_car(properties)
-      |> Jason.encode!
+      |> Jason.encode!()
 
     AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
 
@@ -142,7 +142,7 @@ defmodule MessageGenerator do
       %{}
       |> add_vehicle_addresses(city)
       |> random_car()
-      |> Jason.encode!
+      |> Jason.encode!()
 
     AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
 

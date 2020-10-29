@@ -7,6 +7,7 @@ const keys = {
   INSTRUCTION_GROUPS: 'instruction_groups',
   VEHICLES: 'vehicles',
   VEHICLE_ID_BY_TELEGRAM_ID: 'vehicle-id-by-telegram-id',
+  VEHICLE_ID_BY_PHONE_NUMBER: 'vehicle-id-by-phone-nr',
 }
 
 export default {
@@ -38,6 +39,10 @@ export default {
     redis.get(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`),
   setVehicleIdByTelegramId: (telegramId: number, id: string): Promise<string> =>
     redis.set(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`, id),
+  getVehicleIdByPhoneNumber: (phoneNumber: string): Promise<string> =>
+    redis.get(`${keys.VEHICLE_ID_BY_PHONE_NUMBER}:${phoneNumber}`),
+  setVehicleIdByPhoneNumber: (phone: number, id: string): Promise<string> =>
+    redis.set(`${keys.VEHICLE_ID_BY_PHONE_NUMBER}:${phone}`, id),
   setInstructionGroup: (
     id: string,
     instructionGroup: Instruction[]

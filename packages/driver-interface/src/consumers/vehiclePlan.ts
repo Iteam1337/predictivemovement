@@ -36,16 +36,16 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
             const groupedInstructions = helpers.groupDriverInstructions(
               helpers.cleanDriverInstructions(vehicle.activities)
             )
-            console.log("setting instructions for ", vehicle.id)
-            console.log("setting ", groupedInstructions)
+
             await cache.setInstructions(vehicle.id, groupedInstructions)
-          
             await cache.addVehicle(vehicle.id, {
               ...currentVehicle,
               ...vehicle,
             })
             if (bot.driverIsLoggedIn(vehicle.id)) {
-              bot.handleNextDriverInstruction(parseInt(currentVehicle.telegramId))
+              bot.handleNextDriverInstruction(
+                parseInt(currentVehicle.telegramId)
+              )
             }
             return ch.ack(msg)
           })

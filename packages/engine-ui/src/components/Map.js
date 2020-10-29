@@ -43,24 +43,29 @@ const Map = ({ data }) => {
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-plan-layer',
-      mapUtils.planToFeature(data.plan),
+      mapUtils.planToFeature(data.plan.routes),
       handleClickEvent
     ),
-
     mapUtils.toGeoJsonLayer(
       'geojson-transport-layer',
       mapUtils.planToFeature(data.vehicles),
       handleClickEvent
     ),
-    data.plan.map((route) =>
-      mapUtils.toBookingIconLayer(
-        mapUtils.routeActivityIcon(route),
-        UIState.highlightBooking,
-        { offset: [40, 0] }
+    data.plan.routes
+      .map((route) =>
+        mapUtils.toBookingIconLayer(
+          mapUtils.routeActivityIcon(route),
+          UIState.highlightBooking,
+          { offset: [40, 0] }
+        )
       )
-    ),
+      .concat(
+        data.plan.excludedBookings.map((b) =>
+          mapUtils.toExcludedBookingIcon(b, UIState.highlightBooking)
+        )
+      ),
     showTextLayer &&
-      mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan)),
+      mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
     mapUtils.toTransportIconLayer(
       mapUtils.transportIcon(data.vehicles),
       UIState.highlightTransport

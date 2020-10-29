@@ -14,7 +14,12 @@ export const onBotStart = (ctx: TelegrafContext): void => {
 
 export const onPromptUserForTransportId = (
   ctx: TelegrafContext
-): Promise<Message> => ctx.reply('Klicka på "Skicka telefonnummer" för att logga in', { reply_markup: { keyboard: [[{text: '📲 Skicka telefonnummer', request_contact: true}]] } })
+): Promise<Message> =>
+  ctx.reply('Klicka på "Skicka telefonnummer" för att logga in', {
+    reply_markup: {
+      keyboard: [[{ text: '📲 Skicka telefonnummer', request_contact: true }]],
+    },
+  })
 
 export const onNoVehicleFoundFromId = (
   ctx: TelegrafContext

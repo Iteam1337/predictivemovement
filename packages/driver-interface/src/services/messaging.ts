@@ -71,7 +71,7 @@ export const sendPickupInstruction = async (
       : await getAddressFromCoordinate({ ...firstBooking.delivery })
 
   const message = (instructionGroup.length === 1
-    ? `🎁 Din nästa destination är [${pickup}](${getDirectionsUrl(
+    ? `🎁 Ditt nästa stopp är [${pickup}](${getDirectionsUrl(
         pickup
       )}) där du ska hämta paket "${helpers
         .getLastFourChars(instructionGroup[0].id)

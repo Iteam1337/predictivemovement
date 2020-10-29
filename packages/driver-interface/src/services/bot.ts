@@ -60,8 +60,10 @@ export const handleNextDriverInstruction = async (
 
     const currentInstructionGroup = instructions.shift()
 
-    if (!currentInstructionGroup)
+    if (!currentInstructionGroup) {
+      cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
+    }
 
     const bookings = await cache.getBookings(
       currentInstructionGroup.map((g) => g.id)
@@ -99,8 +101,10 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
 
     const instructionGroupId = uuid().slice(0, 8)
 
-    if (!nextInstructionGroup)
+    if (!nextInstructionGroup) {
+      cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
+    }
 
     await cache.setInstructionGroup(instructionGroupId, nextInstructionGroup)
 

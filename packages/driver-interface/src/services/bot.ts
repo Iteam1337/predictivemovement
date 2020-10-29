@@ -15,7 +15,9 @@ export const onLogin = async (
   phoneNumber: string,
   ctx: TelegrafContext
 ): Promise<Message | void> => {
-  const vehicleId = await cache.getVehicleIdByPhoneNumber(phoneNumber)
+  const vehicleId = await cache.getVehicleIdByPhoneNumber(
+    phoneNumber.replace('46', '0')
+  )
   const vehicle = await cache.getVehicle(vehicleId)
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)

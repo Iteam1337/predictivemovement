@@ -22,6 +22,10 @@ defmodule Booking do
 
   validates(:pickup, presence: true)
   validates(:delivery, presence: true)
+  validates([:pickup, :lat], number: [is: true])
+  validates([:pickup, :lon], number: [is: true])
+  validates([:delivery, :lat], number: [is: true])
+  validates([:delivery, :lon], number: [is: true])
 
   validates([:size, :weight],
     by: [function: &is_integer/1, message: "must be an integer"]
@@ -71,12 +75,12 @@ defmodule Booking do
       delivery: delivery,
       metadata: metadata |> Jason.encode!(),
       events: [],
-      size: size,
-      route: Osrm.route(pickup, delivery)
+      size: size
     }
 
     with true <- Vex.valid?(booking) do
       booking
+      |> Map.put(:route, Osrm.route(pickup, delivery))
       |> add_event_to_events_list("new", DateTime.utc_now())
       |> apply_booking_to_state()
       |> (&ES.add_event(%BookingRegistered{booking: &1})).()

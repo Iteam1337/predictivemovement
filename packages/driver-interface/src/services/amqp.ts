@@ -24,3 +24,24 @@ export const updateLocation = (
     })
     .catch(console.warn)
 }
+
+export const publishBookingEvent = (bookingId: string, event: string) =>
+  open
+    .then((conn) => conn.createChannel())
+    .then((openChannel) =>
+      openChannel
+        .assertExchange(exchanges.INCOMING_BOOKING_UPDATES, 'topic', {
+          durable: true,
+        })
+        .then(() =>
+          openChannel.publish(
+            exchanges.INCOMING_BOOKING_UPDATES,
+            event,
+            Buffer.from(JSON.stringify({ id: bookingId, status: event })),
+            {
+              persistent: true,
+            }
+          )
+        )
+    )
+    .catch(console.warn)

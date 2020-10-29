@@ -1,20 +1,9 @@
 import * as botServices from './services/bot'
 import * as messaging from './services/messaging'
+import * as amqp from './services/amqp'
 import cache from './services/cache'
-import { open, exchanges } from './adapters/amqp'
 import Telegraf from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
-
-const { INCOMING_BOOKING_UPDATES } = exchanges
-
-const channel = open
-  .then((conn) => conn.createChannel())
-  .then((ch) => {
-    ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
-      durable: true,
-    })
-    return ch
-  })
 
 async function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
@@ -24,26 +13,6 @@ async function onArrived(msg) {
     vehicleId,
     telegramId
   )
-}
-
-function handleBookingEvent(telegramId, bookingIds, event) {
-  return channel
-    .then((openChannel) =>
-      Promise.all(
-        bookingIds.map((id) =>
-          openChannel.publish(
-            INCOMING_BOOKING_UPDATES,
-            event,
-            Buffer.from(JSON.stringify({ id, status: event })),
-            {
-              persistent: true,
-            }
-          )
-        )
-      )
-    )
-    .catch(console.warn)
-    .then(() => botServices.handleNextDriverInstruction(telegramId))
 }
 
 export const init = (bot: Telegraf<TelegrafContext>): void => {
@@ -70,7 +39,8 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
-    if (msg.contact && msg.contact.phone_number) return botServices.onLogin(msg.contact.phone_number, ctx)
+    if (msg.contact && msg.contact.phone_number)
+      return botServices.onLogin(msg.contact.phone_number, ctx)
     if (msg.location) return botServices.onLocationMessage(msg, ctx)
   })
 
@@ -89,19 +59,14 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
       case 'picked_up':
       case 'delivered':
       case 'delivery_failed': {
-        const { id: telegramId } = msg.update.callback_query.from
-
+        const telegramId = msg.update.callback_query.from.id
         const { e: event, id: instructionGroupId } = callbackPayload
 
-        const instructionGroup = await cache.getAndDeleteInstructionGroup(
-          instructionGroupId
-        )
-
-        return handleBookingEvent(
-          telegramId,
-          instructionGroup.map((ig) => ig.id),
-          event
-        )
+        return cache
+          .getAndDeleteInstructionGroup(instructionGroupId)
+          .then(([{ id }]) => id)
+          .then((bookingId) => amqp.publishBookingEvent(bookingId, event))
+          .then(() => botServices.handleNextDriverInstruction(telegramId))
       }
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)

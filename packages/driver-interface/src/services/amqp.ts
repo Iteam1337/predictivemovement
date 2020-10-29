@@ -1,11 +1,7 @@
-import { TelegrafContext } from 'telegraf/typings/context'
 import { open, exchanges } from '../adapters/amqp'
 import { LocationMessage } from '../types'
 
-export const updateLocation = (
-  msg: LocationMessage,
-  _ctx: TelegrafContext
-): void => {
+export const updateLocation = (msg: LocationMessage): void => {
   open
     .then((conn) => conn.createChannel())
     .then((ch) => {

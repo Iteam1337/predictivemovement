@@ -31,8 +31,7 @@ export const onLogin = async (
 }
 
 export const onLocationMessage = async (
-  msg: IncomingMessage,
-  ctx: TelegrafContext
+  msg: IncomingMessage
 ): Promise<void> => {
   const vehicleId = await cache.getVehicleIdByTelegramId(msg.from.id)
 
@@ -44,7 +43,7 @@ export const onLocationMessage = async (
     id: vehicleId,
   }
 
-  amqp.updateLocation(message, ctx)
+  amqp.updateLocation(message)
 }
 
 export const handleNextDriverInstruction = async (
@@ -52,13 +51,14 @@ export const handleNextDriverInstruction = async (
 ): Promise<Message> => {
   try {
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
-    console.log("getting instructions for ", vehicleId)
-    
-    if (!await cache.getInstructions(vehicleId)) {
-      console.log("No instructions found")
+    const instructions = await cache.getInstructions(vehicleId)
+
+    if (!instructions) {
+      console.log('No instructions found')
       return
     }
-    const [currentInstructionGroup] = await cache.getInstructions(vehicleId)
+
+    const currentInstructionGroup = instructions.shift()
 
     if (!currentInstructionGroup)
       return messaging.sendDriverFinishedMessage(telegramId)

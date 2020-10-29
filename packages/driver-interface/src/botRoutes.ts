@@ -41,13 +41,13 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
     const msg = ctx.message
     if (msg.contact && msg.contact.phone_number)
       return botServices.onLogin(msg.contact.phone_number, ctx)
-    if (msg.location) return botServices.onLocationMessage(msg, ctx)
+    if (msg.location) return botServices.onLocationMessage(msg)
   })
 
   bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
 
-    if (msg.location) return botServices.onLocationMessage(msg, ctx)
+    if (msg.location) return botServices.onLocationMessage(msg)
   })
 
   /** Listen for user invoked button clicks. */

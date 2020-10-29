@@ -1,4 +1,3 @@
-import * as helpers from '../helpers'
 import * as amqp from './amqp'
 import cache from './cache'
 import { v4 as uuid } from 'uuid'
@@ -7,31 +6,25 @@ import * as messaging from './messaging'
 import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 
+export const driverIsLoggedIn = async (vehicleId) => {
+  const vehicle = await cache.getVehicle(vehicleId)
+  return !!vehicle.telegramId
+}
+
 export const onLogin = async (
-  vehicleId: string,
+  phoneNumber: string,
   ctx: TelegrafContext
 ): Promise<Message | void> => {
+  const vehicleId = await cache.getVehicleIdByPhoneNumber(phoneNumber)
   const vehicle = await cache.getVehicle(vehicleId)
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
   const telegramId = ctx.update.message.from.id
   await cache.setVehicleIdByTelegramId(telegramId, vehicleId)
-
-  if (vehicle.telegramId) {
-    return
-  }
-
-  const groupedInstructions = helpers.groupDriverInstructions(
-    helpers.cleanDriverInstructions(vehicle.activities)
-  )
-
-  await cache.setInstructions(vehicle.id, groupedInstructions)
-
   await cache.addVehicle(vehicleId, {
     ...vehicle,
     telegramId,
   })
-
   return messaging
     .onDriverLoginSuccessful(ctx)
     .then(() => handleNextDriverInstruction(telegramId))
@@ -59,6 +52,12 @@ export const handleNextDriverInstruction = async (
 ): Promise<Message> => {
   try {
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
+    console.log("getting instructions for ", vehicleId)
+    
+    if (!await cache.getInstructions(vehicleId)) {
+      console.log("No instructions found")
+      return
+    }
     const [currentInstructionGroup] = await cache.getInstructions(vehicleId)
 
     if (!currentInstructionGroup)

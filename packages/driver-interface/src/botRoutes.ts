@@ -70,10 +70,8 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
-
-    /** Login attempt from command /login. */
-    if (msg.text && msg.text.toLowerCase().includes('pmv-')) {
-      botServices.onLogin(msg.text, ctx)
+    if (msg.contact && msg.contact.phone_number) {
+      return botServices.onLogin(msg.contact.phone_number, ctx)
     }
 
     if (!msg.location) return

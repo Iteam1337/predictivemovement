@@ -14,18 +14,18 @@ export const onBotStart = (ctx: TelegrafContext): void => {
 
 export const onPromptUserForTransportId = (
   ctx: TelegrafContext
-): Promise<Message> => ctx.reply('Ange ditt transport-id')
+): Promise<Message> => ctx.reply('Klicka på "Skicka telefonnummer" för att logga in', { reply_markup: { keyboard: [[{text: '📲 Skicka telefonnummer', request_contact: true}]] } })
 
 export const onNoVehicleFoundFromId = (
   ctx: TelegrafContext
 ): Promise<Message> =>
-  ctx.reply('Inget fordon som matchar ditt angivna ID kunde hittas...')
+  ctx.reply('Inget fordon med ditt telefonnummer kunde hittas...')
 
 export const onDriverLoginSuccessful = (
   ctx: TelegrafContext
 ): Promise<Message> =>
   ctx.reply(
-    'Tack! Du kommer nu få instruktioner för hur du ska hämta upp de bokningar som du har tilldelats.'.concat(
+    'Välkommen! När du har blivit tilldelad bokningar så kommer du få instruktioner för hur du ska hämta upp dessa.'.concat(
       '\nKlicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :)'
     )
   )

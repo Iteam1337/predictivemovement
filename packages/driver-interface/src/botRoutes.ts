@@ -70,22 +70,14 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
-    if (msg.contact && msg.contact.phone_number) {
-      return botServices.onLogin(msg.contact.phone_number, ctx)
-    }
-
-    if (!msg.location) return
-
-    return botServices.onLocationMessage(msg, ctx)
+    if (msg.contact && msg.contact.phone_number) return botServices.onLogin(msg.contact.phone_number, ctx)
+    if (msg.location) return botServices.onLocationMessage(msg, ctx)
   })
 
   bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
 
-    /** Telegram live location updates. */
-    if (!msg.location) return
-
-    return botServices.onLocationMessage(msg, ctx)
+    if (msg.location) return botServices.onLocationMessage(msg, ctx)
   })
 
   /** Listen for user invoked button clicks. */

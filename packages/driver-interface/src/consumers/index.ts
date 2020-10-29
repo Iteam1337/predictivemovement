@@ -1,9 +1,7 @@
 import newBookings from './newBookings'
-import vehiclePlan from './vehiclePlan'
+import vehicleInstructions from './vehicleInstructions'
 import newVehicles from './newVehicles'
 
 export const register = (): void => {
-  newBookings()
-  vehiclePlan(),
-  newVehicles()
+  newBookings(), vehicleInstructions(), newVehicles()
 }

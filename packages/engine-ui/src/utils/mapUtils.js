@@ -4,6 +4,7 @@ import transportDefaultIcon from '../assets/transport.svg'
 import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
 import * as helpers from './helpers'
+import excludedParcelIcon from '../assets/excluded-parcel.svg'
 
 const point = (coordinates, props) => ({
   type: 'Feature',
@@ -119,6 +120,19 @@ const planToFeature = (plan) => {
   } catch (error) {
     console.log(index, error)
   }
+}
+
+const excludedBookingIcon = (booking) => {
+  if (!booking) return
+
+  return [
+    point([booking.lon, booking.lat], {
+      properties: {
+        size: 80,
+      },
+      id: booking.id,
+    }),
+  ]
 }
 
 const routeActivityIcon = (route) => {
@@ -249,9 +263,11 @@ const toGeoJsonLayer = (id, data, callback) =>
     extruded: true,
     lineWidthScale: 1,
     lineWidthMinPixels: 3,
-    getFillColor: (d) => helpers.hexToRGBA(d.properties.color),
+    getFillColor: ({ properties }) =>
+      helpers.hexToRGBA(properties.color, properties.opacity),
     getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 150),
-    highlightColor: (d) => helpers.hexToRGBA(d.object.properties.color),
+    highlightColor: ({ object: { properties } }) =>
+      helpers.hexToRGBA(properties.color, properties.opacity),
     getRadius: (d) => d.properties.size || 300,
     getLineWidth: 5,
     getElevation: 30,
@@ -270,6 +286,7 @@ const toTransportIconLayer = (data, activeId) => {
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
+      opacity: activeId === feature.id ? null : feature.properties.opacity,
       color:
         activeId === feature.id
           ? feature.properties.highlightColor
@@ -303,11 +320,52 @@ const toTransportIconLayer = (data, activeId) => {
       d.properties.id === activeId
         ? d.properties.highlightSize
         : d.properties.size,
-    getColor: (d) => helpers.hexToRGBA(d.properties.color),
+    getColor: (d) =>
+      helpers.hexToRGBA(d.properties.color, d.properties.opacity),
   })
 }
 
-const toBookingIconLayer = (data, activeId, options = { offset: [0, 0] }) => {
+const toExcludedBookingIcon = (booking, activeId) => {
+  if (!booking) {
+    return
+  }
+  const iconData = excludedBookingIcon(booking).map((feature) => ({
+    coordinates: feature.geometry.coordinates,
+    properties: {
+      id: feature.id,
+      size: 8,
+      activeSize: 10,
+    },
+  }))
+
+  return new IconLayer({
+    id: `excluded-booking-icon-${booking.id}`,
+    data: iconData,
+    pickable: true,
+    getIcon: () => {
+      return {
+        url: excludedParcelIcon,
+        mask: false,
+        width: 128,
+        height: 128,
+      }
+    },
+    sizeScale: 5,
+    getPosition: (d) => d.coordinates,
+    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
+    getSize: (d) =>
+      d.properties.id === activeId
+        ? d.properties.activeSize
+        : d.properties.size,
+  })
+}
+
+const toBookingIconLayer = (
+  data,
+  activeId,
+  options = { offset: [0, 0] },
+  layerId = 'booking-icon'
+) => {
   if (!data || !data.length) {
     return
   }
@@ -316,6 +374,7 @@ const toBookingIconLayer = (data, activeId, options = { offset: [0, 0] }) => {
     coordinates: feature.geometry.coordinates,
     properties: {
       id: feature.id,
+      opacity: activeId === feature.id ? null : feature.properties.opacity,
       color:
         activeId === feature.id
           ? feature.properties.highlightColor
@@ -327,7 +386,7 @@ const toBookingIconLayer = (data, activeId, options = { offset: [0, 0] }) => {
   }))
 
   return new IconLayer({
-    id: 'booking-icon',
+    id: layerId,
     data: iconData,
     pickable: true,
     getPixelOffset: options.offset,
@@ -340,14 +399,14 @@ const toBookingIconLayer = (data, activeId, options = { offset: [0, 0] }) => {
       }
     },
     sizeScale: 5,
-
     getPosition: (d) => d.coordinates,
     transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
     getSize: (d) =>
       d.properties.id === activeId
         ? d.properties.activeSize
         : d.properties.size,
-    getColor: (d) => helpers.hexToRGBA(d.properties.color),
+    getColor: (d) =>
+      helpers.hexToRGBA(d.properties.color, d.properties.opacity),
   })
 }
 
@@ -365,4 +424,5 @@ export {
   routeActivityIcon,
   toTextLayer,
   routeActivitiesToFeature,
+  toExcludedBookingIcon,
 }

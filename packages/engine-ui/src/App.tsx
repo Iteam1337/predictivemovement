@@ -80,7 +80,10 @@ const App = () => {
   useSocket('plan-update', (plan) => {
     dispatch({
       type: 'setPlan',
-      payload: plan.vehicles,
+      payload: {
+        routes: plan.vehicles,
+        excludedBookings: plan.excluded_booking_ids
+      },
     })
   })
 

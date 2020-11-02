@@ -5,7 +5,7 @@ const NotFound = () => {
   return (
     <>
       <Elements.Typography.NoInfoParagraph>
-        Kunde ínte hitta vad du sökte! Ta mig till start!
+        Kunde inte hitta vad du sökte!
       </Elements.Typography.NoInfoParagraph>
     </>
   )

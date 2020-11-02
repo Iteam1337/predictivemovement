@@ -5,7 +5,6 @@ import * as Elements from '../../../shared-elements'
 import DateInput from './DateInput'
 import * as helpers from '../../../utils/helpers'
 import styled from 'styled-components'
-import { useRef } from 'react'
 
 const Wrapper = styled.div`
   width: '100%';
@@ -90,7 +89,7 @@ export const BookingTimeRestrictionPair = ({
   timewindow,
   typeProperty,
 }) => {
-  const timeRestrictionInputRef = useRef()
+  const timeRestrictionInputRef = React.useRef()
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
@@ -125,7 +124,7 @@ export const VehicleTimeRestrictionPair = ({
   timewindow,
   handleFocus,
 }) => {
-  const timeRestrictionInputRef = useRef()
+  const timeRestrictionInputRef = React.useRef()
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>

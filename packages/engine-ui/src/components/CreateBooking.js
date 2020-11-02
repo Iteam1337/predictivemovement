@@ -36,22 +36,35 @@ const initialState = {
   recipient: { name: '', contact: '', info: '' },
 }
 
+const isValidAddress = ({ lat, lon }) => !!(lat && lon)
+
 const CreateBooking = ({ onSubmit }) => {
   const history = useHistory()
   const [isFinished, setIsFinished] = React.useState(false)
   const [formState, setState] = React.useState(initialState)
+  const [formErrors, setFormErrors] = React.useState({
+    pickup: false,
+    delivery: false,
+  })
   const setUIState = stores.ui((state) => state.dispatch)
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
   const onSubmitHandler = (event) => {
     event.preventDefault()
-    if (
-      !formState.pickup.lat ||
-      !formState.pickup.lon ||
-      !formState.delivery.lat ||
-      !formState.delivery.lon
-    ) {
+
+    const validationResult = {
+      pickup: isValidAddress(formState.pickup),
+      delivery: isValidAddress(formState.delivery),
+    }
+
+    if (!validationResult.pickup || !validationResult.delivery) {
+      setFormErrors((formErrors) => ({
+        ...formErrors,
+        pickup: !validationResult.pickup,
+        delivery: !validationResult.delivery,
+      }))
+
       return false
     }
 
@@ -90,6 +103,8 @@ const CreateBooking = ({ onSubmit }) => {
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
         <Form
+          setFormErrors={setFormErrors}
+          formErrors={formErrors}
           onChangeHandler={setState}
           onSubmitHandler={onSubmitHandler}
           state={formState}

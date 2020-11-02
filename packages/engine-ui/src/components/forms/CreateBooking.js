@@ -74,11 +74,11 @@ const Component = ({
             Paketspecifikationer
           </Elements.Form.Label>
           <FormInputs.TextInput
-            name="id"
-            value={state.id}
-            placeholder="ID"
+            name="external-id"
+            value={state.externalId}
+            placeholder="Referensnummer från avsändare"
             onChangeHandler={eventHandlers.handleTextInputChange(
-              'id',
+              'externalId',
               onChangeHandler
             )}
           />

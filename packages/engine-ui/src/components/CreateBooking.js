@@ -10,7 +10,7 @@ import * as hooks from '../utils/hooks'
 import * as stores from '../utils/state/stores'
 
 const initialState = {
-  id: '',
+  externalId: '',
   cargo: '',
   fragile: false,
   pickup: {

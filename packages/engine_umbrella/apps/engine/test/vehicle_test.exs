@@ -18,7 +18,13 @@ defmodule VehicleTest do
       }
       |> Vehicle.make()
 
-    assert result == [{:error, :start_address, :presence, "must be present"}]
+    assert result == [
+             {:error, :start_address, :presence, "must be present"},
+             {:error, [:end_address, :lat], :number, "must be a number"},
+             {:error, [:end_address, :lon], :number, "must be a number"},
+             {:error, [:start_address, :lat], :number, "must be a number"},
+             {:error, [:start_address, :lon], :number, "must be a number"}
+           ]
   end
 
   test "does not allow malformed time constraints" do
@@ -55,6 +61,50 @@ defmodule VehicleTest do
     assert result == [
              {:error, :earliest_start, :format, "must have the correct format"},
              {:error, :latest_end, :format, "must have the correct format"}
+           ]
+  end
+
+  test "should validate addresses containing lat/lon" do
+    result =
+      MessageGenerator.random_car(%{
+        capacity: %{volume: 1, weight: 123},
+        earliest_start: nil,
+        latest_end: nil,
+        metadata: %{driver: %{}, profile: "123"},
+        start_address: %{city: "", name: "hafdoajgjagia", street: ""}
+      })
+      |> Vehicle.make()
+
+    assert result == [
+             {:error, [:end_address, :lat], :number, "must be a number"},
+             {:error, [:end_address, :lon], :number, "must be a number"},
+             {:error, [:start_address, :lat], :number, "must be a number"},
+             {:error, [:start_address, :lon], :number, "must be a number"}
+           ]
+  end
+
+  test "should validate addresses lat/lon in correct format" do
+    result =
+      MessageGenerator.random_car(%{
+        capacity: %{volume: 1, weight: 123},
+        earliest_start: nil,
+        latest_end: nil,
+        metadata: %{driver: %{}, profile: "123"},
+        start_address: %{
+          lat: "21321321",
+          lon: "2321312",
+          city: "",
+          name: "hafdoajgjagia",
+          street: ""
+        }
+      })
+      |> Vehicle.make()
+
+    assert result == [
+             {:error, [:end_address, :lat], :number, "must be a number"},
+             {:error, [:end_address, :lon], :number, "must be a number"},
+             {:error, [:start_address, :lat], :number, "must be a number"},
+             {:error, [:start_address, :lon], :number, "must be a number"}
            ]
   end
 end

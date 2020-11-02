@@ -1,6 +1,5 @@
 import React from 'react'
-
-const Arrow = ({ active = false, ...rest }) => {
+export const Arrow = ({ active = false, ...rest }) => {
   return (
     <svg
       width={11}
@@ -18,7 +17,7 @@ const Arrow = ({ active = false, ...rest }) => {
   )
 }
 
-const ThumbsUp = () => (
+export const ThumbsUp = () => (
   <svg
     width="88"
     height="88"
@@ -34,10 +33,8 @@ const ThumbsUp = () => (
   </svg>
 )
 
-const ActiveView = (props) => (
+export const ActiveView = (props) => (
   <svg width={8} height={16} viewBox="0 0 8 16" fill="none" {...props}>
     <path d="M0 15.864V0l8 7.932-8 7.932z" fill="#13C57B" />
   </svg>
 )
-
-export default { Arrow, ActiveView, ThumbsUp }

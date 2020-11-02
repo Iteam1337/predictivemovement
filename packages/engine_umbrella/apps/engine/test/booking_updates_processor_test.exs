@@ -9,8 +9,8 @@ defmodule BookingUpdatesProcessorTest do
   setup_all do
     {:ok, connection} = AMQP.Connection.open(amqp_url())
     {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.declare(channel, "look_for_picked_up_updates_in_test", durable: false)
-    AMQP.Queue.declare(channel, "look_for_delivered_updates_in_test", durable: false)
+    AMQP.Queue.declare(channel, "look_for_picked_up_updates_in_test", durable: true)
+    AMQP.Queue.declare(channel, "look_for_delivered_updates_in_test", durable: true)
 
     AMQP.Queue.bind(channel, "look_for_picked_up_updates_in_test", @outgoing_booking_exchange,
       routing_key: "picked_up"

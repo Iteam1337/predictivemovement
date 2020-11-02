@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import Elements from '../shared-elements'
+import * as Elements from '../shared-elements'
 import Form from './forms/CreateVehicle'
 import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './CreateSuccess'
-import hooks from '../utils/hooks'
+import * as hooks from '../utils/hooks'
 import moment from 'moment'
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
+import React from 'react'
 
 const initialState = {
   vehicleType: '',
@@ -34,7 +34,7 @@ const CreateVehicle = ({ onSubmit }) => {
     setState
   )
 
-  useEffect(() => {
+  React.useEffect(() => {
     setActive(true)
 
     return () => setActive(false)

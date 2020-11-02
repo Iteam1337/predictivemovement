@@ -1,4 +1,4 @@
-const handleTextInputChange = (propertyName, callback) => (event) => {
+export const handleTextInputChange = (propertyName, callback) => (event) => {
   event.persist()
 
   return callback((currentState) => ({
@@ -7,7 +7,7 @@ const handleTextInputChange = (propertyName, callback) => (event) => {
   }))
 }
 
-const handleNestedInputChange = (
+export const handleNestedInputChange = (
   propertyName,
   nestedPropertyName,
   callback
@@ -22,14 +22,32 @@ const handleNestedInputChange = (
   }))
 }
 
-const handleAddressInput = (propertyName, callback) => ({
+export const handleAddressInputForBooking = (
+  propertyName,
+  callback,
+  setFormErrors
+) => ({ name = '', street = '', lon, lat, county = '' }) => {
+  setFormErrors((prev) => ({ ...prev, [propertyName]: false }))
+  return callback((currentState) => ({
+    ...currentState,
+    [propertyName]: {
+      name,
+      lon,
+      lat,
+      city: county,
+      street,
+    },
+  }))
+}
+
+export const handleAddressInput = (propertyName, callback) => ({
   name = '',
   street = '',
   lon,
   lat,
   county = '',
-}) => {
-  return callback((currentState) => ({
+}) =>
+  callback((currentState) => ({
     ...currentState,
     [propertyName]: {
       ...currentState[propertyName],
@@ -40,10 +58,3 @@ const handleAddressInput = (propertyName, callback) => ({
       street,
     },
   }))
-}
-
-export default {
-  handleTextInputChange,
-  handleNestedInputChange,
-  handleAddressInput,
-}

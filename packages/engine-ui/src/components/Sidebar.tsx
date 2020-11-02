@@ -5,8 +5,8 @@ import { Switch as RouterSwitch, Route, Redirect } from 'react-router-dom'
 import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
-import { Booking, Route as PlanRoute } from '../types'
 import NotFound from './NotFound'
+import { Booking, Plan as IPlan } from '../types'
 
 const Container = styled.div`
   position: absolute;
@@ -26,7 +26,7 @@ const Content = styled.div`
 
 interface Props {
   bookings: Booking[]
-  plan: PlanRoute[]
+  plan: IPlan
   vehicles: any
   createBooking: (params: any) => void
   deleteBooking: (params: any) => void

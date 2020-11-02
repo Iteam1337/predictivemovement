@@ -1,9 +1,9 @@
 import React from 'react'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
-import Elements from '../../../shared-elements'
+import * as Elements from '../../../shared-elements'
 import DateInput from './DateInput'
-import helpers from '../../../utils/helpers'
+import * as helpers from '../../../utils/helpers'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -84,7 +84,7 @@ const VehicleTimeRestriction = ({
   )
 }
 
-const BookingTimeRestrictionPair = ({
+export const BookingTimeRestrictionPair = ({
   onChangeHandler,
   timewindow,
   typeProperty,
@@ -119,7 +119,7 @@ const BookingTimeRestrictionPair = ({
   )
 }
 
-const VehicleTimeRestrictionPair = ({
+export const VehicleTimeRestrictionPair = ({
   onChangeHandler,
   timewindow,
   handleFocus,
@@ -159,5 +159,3 @@ const VehicleTimeRestrictionPair = ({
     </Elements.Layout.TextInputPairContainer>
   )
 }
-
-export default { BookingTimeRestrictionPair, VehicleTimeRestrictionPair }

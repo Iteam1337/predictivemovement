@@ -1,11 +1,11 @@
 import React from 'react'
 import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
-import mapUtils from '../utils/mapUtils'
+import * as mapUtils from '../utils/mapUtils'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
 
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 
 const Map = ({ data }) => {
   const history = useHistory()
@@ -43,24 +43,29 @@ const Map = ({ data }) => {
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-plan-layer',
-      mapUtils.planToFeature(data.plan),
+      mapUtils.planToFeature(data.plan.routes),
       handleClickEvent
     ),
-
     mapUtils.toGeoJsonLayer(
       'geojson-transport-layer',
       mapUtils.planToFeature(data.vehicles),
       handleClickEvent
     ),
-    data.plan.map((route) =>
-      mapUtils.toBookingIconLayer(
-        mapUtils.routeActivityIcon(route),
-        UIState.highlightBooking,
-        { offset: [40, 0] }
+    data.plan.routes
+      .map((route) =>
+        mapUtils.toBookingIconLayer(
+          mapUtils.routeActivityIcon(route),
+          UIState.highlightBooking,
+          { offset: [40, 0] }
+        )
       )
-    ),
+      .concat(
+        data.plan.excludedBookings.map((b) =>
+          mapUtils.toExcludedBookingIcon(b, UIState.highlightBooking)
+        )
+      ),
     showTextLayer &&
-      mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan)),
+      mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
     mapUtils.toTransportIconLayer(
       mapUtils.transportIcon(data.vehicles),
       UIState.highlightTransport

@@ -11,7 +11,7 @@ const channel = open
   .then((conn) => conn.createChannel())
   .then((ch) => {
     ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
-      durable: false,
+      durable: true,
     })
     return ch
   })
@@ -34,7 +34,10 @@ function handleBookingEvent(telegramId, bookingIds, event) {
           openChannel.publish(
             INCOMING_BOOKING_UPDATES,
             event,
-            Buffer.from(JSON.stringify({ id, status: event }))
+            Buffer.from(JSON.stringify({ id, status: event })),
+            {
+              persistent: true,
+            }
           )
         )
       )

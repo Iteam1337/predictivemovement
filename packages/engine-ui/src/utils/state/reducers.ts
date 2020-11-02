@@ -45,4 +45,4 @@ const ui = (state: types.UIState, action: types.UIStateReducerAction) => {
   }
 }
 
-export default { ui }
+export { ui }

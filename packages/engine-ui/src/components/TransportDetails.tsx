@@ -1,14 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
-import Elements from '../shared-elements'
+import * as Elements from '../shared-elements'
 import RouteActivities from './RouteActivities'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams } from 'react-router-dom'
-import Icons from '../assets/Icons'
+import * as Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
-import stores from '../utils/state/stores'
-import helpers from '../utils/helpers'
+import * as stores from '../utils/state/stores'
+import * as helpers from '../utils/helpers'
 import { Transport } from '../types'
 
 const Line = styled.div`

@@ -12,11 +12,11 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
     .then((ch) =>
       ch
         .assertQueue(ADD_INSTRUCTIONS_TO_VEHICLE, {
-          durable: false,
+          durable: true,
         })
         .then(() =>
           ch.assertExchange(OUTGOING_VEHICLE_UPDATES, 'topic', {
-            durable: false,
+            durable: true,
           })
         )
         .then(() =>
@@ -30,7 +30,7 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
           ch.consume(ADD_INSTRUCTIONS_TO_VEHICLE, async (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
             const currentVehicle = (await cache.getVehicle(vehicle.id)) || {}
-            console.log('received plan: ', vehicle)
+            console.log('received plan for vehicle: ', vehicle.id)
 
             await cache.addVehicle(vehicle.id, {
               ...currentVehicle,

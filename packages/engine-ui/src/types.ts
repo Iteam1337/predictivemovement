@@ -61,6 +61,18 @@ export type Transport = {
 
 export type NotificationType = Transport | Booking
 
+export interface ExcludedBooking {
+  status: string, 
+  id: string
+  lat: number
+  lon: number
+}
+
+export interface Plan {
+  excludedBookings: ExcludedBooking[]
+  routes: Route[]
+}
+
 export interface Route {
   activities: Activity[] | null
   booking_ids: string[] | null

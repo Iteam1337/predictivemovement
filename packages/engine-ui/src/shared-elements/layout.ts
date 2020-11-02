@@ -19,6 +19,11 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
+const FlexRowInCenter = styled.div`
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+`
 const BookingList = styled.ul`
   overflow: auto;
   height: 100%;
@@ -113,7 +118,7 @@ const TimeRestrictionWrapper = styled.div`
   }
 `
 
-export default {
+export {
   InputBlock,
   InputContainer,
   FlexRowWrapper,
@@ -134,4 +139,5 @@ export default {
   SectionWithMargin,
   MarginTopContainerSm,
   TransportsList,
+  FlexRowInCenter
 }

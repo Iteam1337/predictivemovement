@@ -12,11 +12,11 @@ const pickupInstructions = (): Promise<Replies.Consume> =>
     .then((ch) =>
       ch
         .assertQueue(ADD_BOOKING_INFO, {
-          durable: false,
+          durable: true,
         })
         .then(() =>
           ch.assertExchange(OUTGOING_BOOKING_UPDATES, 'topic', {
-            durable: false,
+            durable: true,
           })
         )
         .then(() =>
@@ -25,9 +25,12 @@ const pickupInstructions = (): Promise<Replies.Consume> =>
         .then(() =>
           ch.consume(ADD_BOOKING_INFO, async (msg) => {
             const booking = JSON.parse(msg.content.toString())
-            console.log('received booking: ', booking)
+            console.log('received booking: ', booking.id)
 
-            await cache.addBooking(booking.id, booking)
+            await cache.addBooking(booking.id, {
+              ...booking,
+              metadata: JSON.parse(booking.metadata),
+            })
 
             ch.ack(msg)
           })

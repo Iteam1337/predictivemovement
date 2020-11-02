@@ -52,6 +52,7 @@ You will need:
 - [docker installed](https://docs.docker.com/engine/install/)
 - [kubectl installed](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [skaffold installed](https://skaffold.dev/docs/install/)
+- [kustomize installed](https://kubernetes-sigs.github.io/kustomize/installation/)
 - login with your Docker account
 - access to Iteam Kubernetes cluster
 - mapbox access token from `Predictivemovement` LastPass folder

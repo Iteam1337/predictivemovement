@@ -1,12 +1,31 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
-import Elements from '../shared-elements'
+import * as Elements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
 import PlanBookingDetails from './PlanBookingDetails'
-import { Route as PlanRoute, Transport, Booking } from '../types'
-import stores from '../utils/state/stores'
 import NotFound from './NotFound'
+import * as Icons from '../assets/Icons'
+import * as helpers from '../utils/helpers'
+import * as stores from '../utils/state/stores'
+import { Plan as PlanType, Transport, Booking, ExcludedBooking } from '../types'
+import { FlyToInterpolator } from 'react-map-gl'
+
+const bookingStatusToReadable = (status: string) => {
+  switch (status) {
+    case 'TIME_CONSTRAINTS_EXPIRED':
+      return 'Tidsfönster passerat'
+    case 'CONSTRAINTS_FAILURE':
+    default:
+      return 'Okänd anledning'
+  }
+}
+
+const Paragraph = styled.p`
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+  margin-left: 10px;
+`
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -14,24 +33,104 @@ const PlanWrapper = styled.div`
   height: 100%;
 `
 
-interface IPlanProps {
-  plan: PlanRoute[]
+interface PlanProps {
+  plan: PlanType
   transports: Transport[]
   dispatchOffers: (params: any) => void
   bookings: Booking[]
 }
 
-const Plan = ({
-  plan: routes,
+const Wrapper = styled.div`
+  margin-top: 10px;
+  display: flex;
+  height: 23%;
+  flex-direction: column;
+`
+
+const BookingToggleList: React.FC<{
+  excludedBookings: ExcludedBooking[]
+  text: string
+  onClickHandler: (lat: number, lon: number) => void
+  onMouseEnterHandler: (id?: string) => void
+  isOpen: boolean
+  setOpen: () => void
+}> = ({
+  excludedBookings,
+  text,
+  onClickHandler,
+  onMouseEnterHandler,
+  isOpen,
+  setOpen,
+}) => (
+      <Wrapper>
+        <Elements.Layout.MarginBottomContainer>
+          <Elements.Layout.FlexRowWrapper onClick={setOpen}>
+            <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
+            <Icons.Arrow
+              style={{
+                marginLeft: '0.875rem',
+                transform: `rotate(${isOpen ? '180deg' : 0})`,
+              }}
+            />
+          </Elements.Layout.FlexRowWrapper>
+
+          {isOpen && (
+            <Elements.Layout.BookingList>
+              {excludedBookings.map((booking) => (
+                <li key={booking.id}>
+                  <Elements.Layout.InlineContainer>
+                    <Elements.Links.RoundedLink
+                      onMouseOver={() => onMouseEnterHandler(booking.id)}
+                      onMouseLeave={() => onMouseEnterHandler()}
+                      to={`/bookings/${booking.id}`}
+                      onClick={() => onClickHandler(booking.lat, booking.lon)}
+                    >
+                      {helpers.getLastFourChars(booking.id).toUpperCase()}
+                    </Elements.Links.RoundedLink>
+                    <Paragraph>{bookingStatusToReadable(booking.status)}</Paragraph>
+                  </Elements.Layout.InlineContainer>
+                </li>
+              ))}
+            </Elements.Layout.BookingList>
+          )}
+        </Elements.Layout.MarginBottomContainer>
+      </Wrapper>
+    )
+
+const Plan: React.FC<PlanProps> = ({
+  plan,
   dispatchOffers,
   transports,
   bookings,
-}: IPlanProps) => {
-  const activeRoutes = routes.filter(
+}) => {
+  const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0
   )
+  const [expandedSection, setExpandedSection] = React.useState({
+    isOpen: false,
+  })
   const { path } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
+  const setMap = stores.map((state) => state.set)
+
+  const onClickHandler = (latitude: number, longitude: number) =>
+    setMap({
+      latitude,
+      longitude,
+      zoom: 10,
+      transitionDuration: 2000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: (t: number) => t * (2 - t),
+    })
+
+  const onMouseEnter = (id?: string) =>
+    setUIState({ type: 'highlightBooking', payload: id })
+
+  const handleExpand = () =>
+    setExpandedSection((currentState) => ({
+      ...currentState,
+      isOpen: !currentState.isOpen,
+    }))
 
   return (
     <Switch>
@@ -43,27 +142,37 @@ const Plan = ({
               Det finns inga föreslagna rutter...
             </Elements.Typography.NoInfoParagraph>
           ) : (
-            <>
-              {activeRoutes.map((route, i) => (
-                <PlanRouteDetails
-                  key={i}
-                  route={route}
-                  routeNumber={i + 1}
-                  color={
-                    transports.find((transport) => transport.id === route.id)
-                      ?.color
-                  }
-                />
-              ))}
-              <Elements.Buttons.SubmitButton
-                alignSelf="center"
-                marginTop="5rem"
-                onClick={dispatchOffers}
-              >
-                Bekräfta plan
+              <>
+                {activeRoutes.map((route, i) => (
+                  <PlanRouteDetails
+                    key={i}
+                    route={route}
+                    routeNumber={i + 1}
+                    color={
+                      transports.find((transport) => transport.id === route.id)
+                        ?.color
+                    }
+                  />
+                ))}
+                {plan.excludedBookings.length > 0 && (
+                  <BookingToggleList
+                    excludedBookings={plan.excludedBookings}
+                    text="Exkluderade bokningar"
+                    onClickHandler={onClickHandler}
+                    onMouseEnterHandler={onMouseEnter}
+                    isOpen={expandedSection.isOpen}
+                    setOpen={handleExpand}
+                  />
+                )}
+                <Elements.Buttons.SubmitButton
+                  alignSelf="center"
+                  marginTop="5rem"
+                  onClick={dispatchOffers}
+                >
+                  Bekräfta plan
               </Elements.Buttons.SubmitButton>
-            </>
-          )}
+              </>
+            )}
         </PlanWrapper>
       </Route>
       <Route exact path={`${path}/routes/:routeId/:activityId`}>

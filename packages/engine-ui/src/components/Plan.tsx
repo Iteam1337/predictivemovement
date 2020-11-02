@@ -6,6 +6,7 @@ import PlanRouteDetails from './PlanRouteDetails'
 import PlanBookingDetails from './PlanBookingDetails'
 import { Route as PlanRoute, Transport, Booking } from '../types'
 import stores from '../utils/state/stores'
+import NotFound from './NotFound'
 
 const PlanWrapper = styled.div`
   display: flex;
@@ -77,6 +78,7 @@ const Plan = ({
         exact
         path={[`${path}/current-plan`, `${path}/current-plan/:routeId`]}
       />
+      <Route component={NotFound} />
     </Switch>
   )
 }

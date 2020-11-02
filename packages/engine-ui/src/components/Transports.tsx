@@ -6,6 +6,7 @@ import TransportDetails from './TransportDetails'
 import AddFormFieldButton from './forms/inputs/AddFormFieldButton'
 import stores from '../utils/state/stores'
 import { Transport } from '../types'
+import NotFound from './NotFound'
 
 const Transports: React.FC<{
   transports: Transport[]
@@ -26,10 +27,10 @@ const Transports: React.FC<{
           </AddFormFieldButton>
         </Link>
       </Route>
-      <Route path={`${path}/add-vehicle`}>
+      <Route exact path={`${path}/add-vehicle`}>
         <AddVehicle onSubmit={addVehicle} />
       </Route>
-      <Route path={`${path}/:vehicleId`}>
+      <Route exact path={`${path}/:transportId`}>
         <TransportDetails
           transports={transports}
           deleteTransport={deleteVehicle}
@@ -38,6 +39,7 @@ const Transports: React.FC<{
           }
         />
       </Route>
+      <Route component={NotFound} />
     </Switch>
   )
 }

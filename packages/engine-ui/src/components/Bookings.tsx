@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import { Booking } from '../types'
 import helpers from '../utils/helpers'
 import stores from '../utils/state/stores'
+import NotFound from './NotFound'
 
 const AddNewContainer = styled.div`
   margin-top: 1rem;
@@ -194,7 +195,7 @@ const Bookings: React.FC<{
           <CreateBooking onSubmit={props.createBooking} />
         </Route>
 
-        <Route path={`${path}/:bookingId`}>
+        <Route exact path={`${path}/:bookingId`}>
           <BookingDetails
             bookings={props.bookings}
             deleteBooking={props.deleteBooking}
@@ -203,6 +204,7 @@ const Bookings: React.FC<{
             }
           />
         </Route>
+        <Route component={NotFound} />
       </Switch>
     </Wrapper>
   )

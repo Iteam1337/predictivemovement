@@ -121,7 +121,14 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
     }
   }
 
-  if (!booking || !address) return <p>Laddar bokning...</p>
+  if (!booking)
+    return (
+      <p>
+        Kunde inte hitta bokning med id: <b>{bookingId}</b>
+      </p>
+    )
+
+  if (!address) return <p>Laddar bokning...</p>
 
   const {
     pickup,

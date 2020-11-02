@@ -6,6 +6,7 @@ import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
 import { Booking, Route as PlanRoute } from '../types'
+import NotFound from './NotFound'
 
 const Container = styled.div`
   position: absolute;
@@ -67,6 +68,7 @@ const Sidebar = (state: Props) => {
                   bookings={state.bookings}
                 />
               </Route>
+              <Route component={NotFound} />
             </RouterSwitch>
           </Content>
         </Route>

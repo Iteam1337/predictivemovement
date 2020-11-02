@@ -1,8 +1,7 @@
 import React from 'react'
-// import styled from 'styled-components'
-import Elements from '../shared-elements'
+import * as Elements from '../shared-elements'
 
-export default () => {
+const NotFound = () => {
   return (
     <>
       <Elements.Typography.NoInfoParagraph>
@@ -11,3 +10,5 @@ export default () => {
     </>
   )
 }
+
+export default NotFound

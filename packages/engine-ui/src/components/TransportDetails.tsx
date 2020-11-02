@@ -59,6 +59,8 @@ const TransportDetails: React.FC<{
   const { transportId } = useParams<{ transportId: string }>()
   const transport = transports.find((v) => v.id === transportId)
 
+  if (!transports.length) return <p>Laddar...</p>
+
   if (!transport)
     return (
       <p>
@@ -204,22 +206,22 @@ const TransportDetails: React.FC<{
             </Elements.Layout.MarginBottomContainer>
           </>
         ) : (
-            <>
-              <Elements.Typography.StrongParagraph>
-                Bokningar på fordon
+          <>
+            <Elements.Typography.StrongParagraph>
+              Bokningar på fordon
             </Elements.Typography.StrongParagraph>
-              <Elements.Typography.NoInfoParagraph>
-                Inga bekräftade bokningar
+            <Elements.Typography.NoInfoParagraph>
+              Inga bekräftade bokningar
             </Elements.Typography.NoInfoParagraph>
-              <Line />
-              <Elements.Typography.StrongParagraph>
-                Rutt
+            <Line />
+            <Elements.Typography.StrongParagraph>
+              Rutt
             </Elements.Typography.StrongParagraph>
-              <Elements.Typography.NoInfoParagraph>
-                Ingen rutt planerad
+            <Elements.Typography.NoInfoParagraph>
+              Ingen rutt planerad
             </Elements.Typography.NoInfoParagraph>
-            </>
-          )}
+          </>
+        )}
         <Elements.Layout.MarginTopContainer alignItems="center">
           <Elements.Buttons.CancelButton
             onClick={() => handleDeleteClick(transport.id)}

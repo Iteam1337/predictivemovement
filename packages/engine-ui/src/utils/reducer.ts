@@ -69,7 +69,7 @@ export const reducer = (state: State, action: any) => {
   }
 }
 
-type State = {
+export type State = {
   bookings: types.Booking[]
   assignedBookings: types.Booking[]
   vehicles: types.Transport[]
@@ -82,6 +82,6 @@ export const initState: State = {
   vehicles: [],
   plan: {
     excludedBookings: [],
-    routes: []
+    routes: [],
   },
 }

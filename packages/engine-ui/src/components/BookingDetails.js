@@ -121,6 +121,10 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
     }
   }
 
+  if (!bookings.length) {
+    return <p>Laddar...</p>
+  }
+
   if (!booking)
     return (
       <p>

@@ -26,11 +26,10 @@ defmodule Engine.BookingProcessor do
     )
   end
 
-  defp handle_booking_failure(%{id: id, failure: %{ status_msg: @jsprit_time_constraint_msg }}), do:  %{id: id, status: "TIME_CONSTRAINTS_EXPIRED"}
+  defp handle_booking_failure(%{id: id, failure: %{status_msg: @jsprit_time_constraint_msg}}),
+    do: %{id: id, status: "TIME_CONSTRAINTS_EXPIRED"}
 
-  defp handle_booking_failure(%{id: id}) do
-    %{id: id, status: "CONSTRAINTS_FAILURE"}
-  end
+  defp handle_booking_failure(%{id: id}), do: %{id: id, status: "CONSTRAINTS_FAILURE"}
 
   def calculate_plan(vehicle_ids, booking_ids)
       when length(vehicle_ids) == 0 or length(booking_ids) == 0,
@@ -63,9 +62,7 @@ defmodule Engine.BookingProcessor do
     PlanStore.put_plan(%{
       vehicles: vehicles,
       booking_ids: booking_ids,
-      excluded_booking_ids:
-        Enum.map(excluded, &handle_booking_failure/1)
-
+      excluded_booking_ids: Enum.map(excluded, &handle_booking_failure/1)
     })
   end
 

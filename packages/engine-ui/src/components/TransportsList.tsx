@@ -1,8 +1,8 @@
 import React from 'react'
-import stores from '../utils/state/stores'
-import Elements from '../shared-elements/'
+import * as stores from '../utils/state/stores'
+import * as Elements from '../shared-elements/'
 import { FlyToInterpolator } from 'react-map-gl'
-import helpers from '../utils/helpers'
+import * as helpers from '../utils/helpers'
 import { Transport } from '../types'
 
 const TransportsList: React.FC<{ transports: Transport[] }> = ({

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import Elements from '../shared-elements'
-import helpers from '../utils/helpers'
+import * as Elements from '../shared-elements'
+import * as helpers from '../utils/helpers'
 import {
   Notification,
   EntityType,

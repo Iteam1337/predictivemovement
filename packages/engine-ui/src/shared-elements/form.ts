@@ -43,4 +43,4 @@ const TextInput = styled.input<{ iconInset?: boolean; error?: boolean }>`
   }
 `
 
-export default { DateInput, Label, TextInput }
+export { DateInput, Label, TextInput }

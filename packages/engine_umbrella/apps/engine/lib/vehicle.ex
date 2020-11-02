@@ -35,9 +35,7 @@ defmodule Vehicle do
     by: [function: &is_integer/1, message: "must be an integer"]
   )
 
-  validates([:capacity, :volume],
-    by: [function: &is_integer/1, message: "must be an integer"]
-  )
+  validates([:capacity, :volume], number: [is: true])
 
   def init(init_arg) do
     {:ok, init_arg}

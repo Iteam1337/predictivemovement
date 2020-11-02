@@ -104,7 +104,7 @@ const Component = ({
               </Elements.Form.Label>
               <FormInputs.TextInput
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                step={1}
+                step={0.1}
                 min="0"
                 required
                 name="volume"

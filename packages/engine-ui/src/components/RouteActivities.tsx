@@ -2,10 +2,10 @@ import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
 import styled from 'styled-components'
 import { Activity, Route } from '../types'
-import helpers from '../utils/helpers'
-import Elements from '../shared-elements'
+import * as helpers from '../utils/helpers'
+import * as Elements from '../shared-elements'
 import { useRouteMatch } from 'react-router-dom'
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 
 const ActivityGroup = styled.div`
   margin-left: auto;

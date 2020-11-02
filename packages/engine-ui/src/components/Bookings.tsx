@@ -1,14 +1,14 @@
 import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
-import Elements from '../shared-elements/'
-import Icons from '../assets/Icons'
+import * as Elements from '../shared-elements/'
+import * as Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import styled from 'styled-components'
 import { Booking } from '../types'
-import helpers from '../utils/helpers'
-import stores from '../utils/state/stores'
+import * as helpers from '../utils/helpers'
+import * as stores from '../utils/state/stores'
 
 const sortBookingsByStatus = (bookings: Booking[]) =>
   bookings.reduce<{

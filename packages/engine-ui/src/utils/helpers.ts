@@ -56,7 +56,7 @@ const formatCoordinateToFixedDecimalLength = ({
   length: number
 }) => `${lat.toFixed(length)}, ${lon.toFixed(length)}`
 
-export const hexToRGBA = (hex: string, opacity: number = 255) => {
+const hexToRGBA = (hex: string, opacity: number = 255) => {
   hex = hex.replace('#', '')
   const r = parseInt(hex.substring(0, 2), 16)
   const g = parseInt(hex.substring(2, 4), 16)
@@ -65,7 +65,7 @@ export const hexToRGBA = (hex: string, opacity: number = 255) => {
   return [r, g, b, opacity]
 }
 
-export default {
+export {
   findAddress,
   calculateMinTime,
   getAddressFromCoordinate,

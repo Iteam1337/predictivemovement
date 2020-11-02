@@ -1,5 +1,5 @@
 import create from 'zustand'
-import reducers from './reducers'
+import * as reducers from './reducers'
 import * as types from './types'
 import { FlyToInterpolator } from 'react-map-gl'
 
@@ -32,4 +32,4 @@ const map = create<types.MapState>(
   })
 )
 
-export default { ui, map }
+export { ui, map }

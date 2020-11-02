@@ -118,7 +118,7 @@ const TimeRestrictionWrapper = styled.div`
   }
 `
 
-export default {
+export {
   InputBlock,
   InputContainer,
   FlexRowWrapper,

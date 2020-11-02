@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import Elements from '../../shared-elements'
-import Icons from '../../assets/Icons'
+import * as Elements from '../../shared-elements'
+import * as Icons from '../../assets/Icons'
 import styled from 'styled-components'
 import AddFormFieldButton from '../forms/inputs/AddFormFieldButton'
 

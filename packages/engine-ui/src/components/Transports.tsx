@@ -3,9 +3,9 @@ import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
 import AddVehicle from './CreateVehicle'
 import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 import { Transport } from '../types'
-import Elements from '../shared-elements'
+import * as Elements from '../shared-elements'
 
 const Transports: React.FC<{
   transports: Transport[]

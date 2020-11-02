@@ -1,8 +1,8 @@
 import React from 'react'
-import Elements from '../../../shared-elements'
+import * as Elements from '../../../shared-elements'
 import locationIcon from '../../../assets/location.svg'
 import styled from 'styled-components'
-import hooks from '../../../utils/hooks'
+import * as hooks from '../../../utils/hooks'
 import debounce from 'lodash.debounce'
 import warningIcon from '../../../assets/warning.svg'
 
@@ -32,9 +32,9 @@ const Component = ({
   const [showDropdown, setShowDropdown] = React.useState(false)
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
 
-  const searchWithDebounce = React.useCallback(
-    debounce((q) => search(q, () => setShowDropdown(true)), 300),
-    []
+  const searchWithDebounce = React.useMemo(
+    () => debounce((q) => search(q, () => setShowDropdown(true)), 300),
+    [search]
   )
 
   const onSearchInputHandler = (event) => {

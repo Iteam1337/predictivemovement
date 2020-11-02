@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useRouteMatch, Route, Switch } from 'react-router-dom'
-import Elements from '../shared-elements'
+import * as Elements from '../shared-elements'
 import PlanRouteDetails from './PlanRouteDetails'
-import Icons from '../assets/Icons'
-import helpers from '../utils/helpers'
 import PlanBookingDetails from './PlanBookingDetails'
-import { Plan, Transport, Booking, ExcludedBooking } from '../types'
-import stores from '../utils/state/stores'
+import * as Icons from '../assets/Icons'
+import * as helpers from '../utils/helpers'
+import * as stores from '../utils/state/stores'
+import { Plan as PlanType, Transport, Booking, ExcludedBooking } from '../types'
 import { FlyToInterpolator } from 'react-map-gl'
 
 const bookingStatusToReadable = (status: string) => {
@@ -33,7 +33,7 @@ const PlanWrapper = styled.div`
 `
 
 interface PlanProps {
-  plan: Plan
+  plan: PlanType
   transports: Transport[]
   dispatchOffers: (params: any) => void
   bookings: Booking[]
@@ -96,7 +96,12 @@ const BookingToggleList: React.FC<{
   </Wrapper>
 )
 
-export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {
+const Plan: React.FC<PlanProps> = ({
+  plan,
+  dispatchOffers,
+  transports,
+  bookings,
+}) => {
   const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0
   )
@@ -106,6 +111,7 @@ export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {
   const { path } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
+
   const onClickHandler = (latitude: number, longitude: number) =>
     setMap({
       latitude,
@@ -115,6 +121,7 @@ export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {
       transitionInterpolator: new FlyToInterpolator(),
       transitionEasing: (t: number) => t * (2 - t),
     })
+
   const onMouseEnter = (id?: string) =>
     setUIState({ type: 'highlightBooking', payload: id })
 
@@ -123,6 +130,7 @@ export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {
       ...currentState,
       isOpen: !currentState.isOpen,
     }))
+
   return (
     <Switch>
       <Route exact path={[path, `${path}/routes/:routeId`]}>
@@ -181,3 +189,5 @@ export default ({ plan, dispatchOffers, transports, bookings }: PlanProps) => {
     </Switch>
   )
 }
+
+export default Plan

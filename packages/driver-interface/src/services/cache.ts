@@ -41,7 +41,7 @@ export default {
     redis.set(`${keys.VEHICLE_ID_BY_TELEGRAM_ID}:${telegramId}`, id),
   getVehicleIdByPhoneNumber: (phoneNumber: string): Promise<string> =>
     redis.get(`${keys.VEHICLE_ID_BY_PHONE_NUMBER}:${phoneNumber}`),
-  setVehicleIdByPhoneNumber: (phone: number, id: string): Promise<string> =>
+  setVehicleIdByPhoneNumber: (phoneNumber: string, id: string): Promise<string> =>
     redis.set(`${keys.VEHICLE_ID_BY_PHONE_NUMBER}:${phone}`, id),
   setInstructionGroup: (
     id: string,

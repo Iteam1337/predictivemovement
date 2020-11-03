@@ -35,7 +35,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
     )
   })
 
-  bot.command('/login', messaging.onPromptUserForTransportId)
+  bot.command('/login', messaging.requestPhoneNumber)
 
   bot.on('message', (ctx) => {
     const msg = ctx.message

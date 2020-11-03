@@ -12,9 +12,7 @@ export const onBotStart = (ctx: TelegrafContext): void => {
   )
 }
 
-export const onPromptUserForTransportId = (
-  ctx: TelegrafContext
-): Promise<Message> =>
+export const requestPhoneNumber = (ctx: TelegrafContext): Promise<Message> =>
   ctx.reply('Klicka på "Skicka telefonnummer" för att logga in', {
     reply_markup: {
       one_time_keyboard: true,

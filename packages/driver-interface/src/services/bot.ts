@@ -60,7 +60,7 @@ export const handleNextDriverInstruction = async (
       return
     }
 
-    const currentInstructionGroup = instructions.shift()
+    const [currentInstructionGroup] = instructions
 
     if (!currentInstructionGroup) {
       cache.setInstructions(vehicleId, null)

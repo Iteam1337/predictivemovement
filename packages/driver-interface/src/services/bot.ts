@@ -6,7 +6,7 @@ import * as messaging from './messaging'
 import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 
-export const driverIsLoggedIn = async (vehicleId) => {
+export const driverIsLoggedIn = async (vehicleId): Promise<boolean> => {
   const vehicle = await cache.getVehicle(vehicleId)
   return !!vehicle.telegramId
 }

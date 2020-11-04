@@ -1,4 +1,4 @@
-FROM elixir as build
+FROM elixir:1.11 as build
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN export MIX_ENV=prod && \
   rm -Rf _build && \
   mix do deps.get, release
 
-FROM elixir
+FROM elixir:1.11
 
 WORKDIR /app
 COPY --from=build /app/_build/prod/rel/engine_umbrella .

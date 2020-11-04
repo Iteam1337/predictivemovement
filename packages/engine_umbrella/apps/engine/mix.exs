@@ -19,11 +19,6 @@ defmodule Engine.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      env: [
-        amqp_host: "localhost",
-        osrm_url: "https://osrm.iteamdev.io",
-        init_from_eventstore: false
-      ],
       extra_applications: [:logger, :gproc],
       mod: {Engine.Application, []}
     ]

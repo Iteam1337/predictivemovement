@@ -11,6 +11,9 @@ config :engine, :outgoing_plan_exchange, "outgoing_plan_updates"
 
 config :engine, event_stores: [Engine.ES]
 
-config :engine, Engine.ES, serializer: Engine.JsonSerializer
-
-import_config "#{Mix.env()}.exs"
+config :engine, Engine.ES,
+  serializer: Engine.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "eventstore",
+  hostname: "localhost"

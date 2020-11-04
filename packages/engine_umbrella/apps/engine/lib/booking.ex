@@ -16,6 +16,7 @@ defmodule Booking do
     :external_id,
     :events,
     :metadata,
+    :size,
     :route
   ]
 
@@ -25,6 +26,20 @@ defmodule Booking do
   validates([:pickup, :lon], number: [is: true])
   validates([:delivery, :lat], number: [is: true])
   validates([:delivery, :lon], number: [is: true])
+
+  validates([:size, :weight],
+    by: [function: &is_integer/1, message: "must be an integer"]
+  )
+
+  validates([:size, :measurements],
+    by: [function: &Booking.valid_measurements/1, message: "must be a list of integers"],
+    length: [is: 3]
+  )
+
+  def valid_measurements(measurements) when is_list(measurements),
+    do: Enum.all?(measurements, &is_integer/1)
+
+  def valid_measurements(_), do: false
 
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
@@ -43,7 +58,8 @@ defmodule Booking do
         pickup: pickup,
         delivery: delivery,
         externalId: external_id,
-        metadata: metadata
+        metadata: metadata,
+        size: size
       }) do
     id = generate_id()
 
@@ -53,7 +69,8 @@ defmodule Booking do
       external_id: external_id,
       delivery: delivery,
       metadata: metadata |> Jason.encode!(),
-      events: []
+      events: [],
+      size: size
     }
 
     with true <- Vex.valid?(booking) do

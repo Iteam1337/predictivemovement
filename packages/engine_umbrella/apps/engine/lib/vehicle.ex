@@ -17,7 +17,8 @@ defmodule Vehicle do
     :end_address,
     :earliest_start,
     :latest_end,
-    :profile
+    :profile,
+    :capacity
   ]
 
   @hour_and_minutes_format ~r/^((?:[01]\d|2[0-3]):[0-5]\d$)/
@@ -29,6 +30,12 @@ defmodule Vehicle do
   validates([:end_address, :lon], number: [is: true])
   validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
   validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
+
+  validates([:capacity, :weight],
+    by: [function: &is_integer/1, message: "must be an integer"]
+  )
+
+  validates([:capacity, :volume], number: [is: true])
 
   def init(init_arg) do
     {:ok, init_arg}
@@ -97,6 +104,7 @@ defmodule Vehicle do
       vehicle_info
       |> Map.put_new(:end_address, Map.get(vehicle_info, :start_address))
       |> Map.put(:id, generate_id())
+      |> Map.put_new(:capacity, %{volume: 15, weight: 700})
       |> Map.update(:metadata, nil, &Jason.encode!/1)
 
     vehicle = struct(Vehicle, vehicle_fields)

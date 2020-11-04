@@ -43,9 +43,31 @@ defmodule VehicleTest do
            ]
   end
 
+  test "does not allow non integer weight capacity" do
+    result =
+      MessageGenerator.random_car(%{
+        capacity: %{volume: 2, weight: 13.4}
+      })
+      |> Vehicle.make()
+
+    assert result == [{:error, [:capacity, :weight], :by, "must be an integer"}]
+  end
+
+  test "does not allow non integer volume capacity" do
+    result =
+      MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
+      |> Vehicle.make()
+
+    assert result == [
+             {:error, :earliest_start, :format, "must have the correct format"},
+             {:error, :latest_end, :format, "must have the correct format"}
+           ]
+  end
+
   test "should validate addresses containing lat/lon" do
     result =
       MessageGenerator.random_car(%{
+        capacity: %{volume: 1, weight: 123},
         earliest_start: nil,
         latest_end: nil,
         metadata: %{driver: %{}, profile: "123"},
@@ -64,6 +86,7 @@ defmodule VehicleTest do
   test "should validate addresses lat/lon in correct format" do
     result =
       MessageGenerator.random_car(%{
+        capacity: %{volume: 1, weight: 123},
         earliest_start: nil,
         latest_end: nil,
         metadata: %{driver: %{}, profile: "123"},

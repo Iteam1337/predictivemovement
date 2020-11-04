@@ -43,7 +43,7 @@ jobs:
       - uses: actions/setup-elixir@v1.0.0
         with:
           otp-version: "23.1"
-          elixir-version: "1.11.0"
+          elixir-version: "1.11.1-1"
       - name: Install Dependencies
         run: mix deps.get
       - name: Compile

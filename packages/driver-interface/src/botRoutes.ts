@@ -64,8 +64,13 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
 
         return cache
           .getAndDeleteInstructionGroup(instructionGroupId)
-          .then(([{ id }]) => id)
-          .then((bookingId) => amqp.publishBookingEvent(bookingId, event))
+          .then((instructionGroup) =>
+            Promise.all(
+              instructionGroup.map(({ id: bookingId }) =>
+                amqp.publishBookingEvent(bookingId, event)
+              )
+            )
+          )
           .then(() => botServices.handleNextDriverInstruction(telegramId))
       }
       default:

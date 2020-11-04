@@ -24,6 +24,10 @@ defmodule Vehicle do
   @hour_and_minutes_format ~r/^((?:[01]\d|2[0-3]):[0-5]\d$)/
 
   validates(:start_address, presence: true)
+  validates([:start_address, :lat], number: [is: true])
+  validates([:start_address, :lon], number: [is: true])
+  validates([:end_address, :lat], number: [is: true])
+  validates([:end_address, :lon], number: [is: true])
   validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
   validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
 
@@ -31,9 +35,7 @@ defmodule Vehicle do
     by: [function: &is_integer/1, message: "must be an integer"]
   )
 
-  validates([:capacity, :volume],
-    by: [function: &is_integer/1, message: "must be an integer"]
-  )
+  validates([:capacity, :volume], number: [is: true])
 
   def init(init_arg) do
     {:ok, init_arg}

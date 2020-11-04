@@ -1,5 +1,5 @@
 import React from 'react'
-import Elements from '../../../shared-elements'
+import * as Elements from '../../../shared-elements'
 
 const Component = ({
   value,

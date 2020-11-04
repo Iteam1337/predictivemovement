@@ -1,8 +1,8 @@
-import Typography from './typography'
-import Form from './form'
-import Layout from './layout'
-import Icons from './icons'
-import Buttons from './buttons'
-import Links from './links'
+import * as Typography from './typography'
+import * as Form from './form'
+import * as Layout from './layout'
+import * as Icons from './icons'
+import * as Buttons from './buttons'
+import * as Links from './links'
 
-export default { Typography, Form, Layout, Icons, Buttons, Links }
+export { Typography, Form, Layout, Icons, Buttons, Links }

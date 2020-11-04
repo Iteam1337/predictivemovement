@@ -37,7 +37,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
     )
   })
 
-  bot.command('/login', messaging.onPromptUserForTransportId)
+  bot.command('/login', messaging.requestPhoneNumber)
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
@@ -66,8 +66,13 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
 
         return cache
           .getAndDeleteInstructionGroup(instructionGroupId)
-          .then(([{ id }]) => id)
-          .then((bookingId) => amqp.publishBookingEvent(bookingId, event))
+          .then((instructionGroup) =>
+            Promise.all(
+              instructionGroup.map(({ id: bookingId }) =>
+                amqp.publishBookingEvent(bookingId, event)
+              )
+            )
+          )
           .then(() => botServices.handleNextDriverInstruction(telegramId))
       }
       default:

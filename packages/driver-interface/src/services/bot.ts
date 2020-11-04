@@ -6,7 +6,7 @@ import * as messaging from './messaging'
 import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 
-export const driverIsLoggedIn = async (vehicleId) => {
+export const driverIsLoggedIn = async (vehicleId): Promise<boolean> => {
   const vehicle = await cache.getVehicle(vehicleId)
   return !!vehicle.telegramId
 }
@@ -16,7 +16,7 @@ export const onLogin = async (
   ctx: TelegrafContext
 ): Promise<Message | void> => {
   const vehicleId = await cache.getVehicleIdByPhoneNumber(
-    phoneNumber.replace('46', '0')
+    phoneNumber.replace('+', '').replace('46', '0')
   )
   const vehicle = await cache.getVehicle(vehicleId)
 
@@ -60,7 +60,7 @@ export const handleNextDriverInstruction = async (
       return
     }
 
-    const currentInstructionGroup = instructions.shift()
+    const [currentInstructionGroup] = instructions
 
     if (!currentInstructionGroup) {
       cache.setInstructions(vehicleId, null)

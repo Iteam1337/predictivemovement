@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import DispatchIcon from '../assets/dispatch.svg'
-import Icons from '../assets/Icons'
+import * as Icons from '../assets/Icons'
 import ParcelIcon from '../assets/parcel.svg'
 import ShippingIcon from '../assets/shippingIcon.svg'
 

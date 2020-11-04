@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import Icons from '../assets/Icons'
-import Elements from '../shared-elements'
+import * as Icons from '../assets/Icons'
+import * as Elements from '../shared-elements'
 
 const Container = styled.div`
   width: 100%;

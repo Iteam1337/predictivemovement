@@ -37,6 +37,18 @@ module.exports = (io) => {
       .each((vehicles) => socket.emit('vehicles', vehicles))
 
     _.merge([_(planCache.values()), plan.fork()])
+      .map((plan) => ({
+        ...plan,
+        excluded_booking_ids: plan.excluded_booking_ids.map((booking) => {
+          const b = bookingsCache.get(booking.id)
+          if (!b) return booking
+          return {
+            ...booking,
+            lat: b.pickup.lat,
+            lon: b.pickup.lon,
+          }
+        }),
+      }))
       .doto((data) => {
         planCache.set('plan', data)
       })
@@ -67,7 +79,7 @@ module.exports = (io) => {
 
     socket.on('new-booking', (params) => {
       const booking = {
-        id: params.id || id62(),
+        externalId: params.externalId,
         senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
         bookingDate: new Date().toISOString(),
         size: params.size,

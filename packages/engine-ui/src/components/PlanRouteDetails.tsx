@@ -2,12 +2,12 @@ import React from 'react'
 import styled from 'styled-components'
 import { FlyToInterpolator } from 'react-map-gl'
 import RouteActivities from './RouteActivities'
-import Icons from '../assets/Icons'
+import * as Icons from '../assets/Icons'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
-import Elements from '../shared-elements'
-import helpers from '../utils/helpers'
+import * as Elements from '../shared-elements'
+import * as helpers from '../utils/helpers'
 import { Route, InAppColor } from '../types'
-import stores from '../utils/state/stores'
+import * as stores from '../utils/state/stores'
 
 interface Props {
   route: Route

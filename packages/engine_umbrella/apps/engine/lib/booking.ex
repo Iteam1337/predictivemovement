@@ -22,25 +22,24 @@ defmodule Booking do
 
   validates(:pickup, presence: true)
   validates(:delivery, presence: true)
+  validates([:pickup, :lat], number: [is: true])
+  validates([:pickup, :lon], number: [is: true])
+  validates([:delivery, :lat], number: [is: true])
+  validates([:delivery, :lon], number: [is: true])
 
   validates([:size, :weight],
     by: [function: &is_integer/1, message: "must be an integer"]
   )
 
   validates([:size, :measurements],
-    by: [function: &Booking.valid_measurements/1, message: "must be an integer"],
+    by: [function: &Booking.valid_measurements/1, message: "must be a list of integers"],
     length: [is: 3]
   )
 
-  def valid_measurements(measurements) do
-    case is_list(measurements) do
-      true ->
-        measurements |> Enum.all?(&is_integer/1)
+  def valid_measurements(measurements) when is_list(measurements),
+    do: Enum.all?(measurements, &is_integer/1)
 
-      _ ->
-        false
-    end
-  end
+  def valid_measurements(_), do: false
 
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
@@ -58,7 +57,7 @@ defmodule Booking do
   def make(%{
         pickup: pickup,
         delivery: delivery,
-        id: external_id,
+        externalId: external_id,
         metadata: metadata,
         size: size
       }) do
@@ -71,12 +70,12 @@ defmodule Booking do
       delivery: delivery,
       metadata: metadata |> Jason.encode!(),
       events: [],
-      size: size,
-      route: Osrm.route(pickup, delivery)
+      size: size
     }
 
     with true <- Vex.valid?(booking) do
       booking
+      |> Map.put(:route, Osrm.route(pickup, delivery))
       |> add_event_to_events_list("new", DateTime.utc_now())
       |> apply_booking_to_state()
       |> (&ES.add_event(%BookingRegistered{booking: &1})).()

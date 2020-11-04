@@ -56,36 +56,34 @@ export const handleNextDriverInstruction = async (
     const instructions = await cache.getInstructions(vehicleId)
 
     if (!instructions) {
-      console.log('No instructions found')
+      console.log('No instructions found for:', vehicleId)
       return
-    }
-
-    const [currentInstructionGroup] = instructions
-
-    if (!currentInstructionGroup) {
+    } else if (!instructions.length) {
+      console.log('Vehicle finished all instructions:', vehicleId)
       cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
+    } else {
+      const [currentInstructionGroup] = instructions
+
+      const bookings = await cache.getBookings(
+        currentInstructionGroup.map((g) => g.id)
+      )
+
+      switch (currentInstructionGroup[0].type) {
+        case 'pickupShipment':
+          return messaging.sendPickupInstruction(
+            currentInstructionGroup,
+            telegramId,
+            bookings
+          )
+        case 'deliverShipment':
+          return messaging.sendDeliveryInstruction(
+            currentInstructionGroup,
+            telegramId,
+            bookings
+          )
+      }
     }
-
-    const bookings = await cache.getBookings(
-      currentInstructionGroup.map((g) => g.id)
-    )
-
-    const type = currentInstructionGroup[0].type
-
-    if (type === 'pickupShipment')
-      return messaging.sendPickupInstruction(
-        currentInstructionGroup,
-        telegramId,
-        bookings
-      )
-
-    if (type === 'deliverShipment')
-      return messaging.sendDeliveryInstruction(
-        currentInstructionGroup,
-        telegramId,
-        bookings
-      )
   } catch (error) {
     console.log('error in handleNextDriverInstruction: ', error)
     return

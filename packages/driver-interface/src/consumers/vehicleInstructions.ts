@@ -31,7 +31,7 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
           ch.consume(ADD_INSTRUCTIONS_TO_VEHICLE, async (msg) => {
             const vehicle = JSON.parse(msg.content.toString())
             const currentVehicle = await cache.getVehicle(vehicle.id)
-            console.log('received plan for vehicle: ', vehicle.id)
+            console.log('received instructions for vehicle: ', vehicle.id)
 
             const groupedInstructions = helpers.groupDriverInstructions(
               helpers.cleanDriverInstructions(vehicle.activities)

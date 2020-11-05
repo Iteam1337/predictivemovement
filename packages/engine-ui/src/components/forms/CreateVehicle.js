@@ -54,11 +54,12 @@ const Component = ({
 
   const transportSelectOptions = Object.entries(transportPresets.truck)
     .map(([name, { weight, volume }]) => ({
-      name: transportPresetNameToHumanReadable(name),
+      value: name,
+      label: transportPresetNameToHumanReadable(name),
       weight,
       volume,
     }))
-    .concat({ name: 'custom' })
+    .concat({ value: 'custom' })
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
@@ -139,7 +140,7 @@ const Component = ({
             Välj kapacitet
           </Elements.Form.Label>
           {!useCustomCapacity && (
-            <FormInputs.TransportTypeSelect
+            <FormInputs.TransportCapacity
               onChange={handleTransportPresetSelectChange}
               options={transportSelectOptions}
             />

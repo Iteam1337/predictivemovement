@@ -13,9 +13,10 @@ const Component = ({
   dispatch,
   formErrors,
   setFormErrors,
+  parcelSizePresets,
 }) => {
   const history = useHistory()
-
+  const [useCustomSize, setUseCustomSize] = React.useState(false)
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
@@ -65,6 +66,49 @@ const Component = ({
     }))
   }
 
+  const handleParcelSizeSelectChange = (e) => {
+    if (e.target.value === 'custom') {
+      setUseCustomSize(!useCustomSize)
+      return onChangeHandler((currentState) => ({
+        ...currentState,
+        size: {
+          weight: '',
+          measurements: '',
+        },
+      }))
+    }
+
+    console.log(
+      'parcelSizePresets[e.target.value]',
+      e.target.value,
+      parcelSizePresets
+    )
+    return onChangeHandler((currentState) => ({
+      ...currentState,
+      size: parcelSizePresets[e.target.value],
+    }))
+  }
+
+  const parcelSizeToHumanReadable = (name) => {
+    switch (name) {
+      case 'small':
+        return 'Liten'
+      case 'medium':
+        return 'Medium'
+      case 'big':
+        return 'Stor'
+    }
+  }
+
+  const parcelSizeSelectOptions = Object.entries(parcelSizePresets)
+    .map(([name, { weight, measurements }]) => ({
+      value: name,
+      label: parcelSizeToHumanReadable(name),
+      weight,
+      measurements,
+    }))
+    .concat({ value: 'custom' })
+
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.Layout.MarginBottomContainer />
@@ -97,51 +141,95 @@ const Component = ({
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Layout.TextInputPairContainer>
-            <Elements.Layout.TextInputPairItem>
-              <Elements.Form.Label required htmlFor="measurements">
-                Storlek
-              </Elements.Form.Label>
-              <FormInputs.TextInput
-                required
-                name="measurements"
-                value={state.size.measurements}
-                placeholder="Mått (BxHxDcm)"
-                pattern="(\d+)x(\d+)x(\d+)"
-                title="BxHxD cm"
-                onChangeHandler={eventHandlers.handleNestedInputChange(
-                  'size',
-                  'measurements',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-            <Elements.Layout.TextInputPairItem>
-              <Elements.Form.Label required htmlFor="weight">
-                Vikt
-              </Elements.Form.Label>
-              <FormInputs.TextInput
-                step={1}
-                name="weight"
-                value={state.size.weight}
-                placeholder="Vikt (kg)"
-                type="number"
-                required
-                isRequiredInline
-                onChangeHandler={eventHandlers.handleNestedInputChange(
-                  'size',
-                  'weight',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-          </Elements.Layout.TextInputPairContainer>
-          <FormInputs.Checkbox
-            label="Paketet är ömtåligt"
-            onChangeHandler={handleFragileParcelChange}
-          />
+          <Elements.Form.Label htmlFor="size" required>
+            Välj storlek
+          </Elements.Form.Label>
+          {!useCustomSize && (
+            <FormInputs.ParcelSize
+              onChange={handleParcelSizeSelectChange}
+              options={parcelSizeSelectOptions}
+            />
+          )}
+          {useCustomSize && (
+            <>
+              <Elements.Layout.InputContainer>
+                {/* <FormInputs.TextInput
+                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                  step={0.1}
+                  min="0"
+                  required
+                  name="volume"
+                  value={state.capacity.volume}
+                  placeholder="Lastvolym (m3)"
+                  type="number"
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'capacity',
+                    'volume',
+                    onChangeHandler
+                  )}
+                /> */}
+
+                <FormInputs.TextInput
+                  required
+                  name="measurements"
+                  value={state.size.measurements}
+                  placeholder="Mått (BxHxDcm)"
+                  pattern="(\d+)x(\d+)x(\d+)"
+                  title="BxHxD cm"
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'size',
+                    'measurements',
+                    onChangeHandler
+                  )}
+                />
+              </Elements.Layout.InputContainer>
+              <Elements.Layout.InputContainer>
+                {/* <FormInputs.TextInput
+                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                  step={1}
+                  min="0"
+                  type="number"
+                  required
+                  name="weight"
+                  value={state.capacity.weight}
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'capacity',
+                    'weight',
+                    onChangeHandler
+                  )}
+                  placeholder="Maxvikt (kg)"
+                /> */}
+
+                <FormInputs.TextInput
+                  step={1}
+                  name="weight"
+                  value={state.size.weight}
+                  placeholder="Vikt (kg)"
+                  type="number"
+                  required
+                  isRequiredInline
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'size',
+                    'weight',
+                    onChangeHandler
+                  )}
+                />
+
+                <Elements.Buttons.CancelButton
+                  padding="0.5rem"
+                  style={{
+                    marginTop: '0.5rem',
+                  }}
+                  onClick={() => setUseCustomSize(!useCustomSize)}
+                >
+                  Återgå till förval
+                </Elements.Buttons.CancelButton>
+              </Elements.Layout.InputContainer>
+            </>
+          )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+
       <Elements.Layout.InputContainer>
         <Elements.Form.Label required htmlFor="pickup">
           Upphämtning

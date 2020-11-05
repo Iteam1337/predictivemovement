@@ -15,10 +15,10 @@ type parcelSizeOptions = {
   measurements: string
 }
 
-const TransportCapacity: React.FC<{ onChange: any; options: options[] }> = ({
-  onChange,
-  options,
-}) => {
+const TransportCapacity: React.FC<{
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
+  options: options[]
+}> = ({ onChange, options }) => {
   return (
     <Elements.Form.SelectInput name="capacity" onChange={onChange}>
       {options.map(({ label, value, weight, volume }) => {
@@ -40,12 +40,12 @@ const TransportCapacity: React.FC<{ onChange: any; options: options[] }> = ({
   )
 }
 
-const ParcelSize: React.FC<{ onChange: any; options: parcelSizeOptions[] }> = ({
-  onChange,
-  options,
-}) => {
+const ParcelSize: React.FC<{
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
+  options: parcelSizeOptions[]
+}> = ({ onChange, options }) => {
   return (
-    <Elements.Form.SelectInput name="capacity" onChange={onChange}>
+    <Elements.Form.SelectInput name="size" onChange={onChange}>
       {options.map(({ label, value, weight, measurements }) => {
         if (value === 'custom') {
           return (

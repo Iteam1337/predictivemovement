@@ -114,12 +114,12 @@ export const sendPickupInstruction = async (
   const message = (instructionGroup.length === 1
     ? `🎁 Ditt nästa stopp är [${pickup}](${getDirectionsUrl(
         pickup
-      )}) där du ska hämta paket "${helpers
-        .getLastFourChars(instructionGroup[0].id)
-        .toUpperCase()}". Paketet ska sedan vidare till ${delivery}.`
+      )}) där du ska hämta paket "${helpers.formatId(
+        instructionGroup[0].id
+      )}". Paketet ska sedan vidare till ${delivery}.`
     : `🎁 Hämta följande paket:
 ${instructionGroup
-  .map((ig, i) => `${++i}. ${helpers.getLastFourChars(ig.id).toUpperCase()}`)
+  .map((ig, i) => `${++i}. ${helpers.formatId(ig.id)}`)
   .join('\n')}\nvid [${pickup}](${getDirectionsUrl(pickup)})`
   )
     .concat(
@@ -160,12 +160,10 @@ export const sendDeliveryInstruction = async (
       : await getAddressFromCoordinate({ ...firstBooking.delivery })
 
   const message = (instructionGroup.length === 1
-    ? `🎁 Leverera paket "${helpers
-        .getLastFourChars(instructionGroup[0].id)
-        .toUpperCase()}" `
+    ? `🎁 Leverera paket "${helpers.formatId(instructionGroup[0].id)}" `
     : `🎁 Leverera följande paket:
   ${instructionGroup
-    .map((ig, i) => `${++i}. ${helpers.getLastFourChars(ig.id).toUpperCase()}`)
+    .map((ig, i) => `${++i}. ${helpers.formatId(ig.id)}`)
     .join('\n')}\n`
   )
     .concat(`till [${delivery}](${getDirectionsUrl(delivery)})!\n`)
@@ -205,7 +203,7 @@ export const sendPickupInformation = (
 
   const packageInfos = bookings
     .map((b) =>
-      `\nID: ${helpers.getLastFourChars(b.id).toUpperCase()}\n`
+      `\nID: ${helpers.formatId(b.id)}\n`
         .concat(
           b.metadata?.sender?.info
             ? `Extra information vid upphämtning: ${b.metadata.sender.info}\n`

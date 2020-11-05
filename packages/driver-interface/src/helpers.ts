@@ -1,6 +1,6 @@
 import { Instruction } from './types'
 
-export const getLastFourChars = (str: string): string =>
+const getLastFourChars = (str: string): string =>
   str.slice(str.length - 4, str.length)
 
 export const formatId = (id: string): string =>

@@ -1,4 +1,4 @@
-import { convertInstructionsToSummary } from '../src/services/messaging'
+import { convertInstructionsToSummaryList } from '../src/services/messaging'
 
 test('2 instruction groups with 1 entity in each ', () => {
   const instructions = [
@@ -21,11 +21,11 @@ test('2 instruction groups with 1 entity in each ', () => {
       },
     ],
   ]
-  const res = convertInstructionsToSummary(instructions)
+  const res = convertInstructionsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
-1\\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
-2\\. Lämna __ODMW__ vid Storgatan 59, Stockholm, Sweden`)
+1\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
+2\. Lämna __ODMW__ vid Storgatan 59, Stockholm, Sweden`)
 })
 
 test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', () => {
@@ -65,12 +65,12 @@ test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', 
       },
     ],
   ]
-  const res = convertInstructionsToSummary(instructions)
+  const res = convertInstructionsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
-1\\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
-2\\. Hämta __NJDJ__ vid Åkerivägen 3, Sweden
-3\\. Lämna __ODMW__, __NJDJ__ vid Storgatan 59, Stockholm, Sweden`)
+1\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
+2\. Hämta __NJDJ__ vid Åkerivägen 3, Sweden
+3\. Lämna __ODMW__, __NJDJ__ vid Storgatan 59, Stockholm, Sweden`)
 })
 
 test('2 instruction group with 2 entities, 1 instruction group with 1 ', () => {
@@ -126,11 +126,11 @@ test('2 instruction group with 2 entities, 1 instruction group with 1 ', () => {
       },
     ],
   ]
-  const res = convertInstructionsToSummary(instructions)
+  const res = convertInstructionsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
-1\\. Hämta __ODMW__, __NWIY__ vid Kellgrensgatan 14, Stockholm, Sweden
-2\\. Lämna __ODMW__, __NWIY__ vid Storgatan 59, Stockholm, Sweden
-3\\. Hämta __NJDJ__ vid Åkerivägen 3, Sweden
-4\\. Lämna __NJDJ__ vid Stockholmsvägen 8, Sweden`)
+1\. Hämta __ODMW__, __NWIY__ vid Kellgrensgatan 14, Stockholm, Sweden
+2\. Lämna __ODMW__, __NWIY__ vid Storgatan 59, Stockholm, Sweden
+3\. Hämta __NJDJ__ vid Åkerivägen 3, Sweden
+4\. Lämna __NJDJ__ vid Stockholmsvägen 8, Sweden`)
 })

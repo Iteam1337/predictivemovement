@@ -3,7 +3,7 @@ import { Message } from 'telegraf/typings/telegram-types'
 import bot from '../adapters/bot'
 import * as helpers from '../helpers'
 import { Booking, Instruction } from '../types'
-import { getDirectionsFromActivities, getDirectionsUrl } from './google'
+import { getDirectionsUrl, getDirectionsFromInstructions } from './google'
 import { getAddressFromCoordinate } from './pelias'
 
 export const onBotStart = (ctx: TelegrafContext): void => {
@@ -38,9 +38,14 @@ export const sendSummary = (
   telegramId: number,
   instructions: Instruction[][]
 ): Promise<Message> => {
-  const text = convertInstructionsToSummary(instructions)
-  return bot.telegram.sendMessage(telegramId, text, {
-    parse_mode: 'MarkdownV2',
+  const summaryList = convertInstructionsToSummaryList(instructions)
+  const summary =
+    summaryList +
+    `\n[Se rutt på karta](${getDirectionsFromInstructions(instructions)})`
+
+  return bot.telegram.sendMessage(telegramId, summary, {
+    parse_mode: 'Markdown',
+    disable_web_page_preview: true,
   })
 }
 
@@ -48,7 +53,7 @@ export const onNoInstructionsForVehicle = (
   ctx: TelegrafContext
 ): Promise<Message> => ctx.reply('Vi kunde inte hitta några instruktioner...')
 
-export const convertInstructionsToSummary = (
+export const convertInstructionsToSummaryList = (
   instructions: Instruction[][]
 ): string =>
   instructions
@@ -71,23 +76,9 @@ export const convertInstructionsToSummary = (
     .reduce(
       (summary: string, { ids, name, type }, index) =>
         `${summary}
-${index + 1}\\. ${type} __${ids}__ vid ${name}`,
+${index + 1}\. ${type} __${ids}__ vid ${name}`,
       '🎁  Här är dina körningar:'
     )
-
-export const onInstructionsForVehicle = (
-  activities: Instruction[],
-  bookingIds: string[],
-  id: number
-): Promise<Message> => {
-  const directions = getDirectionsFromActivities(activities)
-
-  return bot.telegram.sendMessage(
-    id,
-    `${bookingIds.length} paket finns att hämta. [Se på kartan](${directions}).`,
-    { parse_mode: 'Markdown' }
-  )
-}
 
 export const sendDriverFinishedMessage = (
   telegramId: number

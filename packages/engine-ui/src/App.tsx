@@ -70,10 +70,10 @@ const App = () => {
     })
   })
 
-  useSocket('vehicles', (newVehicles) => {
+  useSocket('vehicles', (newTransports) => {
     dispatch({
       type: 'setTransports',
-      payload: newVehicles,
+      payload: newTransports,
     })
   })
 
@@ -82,7 +82,7 @@ const App = () => {
       type: 'setPlan',
       payload: {
         routes: plan.vehicles,
-        excludedBookings: plan.excluded_booking_ids
+        excludedBookings: plan.excluded_booking_ids,
       },
     })
   })

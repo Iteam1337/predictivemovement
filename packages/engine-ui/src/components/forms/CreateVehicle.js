@@ -41,6 +41,25 @@ const Component = ({
     }))
   }
 
+  const transportPresetNameToHumanReadable = (name) => {
+    switch (name) {
+      case 'small':
+        return 'Liten'
+      case 'medium':
+        return 'Medium'
+      case 'big':
+        return 'Stor'
+    }
+  }
+
+  const transportSelectOptions = Object.entries(transportPresets.truck)
+    .map(([name, { weight, volume }]) => ({
+      name: transportPresetNameToHumanReadable(name),
+      weight,
+      volume,
+    }))
+    .concat({ name: 'custom' })
+
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
       <Elements.Layout.MarginBottomContainer />
@@ -120,30 +139,15 @@ const Component = ({
             Välj kapacitet
           </Elements.Form.Label>
           {!useCustomCapacity && (
-            <select
-              name="capacity"
+            <FormInputs.TransportTypeSelect
               onChange={handleTransportPresetSelectChange}
-            >
-              {Object.entries(transportPresets.truck).map(
-                ([size, { weight, volume }]) => {
-                  return (
-                    <option key={size} value={size}>
-                      {size} (max {volume} m3, {weight} kg)
-                    </option>
-                  )
-                }
-              )}
-              <option value="custom">Ange anpassad kapacitet</option>
-            </select>
+              options={transportSelectOptions}
+            />
           )}
 
           {useCustomCapacity && (
             <>
               <Elements.Layout.InputContainer>
-                {/* <Elements.Form.Label required htmlFor="volume">
-                  Lastvolym (m3)
-                </Elements.Form.Label> */}
-
                 <FormInputs.TextInput
                   onFocus={() => dispatch({ type: 'resetInputClickState' })}
                   step={0.1}
@@ -161,10 +165,6 @@ const Component = ({
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>
-                {/* <Elements.Form.Label required htmlFor="weight">
-                  Maxvikt (kg)
-                </Elements.Form.Label> */}
-
                 <FormInputs.TextInput
                   onFocus={() => dispatch({ type: 'resetInputClickState' })}
                   step={1}
@@ -181,17 +181,15 @@ const Component = ({
                   placeholder="Maxvikt (kg)"
                 />
 
-                <button
+                <Elements.Buttons.CancelButton
+                  padding="0.5rem"
                   style={{
-                    alignSelf: 'center',
-                    margin: 0,
-
-                    marginLeft: '0.5rem',
+                    marginTop: '0.5rem',
                   }}
                   onClick={() => setUseCustomCapacity(!useCustomCapacity)}
                 >
-                  x
-                </button>
+                  Återgå till förval
+                </Elements.Buttons.CancelButton>
               </Elements.Layout.InputContainer>
             </>
           )}

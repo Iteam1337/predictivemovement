@@ -3,6 +3,8 @@ import * as bot from '../services/bot'
 import { open, queues, exchanges } from '../adapters/amqp'
 import { Replies } from 'amqplib'
 import * as helpers from '../helpers'
+import { getAddressFromCoordinate } from '../services/pelias'
+import { Instruction } from '../types'
 
 const { ADD_INSTRUCTIONS_TO_VEHICLE } = queues
 const { OUTGOING_VEHICLE_UPDATES } = exchanges
@@ -32,19 +34,28 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
             const vehicle = JSON.parse(msg.content.toString())
             const currentVehicle = await cache.getVehicle(vehicle.id)
             console.log('received instructions for vehicle: ', vehicle.id)
-
-            const groupedInstructions = helpers.groupDriverInstructions(
-              helpers.cleanDriverInstructions(vehicle.activities)
+            const groupedInstructions = await Promise.all(
+              vehicle.activities.map(
+                async (instruction: Instruction): Promise<Instruction> => ({
+                  ...instruction,
+                  address: {
+                    ...instruction.address,
+                    name: await getAddressFromCoordinate(instruction.address),
+                  },
+                })
+              )
             )
-
+              .then(helpers.cleanDriverInstructions)
+              .then(helpers.groupDriverInstructions)
             await cache.setInstructions(vehicle.id, groupedInstructions)
             await cache.addVehicle(vehicle.id, {
               ...currentVehicle,
               ...vehicle,
             })
             if (bot.driverIsLoggedIn(vehicle.id)) {
-              bot.handleNextDriverInstruction(
-                parseInt(currentVehicle.telegramId)
+              await bot.onInstructionsReceived(
+                parseInt(currentVehicle.telegramId),
+                groupedInstructions
               )
             }
             return ch.ack(msg)

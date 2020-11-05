@@ -5,10 +5,20 @@ import { v4 as uuid } from 'uuid'
 import * as messaging from './messaging'
 import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
+import { Instruction } from '../types'
 
 export const driverIsLoggedIn = async (vehicleId): Promise<boolean> => {
   const vehicle = await cache.getVehicle(vehicleId)
   return !!vehicle.telegramId
+}
+
+export const onInstructionsReceived = (
+  telegramId: number,
+  instructions: Instruction[][]
+): Promise<Message> => {
+  return messaging
+    .sendSummary(telegramId, instructions)
+    .then(() => handleNextDriverInstruction(telegramId))
 }
 
 export const onLogin = async (
@@ -63,11 +73,13 @@ export const handleNextDriverInstruction = async (
       cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
     } else {
+      console.log('hej', JSON.stringify(instructions, null, 2))
       const [currentInstructionGroup] = instructions
 
       const bookings = await cache.getBookings(
         currentInstructionGroup.map((g) => g.id)
       )
+      // console.log('book', bookings)
 
       switch (currentInstructionGroup[0].type) {
         case 'pickupShipment':

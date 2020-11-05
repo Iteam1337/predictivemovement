@@ -51,6 +51,11 @@ const FlexRowBaselineContainer = styled.div`
   display: flex;
   align-items: baseline;
 `
+
+const FlexContainer = styled.div`
+  display: flex;
+`
+
 const MarginBottomContainer = styled.div`
   margin-bottom: 1rem;
   display: flex;
@@ -139,5 +144,6 @@ export {
   SectionWithMargin,
   MarginTopContainerSm,
   TransportsList,
-  FlexRowInCenter
+  FlexRowInCenter,
+  FlexContainer,
 }

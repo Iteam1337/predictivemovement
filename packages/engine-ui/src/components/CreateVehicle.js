@@ -8,13 +8,18 @@ import moment from 'moment'
 import * as stores from '../utils/state/stores'
 import React from 'react'
 
+const transportPresets = {
+  truck: {
+    small: { weight: 1234, volume: 18 },
+    medium: { weight: 2234, volume: 24 },
+    big: { weight: 4234, volume: 36 },
+  },
+}
+
 const initialState = {
   vehicleType: '',
   id: '',
-  capacity: {
-    volume: '',
-    weight: '',
-  },
+  capacity: transportPresets.truck.small,
   timewindow: { start: null, end: null },
   startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
   endPosition: { lat: undefined, lon: undefined, name: '' },
@@ -99,6 +104,7 @@ const CreateVehicle = ({ onSubmit }) => {
           onSubmitHandler={onSubmitHandler}
           formState={formState}
           dispatch={setUIState}
+          transportPresets={transportPresets}
         />
       </Elements.Layout.Container>
     </MainRouteLayout>

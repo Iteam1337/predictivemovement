@@ -14,11 +14,26 @@ export type Truck = {
   capacity: { weight: number; volume: number }
 }
 
+interface BookingRoute {
+  distance: number
+  duration: number
+  geometry: {
+    coordinates: {
+      lat: number
+      lon: number
+    }[]
+    legs: any[]
+    weight: number
+    weight_name: string
+  }
+}
+
 export interface Booking {
   id: string
   pickup: ParcelAddress
   delivery: ParcelAddress
   metadata: Metadata
+  route: BookingRoute
   size: Size
   status: BookingStatus
 }

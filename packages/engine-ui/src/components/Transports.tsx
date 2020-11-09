@@ -5,6 +5,7 @@ import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
 import * as stores from '../utils/state/stores'
 import { Transport } from '../types'
+import NotFound from './NotFound'
 import * as Elements from '../shared-elements'
 
 const Transports: React.FC<{
@@ -28,10 +29,10 @@ const Transports: React.FC<{
           </Link>
         </Elements.Layout.FlexRowInCenter>
       </Route>
-      <Route path={`${path}/add-vehicle`}>
+      <Route exact path={`${path}/add-vehicle`}>
         <AddVehicle onSubmit={addVehicle} />
       </Route>
-      <Route path={`${path}/:vehicleId`}>
+      <Route exact path={`${path}/:transportId`}>
         <TransportDetails
           transports={transports}
           deleteTransport={deleteVehicle}
@@ -40,6 +41,7 @@ const Transports: React.FC<{
           }
         />
       </Route>
+      <Route component={NotFound} />
     </Switch>
   )
 }

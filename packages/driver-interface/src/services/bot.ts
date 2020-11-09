@@ -1,4 +1,3 @@
-import * as helpers from '../helpers'
 import * as amqp from './amqp'
 import cache from './cache'
 import { v4 as uuid } from 'uuid'
@@ -7,39 +6,34 @@ import * as messaging from './messaging'
 import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 
+export const driverIsLoggedIn = async (vehicleId): Promise<boolean> => {
+  const vehicle = await cache.getVehicle(vehicleId)
+  return !!vehicle.telegramId
+}
+
 export const onLogin = async (
-  vehicleId: string,
+  phoneNumber: string,
   ctx: TelegrafContext
 ): Promise<Message | void> => {
+  const vehicleId = await cache.getVehicleIdByPhoneNumber(
+    phoneNumber.replace('+', '').replace('46', '0')
+  )
   const vehicle = await cache.getVehicle(vehicleId)
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
   const telegramId = ctx.update.message.from.id
   await cache.setVehicleIdByTelegramId(telegramId, vehicleId)
-
-  if (vehicle.telegramId) {
-    return
-  }
-
-  const groupedInstructions = helpers.groupDriverInstructions(
-    helpers.cleanDriverInstructions(vehicle.activities)
-  )
-
-  await cache.setInstructions(vehicle.id, groupedInstructions)
-
   await cache.addVehicle(vehicleId, {
     ...vehicle,
     telegramId,
   })
-
   return messaging
     .onDriverLoginSuccessful(ctx)
     .then(() => handleNextDriverInstruction(telegramId))
 }
 
 export const onLocationMessage = async (
-  msg: IncomingMessage,
-  ctx: TelegrafContext
+  msg: IncomingMessage
 ): Promise<void> => {
   const vehicleId = await cache.getVehicleIdByTelegramId(msg.from.id)
 
@@ -51,7 +45,7 @@ export const onLocationMessage = async (
     id: vehicleId,
   }
 
-  amqp.updateLocation(message, ctx)
+  amqp.updateLocation(message)
 }
 
 export const handleNextDriverInstruction = async (
@@ -59,10 +53,19 @@ export const handleNextDriverInstruction = async (
 ): Promise<Message> => {
   try {
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
-    const [currentInstructionGroup] = await cache.getInstructions(vehicleId)
+    const instructions = await cache.getInstructions(vehicleId)
 
-    if (!currentInstructionGroup)
+    if (!instructions) {
+      console.log('No instructions found')
+      return
+    }
+
+    const [currentInstructionGroup] = instructions
+
+    if (!currentInstructionGroup) {
+      cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
+    }
 
     const bookings = await cache.getBookings(
       currentInstructionGroup.map((g) => g.id)
@@ -100,8 +103,10 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
 
     const instructionGroupId = uuid().slice(0, 8)
 
-    if (!nextInstructionGroup)
+    if (!nextInstructionGroup) {
+      cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
+    }
 
     await cache.setInstructionGroup(instructionGroupId, nextInstructionGroup)
 

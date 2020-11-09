@@ -37,7 +37,7 @@ export const getAddressFromCoordinate = (coordinate: {
 
 export const getDirectionsFromInstructions = (
   instructionGroups: Instruction[][]
-) =>
+): string =>
   instructionGroups
     .flatMap((instructionGroup: Instruction[]) =>
       instructionGroup.map(({ address }) => address)

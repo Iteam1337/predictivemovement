@@ -1,31 +1,32 @@
 import React from 'react'
 import { useRouteMatch } from 'react-router-dom'
+import { Booking, Route, Transport } from '../types'
 import * as helpers from './helpers'
-import * as stores from '../utils/state/stores'
+import { State } from './reducer'
+import * as stores from './state/stores'
 
-const useFilteredStateFromQueryParams = (state) => {
-  const includeBookings = useRouteMatch(['/bookings', '/bookings/:id'], {
+export const useFilteredStateFromQueryParams = (state: State) => {
+  const includeBookings = useRouteMatch({
+    path: ['/bookings', '/bookings/:id'],
     exact: true,
   })
 
-  const includeTransports = useRouteMatch(
-    ['/plans', '/transports', '/transports/:id'],
-    {
-      exact: true,
-    }
-  )
+  const includeTransports = useRouteMatch({
+    path: ['/plans', '/transports', '/transports/:id'],
+    exact: true,
+  })
 
   const rootView = useRouteMatch({
     path: '/',
     exact: true,
   })
 
-  const bookingDetailView = useRouteMatch({
+  const bookingDetailView = useRouteMatch<{ id: string }>({
     path: '/bookings/:id',
     exact: true,
   })
 
-  const transportDetailView = useRouteMatch({
+  const transportDetailView = useRouteMatch<{ id: string }>({
     path: '/transports/:id',
     exact: true,
   })
@@ -34,12 +35,12 @@ const useFilteredStateFromQueryParams = (state) => {
     path: '/plans',
   })
 
-  const planRouteDetailsView = useRouteMatch({
+  const planRouteDetailsView = useRouteMatch<{ routeId: string }>({
     path: '/plans/routes/:routeId',
     exact: true,
   })
 
-  const includeBookingRouteIfDetailView = (booking) => {
+  const includeBookingRouteIfDetailView = (booking: Booking) => {
     if (bookingDetailView) {
       return booking
     }
@@ -49,10 +50,11 @@ const useFilteredStateFromQueryParams = (state) => {
     return rest
   }
 
-  const includeOneBookingIfDetailView = (booking) =>
-    bookingDetailView ? bookingDetailView.params.id === booking.id : true
+  const includeOneBookingIfDetailView = (
+    booking: Booking | Omit<Booking, 'route'>
+  ) => (bookingDetailView ? bookingDetailView.params.id === booking.id : true)
 
-  const includeTransportRouteIfDetailView = (transport) => {
+  const includeTransportRouteIfDetailView = (transport: Transport) => {
     if (transportDetailView) {
       return transport
     }
@@ -60,10 +62,12 @@ const useFilteredStateFromQueryParams = (state) => {
 
     return rest
   }
-  const includeOneTransportIfDetailView = (transport) =>
+  const includeOneTransportIfDetailView = (
+    transport: Transport | Omit<Transport, 'current_route'>
+  ) =>
     transportDetailView ? transportDetailView.params.id === transport.id : true
 
-  const includeOnePlanRouteIfDetailView = (route) =>
+  const includeOnePlanRouteIfDetailView = (route: Route) =>
     planRouteDetailsView
       ? planRouteDetailsView.params.routeId === route.id
       : true
@@ -87,7 +91,7 @@ const useFilteredStateFromQueryParams = (state) => {
         ? {
             excludedBookings: state.plan.excludedBookings,
             routes: state.plan.routes
-              .map((r, i) => ({ ...r, routeIndex: i }))
+              .map((r: Route, i: number) => ({ ...r, routeIndex: i }))
               .filter(includeOnePlanRouteIfDetailView),
           }
         : { excludedBookings: [], routes: [] },
@@ -95,9 +99,9 @@ const useFilteredStateFromQueryParams = (state) => {
   }
 }
 
-const useGetSuggestedAddresses = (initialState) => {
+export const useGetSuggestedAddresses = (initialState = []) => {
   const [suggested, set] = React.useState(initialState)
-  const find = (query, callback) =>
+  const find = (query: string, callback: () => void) =>
     helpers
       .findAddress(query)
       .then(({ features }) => {
@@ -107,6 +111,11 @@ const useGetSuggestedAddresses = (initialState) => {
               coordinates: [lon, lat],
             },
             properties: { name, county },
+          }: {
+            geometry: {
+              coordinates: [lat: number, lon: number]
+            }
+            properties: { name: string; county: string }
           }) => ({
             name,
             county,
@@ -128,7 +137,11 @@ const useGetSuggestedAddresses = (initialState) => {
   return [find, suggested]
 }
 
-const useFormStateWithMapClickControl = (start, end, set) => {
+export const useFormStateWithMapClickControl = (
+  start: string,
+  end: string,
+  set: (callback: (current: any) => void) => void
+) => {
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
   React.useEffect(() => {
@@ -190,10 +203,4 @@ const useFormStateWithMapClickControl = (start, end, set) => {
   React.useEffect(() => {
     return () => setUIState({ type: 'resetInputClickState' })
   }, [setUIState])
-}
-
-export {
-  useFilteredStateFromQueryParams,
-  useGetSuggestedAddresses,
-  useFormStateWithMapClickControl,
 }

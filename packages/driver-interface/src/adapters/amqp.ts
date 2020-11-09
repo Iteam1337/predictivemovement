@@ -13,4 +13,5 @@ export const queues = {
   OFFER_BOOKING_TO_TELEGRAM_VEHICLE: 'offer_bookings_to_telegram_vehicles',
   ADD_BOOKING_INFO: 'add_booking_info_in_driver_interface',
   ADD_INSTRUCTIONS_TO_VEHICLE: 'add_instructions_to_vehicle',
+  ADD_VEHICLE: 'add_vehicle.driver_interface',
 }

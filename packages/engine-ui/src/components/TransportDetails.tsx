@@ -59,7 +59,14 @@ const TransportDetails: React.FC<{
   const { transportId } = useParams<{ transportId: string }>()
   const transport = transports.find((v) => v.id === transportId)
 
-  if (!transport) return <p>Loading...</p>
+  if (!transports.length) return <p>Laddar...</p>
+
+  if (!transport)
+    return (
+      <p>
+        Kunde inte hitta transport med id: <b>{transportId}</b>
+      </p>
+    )
 
   const handleDeleteClick = (transportId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {

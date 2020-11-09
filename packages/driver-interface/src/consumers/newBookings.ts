@@ -20,7 +20,7 @@ const pickupInstructions = (): Promise<Replies.Consume> =>
           })
         )
         .then(() =>
-          ch.bindQueue(ADD_BOOKING_INFO, OUTGOING_BOOKING_UPDATES, 'assigned')
+          ch.bindQueue(ADD_BOOKING_INFO, OUTGOING_BOOKING_UPDATES, 'new')
         )
         .then(() =>
           ch.consume(ADD_BOOKING_INFO, async (msg) => {

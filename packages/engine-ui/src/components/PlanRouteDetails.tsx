@@ -6,7 +6,7 @@ import * as Icons from '../assets/Icons'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import * as Elements from '../shared-elements'
 import * as helpers from '../utils/helpers'
-import { Route, InAppColor } from '../types'
+import { Route, InAppColor, Activity } from '../types'
 import * as stores from '../utils/state/stores'
 
 interface Props {
@@ -36,10 +36,42 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
   const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
 
+  const panMapView = (latitude: number, longitude: number) =>
+    setMap({
+      latitude,
+      longitude,
+      zoom: 10,
+      transitionDuration: 3000,
+      transitionInterpolator: new FlyToInterpolator(),
+      transitionEasing: (t: number) => t * (2 - t),
+    })
+  const calculateCenter = (activities: Activity[]) => {
+    const coordinates = activities.reduce<{ lat: number; lon: number }>(
+      (prev, curr) => ({
+        lat: prev.lat + curr.address.lat,
+        lon: prev.lon + curr.address.lon,
+      }),
+      { lat: 0, lon: 0 }
+    )
+
+    return {
+      lat: coordinates.lat / activities.length,
+      lon: coordinates.lon / activities.length,
+    }
+  }
+
+  const getMapCoordinates = () => {
+    if (!route.activities) return route.start_address
+    return calculateCenter(route.activities)
+  }
+
   const toggle = (id: string) => {
     if (id === routeId) {
       return history.push(isCurrentPlan ? '/plans/current-plan' : '/plans')
     }
+
+    const { lat, lon } = getMapCoordinates()
+    panMapView(lat, lon)
 
     return history.push(
       isCurrentPlan ? `/plans/current-plan/${id}` : `/plans/routes/${id}`
@@ -76,14 +108,7 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
               }
               to={`/transports/${route.id}`}
               onClick={() =>
-                setMap({
-                  latitude: route.start_address.lat,
-                  longitude: route.start_address.lon,
-                  zoom: 10,
-                  transitionDuration: 3000,
-                  transitionInterpolator: new FlyToInterpolator(),
-                  transitionEasing: (t: number) => t * (2 - t),
-                })
+                panMapView(route.start_address.lat, route.start_address.lon)
               }
             >
               {helpers.getLastFourChars(route.id).toUpperCase()}

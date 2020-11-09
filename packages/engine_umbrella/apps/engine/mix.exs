@@ -5,7 +5,7 @@ defmodule Engine.MixProject do
     [
       app: :engine,
       version: "0.1.0",
-      elixir: "~> 1.10",
+      elixir: "~> 1.11",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -19,11 +19,6 @@ defmodule Engine.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      env: [
-        amqp_host: "localhost",
-        osrm_url: "https://osrm.iteamdev.io",
-        init_from_eventstore: false
-      ],
       extra_applications: [:logger, :gproc],
       mod: {Engine.Application, []}
     ]

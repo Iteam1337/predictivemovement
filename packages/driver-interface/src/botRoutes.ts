@@ -1,20 +1,9 @@
 import * as botServices from './services/bot'
 import * as messaging from './services/messaging'
+import * as amqp from './services/amqp'
 import cache from './services/cache'
-import { open, exchanges } from './adapters/amqp'
 import Telegraf from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
-
-const { INCOMING_BOOKING_UPDATES } = exchanges
-
-const channel = open
-  .then((conn) => conn.createChannel())
-  .then((ch) => {
-    ch.assertExchange(INCOMING_BOOKING_UPDATES, 'topic', {
-      durable: true,
-    })
-    return ch
-  })
 
 async function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
@@ -26,31 +15,13 @@ async function onArrived(msg) {
   )
 }
 
-function handleBookingEvent(telegramId, bookingIds, event) {
-  return channel
-    .then((openChannel) =>
-      Promise.all(
-        bookingIds.map((id) =>
-          openChannel.publish(
-            INCOMING_BOOKING_UPDATES,
-            event,
-            Buffer.from(JSON.stringify({ id, status: event })),
-            {
-              persistent: true,
-            }
-          )
-        )
-      )
-    )
-    .catch(console.warn)
-    .then(() => botServices.handleNextDriverInstruction(telegramId))
-}
-
 export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', async (ctx) => {
-    const vehicleId = await cache.getVehicleIdByTelegramId(ctx.botInfo.id)
+    const vehicleId = await cache.getVehicleIdByTelegramId(
+      ctx.update.message.from.id
+    )
     const vehicleWithPlan = await cache.getVehicle(vehicleId)
 
     if (!vehicleWithPlan || !vehicleWithPlan.activities)
@@ -66,28 +37,19 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
     )
   })
 
-  bot.command('/login', messaging.onPromptUserForTransportId)
+  bot.command('/login', messaging.requestPhoneNumber)
 
   bot.on('message', (ctx) => {
     const msg = ctx.message
-
-    /** Login attempt from command /login. */
-    if (msg.text && msg.text.toLowerCase().includes('pmv-')) {
-      botServices.onLogin(msg.text, ctx)
-    }
-
-    if (!msg.location) return
-
-    return botServices.onLocationMessage(msg, ctx)
+    if (msg.contact && msg.contact.phone_number)
+      return botServices.onLogin(msg.contact.phone_number, ctx)
+    if (msg.location) return botServices.onLocationMessage(msg)
   })
 
   bot.on('edited_message', (ctx) => {
     const msg = ctx.update.edited_message
 
-    /** Telegram live location updates. */
-    if (!msg.location) return
-
-    return botServices.onLocationMessage(msg, ctx)
+    if (msg.location) return botServices.onLocationMessage(msg)
   })
 
   /** Listen for user invoked button clicks. */
@@ -99,19 +61,19 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
       case 'picked_up':
       case 'delivered':
       case 'delivery_failed': {
-        const { id: telegramId } = msg.update.callback_query.from
-
+        const telegramId = msg.update.callback_query.from.id
         const { e: event, id: instructionGroupId } = callbackPayload
 
-        const instructionGroup = await cache.getAndDeleteInstructionGroup(
-          instructionGroupId
-        )
-
-        return handleBookingEvent(
-          telegramId,
-          instructionGroup.map((ig) => ig.id),
-          event
-        )
+        return cache
+          .getAndDeleteInstructionGroup(instructionGroupId)
+          .then((instructionGroup) =>
+            Promise.all(
+              instructionGroup.map(({ id: bookingId }) =>
+                amqp.publishBookingEvent(bookingId, event)
+              )
+            )
+          )
+          .then(() => botServices.handleNextDriverInstruction(telegramId))
       }
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)

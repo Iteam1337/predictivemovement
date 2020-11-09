@@ -17,7 +17,7 @@ export const driverIsLoggedIn = async (
 export const onInstructionsReceived = async (
   telegramId: number,
   instructions: Instruction[][]
-): Promise<Message> => {
+): Promise<Message | void> => {
   if (await driverIsLoggedIn(telegramId)) {
     return messaging
       .sendSummary(telegramId, instructions)

@@ -153,22 +153,6 @@ const Component = ({
           {useCustomSize && (
             <>
               <Elements.Layout.InputContainer>
-                {/* <FormInputs.TextInput
-                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                  step={0.1}
-                  min="0"
-                  required
-                  name="volume"
-                  value={state.capacity.volume}
-                  placeholder="Lastvolym (m3)"
-                  type="number"
-                  onChangeHandler={eventHandlers.handleNestedInputChange(
-                    'capacity',
-                    'volume',
-                    onChangeHandler
-                  )}
-                /> */}
-
                 <FormInputs.TextInput
                   required
                   name="measurements"
@@ -184,22 +168,6 @@ const Component = ({
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>
-                {/* <FormInputs.TextInput
-                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                  step={1}
-                  min="0"
-                  type="number"
-                  required
-                  name="weight"
-                  value={state.capacity.weight}
-                  onChangeHandler={eventHandlers.handleNestedInputChange(
-                    'capacity',
-                    'weight',
-                    onChangeHandler
-                  )}
-                  placeholder="Maxvikt (kg)"
-                /> */}
-
                 <FormInputs.TextInput
                   step={1}
                   name="weight"

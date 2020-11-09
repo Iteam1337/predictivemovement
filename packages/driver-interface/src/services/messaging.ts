@@ -3,7 +3,7 @@ import { Message } from 'telegraf/typings/telegram-types'
 import bot from '../adapters/bot'
 import * as helpers from '../helpers'
 import { Booking, Instruction } from '../types'
-import { getDirectionsUrl, getDirectionsFromInstructions } from './google'
+import { getDirectionsUrl, getDirectionsFromInstructionGroups } from './google'
 import { getAddressFromCoordinate } from './pelias'
 
 export const onBotStart = (ctx: TelegrafContext): void => {
@@ -43,7 +43,9 @@ export const sendSummary = (
   const summaryList = convertInstructionGroupsToSummaryList(instructionGroups)
   const summary =
     summaryList +
-    `\n[Se rutt på karta](${getDirectionsFromInstructions(instructionGroups)})`
+    `\n[Se rutt på karta](${getDirectionsFromInstructionGroups(
+      instructionGroups
+    )})`
 
   return bot.telegram.sendMessage(telegramId, summary, {
     parse_mode: 'Markdown',

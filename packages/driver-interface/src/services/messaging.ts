@@ -27,10 +27,9 @@ export const onNoVehicleFoundFromId = (
 ): Promise<Message> =>
   ctx.reply('Inget fordon med ditt telefonnummer kunde hittas...')
 
-export const onDriverLoginSuccessful = (
-  ctx: TelegrafContext
-): Promise<Message> =>
-  ctx.reply(
+export const sendWelcomeMsg = (telegramId: number): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
     'Välkommen! När du har blivit tilldelad bokningar så kommer du få instruktioner för hur du ska hämta upp dessa.'.concat(
       '\nKlicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :)'
     )

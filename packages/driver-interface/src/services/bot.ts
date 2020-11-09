@@ -25,6 +25,22 @@ export const onInstructionsReceived = async (
   }
 }
 
+const onDriverLoginSuccessful = async (
+  telegramId: number
+): Promise<Message | void> => {
+  await messaging.sendWelcomeMsg(telegramId)
+
+  return cache
+    .getVehicleIdByTelegramId(telegramId)
+    .then(cache.getInstructions)
+    .then((instructionGroups: Instruction[][]) => {
+      if (instructionGroups)
+        return messaging
+          .sendSummary(telegramId, instructionGroups)
+          .then(() => handleNextDriverInstruction(telegramId))
+    })
+}
+
 export const onLogin = async (
   phoneNumber: string,
   ctx: TelegrafContext
@@ -41,9 +57,7 @@ export const onLogin = async (
     ...vehicle,
     telegramId,
   })
-  return messaging
-    .onDriverLoginSuccessful(ctx)
-    .then(() => handleNextDriverInstruction(telegramId))
+  return onDriverLoginSuccessful(telegramId)
 }
 
 export const onLocationMessage = async (

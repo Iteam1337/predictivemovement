@@ -77,12 +77,7 @@ const Component = ({
         },
       }))
     }
-
-    console.log(
-      'parcelSizePresets[e.target.value]',
-      e.target.value,
-      parcelSizePresets
-    )
+    
     return onChangeHandler((currentState) => ({
       ...currentState,
       size: parcelSizePresets[e.target.value],

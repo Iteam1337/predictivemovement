@@ -7,18 +7,22 @@ import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Instruction } from '../types'
 
-export const driverIsLoggedIn = async (vehicleId): Promise<boolean> => {
-  const vehicle = await cache.getVehicle(vehicleId)
-  return !!vehicle.telegramId
+export const driverIsLoggedIn = async (
+  telegramId: number
+): Promise<boolean> => {
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
+  return !!vehicleId
 }
 
-export const onInstructionsReceived = (
+export const onInstructionsReceived = async (
   telegramId: number,
   instructions: Instruction[][]
 ): Promise<Message> => {
-  return messaging
-    .sendSummary(telegramId, instructions)
-    .then(() => handleNextDriverInstruction(telegramId))
+  if (await driverIsLoggedIn(telegramId)) {
+    return messaging
+      .sendSummary(telegramId, instructions)
+      .then(() => handleNextDriverInstruction(telegramId))
+  }
 }
 
 export const onLogin = async (
@@ -73,13 +77,11 @@ export const handleNextDriverInstruction = async (
       cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
     } else {
-      console.log('hej', JSON.stringify(instructions, null, 2))
       const [currentInstructionGroup] = instructions
 
       const bookings = await cache.getBookings(
         currentInstructionGroup.map((g) => g.id)
       )
-      // console.log('book', bookings)
 
       switch (currentInstructionGroup[0].type) {
         case 'pickupShipment':

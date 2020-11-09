@@ -38,12 +38,12 @@ export const onDriverLoginSuccessful = (
 
 export const sendSummary = (
   telegramId: number,
-  instructions: Instruction[][]
+  instructionGroups: Instruction[][]
 ): Promise<Message> => {
-  const summaryList = convertInstructionsToSummaryList(instructions)
+  const summaryList = convertInstructionGroupsToSummaryList(instructionGroups)
   const summary =
     summaryList +
-    `\n[Se rutt på karta](${getDirectionsFromInstructions(instructions)})`
+    `\n[Se rutt på karta](${getDirectionsFromInstructions(instructionGroups)})`
 
   return bot.telegram.sendMessage(telegramId, summary, {
     parse_mode: 'Markdown',
@@ -55,10 +55,10 @@ export const onNoInstructionsForVehicle = (
   ctx: TelegrafContext
 ): Promise<Message> => ctx.reply('Vi kunde inte hitta några instruktioner...')
 
-export const convertInstructionsToSummaryList = (
-  instructions: Instruction[][]
+export const convertInstructionGroupsToSummaryList = (
+  instructionGroups: Instruction[][]
 ): string =>
-  instructions
+  instructionGroups
     .map((instructionGroup: Instruction[]) => {
       const [
         {

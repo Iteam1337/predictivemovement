@@ -16,11 +16,11 @@ export const driverIsLoggedIn = async (
 
 export const onInstructionsReceived = async (
   telegramId: number,
-  instructions: Instruction[][]
+  instructionGroups: Instruction[][]
 ): Promise<Message | void> => {
   if (await driverIsLoggedIn(telegramId)) {
     return messaging
-      .sendSummary(telegramId, instructions)
+      .sendSummary(telegramId, instructionGroups)
       .then(() => handleNextDriverInstruction(telegramId))
   }
 }

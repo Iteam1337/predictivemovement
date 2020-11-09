@@ -34,19 +34,19 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
             const vehicle = JSON.parse(msg.content.toString())
             const currentVehicle = await cache.getVehicle(vehicle.id)
             console.log('received instructions for vehicle: ', vehicle.id)
-            const groupedInstructions = await Promise.all(
-              vehicle.activities.map(
-                async (instruction: Instruction): Promise<Instruction> => ({
-                  ...instruction,
-                  address: {
-                    ...instruction.address,
-                    name: await getAddressFromCoordinate(instruction.address),
-                  },
-                })
-              )
+
+            const groupedInstructions = await Promise.all<Instruction>(
+              vehicle.activities.map(async (instruction: Instruction) => ({
+                ...instruction,
+                address: {
+                  ...instruction.address,
+                  name: await getAddressFromCoordinate(instruction.address),
+                },
+              }))
             )
               .then(helpers.cleanDriverInstructions)
               .then(helpers.groupDriverInstructions)
+
             await cache.setInstructions(vehicle.id, groupedInstructions)
             await cache.addVehicle(vehicle.id, {
               ...currentVehicle,

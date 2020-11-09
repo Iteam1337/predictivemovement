@@ -52,7 +52,7 @@ const vehiclePlan = (): Promise<Replies.Consume> =>
               ...currentVehicle,
               ...vehicle,
             })
-            if (bot.driverIsLoggedIn(vehicle.id)) {
+            if (await bot.driverIsLoggedIn(vehicle.id)) {
               await bot.onInstructionsReceived(
                 parseInt(currentVehicle.telegramId),
                 groupedInstructions

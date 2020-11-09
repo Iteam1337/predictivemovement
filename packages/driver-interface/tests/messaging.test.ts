@@ -1,4 +1,4 @@
-import { convertInstructionsToSummaryList } from '../src/services/messaging'
+import { convertInstructionGroupsToSummaryList } from '../src/services/messaging'
 
 function addIndexNull(instructions: any[]) {
   return instructions.map((instruction: any) => ({
@@ -28,7 +28,7 @@ test('2 instruction groups with 1 entity in each ', () => {
       },
     ],
   ].map(addIndexNull)
-  const res = convertInstructionsToSummaryList(instructions)
+  const res = convertInstructionGroupsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
 1\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
@@ -72,7 +72,7 @@ test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', 
       },
     ],
   ].map(addIndexNull)
-  const res = convertInstructionsToSummaryList(instructions)
+  const res = convertInstructionGroupsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
 1\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
@@ -133,7 +133,7 @@ test('2 instruction group with 2 entities, 1 instruction group with 1 ', () => {
       },
     ],
   ].map(addIndexNull)
-  const res = convertInstructionsToSummaryList(instructions)
+  const res = convertInstructionGroupsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
 1\. Hämta __ODMW__, __NWIY__ vid Kellgrensgatan 14, Stockholm, Sweden

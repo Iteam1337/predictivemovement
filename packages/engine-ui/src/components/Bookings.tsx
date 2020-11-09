@@ -7,6 +7,8 @@ import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import styled from 'styled-components'
 import { Booking } from '../types'
+import NotFound from './NotFound'
+
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 
@@ -48,47 +50,47 @@ const BookingToggleList: React.FC<{
   isOpen,
   setOpen,
 }) => {
-  return (
-    <Elements.Layout.MarginBottomContainer>
-      <Elements.Layout.FlexRowWrapper onClick={setOpen}>
-        <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
-        <Icons.Arrow
-          style={{
-            marginLeft: '0.875rem',
-            transform: `rotate(${isOpen ? '180deg' : 0})`,
-          }}
-        />
-      </Elements.Layout.FlexRowWrapper>
+    return (
+      <Elements.Layout.MarginBottomContainer>
+        <Elements.Layout.FlexRowWrapper onClick={setOpen}>
+          <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
+          <Icons.Arrow
+            style={{
+              marginLeft: '0.875rem',
+              transform: `rotate(${isOpen ? '180deg' : 0})`,
+            }}
+          />
+        </Elements.Layout.FlexRowWrapper>
 
-      {isOpen && (
-        <Elements.Layout.BookingList>
-          {bookings.length === 0 && (
-            <Elements.Typography.NoInfoParagraph>
-              Just nu finns det inget här...
-            </Elements.Typography.NoInfoParagraph>
-          )}
-          {bookings.length > 0 &&
-            bookings.map((booking) => (
-              <li key={booking.id}>
-                <Elements.Layout.InlineContainer>
-                  <Elements.Links.RoundedLink
-                    onMouseOver={() => onMouseEnterHandler(booking.id)}
-                    onMouseLeave={() => onMouseLeaveHandler()}
-                    to={`/bookings/${booking.id}`}
-                    onClick={() =>
-                      onClickHandler(booking.pickup.lat, booking.pickup.lon)
-                    }
-                  >
-                    {helpers.getLastFourChars(booking.id).toUpperCase()}
-                  </Elements.Links.RoundedLink>
-                </Elements.Layout.InlineContainer>
-              </li>
-            ))}
-        </Elements.Layout.BookingList>
-      )}
-    </Elements.Layout.MarginBottomContainer>
-  )
-}
+        {isOpen && (
+          <Elements.Layout.BookingList>
+            {bookings.length === 0 && (
+              <Elements.Typography.NoInfoParagraph>
+                Just nu finns det inget här...
+              </Elements.Typography.NoInfoParagraph>
+            )}
+            {bookings.length > 0 &&
+              bookings.map((booking) => (
+                <li key={booking.id}>
+                  <Elements.Layout.InlineContainer>
+                    <Elements.Links.RoundedLink
+                      onMouseOver={() => onMouseEnterHandler(booking.id)}
+                      onMouseLeave={() => onMouseLeaveHandler()}
+                      to={`/bookings/${booking.id}`}
+                      onClick={() =>
+                        onClickHandler(booking.pickup.lat, booking.pickup.lon)
+                      }
+                    >
+                      {helpers.getLastFourChars(booking.id).toUpperCase()}
+                    </Elements.Links.RoundedLink>
+                  </Elements.Layout.InlineContainer>
+                </li>
+              ))}
+          </Elements.Layout.BookingList>
+        )}
+      </Elements.Layout.MarginBottomContainer>
+    )
+  }
 
 const Wrapper = styled.div`
   display: flex;
@@ -189,7 +191,7 @@ const Bookings: React.FC<{
           <CreateBooking onSubmit={props.createBooking} />
         </Route>
 
-        <Route path={`${path}/:bookingId`}>
+        <Route exact path={`${path}/:bookingId`}>
           <BookingDetails
             bookings={props.bookings}
             deleteBooking={props.deleteBooking}
@@ -198,6 +200,7 @@ const Bookings: React.FC<{
             }
           />
         </Route>
+        <Route component={NotFound} />
       </Switch>
     </Wrapper>
   )

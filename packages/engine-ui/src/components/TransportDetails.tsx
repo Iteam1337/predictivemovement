@@ -56,14 +56,21 @@ const TransportDetails: React.FC<{
 
   React.useEffect(() => () => onUnmount(), [onUnmount])
 
-  const { vehicleId } = useParams<{ vehicleId: string }>()
-  const transport = transports.find((v) => v.id === vehicleId)
+  const { transportId } = useParams<{ transportId: string }>()
+  const transport = transports.find((v) => v.id === transportId)
 
-  if (!transport) return <p>Loading...</p>
+  if (!transports.length) return <p>Laddar...</p>
 
-  const handleDeleteClick = (vehicleId: string) => {
+  if (!transport)
+    return (
+      <p>
+        Kunde inte hitta transport med id: <b>{transportId}</b>
+      </p>
+    )
+
+  const handleDeleteClick = (transportId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
-      deleteTransport(vehicleId)
+      deleteTransport(transportId)
       return history.push('/transports')
     }
   }
@@ -92,7 +99,7 @@ const TransportDetails: React.FC<{
             margin="0 0.5rem"
             backgroundColor={transport.color}
           >
-            {helpers.getLastFourChars(vehicleId).toUpperCase()}
+            {helpers.getLastFourChars(transportId).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>
         {transport.capacity && (

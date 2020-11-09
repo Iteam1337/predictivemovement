@@ -45,7 +45,9 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
 
   React.useEffect(() => () => onUnmount(), [onUnmount])
 
-  if (!booking || !bookings) return <p>Laddar bokning...</p>
+  if (!bookings) return <p>Laddar bokning...</p>
+
+  if (!booking) return <p>Kunde inte hitta bokning med id: {activityId}</p>
 
   return (
     <MainRouteLayout redirect={`/plans/routes/${routeId}`}>

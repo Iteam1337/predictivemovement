@@ -5,6 +5,7 @@ import { Switch as RouterSwitch, Route, Redirect } from 'react-router-dom'
 import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
+import NotFound from './NotFound'
 import { Booking, Plan as IPlan } from '../types'
 
 const Container = styled.div`
@@ -67,6 +68,7 @@ const Sidebar = (state: Props) => {
                   bookings={state.bookings}
                 />
               </Route>
+              <Route component={NotFound} />
             </RouterSwitch>
           </Content>
         </Route>

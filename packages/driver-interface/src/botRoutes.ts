@@ -19,22 +19,16 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', async (ctx) => {
-    const vehicleId = await cache.getVehicleIdByTelegramId(
-      ctx.update.message.from.id
-    )
-    const vehicleWithPlan = await cache.getVehicle(vehicleId)
+    const telegramId = ctx.update.message.from.id
+    const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 
-    if (!vehicleWithPlan || !vehicleWithPlan.activities)
-      return messaging.onNoInstructionsForVehicle(ctx)
+    if (!vehicleId) return messaging.promptForLogin(ctx)
 
-    const activities = vehicleWithPlan.activities
-    const bookingIds = vehicleWithPlan.booking_ids
+    const instructionGroups = await cache.getInstructions(vehicleId)
 
-    return messaging.onInstructionsForVehicle(
-      activities,
-      bookingIds,
-      ctx.update.message.from.id
-    )
+    if (!instructionGroups) return messaging.onNoInstructionsForVehicle(ctx)
+
+    return messaging.sendSummary(telegramId, instructionGroups)
   })
 
   bot.command('/login', messaging.requestPhoneNumber)

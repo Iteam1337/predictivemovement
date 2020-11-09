@@ -40,16 +40,12 @@ const transportToNotification = (transport) => ({
 
 const changeFormatOnPhoneNumber = (phoneNumber) => {
   let phoneNumberData
-  switch (true) {
-    case phoneNumber.startsWith('+'):
-      phoneNumberData = new PhoneNumber(phoneNumber)
-      break
-    case phoneNumber.startsWith('07'):
-      phoneNumberData = new PhoneNumber(phoneNumber, 'SE')
-    default:
-      break
-  }
 
+  if (phoneNumber.startsWith('+')) {
+    phoneNumberData = new PhoneNumber(phoneNumber)
+  } else if (phoneNumber.startsWith('07')) {
+    phoneNumberData = new PhoneNumber(phoneNumber, 'SE')
+  }
   return phoneNumberData.getNumber('e164').replace('+', '')
 }
 

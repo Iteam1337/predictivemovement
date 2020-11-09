@@ -81,9 +81,9 @@ export const useFilteredStateFromQueryParams = (state: State) => {
               .map(includeBookingRouteIfDetailView)
               .filter(includeOneBookingIfDetailView)
           : [],
-      vehicles:
+      transports:
         includeTransports || rootView
-          ? state.vehicles
+          ? state.transports
               .map(includeTransportRouteIfDetailView)
               .filter(includeOneTransportIfDetailView)
           : [],

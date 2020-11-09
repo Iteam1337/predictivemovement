@@ -38,6 +38,10 @@ const App = () => {
     socket.emit('delete-vehicle', id)
   }
 
+  const updateBooking = (booking: any) => {
+    socket.emit('update-booking', booking)
+  }
+
   useSocket('notification', (data: notificationTypes.Notification) => {
     updateNotifications((notifications) => notifications.concat(data))
   })
@@ -101,6 +105,7 @@ const App = () => {
         addVehicle={addVehicle}
         deleteBooking={deleteBooking}
         deleteVehicle={deleteVehicle}
+        updateBooking={updateBooking}
       />
       <Route path="/">
         <Map data={mapData} />

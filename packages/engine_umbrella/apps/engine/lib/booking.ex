@@ -88,6 +88,38 @@ defmodule Booking do
     end
   end
 
+  def update(%{
+        "id" => id,
+        "pickup" => pickup,
+        "delivery" => delivery,
+        "metadata" => metadata,
+        "external_id" => external_id,
+        "size" => size
+      }) do
+    booking =
+      get(id)
+      |> Map.put(:pickup, pickup)
+      |> Map.put(:delivery, delivery)
+      |> Map.put(:metadata, metadata)
+      |> Map.put(:external_id, external_id)
+      |> Map.put(:size, size)
+
+    with true <- Vex.valid?(booking) do
+      booking_with_route =
+        booking
+        |> Map.put(:route, Osrm.route(pickup, delivery))
+        |> add_event_to_events_list("update", DateTime.utc_now())
+        |> (&ES.add_event(%BookingUpdated{booking: &1})).()
+
+      RMQ.publish(booking_with_route, @outgoing_booking_exchange, "new")
+      id
+    else
+      _ ->
+        IO.inspect(Vex.errors(booking), label: "booking validation errors")
+        Vex.errors(booking)
+    end
+  end
+
   def apply_booking_to_state(%Booking{id: id} = booking) do
     GenServer.start_link(
       __MODULE__,

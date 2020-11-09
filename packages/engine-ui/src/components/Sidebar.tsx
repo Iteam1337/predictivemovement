@@ -33,6 +33,7 @@ interface Props {
   dispatchOffers: (params: any) => void
   addVehicle: (params: any) => void
   deleteVehicle: (id: string) => void
+  updateBooking: (booking: any) => void
 }
 
 const Sidebar = (state: Props) => {
@@ -51,6 +52,7 @@ const Sidebar = (state: Props) => {
                   bookings={state.bookings}
                   createBooking={state.createBooking}
                   deleteBooking={state.deleteBooking}
+                  updateBooking={state.updateBooking}
                 />
               </Route>
               <Route path="/transports">

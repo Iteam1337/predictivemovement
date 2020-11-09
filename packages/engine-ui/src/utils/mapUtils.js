@@ -278,8 +278,8 @@ const toGeoJsonLayer = (id, data, callback) =>
   })
 
 const toTransportIconLayer = (data, activeId) => {
-  if (!data.length) {
-    return
+  if (!data) {
+    return new IconLayer()
   }
 
   const iconData = data.map((feature) => ({
@@ -327,7 +327,7 @@ const toTransportIconLayer = (data, activeId) => {
 
 const toExcludedBookingIcon = (booking, activeId) => {
   if (!booking) {
-    return
+    return new IconLayer()
   }
   const iconData = excludedBookingIcon(booking).map((feature) => ({
     coordinates: feature.geometry.coordinates,
@@ -367,7 +367,7 @@ const toBookingIconLayer = (
   layerId = 'booking-icon'
 ) => {
   if (!data || !data.length) {
-    return
+    return new IconLayer()
   }
 
   const iconData = data.map((feature) => ({

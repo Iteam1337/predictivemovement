@@ -48,6 +48,12 @@ const BookingToggleList: React.FC<{
   isOpen,
   setOpen,
 }) => {
+  const setMapFilters = stores.mapFilters((state) => state.set)
+
+  React.useEffect(() => {
+    setMapFilters({ bookings: true })
+  })
+
   return (
     <Elements.Layout.MarginBottomContainer>
       <Elements.Layout.FlexRowWrapper onClick={setOpen}>

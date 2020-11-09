@@ -1,8 +1,16 @@
 import { FlyToInterpolator } from 'react-map-gl'
+import * as baseTypes from '../../types'
 
 export enum lastFocusedInput {
   START = 'start',
   END = 'end',
+}
+
+export type State = {
+  bookings: baseTypes.Booking[]
+  assignedBookings: baseTypes.Booking[]
+  vehicles: baseTypes.Transport[]
+  plan: baseTypes.Plan
 }
 
 export type UIState = {
@@ -35,11 +43,43 @@ export type UIStateReducerAction =
       payload: UIState['lastClickedPosition']['address']
     }
 
-export type MapState = {
+export type MapViewState = {
   latitude: number
   longitude: number
   zoom: number
   transitionDuration: number
   transitionInterpolator: FlyToInterpolator
   transitionEasing: (t: number) => number
-} & { set: (args: Partial<MapState>) => void }
+} & { set: (args: Partial<MapViewState>) => void }
+
+export type MapFilters = {
+  bookings: boolean
+  bookingsDetailView: string | undefined
+  transportsDetailView: string | undefined
+  planRouteDetailView: string | undefined
+  transports: boolean
+  plan: boolean
+  excludedBookings: boolean
+  routes: boolean
+}
+
+export type MapFiltersWithSetter = MapFilters & {
+  set: (args: Partial<MapFilters>) => void
+}
+
+export type MapDataFilterFunctions = {
+  [key in keyof MapFilters]: (param: MapDataState) => MapDataState
+}
+
+export type MapDataStateWithSetter = MapDataState & {
+  set: (args: Partial<MapDataState>) => void
+}
+
+export type MapDataState = {
+  bookings: State['bookings']
+  transports: State['vehicles']
+  plan: {
+    excludedBookings: State['plan']['excludedBookings']
+    routes: (baseTypes.Route & { routeIndex: number })[]
+  }
+}

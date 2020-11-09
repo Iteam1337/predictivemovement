@@ -200,7 +200,8 @@ export const palette = [
   ['#F2E8C4', '#98D9B6', '#3EC9A7', '#2B879E', '#616668'],
 ]
 
-export const getColor = (index, colorIndex) =>
-  palette[index % palette.length][colorIndex]
+export const getColor = (index, colorIndex) => {
+  return palette[index % palette.length][colorIndex]
+}
 
 export default palette

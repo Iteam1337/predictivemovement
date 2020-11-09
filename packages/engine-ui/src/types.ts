@@ -62,7 +62,7 @@ export type Transport = {
 export type NotificationType = Transport | Booking
 
 export interface ExcludedBooking {
-  status: string, 
+  status: string
   id: string
   lat: number
   lon: number

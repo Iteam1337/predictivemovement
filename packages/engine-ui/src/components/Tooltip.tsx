@@ -6,10 +6,10 @@ import { useRouteMatch } from 'react-router-dom'
 import * as stores from '../utils/state/stores'
 import * as UIStateTypes from '../utils/state/types'
 
-const Container = styled.div<{ x: number; y: number }>`
+const Container = styled.div<{ x?: any; y?: any }>`
   position: absolute;
-  top: ${({ y }) => y + 10}px;
-  left: ${({ x }) => x + 10}px;
+  top: ${({ y }) => y && y + 10}px;
+  left: ${({ x }) => x && x + 10}px;
   background: white;
   border-radius: 0.25rem;
   min-width: 150px;
@@ -60,8 +60,8 @@ const useAddressFromCoordinate = ({
   lat,
   lon,
 }: {
-  lat: number
-  lon: number
+  lat?: number
+  lon?: number
 }) => {
   const [state, set] = React.useState<{
     error: Error | undefined
@@ -74,14 +74,18 @@ const useAddressFromCoordinate = ({
   })
 
   React.useEffect(() => {
-    set({ loading: true, data: undefined, error: undefined })
+    if (lat && lon) {
+      set({ loading: true, data: undefined, error: undefined })
 
-    helpers
-      .getAddressFromCoordinate({ lat, lon })
-      .then((data) => set((current) => ({ ...current, loading: false, data })))
-      .catch((error) =>
-        set((current) => ({ ...current, loading: false, error }))
-      )
+      helpers
+        .getAddressFromCoordinate({ lat, lon })
+        .then((data) =>
+          set((current) => ({ ...current, loading: false, data }))
+        )
+        .catch((error) =>
+          set((current) => ({ ...current, loading: false, error }))
+        )
+    }
   }, [lat, lon])
 
   return state
@@ -93,7 +97,7 @@ enum EntityTypes {
 }
 
 const Component: React.FC<{
-  position: { x: number; y: number; lat: number; lon: number }
+  position: { x?: number; y?: number; lat?: number; lon?: number }
 }> = ({ position: { lat, lon, ...rest } }) => {
   const { data, error, loading } = useAddressFromCoordinate({ lat, lon })
 
@@ -141,6 +145,8 @@ const Component: React.FC<{
       </AddButton>
     </Elements.Typography.InfoSmStrong>
   )
+
+  if (!lat || !lon) return null
 
   return (
     <Container {...rest}>

@@ -20,8 +20,8 @@ const ui = create<types.UIState>(
   })
 )
 
-const map = create<types.MapState>(
-  (set, get): types.MapState => ({
+const map = create<types.MapViewState>(
+  (set, get): types.MapViewState => ({
     latitude: 61.8294959,
     longitude: 16.0740589,
     zoom: 10,
@@ -32,4 +32,38 @@ const map = create<types.MapState>(
   })
 )
 
-export { ui, map }
+const mapFiltersInitialState = {
+  bookings: false,
+  bookingsDetailView: undefined,
+  transportsDetailView: undefined,
+  planRouteDetailView: undefined,
+  transports: false,
+  plan: false,
+  excludedBookings: false,
+  routes: false,
+}
+
+const mapDataInitialState = {
+  bookings: [],
+  transports: [],
+  plan: {
+    excludedBookings: [],
+    routes: [],
+  },
+}
+
+const mapFilters = create<types.MapFiltersWithSetter>(
+  (set): types.MapFiltersWithSetter => ({
+    ...mapFiltersInitialState,
+    set: (data) => set({ ...mapFiltersInitialState, ...data }),
+  })
+)
+
+const mapData = create<types.MapDataStateWithSetter>(
+  (set, get): types.MapDataStateWithSetter => ({
+    ...mapDataInitialState,
+    set: (data) => set({ ...get(), ...data }),
+  })
+)
+
+export { ui, map, mapData, mapFilters, mapDataInitialState }

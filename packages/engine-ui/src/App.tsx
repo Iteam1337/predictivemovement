@@ -6,14 +6,18 @@ import { reducer, initState } from './utils/reducer'
 import { Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import * as hooks from './utils/hooks'
 import Notifications from './components/Notifications'
+import * as types from './types'
 import * as notificationTypes from './notificationTypes'
+import * as stores from './utils/state/stores'
+import { getColor } from './utils/palette'
 
 const App = () => {
   const { socket } = useSocket()
   const [state, dispatch] = React.useReducer(reducer, initState)
-  const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
+  const mapState = stores.mapData((state) => state)
+  console.log('render app')
+
   const [notifications, updateNotifications] = React.useState<
     notificationTypes.Notification[]
   >([])
@@ -47,6 +51,7 @@ const App = () => {
       type: 'setBookings',
       payload: bookings,
     })
+    mapState.set({ bookings })
   })
 
   useSocket('delete-booking', (bookingId) => {
@@ -75,6 +80,14 @@ const App = () => {
       type: 'setTransports',
       payload: newVehicles,
     })
+    mapState.set({
+      transports: [
+        ...mapState.transports.filter(
+          (c) => !newVehicles.find((p: types.Transport) => p.id === c.id)
+        ),
+        ...newVehicles,
+      ].map((v, i) => ({ ...v, color: getColor(i, 0) })),
+    })
   })
 
   useSocket('plan-update', (plan) => {
@@ -82,7 +95,7 @@ const App = () => {
       type: 'setPlan',
       payload: {
         routes: plan.vehicles,
-        excludedBookings: plan.excluded_booking_ids
+        excludedBookings: plan.excluded_booking_ids,
       },
     })
   })
@@ -103,7 +116,7 @@ const App = () => {
         deleteVehicle={deleteVehicle}
       />
       <Route path="/">
-        <Map data={mapData} />
+        <Map />
       </Route>
     </>
   )

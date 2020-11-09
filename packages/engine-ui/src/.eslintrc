@@ -15,8 +15,10 @@
         "react/display-name": "off",
         "no-undef": "error",
         "no-unused-vars": "warn",
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "off",
         "@typescript-eslint/no-unused-vars": [
-          "error",
+          "warn",
           {
             "vars": "all",
             "args": "after-used",
@@ -31,9 +33,9 @@
       "files": ["**/*.jsx", "**/*.js"],
       "rules": {
         "react/jsx-uses-react": "error",
-        "react/react-in-jsx-scope": "error",
-        "no-use-before-define": "off",
-        "@typescript-eslint/no-use-before-define": "warn"
+        "react/react-in-jsx-scope": "error"
+        // "no-use-before-define": "off"
+        // "@typescript-eslint/no-use-before-define": "warn"
       }
     }
   ]

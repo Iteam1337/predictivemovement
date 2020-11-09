@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@danmarshall/deckgl-typings": "^4.3.8",
     "@deck.gl/core": "^8.2.10",
     "@deck.gl/layers": "^8.2.10",
     "@deck.gl/react": "^8.2.10",

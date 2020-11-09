@@ -21,7 +21,10 @@ export const updateLocation = (msg: LocationMessage): void => {
     .catch(console.warn)
 }
 
-export const publishBookingEvent = (bookingId: string, event: string): Promise<boolean | void> =>
+export const publishBookingEvent = (
+  bookingId: string,
+  event: string
+): Promise<boolean | void> =>
   open
     .then((conn) => conn.createChannel())
     .then((openChannel) =>

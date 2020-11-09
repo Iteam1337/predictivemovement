@@ -48,7 +48,7 @@ const Map = ({ data }) => {
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-transport-layer',
-      mapUtils.planToFeature(data.vehicles),
+      mapUtils.planToFeature(data.transports),
       handleClickEvent
     ),
     data.plan.routes
@@ -67,7 +67,7 @@ const Map = ({ data }) => {
     showTextLayer &&
       mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
     mapUtils.toTransportIconLayer(
-      mapUtils.transportIcon(data.vehicles),
+      mapUtils.transportIcon(data.transports),
       UIState.highlightTransport
     ),
     mapUtils.toBookingIconLayer(

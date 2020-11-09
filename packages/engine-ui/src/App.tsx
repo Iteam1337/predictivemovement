@@ -18,8 +18,8 @@ const App = () => {
     notificationTypes.Notification[]
   >([])
 
-  const addVehicle = (params: any) => {
-    socket.emit('add-vehicle', params)
+  const createTransport = (params: any) => {
+    socket.emit('create-transport', params)
   }
 
   const createBooking = (params: any) => {
@@ -34,8 +34,8 @@ const App = () => {
     socket.emit('delete-booking', id)
   }
 
-  const deleteVehicle = (id: string) => {
-    socket.emit('delete-vehicle', id)
+  const deleteTransport = (id: string) => {
+    socket.emit('delete-transport', id)
   }
 
   useSocket('notification', (data: notificationTypes.Notification) => {
@@ -63,14 +63,14 @@ const App = () => {
     })
   })
 
-  useSocket('vehicle-deleted', (vehicleId) => {
+  useSocket('transport-deleted', (transportId) => {
     dispatch({
-      type: 'deleteVehicle',
-      payload: vehicleId,
+      type: 'deleteTransport',
+      payload: transportId,
     })
   })
 
-  useSocket('vehicles', (newTransports) => {
+  useSocket('transports', (newTransports) => {
     dispatch({
       type: 'setTransports',
       payload: newTransports,
@@ -81,7 +81,7 @@ const App = () => {
     dispatch({
       type: 'setPlan',
       payload: {
-        routes: plan.vehicles,
+        routes: plan.transports,
         excludedBookings: plan.excluded_booking_ids,
       },
     })
@@ -98,9 +98,9 @@ const App = () => {
         {...state}
         createBooking={createBooking}
         dispatchOffers={dispatchOffers}
-        addVehicle={addVehicle}
+        createTransport={createTransport}
         deleteBooking={deleteBooking}
-        deleteVehicle={deleteVehicle}
+        deleteTransport={deleteTransport}
       />
       <Route path="/">
         <Map data={mapData} />

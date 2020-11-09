@@ -16,6 +16,7 @@ module.exports = (io) => {
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,
+    updateBooking,
   } = require('./engineConnector')(io)
 
   io.on('connection', function (socket) {
@@ -150,6 +151,10 @@ module.exports = (io) => {
       vehiclesCache.delete(id)
       publishDeleteVehicle(id)
       socket.emit('vehicle-deleted', id)
+    })
+
+    socket.on('update-booking', (booking) => {
+      updateBooking(booking)
     })
   })
 }

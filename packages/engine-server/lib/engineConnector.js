@@ -11,6 +11,7 @@ const routingKeys = {
   PICKED_UP: 'picked_up',
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
+  UPDATE: 'update',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -224,6 +225,21 @@ module.exports = (io) => {
       return { ...booking, status: bookingRes.fields.routingKey }
     })
 
+  const updateBooking = (booking) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', {
+        durable: true,
+      })
+      .publish(booking, routingKeys.UPDATE, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(
+          ` [x] Updated booking '${JSON.stringify(booking, null, 2)}'`
+        )
+      )
+  }
+
   return {
     bookings,
     vehicles,
@@ -236,5 +252,6 @@ module.exports = (io) => {
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,
+    updateBooking,
   }
 }

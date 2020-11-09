@@ -38,10 +38,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - engine-ui.dev.iteamdev.io
+        - engine-ui.iteamdev.io
       secretName: engine-ui-prod-tls
   rules:
-    - host: engine-ui.dev.iteamdev.io
+    - host: engine-ui.iteamdev.io
       http:
         paths:
           - backend:

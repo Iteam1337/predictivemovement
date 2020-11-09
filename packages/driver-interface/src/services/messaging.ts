@@ -11,6 +11,8 @@ export const onBotStart = (ctx: TelegrafContext): void => {
     "Välkommen till Predictive Movement. När du loggat in kan du agera som förare och hämta och leverera paket i vårt system. Logga in genom att skriva '/login'."
   )
 }
+export const promptForLogin = (ctx: TelegrafContext): Promise<Message> =>
+  ctx.reply('Du är inte inloggad. Logga in först genom att skriva /login')
 
 export const requestPhoneNumber = (ctx: TelegrafContext): Promise<Message> =>
   ctx.reply('Klicka på "Skicka telefonnummer" för att logga in', {

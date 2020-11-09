@@ -52,7 +52,7 @@ const BookingToggleList: React.FC<{
 
   React.useEffect(() => {
     setMapFilters({ bookings: true })
-  })
+  }, [setMapFilters])
 
   return (
     <Elements.Layout.MarginBottomContainer>

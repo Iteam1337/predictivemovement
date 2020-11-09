@@ -16,7 +16,6 @@ const App = () => {
   const { socket } = useSocket()
   const [state, dispatch] = React.useReducer(reducer, initState)
   const mapState = stores.mapData((state) => state)
-  console.log('render app')
 
   const [notifications, updateNotifications] = React.useState<
     notificationTypes.Notification[]

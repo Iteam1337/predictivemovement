@@ -12,6 +12,12 @@ const Transports: React.FC<{
   addVehicle: (params: any) => void
   deleteVehicle: (id: string) => void
 }> = ({ transports, addVehicle, deleteVehicle }) => {
+  const setMapFilters = stores.mapFilters((state) => state.set)
+
+  React.useEffect(() => {
+    setMapFilters({ transports: true })
+  }, [setMapFilters])
+
   const { path, url } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
 

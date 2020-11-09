@@ -46,6 +46,7 @@ const TransportDetails: React.FC<{
   onUnmount: () => void
 }> = ({ transports, deleteTransport, onUnmount }) => {
   const setMap = stores.map((state) => state.set)
+  const setMapFilters = stores.mapFilters((state) => state.set)
   const history = useHistory()
 
   const [showInfo, setShowInfo] = React.useState({
@@ -54,10 +55,14 @@ const TransportDetails: React.FC<{
     status: false,
   })
 
-  React.useEffect(() => () => onUnmount(), [onUnmount])
-
   const { vehicleId } = useParams<{ vehicleId: string }>()
   const transport = transports.find((v) => v.id === vehicleId)
+
+  React.useEffect(() => () => onUnmount(), [onUnmount])
+
+  React.useEffect(() => {
+    setMapFilters({ transportDetailsById: vehicleId })
+  }, [setMapFilters, vehicleId])
 
   if (!transport) return <p>Loading...</p>
 

@@ -75,9 +75,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const [address, setAddress] = React.useState()
 
   React.useEffect(() => {
-    setMapFilters({ bookingsDetailView: booking?.id })
-    console.log('running')
-  }, [booking?.id, bookingId, setMapFilters])
+    setMapFilters({ bookingDetailsById: bookingId })
+  }, [bookingId, setMapFilters])
 
   React.useEffect(() => () => onUnmount(), [onUnmount])
 

@@ -19,64 +19,74 @@ const useMapDataWithFilters = () => {
   const filterFunctions: stateTypes.MapDataFilterFunctions = React.useMemo(
     () => ({
       bookings: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
+        Object.assign({}, state, {
           bookings: mapData.bookings,
         }),
       transports: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
+        Object.assign({}, state, {
           transports: mapData.transports,
         }),
       plan: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
+        Object.assign({}, state, {
           plan: mapData.plan,
         }),
-      bookingsDetailView: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
+      bookingDetailsById: (state: stateTypes.MapDataState) =>
+        Object.assign({}, state, {
           bookings: mapData.bookings.filter(({ id }) =>
-            filters.bookingsDetailView
-              ? id === filters.bookingsDetailView
+            filters.bookingDetailsById
+              ? id === filters.bookingDetailsById
               : true
           ),
         }),
       excludedBookings: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
-          plan: Object.assign(state.plan, {
+        Object.assign({}, state, {
+          plan: Object.assign({}, state.plan, {
             excludedBookings: mapData.plan.excludedBookings,
           }),
         }),
-      planRouteDetailView: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
-          plan: Object.assign(state.plan, {
+      planRouteDetailsById: (state: stateTypes.MapDataState) =>
+        Object.assign({}, state, {
+          plan: Object.assign({}, state.plan, {
             routes: mapData.plan.routes.filter(
-              (route) => route.id === filters['planRouteDetailView']
+              (route) => route.id === filters['planRouteDetailsById']
             ),
           }),
         }),
       routes: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
-          plan: Object.assign(state.plan, {
+        Object.assign({}, state, {
+          plan: Object.assign({}, state.plan, {
             routes: mapData.plan.routes,
           }),
         }),
-      transportsDetailView: (state: stateTypes.MapDataState) =>
-        Object.assign(state, {
+      transportDetailsById: (state: stateTypes.MapDataState) =>
+        Object.assign({}, state, {
           transports: mapData.transports.filter(
-            (transport) => transport.id === filters.transportsDetailView
+            (transport) => transport.id === filters.transportDetailsById
           ),
         }),
     }),
     [filters, mapData.bookings, mapData.plan, mapData.transports]
   )
 
-  const activeFilters = Object.entries(filters)
-    .filter(([_, val]) => val)
-    .map(([key]) => key)
+  return React.useMemo(() => {
+    const activeFilters = Object.entries(filters)
+      .filter(([_, val]) => val)
+      .map(([key]) => key)
 
-  const filtersToApply = Object.entries(filterFunctions)
-    .filter(([name]) => activeFilters.includes(name))
-    .map(([_, fn]) => fn)
-
-  return filtersToApply.reduce((accumulator, fn) => fn(accumulator), mapData)
+    const filtersToApply = Object.entries(filterFunctions)
+      .filter(([name]) => activeFilters.includes(name))
+      .map(([_, fn]) => fn)
+    console.log(
+      filtersToApply.reduce(
+        (accumulator, fn) => fn(accumulator),
+        stores.mapDataInitialState
+      )
+    )
+    return filtersToApply.reduce(
+      (accumulator, fn) => fn(accumulator),
+      stores.mapDataInitialState
+    )
+  }, [filterFunctions, filters])
 }
 
 const useMapLayers = (
@@ -136,6 +146,7 @@ const useMapLayers = (
       handleClick,
     ]
   )
+
   return layers
 }
 

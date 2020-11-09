@@ -32,18 +32,18 @@ const map = create<types.MapViewState>(
   })
 )
 
-const mapFiltersInitialState = {
+const mapFiltersInitialState: types.MapFilters = {
   bookings: false,
-  bookingsDetailView: undefined,
-  transportsDetailView: undefined,
-  planRouteDetailView: undefined,
+  bookingDetailsById: undefined,
+  transportDetailsById: undefined,
+  planRouteDetailsById: undefined,
   transports: false,
   plan: false,
   excludedBookings: false,
   routes: false,
 }
 
-const mapDataInitialState = {
+const mapDataInitialState: types.MapDataState = {
   bookings: [],
   transports: [],
   plan: {

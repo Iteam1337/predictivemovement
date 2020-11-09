@@ -54,9 +54,9 @@ export type MapViewState = {
 
 export type MapFilters = {
   bookings: boolean
-  bookingsDetailView: string | undefined
-  transportsDetailView: string | undefined
-  planRouteDetailView: string | undefined
+  bookingDetailsById: string | undefined
+  transportDetailsById: string | undefined
+  planRouteDetailsById: string | undefined
   transports: boolean
   plan: boolean
   excludedBookings: boolean

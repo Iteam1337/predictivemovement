@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
-import AddVehicle from './CreateVehicle'
+import CreateTransport from './CreateTransport'
 import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
 import * as stores from '../utils/state/stores'
@@ -9,9 +9,9 @@ import * as Elements from '../shared-elements'
 
 const Transports: React.FC<{
   transports: Transport[]
-  addVehicle: (params: any) => void
-  deleteVehicle: (id: string) => void
-}> = ({ transports, addVehicle, deleteVehicle }) => {
+  createTransport: (params: any) => void
+  deleteTransport: (id: string) => void
+}> = ({ transports, createTransport, deleteTransport }) => {
   const { path, url } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
 
@@ -21,20 +21,20 @@ const Transports: React.FC<{
         <h3>Aktuella transporter</h3>
         <TransportsList transports={transports} />
         <Elements.Layout.FlexRowInCenter>
-          <Link to={`${url}/add-vehicle`}>
+          <Link to={`${url}/add-transport`}>
             <Elements.Buttons.SubmitButton color="#666666">
               + Lägg till transport
             </Elements.Buttons.SubmitButton>
           </Link>
         </Elements.Layout.FlexRowInCenter>
       </Route>
-      <Route path={`${path}/add-vehicle`}>
-        <AddVehicle onSubmit={addVehicle} />
+      <Route path={`${path}/add-transport`}>
+        <CreateTransport onSubmit={createTransport} />
       </Route>
-      <Route path={`${path}/:vehicleId`}>
+      <Route path={`${path}/:transportId`}>
         <TransportDetails
           transports={transports}
-          deleteTransport={deleteVehicle}
+          deleteTransport={deleteTransport}
           onUnmount={() =>
             setUIState({ type: 'highlightTransport', payload: undefined })
           }

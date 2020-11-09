@@ -1,18 +1,18 @@
 const _ = require('highland')
 const helpers = require('./helpers')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
-const { bookingsCache, vehiclesCache, planCache } = require('./cache')
+const { bookingsCache, transportsCache, planCache } = require('./cache')
 
 module.exports = (io) => {
   const {
     bookings,
-    vehicles,
+    transports,
     plan,
-    addVehicle,
+    createTransport,
     createBooking,
     dispatchOffers,
     publishDeleteBooking,
-    publishDeleteVehicle,
+    publishDeleteTransport,
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,
@@ -27,14 +27,14 @@ module.exports = (io) => {
         socket.emit('bookings', bookings)
       })
 
-    _.merge([_(vehiclesCache.values()), vehicles.fork()])
-      .filter((vehicle) => vehicle.id)
-      .doto((vehicle) => {
-        vehiclesCache.set(vehicle.id, vehicle)
+    _.merge([_(transportsCache.values()), transports.fork()])
+      .filter((transport) => transport.id)
+      .doto((transport) => {
+        transportsCache.set(transport.id, transport)
       })
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
-      .each((vehicles) => socket.emit('vehicles', vehicles))
+      .each((transports) => socket.emit('transports', transports))
 
     _.merge([_(planCache.values()), plan.fork()])
       .map((plan) => ({
@@ -55,16 +55,16 @@ module.exports = (io) => {
       .each((data) => socket.emit('plan-update', data))
 
     _(transportLocationUpdates.fork()).each(({ id, location }) => {
-      if (!vehiclesCache.has(id)) return
+      if (!transportsCache.has(id)) return
 
-      const transport = vehiclesCache.get(id)
+      const transport = transportsCache.get(id)
 
       const updatedTransport = {
         ...transport,
         location,
       }
 
-      vehiclesCache.set(id, updatedTransport)
+      transportsCache.set(id, updatedTransport)
 
       return socket.emit('transport-updated', transportLocationUpdate)
     })
@@ -117,8 +117,8 @@ module.exports = (io) => {
       dispatchOffers()
     })
 
-    socket.on('add-vehicle', (params) => {
-      const vehicle = {
+    socket.on('create-transport', (params) => {
+      const transport = {
         id: params.id || id62(),
         capacity: params.capacity,
         earliest_start: params.timewindow.start,
@@ -132,11 +132,11 @@ module.exports = (io) => {
 
         metadata: {
           driver: params.driver,
-          profile: params.vehicleType,
+          profile: params.profile,
         },
       }
 
-      addVehicle(vehicle)
+      createTransport(transport)
     })
 
     socket.on('delete-booking', (id) => {
@@ -146,10 +146,10 @@ module.exports = (io) => {
       socket.emit('delete-booking', id)
     })
 
-    socket.on('delete-vehicle', (id) => {
-      vehiclesCache.delete(id)
-      publishDeleteVehicle(id)
-      socket.emit('vehicle-deleted', id)
+    socket.on('delete-transport', (id) => {
+      transportsCache.delete(id)
+      publishDeleteTransport(id)
+      socket.emit('transport-deleted', id)
     })
   })
 }

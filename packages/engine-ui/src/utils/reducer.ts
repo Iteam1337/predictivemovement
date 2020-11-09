@@ -6,8 +6,8 @@ export const reducer = (state: State, action: any) => {
     case 'setTransports':
       return {
         ...state,
-        vehicles: [
-          ...state.vehicles.filter(
+        transports: [
+          ...state.transports.filter(
             (c) => !action.payload.find((p: any) => p.id === c.id)
           ),
           ...action.payload,
@@ -18,8 +18,8 @@ export const reducer = (state: State, action: any) => {
 
       return {
         ...state,
-        vehicles: [
-          ...state.vehicles.map((t) => {
+        transports: [
+          ...state.transports.map((t) => {
             if (t.id !== id) {
               return t
             }
@@ -32,10 +32,10 @@ export const reducer = (state: State, action: any) => {
         ],
       }
     }
-    case 'deleteVehicle':
+    case 'deleteTransport':
       return {
         ...state,
-        vehicles: state.vehicles.filter((c) => c.id !== action.payload),
+        transports: state.transports.filter((c) => c.id !== action.payload),
       }
     case 'deleteBooking':
       return {
@@ -72,16 +72,16 @@ export const reducer = (state: State, action: any) => {
 type State = {
   bookings: types.Booking[]
   assignedBookings: types.Booking[]
-  vehicles: types.Transport[]
+  transports: types.Transport[]
   plan: types.Plan
 }
 
 export const initState: State = {
   bookings: [],
   assignedBookings: [],
-  vehicles: [],
+  transports: [],
   plan: {
     excludedBookings: [],
-    routes: []
+    routes: [],
   },
 }

@@ -1,5 +1,12 @@
 import { convertInstructionsToSummaryList } from '../src/services/messaging'
 
+function addIndexNull(instructions: any[]) {
+  return instructions.map((instruction: any) => ({
+    index: null,
+    ...instruction,
+  }))
+}
+
 test('2 instruction groups with 1 entity in each ', () => {
   const instructions = [
     [
@@ -20,7 +27,7 @@ test('2 instruction groups with 1 entity in each ', () => {
         type: 'deliverShipment',
       },
     ],
-  ]
+  ].map(addIndexNull)
   const res = convertInstructionsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
@@ -64,7 +71,7 @@ test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', 
         type: 'deliverShipment',
       },
     ],
-  ]
+  ].map(addIndexNull)
   const res = convertInstructionsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:
@@ -125,7 +132,7 @@ test('2 instruction group with 2 entities, 1 instruction group with 1 ', () => {
         type: 'deliverShipment',
       },
     ],
-  ]
+  ].map(addIndexNull)
   const res = convertInstructionsToSummaryList(instructions)
 
   expect(res).toBe(`🎁  Här är dina körningar:

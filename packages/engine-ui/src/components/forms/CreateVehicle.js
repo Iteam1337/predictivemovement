@@ -183,9 +183,9 @@ const Component = ({
                 'contact',
                 onChangeHandler
               )}
-              pattern="^(0)\s*(7[0236])\s*(\d{4})\s*(\d{3})$"
+              pattern="^(?:0|[+]46)\s*(7[0236])\s*(\d{4})\s*(\d{3})$"
               required
-              title="07X XX XX XXX"
+              title="07... or +46"
               placeholder="Telefonnummer"
             />
           </Elements.Layout.InputInnerContainer>

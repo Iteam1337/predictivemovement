@@ -1,3 +1,5 @@
+const PhoneNumber = require('awesome-phonenumber')
+
 const severityByEventStatus = (status) => {
   const map = {
     new: 'success',
@@ -36,8 +38,24 @@ const transportToNotification = (transport) => ({
   transport,
 })
 
+const changeFormatOnPhoneNumber = (phoneNumber) => {
+  let phoneNumberData
+  switch (true) {
+    case phoneNumber.startsWith('+'):
+      phoneNumberData = new PhoneNumber(phoneNumber)
+      break
+    case phoneNumber.startsWith('07'):
+      phoneNumberData = new PhoneNumber(phoneNumber, 'SE')
+    default:
+      break
+  }
+
+  return phoneNumberData.getNumber('e164').replace('+', '')
+}
+
 module.exports = {
   severityByEventStatus,
   bookingToNotification,
   transportToNotification,
+  changeFormatOnPhoneNumber,
 }

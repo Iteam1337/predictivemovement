@@ -131,7 +131,10 @@ module.exports = (io) => {
             : params.startPosition,
 
         metadata: {
-          driver: params.driver,
+          driver: {
+            name: params.driver.name,
+            contact: helpers.changeFormatOnPhoneNumber(params.driver.contact),
+          },
           profile: params.vehicleType,
         },
       }

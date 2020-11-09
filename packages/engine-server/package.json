@@ -26,6 +26,7 @@
     "url": "https://github.com/Iteam1337/pm-mapbox-test/issues"
   },
   "dependencies": {
+    "awesome-phonenumber": "^2.40.0",
     "fluent-amqp": "^0.4.1",
     "highland": "^2.13.5",
     "id62": "^1.0.0",

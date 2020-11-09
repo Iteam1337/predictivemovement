@@ -76,27 +76,26 @@ export const handleNextDriverInstruction = async (
       console.log('Vehicle finished all instructions:', vehicleId)
       cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
-    } else {
-      const [currentInstructionGroup] = instructions
+    }
+    const [currentInstructionGroup] = instructions
 
-      const bookings = await cache.getBookings(
-        currentInstructionGroup.map((g) => g.id)
-      )
+    const bookings = await cache.getBookings(
+      currentInstructionGroup.map((g) => g.id)
+    )
 
-      switch (currentInstructionGroup[0].type) {
-        case 'pickupShipment':
-          return messaging.sendPickupInstruction(
-            currentInstructionGroup,
-            telegramId,
-            bookings
-          )
-        case 'deliverShipment':
-          return messaging.sendDeliveryInstruction(
-            currentInstructionGroup,
-            telegramId,
-            bookings
-          )
-      }
+    switch (currentInstructionGroup[0].type) {
+      case 'pickupShipment':
+        return messaging.sendPickupInstruction(
+          currentInstructionGroup,
+          telegramId,
+          bookings
+        )
+      case 'deliverShipment':
+        return messaging.sendDeliveryInstruction(
+          currentInstructionGroup,
+          telegramId,
+          bookings
+        )
     }
   } catch (error) {
     console.log('error in handleNextDriverInstruction: ', error)

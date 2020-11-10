@@ -15,7 +15,7 @@ interface Props {
   color?: InAppColor
   route: Route
   routeNumber: number
-  routes: Route[]
+  transports: Route[]
   moveBooking: (bookingId: string, routeId: string) => void
 }
 
@@ -42,7 +42,7 @@ const MenuButton = styled.button``
 const PlanRouteDetails = ({
   route,
   routeNumber,
-  routes,
+  transports,
   color,
   moveBooking,
 }: Props) => {
@@ -135,7 +135,7 @@ const PlanRouteDetails = ({
             {route.booking_ids?.map((bookingId) => (
               <li key={bookingId}>
                 <Elements.Links.RoundedLink to={`/bookings/${route.id}`}>
-                  {bookingId}
+                  {helpers.getLastFourChars(bookingId).toUpperCase()}
                 </Elements.Links.RoundedLink>
                 <MenuButton
                   onClick={() => toggleRouteMenu((isOpen) => !isOpen)}
@@ -148,7 +148,7 @@ const PlanRouteDetails = ({
                   anchorEl={menuEl.current}
                   onClose={() => toggleRouteMenu((isOpen) => !isOpen)}
                 >
-                  {routes.map(({ id }) => (
+                  {transports.map(({ id }) => (
                     <MenuItem
                       key={id}
                       selected={route.id === id}
@@ -157,7 +157,7 @@ const PlanRouteDetails = ({
                         moveBooking(bookingId, id)
                       }}
                     >
-                      {id}
+                      {helpers.getLastFourChars(id).toUpperCase()}
                     </MenuItem>
                   ))}
                 </Menu>

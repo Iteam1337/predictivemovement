@@ -22,6 +22,7 @@ const initialState: FormState = {
 }
 
 export interface FormState {
+  [key: string]: any
   profile: string
   id: string
   capacity: {

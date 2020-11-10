@@ -38,6 +38,7 @@ interface PlanProps {
   transports: Transport[]
   dispatchOffers: (params: any) => void
   bookings: Booking[]
+  moveBooking: (bookingId: string, routeId: string) => void
 }
 
 const Wrapper = styled.div`
@@ -62,46 +63,47 @@ const BookingToggleList: React.FC<{
   isOpen,
   setOpen,
 }) => (
-      <Wrapper>
-        <Elements.Layout.MarginBottomContainer>
-          <Elements.Layout.FlexRowWrapper onClick={setOpen}>
-            <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
-            <Icons.Arrow
-              style={{
-                marginLeft: '0.875rem',
-                transform: `rotate(${isOpen ? '180deg' : 0})`,
-              }}
-            />
-          </Elements.Layout.FlexRowWrapper>
+  <Wrapper>
+    <Elements.Layout.MarginBottomContainer>
+      <Elements.Layout.FlexRowWrapper onClick={setOpen}>
+        <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
+        <Icons.Arrow
+          style={{
+            marginLeft: '0.875rem',
+            transform: `rotate(${isOpen ? '180deg' : 0})`,
+          }}
+        />
+      </Elements.Layout.FlexRowWrapper>
 
-          {isOpen && (
-            <Elements.Layout.BookingList>
-              {excludedBookings.map((booking) => (
-                <li key={booking.id}>
-                  <Elements.Layout.InlineContainer>
-                    <Elements.Links.RoundedLink
-                      onMouseOver={() => onMouseEnterHandler(booking.id)}
-                      onMouseLeave={() => onMouseEnterHandler()}
-                      to={`/bookings/${booking.id}`}
-                      onClick={() => onClickHandler(booking.lat, booking.lon)}
-                    >
-                      {helpers.getLastFourChars(booking.id).toUpperCase()}
-                    </Elements.Links.RoundedLink>
-                    <Paragraph>{bookingStatusToReadable(booking.status)}</Paragraph>
-                  </Elements.Layout.InlineContainer>
-                </li>
-              ))}
-            </Elements.Layout.BookingList>
-          )}
-        </Elements.Layout.MarginBottomContainer>
-      </Wrapper>
-    )
+      {isOpen && (
+        <Elements.Layout.BookingList>
+          {excludedBookings.map((booking) => (
+            <li key={booking.id}>
+              <Elements.Layout.InlineContainer>
+                <Elements.Links.RoundedLink
+                  onMouseOver={() => onMouseEnterHandler(booking.id)}
+                  onMouseLeave={() => onMouseEnterHandler()}
+                  to={`/bookings/${booking.id}`}
+                  onClick={() => onClickHandler(booking.lat, booking.lon)}
+                >
+                  {helpers.getLastFourChars(booking.id).toUpperCase()}
+                </Elements.Links.RoundedLink>
+                <Paragraph>{bookingStatusToReadable(booking.status)}</Paragraph>
+              </Elements.Layout.InlineContainer>
+            </li>
+          ))}
+        </Elements.Layout.BookingList>
+      )}
+    </Elements.Layout.MarginBottomContainer>
+  </Wrapper>
+)
 
 const Plan: React.FC<PlanProps> = ({
   plan,
   dispatchOffers,
   transports,
   bookings,
+  moveBooking,
 }) => {
   const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0
@@ -142,37 +144,39 @@ const Plan: React.FC<PlanProps> = ({
               Det finns inga föreslagna rutter...
             </Elements.Typography.NoInfoParagraph>
           ) : (
-              <>
-                {activeRoutes.map((route, i) => (
-                  <PlanRouteDetails
-                    key={i}
-                    route={route}
-                    routeNumber={i + 1}
-                    color={
-                      transports.find((transport) => transport.id === route.id)
-                        ?.color
-                    }
-                  />
-                ))}
-                {plan.excludedBookings.length > 0 && (
-                  <BookingToggleList
-                    excludedBookings={plan.excludedBookings}
-                    text="Exkluderade bokningar"
-                    onClickHandler={onClickHandler}
-                    onMouseEnterHandler={onMouseEnter}
-                    isOpen={expandedSection.isOpen}
-                    setOpen={handleExpand}
-                  />
-                )}
-                <Elements.Buttons.SubmitButton
-                  alignSelf="center"
-                  marginTop="5rem"
-                  onClick={dispatchOffers}
-                >
-                  Bekräfta plan
+            <>
+              {activeRoutes.map((route, i) => (
+                <PlanRouteDetails
+                  key={i}
+                  moveBooking={moveBooking}
+                  route={route}
+                  routeNumber={i + 1}
+                  routes={activeRoutes}
+                  color={
+                    transports.find((transport) => transport.id === route.id)
+                      ?.color
+                  }
+                />
+              ))}
+              {plan.excludedBookings.length > 0 && (
+                <BookingToggleList
+                  excludedBookings={plan.excludedBookings}
+                  text="Exkluderade bokningar"
+                  onClickHandler={onClickHandler}
+                  onMouseEnterHandler={onMouseEnter}
+                  isOpen={expandedSection.isOpen}
+                  setOpen={handleExpand}
+                />
+              )}
+              <Elements.Buttons.SubmitButton
+                alignSelf="center"
+                marginTop="5rem"
+                onClick={dispatchOffers}
+              >
+                Bekräfta plan
               </Elements.Buttons.SubmitButton>
-              </>
-            )}
+            </>
+          )}
         </PlanWrapper>
       </Route>
       <Route exact path={`${path}/routes/:routeId/:activityId`}>

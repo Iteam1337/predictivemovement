@@ -8,11 +8,15 @@ import * as Elements from '../shared-elements'
 import * as helpers from '../utils/helpers'
 import { Route, InAppColor, Activity } from '../types'
 import * as stores from '../utils/state/stores'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
 
 interface Props {
-  route: Route
   color?: InAppColor
+  route: Route
   routeNumber: number
+  routes: Route[]
+  moveBooking: (bookingId: string, routeId: string) => void
 }
 
 const RouteTitleWrapper = styled.div`
@@ -29,12 +33,26 @@ const Chevron = styled(Icons.Arrow)`
   justify-self: flex-end;
 `
 
-const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
+const BookingsList = styled.ul`
+  list-style: none;
+`
+
+const MenuButton = styled.button``
+
+const PlanRouteDetails = ({
+  route,
+  routeNumber,
+  routes,
+  color,
+  moveBooking,
+}: Props) => {
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
+  const menuEl = React.useRef(null)
+  const [changeRouteMenuOpen, toggleRouteMenu] = React.useState(false)
 
   const panMapView = (latitude: number, longitude: number) =>
     setMap({
@@ -90,7 +108,6 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
         </Elements.Typography.StrongParagraph>
         <Chevron active={routeId === route.id ? true : undefined} />
       </RouteTitleWrapper>
-
       {routeId === route.id && (
         <>
           <Elements.Layout.FlexRowWrapper>
@@ -114,6 +131,39 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
               {helpers.getLastFourChars(route.id).toUpperCase()}
             </Elements.Links.RoundedLink>
           </Elements.Layout.FlexRowWrapper>
+          <BookingsList>
+            {route.booking_ids?.map((bookingId) => (
+              <li key={bookingId}>
+                <Elements.Links.RoundedLink to={`/bookings/${route.id}`}>
+                  {bookingId}
+                </Elements.Links.RoundedLink>
+                <MenuButton
+                  onClick={() => toggleRouteMenu((isOpen) => !isOpen)}
+                  ref={menuEl}
+                >
+                  Flytta
+                </MenuButton>
+                <Menu
+                  open={changeRouteMenuOpen}
+                  anchorEl={menuEl.current}
+                  onClose={() => toggleRouteMenu((isOpen) => !isOpen)}
+                >
+                  {routes.map(({ id }) => (
+                    <MenuItem
+                      key={id}
+                      selected={route.id === id}
+                      onClick={() => {
+                        toggleRouteMenu((isOpen) => !isOpen)
+                        moveBooking(bookingId, id)
+                      }}
+                    >
+                      {id}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </li>
+            ))}
+          </BookingsList>
           <RouteActivities route={route} />
         </>
       )}

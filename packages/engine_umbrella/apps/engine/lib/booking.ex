@@ -89,18 +89,18 @@ defmodule Booking do
   end
 
   def update(%{
-        "id" => id,
-        "pickup" => pickup,
-        "delivery" => delivery,
-        "metadata" => metadata,
-        "external_id" => external_id,
-        "size" => size
+        id: id,
+        pickup: pickup,
+        delivery: delivery,
+        metadata: metadata,
+        external_id: external_id,
+        size: size
       }) do
     booking =
       get(id)
       |> Map.put(:pickup, pickup)
       |> Map.put(:delivery, delivery)
-      |> Map.put(:metadata, metadata)
+      |> Map.put(:metadata, metadata |> Jason.encode!())
       |> Map.put(:external_id, external_id)
       |> Map.put(:size, size)
 
@@ -109,9 +109,9 @@ defmodule Booking do
         booking
         |> Map.put(:route, Osrm.route(pickup, delivery))
         |> add_event_to_events_list("update", DateTime.utc_now())
-        |> (&ES.add_event(%BookingUpdated{booking: &1})).()
 
       RMQ.publish(booking_with_route, @outgoing_booking_exchange, "new")
+      ES.add_event(%BookingUpdated{booking: booking_with_route})
       id
     else
       _ ->

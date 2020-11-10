@@ -35,18 +35,11 @@ defmodule Engine.BookingUpdateProcessor do
     )
   end
 
-  def keys_to_atoms(string_key_map) when is_map(string_key_map) do
-    for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), keys_to_atoms(val)}
-  end
-
-  def keys_to_atoms(value), do: value
-
   def handle_message(_, %Broadway.Message{data: booking_update} = msg, _) do
     booking_update
     |> Jason.decode!()
     |> Map.delete("route")
-    |> Enum.reduce(%{}, fn {key, val}, acc -> Map.put(acc, String.to_atom(key), val) end)
-    |> IO.inspect(label: "what is the booking?")
+    |> Map.Helpers.atomize_keys()
     |> Booking.update()
 
     msg

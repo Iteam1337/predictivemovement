@@ -171,7 +171,9 @@ const Component = ({
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="contact">Kontakt</Elements.Form.Label>
+          <Elements.Form.Label required htmlFor="contact">
+            Kontakt
+          </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>
             <Elements.Icons.FormInputIcon
               alt="Contact number icon"
@@ -187,6 +189,9 @@ const Component = ({
                 'contact',
                 onChangeHandler
               )}
+              pattern="^(?:0|[+]46)\s*(7[0236])\s*(\d{4})\s*(\d{3})$"
+              required
+              title="07... or +46"
               placeholder="Telefonnummer"
             />
           </Elements.Layout.InputInnerContainer>

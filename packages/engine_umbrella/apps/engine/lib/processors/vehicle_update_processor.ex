@@ -4,7 +4,7 @@ defmodule Engine.VehicleUpdateProcessor do
 
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
   @update_vehicle_routing_key "update"
-  @update_booking_queue "update_vehicle_in_engine"
+  @update_vehicle_queue "update_vehicle_in_engine"
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
@@ -16,7 +16,7 @@ defmodule Engine.VehicleUpdateProcessor do
              Logger.info("#{__MODULE__} connected to rabbitmq")
              AMQP.Exchange.declare(channel, @incoming_vehicle_exchange, :topic, durable: true)
            end,
-           queue: @update_booking_queue,
+           queue: @update_vehicle_queue,
            connection: [
              host: Application.fetch_env!(:engine, :amqp_host)
            ],
@@ -38,11 +38,9 @@ defmodule Engine.VehicleUpdateProcessor do
   def handle_message(_, %Broadway.Message{data: vehicle_update} = msg, _) do
     vehicle_update
     |> Jason.decode!()
-    |> IO.inspect(label: "the updated vehicle")
-
-    # |> Map.delete("route")
-    # |> Map.Helpers.atomize_keys()
-    # |> Booking.update()
+    |> Map.delete("current_route")
+    |> Map.Helpers.atomize_keys()
+    |> Vehicle.update()
 
     msg
   end

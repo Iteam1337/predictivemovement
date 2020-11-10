@@ -123,6 +123,45 @@ defmodule Vehicle do
     end
   end
 
+  def update(%{
+        id: id,
+        start_address: start_address,
+        end_address: end_address,
+        earliest_start: earliest_start,
+        latest_end: latest_end,
+        profile: profile,
+        capacity: capacity,
+        metadata: metadata
+      }) do
+    vehicle =
+      get(id)
+      |> Map.put(:start_address, start_address)
+      |> Map.put(:end_address, end_address)
+      |> Map.put(:earliest_start, earliest_start)
+      |> Map.put(:latest_end, latest_end)
+      |> Map.put(:profile, profile)
+      |> Map.put(:capacity, capacity)
+      |> Map.put(:metadata, metadata |> Jason.encode!())
+
+    with true <- Vex.valid?(vehicle) do
+      vehicle
+      |> (&%VehicleUpdated{vehicle: &1}).()
+      |> ES.add_event()
+
+      RMQ.publish(
+        vehicle,
+        Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+        "new"
+      )
+
+      id
+    else
+      _ ->
+        IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")
+        Vex.errors(vehicle)
+    end
+  end
+
   def apply_offer_accepted(id, offer),
     do: GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
 

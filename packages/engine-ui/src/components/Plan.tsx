@@ -38,7 +38,7 @@ interface PlanProps {
   transports: Transport[]
   dispatchOffers: (params: any) => void
   bookings: Booking[]
-  moveBooking: (bookingId: string, routeId: string) => void
+  moveBooking: (bookingId: string, transportId: string) => void
 }
 
 const Wrapper = styled.div`

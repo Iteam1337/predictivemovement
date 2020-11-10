@@ -33,7 +33,7 @@ interface Props {
   dispatchOffers: (params: any) => void
   createTransport: (params: any) => void
   deleteTransport: (id: string) => void
-  moveBooking: (bookingId: string, routeId: string) => void
+  moveBooking: (bookingId: string, transportId: string) => void
 }
 
 const Sidebar = (state: Props) => {

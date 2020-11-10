@@ -16,7 +16,7 @@ interface Props {
   route: Route
   routeNumber: number
   transports: Route[]
-  moveBooking: (bookingId: string, routeId: string) => void
+  moveBooking: (bookingId: string, transportId: string) => void
 }
 
 const RouteTitleWrapper = styled.div`

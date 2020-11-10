@@ -38,8 +38,8 @@ const App = () => {
     socket.emit('delete-transport', id)
   }
 
-  const moveBooking = (bookingId: string, routeId: string) => {
-    socket.emit('move-booking', { bookingId, routeId })
+  const moveBooking = (bookingId: string, transportId: string) => {
+    socket.emit('move-booking', { bookingId, transportId })
   }
 
   useSocket('notification', (data: notificationTypes.Notification) => {

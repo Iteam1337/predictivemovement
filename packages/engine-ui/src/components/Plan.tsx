@@ -151,7 +151,7 @@ const Plan: React.FC<PlanProps> = ({
                   moveBooking={moveBooking}
                   route={route}
                   routeNumber={i + 1}
-                  routes={activeRoutes}
+                  transports={transports}
                   color={
                     transports.find((transport) => transport.id === route.id)
                       ?.color

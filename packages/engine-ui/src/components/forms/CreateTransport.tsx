@@ -162,9 +162,10 @@ const Component = ({
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             required
             name="profile"
-            value={formState.profile}
+            value={formState.metadata.profile}
             placeholder="Paketbil"
-            onChangeHandler={eventHandlers.handleTextInputChange(
+            onChangeHandler={eventHandlers.handleNestedInputChange(
+              'metadata',
               'profile',
               onChangeHandler
             )}

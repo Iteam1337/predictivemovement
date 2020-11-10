@@ -5,10 +5,40 @@ import { v4 as uuid } from 'uuid'
 import * as messaging from './messaging'
 import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
+import { Instruction } from '../types'
 
-export const driverIsLoggedIn = async (vehicleId): Promise<boolean> => {
-  const vehicle = await cache.getVehicle(vehicleId)
-  return !!vehicle.telegramId
+export const driverIsLoggedIn = async (
+  telegramId: number
+): Promise<boolean> => {
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
+  return !!vehicleId
+}
+
+export const onInstructionsReceived = async (
+  telegramId: number,
+  instructionGroups: Instruction[][]
+): Promise<Message | void> => {
+  if (await driverIsLoggedIn(telegramId)) {
+    return messaging
+      .sendSummary(telegramId, instructionGroups)
+      .then(() => handleNextDriverInstruction(telegramId))
+  }
+}
+
+const onDriverLoginSuccessful = async (
+  telegramId: number
+): Promise<Message | void> => {
+  await messaging.sendWelcomeMsg(telegramId)
+
+  return cache
+    .getVehicleIdByTelegramId(telegramId)
+    .then(cache.getInstructions)
+    .then((instructionGroups: Instruction[][]) => {
+      if (instructionGroups)
+        return messaging
+          .sendSummary(telegramId, instructionGroups)
+          .then(() => handleNextDriverInstruction(telegramId))
+    })
 }
 
 export const onLogin = async (
@@ -27,9 +57,7 @@ export const onLogin = async (
     ...vehicle,
     telegramId,
   })
-  return messaging
-    .onDriverLoginSuccessful(ctx)
-    .then(() => handleNextDriverInstruction(telegramId))
+  return onDriverLoginSuccessful(telegramId)
 }
 
 export const onLocationMessage = async (
@@ -56,36 +84,33 @@ export const handleNextDriverInstruction = async (
     const instructions = await cache.getInstructions(vehicleId)
 
     if (!instructions) {
-      console.log('No instructions found')
+      console.log('No instructions found for:', vehicleId)
       return
-    }
-
-    const [currentInstructionGroup] = instructions
-
-    if (!currentInstructionGroup) {
+    } else if (!instructions.length) {
+      console.log('Vehicle finished all instructions:', vehicleId)
       cache.setInstructions(vehicleId, null)
       return messaging.sendDriverFinishedMessage(telegramId)
     }
+    const [currentInstructionGroup] = instructions
 
     const bookings = await cache.getBookings(
       currentInstructionGroup.map((g) => g.id)
     )
 
-    const type = currentInstructionGroup[0].type
-
-    if (type === 'pickupShipment')
-      return messaging.sendPickupInstruction(
-        currentInstructionGroup,
-        telegramId,
-        bookings
-      )
-
-    if (type === 'deliverShipment')
-      return messaging.sendDeliveryInstruction(
-        currentInstructionGroup,
-        telegramId,
-        bookings
-      )
+    switch (currentInstructionGroup[0].type) {
+      case 'pickupShipment':
+        return messaging.sendPickupInstruction(
+          currentInstructionGroup,
+          telegramId,
+          bookings
+        )
+      case 'deliverShipment':
+        return messaging.sendDeliveryInstruction(
+          currentInstructionGroup,
+          telegramId,
+          bookings
+        )
+    }
   } catch (error) {
     console.log('error in handleNextDriverInstruction: ', error)
     return

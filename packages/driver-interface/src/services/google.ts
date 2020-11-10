@@ -35,13 +35,15 @@ export const getAddressFromCoordinate = (coordinate: {
       console.log('Error getting google geocode data: ', err.message)
     )
 
-export const getDirectionsFromActivities = (
-  activities: Instruction[]
+export const getDirectionsFromInstructionGroups = (
+  instructionGroups: Instruction[][]
 ): string =>
-  activities.reduce(
-    (result, { address }) => result.concat(`/${address.lat},${address.lon}`),
-    'https://www.google.com/maps/dir'
-  )
+  instructionGroups
+    .map((instructionGroup: Instruction[]) => instructionGroup[0].address)
+    .reduce(
+      (result, { lat, lon }) => `${result}/${lat},${lon}`,
+      'https://www.google.com/maps/dir'
+    )
 
 export const getDirectionsUrl = (...args: string[]): string =>
   `https://www.google.com/maps/dir/?api=1&destination=${args.join(',')}`

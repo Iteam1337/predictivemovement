@@ -1,10 +1,18 @@
-import { Instruction } from "./types"
+import { Instruction } from './types'
 
-export const getLastFourChars = (str: string): string => str.slice(str.length - 4, str.length)
+const getLastFourChars = (str: string): string =>
+  str.slice(str.length - 4, str.length)
 
-export const cleanDriverInstructions = <T>(arr: T[]): T[] => arr.slice(1, -1)
+export const formatId = (id: string): string =>
+  getLastFourChars(id).toUpperCase()
 
-export const groupDriverInstructions = (instructions: Instruction[]): Instruction[][] => {
+export const cleanDriverInstructions = (
+  instructions: Instruction[]
+): Instruction[] => instructions.slice(1, -1)
+
+export const groupDriverInstructions = (
+  instructions: Instruction[]
+): Instruction[][] => {
   const { data } = instructions.reduce<{
     type: string
     address: string

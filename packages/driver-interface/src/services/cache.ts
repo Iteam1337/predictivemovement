@@ -23,11 +23,11 @@ export default {
     redis.set(`${keys.BOOKINGS}:${id}`, JSON.stringify(booking)),
   setInstructions: (
     vehicleId: string,
-    instructions: Instruction[][]
+    instructionGroups: Instruction[][]
   ): Promise<string> =>
     redis.set(
       `${keys.INSTRUCTIONS}:${vehicleId}`,
-      JSON.stringify(instructions)
+      JSON.stringify(instructionGroups)
     ),
   getInstructions: (vehicleId: string): Promise<Instruction[][]> =>
     redis.get(`${keys.INSTRUCTIONS}:${vehicleId}`).then(JSON.parse),

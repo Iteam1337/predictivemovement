@@ -13,6 +13,7 @@ module.exports = (io) => {
     dispatchOffers,
     publishDeleteBooking,
     publishDeleteTransport,
+    publishMoveBooking,
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,
@@ -140,6 +141,10 @@ module.exports = (io) => {
       }
 
       createTransport(transport)
+    })
+
+    socket.on('move-booking', ({ bookingId, transportId }) => {
+      publishMoveBooking(bookingId, transportId)
     })
 
     socket.on('delete-booking', (id) => {

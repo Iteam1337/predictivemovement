@@ -65,17 +65,11 @@ const Timeline = styled.div`
   }
 `
 
-const BookingDetails = ({
-  bookings,
-  deleteBooking,
-  updateBooking,
-  onUnmount,
-}) => {
+const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const { bookingId } = useParams()
   const history = useHistory()
 
   const booking = bookings.find((b) => b.id === bookingId)
-
   const [address, setAddress] = React.useState()
 
   React.useEffect(() => () => onUnmount(), [onUnmount])
@@ -108,10 +102,6 @@ const BookingDetails = ({
       deleteBooking(bookingId)
       return history.push('/bookings')
     }
-  }
-
-  const handleUpdateClick = (booking) => {
-    updateBooking(booking)
   }
 
   const parseEventTypeToHumanReadable = (type) => {
@@ -310,12 +300,6 @@ const BookingDetails = ({
               Radera bokning
             </Elements.Buttons.CancelButton>
           )}
-
-          <Elements.Buttons.CancelButton
-            onClick={() => handleUpdateClick(booking)}
-          >
-            Save update bokning
-          </Elements.Buttons.CancelButton>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

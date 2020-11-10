@@ -23,6 +23,6 @@ COPY package-lock.json .
 
 RUN npm ci --only=production --no-optional --no-fund
 
-COPY --from=base /app/dist ./dist
+COPY --from=base /app/dist/src ./dist
 
 CMD npm start

@@ -12,19 +12,73 @@ const Component = ({
   onSubmitHandler,
   formState,
   dispatch,
+  transportPresets,
 }: {
   onChangeHandler: any
   onSubmitHandler: any
   formState: FormState
   dispatch: any
+  transportPresets: {
+    truck: {
+      [s: string]: {
+        weight: string
+        volume: string
+      }
+    }
+  }
 }) => {
   const history = useHistory()
+  const [useCustomCapacity, setUseCustomCapacity] = React.useState(false)
 
   const handleDriverTimeRestrictionChange = (date: string, property: string) =>
     onChangeHandler((currentState: FormState) => ({
       ...currentState,
       timewindow: { ...currentState.timewindow, [property]: date },
     }))
+
+  const handleTransportPresetSelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    if (e.target.value === 'custom') {
+      setUseCustomCapacity(!useCustomCapacity)
+      return onChangeHandler((currentState: any) => ({
+        ...currentState,
+        capacity: {
+          weight: '',
+          volume: '',
+        },
+      }))
+    }
+    return onChangeHandler((currentState: any) => ({
+      ...currentState,
+      capacity: transportPresets.truck[e.target.value],
+    }))
+  }
+
+  const transportPresetNameToHumanReadable = (name: string) => {
+    switch (name) {
+      case 'small':
+        return 'Liten'
+      case 'medium':
+        return 'Medium'
+      case 'big':
+        return 'Stor'
+    }
+  }
+
+  const transportSelectOptions = Object.entries(transportPresets.truck)
+    .map(([name, { weight, volume }]) => ({
+      value: name,
+      label: transportPresetNameToHumanReadable(name),
+      weight,
+      volume,
+    }))
+    .concat({
+      value: 'custom',
+      label: '',
+      weight: '',
+      volume: '',
+    })
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
@@ -103,48 +157,64 @@ const Component = ({
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Layout.TextInputPairContainer>
-            <Elements.Layout.TextInputPairItem>
-              <Elements.Form.Label required htmlFor="volume">
-                Volym
-              </Elements.Form.Label>
-              <FormInputs.TextInput
-                onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                step={0.1}
-                min="0"
-                required
-                name="volume"
-                value={formState.capacity.volume}
-                placeholder="Lastvolym (m3)"
-                type="number"
-                onChangeHandler={eventHandlers.handleNestedInputChange(
-                  'capacity',
-                  'volume',
-                  onChangeHandler
-                )}
-              />
-            </Elements.Layout.TextInputPairItem>
-            <Elements.Layout.TextInputPairItem>
-              <Elements.Form.Label required htmlFor="weight">
-                Vikt
-              </Elements.Form.Label>
-              <FormInputs.TextInput
-                onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                step={1}
-                min="0"
-                type="number"
-                required
-                name="weight"
-                value={formState.capacity.weight}
-                onChangeHandler={eventHandlers.handleNestedInputChange(
-                  'capacity',
-                  'weight',
-                  onChangeHandler
-                )}
-                placeholder="Maxvikt (kg)"
-              />
-            </Elements.Layout.TextInputPairItem>
-          </Elements.Layout.TextInputPairContainer>
+          <Elements.Form.Label htmlFor="capacity" required>
+            Välj kapacitet
+          </Elements.Form.Label>
+          {!useCustomCapacity && (
+            <FormInputs.TransportCapacity
+              onChange={handleTransportPresetSelectChange}
+              options={transportSelectOptions}
+            />
+          )}
+
+          {useCustomCapacity && (
+            <>
+              <Elements.Layout.InputContainer>
+                <FormInputs.TextInput
+                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                  step={0.1}
+                  min="0"
+                  required
+                  name="volume"
+                  value={formState.capacity.volume}
+                  placeholder="Lastvolym (m3)"
+                  type="number"
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'capacity',
+                    'volume',
+                    onChangeHandler
+                  )}
+                />
+              </Elements.Layout.InputContainer>
+              <Elements.Layout.InputContainer>
+                <FormInputs.TextInput
+                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                  step={1}
+                  min="0"
+                  type="number"
+                  required
+                  name="weight"
+                  value={formState.capacity.weight}
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'capacity',
+                    'weight',
+                    onChangeHandler
+                  )}
+                  placeholder="Maxvikt (kg)"
+                />
+
+                <Elements.Buttons.CancelButton
+                  padding="0.5rem"
+                  style={{
+                    marginTop: '0.5rem',
+                  }}
+                  onClick={() => setUseCustomCapacity(!useCustomCapacity)}
+                >
+                  Återgå till förval
+                </Elements.Buttons.CancelButton>
+              </Elements.Layout.InputContainer>
+            </>
+          )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
 

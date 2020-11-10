@@ -6,6 +6,14 @@ export enum BookingStatus {
   PICKED_UP = 'picked_up',
 }
 
+export enum TransportTypes {
+  TRUCK = 'truck',
+}
+
+export type Truck = {
+  capacity: { weight: number; volume: number }
+}
+
 interface BookingRoute {
   distance: number
   duration: number

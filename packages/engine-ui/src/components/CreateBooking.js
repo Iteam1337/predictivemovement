@@ -9,6 +9,12 @@ import Success from './CreateSuccess'
 import * as hooks from '../utils/hooks'
 import * as stores from '../utils/state/stores'
 
+const parcelSizePresets = {
+  small: { weight: 1, measurements: '18x18x18' },
+  medium: { weight: 10, measurements: '24x24x24' },
+  big: { weight: 50, measurements: '36x36x36' },
+}
+
 const initialState = {
   externalId: '',
   cargo: '',
@@ -29,10 +35,7 @@ const initialState = {
     city: '',
     timewindow: null,
   },
-  size: {
-    measurements: '',
-    weight: '',
-  },
+  size: parcelSizePresets.small,
   sender: { name: '', contact: '', info: '' },
   recipient: { name: '', contact: '', info: '' },
 }
@@ -110,6 +113,7 @@ const CreateBooking = ({ onSubmit }) => {
           onSubmitHandler={onSubmitHandler}
           state={formState}
           dispatch={setUIState}
+          parcelSizePresets={parcelSizePresets}
         />
       </Elements.Layout.Container>
     </MainRouteLayout>

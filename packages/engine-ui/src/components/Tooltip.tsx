@@ -88,7 +88,7 @@ const useAddressFromCoordinate = ({
 }
 
 enum EntityTypes {
-  VEHICLE = 'vehicle',
+  TRANSPORT = 'transport',
   BOOKING = 'booking',
 }
 
@@ -102,13 +102,13 @@ const Component: React.FC<{
     state.dispatch,
   ])
 
-  const createBookingOrVehicleView = useRouteMatch<{}>({
-    path: ['/bookings/add-booking', '/transports/add-vehicle'],
+  const createBookingOrTransportView = useRouteMatch<{}>({
+    path: ['/bookings/add-booking', '/transports/add-transport'],
     exact: true,
   })
 
   const tooltipTexts = {
-    vehicle: {
+    transport: {
       start: 'startposition',
       end: 'slutposition',
     },
@@ -171,9 +171,9 @@ const Component: React.FC<{
             </Coordinate>
 
             {lastFocusedInput &&
-              createBookingOrVehicleView &&
+              createBookingOrTransportView &&
               getAddAsInputButton(
-                createBookingOrVehicleView.path,
+                createBookingOrTransportView.path,
                 lastFocusedInput
               )}
           </>

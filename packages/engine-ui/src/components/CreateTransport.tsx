@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom'
 import * as Elements from '../shared-elements'
-import Form from './forms/CreateVehicle'
+import Form from './forms/CreateTransport'
 import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './CreateSuccess'
 import * as hooks from '../utils/hooks'
@@ -10,14 +10,14 @@ import React from 'react'
 
 const transportPresets = {
   truck: {
-    small: { weight: 1234, volume: 18 },
-    medium: { weight: 2234, volume: 24 },
-    big: { weight: 4234, volume: 36 },
+    small: { weight: '1234', volume: '18' },
+    medium: { weight: '2234', volume: '24' },
+    big: { weight: '4234', volume: '36' },
   },
 }
 
-const initialState = {
-  vehicleType: '',
+const initialState: FormState = {
+  profile: '',
   id: '',
   capacity: transportPresets.truck.small,
   timewindow: { start: null, end: null },
@@ -26,7 +26,46 @@ const initialState = {
   driver: { name: '', contact: '' },
 }
 
-const CreateVehicle = ({ onSubmit }) => {
+export interface FormState {
+  [key: string]: any
+  profile: string
+  id: string
+  capacity: {
+    volume: string
+    weight: string
+  }
+  timewindow: {
+    start: string | null
+    end: string | null
+  }
+  startPosition: {
+    lat: number
+    lon: number
+    name?: string
+  }
+  endPosition: {
+    lat?: number
+    lon?: number
+    name?: string
+  }
+  driver: {
+    name?: string
+    contact?: string
+  }
+}
+
+interface FormSubmit extends Omit<FormState, 'capacity'> {
+  capacity: {
+    volume: number
+    weight: number
+  }
+}
+
+const CreateTransport = ({
+  onSubmit,
+}: {
+  onSubmit: (form: FormSubmit) => void
+}) => {
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
   const [isFinished, setIsFinished] = React.useState(false)
@@ -45,12 +84,10 @@ const CreateVehicle = ({ onSubmit }) => {
     return () => setActive(false)
   }, [isActive])
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = (event: any) => {
     event.preventDefault()
     onSubmit({
       ...formState,
-      lat: formState.startPosition.lat,
-      lon: formState.startPosition.lon,
       timewindow:
         formState.timewindow.start && formState.timewindow.end
           ? {
@@ -111,4 +148,4 @@ const CreateVehicle = ({ onSubmit }) => {
   )
 }
 
-export default CreateVehicle
+export default CreateTransport

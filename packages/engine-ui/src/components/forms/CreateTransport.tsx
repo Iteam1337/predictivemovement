@@ -5,6 +5,7 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import * as Elements from '../../shared-elements'
 import * as FormInputs from './inputs'
 import * as eventHandlers from './eventHandlers'
+import { FormState } from '../CreateTransport'
 
 const Component = ({
   onChangeHandler,
@@ -12,22 +13,35 @@ const Component = ({
   formState,
   dispatch,
   transportPresets,
+}: {
+  onChangeHandler: any
+  onSubmitHandler: any
+  formState: FormState
+  dispatch: any
+  transportPresets: {
+    truck: {
+      [s: string]: {
+        weight: string
+        volume: string
+      }
+    }
+  }
 }) => {
   const history = useHistory()
   const [useCustomCapacity, setUseCustomCapacity] = React.useState(false)
 
-  const handleDriverTimeRestrictionChange = (date, property) =>
-    onChangeHandler((currentState) => {
-      return {
-        ...currentState,
-        timewindow: { ...currentState.timewindow, [property]: date },
-      }
-    })
+  const handleDriverTimeRestrictionChange = (date: string, property: string) =>
+    onChangeHandler((currentState: FormState) => ({
+      ...currentState,
+      timewindow: { ...currentState.timewindow, [property]: date },
+    }))
 
-  const handleTransportPresetSelectChange = (e) => {
+  const handleTransportPresetSelectChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     if (e.target.value === 'custom') {
       setUseCustomCapacity(!useCustomCapacity)
-      return onChangeHandler((currentState) => ({
+      return onChangeHandler((currentState: any) => ({
         ...currentState,
         capacity: {
           weight: '',
@@ -35,13 +49,13 @@ const Component = ({
         },
       }))
     }
-    return onChangeHandler((currentState) => ({
+    return onChangeHandler((currentState: any) => ({
       ...currentState,
       capacity: transportPresets.truck[e.target.value],
     }))
   }
 
-  const transportPresetNameToHumanReadable = (name) => {
+  const transportPresetNameToHumanReadable = (name: string) => {
     switch (name) {
       case 'small':
         return 'Liten'
@@ -59,7 +73,12 @@ const Component = ({
       weight,
       volume,
     }))
-    .concat({ value: 'custom' })
+    .concat({
+      value: 'custom',
+      label: '',
+      weight: '',
+      volume: '',
+    })
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
@@ -68,7 +87,7 @@ const Component = ({
         <Elements.Layout.InputContainer>
           <Elements.Form.Label>Körschema</Elements.Form.Label>
           <Elements.Layout.TimeRestrictionWrapper>
-            <FormInputs.TimeRestriction.VehicleTimeRestrictionPair
+            <FormInputs.TimeRestriction.TransportTimeRestrictionPair
               handleFocus={() => dispatch({ type: 'resetInputClickState' })}
               timewindow={formState.timewindow}
               onChangeHandler={handleDriverTimeRestrictionChange}
@@ -80,6 +99,7 @@ const Component = ({
         <Elements.Layout.InputContainer>
           <Elements.Form.Label required>Startposition</Elements.Form.Label>
           <FormInputs.AddressSearchInput
+            formError={false}
             required
             placeholder="Adress (sök eller klicka på karta)"
             value={formState.startPosition.name}
@@ -100,6 +120,7 @@ const Component = ({
         <Elements.Layout.InputContainer>
           <Elements.Form.Label>Slutposition</Elements.Form.Label>
           <FormInputs.AddressSearchInput
+            formError={false}
             value={formState.endPosition.name}
             placeholder="Adress (sök eller klicka på karta)"
             onChangeHandler={eventHandlers.handleAddressInput(
@@ -118,17 +139,17 @@ const Component = ({
 
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="vehicleType" required>
+          <Elements.Form.Label htmlFor="profile" required>
             Namn på transport
           </Elements.Form.Label>
           <FormInputs.TextInput
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             required
-            name="vehicleType"
-            value={formState.vehicleType}
+            name="profile"
+            value={formState.profile}
             placeholder="Paketbil"
             onChangeHandler={eventHandlers.handleTextInputChange(
-              'vehicleType',
+              'profile',
               onChangeHandler
             )}
           />

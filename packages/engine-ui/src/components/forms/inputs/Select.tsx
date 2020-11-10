@@ -2,16 +2,16 @@ import React from 'react'
 import * as Elements from '../../../shared-elements'
 
 type options = {
-  label: string
+  label: string | undefined
   value: string
-  weight: number
-  volume: number
+  weight: string | undefined
+  volume: string | undefined
 }
 
 type parcelSizeOptions = {
   label: string
   value: string
-  weight: number
+  weight: string
   measurements: string
 }
 

@@ -240,6 +240,21 @@ module.exports = (io) => {
       )
   }
 
+  const updateVehicle = (vehicle) => {
+    return amqp
+      .exchange('incoming_vehicle_updates', 'topic', {
+        durable: true,
+      })
+      .publish(vehicle, routingKeys.UPDATE, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(
+          ` [x] Updated vehicle '${JSON.stringify(vehicle, null, 2)}'`
+        )
+      )
+  }
+
   return {
     bookings,
     vehicles,
@@ -253,5 +268,6 @@ module.exports = (io) => {
     transportNotifications,
     bookingNotifications,
     updateBooking,
+    updateVehicle,
   }
 }

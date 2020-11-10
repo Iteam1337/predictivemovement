@@ -13,7 +13,12 @@ const findAddress = (query: string) => {
     return Promise.resolve({ features: [] })
   }
   return fetch(
-    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`
+    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`,
+    {
+      headers: {
+        'Accept-Language': 'sv-SE',
+      },
+    }
   ).then((res) => res.json())
 }
 

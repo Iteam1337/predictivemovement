@@ -6,7 +6,7 @@ import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
 import NotFound from './NotFound'
-import { Booking, Plan as IPlan } from '../types'
+import { Booking, Plan as IPlan, Transport } from '../types'
 
 const Container = styled.div`
   position: absolute;
@@ -27,12 +27,12 @@ const Content = styled.div`
 interface Props {
   bookings: Booking[]
   plan: IPlan
-  vehicles: any
+  transports: Transport[]
   createBooking: (params: any) => void
   deleteBooking: (params: any) => void
   dispatchOffers: (params: any) => void
-  addVehicle: (params: any) => void
-  deleteVehicle: (id: string) => void
+  createTransport: (params: any) => void
+  deleteTransport: (id: string) => void
 }
 
 const Sidebar = (state: Props) => {
@@ -55,16 +55,16 @@ const Sidebar = (state: Props) => {
               </Route>
               <Route path="/transports">
                 <Transports
-                  transports={state.vehicles}
-                  addVehicle={state.addVehicle}
-                  deleteVehicle={state.deleteVehicle}
+                  transports={state.transports}
+                  createTransport={state.createTransport}
+                  deleteTransport={state.deleteTransport}
                 />
               </Route>
               <Route path="/plans">
                 <Plan
                   plan={state.plan}
                   dispatchOffers={state.dispatchOffers}
-                  transports={state.vehicles}
+                  transports={state.transports}
                   bookings={state.bookings}
                 />
               </Route>

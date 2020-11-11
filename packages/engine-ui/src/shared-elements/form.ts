@@ -43,4 +43,15 @@ const TextInput = styled.input<{ iconInset?: boolean; error?: boolean }>`
   }
 `
 
-export { DateInput, Label, TextInput }
+const SelectInput = styled.select`
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.875rem;
+  padding: 0.55rem;
+  :focus {
+    outline-color: #13c57b;
+  }
+`
+
+export { DateInput, Label, TextInput, SelectInput }

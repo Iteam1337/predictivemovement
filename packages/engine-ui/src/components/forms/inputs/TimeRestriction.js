@@ -58,7 +58,7 @@ const BookingTimeRestriction = ({
   )
 }
 
-const VehicleTimeRestriction = ({
+const TransportTimeRestriction = ({
   selected,
   onChangeHandler,
   placeholderText,
@@ -119,7 +119,7 @@ export const BookingTimeRestrictionPair = ({
   )
 }
 
-export const VehicleTimeRestrictionPair = ({
+export const TransportTimeRestrictionPair = ({
   onChangeHandler,
   timewindow,
   handleFocus,
@@ -128,7 +128,7 @@ export const VehicleTimeRestrictionPair = ({
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
-        <VehicleTimeRestriction
+        <TransportTimeRestriction
           selected={timewindow.start}
           onChangeHandler={(date) => onChangeHandler(date, 'start', 'start')}
           placeholderText="Starttid"
@@ -142,7 +142,7 @@ export const VehicleTimeRestrictionPair = ({
         />
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
-        <VehicleTimeRestriction
+        <TransportTimeRestriction
           selected={timewindow.end}
           minDate={timewindow.start ? new Date(timewindow.start) : new Date()}
           onChangeHandler={(date) => onChangeHandler(date, 'end', 'end')}

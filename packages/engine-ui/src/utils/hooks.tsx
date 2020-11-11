@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { SetStateAction } from 'react'
 import { useRouteMatch } from 'react-router-dom'
+import { FormState } from '../components/CreateTransport'
 import { Booking, Route, Transport } from '../types'
 import * as helpers from './helpers'
 import { State } from './reducer'
@@ -81,9 +82,9 @@ export const useFilteredStateFromQueryParams = (state: State) => {
               .map(includeBookingRouteIfDetailView)
               .filter(includeOneBookingIfDetailView)
           : [],
-      vehicles:
+      transports:
         includeTransports || rootView
-          ? state.vehicles
+          ? state.transports
               .map(includeTransportRouteIfDetailView)
               .filter(includeOneTransportIfDetailView)
           : [],
@@ -140,7 +141,7 @@ export const useGetSuggestedAddresses = (initialState = []) => {
 export const useFormStateWithMapClickControl = (
   start: string,
   end: string,
-  set: (callback: (current: any) => void) => void
+  set: (callback: SetStateAction<FormState>) => void
 ) => {
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 

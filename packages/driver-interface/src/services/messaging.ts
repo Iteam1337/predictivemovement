@@ -3,7 +3,7 @@ import { Message } from 'telegraf/typings/telegram-types'
 import bot from '../adapters/bot'
 import * as helpers from '../helpers'
 import { Booking, Instruction } from '../types'
-import { getDirectionsFromActivities, getDirectionsUrl } from './google'
+import { getDirectionsUrl, getDirectionsFromInstructionGroups } from './google'
 import { getAddressFromCoordinate } from './pelias'
 
 export const onBotStart = (ctx: TelegrafContext): void => {
@@ -11,6 +11,8 @@ export const onBotStart = (ctx: TelegrafContext): void => {
     "Välkommen till Predictive Movement. När du loggat in kan du agera som förare och hämta och leverera paket i vårt system. Logga in genom att skriva '/login'."
   )
 }
+export const promptForLogin = (ctx: TelegrafContext): Promise<Message> =>
+  ctx.reply('Du är inte inloggad. Logga in först genom att skriva /login')
 
 export const requestPhoneNumber = (ctx: TelegrafContext): Promise<Message> =>
   ctx.reply('Klicka på "Skicka telefonnummer" för att logga in', {
@@ -25,32 +27,61 @@ export const onNoVehicleFoundFromId = (
 ): Promise<Message> =>
   ctx.reply('Inget fordon med ditt telefonnummer kunde hittas...')
 
-export const onDriverLoginSuccessful = (
-  ctx: TelegrafContext
-): Promise<Message> =>
-  ctx.reply(
+export const sendWelcomeMsg = (telegramId: number): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
     'Välkommen! När du har blivit tilldelad bokningar så kommer du få instruktioner för hur du ska hämta upp dessa.'.concat(
       '\nKlicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :)'
     )
   )
 
+export const sendSummary = (
+  telegramId: number,
+  instructionGroups: Instruction[][]
+): Promise<Message> => {
+  const summaryList = convertInstructionGroupsToSummaryList(instructionGroups)
+  const summary =
+    summaryList +
+    `\n[Se rutt på karta](${getDirectionsFromInstructionGroups(
+      instructionGroups
+    )})`
+
+  return bot.telegram.sendMessage(telegramId, summary, {
+    parse_mode: 'Markdown',
+    disable_web_page_preview: true,
+  })
+}
+
 export const onNoInstructionsForVehicle = (
   ctx: TelegrafContext
 ): Promise<Message> => ctx.reply('Vi kunde inte hitta några instruktioner...')
 
-export const onInstructionsForVehicle = (
-  activities: Instruction[],
-  bookingIds: string[],
-  id: number
-): Promise<Message> => {
-  const directions = getDirectionsFromActivities(activities)
-
-  return bot.telegram.sendMessage(
-    id,
-    `${bookingIds.length} paket finns att hämta. [Se på kartan](${directions}).`,
-    { parse_mode: 'Markdown' }
-  )
-}
+export const convertInstructionGroupsToSummaryList = (
+  instructionGroups: Instruction[][]
+): string =>
+  instructionGroups
+    .map((instructionGroup: Instruction[]) => {
+      const [
+        {
+          type,
+          address: { name },
+        },
+      ] = instructionGroup
+      return {
+        name,
+        type: type === 'pickupShipment' ? 'Hämta' : 'Lämna',
+        ids: instructionGroup
+          .map(({ id }) => id)
+          .map(helpers.formatId)
+          .join('__, __'),
+      }
+    })
+    .reduce(
+      (summary: string, { ids, name, type }, index) =>
+        `${summary}
+${index + 1}\. ${type} __${ids}__ vid ${name}`,
+      '🎁  Här är dina körningar:'
+    )
 
 export const sendDriverFinishedMessage = (
   telegramId: number
@@ -77,12 +108,12 @@ export const sendPickupInstruction = async (
   const message = (instructionGroup.length === 1
     ? `🎁 Ditt nästa stopp är [${pickup}](${getDirectionsUrl(
         pickup
-      )}) där du ska hämta paket "${helpers
-        .getLastFourChars(instructionGroup[0].id)
-        .toUpperCase()}". Paketet ska sedan vidare till ${delivery}.`
+      )}) där du ska hämta paket "${helpers.formatId(
+        instructionGroup[0].id
+      )}". Paketet ska sedan vidare till ${delivery}.`
     : `🎁 Hämta följande paket:
 ${instructionGroup
-  .map((ig, i) => `${++i}. ${helpers.getLastFourChars(ig.id).toUpperCase()}`)
+  .map((ig, i) => `${++i}. ${helpers.formatId(ig.id)}`)
   .join('\n')}\nvid [${pickup}](${getDirectionsUrl(pickup)})`
   )
     .concat(
@@ -123,12 +154,10 @@ export const sendDeliveryInstruction = async (
       : await getAddressFromCoordinate({ ...firstBooking.delivery })
 
   const message = (instructionGroup.length === 1
-    ? `🎁 Leverera paket "${helpers
-        .getLastFourChars(instructionGroup[0].id)
-        .toUpperCase()}" `
+    ? `🎁 Leverera paket "${helpers.formatId(instructionGroup[0].id)}" `
     : `🎁 Leverera följande paket:
   ${instructionGroup
-    .map((ig, i) => `${++i}. ${helpers.getLastFourChars(ig.id).toUpperCase()}`)
+    .map((ig, i) => `${++i}. ${helpers.formatId(ig.id)}`)
     .join('\n')}\n`
   )
     .concat(`till [${delivery}](${getDirectionsUrl(delivery)})!\n`)
@@ -168,7 +197,7 @@ export const sendPickupInformation = (
 
   const packageInfos = bookings
     .map((b) =>
-      `\nID: ${helpers.getLastFourChars(b.id).toUpperCase()}\n`
+      `\nID: ${helpers.formatId(b.id)}\n`
         .concat(
           b.metadata?.sender?.info
             ? `Extra information vid upphämtning: ${b.metadata.sender.info}\n`

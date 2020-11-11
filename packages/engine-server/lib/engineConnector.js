@@ -1,6 +1,6 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
-const { bookingsCache, vehiclesCache } = require('./cache')
+const { bookingsCache, transportsCache } = require('./cache')
 
 const routingKeys = {
   NEW: 'new',
@@ -37,13 +37,16 @@ module.exports = (io) => {
     ])
     .map((bookingRes) => {
       const booking = bookingRes.json()
-      booking.route = JSON.parse(booking.route)
-      booking.metadata = JSON.parse(booking.metadata)
 
-      return { ...booking, status: bookingRes.fields.routingKey }
+      return {
+        ...booking,
+        route: JSON.parse(booking.route),
+        metadata: JSON.parse(booking.metadata),
+        status: bookingRes.fields.routingKey,
+      }
     })
 
-  const vehicles = amqp
+  const transports = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: true,
     })
@@ -51,12 +54,14 @@ module.exports = (io) => {
       durable: true,
     })
     .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
-    .map((vehicleRes) => {
-      const vehicle = vehicleRes.json()
-      vehicle.current_route = JSON.parse(vehicle.current_route)
-      vehicle.metadata = JSON.parse(vehicle.metadata)
+    .map((transportRes) => {
+      const transport = transportRes.json()
 
-      return vehicle
+      return {
+        ...transport,
+        current_route: JSON.parse(transport.current_route),
+        metadata: JSON.parse(transport.metadata),
+      }
     })
 
   const plan = amqp
@@ -72,7 +77,7 @@ module.exports = (io) => {
 
       const plan = {
         ...planFromMsg,
-        vehicles: planFromMsg.vehicles.map((route) => ({
+        transports: planFromMsg.vehicles.map((route) => ({
           ...route,
           current_route: JSON.parse(route.current_route),
           metadata: JSON.parse(route.metadata),
@@ -117,12 +122,12 @@ module.exports = (io) => {
       durable: true,
     })
     .subscribe({ noAck: true }, [routingKeys.DELETED])
-    .map((vehicleData) => vehicleData.json())
-    .each(deleteVehicle)
+    .map((transportData) => transportData.json())
+    .each(deleteTransport)
 
-  function deleteVehicle(id) {
-    vehiclesCache.delete(id)
-    io.emit('delete-vehicle', id)
+  function deleteTransport(id) {
+    transportsCache.delete(id)
+    io.emit('delete-transport', id)
   }
 
   ///////// Publishers
@@ -151,13 +156,13 @@ module.exports = (io) => {
       .publish(JUST_DO_IT_MESSAGE)
   }
 
-  const addVehicle = (vehicle) => {
+  const createTransport = (transport) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', { durable: true })
       .publish(
         {
           id: id62(),
-          ...vehicle,
+          ...transport,
         },
         routingKeys.REGISTERED,
         {
@@ -177,7 +182,7 @@ module.exports = (io) => {
       .then(() => console.log(` [x] Delete booking ${id}`))
   }
 
-  const publishDeleteVehicle = (id) => {
+  const publishDeleteTransport = (id) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', {
         durable: true,
@@ -185,7 +190,7 @@ module.exports = (io) => {
       .publish(id, routingKeys.DELETED, {
         persistent: true,
       })
-      .then(() => console.log(` [x] Delete vehicle ${id}`))
+      .then(() => console.log(` [x] Delete transport ${id}`))
   }
 
   const transportNotifications = amqp
@@ -196,12 +201,14 @@ module.exports = (io) => {
       durable: true,
     })
     .subscribe({ noAck: true }, [routingKeys.NEW])
-    .map((vehicleRes) => {
-      const vehicle = vehicleRes.json()
-      vehicle.current_route = JSON.parse(vehicle.current_route)
-      vehicle.metadata = JSON.parse(vehicle.metadata)
+    .map((transportRes) => {
+      const transport = transportRes.json()
 
-      return vehicle
+      return {
+        ...transport,
+        current_route: JSON.parse(transport.current_route),
+        metadata: JSON.parse(transport.metadata),
+      }
     })
 
   const bookingNotifications = amqp
@@ -219,10 +226,13 @@ module.exports = (io) => {
     ])
     .map((bookingRes) => {
       const booking = bookingRes.json()
-      booking.route = JSON.parse(booking.route)
-      booking.metadata = JSON.parse(booking.metadata)
 
-      return { ...booking, status: bookingRes.fields.routingKey }
+      return {
+        ...booking,
+        route: JSON.parse(booking.route),
+        metadata: JSON.parse(booking.metadata),
+        status: bookingRes.fields.routingKey,
+      }
     })
 
   const updateBooking = (booking) => {
@@ -257,12 +267,12 @@ module.exports = (io) => {
 
   return {
     bookings,
-    vehicles,
+    transports,
     plan,
     publishDeleteBooking,
-    publishDeleteVehicle,
+    publishDeleteTransport,
     dispatchOffers,
-    addVehicle,
+    createTransport,
     createBooking,
     transportLocationUpdates,
     transportNotifications,

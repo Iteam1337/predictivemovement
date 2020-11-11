@@ -2,6 +2,7 @@ const _ = require('highland')
 const helpers = require('./helpers')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, transportsCache, planCache } = require('./cache')
+const parcel = require('./parcel')
 
 module.exports = (io) => {
   const {
@@ -153,6 +154,18 @@ module.exports = (io) => {
       transportsCache.delete(id)
       publishDeleteTransport(id)
       socket.emit('transport-deleted', id)
+    })
+
+    socket.on('search-parcel', async (id) => {
+      const response = await parcel.search(id)
+      const result = await response.json()
+      const {
+        TrackingInformationResponse: { shipments },
+      } = result
+
+      console.log(result)
+      const shipment = shipments[0]
+      socket.emit('shipment', shipment)
     })
   })
 }

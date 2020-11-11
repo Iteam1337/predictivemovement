@@ -5,6 +5,7 @@ import { Booking, Route, Transport } from '../types'
 import * as helpers from './helpers'
 import { State } from './reducer'
 import * as stores from './state/stores'
+import { useSocket } from 'use-socketio'
 
 export const useFilteredStateFromQueryParams = (state: State) => {
   const includeBookings = useRouteMatch({
@@ -134,6 +135,17 @@ export const useGetSuggestedAddresses = (initialState = []) => {
           error
         )
       )
+
+  return [find, suggested]
+}
+
+export const useGetParcelInfo = (initialState = []) => {
+  const { socket } = useSocket()
+  const [suggested, set] = React.useState(initialState)
+  const find = (query: string, callback: () => void) => {
+    console.log('query', query)
+    socket.emit('search-parcel', query)
+  }
 
   return [find, suggested]
 }

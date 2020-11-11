@@ -184,9 +184,9 @@ module.exports = (io) => {
 
   const publishMoveBooking = (bookingId, transportId) => {
     return amqp
-      .exchange('incoming_plan_updates', 'topic', { durable: true })
+      .exchange('incoming_booking_updates', 'topic', { durable: true })
       .publish(
-        JSON.stringify({ bookingId, transportId }),
+        JSON.stringify({ id: bookingId, requires_transport_id: transportId }),
         routingKeys.BOOKING_MOVED,
         {
           persistent: true,

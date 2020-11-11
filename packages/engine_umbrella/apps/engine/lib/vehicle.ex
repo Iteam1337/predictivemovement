@@ -86,6 +86,10 @@ defmodule Vehicle do
     {:reply, updated_vehicle, updated_vehicle}
   end
 
+  def handle_call({:update, updated_vehicle}, _from, _state) do
+    {:reply, true, updated_vehicle}
+  end
+
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
 
@@ -147,6 +151,8 @@ defmodule Vehicle do
       vehicle
       |> (&%VehicleUpdated{vehicle: &1}).()
       |> ES.add_event()
+
+      GenServer.call(via_tuple(id), {:update, vehicle})
 
       RMQ.publish(
         vehicle,

@@ -110,6 +110,8 @@ defmodule Booking do
         |> Map.put(:route, Osrm.route(pickup, delivery))
         |> add_event_to_events_list("update", DateTime.utc_now())
 
+      GenServer.call(via_tuple(id), {:update, booking_with_route})
+
       RMQ.publish(booking_with_route, @outgoing_booking_exchange, "new")
       ES.add_event(%BookingUpdated{booking: booking_with_route})
       id
@@ -217,6 +219,10 @@ defmodule Booking do
       |> RMQ.publish(@outgoing_booking_exchange, status)
 
     {:reply, true, updated_state}
+  end
+
+  def handle_call({:update, updated_booking}, _from, _state) do
+    {:reply, true, updated_booking}
   end
 
   defp add_event_to_events_list(booking, status, timestamp) do

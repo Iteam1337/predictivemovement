@@ -109,4 +109,30 @@ defmodule BookingTest do
              {:error, [:pickup, :lon], :number, "must be a number"}
            ]
   end
+
+  test "should allow booking to be updated" do
+    id =
+      MessageGenerator.random_booking()
+      |> Booking.make()
+
+    updated_booking = %{
+      assigned_to: nil,
+      delivery: %{lat: 13.37, lon: 13.37},
+      external_id: 1337,
+      id: id,
+      metadata:
+        "{\"recipient\":{\"contact\":\"0701234567\"},\"sender\":{\"contact\":\"0701234567\"}}",
+      pickup: %{lat: 13.37, lon: 13.37},
+      size: %{measurements: [1, 2, 3], weight: 1337}
+    }
+
+    Booking.update(updated_booking)
+
+    %{delivery: delivery, pickup: pickup, external_id: external_id, size: size} = Booking.get(id)
+
+    assert delivery == updated_booking.delivery
+    assert pickup == updated_booking.pickup
+    assert external_id == updated_booking.external_id
+    assert size == updated_booking.size
+  end
 end

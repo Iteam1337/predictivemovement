@@ -20,8 +20,6 @@ defmodule Booking do
     :route
   ]
 
-  validates(:pickup, presence: true)
-  validates(:delivery, presence: true)
   validates([:pickup, :lat], number: [is: true])
   validates([:pickup, :lon], number: [is: true])
   validates([:delivery, :lat], number: [is: true])
@@ -85,6 +83,20 @@ defmodule Booking do
       _ ->
         IO.inspect(Vex.errors(booking), label: "booking validation errors")
         Vex.errors(booking)
+    end
+  end
+
+  def update(%{id: id} = booking_update) do
+    with true <- valid?(struct(Booking, booking_update)) do
+      GenServer.call(via_tuple(id), {:update, booking_update})
+
+      RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
+      ES.add_event(%BookingUpdated{booking: booking_update})
+      id
+    else
+      _ ->
+        IO.inspect(Vex.errors(booking_update), label: "booking validation errors")
+        Vex.errors(booking_update)
     end
   end
 
@@ -185,6 +197,10 @@ defmodule Booking do
       |> RMQ.publish(@outgoing_booking_exchange, status)
 
     {:reply, true, updated_state}
+  end
+
+  def handle_call({:update, updated_booking}, _from, _state) do
+    {:reply, true, updated_booking}
   end
 
   defp add_event_to_events_list(booking, status, timestamp) do

@@ -86,6 +86,10 @@ defmodule Vehicle do
     {:reply, updated_vehicle, updated_vehicle}
   end
 
+  def handle_call({:update, updated_vehicle}, _from, _state) do
+    {:reply, true, updated_vehicle}
+  end
+
   def generate_id do
     alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
 
@@ -116,6 +120,47 @@ defmodule Vehicle do
       |> ES.add_event()
 
       vehicle_fields.id
+    else
+      _ ->
+        IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")
+        Vex.errors(vehicle)
+    end
+  end
+
+  def update(%{
+        id: id,
+        start_address: start_address,
+        end_address: end_address,
+        earliest_start: earliest_start,
+        latest_end: latest_end,
+        profile: profile,
+        capacity: capacity,
+        metadata: metadata
+      }) do
+    vehicle =
+      get(id)
+      |> Map.put(:start_address, start_address)
+      |> Map.put(:end_address, end_address)
+      |> Map.put(:earliest_start, earliest_start)
+      |> Map.put(:latest_end, latest_end)
+      |> Map.put(:profile, profile)
+      |> Map.put(:capacity, capacity)
+      |> Map.put(:metadata, metadata |> Jason.encode!())
+
+    with true <- Vex.valid?(vehicle) do
+      vehicle
+      |> (&%VehicleUpdated{vehicle: &1}).()
+      |> ES.add_event()
+
+      GenServer.call(via_tuple(id), {:update, vehicle})
+
+      RMQ.publish(
+        vehicle,
+        Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+        "new"
+      )
+
+      id
     else
       _ ->
         IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")

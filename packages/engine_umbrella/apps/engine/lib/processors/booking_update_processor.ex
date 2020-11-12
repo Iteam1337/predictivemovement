@@ -37,9 +37,7 @@ defmodule Engine.BookingUpdateProcessor do
 
   def handle_message(_, %Broadway.Message{data: booking_update} = msg, _) do
     booking_update
-    |> Jason.decode!()
-    |> Map.delete("route")
-    |> Map.Helpers.atomize_keys()
+    |> Jason.decode!(keys: :atoms!)
     |> Booking.update()
 
     msg

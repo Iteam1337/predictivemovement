@@ -20,8 +20,6 @@ defmodule Booking do
     :route
   ]
 
-  validates(:pickup, presence: true)
-  validates(:delivery, presence: true)
   validates([:pickup, :lat], number: [is: true])
   validates([:pickup, :lon], number: [is: true])
   validates([:delivery, :lat], number: [is: true])
@@ -88,37 +86,17 @@ defmodule Booking do
     end
   end
 
-  def update(%{
-        id: id,
-        pickup: pickup,
-        delivery: delivery,
-        metadata: metadata,
-        external_id: external_id,
-        size: size
-      }) do
-    booking =
-      get(id)
-      |> Map.put(:pickup, pickup)
-      |> Map.put(:delivery, delivery)
-      |> Map.put(:metadata, metadata |> Jason.encode!())
-      |> Map.put(:external_id, external_id)
-      |> Map.put(:size, size)
+  def update(%{id: id} = booking_update) do
+    with true <- valid?(struct(Booking, booking_update)) do
+      GenServer.call(via_tuple(id), {:update, booking_update})
 
-    with true <- Vex.valid?(booking) do
-      booking_with_route =
-        booking
-        |> Map.put(:route, Osrm.route(pickup, delivery))
-        |> add_event_to_events_list("update", DateTime.utc_now())
-
-      GenServer.call(via_tuple(id), {:update, booking_with_route})
-
-      RMQ.publish(booking_with_route, @outgoing_booking_exchange, "new")
-      ES.add_event(%BookingUpdated{booking: booking_with_route})
+      RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
+      ES.add_event(%BookingUpdated{booking: booking_update})
       id
     else
       _ ->
-        IO.inspect(Vex.errors(booking), label: "booking validation errors")
-        Vex.errors(booking)
+        IO.inspect(Vex.errors(booking_update), label: "booking validation errors")
+        Vex.errors(booking_update)
     end
   end
 

@@ -134,7 +134,7 @@ const PlanRouteDetails = ({
           <BookingsList>
             {route.booking_ids?.map((bookingId) => (
               <li key={bookingId}>
-                <Elements.Links.RoundedLink to={`/bookings/${route.id}`}>
+                <Elements.Links.RoundedLink to={`/bookings/${bookingId}`}>
                   {helpers.getLastFourChars(bookingId).toUpperCase()}
                 </Elements.Links.RoundedLink>
                 <MenuButton

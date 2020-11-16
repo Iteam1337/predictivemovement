@@ -315,7 +315,7 @@ const toTransportIconLayer = (data, activeId) => {
     },
     sizeScale: 5,
     getPosition: (d) => d.coordinates,
-    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
+    transitions: { getSize: { duration: 100 } },
     getSize: (d) =>
       d.properties.id === activeId
         ? d.properties.highlightSize

@@ -1,7 +1,7 @@
 defmodule MessageGenerator do
   use GenServer
   alias MessageGenerator.Address
-  def amqp_url, do: "amqp://" <> Application.fetch_env!(:message_generator, :amqp_host)
+  alias MessageGenerator.Adapters.RMQ
 
   @cars_exchange "incoming_vehicle_updates"
   @bookings_exchange "incoming_booking_updates"
@@ -16,18 +16,7 @@ defmodule MessageGenerator do
   end
 
   def init(_) do
-    {:ok, channel} = start_amqp_resources()
-    {:ok, %{channel: channel}}
-  end
-
-  def start_amqp_resources() do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
-    {:ok, channel} = AMQP.Channel.open(connection)
-
-    AMQP.Exchange.declare(channel, @bookings_exchange, :topic, durable: true)
-    AMQP.Exchange.declare(channel, @cars_exchange, :topic, durable: true)
-
-    {:ok, channel}
+    {:ok, %{}}
   end
 
   def random_car(), do: random_car(@ljusdal)
@@ -83,68 +72,68 @@ defmodule MessageGenerator do
   def add_random_booking(:gothenburg),
     do: GenServer.call(__MODULE__, {:add_random_booking, :gothenburg})
 
-  def handle_call(:add_random_booking, _, %{channel: channel} = state) do
+  def handle_call(:add_random_booking, _, state) do
     payload =
       random_booking()
       |> Jason.encode!()
 
-    AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
+    RMQ.publish(payload, @bookings_exchange, "registered")
 
     {:reply, :ok, state}
   end
 
-  def handle_call({:add_random_booking, properties}, _, %{channel: channel} = state)
+  def handle_call({:add_random_booking, properties}, _, state)
       when is_map(properties) do
     payload =
       random_booking(properties)
       |> Jason.encode!()
 
-    AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
+    RMQ.publish(payload, @bookings_exchange, "registered")
 
     {:reply, :ok, state}
   end
 
-  def handle_call({:add_random_booking, city}, _, %{channel: channel} = state) do
+  def handle_call({:add_random_booking, city}, _, state) do
     payload =
       %{}
       |> add_booking_addresses(city)
       |> random_booking()
       |> Jason.encode!()
 
-    AMQP.Basic.publish(channel, @bookings_exchange, "registered", payload)
+    RMQ.publish(payload, @bookings_exchange, "registered")
 
     {:reply, :ok, state}
   end
 
-  def handle_call(:add_random_car, _, %{channel: channel} = state) do
+  def handle_call(:add_random_car, _, state) do
     payload =
       random_car()
       |> Jason.encode!()
 
-    AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
+    RMQ.publish(payload, @cars_exchange, "registered")
 
     {:reply, :ok, state}
   end
 
-  def handle_call({:add_random_car, properties}, _, %{channel: channel} = state)
+  def handle_call({:add_random_car, properties}, _, state)
       when is_map(properties) do
     payload =
       random_car(properties)
       |> Jason.encode!()
 
-    AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
+    RMQ.publish(payload, @cars_exchange, "registered")
 
     {:reply, :ok, state}
   end
 
-  def handle_call({:add_random_car, city}, _, %{channel: channel} = state) do
+  def handle_call({:add_random_car, city}, _, state) do
     payload =
       %{}
       |> add_vehicle_addresses(city)
       |> random_car()
       |> Jason.encode!()
 
-    AMQP.Basic.publish(channel, @cars_exchange, "registered", payload)
+    RMQ.publish(payload, @cars_exchange, "registered")
 
     {:reply, :ok, state}
   end

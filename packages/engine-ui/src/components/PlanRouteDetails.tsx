@@ -8,8 +8,7 @@ import * as Elements from '../shared-elements'
 import * as helpers from '../utils/helpers'
 import { Route, InAppColor, Activity } from '../types'
 import * as stores from '../utils/state/stores'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
+import MoveMenu from './MoveMenu'
 
 interface Props {
   color?: InAppColor
@@ -37,8 +36,6 @@ const BookingsList = styled.ul`
   list-style: none;
 `
 
-const MenuButton = styled.button``
-
 const PlanRouteDetails = ({
   route,
   routeNumber,
@@ -51,8 +48,6 @@ const PlanRouteDetails = ({
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
-  const menuEl = React.useRef(null)
-  const [changeRouteMenuOpen, toggleRouteMenu] = React.useState(false)
 
   const panMapView = (latitude: number, longitude: number) =>
     setMap({
@@ -137,30 +132,12 @@ const PlanRouteDetails = ({
                 <Elements.Links.RoundedLink to={`/bookings/${bookingId}`}>
                   {helpers.getLastFourChars(bookingId).toUpperCase()}
                 </Elements.Links.RoundedLink>
-                <MenuButton
-                  onClick={() => toggleRouteMenu((isOpen) => !isOpen)}
-                  ref={menuEl}
-                >
-                  Flytta
-                </MenuButton>
-                <Menu
-                  open={changeRouteMenuOpen}
-                  anchorEl={menuEl.current}
-                  onClose={() => toggleRouteMenu((isOpen) => !isOpen)}
-                >
-                  {transports.map(({ id }) => (
-                    <MenuItem
-                      key={id}
-                      selected={route.id === id}
-                      onClick={() => {
-                        toggleRouteMenu((isOpen) => !isOpen)
-                        moveBooking(bookingId, id)
-                      }}
-                    >
-                      {helpers.getLastFourChars(id).toUpperCase()}
-                    </MenuItem>
-                  ))}
-                </Menu>
+                <MoveMenu
+                  transports={transports}
+                  bookingId={bookingId}
+                  currentTransportId={route.id}
+                  moveBooking={moveBooking}
+                />
               </li>
             ))}
           </BookingsList>

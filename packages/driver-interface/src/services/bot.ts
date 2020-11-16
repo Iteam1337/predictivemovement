@@ -46,7 +46,7 @@ export const onLogin = async (
   ctx: TelegrafContext
 ): Promise<Message | void> => {
   const vehicleId = await cache.getVehicleIdByPhoneNumber(
-    phoneNumber
+    phoneNumber.replace('+', '')
   )
   const vehicle = await cache.getVehicle(vehicleId)
 

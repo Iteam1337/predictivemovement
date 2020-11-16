@@ -240,7 +240,7 @@ module.exports = (io) => {
       .exchange('incoming_booking_updates', 'topic', {
         durable: true,
       })
-      .publish(booking, routingKeys.UPDATE, {
+      .publish(booking, routingKeys.UPDATED, {
         persistent: true,
       })
       .then(() =>

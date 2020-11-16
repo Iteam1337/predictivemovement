@@ -52,10 +52,10 @@ defmodule MessageGenerator do
     |> add_random_id_and_time()
     |> add_booking_addresses()
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
-    |> Map.put_new(:metadata, %{
+    |> Utils.merge(%{metadata: %{
       sender: %{contact: "0701234567"},
       recipient: %{contact: "0701234567"}
-    })
+    }}, :reverse)
   end
 
   def random_booking(location) do

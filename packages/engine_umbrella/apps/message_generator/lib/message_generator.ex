@@ -9,10 +9,7 @@ defmodule MessageGenerator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
-  def add_random_transport() do
-    generate_transport()
-    |> RMQ.publish(@transports_exchange, "registered")
-  end
+  def add_random_transport(properties \\ %{})
 
   def add_random_transport(properties) when is_map(properties) do
     generate_transport(properties)
@@ -26,13 +23,7 @@ defmodule MessageGenerator do
     |> RMQ.publish(@transports_exchange, "registered")
   end
 
-  def generate_transport() do
-    %{}
-    |> Map.put(:start_address, Address.random(@ljusdal))
-    |> Map.put(:end_address, Address.random(@ljusdal))
-  end
-
-  def generate_transport(properties) when is_map(properties) do
+  def generate_transport(properties \\ %{}) do
     properties
     |> Map.put_new(:start_address, Address.random(@ljusdal))
   end

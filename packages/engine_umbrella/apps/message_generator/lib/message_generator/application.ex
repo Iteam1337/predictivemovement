@@ -8,7 +8,7 @@ defmodule MessageGenerator.Application do
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: MessageGenerator.Worker.start_link(arg)
-      MessageGenerator
+      MessageGenerator.Adapters.RMQ
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

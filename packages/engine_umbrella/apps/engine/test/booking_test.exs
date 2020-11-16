@@ -110,18 +110,29 @@ defmodule BookingTest do
            ]
   end
 
+  test "requires that delivery is present" do
+    MessageGenerator.random_booking()
+    |> Map.delete(:delivery)
+    |> Booking.make()
+    |> catch_error()
+  end
+
+  test "requires that pickup is present" do
+    MessageGenerator.random_booking()
+    |> Map.delete(:pickup)
+    |> Booking.make()
+    |> catch_error()
+  end
+
   test "should allow booking to be updated" do
     id =
       MessageGenerator.random_booking()
       |> Booking.make()
 
     updated_booking = %{
-      assigned_to: nil,
       delivery: %{lat: 13.37, lon: 13.37},
       external_id: 1337,
       id: id,
-      metadata:
-        "{\"recipient\":{\"contact\":\"0701234567\"},\"sender\":{\"contact\":\"0701234567\"}}",
       pickup: %{lat: 13.37, lon: 13.37},
       size: %{measurements: [1, 2, 3], weight: 1337}
     }

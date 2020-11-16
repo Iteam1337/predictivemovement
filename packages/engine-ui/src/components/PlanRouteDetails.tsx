@@ -34,6 +34,14 @@ const Chevron = styled(Icons.Arrow)`
 
 const BookingsList = styled.ul`
   list-style: none;
+  padding: 0;
+`
+
+const BookingListItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+  margin-left: 1rem;
 `
 
 const PlanRouteDetails = ({
@@ -126,9 +134,10 @@ const PlanRouteDetails = ({
               {helpers.getLastFourChars(route.id).toUpperCase()}
             </Elements.Links.RoundedLink>
           </Elements.Layout.FlexRowWrapper>
+          Bookingar på rutt:
           <BookingsList>
             {route.booking_ids?.map((bookingId) => (
-              <li key={bookingId}>
+              <BookingListItem key={bookingId}>
                 <Elements.Links.RoundedLink to={`/bookings/${bookingId}`}>
                   {helpers.getLastFourChars(bookingId).toUpperCase()}
                 </Elements.Links.RoundedLink>
@@ -138,7 +147,7 @@ const PlanRouteDetails = ({
                   currentTransportId={route.id}
                   moveBooking={moveBooking}
                 />
-              </li>
+              </BookingListItem>
             ))}
           </BookingsList>
           <RouteActivities route={route} />

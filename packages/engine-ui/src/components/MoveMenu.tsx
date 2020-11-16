@@ -6,7 +6,18 @@ import styled from 'styled-components'
 import * as helpers from '../utils/helpers'
 import { Route } from '../types'
 
-const MenuButton = styled.button``
+const MenuButton = styled.button`
+  font-size: 0.75rem;
+  background: none;
+  border: none;
+  outline: none;
+  font-weight: bold;
+  padding: 0;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  background-color: aliceblue;
+  border-radius: 0.75rem;
+`
 
 interface props {
   bookingId: string
@@ -27,7 +38,7 @@ const MoveMenu = ({
   return (
     <>
       <MenuButton onClick={() => toggleMenu((isOpen) => !isOpen)} ref={menuEl}>
-        Flytta
+        Flytta bokning
       </MenuButton>
       <Menu
         open={menuIsOpen}

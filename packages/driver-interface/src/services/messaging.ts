@@ -204,7 +204,6 @@ export const sendPickupInformation = (
             ? `Extra information vid upphämtning: ${b.metadata.sender.info}\n`
             : ''
         )
-        .concat(`Ömtåligt: ${b.metadata?.fragile ? 'Ja' : 'Nej'}`)
         .concat(b.size.weight ? `\nVikt: ${b.size.weight}kg` : '')
         .concat(
           b.size.measurement && b.size.measurement.length === 3

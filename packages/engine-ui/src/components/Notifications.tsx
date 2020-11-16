@@ -103,7 +103,7 @@ const Notifications: React.FC<{
             notification.type,
             messageElementFromNotification(notification),
             notification.type === EntityType.TRANSPORT
-              ? notification.transport.metadata.profile
+              ? notification.transport.metadata?.profile
               : undefined
           )}
         </NotificationComponent>

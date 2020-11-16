@@ -99,7 +99,7 @@ const TransportDetails: React.FC<{
             margin="0 0.5rem"
             backgroundColor={transport.color}
           >
-            {transport.metadata.profile?.toUpperCase() ||
+            {transport.metadata?.profile?.toUpperCase() ||
               helpers.getLastFourChars(transportId).toUpperCase()}
           </Elements.Typography.RoundedLabelDisplay>
         </Elements.Layout.FlexRowWrapper>

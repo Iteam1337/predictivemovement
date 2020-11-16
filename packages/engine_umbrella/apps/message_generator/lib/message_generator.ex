@@ -30,12 +30,10 @@ defmodule MessageGenerator do
     %{}
     |> Map.put(:start_address, Address.random(@ljusdal))
     |> Map.put(:end_address, Address.random(@ljusdal))
-    |> Map.put(:id, Enum.random(0..100_000))
   end
 
   def generate_transport(properties) when is_map(properties) do
     properties
-    |> Map.put(:id, Enum.random(0..100_000))
     |> Map.put_new(:start_address, Address.random(@ljusdal))
   end
 

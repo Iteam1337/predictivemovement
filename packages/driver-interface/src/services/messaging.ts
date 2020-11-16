@@ -117,8 +117,9 @@ ${instructionGroup
   .join('\n')}\nvid [${pickup}](${getDirectionsUrl(pickup)})`
   )
     .concat(
-      firstBooking.metadata.sender?.contact &&
-        `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
+      firstBooking.metadata.sender?.contact
+        ? `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
+        : '\n'
     )
     .concat(
       '\nTryck på "[Framme]" när du har kommit till upphämtningsadressen.'

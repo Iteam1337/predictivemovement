@@ -147,7 +147,7 @@ const Plan: React.FC<PlanProps> = ({
     return (
       <Success
         onClose={handleOnClose}
-        infoText="Planen är nu bekräftad och rutten är tillagd på respektive transport"
+        infoText="Planen är nu bekräftad och rutten tillagd på respektive transport"
       />
     )
 

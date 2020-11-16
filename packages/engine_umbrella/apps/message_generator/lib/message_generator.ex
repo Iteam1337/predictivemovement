@@ -1,5 +1,4 @@
 defmodule MessageGenerator do
-  use GenServer
   alias MessageGenerator.Address
   alias MessageGenerator.Adapters.RMQ
 
@@ -9,14 +8,6 @@ defmodule MessageGenerator do
   @stockholm %{lat: 59.3414072, lon: 18.0470482}
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
-
-  def start_link(_opts) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
-  end
-
-  def init(_) do
-    {:ok, %{}}
-  end
 
   def add_random_transport() do
     generate_transport()

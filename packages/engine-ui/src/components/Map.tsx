@@ -18,9 +18,16 @@ const useMapDataWithFilters = () => {
 
   const filterFunctions: stateTypes.MapDataFilterFunctions = React.useMemo(
     () => ({
-      bookings: (state: stateTypes.MapDataState) =>
+      bookings: (
+        state: stateTypes.MapDataState,
+        options: { route?: boolean } = { route: false }
+      ) =>
         Object.assign({}, state, {
-          bookings: mapData.bookings,
+          bookings: mapData.bookings.map((booking) => {
+            if (options.route) return booking
+            const { route, ...rest } = booking
+            return rest
+          }),
         }),
       transports: (state: stateTypes.MapDataState) =>
         Object.assign({}, state, {
@@ -76,12 +83,7 @@ const useMapDataWithFilters = () => {
     const filtersToApply = Object.entries(filterFunctions)
       .filter(([name]) => activeFilters.includes(name))
       .map(([_, fn]) => fn)
-    console.log(
-      filtersToApply.reduce(
-        (accumulator, fn) => fn(accumulator),
-        stores.mapDataInitialState
-      )
-    )
+
     return filtersToApply.reduce(
       (accumulator, fn) => fn(accumulator),
       stores.mapDataInitialState
@@ -95,8 +97,9 @@ const useMapLayers = (
 ) => {
   const [UIState] = stores.ui((state) => [state, state.dispatch])
 
-  const layers = React.useMemo(
-    () => [
+  const layers = React.useMemo(() => {
+    console.log('running')
+    return [
       mapUtils.toGeoJsonLayer(
         'geojson-bookings-layer',
         mapUtils.bookingToFeature(data.bookings),
@@ -135,17 +138,16 @@ const useMapLayers = (
         mapUtils.bookingIcon(data.bookings),
         UIState.highlightBooking
       ),
-    ],
-    [
-      UIState.highlightBooking,
-      UIState.highlightTransport,
-      data.bookings,
-      data.plan.excludedBookings,
-      data.plan.routes,
-      data.transports,
-      handleClick,
     ]
-  )
+  }, [
+    UIState.highlightBooking,
+    UIState.highlightTransport,
+    data.bookings,
+    data.plan.excludedBookings,
+    data.plan.routes,
+    data.transports,
+    handleClick,
+  ])
 
   return layers
 }

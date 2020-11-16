@@ -13,6 +13,16 @@ export interface Booking {
   metadata: Metadata
   size: Size
   status: BookingStatus
+  route: {
+    distance: number
+    duration: number
+    geometry: {
+      coordinates: { lat: number; lon: number }[]
+      legs: any[]
+      weight: number
+      weight_name: string
+    }
+  }
 }
 
 type ParcelAddress = {

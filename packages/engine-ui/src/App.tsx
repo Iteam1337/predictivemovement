@@ -97,6 +97,12 @@ const App = () => {
         excludedBookings: plan.excluded_booking_ids,
       },
     })
+    mapState.set({
+      plan: {
+        routes: plan.vehicles,
+        excludedBookings: plan.excluded_booking_ids,
+      },
+    })
   })
 
   return (

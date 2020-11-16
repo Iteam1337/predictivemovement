@@ -102,15 +102,23 @@ const Plan: React.FC<PlanProps> = ({
   transports,
   bookings,
 }) => {
+  const setMapFilters = stores.mapFilters((state) => state.set)
+
   const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0
   )
+
   const [expandedSection, setExpandedSection] = React.useState({
     isOpen: false,
   })
+
   const { path } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
+
+  React.useEffect(() => {
+    setMapFilters({ plan: true, transports: true })
+  }, [setMapFilters])
 
   const onClickHandler = (latitude: number, longitude: number) =>
     setMap({

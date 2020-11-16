@@ -65,7 +65,6 @@ defmodule Booking do
         size: size
       }) do
     id = generate_id()
-    IO.inspect(size, label: "SIZE")
 
     booking = %Booking{
       id: id,

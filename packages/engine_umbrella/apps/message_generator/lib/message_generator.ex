@@ -18,7 +18,7 @@ defmodule MessageGenerator do
 
   def add_random_transport(city) when city in [:stockholm, :gothenburg] do
     %{}
-    |> add_vehicle_addresses(city)
+    |> add_transport_addresses(city)
     |> generate_transport()
     |> RMQ.publish(@transports_exchange, "registered")
   end
@@ -28,11 +28,11 @@ defmodule MessageGenerator do
     |> Map.put_new(:start_address, Address.random(@ljusdal))
   end
 
-  def add_vehicle_addresses(map), do: do_add_vehicle_addresses(map, @ljusdal)
-  def add_vehicle_addresses(map, :stockholm), do: do_add_vehicle_addresses(map, @stockholm)
-  def add_vehicle_addresses(map, :gothenburg), do: do_add_vehicle_addresses(map, @gothenburg)
+  def add_transport_addresses(map), do: do_add_transport_addresses(map, @ljusdal)
+  def add_transport_addresses(map, :stockholm), do: do_add_transport_addresses(map, @stockholm)
+  def add_transport_addresses(map, :gothenburg), do: do_add_transport_addresses(map, @gothenburg)
 
-  defp do_add_vehicle_addresses(map, location) do
+  defp do_add_transport_addresses(map, location) do
     map
     |> Map.put(:start_address, Address.random(location))
     |> Map.put(:end_address, Address.random(location))

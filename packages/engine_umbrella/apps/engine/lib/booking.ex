@@ -17,7 +17,8 @@ defmodule Booking do
     :events,
     :metadata,
     :size,
-    :route
+    :route,
+    :requires_transport_id
   ]
 
   validates([:pickup, :lat], number: [is: true])
@@ -26,11 +27,15 @@ defmodule Booking do
   validates([:delivery, :lon], number: [is: true])
 
   validates([:size, :weight],
-    by: [function: &is_integer/1, message: "must be an integer"]
+    by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
   )
 
   validates([:size, :measurements],
-    by: [function: &Booking.valid_measurements/1, message: "must be a list of integers"],
+    by: [
+      function: &Booking.valid_measurements/1,
+      message: "must be a list of integers",
+      allow_nil: true
+    ],
     length: [is: 3]
   )
 
@@ -87,16 +92,16 @@ defmodule Booking do
   end
 
   def update(%{id: id} = booking_update) do
-    with true <- valid?(struct(Booking, booking_update)) do
-      GenServer.call(via_tuple(id), {:update, booking_update})
-
+    with true <- Vex.valid?(struct(Booking, booking_update)),
+         true <- GenServer.call(via_tuple(id), {:update, booking_update}) do
       RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
       ES.add_event(%BookingUpdated{booking: booking_update})
       id
     else
-      _ ->
-        IO.inspect(Vex.errors(booking_update), label: "booking validation errors")
-        Vex.errors(booking_update)
+      e ->
+        IO.inspect(e)
+
+        IO.inspect(Vex.errors(struct(Booking, booking_update)), label: "booking validation errors")
     end
   end
 
@@ -199,8 +204,8 @@ defmodule Booking do
     {:reply, true, updated_state}
   end
 
-  def handle_call({:update, updated_booking}, _from, _state) do
-    {:reply, true, updated_booking}
+  def handle_call({:update, updated_booking}, _from, state) do
+    {:reply, true, Map.merge(state, updated_booking)}
   end
 
   defp add_event_to_events_list(booking, status, timestamp) do

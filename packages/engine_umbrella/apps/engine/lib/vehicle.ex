@@ -157,7 +157,7 @@ defmodule Vehicle do
       RMQ.publish(
         vehicle,
         Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
-        "new"
+        "updated"
       )
 
       id

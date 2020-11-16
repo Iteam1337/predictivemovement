@@ -12,7 +12,7 @@ const routingKeys = {
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
   BOOKING_MOVED: 'booking_moved',
-  UPDATE: 'update',
+  UPDATE: 'updated',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -256,7 +256,7 @@ module.exports = (io) => {
       .exchange('incoming_booking_updates', 'topic', {
         durable: true,
       })
-      .publish(booking, routingKeys.UPDATE, {
+      .publish(booking, routingKeys.UPDATED, {
         persistent: true,
       })
       .then(() =>
@@ -271,7 +271,7 @@ module.exports = (io) => {
       .exchange('incoming_vehicle_updates', 'topic', {
         durable: true,
       })
-      .publish(vehicle, routingKeys.UPDATE, {
+      .publish(vehicle, routingKeys.UPDATED, {
         persistent: true,
       })
       .then(() =>

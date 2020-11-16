@@ -124,7 +124,6 @@ defmodule BookingTest do
     |> catch_error()
   end
 
-  @tag :only
   test "should allow booking to be updated" do
     id =
       MessageGenerator.random_booking()

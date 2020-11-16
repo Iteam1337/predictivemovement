@@ -34,6 +34,7 @@ defmodule BookingTest do
            ]
   end
 
+  @tag :only
   test "does not allow malformed measurements elements" do
     result =
       MessageGenerator.random_booking(%{
@@ -68,6 +69,7 @@ defmodule BookingTest do
     clear_state()
   end
 
+  @tag :only
   test "should validate booking addresses containing lat/lon" do
     result =
       MessageGenerator.random_booking()

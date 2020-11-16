@@ -21,22 +21,22 @@ defmodule Booking do
     :requires_transport_id
   ]
 
-  validates([:pickup, :lat], number: [is: true, if: [:pickup, :lat]])
-  validates([:pickup, :lon], number: [is: true, if: [:pickup, :lon]])
-  validates([:delivery, :lat], number: [is: true, if: [:delivery, :lat]])
-  validates([:delivery, :lon], number: [is: true, if: [:delivery, :lon]])
+  validates([:pickup, :lat], number: [is: true])
+  validates([:pickup, :lon], number: [is: true])
+  validates([:delivery, :lat], number: [is: true])
+  validates([:delivery, :lon], number: [is: true])
 
   validates([:size, :weight],
-    by: [function: &is_integer/1, message: "must be an integer", if: [:size, :weight]]
+    by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
   )
 
   validates([:size, :measurements],
     by: [
       function: &Booking.valid_measurements/1,
-      if: [:size, :measurements],
-      message: "must be a list of integers"
+      message: "must be a list of integers",
+      allow_nil: true
     ],
-    length: [is: 3, if: [:size, :measurements]]
+    length: [is: 3]
   )
 
   def valid_measurements(measurements) when is_list(measurements),
@@ -65,6 +65,7 @@ defmodule Booking do
         size: size
       }) do
     id = generate_id()
+    IO.inspect(size, label: "SIZE")
 
     booking = %Booking{
       id: id,

@@ -1,9 +1,11 @@
 defmodule Engine.BookingUpdateProcessor do
   use Broadway
   require Logger
+  alias Broadway.Message
 
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
   @update_booking_routing_key "update"
+  @booking_moved "booking_moved"
   @update_booking_queue "update_booking_in_engine"
 
   def start_link(_opts) do
@@ -22,8 +24,10 @@ defmodule Engine.BookingUpdateProcessor do
            ],
            declare: [arguments: [{"x-dead-letter-exchange", "engine_DLX"}], durable: true],
            on_failure: :reject,
+           metadata: [:routing_key],
            bindings: [
-             {@incoming_booking_exchange, routing_key: @update_booking_routing_key}
+             {@incoming_booking_exchange, routing_key: @update_booking_routing_key},
+             {@incoming_booking_exchange, routing_key: @booking_moved}
            ]},
         concurrency: 1
       ],
@@ -35,11 +39,15 @@ defmodule Engine.BookingUpdateProcessor do
     )
   end
 
-  def handle_message(_, %Broadway.Message{data: booking_update} = msg, _) do
+  def handle_message(_, %Message{data: booking_update} = msg, _) do
     booking_update
     |> Jason.decode!(keys: :atoms!)
     |> Booking.update()
 
+    booking_ids = Engine.BookingStore.get_bookings()
+    vehicle_ids = Engine.VehicleStore.get_vehicles()
+
+    Plan.calculate(vehicle_ids, booking_ids)
     msg
   end
 end

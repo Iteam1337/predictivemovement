@@ -5,6 +5,7 @@ import { Booking, Route, Transport } from '../types'
 import * as helpers from './helpers'
 import { State } from './reducer'
 import * as stores from './state/stores'
+import * as mapUtils from '../utils/mapUtils'
 
 export const useFilteredStateFromQueryParams = (state: State) => {
   const includeBookings = useRouteMatch({
@@ -204,4 +205,55 @@ export const useFormStateWithMapClickControl = (
   React.useEffect(() => {
     return () => setUIState({ type: 'resetInputClickState' })
   }, [setUIState])
+}
+
+export const useMapLayers = (data: any, handleClick: any) => {
+  const UIState = stores.ui((state) => state)
+
+  const showTextLayer = useRouteMatch({
+    path: ['/plans/routes/:routeId'],
+  })
+  console.log('ok')
+  const layers = [
+    mapUtils.toGeoJsonLayer(
+      'geojson-bookings-layer',
+      mapUtils.bookingToFeature(data.bookings),
+      handleClick
+    ),
+    mapUtils.toGeoJsonLayer(
+      'geojson-plan-layer',
+      mapUtils.planToFeature(data.plan.routes),
+      handleClick
+    ),
+    mapUtils.toGeoJsonLayer(
+      'geojson-transport-layer',
+      mapUtils.planToFeature(data.transports),
+      handleClick
+    ),
+    data.plan.routes
+      .map((route: any) =>
+        mapUtils.toBookingIconLayer(
+          mapUtils.routeActivityIcon(route),
+          UIState.highlightBooking,
+          { offset: [40, 0] }
+        )
+      )
+      .concat(
+        data.plan.excludedBookings.map((b: any) =>
+          mapUtils.toExcludedBookingIcon(b, UIState.highlightBooking)
+        )
+      ),
+    showTextLayer &&
+      mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
+    mapUtils.toTransportIconLayer(
+      mapUtils.transportIcon(data.transports),
+      UIState.highlightTransport
+    ),
+    mapUtils.toBookingIconLayer(
+      mapUtils.bookingIcon(data.bookings),
+      UIState.highlightBooking
+    ),
+  ]
+
+  return layers
 }

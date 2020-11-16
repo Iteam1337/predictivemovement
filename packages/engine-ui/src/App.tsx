@@ -3,7 +3,7 @@ import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-import { Route } from 'react-router-dom'
+import { Route, useHistory } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
 import * as hooks from './utils/hooks'
@@ -17,6 +17,21 @@ const App = () => {
   const [notifications, updateNotifications] = React.useState<
     notificationTypes.Notification[]
   >([])
+  const history = useHistory()
+  const handleMapClickEvent = (event: any) => {
+    if (!event.object) return
+    const type = event.object.properties.type
+    switch (type) {
+      case 'booking':
+        return history.push(`/bookings/${event.object.id}`)
+      case 'plan':
+        return history.push(`/transports/${event.object.id}`)
+      default:
+        return
+    }
+  }
+
+  const layers = hooks.useMapLayers(mapData, handleMapClickEvent)
 
   const createTransport = (params: any) => {
     socket.emit('create-transport', params)
@@ -103,7 +118,7 @@ const App = () => {
         deleteTransport={deleteTransport}
       />
       <Route path="/">
-        <Map data={mapData} />
+        <Map layers={layers} handleMapClick={handleMapClickEvent} />
       </Route>
     </>
   )

@@ -29,6 +29,16 @@ const Component = ({
 }) => {
   const history = useHistory()
   const [useCustomCapacity, setUseCustomCapacity] = React.useState(false)
+  const [showEndPositionInput, setShowEndPositionInput] = React.useState(false)
+
+  const toggleShowEndPositionInput = () => {
+    setShowEndPositionInput((showEndPosition) => !showEndPosition)
+
+    onChangeHandler((currentState: FormState) => ({
+      ...currentState,
+      endPosition: { lat: undefined, lon: undefined, name: '' },
+    }))
+  }
 
   const handleDriverTimeRestrictionChange = (date: string, property: string) =>
     onChangeHandler((currentState: FormState) => ({
@@ -118,22 +128,28 @@ const Component = ({
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label>Slutposition</Elements.Form.Label>
-          <FormInputs.AddressSearchInput
-            formError={false}
-            value={formState.endPosition.name}
-            placeholder="Adress (sök eller klicka på karta)"
-            onChangeHandler={eventHandlers.handleAddressInput(
-              'endPosition',
-              onChangeHandler
-            )}
-            onFocus={() =>
-              dispatch({
-                type: 'focusInput',
-                payload: 'end',
-              })
-            }
+          <FormInputs.Checkbox
+            label="Slutposition (om inte samma som startposition)"
+            onChangeHandler={() => toggleShowEndPositionInput()}
           />
+
+          {showEndPositionInput && formState.endPosition && (
+            <FormInputs.AddressSearchInput
+              formError={false}
+              value={formState.endPosition.name}
+              placeholder="Adress (sök eller klicka på karta)"
+              onChangeHandler={eventHandlers.handleAddressInput(
+                'endPosition',
+                onChangeHandler
+              )}
+              onFocus={() =>
+                dispatch({
+                  type: 'focusInput',
+                  payload: 'end',
+                })
+              }
+            />
+          )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
 

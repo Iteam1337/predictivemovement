@@ -22,7 +22,7 @@ const initialState: FormState = {
   capacity: transportPresets.truck.small,
   timewindow: { start: null, end: null },
   startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
-  endPosition: { lat: undefined, lon: undefined, name: '' },
+  endPosition: null,
   driver: { name: '', contact: '' },
 }
 
@@ -47,7 +47,7 @@ export interface FormState {
     lat?: number
     lon?: number
     name?: string
-  }
+  } | null
   driver: {
     name?: string
     contact?: string
@@ -86,6 +86,8 @@ const CreateTransport = ({
 
   const onSubmitHandler = (event: any) => {
     event.preventDefault()
+
+    const endPosition = formState.endPosition ?? formState.startPosition
     onSubmit({
       ...formState,
       timewindow:
@@ -104,8 +106,8 @@ const CreateTransport = ({
         name: formState.startPosition.name || undefined,
       },
       endPosition: {
-        ...formState.endPosition,
-        name: formState.endPosition.name || undefined,
+        ...endPosition,
+        name: endPosition.name || undefined,
       },
       driver: {
         name: formState.driver.name || undefined,

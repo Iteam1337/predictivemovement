@@ -4,7 +4,6 @@ import styled from 'styled-components'
 const CustomCheckboxContainer = styled.label`
   position: relative;
   margin: 0.5rem 0 0.5rem 0;
-  height: 20px;
   display: block;
   .custom-checkbox {
     position: absolute;
@@ -74,7 +73,7 @@ const CheckboxLabel = styled.label`
 `
 
 const Checkbox: React.FC<{
-  name: string
+  name?: string
   onChangeHandler: (event: any) => void
   label: string
   onFocus?: () => void

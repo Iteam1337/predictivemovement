@@ -3,7 +3,7 @@ defmodule Engine.VehicleUpdateProcessor do
   require Logger
 
   @incoming_vehicle_exchange Application.compile_env!(:engine, :incoming_vehicle_exchange)
-  @update_vehicle_routing_key "update"
+  @update_vehicle_routing_key "updated"
   @update_vehicle_queue "update_vehicle_in_engine"
 
   def start_link(_opts) do

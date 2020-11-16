@@ -11,7 +11,7 @@ const routingKeys = {
   PICKED_UP: 'picked_up',
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
-  UPDATE: 'update',
+  UPDATED: 'updated',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'

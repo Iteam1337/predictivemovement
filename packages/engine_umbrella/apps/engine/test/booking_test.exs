@@ -109,4 +109,41 @@ defmodule BookingTest do
              {:error, [:pickup, :lon], :number, "must be a number"}
            ]
   end
+
+  test "requires that delivery is present" do
+    MessageGenerator.random_booking()
+    |> Map.delete(:delivery)
+    |> Booking.make()
+    |> catch_error()
+  end
+
+  test "requires that pickup is present" do
+    MessageGenerator.random_booking()
+    |> Map.delete(:pickup)
+    |> Booking.make()
+    |> catch_error()
+  end
+
+  test "should allow booking to be updated" do
+    id =
+      MessageGenerator.random_booking()
+      |> Booking.make()
+
+    updated_booking = %{
+      delivery: %{lat: 13.37, lon: 13.37},
+      external_id: 1337,
+      id: id,
+      pickup: %{lat: 13.37, lon: 13.37},
+      size: %{measurements: [1, 2, 3], weight: 1337}
+    }
+
+    Booking.update(updated_booking)
+
+    %{delivery: delivery, pickup: pickup, external_id: external_id, size: size} = Booking.get(id)
+
+    assert delivery == updated_booking.delivery
+    assert pickup == updated_booking.pickup
+    assert external_id == updated_booking.external_id
+    assert size == updated_booking.size
+  end
 end

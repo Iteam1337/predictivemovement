@@ -177,9 +177,6 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
 
           <Elements.Links.RoundedLink to={`/transports/${routeId}`}>
             {helpers.withoutLastFourChars(routeId)}
-            <Elements.Typography.SpanBold>
-              {helpers.getLastFourChars(routeId)}
-            </Elements.Typography.SpanBold>
           </Elements.Links.RoundedLink>
         </Elements.Layout.MarginTopContainer>
 

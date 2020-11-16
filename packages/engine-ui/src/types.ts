@@ -66,20 +66,19 @@ type TimeWindow = {
 export type InAppColor = string
 
 export type Transport = {
-  id: string
-  name?: string
   activities: Activity[] | null
-  busy: any
-  metadata: { profile?: string }
   booking_ids: string[] | null
+  busy: any
+  capacity?: { weight?: number; volume?: number }
+  color: InAppColor
   current_route: any
   earliest_start: Date
-  latest_end: Date
-  capacity?: { weight?: number; volume?: number }
   end_address: Address
-  profile: any
+  id: string
+  latest_end: Date
+  metadata: { profile?: string }
+  name?: string
   start_address: Address
-  color: InAppColor
 }
 
 export type NotificationType = Transport | Booking
@@ -103,12 +102,11 @@ export interface Route {
   capacity?: { weight?: number; volume?: number }
   current_route: any
   earliest_start: Date
+  end_address: Address
   id: string
   latest_end: Date
-  metadata: any
-  profile: any
+  metadata: { profile?: string }
   start_address: Address
-  end_address: Address
 }
 
 export interface Address {

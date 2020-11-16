@@ -137,7 +137,7 @@ module.exports = (io) => {
             name: params.driver.name,
             contact: helpers.changeFormatOnPhoneNumber(params.driver.contact),
           },
-          profile: params.profile,
+          profile: params.metadata.profile,
         },
       }
 

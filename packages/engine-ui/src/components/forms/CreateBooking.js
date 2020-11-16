@@ -59,13 +59,6 @@ const Component = ({
       : addTimeRestrictionWindow(propertyName)
   }
 
-  const handleFragileParcelChange = () => {
-    onChangeHandler((currentState) => ({
-      ...currentState,
-      fragile: !currentState.fragile,
-    }))
-  }
-
   const handleParcelSizeSelectChange = (e) => {
     if (e.target.value === 'custom') {
       setUseCustomSize(!useCustomSize)
@@ -77,7 +70,7 @@ const Component = ({
         },
       }))
     }
-    
+
     return onChangeHandler((currentState) => ({
       ...currentState,
       size: parcelSizePresets[e.target.value],
@@ -92,6 +85,8 @@ const Component = ({
         return 'Medium'
       case 'big':
         return 'Stor'
+      default:
+        return 'Storleksnamn saknas'
     }
   }
 

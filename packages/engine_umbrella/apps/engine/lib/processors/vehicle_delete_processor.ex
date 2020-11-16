@@ -41,7 +41,7 @@ defmodule Engine.VehicleDeleteProcessor do
     booking_ids = Engine.BookingStore.get_bookings()
     vehicle_ids = Engine.VehicleStore.get_vehicles()
 
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
   end
 
   def handle_message(_, %Broadway.Message{data: id} = msg, _) do

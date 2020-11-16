@@ -40,7 +40,7 @@ defmodule Engine.Application do
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
   end
 
   def start(_type, _args) do

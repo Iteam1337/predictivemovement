@@ -81,8 +81,8 @@ public class VRPShipments {
             }
 
             // Adding vehicle Id as a required skill so it can be used as a constraint
-            if (jsonBooking.has(REQUIRES_TEANSPORT_ID) && !jsonBooking.isNull(REQUIRES_TEANSPORT_ID)) {
-                shipmentBuilder.addRequiredSkill(jsonBooking.getString(REQUIRES_TEANSPORT_ID));
+            if (jsonBooking.has(REQUIRES_TRANSPORT_ID) && !jsonBooking.isNull(REQUIRES_TRANSPORT_ID)) {
+                shipmentBuilder.addRequiredSkill(jsonBooking.getString(REQUIRES_TRANSPORT_ID));
             }
 
             Shipment shipment = shipmentBuilder.build();

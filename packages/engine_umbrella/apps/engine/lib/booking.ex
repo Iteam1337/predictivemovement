@@ -21,10 +21,16 @@ defmodule Booking do
     :requires_transport_id
   ]
 
-  validates([:pickup, :lat], number: [is: true])
-  validates([:pickup, :lon], number: [is: true])
-  validates([:delivery, :lat], number: [is: true])
-  validates([:delivery, :lon], number: [is: true])
+  def pickup_exists?(map) when not is_nil(map.pickup), do: true
+  def pickup_exists?(_), do: false
+
+  def delivery_exists?(map) when not is_nil(map.delivery), do: true
+  def delivery_exists?(_), do: false
+
+  validates([:pickup, :lat], number: [is: true, if: &Booking.pickup_exists?/1])
+  validates([:pickup, :lon], number: [is: true, if: &Booking.pickup_exists?/1])
+  validates([:delivery, :lat], number: [is: true, if: &Booking.delivery_exists?/1])
+  validates([:delivery, :lon], number: [is: true, if: &Booking.delivery_exists?/1])
 
   validates([:size, :weight],
     by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
@@ -36,7 +42,7 @@ defmodule Booking do
       message: "must be a list of integers",
       allow_nil: true
     ],
-    length: [is: 3]
+    length: [is: 3, allow_nil: true]
   )
 
   def valid_measurements(measurements) when is_list(measurements),

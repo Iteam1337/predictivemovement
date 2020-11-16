@@ -8,6 +8,7 @@ import * as helpers from '../utils/helpers'
 import moment from 'moment'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
+import * as stores from '../utils/state/stores'
 
 const Paragraph = styled.p`
   margin-bottom: 0.25rem;
@@ -65,14 +66,18 @@ const Timeline = styled.div`
   }
 `
 
-const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
+const BookingDetails = ({ bookings, deleteBooking }) => {
   const { bookingId } = useParams()
   const history = useHistory()
+  const setUIState = stores.ui((state) => state.dispatch)
 
   const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
 
-  React.useEffect(() => () => onUnmount(), [onUnmount])
+  React.useEffect(
+    () => () => setUIState({ type: 'highlightBooking', payload: undefined }),
+    [setUIState]
+  )
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (

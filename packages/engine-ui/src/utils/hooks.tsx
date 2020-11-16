@@ -208,12 +208,12 @@ export const useFormStateWithMapClickControl = (
 }
 
 export const useMapLayers = (data: any, handleClick: any) => {
-  const UIState = stores.ui((state) => state)
+  const UIState = stores.ui(React.useCallback((state) => state, []))
 
   const showTextLayer = useRouteMatch({
     path: ['/plans/routes/:routeId'],
   })
-  console.log('ok')
+
   const layers = [
     mapUtils.toGeoJsonLayer(
       'geojson-bookings-layer',

@@ -43,10 +43,10 @@ const RouteTitleWrapper = styled.div`
 const TransportDetails: React.FC<{
   transports: Transport[]
   deleteTransport: (id: string) => void
-  onUnmount: () => void
-}> = ({ transports, deleteTransport, onUnmount }) => {
+}> = ({ transports, deleteTransport }) => {
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
+  const setUIState = stores.ui((state) => state.dispatch)
 
   const [showInfo, setShowInfo] = React.useState({
     route: false,
@@ -54,7 +54,10 @@ const TransportDetails: React.FC<{
     status: false,
   })
 
-  React.useEffect(() => () => onUnmount(), [onUnmount])
+  React.useEffect(
+    () => () => setUIState({ type: 'highlightTransport', payload: undefined }),
+    [setUIState]
+  )
 
   const { transportId } = useParams<{ transportId: string }>()
   const transport = transports.find((v) => v.id === transportId)

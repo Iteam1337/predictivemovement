@@ -50,47 +50,47 @@ const BookingToggleList: React.FC<{
   isOpen,
   setOpen,
 }) => {
-    return (
-      <Elements.Layout.MarginBottomContainer>
-        <Elements.Layout.FlexRowWrapper onClick={setOpen}>
-          <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
-          <Icons.Arrow
-            style={{
-              marginLeft: '0.875rem',
-              transform: `rotate(${isOpen ? '180deg' : 0})`,
-            }}
-          />
-        </Elements.Layout.FlexRowWrapper>
+  return (
+    <Elements.Layout.MarginBottomContainer>
+      <Elements.Layout.FlexRowWrapper onClick={setOpen}>
+        <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
+        <Icons.Arrow
+          style={{
+            marginLeft: '0.875rem',
+            transform: `rotate(${isOpen ? '180deg' : 0})`,
+          }}
+        />
+      </Elements.Layout.FlexRowWrapper>
 
-        {isOpen && (
-          <Elements.Layout.BookingList>
-            {bookings.length === 0 && (
-              <Elements.Typography.NoInfoParagraph>
-                Just nu finns det inget här...
-              </Elements.Typography.NoInfoParagraph>
-            )}
-            {bookings.length > 0 &&
-              bookings.map((booking) => (
-                <li key={booking.id}>
-                  <Elements.Layout.InlineContainer>
-                    <Elements.Links.RoundedLink
-                      onMouseOver={() => onMouseEnterHandler(booking.id)}
-                      onMouseLeave={() => onMouseLeaveHandler()}
-                      to={`/bookings/${booking.id}`}
-                      onClick={() =>
-                        onClickHandler(booking.pickup.lat, booking.pickup.lon)
-                      }
-                    >
-                      {helpers.getLastFourChars(booking.id).toUpperCase()}
-                    </Elements.Links.RoundedLink>
-                  </Elements.Layout.InlineContainer>
-                </li>
-              ))}
-          </Elements.Layout.BookingList>
-        )}
-      </Elements.Layout.MarginBottomContainer>
-    )
-  }
+      {isOpen && (
+        <Elements.Layout.BookingList>
+          {bookings.length === 0 && (
+            <Elements.Typography.NoInfoParagraph>
+              Just nu finns det inget här...
+            </Elements.Typography.NoInfoParagraph>
+          )}
+          {bookings.length > 0 &&
+            bookings.map((booking) => (
+              <li key={booking.id}>
+                <Elements.Layout.InlineContainer>
+                  <Elements.Links.RoundedLink
+                    onMouseOver={() => onMouseEnterHandler(booking.id)}
+                    onMouseLeave={onMouseLeaveHandler}
+                    to={`/bookings/${booking.id}`}
+                    onClick={() =>
+                      onClickHandler(booking.pickup.lat, booking.pickup.lon)
+                    }
+                  >
+                    {helpers.getLastFourChars(booking.id).toUpperCase()}
+                  </Elements.Links.RoundedLink>
+                </Elements.Layout.InlineContainer>
+              </li>
+            ))}
+        </Elements.Layout.BookingList>
+      )}
+    </Elements.Layout.MarginBottomContainer>
+  )
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -104,7 +104,7 @@ const Bookings: React.FC<{
   deleteBooking: (params: any) => void
 }> = (props) => {
   const setMap = stores.map((state) => state.set)
-  const setUIState = stores.ui((state) => state.dispatch)
+  const setUIState = stores.ui(React.useCallback((state) => state.dispatch, []))
   const { path, url } = useRouteMatch()
 
   const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
@@ -136,7 +136,7 @@ const Bookings: React.FC<{
   return (
     <Wrapper>
       <Switch>
-        <Route exact path={path}>
+        <Route exact path={'/bookings'}>
           <Elements.Layout.MarginTopContainer>
             <BookingToggleList
               isOpen={expandedSection.new}
@@ -187,19 +187,23 @@ const Bookings: React.FC<{
           </Elements.Layout.FlexRowInCenter>
         </Route>
 
-        <Route exact path={`${path}/add-booking`}>
-          <CreateBooking onSubmit={props.createBooking} />
-        </Route>
+        <Route
+          exact
+          path={`${path}/add-booking`}
+          component={() => <CreateBooking onSubmit={props.createBooking} />}
+        />
 
-        <Route exact path={`${path}/:bookingId`}>
-          <BookingDetails
-            bookings={props.bookings}
-            deleteBooking={props.deleteBooking}
-            onUnmount={() =>
-              setUIState({ type: 'highlightBooking', payload: undefined })
-            }
-          />
-        </Route>
+        <Route
+          exact
+          path={`${path}/:bookingId`}
+          component={() => (
+            <BookingDetails
+              bookings={props.bookings}
+              deleteBooking={props.deleteBooking}
+            />
+          )}
+        />
+
         <Route component={NotFound} />
       </Switch>
     </Wrapper>

@@ -3,7 +3,6 @@ import { Link, Route, useRouteMatch, Switch } from 'react-router-dom'
 import CreateTransport from './CreateTransport'
 import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
-import * as stores from '../utils/state/stores'
 import { Transport } from '../types'
 import NotFound from './NotFound'
 import * as Elements from '../shared-elements'
@@ -14,7 +13,6 @@ const Transports: React.FC<{
   deleteTransport: (id: string) => void
 }> = ({ transports, createTransport, deleteTransport }) => {
   const { path, url } = useRouteMatch()
-  const setUIState = stores.ui((state) => state.dispatch)
 
   return (
     <Switch>
@@ -36,9 +34,6 @@ const Transports: React.FC<{
         <TransportDetails
           transports={transports}
           deleteTransport={deleteTransport}
-          onUnmount={() =>
-            setUIState({ type: 'highlightTransport', payload: undefined })
-          }
         />
       </Route>
       <Route component={NotFound} />

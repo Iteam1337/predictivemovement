@@ -3,7 +3,7 @@ defmodule Engine.BookingUpdateProcessor do
   require Logger
 
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
-  @update_booking_routing_key "update"
+  @update_booking_routing_key "updated"
   @update_booking_queue "update_booking_in_engine"
 
   def start_link(_opts) do

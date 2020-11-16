@@ -17,7 +17,7 @@ public class VRPShipments {
     private static final int SHIPMENT_DEFAULT_VOLUME = 19 * 18 * 14;
     private static final int SHIPMENT_DEFAULT_WEIGHT = 1;
 
-    private static final String REQUIRES_TEANSPORT_ID = "requires_transport_id";
+    private static final String REQUIRES_TRANSPORT_ID = "requires_transport_id";
 
     List<Shipment> shipments;
     private VRPSetting vrpSetting;

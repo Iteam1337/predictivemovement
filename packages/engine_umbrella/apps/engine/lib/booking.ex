@@ -112,7 +112,7 @@ defmodule Booking do
 
       GenServer.call(via_tuple(id), {:update, booking_with_route})
 
-      RMQ.publish(booking_with_route, @outgoing_booking_exchange, "new")
+      RMQ.publish(booking_with_route, @outgoing_booking_exchange, "updated")
       ES.add_event(%BookingUpdated{booking: booking_with_route})
       id
     else

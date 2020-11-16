@@ -198,12 +198,14 @@ export const sendPickupInformation = (
 
   const packageInfos = bookings
     .map((b) =>
-      `\nID: ${helpers.formatId(b.id)}\n`
+      `\nID: ${helpers.formatId(b.id)}`
+        .concat(b.externalId ? `\nReferensnummer: ${b.externalId}` : '')
         .concat(
-          b.metadata?.sender?.info
-            ? `Extra information vid upphämtning: ${b.metadata.sender.info}\n`
+          b.metadata.sender?.info
+            ? `\nExtra information vid upphämtning: ${b.metadata.sender.info}`
             : ''
         )
+        .concat(b.metadata.cargo ? `\nInnehåll: ${b.metadata.cargo}` : '')
         .concat(b.size.weight ? `\nVikt: ${b.size.weight}kg` : '')
         .concat(
           b.size.measurement && b.size.measurement.length === 3
@@ -258,14 +260,14 @@ export const sendDeliveryInformation = (
   return bot.telegram.sendMessage(
     telegramId,
     ` ${
-      firstBooking.metadata?.recipient?.contact
+      firstBooking.metadata.recipient?.contact
         ? 'Du kan nu nå mottagaren på ' +
           firstBooking.metadata.recipient.contact +
           '\n'
         : ''
     }`
       .concat(
-        firstBooking.metadata?.recipient?.info
+        firstBooking.metadata.recipient?.info
           ? `\nExtra information vid avlämning: ${firstBooking.metadata.recipient.info}`
           : ''
       )

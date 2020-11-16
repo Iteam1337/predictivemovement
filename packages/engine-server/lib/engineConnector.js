@@ -255,7 +255,7 @@ module.exports = (io) => {
       .exchange('incoming_vehicle_updates', 'topic', {
         durable: true,
       })
-      .publish(vehicle, routingKeys.UPDATE, {
+      .publish(vehicle, routingKeys.UPDATED, {
         persistent: true,
       })
       .then(() =>

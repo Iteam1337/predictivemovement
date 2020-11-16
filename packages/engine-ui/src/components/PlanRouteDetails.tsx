@@ -131,7 +131,8 @@ const PlanRouteDetails = ({
                 panMapView(route.start_address.lat, route.start_address.lon)
               }
             >
-              {helpers.getLastFourChars(route.id).toUpperCase()}
+              {route.metadata.profile?.toUpperCase() ||
+                helpers.getLastFourChars(route.id).toUpperCase()}
             </Elements.Links.RoundedLink>
           </Elements.Layout.FlexRowWrapper>
           Bookingar på rutt:

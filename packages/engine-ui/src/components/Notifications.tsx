@@ -37,6 +37,7 @@ const notificationMessages = {
   },
   [EntityType.TRANSPORT]: {
     [TransportStatus.NEW]: 'En ny transport har lags till:',
+    [TransportStatus.NEW_INSTRUCTIONS]: 'En ny rutt har bekräftats:',
   },
 }
 
@@ -75,14 +76,15 @@ const Notifications: React.FC<{
   const withLinkElement = (
     id: string,
     entityType: EntityType,
-    text: string
+    text: string,
+    name?: string
   ) => {
     const path = entityType === EntityType.BOOKING ? 'bookings' : 'transports'
     return (
       <>
         {text}
         <Elements.Links.RoundedLink margin="0 0.5rem" to={`/${path}/${id}`}>
-          {helpers.formatIdForEndUser(id)}
+          {name || helpers.formatIdForEndUser(id)}
         </Elements.Links.RoundedLink>
       </>
     )
@@ -99,7 +101,10 @@ const Notifications: React.FC<{
           {withLinkElement(
             notification.event.id,
             notification.type,
-            messageElementFromNotification(notification)
+            messageElementFromNotification(notification),
+            notification.type === EntityType.TRANSPORT
+              ? notification.transport.metadata.profile
+              : undefined
           )}
         </NotificationComponent>
       ))}

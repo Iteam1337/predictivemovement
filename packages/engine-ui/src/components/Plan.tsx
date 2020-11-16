@@ -1,15 +1,16 @@
 import React from 'react'
+import { FlyToInterpolator } from 'react-map-gl'
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
-import { useRouteMatch, Route, Switch } from 'react-router-dom'
-import * as Elements from '../shared-elements'
-import PlanRouteDetails from './PlanRouteDetails'
-import PlanBookingDetails from './PlanBookingDetails'
-import NotFound from './NotFound'
 import * as Icons from '../assets/Icons'
+import * as Elements from '../shared-elements'
+import { Booking, ExcludedBooking, Plan as PlanType, Transport } from '../types'
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
-import { Plan as PlanType, Transport, Booking, ExcludedBooking } from '../types'
-import { FlyToInterpolator } from 'react-map-gl'
+import NotFound from './NotFound'
+import PlanBookingDetails from './PlanBookingDetails'
+import PlanRouteDetails from './PlanRouteDetails'
+import Success from './SuccessScreen'
 
 const bookingStatusToReadable = (status: string) => {
   switch (status) {
@@ -105,6 +106,7 @@ const Plan: React.FC<PlanProps> = ({
   bookings,
   moveBooking,
 }) => {
+  const history = useHistory()
   const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0
   )
@@ -114,6 +116,7 @@ const Plan: React.FC<PlanProps> = ({
   const { path } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
+  const [isFinished, setIsFinished] = React.useState(false)
 
   const onClickHandler = (latitude: number, longitude: number) =>
     setMap({
@@ -133,6 +136,23 @@ const Plan: React.FC<PlanProps> = ({
       ...currentState,
       isOpen: !currentState.isOpen,
     }))
+
+  const handleOnClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    dispatchOffers(event)
+    setIsFinished(true)
+  }
+
+  const handleOnClose = () => history.push('/transports')
+
+  if (isFinished)
+    return (
+      <Success
+        onClose={handleOnClose}
+        infoText="Planen är nu bekräftad och rutten tillagd på respektive transport"
+      />
+    )
 
   return (
     <Switch>
@@ -171,7 +191,7 @@ const Plan: React.FC<PlanProps> = ({
               <Elements.Buttons.SubmitButton
                 alignSelf="center"
                 marginTop="5rem"
-                onClick={dispatchOffers}
+                onClick={handleOnClick}
               >
                 Bekräfta plan
               </Elements.Buttons.SubmitButton>

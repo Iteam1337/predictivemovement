@@ -37,6 +37,7 @@ const notificationMessages = {
   },
   [EntityType.TRANSPORT]: {
     [TransportStatus.NEW]: 'En ny transport har lags till:',
+    [TransportStatus.NEW_INSTRUCTIONS]: 'En ny plan har bekräftats:',
   },
 }
 

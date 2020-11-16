@@ -12,7 +12,7 @@ const routingKeys = {
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
   BOOKING_MOVED: 'booking_moved',
-  UPDATE: 'updated',
+  UPDATED: 'updated',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'

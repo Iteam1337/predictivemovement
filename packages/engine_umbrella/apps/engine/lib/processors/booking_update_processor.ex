@@ -4,7 +4,7 @@ defmodule Engine.BookingUpdateProcessor do
   alias Broadway.Message
 
   @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
-  @update_booking_routing_key "update"
+  @update_booking_routing_key "updated"
   @booking_moved "booking_moved"
   @update_booking_queue "update_booking_in_engine"
 

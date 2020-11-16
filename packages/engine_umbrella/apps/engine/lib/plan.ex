@@ -1,5 +1,6 @@
 defmodule Plan do
   alias Engine.Adapters.RMQRPCWorker
+  @jsprit_time_constraint_msg "Time of time window constraint is in the past!"
 
   def find_optimal_routes(vehicle_ids, booking_ids) do
     IO.puts("call calculate_route_optimization")
@@ -83,4 +84,44 @@ defmodule Plan do
     end)
     |> elem(0)
   end
+
+  def calculate(vehicle_ids, booking_ids)
+      when length(vehicle_ids) == 0 or length(booking_ids) == 0,
+      do: IO.puts("No vehicles/bookings to calculate plan for")
+
+  def calculate(vehicle_ids, booking_ids) do
+    %{data: %{solution: %{routes: routes, excluded: excluded}}} =
+      find_optimal_routes(vehicle_ids, booking_ids)
+
+    vehicles =
+      routes
+      |> Enum.map(fn %{activities: activities, vehicle_id: id} ->
+        booking_ids =
+          activities |> Enum.filter(&Map.has_key?(&1, :id)) |> Enum.map(& &1.id) |> Enum.uniq()
+
+        Vehicle.get(id)
+        |> Map.put(:activities, activities)
+        |> Map.put(:booking_ids, booking_ids)
+      end)
+      |> Enum.map(fn vehicle ->
+        vehicle
+        |> Map.put(
+          :current_route,
+          vehicle.activities
+          |> Enum.map(fn %{address: address} -> address end)
+          |> Osrm.route()
+        )
+      end)
+
+    PlanStore.put_plan(%{
+      vehicles: vehicles,
+      booking_ids: booking_ids,
+      excluded_booking_ids: Enum.map(excluded, &handle_booking_failure/1)
+    })
+  end
+
+  defp handle_booking_failure(%{id: id, failure: %{status_msg: @jsprit_time_constraint_msg}}),
+    do: %{id: id, status: "TIME_CONSTRAINTS_EXPIRED"}
+
+  defp handle_booking_failure(%{id: id}), do: %{id: id, status: "CONSTRAINTS_FAILURE"}
 end

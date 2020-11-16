@@ -146,4 +146,52 @@ defmodule BookingTest do
     assert external_id == updated_booking.external_id
     assert size == updated_booking.size
   end
+
+  test "allows for only updating delivery" do
+    id =
+      MessageGenerator.random_booking()
+      |> Booking.make()
+
+    new_delivery = %{lat: 13.37, lon: 13.37}
+
+    Booking.update(%{
+      id: id,
+      delivery: new_delivery
+    })
+
+    %{delivery: delivery} = Booking.get(id)
+    assert new_delivery == delivery
+  end
+
+  test "allows for only updating pickup" do
+    id =
+      MessageGenerator.random_booking()
+      |> Booking.make()
+
+    new_pickup = %{lat: 13.37, lon: 13.37}
+
+    Booking.update(%{
+      id: id,
+      pickup: new_pickup
+    })
+
+    %{pickup: pickup} = Booking.get(id)
+    assert new_pickup == pickup
+  end
+
+  test "allows for only updating size" do
+    id =
+      MessageGenerator.random_booking()
+      |> Booking.make()
+
+    new_size = %{measurements: [222, 2, 2], weight: 100}
+
+    Booking.update(%{
+      id: id,
+      size: new_size
+    })
+
+    %{size: size} = Booking.get(id)
+    assert new_size == size
+  end
 end

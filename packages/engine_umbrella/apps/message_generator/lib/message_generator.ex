@@ -3,7 +3,7 @@ defmodule MessageGenerator do
   alias MessageGenerator.Address
   alias MessageGenerator.Adapters.RMQ
 
-  @cars_exchange "incoming_vehicle_updates"
+  @transports_exchange "incoming_vehicle_updates"
   @bookings_exchange "incoming_booking_updates"
 
   @stockholm %{lat: 59.3414072, lon: 18.0470482}
@@ -18,31 +18,31 @@ defmodule MessageGenerator do
     {:ok, %{}}
   end
 
-  def add_random_car() do
-    generate_car()
-    |> RMQ.publish(@cars_exchange, "registered")
+  def add_random_transport() do
+    generate_transport()
+    |> RMQ.publish(@transports_exchange, "registered")
   end
 
-  def add_random_car(properties) when is_map(properties) do
-    generate_car(properties)
-    |> RMQ.publish(@cars_exchange, "registered")
+  def add_random_transport(properties) when is_map(properties) do
+    generate_transport(properties)
+    |> RMQ.publish(@transports_exchange, "registered")
   end
 
-  def add_random_car(city) when city in [:stockholm, :gothenburg] do
+  def add_random_transport(city) when city in [:stockholm, :gothenburg] do
     %{}
     |> add_vehicle_addresses(city)
-    |> generate_car()
-    |> RMQ.publish(@cars_exchange, "registered")
+    |> generate_transport()
+    |> RMQ.publish(@transports_exchange, "registered")
   end
 
-  def generate_car() do
+  def generate_transport() do
     %{}
     |> Map.put(:start_address, Address.random(@ljusdal))
     |> Map.put(:end_address, Address.random(@ljusdal))
     |> Map.put(:id, Enum.random(0..100_000))
   end
 
-  def generate_car(properties) when is_map(properties) do
+  def generate_transport(properties) when is_map(properties) do
     properties
     |> Map.put(:id, Enum.random(0..100_000))
     |> Map.put_new(:start_address, Address.random(@ljusdal))

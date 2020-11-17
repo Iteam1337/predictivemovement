@@ -19,11 +19,13 @@ const Map = ({ data }) => {
   const handleClickEvent = (event) => {
     if (!event.object) return
     const type = event.object.properties.type
+    const id = event.object.id || event.object.properties.id
     switch (type) {
       case 'booking':
-        return history.push(`/bookings/${event.object.id}`)
+        return history.push(`/bookings/${id}`)
+      case 'transport':
       case 'plan':
-        return history.push(`/transports/${event.object.id}`)
+        return history.push(`/transports/${id}`)
       default:
         return
     }
@@ -54,7 +56,8 @@ const Map = ({ data }) => {
     data.plan.routes
       .map((route) =>
         mapUtils.toBookingIconLayer(
-          mapUtils.routeActivityIcon(route),
+          route.activities?.slice(1, -1),
+          'address',
           UIState.highlightBooking,
           { offset: [40, 0] }
         )
@@ -66,12 +69,10 @@ const Map = ({ data }) => {
       ),
     showTextLayer &&
       mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
-    mapUtils.toTransportIconLayer(
-      mapUtils.transportIcon(data.transports),
-      UIState.highlightTransport
-    ),
+    mapUtils.toTransportIconLayer(data.transports, UIState.highlightTransport),
     mapUtils.toBookingIconLayer(
-      mapUtils.bookingIcon(data.bookings),
+      data.bookings,
+      'pickup',
       UIState.highlightBooking
     ),
   ]

@@ -122,99 +122,6 @@ const planToFeature = (plan) => {
   }
 }
 
-const excludedBookingIcon = (booking) => {
-  if (!booking) return
-
-  return [
-    point([booking.lon, booking.lat], {
-      properties: {
-        size: 80,
-      },
-      id: booking.id,
-    }),
-  ]
-}
-
-const routeActivityIcon = (route) => {
-  if (!route || !route.activities) return
-
-  let index = 0
-  try {
-    return [
-      ...route.activities.slice(1, -1).flatMap(({ id, address }, i) => {
-        index = i
-        return [
-          point([address.lon, address.lat], {
-            properties: {
-              color: '#ffffff',
-              highlightColor: '#19DE8B',
-              size: 80,
-            },
-            id,
-          }),
-        ]
-      }),
-    ]
-  } catch (error) {
-    console.log(index, error)
-  }
-}
-
-const transportIcon = (transports) => {
-  let index = 0
-  try {
-    return [
-      ...transports.flatMap(
-        ({ id, tail, start_address, location, color }, i) => {
-          index = i
-          return [
-            point(
-              [
-                location?.lon || start_address.lon,
-                location?.lat || start_address.lat,
-              ],
-              {
-                properties: {
-                  color,
-                  highlightColor: color,
-                  size: 80,
-                },
-                id,
-                tail,
-              }
-            ),
-          ]
-        }
-      ),
-    ]
-  } catch (error) {
-    console.log(index, error)
-  }
-}
-
-const bookingIcon = (bookings) => {
-  let index = 0
-  try {
-    return [
-      ...bookings.flatMap(({ id, pickup }, i) => {
-        index = i
-        return [
-          point([pickup.lon, pickup.lat], {
-            properties: {
-              color: '#ffffff',
-              highlightColor: '#19DE8B',
-              size: 80,
-            },
-            id,
-          }),
-        ]
-      }),
-    ]
-  } catch (error) {
-    console.log(index, error)
-  }
-}
-
 const bookingToFeature = (bookings) => {
   return bookings.flatMap(({ id, pickup, delivery, status, route }) => {
     const points = [
@@ -241,7 +148,7 @@ const bookingToFeature = (bookings) => {
             properties: {
               color: '#e6ffe6',
               offset: 0,
-              address: { pickup: pickup, delivery: delivery },
+              address: { pickup, delivery },
               type: 'booking',
             },
           }
@@ -277,26 +184,28 @@ const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
-const toTransportIconLayer = (data, activeId) => {
-  if (!data.length) {
+const toTransportIconLayer = (transports, activeId) => {
+  if (!transports.length) {
     return
   }
 
-  const iconData = data.map((feature) => ({
-    coordinates: feature.geometry.coordinates,
-    properties: {
-      id: feature.id,
-      opacity: activeId === feature.id ? null : feature.properties.opacity,
-      color:
-        activeId === feature.id
-          ? feature.properties.highlightColor
-          : feature.properties.color,
-      icon: transportDefaultIcon,
-      highlightIcon: transportSelectedIcon,
-      size: 7,
-      highlightSize: 9,
-    },
-  }))
+  const iconData = transports.flatMap(
+    ({ id, start_address, location, color }) => ({
+      coordinates: [
+        location?.lon || start_address.lon,
+        location?.lat || start_address.lat,
+      ],
+      properties: {
+        id,
+        color,
+        icon: transportDefaultIcon,
+        highlightIcon: transportSelectedIcon,
+        size: 7,
+        highlightSize: 9,
+        type: 'transport',
+      },
+    })
+  )
 
   return new IconLayer({
     id: 'transport-icon',
@@ -329,27 +238,28 @@ const toExcludedBookingIcon = (booking, activeId) => {
   if (!booking) {
     return
   }
-  const iconData = excludedBookingIcon(booking).map((feature) => ({
-    coordinates: feature.geometry.coordinates,
-    properties: {
-      id: feature.id,
-      size: 8,
-      activeSize: 10,
+
+  const iconData = [
+    {
+      coordinates: [booking.lon, booking.lat],
+      properties: {
+        id: booking.id,
+        size: 8,
+        activeSize: 10,
+      },
     },
-  }))
+  ]
 
   return new IconLayer({
     id: `excluded-booking-icon-${booking.id}`,
     data: iconData,
     pickable: true,
-    getIcon: () => {
-      return {
-        url: excludedParcelIcon,
-        mask: false,
-        width: 128,
-        height: 128,
-      }
-    },
+    getIcon: () => ({
+      url: excludedParcelIcon,
+      mask: false,
+      width: 128,
+      height: 128,
+    }),
     sizeScale: 5,
     getPosition: (d) => d.coordinates,
     transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
@@ -362,31 +272,24 @@ const toExcludedBookingIcon = (booking, activeId) => {
 
 const toBookingIconLayer = (
   data,
+  coordinatesProp,
   activeId,
-  options = { offset: [0, 0] },
-  layerId = 'booking-icon'
+  options = { offset: [0, 0] }
 ) => {
-  if (!data || !data.length) {
-    return
-  }
-
-  const iconData = data.map((feature) => ({
-    coordinates: feature.geometry.coordinates,
+  const iconData = data.flatMap((data) => ({
+    coordinates: [data[coordinatesProp].lon, data[coordinatesProp].lat],
     properties: {
-      id: feature.id,
-      opacity: activeId === feature.id ? null : feature.properties.opacity,
-      color:
-        activeId === feature.id
-          ? feature.properties.highlightColor
-          : feature.properties.color,
+      id: data.id,
+      color: activeId === data.id ? '#19DE8B' : '#ffffff',
       size: 5,
       activeSize: 7,
       icon: parcelIcon,
+      type: 'booking',
     },
   }))
 
   return new IconLayer({
-    id: layerId,
+    id: 'booking-icon',
     data: iconData,
     pickable: true,
     getPixelOffset: options.offset,
@@ -418,10 +321,7 @@ export {
   planToFeature,
   toGeoJsonLayer,
   toBookingIconLayer,
-  transportIcon,
   toTransportIconLayer,
-  bookingIcon,
-  routeActivityIcon,
   toTextLayer,
   routeActivitiesToFeature,
   toExcludedBookingIcon,

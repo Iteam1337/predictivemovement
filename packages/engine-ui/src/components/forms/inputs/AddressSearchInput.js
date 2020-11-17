@@ -29,8 +29,25 @@ const Component = ({
   formError,
   ...rest
 }) => {
+  const getFavoriteAddresses = () => {
+    let favoriteAddresses
+
+    try {
+      favoriteAddresses =
+        JSON.parse(localStorage.getItem('favoriteAddresses')) || []
+    } catch (ex) {
+      favoriteAddresses = []
+    }
+
+    return favoriteAddresses
+  }
   const [showDropdown, setShowDropdown] = React.useState(false)
-  const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
+  const [showSaveFavorite, setShowSaveFavorite] = React.useState(false)
+  const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses(
+    getFavoriteAddresses()
+  )
+
+  const [selectedAddress, setSelectedAddress] = React.useState({})
 
   const searchWithDebounce = React.useMemo(
     () => debounce((q) => search(q, () => setShowDropdown(true)), 300),
@@ -39,6 +56,7 @@ const Component = ({
 
   const onSearchInputHandler = (event) => {
     event.persist()
+    setShowSaveFavorite(false)
     searchWithDebounce(event.target.value)
 
     return onChangeHandler({ name: event.target.value })
@@ -47,12 +65,27 @@ const Component = ({
   const handleDropdownSelect = (event, address) => {
     event.persist()
     setShowDropdown(false)
-
-    return onChangeHandler({
+    setShowSaveFavorite(true)
+    const selected = {
       ...address,
       name: `${address.name}, ${address.county}`,
       street: address.name,
-    })
+    }
+    setSelectedAddress(selected)
+    return onChangeHandler(selected)
+  }
+
+  const saveAsFavorite = () => {
+    const favoriteAddresses = getFavoriteAddresses()
+
+    if (favoriteAddresses.some((a) => a.name === selectedAddress.name))
+      return false
+
+    localStorage.setItem(
+      'favoriteAddresses',
+      JSON.stringify(favoriteAddresses.concat([selectedAddress]))
+    )
+    return false
   }
 
   return (
@@ -76,6 +109,12 @@ const Component = ({
         value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
+        onFocus={() => setShowDropdown(getFavoriteAddresses().length > 0)}
+        // onBlur={() => {
+        //   setTimeout(() => {
+        //     setShowDropdown(false)
+        //   }, 100)
+        // }}
         iconInset
       />
 
@@ -91,6 +130,18 @@ const Component = ({
             </DropdownButton>
           ))}
         </DropdownWrapper>
+      )}
+
+      {showSaveFavorite && (
+        <Elements.Buttons.CancelButton
+          padding="0.5rem"
+          style={{
+            marginTop: '0.5rem',
+          }}
+          onClick={saveAsFavorite}
+        >
+          Spara som favorit
+        </Elements.Buttons.CancelButton>
       )}
     </Elements.Layout.InputInnerContainer>
   )

@@ -124,7 +124,7 @@ export const useGetSuggestedAddresses = (initialState = []) => {
             lat,
           })
         )
-        set(parsedFeatures)
+        set(parsedFeatures.length > 0 ? parsedFeatures : initialState)
 
         return callback()
       })

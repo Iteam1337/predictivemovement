@@ -11,6 +11,7 @@ import NotFound from './NotFound'
 
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
+import EditBooking from './EditBooking'
 
 const sortBookingsByStatus = (bookings: Booking[]) =>
   bookings.reduce<{
@@ -189,6 +190,10 @@ const Bookings: React.FC<{
 
         <Route exact path={`${path}/add-booking`}>
           <CreateBooking onSubmit={props.createBooking} />
+        </Route>
+
+        <Route exact path={`${path}/edit-booking/:bookingId`}>
+          <EditBooking />
         </Route>
 
         <Route exact path={`${path}/:bookingId`}>

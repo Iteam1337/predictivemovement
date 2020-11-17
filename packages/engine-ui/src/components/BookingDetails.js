@@ -104,6 +104,10 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
     }
   }
 
+  const handleChangeClick = (bookingId) => {
+    history.push(`/bookings/edit-booking/${bookingId}`)
+  }
+
   const parseEventTypeToHumanReadable = (type) => {
     switch (type) {
       case 'new':
@@ -292,15 +296,26 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             <CapitalizeParagraph>{booking.status}</CapitalizeParagraph>
           )}
         </Timeline>
-        <Elements.Layout.MarginTopContainer alignItems="center">
-          {booking.status === 'new' && (
-            <Elements.Buttons.CancelButton
-              onClick={() => handleDeleteClick(id)}
-            >
-              Radera bokning
-            </Elements.Buttons.CancelButton>
-          )}
-        </Elements.Layout.MarginTopContainer>
+
+        {booking.status === 'new' && (
+          <Elements.Layout.MarginTopContainer alignItems="center">
+            <Elements.Layout.ButtonWrapper>
+              <Elements.Buttons.SubmitButton
+                type="button"
+                onClick={() => handleChangeClick(id)}
+              >
+                Ändra bokning
+              </Elements.Buttons.SubmitButton>
+            </Elements.Layout.ButtonWrapper>
+            <Elements.Layout.ButtonWrapper>
+              <Elements.Buttons.CancelButton
+                onClick={() => handleDeleteClick(id)}
+              >
+                Radera bokning
+              </Elements.Buttons.CancelButton>
+            </Elements.Layout.ButtonWrapper>
+          </Elements.Layout.MarginTopContainer>
+        )}
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

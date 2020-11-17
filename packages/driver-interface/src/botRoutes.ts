@@ -62,8 +62,9 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
           telegramId,
           instructionGroupId
         )
-      case 'picked_up':
       case 'delivered':
+        cache.setDriverDoneDelivering(telegramId)
+      case 'picked_up':
       case 'delivery_failed': {
         return cache
           .getAndDeleteInstructionGroup(instructionGroupId)

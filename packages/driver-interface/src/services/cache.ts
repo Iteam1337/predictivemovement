@@ -78,6 +78,8 @@ export default {
       `${keys.CURRENTLY_DELIVERING}:${telegramId}`,
       JSON.stringify(bookindIds)
     ),
+  setDriverDoneDelivering: (telegramId: number): Promise<number> =>
+    redis.del(`${keys.CURRENTLY_DELIVERING}:${telegramId}`),
   getDriverCurrentDelivering: (telegramId: number): Promise<string[]> =>
     redis
       .get(`${keys.CURRENTLY_DELIVERING}:${telegramId}`)

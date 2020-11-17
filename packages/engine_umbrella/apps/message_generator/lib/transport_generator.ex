@@ -22,6 +22,5 @@ defmodule MessageGenerator.TransportGenerator do
   defp do_add_transport_addresses(map, location) do
     map
     |> Map.put_new(:start_address, Address.random(location))
-    |> Map.put_new(:end_address, Address.random(location))
   end
 end

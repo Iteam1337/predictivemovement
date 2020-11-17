@@ -53,20 +53,24 @@ defmodule BookingProcessorTest do
   end
 
   test "creates a plan for two vehicles, where each vehicle gets one" do
-    TransportGenerator.generate_transport()
+    %{}
     |> TransportGenerator.put_new_transport_addresses_from_city(:stockholm)
+    |> TransportGenerator.generate_transport()
     |> Vehicle.make()
 
-    TransportGenerator.generate_transport()
+    %{}
     |> TransportGenerator.put_new_transport_addresses_from_city(:gothenburg)
+    |> TransportGenerator.generate_transport()
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking()
+    %{}
     |> BookingGenerator.put_new_booking_addresses_from_city(:stockholm)
+    |> BookingGenerator.generate_booking()
     |> Booking.make()
 
-    BookingGenerator.generate_booking()
+    %{}
     |> BookingGenerator.put_new_booking_addresses_from_city(:gothenburg)
+    |> BookingGenerator.generate_booking()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()

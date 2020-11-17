@@ -62,7 +62,8 @@ export default {
       .get(`${keys.INSTRUCTION_GROUPS}:${id}`)
       .del(`${keys.INSTRUCTION_GROUPS}:${id}`)
       .exec()
-      .then(([res]) => JSON.parse(res[1])),
+      .then(([res]) => JSON.parse(res[1]))
+      .then((res) => res || []),
 
   getInstructionGroup: (id: string): Promise<Instruction[]> =>
     redis

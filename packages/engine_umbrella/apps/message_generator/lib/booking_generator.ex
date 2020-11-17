@@ -16,7 +16,8 @@ defmodule MessageGenerator.BookingGenerator do
     })
   end
 
-  def put_new_booking_addresses_from_city(map), do: do_add_booking_addresses(map, @ljusdal)
+  def put_new_booking_addresses_from_city(map, :ljusdal),
+    do: do_add_booking_addresses(map, @ljusdal)
 
   def put_new_booking_addresses_from_city(map, :stockholm),
     do: do_add_booking_addresses(map, @stockholm)

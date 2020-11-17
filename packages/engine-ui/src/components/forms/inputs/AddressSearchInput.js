@@ -20,6 +20,8 @@ const DropdownButton = styled.button`
   :focus {
     outline-color: #13c57b;
   }
+  background-color: #f1f3f5;
+  margin: 0;
 `
 
 const Component = ({

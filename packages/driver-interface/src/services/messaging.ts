@@ -303,17 +303,10 @@ export const sendDeliveryInformation = (
   )
 }
 
-export const sendBeginDeliveryAcknowledgement = (telegramId: number) => {
-  bot.telegram.sendMessage(
-    telegramId,
-    'Fotografera nu mottagaren tillsammans med paketet och skicka'
-  )
-}
-
 export const sendPhotoReceived = (telegramId: number) =>
   bot.telegram.sendMessage(
     telegramId,
-    'Tack, ditt foto har sparats! Du kan ta fler foton om du vill eller tryck på Klar om du är färdig med leverans och kvittens.',
+    `Tack, ditt foto har sparats!\nDu kan ta fler foton om du vill, tryck annars på _Klar_ om du är färdig med kvittensen.`,
     {
       parse_mode: 'Markdown',
       reply_markup: {
@@ -330,3 +323,9 @@ export const sendPhotoReceived = (telegramId: number) =>
       },
     }
   )
+export const sendBeginDeliveryAcknowledgement = (telegramId: number) => {
+  bot.telegram.sendMessage(
+    telegramId,
+    'Fotografera nu mottagaren tillsammans med paketet och skicka bilden här.'
+  )
+}

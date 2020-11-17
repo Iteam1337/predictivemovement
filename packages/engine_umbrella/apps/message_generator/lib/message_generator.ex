@@ -38,11 +38,9 @@ defmodule MessageGenerator do
     |> Map.put(:end_address, Address.random(location))
   end
 
-  def random_booking(), do: random_booking(@ljusdal)
-
-  def random_booking(properties) when is_map(properties) do
+  def generate_booking(properties \\ %{}) do
     properties
-    |> add_random_id_and_time()
+    |> Map.put_new(:externalId, Enum.random(0..100_000))
     |> add_booking_addresses()
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
     |> Map.put_new(:metadata, %{
@@ -51,50 +49,18 @@ defmodule MessageGenerator do
     })
   end
 
-  def random_booking(location) do
+  def add_random_booking(properties \\ %{})
+
+  def add_random_booking(properties) when is_map(properties) do
+    generate_booking(properties)
+    |> RMQ.publish(@bookings_exchange, "registered")
+  end
+
+  def add_random_booking(city) when city in [:stockholm, :gothenburg] do
     %{}
-    |> add_booking_addresses(location)
-    |> add_random_id_and_time()
-    |> Map.put(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
-  end
-
-  def add_random_booking(), do: GenServer.call(__MODULE__, :add_random_booking)
-
-  def add_random_booking(properties) when is_map(properties),
-    do: GenServer.call(__MODULE__, {:add_random_booking, properties})
-
-  def add_random_booking(:stockholm),
-    do: GenServer.call(__MODULE__, {:add_random_booking, :stockholm})
-
-  def add_random_booking(:gothenburg),
-    do: GenServer.call(__MODULE__, {:add_random_booking, :gothenburg})
-
-  def handle_call(:add_random_booking, _, state) do
-    payload = random_booking()
-
-    RMQ.publish(payload, @bookings_exchange, "registered")
-
-    {:reply, :ok, state}
-  end
-
-  def handle_call({:add_random_booking, properties}, _, state)
-      when is_map(properties) do
-    payload = random_booking(properties)
-
-    RMQ.publish(payload, @bookings_exchange, "registered")
-
-    {:reply, :ok, state}
-  end
-
-  def handle_call({:add_random_booking, city}, _, state) do
-    payload =
-      %{}
-      |> add_booking_addresses(city)
-      |> random_booking()
-
-    RMQ.publish(payload, @bookings_exchange, "registered")
-
-    {:reply, :ok, state}
+    |> add_booking_addresses(city)
+    |> generate_booking()
+    |> RMQ.publish(@bookings_exchange, "registered")
   end
 
   def add_booking_addresses(map), do: do_add_booking_addresses(map, @ljusdal)
@@ -105,11 +71,5 @@ defmodule MessageGenerator do
     map
     |> Map.put(:pickup, Address.random(location))
     |> Map.put(:delivery, Address.random(location))
-  end
-
-  def add_random_id_and_time(map) do
-    map
-    |> Map.put_new(:externalId, Enum.random(0..100_000))
-    |> Map.put(:bookingDate, DateTime.utc_now())
   end
 end

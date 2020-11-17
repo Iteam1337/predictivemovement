@@ -41,6 +41,11 @@ const Component = ({
 
     return favoriteAddresses
   }
+
+  const isFavorite = (name) => {
+    return getFavoriteAddresses().some((a) => a.name === name)
+  }
+
   const [showDropdown, setShowDropdown] = React.useState(false)
   const [showSaveFavorite, setShowSaveFavorite] = React.useState(false)
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses(
@@ -65,26 +70,27 @@ const Component = ({
   const handleDropdownSelect = (event, address) => {
     event.persist()
     setShowDropdown(false)
-    setShowSaveFavorite(true)
+    setShowSaveFavorite(!isFavorite(address.name))
     const selected = {
       ...address,
       name: `${address.name}, ${address.county}`,
       street: address.name,
     }
-    setSelectedAddress(selected)
+    setSelectedAddress(address)
     return onChangeHandler(selected)
   }
 
   const saveAsFavorite = () => {
     const favoriteAddresses = getFavoriteAddresses()
 
-    if (favoriteAddresses.some((a) => a.name === selectedAddress.name))
-      return false
+    if (isFavorite(selectedAddress.name)) return false
 
     localStorage.setItem(
       'favoriteAddresses',
       JSON.stringify(favoriteAddresses.concat([selectedAddress]))
     )
+
+    setShowSaveFavorite(false)
     return false
   }
 
@@ -110,11 +116,9 @@ const Component = ({
         placeholder={placeholder}
         onChange={onSearchInputHandler}
         onFocus={() => setShowDropdown(getFavoriteAddresses().length > 0)}
-        // onBlur={() => {
-        //   setTimeout(() => {
-        //     setShowDropdown(false)
-        //   }, 100)
-        // }}
+        onBlur={() => {
+          setShowDropdown(false)
+        }}
         iconInset
       />
 
@@ -124,7 +128,7 @@ const Component = ({
             <DropdownButton
               key={index}
               name={address.name}
-              onClick={(event) => handleDropdownSelect(event, address)}
+              onMouseDown={(event) => handleDropdownSelect(event, address)}
             >
               {address.name}, {address.county}
             </DropdownButton>

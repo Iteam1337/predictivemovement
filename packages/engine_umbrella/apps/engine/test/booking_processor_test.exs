@@ -8,10 +8,10 @@ defmodule BookingProcessorTest do
   use ExUnit.Case
 
   test "creates a plan for one vehicle and one booking" do
-    TransportGenerator.generate_transport()
+    TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
@@ -26,19 +26,19 @@ defmodule BookingProcessorTest do
   end
 
   test "creates a plan where one vehicle gets two bookings and one gets zero" do
-    TransportGenerator.generate_transport()
+    TransportGenerator.generate_transport_props()
     |> TransportGenerator.put_new_transport_addresses_from_city(:stockholm)
     |> Vehicle.make()
 
-    TransportGenerator.generate_transport()
+    TransportGenerator.generate_transport_props()
     |> TransportGenerator.put_new_transport_addresses_from_city(:gothenburg)
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> BookingGenerator.put_new_booking_addresses_from_city(:stockholm)
     |> Booking.make()
 
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> BookingGenerator.put_new_booking_addresses_from_city(:stockholm)
     |> Booking.make()
 
@@ -55,22 +55,22 @@ defmodule BookingProcessorTest do
   test "creates a plan for two vehicles, where each vehicle gets one" do
     %{}
     |> TransportGenerator.put_new_transport_addresses_from_city(:stockholm)
-    |> TransportGenerator.generate_transport()
+    |> TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 
     %{}
     |> TransportGenerator.put_new_transport_addresses_from_city(:gothenburg)
-    |> TransportGenerator.generate_transport()
+    |> TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 
     %{}
     |> BookingGenerator.put_new_booking_addresses_from_city(:stockholm)
-    |> BookingGenerator.generate_booking()
+    |> BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     %{}
     |> BookingGenerator.put_new_booking_addresses_from_city(:gothenburg)
-    |> BookingGenerator.generate_booking()
+    |> BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
@@ -93,10 +93,12 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with no end_address defined gets start_address as end_address" do
-    TransportGenerator.generate_transport(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
+    TransportGenerator.generate_transport_props(%{
+      start_address: %{lat: 61.829182, lon: 16.0896213}
+    })
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
@@ -112,13 +114,13 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with end_address defined" do
-    TransportGenerator.generate_transport(%{
+    TransportGenerator.generate_transport_props(%{
       start_address: %{lat: 61.829182, lon: 16.0896213},
       end_address: %{lat: 51.829182, lon: 17.0896213}
     })
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
@@ -137,13 +139,13 @@ defmodule BookingProcessorTest do
     earliest_start = "12:05"
     latest_end = "18:05"
 
-    TransportGenerator.generate_transport(%{
+    TransportGenerator.generate_transport_props(%{
       earliest_start: earliest_start,
       latest_end: latest_end
     })
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
@@ -163,12 +165,12 @@ defmodule BookingProcessorTest do
   end
 
   test "capacity is included in the plan" do
-    TransportGenerator.generate_transport(%{
+    TransportGenerator.generate_transport_props(%{
       capacity: %{weight: 731, volume: 18}
     })
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking(%{
+    BookingGenerator.generate_booking_props(%{
       size: %{measurements: [14, 12, 10], weight: 1}
     })
     |> Booking.make()
@@ -186,12 +188,12 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with too small storage doesn't get assigned" do
-    TransportGenerator.generate_transport(%{
+    TransportGenerator.generate_transport_props(%{
       capacity: %{weight: 700, volume: 1}
     })
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking(%{
+    BookingGenerator.generate_booking_props(%{
       size: %{measurements: [100, 100, 101], weight: 2}
     })
     |> Booking.make()
@@ -206,12 +208,12 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with too little weight capabilities doesn't get assigned" do
-    TransportGenerator.generate_transport(%{
+    TransportGenerator.generate_transport_props(%{
       capacity: %{weight: 50, volume: 18}
     })
     |> Vehicle.make()
 
-    BookingGenerator.generate_booking(%{
+    BookingGenerator.generate_booking_props(%{
       size: %{measurements: [14, 12, 10], weight: 100}
     })
     |> Booking.make()
@@ -226,22 +228,22 @@ defmodule BookingProcessorTest do
   end
 
   test "bookings with same pickup should work just fine" do
-    BookingGenerator.generate_booking(%{
+    BookingGenerator.generate_booking_props(%{
       pickup: %{lat: 61.829182, lon: 16.0896213}
     })
     |> Booking.make()
 
-    BookingGenerator.generate_booking(%{
+    BookingGenerator.generate_booking_props(%{
       pickup: %{lat: 61.829182, lon: 16.0896213}
     })
     |> Booking.make()
 
-    BookingGenerator.generate_booking(%{
+    BookingGenerator.generate_booking_props(%{
       delivery: %{lat: 61.829182, lon: 16.0896213}
     })
     |> Booking.make()
 
-    TransportGenerator.generate_transport(%{start_address: %{lat: 60.1111, lon: 16.07544}})
+    TransportGenerator.generate_transport_props(%{start_address: %{lat: 60.1111, lon: 16.07544}})
     |> Vehicle.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
@@ -256,7 +258,7 @@ defmodule BookingProcessorTest do
 
   test "constraints failures leads to excluded bookings" do
     expected_id =
-      BookingGenerator.generate_booking(%{
+      BookingGenerator.generate_booking_props(%{
         id: "Gammelstad->LTU",
         metadata: %{
           start: "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
@@ -281,7 +283,7 @@ defmodule BookingProcessorTest do
       )
       |> Booking.make()
 
-    BookingGenerator.generate_booking(%{
+    BookingGenerator.generate_booking_props(%{
       id: "Gäddvik->LTU",
       metadata: %{
         start: "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
@@ -300,7 +302,7 @@ defmodule BookingProcessorTest do
     )
     |> Booking.make()
 
-    TransportGenerator.generate_transport(%{
+    TransportGenerator.generate_transport_props(%{
       id: "vehicle-1",
       start_address: %{
         lon: 21.92567,

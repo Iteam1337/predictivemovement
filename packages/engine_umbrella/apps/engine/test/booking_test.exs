@@ -5,7 +5,7 @@ defmodule BookingTest do
 
   test "it allows booking creation" do
     result =
-      BookingGenerator.generate_booking()
+      BookingGenerator.generate_booking_props()
       |> Booking.make()
 
     assert is_binary(result)
@@ -14,7 +14,7 @@ defmodule BookingTest do
 
   test "does not allow malformed size (weight)" do
     result =
-      BookingGenerator.generate_booking(%{
+      BookingGenerator.generate_booking_props(%{
         size: %{measurements: [14, 12, 10], weight: 1.2}
       })
       |> Booking.make()
@@ -24,7 +24,7 @@ defmodule BookingTest do
 
   test "does not allow malformed size (measurements)" do
     result =
-      BookingGenerator.generate_booking(%{
+      BookingGenerator.generate_booking_props(%{
         size: %{measurements: "12", weight: 1}
       })
       |> Booking.make()
@@ -37,7 +37,7 @@ defmodule BookingTest do
 
   test "does not allow malformed measurements elements" do
     result =
-      BookingGenerator.generate_booking(%{
+      BookingGenerator.generate_booking_props(%{
         size: %{measurements: ["12"], weight: 1}
       })
       |> Booking.make()
@@ -50,7 +50,7 @@ defmodule BookingTest do
 
   test "does not allow incomplete measurements" do
     result =
-      BookingGenerator.generate_booking(%{
+      BookingGenerator.generate_booking_props(%{
         size: %{measurements: [12], weight: 1}
       })
       |> Booking.make()
@@ -60,7 +60,7 @@ defmodule BookingTest do
 
   test "allows correct measurements" do
     result =
-      BookingGenerator.generate_booking(%{
+      BookingGenerator.generate_booking_props(%{
         size: %{measurements: [12, 14, 15], weight: 1}
       })
       |> Booking.make()
@@ -71,7 +71,7 @@ defmodule BookingTest do
 
   test "should validate booking addresses containing lat/lon" do
     result =
-      BookingGenerator.generate_booking()
+      BookingGenerator.generate_booking_props()
       |> Map.put(:pickup, %{city: "", name: "hafdoajgjagia", street: ""})
       |> Map.put(:delivery, %{city: "", name: "hafdoajgjagia", street: ""})
       |> Booking.make()
@@ -86,7 +86,7 @@ defmodule BookingTest do
 
   test "should validate booking addresses lat/lon in correct format" do
     result =
-      BookingGenerator.generate_booking()
+      BookingGenerator.generate_booking_props()
       |> Map.put(:pickup, %{
         lat: "2321321",
         lon: "dkdsakjdsa",
@@ -112,14 +112,14 @@ defmodule BookingTest do
   end
 
   test "requires that delivery is present" do
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> Map.delete(:delivery)
     |> Booking.make()
     |> catch_error()
   end
 
   test "requires that pickup is present" do
-    BookingGenerator.generate_booking()
+    BookingGenerator.generate_booking_props()
     |> Map.delete(:pickup)
     |> Booking.make()
     |> catch_error()
@@ -127,7 +127,7 @@ defmodule BookingTest do
 
   test "should allow booking to be updated" do
     id =
-      BookingGenerator.generate_booking()
+      BookingGenerator.generate_booking_props()
       |> Booking.make()
 
     updated_booking = %{
@@ -150,7 +150,7 @@ defmodule BookingTest do
 
   test "allows for only updating delivery" do
     id =
-      BookingGenerator.generate_booking()
+      BookingGenerator.generate_booking_props()
       |> Booking.make()
 
     new_delivery = %{lat: 13.37, lon: 13.37}
@@ -166,7 +166,7 @@ defmodule BookingTest do
 
   test "allows for only updating pickup" do
     id =
-      BookingGenerator.generate_booking()
+      BookingGenerator.generate_booking_props()
       |> Booking.make()
 
     new_pickup = %{lat: 13.37, lon: 13.37}
@@ -182,7 +182,7 @@ defmodule BookingTest do
 
   test "allows for only updating size" do
     id =
-      BookingGenerator.generate_booking()
+      BookingGenerator.generate_booking_props()
       |> Booking.make()
 
     new_size = %{measurements: [222, 2, 2], weight: 100}

@@ -5,7 +5,7 @@ defmodule MessageGenerator.BookingGenerator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
-  def generate_booking(properties \\ %{}) do
+  def generate_booking_props(properties \\ %{}) do
     properties
     |> Map.put_new(:externalId, Enum.random(0..100_000))
     |> put_new_booking_addresses_from_city(:ljusdal)

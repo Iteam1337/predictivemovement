@@ -5,7 +5,7 @@ defmodule MessageGenerator.TransportGenerator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
-  def generate_transport(properties \\ %{}) do
+  def generate_transport_props(properties \\ %{}) do
     properties
     |> put_new_transport_addresses_from_city(:ljusdal)
   end

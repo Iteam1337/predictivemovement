@@ -5,7 +5,7 @@ defmodule VehicleTest do
 
   test "it allows vehicle creation" do
     result =
-      TransportGenerator.generate_transport()
+      TransportGenerator.generate_transport_props()
       |> Vehicle.make()
 
     assert is_binary(result)
@@ -30,7 +30,7 @@ defmodule VehicleTest do
 
   test "does not allow malformed time constraints" do
     result =
-      TransportGenerator.generate_transport(%{earliest_start: "foo", latest_end: "bar"})
+      TransportGenerator.generate_transport_props(%{earliest_start: "foo", latest_end: "bar"})
       |> Vehicle.make()
 
     assert result == [
@@ -46,7 +46,7 @@ defmodule VehicleTest do
 
   test "does not allow non integer weight capacity" do
     result =
-      TransportGenerator.generate_transport(%{
+      TransportGenerator.generate_transport_props(%{
         capacity: %{volume: 2, weight: 13.4}
       })
       |> Vehicle.make()
@@ -56,7 +56,7 @@ defmodule VehicleTest do
 
   test "does not allow non integer volume capacity" do
     result =
-      TransportGenerator.generate_transport(%{earliest_start: "foo", latest_end: "bar"})
+      TransportGenerator.generate_transport_props(%{earliest_start: "foo", latest_end: "bar"})
       |> Vehicle.make()
 
     assert result == [
@@ -67,7 +67,7 @@ defmodule VehicleTest do
 
   test "should validate addresses containing lat/lon" do
     result =
-      TransportGenerator.generate_transport(%{
+      TransportGenerator.generate_transport_props(%{
         capacity: %{volume: 1, weight: 123},
         earliest_start: nil,
         latest_end: nil,
@@ -86,7 +86,7 @@ defmodule VehicleTest do
 
   test "should validate addresses lat/lon in correct format" do
     result =
-      TransportGenerator.generate_transport(%{
+      TransportGenerator.generate_transport_props(%{
         capacity: %{volume: 1, weight: 123},
         earliest_start: nil,
         latest_end: nil,
@@ -111,7 +111,7 @@ defmodule VehicleTest do
 
   test "should allow vehicle to be updated" do
     id =
-      TransportGenerator.generate_transport()
+      TransportGenerator.generate_transport_props()
       |> Vehicle.make()
 
     updated_vehicle = %{

@@ -1,4 +1,4 @@
-defmodule MessageGenerator do
+defmodule Generator do
   alias MessageGenerator.Adapters.RMQ
   alias MessageGenerator.TransportGenerator
   alias MessageGenerator.BookingGenerator

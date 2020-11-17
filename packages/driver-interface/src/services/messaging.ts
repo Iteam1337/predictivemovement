@@ -270,7 +270,7 @@ export const sendDeliveryInformation = (
           : ''
       )
       .concat(
-        `\nTryck "[Levererat]" när du har lämnat ${
+        `\nTryck "[Kvittera Leverans]" för att påbörja kvittens av ${
           instructionGroup.length > 1 ? 'paketen' : 'paketet'
         }, eller "[Kunde inte leverera]" om du av någon anledning inte kunde leverera ${
           instructionGroup.length > 1 ? 'paketen' : 'paketet'
@@ -282,9 +282,9 @@ export const sendDeliveryInformation = (
         inline_keyboard: [
           [
             {
-              text: 'Levererat',
+              text: 'Kvittera leverans',
               callback_data: JSON.stringify({
-                e: 'delivered',
+                e: 'begin_delivery_acknowledgement',
                 id: instructionGroupId,
               }),
             },
@@ -302,3 +302,31 @@ export const sendDeliveryInformation = (
     }
   )
 }
+
+export const sendBeginDeliveryAcknowledgement = (telegramId: number) => {
+  bot.telegram.sendMessage(
+    telegramId,
+    'Fotografera nu mottagaren tillsammans med paketet och skicka'
+  )
+}
+
+export const sendPhotoReceived = (telegramId: number) =>
+  bot.telegram.sendMessage(
+    telegramId,
+    'Tack, ditt foto har sparats! Du kan ta fler foton om du vill eller tryck på Klar om du är färdig med leverans och kvittens.',
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Klar',
+              callback_data: JSON.stringify({
+                e: 'delivered',
+              }),
+            },
+          ],
+        ],
+      },
+    }
+  )

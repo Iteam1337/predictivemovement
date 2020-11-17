@@ -8,6 +8,8 @@ const keys = {
   VEHICLES: 'vehicles',
   VEHICLE_ID_BY_TELEGRAM_ID: 'vehicle-id-by-telegram-id',
   VEHICLE_ID_BY_PHONE_NUMBER: 'vehicle-id-by-phone-nr',
+  CURRENTLY_DELIVERING: 'currently_delivering',
+  RECEIPT_PHOTOS: 'receipt_photos',
 }
 
 export default {
@@ -61,4 +63,35 @@ export default {
       .del(`${keys.INSTRUCTION_GROUPS}:${id}`)
       .exec()
       .then(([res]) => JSON.parse(res[1])),
+
+  getInstructionGroup: (id: string): Promise<Instruction[]> =>
+    redis
+      .get(`${keys.INSTRUCTION_GROUPS}:${id}`)
+      .then((res) => JSON.parse(res)),
+
+  setDriverCurrentlyDelivering: (
+    telegramId: number,
+    bookindIds: string[]
+  ): Promise<string> =>
+    redis.set(
+      `${keys.CURRENTLY_DELIVERING}:${telegramId}`,
+      JSON.stringify(bookindIds)
+    ),
+  getDriverCurrentDelivering: (telegramId: number): Promise<string[]> =>
+    redis
+      .get(`${keys.CURRENTLY_DELIVERING}:${telegramId}`)
+      .then((res) => JSON.parse(res)),
+  saveDeliveryReceiptPhoto: (
+    bookingIds: string[],
+    photoIds: string[]
+  ): Promise<string> =>
+    redis.set(
+      `${keys.RECEIPT_PHOTOS}:${bookingIds.join('-')}`,
+      JSON.stringify(photoIds)
+    ),
+  getDeliveryReceiptPhotos: (bookingIds: string[]): Promise<string[]> =>
+    redis
+      .get(`${keys.RECEIPT_PHOTOS}:${bookingIds.join('-')}`)
+      .then((res) => JSON.parse(res))
+      .then((list) => list || []),
 }

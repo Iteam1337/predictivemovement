@@ -45,9 +45,7 @@ export const onLogin = async (
   phoneNumber: string,
   ctx: TelegrafContext
 ): Promise<Message | void> => {
-  const vehicleId = await cache.getVehicleIdByPhoneNumber(
-    phoneNumber
-  )
+  const vehicleId = await cache.getVehicleIdByPhoneNumber(phoneNumber)
   const vehicle = await cache.getVehicle(vehicleId)
 
   if (!vehicle) return messaging.onNoVehicleFoundFromId(ctx)
@@ -157,4 +155,39 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
     )
     return
   }
+}
+
+export const onPhotoReceived = async ({
+  from: { id: telegramId },
+  photo: photoArray,
+}: {
+  from?: { id: number }
+  photo?: any
+}) => {
+  const bookingIds = await cache.getDriverCurrentDelivering(telegramId)
+  if (bookingIds) {
+    const highestResPhotoId = photoArray[photoArray.length - 1].file_id
+    return cache
+      .getDeliveryReceiptPhotos(bookingIds)
+      .then((photoIds: string[]) =>
+        cache.saveDeliveryReceiptPhoto(
+          bookingIds,
+          photoIds.concat([highestResPhotoId])
+        )
+      )
+      .then(() => messaging.sendPhotoReceived(telegramId))
+  }
+}
+
+export const beginDeliveryAcknowledgement = async (
+  telegramId: number,
+  instructionGroupId: string
+) => {
+  return cache
+    .getInstructionGroup(instructionGroupId)
+    .then((instructionGroup) => instructionGroup.map(({ id }) => id))
+    .then((bookingIds) =>
+      cache.setDriverCurrentlyDelivering(telegramId, bookingIds)
+    )
+    .then(() => messaging.sendBeginDeliveryAcknowledgement(telegramId))
 }

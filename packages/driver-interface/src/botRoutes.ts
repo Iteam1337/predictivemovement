@@ -38,6 +38,8 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
     if (msg.contact && msg.contact.phone_number)
       return botServices.onLogin(msg.contact.phone_number, ctx)
     if (msg.location) return botServices.onLocationMessage(msg)
+    if (ctx.update.message.photo)
+      return botServices.onPhotoReceived(ctx.update.message)
   })
 
   bot.on('edited_message', (ctx) => {
@@ -47,15 +49,21 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
   })
 
   /** Listen for user invoked button clicks. */
-  bot.on('callback_query', async (msg) => {
+  bot.on('callback_query', async (msg: TelegrafContext) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
+    const telegramId = msg.update.callback_query.from.id
     switch (callbackPayload.e) {
       case 'arrived':
         return onArrived(msg)
+      case 'begin_delivery_acknowledgement':
+        const { id: instructionGroupId } = callbackPayload
+        return botServices.beginDeliveryAcknowledgement(
+          telegramId,
+          instructionGroupId
+        )
       case 'picked_up':
       case 'delivered':
       case 'delivery_failed': {
-        const telegramId = msg.update.callback_query.from.id
         const { e: event, id: instructionGroupId } = callbackPayload
 
         return cache

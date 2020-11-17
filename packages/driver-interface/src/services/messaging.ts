@@ -303,7 +303,7 @@ export const sendDeliveryInformation = (
   )
 }
 
-export const sendPhotoReceived = (telegramId: number) =>
+export const sendPhotoReceived = (telegramId: number): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
     `Tack, ditt foto har sparats!\nDu kan ta fler foton om du vill, tryck annars på _Klar_ om du är färdig med kvittensen.`,
@@ -323,9 +323,15 @@ export const sendPhotoReceived = (telegramId: number) =>
       },
     }
   )
-export const sendBeginDeliveryAcknowledgement = (telegramId: number) => {
+export const sendBeginDeliveryAcknowledgement = (
+  telegramId: number
+): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
     'Fotografera nu mottagaren tillsammans med paketet och skicka bilden här.'
   )
-}
+
+export const sendCouldNotSavePhoto = async (
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(telegramId, 'Kunde inte spara bilden på servern.')

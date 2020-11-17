@@ -24,17 +24,6 @@ defmodule MessageGenerator do
     |> Generator.put_new_transport_addresses_from_city(:ljusdal)
   end
 
-  def generate_booking(properties \\ %{}) do
-    properties
-    |> Map.put_new(:externalId, Enum.random(0..100_000))
-    |> Generator.add_booking_addresses()
-    |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
-    |> Map.put_new(:metadata, %{
-      sender: %{contact: "0701234567"},
-      recipient: %{contact: "0701234567"}
-    })
-  end
-
   def add_random_booking(properties \\ %{})
 
   def add_random_booking(properties) when is_map(properties) do
@@ -44,8 +33,19 @@ defmodule MessageGenerator do
 
   def add_random_booking(city) when city in [:stockholm, :gothenburg] do
     %{}
-    |> Generator.add_booking_addresses(city)
+    |> Generator.put_new_booking_addresses_from_city(city)
     |> generate_booking()
     |> RMQ.publish(@bookings_exchange, "registered")
+  end
+
+  def generate_booking(properties \\ %{}) do
+    properties
+    |> Map.put_new(:externalId, Enum.random(0..100_000))
+    |> Generator.put_new_booking_addresses_from_city(:ljusdal)
+    |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
+    |> Map.put_new(:metadata, %{
+      sender: %{contact: "0701234567"},
+      recipient: %{contact: "0701234567"}
+    })
   end
 end

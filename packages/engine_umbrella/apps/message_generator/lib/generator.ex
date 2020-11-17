@@ -5,9 +5,13 @@ defmodule MessageGenerator.Generator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
-  def add_booking_addresses(map), do: do_add_booking_addresses(map, @ljusdal)
-  def add_booking_addresses(map, :stockholm), do: do_add_booking_addresses(map, @stockholm)
-  def add_booking_addresses(map, :gothenburg), do: do_add_booking_addresses(map, @gothenburg)
+  def put_new_booking_addresses_from_city(map), do: do_add_booking_addresses(map, @ljusdal)
+
+  def put_new_booking_addresses_from_city(map, :stockholm),
+    do: do_add_booking_addresses(map, @stockholm)
+
+  def put_new_booking_addresses_from_city(map, :gothenburg),
+    do: do_add_booking_addresses(map, @gothenburg)
 
   defp do_add_booking_addresses(map, location) do
     map

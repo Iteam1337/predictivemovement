@@ -122,6 +122,7 @@ export const useGetSuggestedAddresses = (initialState = []) => {
             county,
             lon,
             lat,
+            displayName: `${name}, ${county}`,
           })
         )
         set(parsedFeatures.length > 0 ? parsedFeatures : initialState)

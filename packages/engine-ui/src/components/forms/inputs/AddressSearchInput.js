@@ -85,6 +85,13 @@ const Component = ({
 
     if (isFavorite(selectedAddress.name)) return false
 
+    const displayName = prompt(
+      'Namn på denna favoritposition',
+      `${selectedAddress.name}, ${selectedAddress.county}`
+    )
+    if (!displayName) return false
+    selectedAddress.displayName = displayName
+
     localStorage.setItem(
       'favoriteAddresses',
       JSON.stringify(favoriteAddresses.concat([selectedAddress]))
@@ -130,7 +137,7 @@ const Component = ({
               name={address.name}
               onMouseDown={(event) => handleDropdownSelect(event, address)}
             >
-              {address.name}, {address.county}
+              {address.displayName}
             </DropdownButton>
           ))}
         </DropdownWrapper>
@@ -144,7 +151,7 @@ const Component = ({
           }}
           onClick={saveAsFavorite}
         >
-          Spara som favorit
+          Spara som favoritposition
         </Elements.Buttons.CancelButton>
       )}
     </Elements.Layout.InputInnerContainer>

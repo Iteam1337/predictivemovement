@@ -5,15 +5,17 @@ defmodule MessageGenerator.BookingGenerator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
+  @default_metadata %{
+    sender: %{contact: "0701234567"},
+    recipient: %{contact: "0701234567"}
+  }
+
   def generate_booking_props(properties \\ %{}) do
     properties
     |> Map.put_new(:externalId, Enum.random(0..100_000))
     |> put_new_booking_addresses_from_city(:ljusdal)
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
-    |> Map.put_new(:metadata, %{
-      sender: %{contact: "0701234567"},
-      recipient: %{contact: "0701234567"}
-    })
+    |> Map.update(:metadata, @default_metadata, &Map.merge(@default_metadata, &1))
   end
 
   def put_new_booking_addresses_from_city(map, :ljusdal),

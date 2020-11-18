@@ -117,8 +117,7 @@ ${instructionGroup
   .join('\n')}\nvid [${pickup}](${getDirectionsUrl(pickup)})`
   )
     .concat(
-      firstBooking.metadata.sender?.contact &&
-        `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
+      `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
     )
     .concat(
       '\nTryck på "[Framme]" när du har kommit till upphämtningsadressen.'
@@ -162,8 +161,7 @@ export const sendDeliveryInstruction = async (
   )
     .concat(`till [${delivery}](${getDirectionsUrl(delivery)})!\n`)
     .concat(
-      firstBooking.metadata.recipient?.contact &&
-        `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
+      `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
     )
     .concat('\nTryck "[Framme]" när du har anlänt till upphämtningsplatsen.')
   return bot.telegram.sendMessage(telegramId, message, {
@@ -197,13 +195,14 @@ export const sendPickupInformation = (
 
   const packageInfos = bookings
     .map((b) =>
-      `\nID: ${helpers.formatId(b.id)}\n`
+      `\nID: ${helpers.formatId(b.id)}`
+        .concat(b.external_id ? `\nReferensnummer: ${b.external_id}` : '')
         .concat(
-          b.metadata?.sender?.info
-            ? `Extra information vid upphämtning: ${b.metadata.sender.info}\n`
+          b.metadata.sender?.info
+            ? `\nExtra information vid upphämtning: ${b.metadata.sender.info}`
             : ''
         )
-        .concat(`Ömtåligt: ${b.metadata?.fragile ? 'Ja' : 'Nej'}`)
+        .concat(b.metadata.cargo ? `\nInnehåll: ${b.metadata.cargo}` : '')
         .concat(b.size.weight ? `\nVikt: ${b.size.weight}kg` : '')
         .concat(
           b.size.measurement && b.size.measurement.length === 3
@@ -257,15 +256,9 @@ export const sendDeliveryInformation = (
   const [firstBooking] = bookings
   return bot.telegram.sendMessage(
     telegramId,
-    ` ${
-      firstBooking.metadata?.recipient?.contact
-        ? 'Du kan nu nå mottagaren på ' +
-          firstBooking.metadata.recipient.contact +
-          '\n'
-        : ''
-    }`
+    `Du kan nu nå mottagaren på ${firstBooking.metadata.recipient.contact}`
       .concat(
-        firstBooking.metadata?.recipient?.info
+        firstBooking.metadata.recipient?.info
           ? `\nExtra information vid avlämning: ${firstBooking.metadata.recipient.info}`
           : ''
       )

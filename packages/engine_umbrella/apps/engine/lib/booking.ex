@@ -17,23 +17,32 @@ defmodule Booking do
     :events,
     :metadata,
     :size,
-    :route
+    :route,
+    :requires_transport_id
   ]
 
-  validates(:pickup, presence: true)
-  validates(:delivery, presence: true)
-  validates([:pickup, :lat], number: [is: true])
-  validates([:pickup, :lon], number: [is: true])
-  validates([:delivery, :lat], number: [is: true])
-  validates([:delivery, :lon], number: [is: true])
+  def pickup_exists?(map) when not is_nil(map.pickup), do: true
+  def pickup_exists?(_), do: false
+
+  def delivery_exists?(map) when not is_nil(map.delivery), do: true
+  def delivery_exists?(_), do: false
+
+  validates([:pickup, :lat], number: [is: true, if: &Booking.pickup_exists?/1])
+  validates([:pickup, :lon], number: [is: true, if: &Booking.pickup_exists?/1])
+  validates([:delivery, :lat], number: [is: true, if: &Booking.delivery_exists?/1])
+  validates([:delivery, :lon], number: [is: true, if: &Booking.delivery_exists?/1])
 
   validates([:size, :weight],
-    by: [function: &is_integer/1, message: "must be an integer"]
+    by: [function: &is_integer/1, message: "must be an integer", allow_nil: true]
   )
 
   validates([:size, :measurements],
-    by: [function: &Booking.valid_measurements/1, message: "must be a list of integers"],
-    length: [is: 3]
+    by: [
+      function: &Booking.valid_measurements/1,
+      message: "must be a list of integers",
+      allow_nil: true
+    ],
+    length: [is: 3, allow_nil: true]
   )
 
   def valid_measurements(measurements) when is_list(measurements),
@@ -85,6 +94,20 @@ defmodule Booking do
       _ ->
         IO.inspect(Vex.errors(booking), label: "booking validation errors")
         Vex.errors(booking)
+    end
+  end
+
+  def update(%{id: id} = booking_update) do
+    with true <- Vex.valid?(struct(Booking, booking_update)),
+         true <- GenServer.call(via_tuple(id), {:update, booking_update}) do
+      RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
+      ES.add_event(%BookingUpdated{booking: booking_update})
+      id
+    else
+      e ->
+        IO.inspect(e)
+
+        IO.inspect(Vex.errors(struct(Booking, booking_update)), label: "booking validation errors")
     end
   end
 
@@ -185,6 +208,10 @@ defmodule Booking do
       |> RMQ.publish(@outgoing_booking_exchange, status)
 
     {:reply, true, updated_state}
+  end
+
+  def handle_call({:update, updated_booking}, _from, state) do
+    {:reply, true, Map.merge(state, updated_booking)}
   end
 
   defp add_event_to_events_list(booking, status, timestamp) do

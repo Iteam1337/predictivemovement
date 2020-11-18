@@ -17,6 +17,8 @@ module.exports = (io) => {
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,
+    updateBooking,
+    updateVehicle,
   } = require('./engineConnector')(io)
 
   io.on('connection', function (socket) {
@@ -136,7 +138,7 @@ module.exports = (io) => {
             name: params.driver.name,
             contact: helpers.changeFormatOnPhoneNumber(params.driver.contact),
           },
-          profile: params.profile,
+          profile: params.metadata.profile,
         },
       }
 
@@ -156,15 +158,17 @@ module.exports = (io) => {
       socket.emit('transport-deleted', id)
     })
 
+    socket.on('update-booking', updateBooking)
+    socket.on('update-vehicle', updateVehicle)
+
     socket.on('search-parcel', async (id) => {
       const response = await parcel.search(id)
-      const result = await response.json()
       const {
-        TrackingInformationResponse: { shipments },
-      } = result
+        TrackingInformationResponse: {
+          shipments: [shipment],
+        },
+      } = await response.json()
 
-      console.log(result)
-      const shipment = shipments[0]
       socket.emit('shipment', shipment)
     })
   })

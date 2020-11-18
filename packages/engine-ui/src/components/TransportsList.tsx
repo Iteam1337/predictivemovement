@@ -48,7 +48,8 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
               )
             }
           >
-            {helpers.getLastFourChars(transport.id).toUpperCase()}
+            {transport.metadata?.profile?.toUpperCase() ||
+              helpers.getLastFourChars(transport.id).toUpperCase()}
           </Elements.Links.RoundedLink>
         </li>
       ))}

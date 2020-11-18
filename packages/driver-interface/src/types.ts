@@ -31,12 +31,14 @@ export interface Vehicle {
 export interface Booking {
   pickup: Address
   delivery: Address
+  external_id: string
   size: {
     weight?: number
     measurement?: number[]
   }
   id: string
   metadata: {
+    cargo?: string
     recipient?: {
       contact?: string
       info?: string

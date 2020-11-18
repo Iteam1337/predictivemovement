@@ -1,10 +1,11 @@
 defmodule VehicleTest do
   import TestHelper
+  alias MessageGenerator.TransportGenerator
   use ExUnit.Case
 
   test "it allows vehicle creation" do
     result =
-      MessageGenerator.random_car()
+      TransportGenerator.generate_transport_props()
       |> Vehicle.make()
 
     assert is_binary(result)
@@ -29,7 +30,7 @@ defmodule VehicleTest do
 
   test "does not allow malformed time constraints" do
     result =
-      MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
+      TransportGenerator.generate_transport_props(%{earliest_start: "foo", latest_end: "bar"})
       |> Vehicle.make()
 
     assert result == [
@@ -45,7 +46,7 @@ defmodule VehicleTest do
 
   test "does not allow non integer weight capacity" do
     result =
-      MessageGenerator.random_car(%{
+      TransportGenerator.generate_transport_props(%{
         capacity: %{volume: 2, weight: 13.4}
       })
       |> Vehicle.make()
@@ -55,7 +56,7 @@ defmodule VehicleTest do
 
   test "does not allow non integer volume capacity" do
     result =
-      MessageGenerator.random_car(%{earliest_start: "foo", latest_end: "bar"})
+      TransportGenerator.generate_transport_props(%{earliest_start: "foo", latest_end: "bar"})
       |> Vehicle.make()
 
     assert result == [
@@ -66,7 +67,7 @@ defmodule VehicleTest do
 
   test "should validate addresses containing lat/lon" do
     result =
-      MessageGenerator.random_car(%{
+      TransportGenerator.generate_transport_props(%{
         capacity: %{volume: 1, weight: 123},
         earliest_start: nil,
         latest_end: nil,
@@ -85,7 +86,7 @@ defmodule VehicleTest do
 
   test "should validate addresses lat/lon in correct format" do
     result =
-      MessageGenerator.random_car(%{
+      TransportGenerator.generate_transport_props(%{
         capacity: %{volume: 1, weight: 123},
         earliest_start: nil,
         latest_end: nil,
@@ -106,5 +107,37 @@ defmodule VehicleTest do
              {:error, [:start_address, :lat], :number, "must be a number"},
              {:error, [:start_address, :lon], :number, "must be a number"}
            ]
+  end
+
+  test "should allow vehicle to be updated" do
+    id =
+      TransportGenerator.generate_transport_props()
+      |> Vehicle.make()
+
+    updated_vehicle = %{
+      id: id,
+      start_address: %{lat: 13.37, lon: 13.37},
+      end_address: %{lat: 13.37, lon: 13.37},
+      earliest_start: nil,
+      latest_end: nil,
+      profile: "1337",
+      capacity: %{volume: 1337, weight: 1337},
+      metadata:
+        "{\"recipient\":{\"contact\":\"0701234567\"},\"sender\":{\"contact\":\"0701234567\"}}"
+    }
+
+    Vehicle.update(updated_vehicle)
+
+    %{
+      start_address: start_address,
+      end_address: end_address,
+      profile: profile,
+      capacity: capacity
+    } = Vehicle.get(id)
+
+    assert start_address == updated_vehicle.start_address
+    assert end_address == updated_vehicle.end_address
+    assert profile == updated_vehicle.profile
+    assert capacity == updated_vehicle.capacity
   end
 end

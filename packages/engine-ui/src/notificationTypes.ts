@@ -10,6 +10,7 @@ export enum BookingStatus {
 
 export enum TransportStatus {
   NEW = 'new',
+  NEW_INSTRUCTIONS = 'new_instructions',
 }
 
 export enum EntityType {

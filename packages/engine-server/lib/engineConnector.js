@@ -11,6 +11,7 @@ const routingKeys = {
   PICKED_UP: 'picked_up',
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
+  UPDATED: 'updated',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -199,7 +200,7 @@ module.exports = (io) => {
     .queue('transport_notifications.admin_ui', {
       durable: true,
     })
-    .subscribe({ noAck: true }, [routingKeys.NEW])
+    .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
     .map((transportRes) => {
       const transport = transportRes.json()
 
@@ -207,6 +208,7 @@ module.exports = (io) => {
         ...transport,
         current_route: JSON.parse(transport.current_route),
         metadata: JSON.parse(transport.metadata),
+        status: transportRes.fields.routingKey,
       }
     })
 
@@ -234,6 +236,36 @@ module.exports = (io) => {
       }
     })
 
+  const updateBooking = (booking) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', {
+        durable: true,
+      })
+      .publish(booking, routingKeys.UPDATED, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(
+          ` [x] Updated booking '${JSON.stringify(booking, null, 2)}'`
+        )
+      )
+  }
+
+  const updateVehicle = (vehicle) => {
+    return amqp
+      .exchange('incoming_vehicle_updates', 'topic', {
+        durable: true,
+      })
+      .publish(vehicle, routingKeys.UPDATED, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(
+          ` [x] Updated vehicle '${JSON.stringify(vehicle, null, 2)}'`
+        )
+      )
+  }
+
   return {
     bookings,
     transports,
@@ -246,5 +278,7 @@ module.exports = (io) => {
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,
+    updateBooking,
+    updateVehicle,
   }
 }

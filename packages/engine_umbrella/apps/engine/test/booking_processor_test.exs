@@ -1,19 +1,22 @@
 defmodule BookingProcessorTest do
   import TestHelper
+  alias MessageGenerator.TransportGenerator
+  alias MessageGenerator.BookingGenerator
+
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   test "creates a plan for one vehicle and one booking" do
-    MessageGenerator.random_car()
+    TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 
-    MessageGenerator.random_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
     clear_state()
 
@@ -23,25 +26,25 @@ defmodule BookingProcessorTest do
   end
 
   test "creates a plan where one vehicle gets two bookings and one gets zero" do
-    MessageGenerator.random_car()
-    |> MessageGenerator.add_vehicle_addresses(:stockholm)
+    TransportGenerator.generate_transport_props()
+    |> TransportGenerator.put_new_transport_addresses_from_city(:stockholm)
     |> Vehicle.make()
 
-    MessageGenerator.random_car()
-    |> MessageGenerator.add_vehicle_addresses(:gothenburg)
+    TransportGenerator.generate_transport_props()
+    |> TransportGenerator.put_new_transport_addresses_from_city(:gothenburg)
     |> Vehicle.make()
 
-    MessageGenerator.random_booking()
-    |> MessageGenerator.add_booking_addresses(:stockholm)
+    BookingGenerator.generate_booking_props()
+    |> BookingGenerator.put_new_booking_addresses_from_city(:stockholm)
     |> Booking.make()
 
-    MessageGenerator.random_booking()
-    |> MessageGenerator.add_booking_addresses(:stockholm)
+    BookingGenerator.generate_booking_props()
+    |> BookingGenerator.put_new_booking_addresses_from_city(:stockholm)
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
     clear_state()
@@ -50,25 +53,29 @@ defmodule BookingProcessorTest do
   end
 
   test "creates a plan for two vehicles, where each vehicle gets one" do
-    MessageGenerator.random_car()
-    |> MessageGenerator.add_vehicle_addresses(:stockholm)
+    %{}
+    |> TransportGenerator.put_new_transport_addresses_from_city(:stockholm)
+    |> TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 
-    MessageGenerator.random_car()
-    |> MessageGenerator.add_vehicle_addresses(:gothenburg)
+    %{}
+    |> TransportGenerator.put_new_transport_addresses_from_city(:gothenburg)
+    |> TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 
-    MessageGenerator.random_booking()
-    |> MessageGenerator.add_booking_addresses(:stockholm)
+    %{}
+    |> BookingGenerator.put_new_booking_addresses_from_city(:stockholm)
+    |> BookingGenerator.generate_booking_props()
     |> Booking.make()
 
-    MessageGenerator.random_booking()
-    |> MessageGenerator.add_booking_addresses(:gothenburg)
+    %{}
+    |> BookingGenerator.put_new_booking_addresses_from_city(:gothenburg)
+    |> BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
     clear_state()
@@ -86,15 +93,17 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with no end_address defined gets start_address as end_address" do
-    MessageGenerator.random_car(%{start_address: %{lat: 61.829182, lon: 16.0896213}})
+    TransportGenerator.generate_transport_props(%{
+      start_address: %{lat: 61.829182, lon: 16.0896213}
+    })
     |> Vehicle.make()
 
-    MessageGenerator.random_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
     clear_state()
@@ -105,18 +114,18 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with end_address defined" do
-    MessageGenerator.random_car(%{
+    TransportGenerator.generate_transport_props(%{
       start_address: %{lat: 61.829182, lon: 16.0896213},
       end_address: %{lat: 51.829182, lon: 17.0896213}
     })
     |> Vehicle.make()
 
-    MessageGenerator.random_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
     clear_state()
@@ -130,15 +139,18 @@ defmodule BookingProcessorTest do
     earliest_start = "12:05"
     latest_end = "18:05"
 
-    MessageGenerator.random_car(%{earliest_start: earliest_start, latest_end: latest_end})
+    TransportGenerator.generate_transport_props(%{
+      earliest_start: earliest_start,
+      latest_end: latest_end
+    })
     |> Vehicle.make()
 
-    MessageGenerator.random_booking()
+    BookingGenerator.generate_booking_props()
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
     clear_state()
@@ -153,19 +165,19 @@ defmodule BookingProcessorTest do
   end
 
   test "capacity is included in the plan" do
-    MessageGenerator.random_car(%{
+    TransportGenerator.generate_transport_props(%{
       capacity: %{weight: 731, volume: 18}
     })
     |> Vehicle.make()
 
-    MessageGenerator.random_booking(%{
+    BookingGenerator.generate_booking_props(%{
       size: %{measurements: [14, 12, 10], weight: 1}
     })
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
     clear_state()
@@ -176,19 +188,19 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with too small storage doesn't get assigned" do
-    MessageGenerator.random_car(%{
+    TransportGenerator.generate_transport_props(%{
       capacity: %{weight: 700, volume: 1}
     })
     |> Vehicle.make()
 
-    MessageGenerator.random_booking(%{
+    BookingGenerator.generate_booking_props(%{
       size: %{measurements: [100, 100, 101], weight: 2}
     })
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
     clear_state()
 
@@ -196,19 +208,19 @@ defmodule BookingProcessorTest do
   end
 
   test "vehicle with too little weight capabilities doesn't get assigned" do
-    MessageGenerator.random_car(%{
+    TransportGenerator.generate_transport_props(%{
       capacity: %{weight: 50, volume: 18}
     })
     |> Vehicle.make()
 
-    MessageGenerator.random_booking(%{
+    BookingGenerator.generate_booking_props(%{
       size: %{measurements: [14, 12, 10], weight: 100}
     })
     |> Booking.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
     clear_state()
 
@@ -216,27 +228,27 @@ defmodule BookingProcessorTest do
   end
 
   test "bookings with same pickup should work just fine" do
-    MessageGenerator.random_booking(%{
+    BookingGenerator.generate_booking_props(%{
       pickup: %{lat: 61.829182, lon: 16.0896213}
     })
     |> Booking.make()
 
-    MessageGenerator.random_booking(%{
+    BookingGenerator.generate_booking_props(%{
       pickup: %{lat: 61.829182, lon: 16.0896213}
     })
     |> Booking.make()
 
-    MessageGenerator.random_booking(%{
+    BookingGenerator.generate_booking_props(%{
       delivery: %{lat: 61.829182, lon: 16.0896213}
     })
     |> Booking.make()
 
-    MessageGenerator.random_car(%{start_address: %{lat: 60.1111, lon: 16.07544}})
+    TransportGenerator.generate_transport_props(%{start_address: %{lat: 60.1111, lon: 16.07544}})
     |> Vehicle.make()
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
     clear_state()
 
@@ -246,7 +258,7 @@ defmodule BookingProcessorTest do
 
   test "constraints failures leads to excluded bookings" do
     expected_id =
-      MessageGenerator.random_booking(%{
+      BookingGenerator.generate_booking_props(%{
         id: "Gammelstad->LTU",
         metadata: %{
           start: "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
@@ -271,7 +283,7 @@ defmodule BookingProcessorTest do
       )
       |> Booking.make()
 
-    MessageGenerator.random_booking(%{
+    BookingGenerator.generate_booking_props(%{
       id: "Gäddvik->LTU",
       metadata: %{
         start: "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
@@ -290,7 +302,7 @@ defmodule BookingProcessorTest do
     )
     |> Booking.make()
 
-    MessageGenerator.random_car(%{
+    TransportGenerator.generate_transport_props(%{
       id: "vehicle-1",
       start_address: %{
         lon: 21.92567,
@@ -308,7 +320,7 @@ defmodule BookingProcessorTest do
 
     vehicle_ids = Engine.VehicleStore.get_vehicles()
     booking_ids = Engine.BookingStore.get_bookings()
-    Engine.BookingProcessor.calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
     clear_state()
 

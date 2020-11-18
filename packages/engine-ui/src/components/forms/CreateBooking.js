@@ -59,13 +59,6 @@ const Component = ({
       : addTimeRestrictionWindow(propertyName)
   }
 
-  const handleFragileParcelChange = () => {
-    onChangeHandler((currentState) => ({
-      ...currentState,
-      fragile: !currentState.fragile,
-    }))
-  }
-
   const handleParcelSizeSelectChange = (e) => {
     if (e.target.value === 'custom') {
       setUseCustomSize(!useCustomSize)

@@ -199,7 +199,7 @@ export const sendPickupInformation = (
   const packageInfos = bookings
     .map((b) =>
       `\nID: ${helpers.formatId(b.id)}`
-        .concat(b.externalId ? `\nReferensnummer: ${b.externalId}` : '')
+        .concat(b.external_id ? `\nReferensnummer: ${b.external_id}` : '')
         .concat(
           b.metadata.sender?.info
             ? `\nExtra information vid upphämtning: ${b.metadata.sender.info}`

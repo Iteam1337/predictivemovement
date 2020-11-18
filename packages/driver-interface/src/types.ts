@@ -31,7 +31,7 @@ export interface Vehicle {
 export interface Booking {
   pickup: Address
   delivery: Address
-  externalId: string
+  external_id: string
   size: {
     weight?: number
     measurement?: number[]

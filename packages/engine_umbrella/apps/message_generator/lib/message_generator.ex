@@ -11,6 +11,11 @@ defmodule MessageGenerator do
 
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
+  @default_metadata %{
+    sender: %{contact: "0701234567"},
+    recipient: %{contact: "0701234567"}
+  }
+
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
@@ -52,10 +57,7 @@ defmodule MessageGenerator do
     |> add_random_id_and_time()
     |> add_booking_addresses()
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
-    |> Utils.merge(%{metadata: %{
-      sender: %{contact: "0701234567"},
-      recipient: %{contact: "0701234567"}
-    }}, :reverse)
+    |> Map.update(:metadata, @default_metadata, &Map.merge(@default_metadata, &1))
   end
 
   def random_booking(location) do

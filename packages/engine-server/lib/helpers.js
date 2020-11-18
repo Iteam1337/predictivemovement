@@ -6,6 +6,7 @@ const severityByEventStatus = (status) => {
     assigned: 'success',
     delivered: 'success',
     picked_up: 'success',
+    new_instructions: 'success',
     delivery_failed: 'error',
     default: 'info',
   }
@@ -29,11 +30,11 @@ const transportToNotification = (transport) => ({
    * has been created, hence the 'success' severity status
    * and the 'new' event.status.
    */
-  severity: severityByEventStatus('new'),
+  severity: severityByEventStatus(transport.status),
   type: 'transport',
   event: {
     id: transport.id,
-    status: 'new',
+    status: transport.status,
   },
   transport,
 })

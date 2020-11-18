@@ -5,7 +5,7 @@ import * as Elements from '../shared-elements'
 import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
 import MainRouteLayout from './layout/MainRouteLayout'
-import Success from './CreateSuccess'
+import Success from './SuccessScreen'
 import * as hooks from '../utils/hooks'
 import * as stores from '../utils/state/stores'
 

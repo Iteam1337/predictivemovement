@@ -3,7 +3,11 @@ import cache from './cache'
 import { v4 as uuid } from 'uuid'
 
 import * as messaging from './messaging'
-import { IncomingMessage, Message } from 'telegraf/typings/telegram-types'
+import {
+  IncomingMessage,
+  Message,
+  PhotoSize,
+} from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Instruction } from '../types'
 
@@ -158,3 +162,35 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
     return
   }
 }
+
+export const onPhotoReceived = async (
+  telegramId: number,
+  photoSizes: PhotoSize[]
+): Promise<Message> => {
+  const bookingIds = await cache.getDriverCurrentDelivering(telegramId)
+  if (!bookingIds) return messaging.sendCouldNotSavePhoto(telegramId)
+  const highestResPhotoId = photoSizes[photoSizes.length - 1].file_id
+  return cache
+    .getDeliveryReceiptPhotos(bookingIds)
+    .then((photoIds: string[]) =>
+      cache.saveDeliveryReceiptPhoto(
+        bookingIds,
+        photoIds.concat([highestResPhotoId])
+      )
+    )
+    .then(() => messaging.sendPhotoReceived(telegramId))
+}
+
+export const beginDeliveryAcknowledgement = async (
+  telegramId: number,
+  instructionGroupId: string
+): Promise<Message> =>
+  cache
+    .getInstructionGroup(instructionGroupId)
+    .then((instructionGroup: Instruction[]) =>
+      instructionGroup.map(({ id }) => id)
+    )
+    .then((bookingIds: string[]) =>
+      cache.setDriverCurrentlyDelivering(telegramId, bookingIds)
+    )
+    .then(() => messaging.sendBeginDeliveryAcknowledgement(telegramId))

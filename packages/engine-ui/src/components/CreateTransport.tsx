@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom'
 import * as Elements from '../shared-elements'
 import Form from './forms/CreateTransport'
 import MainRouteLayout from './layout/MainRouteLayout'
-import Success from './CreateSuccess'
+import Success from './SuccessScreen'
 import * as hooks from '../utils/hooks'
 import moment from 'moment'
 import * as stores from '../utils/state/stores'
@@ -17,30 +17,25 @@ const transportPresets = {
 }
 
 const initialState: FormState = {
-  profile: '',
   id: '',
   capacity: transportPresets.truck.small,
+  driver: { name: '', contact: '' },
   timewindow: { start: null, end: null },
   startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
   endPosition: null,
-  driver: { name: '', contact: '' },
+  metadata: {
+    profile: '',
+  },
 }
 
 export interface FormState {
   [key: string]: any
-  profile: string
-  id: string
   capacity: {
     volume: string
     weight: string
   }
-  timewindow: {
-    start: string | null
-    end: string | null
-  }
-  startPosition: {
-    lat: number
-    lon: number
+  driver: {
+    contact?: string
     name?: string
   }
   endPosition: {
@@ -48,9 +43,18 @@ export interface FormState {
     lon?: number
     name?: string
   } | null
-  driver: {
+  id: string
+  metadata: {
+    profile: string
+  }
+  startPosition: {
+    lat: number
+    lon: number
     name?: string
-    contact?: string
+  }
+  timewindow: {
+    end: string | null
+    start: string | null
   }
 }
 
@@ -87,7 +91,7 @@ const CreateTransport = ({
   const onSubmitHandler = (event: any) => {
     event.preventDefault()
 
-    const endPosition = formState.endPosition ?? formState.startPosition
+    const endPosition = formState.endPosition || formState.startPosition
     onSubmit({
       ...formState,
       timewindow:
@@ -109,9 +113,12 @@ const CreateTransport = ({
         ...endPosition,
         name: endPosition.name || undefined,
       },
-      driver: {
-        name: formState.driver.name || undefined,
-        contact: formState.driver.contact || undefined,
+      metadata: {
+        ...formState.metadata,
+        driver: {
+          name: formState.driver.name || undefined,
+          contact: formState.driver.contact || undefined,
+        },
       },
     })
 

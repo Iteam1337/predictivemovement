@@ -200,7 +200,7 @@ module.exports = (io) => {
     .queue('transport_notifications.admin_ui', {
       durable: true,
     })
-    .subscribe({ noAck: true }, [routingKeys.NEW])
+    .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
     .map((transportRes) => {
       const transport = transportRes.json()
 
@@ -208,6 +208,7 @@ module.exports = (io) => {
         ...transport,
         current_route: JSON.parse(transport.current_route),
         metadata: JSON.parse(transport.metadata),
+        status: transportRes.fields.routingKey,
       }
     })
 

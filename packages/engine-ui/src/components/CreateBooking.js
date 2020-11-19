@@ -8,7 +8,6 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './SuccessScreen'
 import * as hooks from '../utils/hooks'
 import * as stores from '../utils/state/stores'
-import { useSocket } from 'use-socketio'
 
 const parcelSizePresets = {
   small: { weight: 1, measurements: '18x18x18' },
@@ -86,11 +85,6 @@ const CreateBooking = ({ onSubmit }) => {
 
     return setIsFinished(true)
   }
-
-  useSocket('shipment', (shipment) => {
-    console.log('shipment', shipment)
-    // setTweet([newTweet, ...tweets])
-  })
 
   const handleOnContinue = () => {
     setState(initialState)

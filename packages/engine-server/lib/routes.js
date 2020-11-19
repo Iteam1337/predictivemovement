@@ -166,7 +166,7 @@ module.exports = (io) => {
       const weight = parcel.getWeight(response)
       const measurements = parcel.getMeasurements(response)
 
-      socket.emit('shipment-info', { weight, measurements })
+      socket.emit('parcel-info', { weight, measurements })
     })
   })
 }

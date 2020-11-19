@@ -11,6 +11,9 @@ const getWeight = ({
     shipments: [shipment],
   },
 }) => {
+  if (!shipment) {
+    return null
+  }
   const {
     items: [{ statedMeasurement, assessedMeasurement }],
     totalWeight,
@@ -40,6 +43,9 @@ const getMeasurements = ({
     shipments: [shipment],
   },
 }) => {
+  if (!shipment) {
+    return null
+  }
   const {
     items: [{ statedMeasurement, assessedMeasurement }],
   } = shipment

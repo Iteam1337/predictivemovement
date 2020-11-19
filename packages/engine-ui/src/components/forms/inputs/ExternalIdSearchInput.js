@@ -1,26 +1,8 @@
 import React from 'react'
 import * as Elements from '../../../shared-elements'
 import locationIcon from '../../../assets/location.svg'
-import styled from 'styled-components'
 import * as hooks from '../../../utils/hooks'
 import debounce from 'lodash.debounce'
-import warningIcon from '../../../assets/warning.svg'
-
-const DropdownWrapper = styled.div`
-  width: 100%;
-  z-index: 1;
-  position: absolute;
-`
-
-const DropdownButton = styled.button`
-  width: inherit;
-  text-align: left;
-  padding: 0.5rem;
-  border: 1px solid grey;
-  :focus {
-    outline-color: #13c57b;
-  }
-`
 
 const Component = ({
   onChangeHandler,
@@ -29,11 +11,10 @@ const Component = ({
   formError,
   ...rest
 }) => {
-  const [showDropdown, setShowDropdown] = React.useState(false)
-  const [search, parcelInfo] = hooks.useGetParcelInfo([])
+  const [search, _parcelInfo] = hooks.useGetParcelInfo([])
 
   const searchWithDebounce = React.useMemo(
-    () => debounce((q) => search(q, () => setShowDropdown(true)), 300),
+    () => debounce((q) => search(q), 300),
     [search]
   )
 
@@ -41,29 +22,15 @@ const Component = ({
     event.persist()
     searchWithDebounce(event.target.value)
 
-    // return onChangeHandler({ name: event.target.value })
     return onChangeHandler(event.target.value)
   }
-
-  const handleDropdownSelect = (event, address) => {
-    event.persist()
-    setShowDropdown(false)
-
-    // return onChangeHandler({
-    //   ...address,
-    //   name: `${address.name}, ${address.county}`,
-    //   street: address.name,
-    // })
-
-    return onChangeHandler(`${address.name}, ${address.county}`)
-  }
-
+  const resultsFound = false
   return (
     <Elements.Layout.InputInnerContainer>
-      {formError ? (
+      {resultsFound ? (
         <Elements.Icons.FormInputIcon
           alt="Warning icon"
-          src={`${warningIcon}`}
+          src={`${locationIcon}`}
         />
       ) : (
         <Elements.Icons.FormInputIcon
@@ -76,25 +43,11 @@ const Component = ({
         error={formError}
         name="externalId"
         type="text"
-        // value={value}
+        value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
         iconInset
       />
-
-      {showDropdown && (
-        <DropdownWrapper>
-          {parcelInfo.map((address, index) => (
-            <DropdownButton
-              key={index}
-              name={address.name}
-              onClick={(event) => handleDropdownSelect(event, address)}
-            >
-              {address.name}, {address.county}
-            </DropdownButton>
-          ))}
-        </DropdownWrapper>
-      )}
     </Elements.Layout.InputInnerContainer>
   )
 }

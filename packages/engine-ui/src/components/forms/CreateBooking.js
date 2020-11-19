@@ -123,6 +123,7 @@ const Component = ({
             required
             formErrors={formErrors.externalId}
             placeholder="Referensnummer från avsändare"
+            value={state.externalId}
             onFocus={() =>
               dispatch({
                 type: 'focusInput',

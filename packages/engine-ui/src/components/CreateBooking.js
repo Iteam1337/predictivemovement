@@ -106,7 +106,6 @@ const CreateBooking = ({ onSubmit }) => {
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
-
         <Form
           setFormErrors={setFormErrors}
           formErrors={formErrors}

@@ -9,7 +9,7 @@ describe('parcel', () => {
             itemId: '1337',
             statedMeasurement: {
               weight: {
-                value: '0.85',
+                value: '1',
                 unit: 'kg',
               },
               length: {
@@ -40,7 +40,7 @@ describe('parcel', () => {
       },
     }
     const weight = getWeight(data)
-    expect(weight).toBe(0.85)
+    expect(weight).toBe(1)
   })
   it('should return assessedMeasurement if no statedMeasurement was found', () => {
     const data = {

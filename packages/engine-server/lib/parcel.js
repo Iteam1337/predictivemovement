@@ -11,11 +11,19 @@ const getWeight = ({
     shipments: [shipment],
   },
 }) => {
-  const { statedMeasurement, assessedMeasurement } = shipment
+  const {
+    items: [{ statedMeasurement, assessedMeasurement }],
+    totalWeight,
+    assessedWeight,
+  } = shipment
   if (statedMeasurement && statedMeasurement.weight) {
     return translateToKgInt(statedMeasurement.weight)
+  } else if (totalWeight) {
+    return translateToKgInt(totalWeight)
   } else if (assessedMeasurement && assessedMeasurement.weight) {
     return translateToKgInt(assessedMeasurement.weight)
+  } else if (assessedWeight) {
+    return translateToKgInt(assessedWeight)
   } else {
     return null
   }

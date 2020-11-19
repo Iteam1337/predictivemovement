@@ -22,9 +22,9 @@ const getWeight = ({
 }
 
 const translateToKgInt = ({ value, unit }) => {
-  const valueAsInt = Math.round(parseFloat(value))
-  if (unit === 'g') return valueAsInt * 1000
-  return valueAsInt
+  const valueAsFloat = parseFloat(value)
+  if (unit === 'g') return Math.round(valueAsFloat / 1000)
+  return Math.round(valueAsFloat)
 }
 
 const getMeasurements = ({

@@ -156,37 +156,37 @@ describe('extract measurements', () => {
               statedMeasurement: {
                 length: {
                   value: '3',
-                  unit: 'm',
+                  unit: 'cm',
                 },
                 height: {
                   value: '1',
-                  unit: 'm',
+                  unit: 'cm',
                 },
                 width: {
                   value: '2',
-                  unit: 'm',
+                  unit: 'cm',
                 },
                 volume: {
                   value: '0.012',
-                  unit: 'm3',
+                  unit: 'cm3',
                 },
               },
               assessedMeasurement: {
                 length: {
                   value: '4',
-                  unit: 'm',
+                  unit: 'cm',
                 },
                 height: {
                   value: '5',
-                  unit: 'm',
+                  unit: 'cm',
                 },
                 width: {
                   value: '6',
-                  unit: 'm',
+                  unit: 'cm',
                 },
                 volume: {
                   value: '0.012',
-                  unit: 'm3',
+                  unit: 'cm3',
                 },
               },
             },
@@ -198,14 +198,16 @@ describe('extract measurements', () => {
 
   it('should return statedMeasurement firstly', () => {
     const measurements = getMeasurements(measurementsPayload)
-    expect(measurements).toBe(2, 1, 3)
+    expect(measurements).toEqual([2, 1, 3])
   })
+
   it('should return assessedMeasurement secondly', () => {
-    const measurements = getMeasurements(measurementsPayload)
     delete measurementsPayload.TrackingInformationResponse.shipments[0].items[0]
       .statedMeasurement
-    expect(measurements).toBe(6, 5, 4)
+    const measurements = getMeasurements(measurementsPayload)
+    expect(measurements).toEqual([6, 5, 4])
   })
+
   it('should round the values', () => {
     const data = {
       TrackingInformationResponse: {
@@ -234,8 +236,8 @@ describe('extract measurements', () => {
         ],
       },
     }
-    const measurements = getWeight(data)
-    expect(measurements).toBe([1, 2, 0])
+    const measurements = getMeasurements(data)
+    expect(measurements).toEqual([1, 1, 0])
   })
 
   it('should convert m to cm', () => {
@@ -266,8 +268,8 @@ describe('extract measurements', () => {
         ],
       },
     }
-    const measurements = getWeight(data)
-    expect(measurements).toBe([600, 500, 400])
+    const measurements = getMeasurements(data)
+    expect(measurements).toEqual([600, 500, 400])
   })
 
   it('should convert dm to cm', () => {
@@ -298,8 +300,8 @@ describe('extract measurements', () => {
         ],
       },
     }
-    const measurements = getWeight(data)
-    expect(measurements).toBe([60, 50, 40])
+    const measurements = getMeasurements(data)
+    expect(measurements).toEqual([60, 50, 40])
   })
 
   it('should round mm to cm-int', () => {
@@ -330,7 +332,7 @@ describe('extract measurements', () => {
         ],
       },
     }
-    const measurements = getWeight(data)
-    expect(measurements).toBe([60, 60, 40])
+    const measurements = getMeasurements(data)
+    expect(measurements).toEqual([60, 57, 44])
   })
 })

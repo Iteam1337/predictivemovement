@@ -40,7 +40,9 @@ const getMeasurements = ({
     shipments: [shipment],
   },
 }) => {
-  const { statedMeasurement, assessedMeasurement } = shipment
+  const {
+    items: [{ statedMeasurement, assessedMeasurement }],
+  } = shipment
 
   if (hasAllMeasurements(statedMeasurement)) {
     const { width, height, length } = statedMeasurement
@@ -62,15 +64,16 @@ const hasAllMeasurements = (data) => {
 }
 
 const translateToCm = ({ value, unit }) => {
+  const valueAsFloat = parseFloat(value)
   switch (unit) {
     case 'mm':
-      return value * 10
+      return Math.round(valueAsFloat / 10)
     case 'cm':
-      return value
+      return Math.round(valueAsFloat)
     case 'dm':
-      return value / 10
+      return Math.round(valueAsFloat * 10)
     case 'm':
-      return value / 100
+      return Math.round(valueAsFloat * 100)
   }
 }
 

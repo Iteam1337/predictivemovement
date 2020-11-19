@@ -163,13 +163,10 @@ module.exports = (io) => {
 
     socket.on('search-parcel', async (id) => {
       const response = await parcel.search(id)
-      const {
-        TrackingInformationResponse: {
-          shipments: [shipment],
-        },
-      } = await response.json()
+      const weight = parcel.getWeight(response)
+      const measurements = parcel.getMeasurements(response)
 
-      socket.emit('shipment', shipment)
+      socket.emit('shipment-info', { weight, measurements })
     })
   })
 }

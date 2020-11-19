@@ -1,123 +1,67 @@
 const { getWeight } = require('../lib/parcel')
 
-describe('extract weight', () => {
-  it('should return statedMeasurement firstly', () => {
-    const data = {
-      TrackingInformationResponse: {
-        shipments: [
+const WEIGHT_PAYLOAD = {
+  TrackingInformationResponse: {
+    shipments: [
+      {
+        totalWeight: {
+          value: '300',
+          unit: 'kg',
+        },
+        assessedWeight: {
+          value: '400',
+          unit: 'kg',
+        },
+        items: [
           {
-            totalWeight: {
-              value: '300',
-              unit: 'kg',
-            },
-            assessedWeight: {
-              value: '400',
-              unit: 'kg',
-            },
-            items: [
-              {
-                itemId: '1337',
-                statedMeasurement: {
-                  weight: {
-                    value: '1',
-                    unit: 'kg',
-                  },
-                },
-                assessedMeasurement: {
-                  weight: {
-                    value: '7',
-                    unit: 'kg',
-                  },
-                },
+            itemId: '1337',
+            statedMeasurement: {
+              weight: {
+                value: '1',
+                unit: 'kg',
               },
-            ],
+            },
+            assessedMeasurement: {
+              weight: {
+                value: '7',
+                unit: 'kg',
+              },
+            },
           },
         ],
       },
-    }
-    const weight = getWeight(data)
+    ],
+  },
+}
+
+describe('extract weight', () => {
+  it('should return statedMeasurement firstly', () => {
+    const weight = getWeight(WEIGHT_PAYLOAD)
     expect(weight).toBe(1)
   })
 
   it('should return totalWeight secondly', () => {
-    const data = {
-      TrackingInformationResponse: {
-        shipments: [
-          {
-            totalWeight: {
-              value: '300',
-              unit: 'kg',
-            },
-            assessedWeight: {
-              value: '400',
-              unit: 'kg',
-            },
-            items: [
-              {
-                itemId: '1337',
-                assessedMeasurement: {
-                  weight: {
-                    value: '7',
-                    unit: 'kg',
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    }
-    const weight = getWeight(data)
+    delete WEIGHT_PAYLOAD.TrackingInformationResponse.shipments[0].items[0]
+      .statedMeasurement
+    const weight = getWeight(WEIGHT_PAYLOAD)
     expect(weight).toBe(300)
   })
 
   it('should return assessedMeasurement 3rd', () => {
-    const data = {
-      TrackingInformationResponse: {
-        shipments: [
-          {
-            assessedWeight: {
-              value: '400',
-              unit: 'kg',
-            },
-            items: [
-              {
-                itemId: '1337',
-                assessedMeasurement: {
-                  weight: {
-                    value: '7',
-                    unit: 'kg',
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    }
-    const weight = getWeight(data)
+    delete WEIGHT_PAYLOAD.TrackingInformationResponse.shipments[0].items[0]
+      .statedMeasurement
+    delete WEIGHT_PAYLOAD.TrackingInformationResponse.shipments[0].totalWeight
+    const weight = getWeight(WEIGHT_PAYLOAD)
     expect(weight).toBe(7)
   })
 
   it('should return assessedWeight 4th', () => {
-    const data = {
-      TrackingInformationResponse: {
-        shipments: [
-          {
-            assessedWeight: {
-              value: '400',
-              unit: 'kg',
-            },
-            items: [
-              {
-                itemId: '1337',
-              },
-            ],
-          },
-        ],
-      },
-    }
-    const weight = getWeight(data)
+    delete WEIGHT_PAYLOAD.TrackingInformationResponse.shipments[0].items[0]
+      .statedMeasurement
+    delete WEIGHT_PAYLOAD.TrackingInformationResponse.shipments[0].totalWeight
+    delete WEIGHT_PAYLOAD.TrackingInformationResponse.shipments[0].items[0]
+      .assessedMeasurement
+    const weight = getWeight(WEIGHT_PAYLOAD)
     expect(weight).toBe(400)
   })
 
@@ -194,7 +138,7 @@ describe('extract weight', () => {
   })
 })
 
-describe('measurements', () => {
+describe('extract measurements', () => {
   const data = {
     TrackingInformationResponse: {
       shipments: [

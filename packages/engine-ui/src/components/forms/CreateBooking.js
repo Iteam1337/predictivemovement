@@ -119,21 +119,10 @@ const Component = ({
           <Elements.Form.Label htmlFor="parceldetails">
             Paketspecifikationer
           </Elements.Form.Label>
-          {/* <FormInputs.TextInput
-            name="external-id"
-            value={state.externalId}
-            placeholder="Referensnummer från avsändare"
-            onChangeHandler={eventHandlers.handleTextInputChange(
-              'externalId',
-              onChangeHandler
-            )}
-          /> */}
-
           <FormInputs.ExternalIdSearchInput
             required
             formErrors={formErrors.externalId}
             placeholder="Referensnummer från avsändare"
-            // value={state.externalId}
             onFocus={() =>
               dispatch({
                 type: 'focusInput',

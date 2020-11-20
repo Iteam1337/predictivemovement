@@ -1,17 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import * as Elements from '../../../shared-elements'
-import locationIcon from '../../../assets/location.svg'
+import searchParcelIcon from '../../../assets/black-parcel.svg'
+import checkIcon from '../../../assets/check-icon.svg'
 import * as hooks from '../../../utils/hooks'
 import debounce from 'lodash.debounce'
+import { useSocket } from 'use-socketio'
 
 const Component = ({
   onChangeHandler,
+  onSearchResult,
   placeholder,
   value,
   formError,
   ...rest
 }) => {
-  const [search, _parcelInfo] = hooks.useGetParcelInfo([])
+  const [search, parcelInfo] = hooks.useGetParcelInfo([])
+  const [resultsIsFound, setResultsIsFound] = useState(false)
+
+  useSocket('parcel-info', ({ weight, measurements }) => {
+    if (weight || measurements) {
+      setResultsIsFound(true)
+      onSearchResult({ weight, measurements })
+    }
+  })
 
   const searchWithDebounce = React.useMemo(
     () => debounce((q) => search(q), 300),
@@ -24,18 +35,17 @@ const Component = ({
 
     return onChangeHandler(event.target.value)
   }
-  const resultsFound = false
   return (
     <Elements.Layout.InputInnerContainer>
-      {resultsFound ? (
+      {resultsIsFound ? (
         <Elements.Icons.FormInputIcon
-          alt="Warning icon"
-          src={`${locationIcon}`}
+          alt="Parcel Search Success Icon"
+          src={`${checkIcon}`}
         />
       ) : (
         <Elements.Icons.FormInputIcon
-          alt="Location pickup icon"
-          src={`${locationIcon}`}
+          alt="Parcel Search Icon"
+          src={`${searchParcelIcon}`}
         />
       )}
       <Elements.Form.TextInput
@@ -43,7 +53,6 @@ const Component = ({
         error={formError}
         name="externalId"
         type="text"
-        value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
         iconInset

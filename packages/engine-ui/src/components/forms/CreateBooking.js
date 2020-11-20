@@ -5,7 +5,6 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import * as eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
-import { useSocket } from 'use-socketio'
 
 const Component = ({
   onChangeHandler,
@@ -26,10 +25,9 @@ const Component = ({
     delivery: false,
   })
 
-  useSocket('parcel-info', ({ weight, measurements }) => {
+  const handleParcelSearchResults = ({ weight, measurements }) => {
     if (!weight || !measurements) return null
 
-    setUseCustomSize(true)
     onChangeHandler((currentState) => ({
       ...currentState,
       size: {
@@ -37,7 +35,8 @@ const Component = ({
         measurements: measurements.length ? measurements.join('x') : null,
       },
     }))
-  })
+    setUseCustomSize(true)
+  }
 
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
@@ -135,6 +134,7 @@ const Component = ({
               onChangeHandler,
               setFormErrors
             )}
+            onSearchResult={handleParcelSearchResults}
           />
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer>

@@ -146,7 +146,7 @@ const bookingToFeature = (bookings) => {
           {
             id,
             properties: {
-              color: '#e6ffe6',
+              color: '#ccffcc',
               offset: 0,
               address: { pickup, delivery },
               type: 'booking',
@@ -172,7 +172,7 @@ const toGeoJsonLayer = (id, data, callback) =>
     lineWidthMinPixels: 3,
     getFillColor: ({ properties }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
-    getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 150),
+    getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 190),
     highlightColor: ({ object: { properties } }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getRadius: (d) => d.properties.size || 300,

@@ -17,6 +17,8 @@ public class VRPShipments {
     private static final int SHIPMENT_DEFAULT_VOLUME = 19 * 18 * 14;
     private static final int SHIPMENT_DEFAULT_WEIGHT = 1;
 
+    private static final String REQUIRES_TRANSPORT_ID = "requires_transport_id";
+
     List<Shipment> shipments;
     private VRPSetting vrpSetting;
     private JSONObject routeRequest;
@@ -77,6 +79,12 @@ public class VRPShipments {
                 shipmentBuilder.addSizeDimension(VRPSetting.VOLUME_INDEX, volume);
                 shipmentBuilder.addSizeDimension(VRPSetting.WEIGHT_INDEX, weight);
             }
+
+            // Adding vehicle Id as a required skill so it can be used as a constraint
+            if (jsonBooking.has(REQUIRES_TRANSPORT_ID) && !jsonBooking.isNull(REQUIRES_TRANSPORT_ID)) {
+                shipmentBuilder.addRequiredSkill(jsonBooking.getString(REQUIRES_TRANSPORT_ID));
+            }
+
             Shipment shipment = shipmentBuilder.build();
             shipments.add(shipment);
         }

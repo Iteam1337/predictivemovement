@@ -11,6 +11,7 @@ const routingKeys = {
   PICKED_UP: 'picked_up',
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
+  BOOKING_MOVED: 'booking_moved',
   UPDATED: 'updated',
 }
 
@@ -182,6 +183,21 @@ module.exports = (io) => {
       .then(() => console.log(` [x] Delete booking ${id}`))
   }
 
+  const publishMoveBooking = (bookingId, transportId) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', { durable: true })
+      .publish(
+        JSON.stringify({ id: bookingId, requires_transport_id: transportId }),
+        routingKeys.BOOKING_MOVED,
+        {
+          persistent: true,
+        }
+      )
+      .then(() =>
+        console.log(` Move booking ${bookingId} to transport ${transportId} `)
+      )
+  }
+
   const publishDeleteTransport = (id) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', {
@@ -272,6 +288,7 @@ module.exports = (io) => {
     plan,
     publishDeleteBooking,
     publishDeleteTransport,
+    publishMoveBooking,
     dispatchOffers,
     createTransport,
     createBooking,

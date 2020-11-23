@@ -33,6 +33,7 @@ interface Props {
   dispatchOffers: (params: any) => void
   createTransport: (params: any) => void
   deleteTransport: (id: string) => void
+  moveBooking: (bookingId: string, transportId: string) => void
 }
 
 const Sidebar = (state: Props) => {
@@ -66,6 +67,7 @@ const Sidebar = (state: Props) => {
                   dispatchOffers={state.dispatchOffers}
                   transports={state.transports}
                   bookings={state.bookings}
+                  moveBooking={state.moveBooking}
                 />
               </Route>
               <Route component={NotFound} />

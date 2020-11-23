@@ -1,0 +1,51 @@
+{
+    "data": {
+        "solution": {
+            "excluded": [],
+            "routes": [
+                {
+                    "number": 1,
+                    "activities": [
+                        {
+                            "address": {
+                                "lon": 22.10964584350586,
+                                "lat": 65.57391357421875
+                            },
+                            "index": -1,
+                            "type": "start"
+                        },
+                        {
+                            "address": {
+                                "lon": 21.94171905517578,
+                                "lat": 65.62086486816406
+                            },
+                            "index": 1,
+                            "id": "pmb-nti5mmuw",
+                            "type": "pickupShipment"
+                        },
+                        {
+                            "address": {
+                                "lon": 22.138946533203125,
+                                "lat": 65.61676788330078
+                            },
+                            "index": 2,
+                            "id": "pmb-nti5mmuw",
+                            "type": "deliverShipment"
+                        },
+                        {
+                            "address": {
+                                "lon": 21.94139289855957,
+                                "lat": 65.62093353271484
+                            },
+                            "index": -2,
+                            "type": "end"
+                        }
+                    ],
+                    "vehicle_id": "pmv-nmzmywni"
+                }
+            ]
+        }
+    },
+    "status_msg": "well done",
+    "status": "success"
+}

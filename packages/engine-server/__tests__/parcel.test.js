@@ -88,6 +88,30 @@ describe('extract weight', () => {
     expect(weight).toBe(1)
   })
 
+  it('should round to atleast 1', () => {
+    const data = {
+      TrackingInformationResponse: {
+        shipments: [
+          {
+            items: [
+              {
+                itemId: '1337',
+                statedMeasurement: {
+                  weight: {
+                    value: '0.25',
+                    unit: 'kg',
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    }
+    const weight = getWeight(data)
+    expect(weight).toBe(1)
+  })
+
   it('should convert weight to kg', () => {
     const data = {
       TrackingInformationResponse: {
@@ -237,7 +261,7 @@ describe('extract measurements', () => {
       },
     }
     const measurements = getMeasurements(data)
-    expect(measurements).toEqual([1, 1, 0])
+    expect(measurements).toEqual([1, 1, 1])
   })
 
   it('should convert m to cm', () => {

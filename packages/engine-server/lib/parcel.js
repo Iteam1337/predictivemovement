@@ -34,9 +34,10 @@ const getWeight = ({
 }
 
 const translateToKgInt = ({ value, unit }) => {
-  const valueAsFloat = parseFloat(value)
-  if (unit === 'g') return Math.round(valueAsFloat / 1000)
-  return Math.round(valueAsFloat)
+  let valueAsFloat = parseFloat(value)
+  if (unit === 'g') valueAsFloat /= 1000
+
+  return Math.max(Math.round(valueAsFloat), 1)
 }
 
 const getMeasurements = ({
@@ -71,17 +72,21 @@ const hasAllMeasurements = (data) => {
 }
 
 const translateToCm = ({ value, unit }) => {
-  const valueAsFloat = parseFloat(value)
+  let valueAsFloat = parseFloat(value)
   switch (unit) {
     case 'mm':
-      return Math.round(valueAsFloat / 10)
+      valueAsFloat /= 10
+      break
     case 'cm':
-      return Math.round(valueAsFloat)
+      break
     case 'dm':
-      return Math.round(valueAsFloat * 10)
+      valueAsFloat *= 10
+      break
     case 'm':
-      return Math.round(valueAsFloat * 100)
+      valueAsFloat *= 100
+      break
   }
+  return Math.max(Math.round(valueAsFloat), 1)
 }
 
 module.exports = {

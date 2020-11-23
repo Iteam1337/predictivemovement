@@ -6,6 +6,9 @@ const getIconName = (size) => {
   if (size === 0) {
     return ''
   }
+  if (size === 1) {
+    return 'marker'
+  }
   if (size < 10) {
     return `marker-${size}`
   }
@@ -15,7 +18,20 @@ const getIconName = (size) => {
   return 'marker-100'
 }
 
-const getIconSize = (size) => Math.min(100, size) / 100 + 1
+const getIcon = (size, active, iconMapping) => {
+  const iconName = getIconName(size)
+
+  if (iconName && active && iconMapping) {
+    const activeIconName = iconName + '-active'
+
+    return iconMapping[activeIconName] ? activeIconName : iconName
+  }
+
+  return iconName
+}
+
+const getIconSize = (size, active) =>
+  Math.min(100, active ? size + 100 : size) / 100 + 1
 
 export default class IconClusterLayer extends CompositeLayer {
   shouldUpdateState({ changeFlags }) {
@@ -30,14 +46,21 @@ export default class IconClusterLayer extends CompositeLayer {
       const index = new Supercluster({
         maxZoom: 16,
         radius: props.sizeScale,
-        initial: () => ({ active: true }),
+        initial: () => ({
+          active: false,
+          color: [255, 255, 255, 100],
+          activeIconAtlas: false,
+        }),
         map: (props) => ({
           active: props.active,
+          color: props.color,
+          activeIconAtlas: props.activeIconAtlas,
         }),
         reduce: (prev, curr) => {
           prev.active = prev.active || curr.active
         },
       })
+
       index.load(
         props.data.map((d) => ({
           geometry: { coordinates: props.getPosition(d) },
@@ -76,7 +99,13 @@ export default class IconClusterLayer extends CompositeLayer {
 
   renderLayers() {
     const { data } = this.state
-    const { iconAtlas, iconMapping, sizeScale, getColor } = this.props
+    const {
+      iconAtlas,
+      iconMapping,
+      sizeScale,
+      getColor,
+      transitions,
+    } = this.props
 
     return new IconLayer(
       this.getSubLayerProps({
@@ -86,11 +115,19 @@ export default class IconClusterLayer extends CompositeLayer {
         iconMapping,
         sizeScale,
         getColor,
+        transitions,
         getPosition: (d) => d.geometry.coordinates,
         getIcon: (d) =>
-          getIconName(d.properties.cluster ? d.properties.point_count : 1),
+          getIcon(
+            d.properties.cluster ? d.properties.point_count : 1,
+            d.properties.active,
+            iconMapping
+          ),
         getSize: (d) =>
-          getIconSize(d.properties.cluster ? d.properties.point_count : 1),
+          getIconSize(
+            d.properties.cluster ? d.properties.point_count : 1,
+            d.properties.active
+          ),
       })
     )
   }

@@ -70,17 +70,12 @@ const Map = ({ data }) => {
     showTextLayer &&
       mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
     mapUtils.toTransportIconLayer(data.transports, UIState.highlightTransport),
-    mapUtils.toIconClusterLayer(
-      data.bookings.flatMap(({ id, pickup }) => ({
+    mapUtils.toIconClusterLayer({
+      data: data.bookings.flatMap(({ id, pickup }) => ({
         coordinates: [pickup.lon, pickup.lat],
         active: id === UIState.highlightBooking,
-      }))
-    ),
-    // mapUtils.toBookingIconLayer(
-    //   data.bookings,
-    //   'pickup',
-    //   UIState.highlightBooking
-    // ),
+      })),
+    }),
   ]
 
   const handleDragEvent = () =>

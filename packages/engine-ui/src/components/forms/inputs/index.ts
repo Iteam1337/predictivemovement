@@ -3,6 +3,7 @@ import AddressSearchInput from './AddressSearchInput'
 import * as TimeRestriction from './TimeRestriction'
 import TextInput from './TextInput'
 import { TransportCapacity, ParcelSize } from './Select'
+import ExternalIdSearchInput from './ExternalIdSearchInput'
 
 export {
   Checkbox,
@@ -11,4 +12,5 @@ export {
   TextInput,
   TransportCapacity,
   ParcelSize,
+  ExternalIdSearchInput,
 }

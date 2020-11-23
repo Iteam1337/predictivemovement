@@ -2,6 +2,7 @@ const _ = require('highland')
 const helpers = require('./helpers')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, transportsCache, planCache } = require('./cache')
+const parcel = require('./parcel')
 
 module.exports = (io) => {
   const {
@@ -162,12 +163,15 @@ module.exports = (io) => {
       socket.emit('transport-deleted', id)
     })
 
-    socket.on('update-booking', (booking) => {
-      updateBooking(booking)
-    })
+    socket.on('update-booking', updateBooking)
+    socket.on('update-vehicle', updateVehicle)
 
-    socket.on('update-vehicle', (vehicle) => {
-      updateVehicle(vehicle)
+    socket.on('search-parcel', async (id) => {
+      const response = await parcel.search(id)
+      const weight = parcel.getWeight(response)
+      const measurements = parcel.getMeasurements(response)
+
+      socket.emit('parcel-info', { weight, measurements })
     })
   })
 }

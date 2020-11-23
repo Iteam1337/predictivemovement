@@ -25,6 +25,19 @@ const Component = ({
     delivery: false,
   })
 
+  const handleParcelSearchResults = ({ weight, measurements }) => {
+    if (!weight || !measurements) return null
+
+    onChangeHandler((currentState) => ({
+      ...currentState,
+      size: {
+        weight,
+        measurements: measurements.length ? measurements.join('x') : null,
+      },
+    }))
+    setUseCustomSize(true)
+  }
+
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
       return {
@@ -105,14 +118,23 @@ const Component = ({
           <Elements.Form.Label htmlFor="parceldetails">
             Paketspecifikationer
           </Elements.Form.Label>
-          <FormInputs.TextInput
-            name="external-id"
-            value={state.externalId}
+          <FormInputs.ExternalIdSearchInput
+            required
+            formErrors={formErrors.externalId}
             placeholder="Referensnummer från avsändare"
-            onChangeHandler={eventHandlers.handleTextInputChange(
+            value={state.externalId}
+            onFocus={() =>
+              dispatch({
+                type: 'focusInput',
+                payload: 'start',
+              })
+            }
+            onChangeHandler={eventHandlers.handleAddressInputForBooking(
               'externalId',
-              onChangeHandler
+              onChangeHandler,
+              setFormErrors
             )}
+            onSearchResult={handleParcelSearchResults}
           />
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer>

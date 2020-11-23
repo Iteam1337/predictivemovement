@@ -8,6 +8,7 @@ import Tooltip from './Tooltip'
 import * as stores from '../utils/state/stores'
 
 const Map = ({ data }) => {
+  const [isHovering, setHover] = React.useState(false)
   const history = useHistory()
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
@@ -16,8 +17,23 @@ const Map = ({ data }) => {
     path: ['/plans/routes/:routeId'],
   })
 
+  const hideTooltip = () =>
+    UIState.showMapTooltip && setUIState({ type: 'hideTooltip' })
+
   const handleClickEvent = (event) => {
-    if (!event.object?.properties) return
+    if (!event.object) {
+      const {
+        lngLat: [lon, lat],
+        x,
+        y,
+      } = event
+      return setUIState({
+        type: 'lastClickedPosition',
+        payload: { lat, lon, x, y },
+      })
+    }
+
+    hideTooltip()
     const type = event.object.properties.type
     const id = event.object.id || event.object.properties.id
     switch (type) {
@@ -30,12 +46,6 @@ const Map = ({ data }) => {
         return
     }
   }
-
-  const onMapClick = ({ lngLat: [lon, lat], x, y }) =>
-    setUIState({
-      type: 'lastClickedPosition',
-      payload: { lat, lon, x, y },
-    })
 
   const layers = [
     mapUtils.toGeoJsonLayer(
@@ -71,6 +81,7 @@ const Map = ({ data }) => {
       mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
     mapUtils.toTransportIconLayer(data.transports, UIState.highlightTransport),
     mapUtils.toIconClusterLayer({
+      type: 'bookings',
       data: data.bookings.flatMap(({ id, pickup }) => ({
         coordinates: [pickup.lon, pickup.lat],
         active: id === UIState.highlightBooking,
@@ -78,23 +89,23 @@ const Map = ({ data }) => {
     }),
   ]
 
-  const handleDragEvent = () =>
-    UIState.showMapTooltip && setUIState({ type: 'hideTooltip' })
-
   return (
     <>
       <DeckGL
         layers={layers}
         controller={true}
         onClick={(e) => {
-          onMapClick(e)
           handleClickEvent(e)
         }}
+        getCursor={({ isDragging }) =>
+          isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'
+        }
         viewState={viewState}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
-        onDrag={handleDragEvent}
+        onDrag={() => hideTooltip}
+        onHover={({ object }) => setHover(Boolean(object))}
       >
-        <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />
+        <StaticMap mapStyle="mapbox://styles/izabella123/ckhucn6ed1pwi19mrjwnlcp1b" />
       </DeckGL>
       {UIState.showMapTooltip && (
         <Tooltip position={UIState.lastClickedPosition} />

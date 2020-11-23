@@ -1,0 +1,281 @@
+{
+    "metadata": {
+        "note": "Easiest setup, with one car and one booking. No constraints, no time-distance matrix. Start, pickup and end position are the same.",
+        "map": "https://www.google.de/maps/dir/65.6335,21.92567/'65.61582,22.13488'/@65.6053705,21.967947,12z/data=!3m1!4b1!4m7!4m6!1m0!1m3!2m2!1d22.13488!2d65.61582!3e0"
+    },
+    "vehicles": [
+        {
+            "end_address": {
+                "city": "Lulea",
+                "hint": "7ewagF0rAoAQAAAAIwAAAFcAAAAAAAAATEKWQd8tGkL52r9CAAAAABAAAAAjAAAAVwAAAAAAAACCAQAAn9VRAX476QNn1VEBuTvpAwQATwTsYsCD",
+                "lat": 65.61682477744563,
+                "lon": 22.140262659112672,
+                "name": "Universitetsbiblioteket, Lulea",
+                "street": "Universitetsbiblioteket"
+            },
+            "id": "pmv-nzbhymm4",
+            "start_address": {
+                "city": "Lulea",
+                "hint": "9rkagP25GoBkAAAAKQAAAHMAAABaAAAAy-SLQno74EE42p9CJjp7QmQAAAApAAAAcwAAAFoAAACCAQAAJddOAX5M6QP91E4BzE3pAwEAfwPsYsCD",
+                "lat": 65.62145193460437,
+                "lon": 21.943548744413217,
+                "name": "Nederlulea, Lulea",
+                "street": "Nederlulea"
+            }
+        },
+        {
+            "end_address": {
+                "city": "Lulea",
+                "hint": "97kagAC6GoAiAAAAJwAAAAAAAAAAAAAAuJlVQn1pakIAAAAAAAAAACIAAAAnAAAAAAAAAAAAAACCAQAAJMpOARhL6QORzE4BwkvpAwAAbxTsYsCD",
+                "lat": 65.62093038004136,
+                "lon": 21.94139349525241,
+                "name": "Nederlulea, Lulea",
+                "street": "Nederlulea"
+            },
+            "id": "pmv-nmzmywni",
+            "start_address": {
+                "city": "Lulea",
+                "hint": "pCYCgAikGoAGAAAAPwAAAEwAAABZAQAAiNnbQA8ajEKx-ahCrgLAQwYAAAA_AAAATAAAAFkBAACCAQAAo15RAbaU6APPXVEBGZToAwIAfwfsYsCD",
+                "lat": 65.57391302467074,
+                "lon": 22.10964668442636,
+                "name": "Trollebergsvägen 1, Lulea",
+                "street": "Trollebergsvägen 1"
+            }
+        }
+    ],
+    "bookings": [
+        {
+            "requires_transport_id": "pmv-nmzmywni",
+            "delivery": {
+                "city": "Lulea",
+                "hint": "7ewagF0rAoAqAAAABgAAAAgAAABSAAAArpw9Qnl2vUBtlwdB1-m2QioAAAAGAAAACAAAAFIAAACCAQAA-NBRAcA66QND0FEBgDvpAwEATwTsYsCD",
+                "lat": 65.61676773503345,
+                "lon": 22.138946592953637,
+                "street": "Alfa-huset"
+            },
+            "id": "pmb-nti5mmuw",
+            "pickup": {
+                "city": "Lulea",
+                "hint": "9rkagP25GoA-AAAANQAAAAAAAADnAAAAOTIuQjmCEUIAAAAAWcggQz4AAAA1AAAAAAAAAOcAAACCAQAAss9OAWVK6QPXzU4BhEvpAwAAfwPsYsCD",
+                "lat": 65.62086776014158,
+                "lon": 21.941719085177787,
+                "street": "Nederlulea"
+            }
+        }
+    ],
+    "matrix": {
+        "sources": [
+            {
+                "name": "",
+                "location": [
+                    21.942194,
+                    65.620581
+                ],
+                "hint": "9rkagP25GoA-AAAANQAAAAAAAADnAAAAOTIuQjmCEUIAAAAAWcggQz4AAAA1AAAAAAAAAOcAAACCAQAAss9OAWVK6QPXzU4BhEvpAwAAfwPsYsCD",
+                "distance": 38.769227
+            },
+            {
+                "name": "Universitetsvägen",
+                "location": [
+                    22.139128,
+                    65.616576
+                ],
+                "hint": "7ewagF0rAoAqAAAABgAAAAgAAABSAAAArpw9Qnl2vUBtlwdB1-m2QioAAAAGAAAACAAAAFIAAACCAQAA-NBRAcA66QND0FEBgDvpAwEATwTsYsCD",
+                "distance": 22.975758
+            },
+            {
+                "name": "Granuddsvägen",
+                "location": [
+                    22.109859,
+                    65.57407
+                ],
+                "hint": "pCYCgAikGoAGAAAAPwAAAEwAAABZAQAAiNnbQA8ajEKx-ahCrgLAQwYAAAA_AAAATAAAAFkBAACCAQAAo15RAbaU6APPXVEBGZToAwIAfwfsYsCD",
+                "distance": 20.055801
+            },
+            {
+                "name": "Bälingevägen",
+                "location": [
+                    21.940772,
+                    65.62076
+                ],
+                "hint": "97kagAC6GoAiAAAAJwAAAAAAAAAAAAAAuJlVQn1pakIAAAAAAAAAACIAAAAnAAAAAAAAAAAAAACCAQAAJMpOARhL6QORzE4BwkvpAwAAbxTsYsCD",
+                "distance": 34.320721
+            },
+            {
+                "name": "",
+                "location": [
+                    21.944101,
+                    65.621118
+                ],
+                "hint": "9rkagP25GoBkAAAAKQAAAHMAAABaAAAAy-SLQno74EE42p9CJjp7QmQAAAApAAAAcwAAAFoAAACCAQAAJddOAX5M6QP91E4BzE3pAwEAfwPsYsCD",
+                "distance": 45.097726
+            },
+            {
+                "name": "Universitetsvägen",
+                "location": [
+                    22.140319,
+                    65.616766
+                ],
+                "hint": "7ewagF0rAoAQAAAAIwAAAFcAAAAAAAAATEKWQd8tGkL52r9CAAAAABAAAAAjAAAAVwAAAAAAAACCAQAAn9VRAX476QNn1VEBuTvpAwQATwTsYsCD",
+                "distance": 7.066636
+            }
+        ],
+        "durations": [
+            [
+                0,
+                967,
+                693.9,
+                11.7,
+                15.3,
+                972.3
+            ],
+            [
+                1013.2,
+                0,
+                570,
+                1008.4,
+                1028.5,
+                5.3
+            ],
+            [
+                699.1,
+                563.7,
+                0,
+                694.3,
+                714.4,
+                569
+            ],
+            [
+                15,
+                958.9,
+                685.8,
+                0,
+                30.3,
+                964.2
+            ],
+            [
+                15.3,
+                982.3,
+                709.2,
+                27,
+                0,
+                987.6
+            ],
+            [
+                1018.5,
+                5.3,
+                575.3,
+                1013.7,
+                1033.8,
+                0
+            ]
+        ],
+        "distances": [
+            [
+                0,
+                14707.7,
+                10144.8,
+                96.9,
+                106.3,
+                14766.5
+            ],
+            [
+                15978.9,
+                0,
+                7175.4,
+                15988.8,
+                16085.3,
+                58.8
+            ],
+            [
+                10167.6,
+                7076.9,
+                0,
+                10177.5,
+                10273.9,
+                7135.7
+            ],
+            [
+                96.9,
+                14717.5,
+                10154.6,
+                0,
+                203.3,
+                14776.3
+            ],
+            [
+                106.3,
+                14814,
+                10251.1,
+                203.3,
+                0,
+                14872.8
+            ],
+            [
+                16037.8,
+                58.8,
+                7234.3,
+                16047.6,
+                16144.1,
+                0
+            ]
+        ],
+        "destinations": [
+            {
+                "name": "",
+                "location": [
+                    21.942194,
+                    65.620581
+                ],
+                "hint": "9rkagP25GoA-AAAANQAAAAAAAADnAAAAOTIuQjmCEUIAAAAAWcggQz4AAAA1AAAAAAAAAOcAAACCAQAAss9OAWVK6QPXzU4BhEvpAwAAfwPsYsCD",
+                "distance": 38.769227
+            },
+            {
+                "name": "Universitetsvägen",
+                "location": [
+                    22.139128,
+                    65.616576
+                ],
+                "hint": "7ewagF0rAoAqAAAABgAAAAgAAABSAAAArpw9Qnl2vUBtlwdB1-m2QioAAAAGAAAACAAAAFIAAACCAQAA-NBRAcA66QND0FEBgDvpAwEATwTsYsCD",
+                "distance": 22.975758
+            },
+            {
+                "name": "Granuddsvägen",
+                "location": [
+                    22.109859,
+                    65.57407
+                ],
+                "hint": "pCYCgAikGoAGAAAAPwAAAEwAAABZAQAAiNnbQA8ajEKx-ahCrgLAQwYAAAA_AAAATAAAAFkBAACCAQAAo15RAbaU6APPXVEBGZToAwIAfwfsYsCD",
+                "distance": 20.055801
+            },
+            {
+                "name": "Bälingevägen",
+                "location": [
+                    21.940772,
+                    65.62076
+                ],
+                "hint": "97kagAC6GoAiAAAAJwAAAAAAAAAAAAAAuJlVQn1pakIAAAAAAAAAACIAAAAnAAAAAAAAAAAAAACCAQAAJMpOARhL6QORzE4BwkvpAwAAbxTsYsCD",
+                "distance": 34.320721
+            },
+            {
+                "name": "",
+                "location": [
+                    21.944101,
+                    65.621118
+                ],
+                "hint": "9rkagP25GoBkAAAAKQAAAHMAAABaAAAAy-SLQno74EE42p9CJjp7QmQAAAApAAAAcwAAAFoAAACCAQAAJddOAX5M6QP91E4BzE3pAwEAfwPsYsCD",
+                "distance": 45.097726
+            },
+            {
+                "name": "Universitetsvägen",
+                "location": [
+                    22.140319,
+                    65.616766
+                ],
+                "hint": "7ewagF0rAoAQAAAAIwAAAFcAAAAAAAAATEKWQd8tGkL52r9CAAAAABAAAAAjAAAAVwAAAAAAAACCAQAAn9VRAX476QNn1VEBuTvpAwQATwTsYsCD",
+                "distance": 7.066636
+            }
+        ],
+        "code": "Ok"
+    }
+}

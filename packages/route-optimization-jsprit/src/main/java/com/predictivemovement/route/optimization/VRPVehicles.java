@@ -37,6 +37,9 @@ public class VRPVehicles {
             String vehicleId = jsonVehicle.getString("id");
             VehicleImpl.Builder vehicleBuilder = VehicleImpl.Builder.newInstance(vehicleId);
 
+            // Adding vehicle Id as a skill so it can be used as a constraint
+            vehicleBuilder.addSkill(vehicleId);
+
             // type
             VehicleType vehicleType = VRPVehiclesTypes.getType(jsonVehicle);
             vehicleBuilder.setType(vehicleType);

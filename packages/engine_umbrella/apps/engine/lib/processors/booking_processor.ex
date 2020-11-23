@@ -2,8 +2,6 @@ defmodule Engine.BookingProcessor do
   use Broadway
   alias Broadway.Message
   require Logger
-  @plan Application.get_env(:engine, :plan)
-  @jsprit_time_constraint_msg "Time of time window constraint is in the past!"
 
   def start_link(_opts) do
     Broadway.start_link(__MODULE__,
@@ -24,46 +22,6 @@ defmodule Engine.BookingProcessor do
         ]
       ]
     )
-  end
-
-  defp handle_booking_failure(%{id: id, failure: %{status_msg: @jsprit_time_constraint_msg}}),
-    do: %{id: id, status: "TIME_CONSTRAINTS_EXPIRED"}
-
-  defp handle_booking_failure(%{id: id}), do: %{id: id, status: "CONSTRAINTS_FAILURE"}
-
-  def calculate_plan(vehicle_ids, booking_ids)
-      when length(vehicle_ids) == 0 or length(booking_ids) == 0,
-      do: IO.puts("No vehicles/bookings to calculate plan for")
-
-  def calculate_plan(vehicle_ids, booking_ids) do
-    %{data: %{solution: %{routes: routes, excluded: excluded}}} =
-      @plan.find_optimal_routes(vehicle_ids, booking_ids)
-
-    vehicles =
-      routes
-      |> Enum.map(fn %{activities: activities, vehicle_id: id} ->
-        booking_ids =
-          activities |> Enum.filter(&Map.has_key?(&1, :id)) |> Enum.map(& &1.id) |> Enum.uniq()
-
-        Vehicle.get(id)
-        |> Map.put(:activities, activities)
-        |> Map.put(:booking_ids, booking_ids)
-      end)
-      |> Enum.map(fn vehicle ->
-        vehicle
-        |> Map.put(
-          :current_route,
-          vehicle.activities
-          |> Enum.map(fn %{address: address} -> address end)
-          |> Osrm.route()
-        )
-      end)
-
-    PlanStore.put_plan(%{
-      vehicles: vehicles,
-      booking_ids: booking_ids,
-      excluded_booking_ids: Enum.map(excluded, &handle_booking_failure/1)
-    })
   end
 
   def handle_message(
@@ -111,7 +69,7 @@ defmodule Engine.BookingProcessor do
     booking_ids = Engine.BookingStore.get_bookings()
     vehicle_ids = Engine.VehicleStore.get_vehicles()
 
-    calculate_plan(vehicle_ids, booking_ids)
+    Plan.calculate(vehicle_ids, booking_ids)
     messages
   end
 

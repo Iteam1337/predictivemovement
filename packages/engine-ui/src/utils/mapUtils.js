@@ -149,7 +149,7 @@ const bookingToFeature = (bookings) => {
           {
             id,
             properties: {
-              color: '#e6ffe6',
+              color: '#ccffcc',
               offset: 0,
               address: { pickup, delivery },
               type: 'booking',
@@ -175,7 +175,7 @@ const toGeoJsonLayer = (id, data, callback) =>
     lineWidthMinPixels: 3,
     getFillColor: ({ properties }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
-    getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 150),
+    getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 190),
     highlightColor: ({ object: { properties } }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getRadius: (d) => d.properties.size || 300,
@@ -229,11 +229,11 @@ const toBookingIconLayer = (
   activeId,
   options = { offset: [0, 0] }
 ) => {
-  const iconData = data.flatMap((data) => ({
-    coordinates: [data[coordinatesProp].lon, data[coordinatesProp].lat],
+  const iconData = data.flatMap((d) => ({
+    coordinates: [d[coordinatesProp].lon, d[coordinatesProp].lat],
     properties: {
-      id: data.id,
-      color: activeId === data.id ? '#19DE8B' : '#ffffff',
+      id: d.id,
+      color: activeId === d.id ? '#19DE8B' : '#ffffff',
       size: 5,
       activeSize: 7,
       icon: parcelIcon,
@@ -266,7 +266,7 @@ const toBookingIconLayer = (
   })
 }
 
-const toIconClusterLayer = ({ data, properties }) => {
+const toIconClusterLayer = ({ data, type, properties }) => {
   const layerProps = {
     data,
     pickable: true,
@@ -285,7 +285,7 @@ const toIconClusterLayer = ({ data, properties }) => {
 
   return new IconClusterLayer({
     ...layerProps,
-    id: 'icon-cluster',
+    id: `icon-cluster-${type}`,
     sizeScale: 45,
   })
 }
@@ -296,6 +296,7 @@ const toTransportIconLayer = (transports, activeId) => {
   }
 
   return toIconClusterLayer({
+    type: 'transports',
     data: transports.flatMap(({ id, start_address, location, color }) => ({
       coordinates: [
         location?.lon || start_address.lon,
@@ -318,50 +319,6 @@ const toTransportIconLayer = (transports, activeId) => {
       },
     },
   })
-
-  // const iconData = transports.flatMap(
-  //   ({ id, start_address, location, color }) => ({
-  //     coordinates: [
-  //       location?.lon || start_address.lon,
-  //       location?.lat || start_address.lat,
-  //     ],
-  //     properties: {
-  //       id,
-  //       color,
-  //       icon: transportDefaultIcon,
-  //       highlightIcon: transportSelectedIcon,
-  //       size: 7,
-  //       highlightSize: 9,
-  //       type: 'transport',
-  //     },
-  //   })
-  // )
-
-  // return new IconLayer({
-  //   id: 'transport-icon',
-  //   data: iconData,
-  //   pickable: true,
-  //   getIcon: (d) => {
-  //     return {
-  //       url:
-  //         d.properties.id === activeId
-  //           ? d.properties.highlightIcon
-  //           : d.properties.icon,
-  //       mask: true,
-  //       width: 128,
-  //       height: 128,
-  //     }
-  //   },
-  //   sizeScale: 5,
-  //   getPosition: (d) => d.coordinates,
-  //   transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
-  //   getSize: (d) =>
-  //     d.properties.id === activeId
-  //       ? d.properties.highlightSize
-  //       : d.properties.size,
-  //   getColor: (d) =>
-  //     helpers.hexToRGBA(d.properties.color, d.properties.opacity),
-  // })
 }
 
 export {

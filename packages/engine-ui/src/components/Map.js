@@ -8,6 +8,7 @@ import Tooltip from './Tooltip'
 import * as stores from '../utils/state/stores'
 
 const Map = ({ data }) => {
+  const [isHovering, setHover] = React.useState(false)
   const history = useHistory()
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
@@ -89,9 +90,13 @@ const Map = ({ data }) => {
           onMapClick(e)
           handleClickEvent(e)
         }}
+        getCursor={({ isDragging }) =>
+          isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'
+        }
         viewState={viewState}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
         onDrag={handleDragEvent}
+        onHover={({ object }) => setHover(Boolean(object))}
       >
         <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />
       </DeckGL>

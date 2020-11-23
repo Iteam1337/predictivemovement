@@ -29,7 +29,7 @@ const SubmitButton = styled.button<{
   }
 `
 
-const CancelButton = styled.button<{ padding?: string }>`
+const CancelButton = styled.button<{ padding?: string, width?: string, marginTop?: string }>`
   padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
   background: #fff;
   font-weight: 600;
@@ -37,7 +37,8 @@ const CancelButton = styled.button<{ padding?: string }>`
   font-size: 0.875rem;
   border: 1px solid #c4c4c4;
   cursor: pointer;
-  width: fit-content;
+  width: ${({ width }) => (width ? width : 'fit-content')};
+  margin-top: ${({ marginTop }) => marginTop && marginTop};
 
   :hover {
     color: #666666;

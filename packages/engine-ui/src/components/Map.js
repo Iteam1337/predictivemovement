@@ -17,8 +17,23 @@ const Map = ({ data }) => {
     path: ['/plans/routes/:routeId'],
   })
 
+  const hideTooltip = () =>
+    UIState.showMapTooltip && setUIState({ type: 'hideTooltip' })
+
   const handleClickEvent = (event) => {
-    if (!event.object) return
+    if (!event.object) {
+      const {
+        lngLat: [lon, lat],
+        x,
+        y,
+      } = event
+      return setUIState({
+        type: 'lastClickedPosition',
+        payload: { lat, lon, x, y },
+      })
+    }
+
+    hideTooltip()
     const type = event.object.properties.type
     const id = event.object.id || event.object.properties.id
     switch (type) {
@@ -31,12 +46,6 @@ const Map = ({ data }) => {
         return
     }
   }
-
-  const onMapClick = ({ lngLat: [lon, lat], x, y }) =>
-    setUIState({
-      type: 'lastClickedPosition',
-      payload: { lat, lon, x, y },
-    })
 
   const layers = [
     mapUtils.toGeoJsonLayer(
@@ -78,16 +87,12 @@ const Map = ({ data }) => {
     ),
   ]
 
-  const handleDragEvent = () =>
-    UIState.showMapTooltip && setUIState({ type: 'hideTooltip' })
-
   return (
     <>
       <DeckGL
         layers={layers}
         controller={true}
         onClick={(e) => {
-          onMapClick(e)
           handleClickEvent(e)
         }}
         getCursor={({ isDragging }) =>
@@ -95,7 +100,7 @@ const Map = ({ data }) => {
         }
         viewState={viewState}
         onViewStateChange={({ viewState }) => setViewState(viewState)}
-        onDrag={handleDragEvent}
+        onDrag={() => hideTooltip}
         onHover={({ object }) => setHover(Boolean(object))}
       >
         <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />

@@ -276,11 +276,11 @@ const toBookingIconLayer = (
   activeId,
   options = { offset: [0, 0] }
 ) => {
-  const iconData = data.flatMap((data) => ({
-    coordinates: [data[coordinatesProp].lon, data[coordinatesProp].lat],
+  const iconData = data.flatMap((d) => ({
+    coordinates: [d[coordinatesProp].lon, d[coordinatesProp].lat],
     properties: {
-      id: data.id,
-      color: activeId === data.id ? '#19DE8B' : '#ffffff',
+      id: d.id,
+      color: activeId === d.id ? '#19DE8B' : '#ffffff',
       size: 5,
       activeSize: 7,
       icon: parcelIcon,

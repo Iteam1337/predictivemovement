@@ -5,6 +5,9 @@ import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
 import * as helpers from './helpers'
 import excludedParcelIcon from '../assets/excluded-parcel.svg'
+import IconClusterLayer from './IconClusterLayer'
+import iconMapping from '../assets/location-icon-mapping.json'
+import iconAtlas from '../assets/icon-atlas.png'
 
 const point = (coordinates, props) => ({
   type: 'Feature',
@@ -313,6 +316,28 @@ const toBookingIconLayer = (
   })
 }
 
+const toIconClusterLayer = (data) => {
+  const layerProps = {
+    data,
+    pickable: true,
+
+    getPosition: (d) => d.coordinates,
+    getColor: (d) =>
+      helpers.hexToRGBA(
+        d.properties.active ? '#19DE8B' : '#ffffff',
+        d.properties.opacity
+      ),
+    iconAtlas,
+    iconMapping,
+  }
+
+  return new IconClusterLayer({
+    ...layerProps,
+    id: 'icon-cluster',
+    sizeScale: 45,
+  })
+}
+
 export {
   feature,
   point,
@@ -322,6 +347,7 @@ export {
   toGeoJsonLayer,
   toBookingIconLayer,
   toTransportIconLayer,
+  toIconClusterLayer,
   toTextLayer,
   routeActivitiesToFeature,
   toExcludedBookingIcon,

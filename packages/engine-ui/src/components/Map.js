@@ -17,7 +17,7 @@ const Map = ({ data }) => {
   })
 
   const handleClickEvent = (event) => {
-    if (!event.object) return
+    if (!event.object?.properties) return
     const type = event.object.properties.type
     const id = event.object.id || event.object.properties.id
     switch (type) {
@@ -70,11 +70,17 @@ const Map = ({ data }) => {
     showTextLayer &&
       mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
     mapUtils.toTransportIconLayer(data.transports, UIState.highlightTransport),
-    mapUtils.toBookingIconLayer(
-      data.bookings,
-      'pickup',
-      UIState.highlightBooking
+    mapUtils.toIconClusterLayer(
+      data.bookings.flatMap(({ id, pickup }) => ({
+        coordinates: [pickup.lon, pickup.lat],
+        active: id === UIState.highlightBooking,
+      }))
     ),
+    // mapUtils.toBookingIconLayer(
+    //   data.bookings,
+    //   'pickup',
+    //   UIState.highlightBooking
+    // ),
   ]
 
   const handleDragEvent = () =>

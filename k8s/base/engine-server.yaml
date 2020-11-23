@@ -19,6 +19,12 @@ spec:
           image: iteam1337/pm-engine-server
           ports:
             - containerPort: 4000
+          env:
+            - name: POSTNORD_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: POSTNORD_KEY
+                  name: postnord-api-key 
           envFrom:
             - configMapRef:
                 name: common-properties

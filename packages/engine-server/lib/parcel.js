@@ -1,5 +1,6 @@
 const fetch = require('node-fetch')
 const postnordKey = process.env.POSTNORD_KEY
+if (!postnordKey) console.warn('Postnord key not set!')
 
 const search = (id) =>
   fetch(

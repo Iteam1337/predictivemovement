@@ -4,6 +4,7 @@ import * as amqp from './services/amqp'
 import cache from './services/cache'
 import Telegraf from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
+import { Instruction } from './types'
 
 async function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
@@ -38,6 +39,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
     if (msg.contact && msg.contact.phone_number)
       return botServices.onLogin(msg.contact.phone_number, ctx)
     if (msg.location) return botServices.onLocationMessage(msg)
+    if (msg.photo) return botServices.onPhotoReceived(msg.from.id, msg.photo)
   })
 
   bot.on('edited_message', (ctx) => {
@@ -47,22 +49,28 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
   })
 
   /** Listen for user invoked button clicks. */
-  bot.on('callback_query', async (msg) => {
+  bot.on('callback_query', async (msg: TelegrafContext) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
-    switch (callbackPayload.e) {
+    const telegramId = msg.update.callback_query.from.id
+    const { e: event, id: instructionGroupId } = callbackPayload
+
+    switch (event) {
       case 'arrived':
         return onArrived(msg)
-      case 'picked_up':
+      case 'begin_delivery_acknowledgement':
+        return botServices.beginDeliveryAcknowledgement(
+          telegramId,
+          instructionGroupId
+        )
       case 'delivered':
+        cache.setDriverDoneDelivering(telegramId)
+      case 'picked_up':
       case 'delivery_failed': {
-        const telegramId = msg.update.callback_query.from.id
-        const { e: event, id: instructionGroupId } = callbackPayload
-
         return cache
           .getAndDeleteInstructionGroup(instructionGroupId)
-          .then((instructionGroup) =>
+          .then((instructionGroup: Instruction[]) =>
             Promise.all(
-              instructionGroup.map(({ id: bookingId }) =>
+              instructionGroup.map(({ id: bookingId }: Instruction) =>
                 amqp.publishBookingEvent(bookingId, event)
               )
             )

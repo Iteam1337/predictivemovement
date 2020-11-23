@@ -98,7 +98,6 @@ const Component = ({
     )
 
     setShowSaveFavorite(false)
-    return false
   }
 
   return (

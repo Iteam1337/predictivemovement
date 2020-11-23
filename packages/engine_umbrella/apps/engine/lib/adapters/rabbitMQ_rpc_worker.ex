@@ -54,7 +54,7 @@ defmodule Engine.Adapters.RMQRPCWorker do
     msg = wait_for_messages(channel, correlation_id)
 
     Logger.info(
-      "Engine wants got response from #{queue_name} for #{queue}, which took #{
+      "Engine got response from #{queue_name} for #{queue}, which took #{
         Time.diff(Time.utc_now(), start_of_rpc)
       } seconds"
     )

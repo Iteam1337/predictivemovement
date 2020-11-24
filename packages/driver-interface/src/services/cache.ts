@@ -72,15 +72,15 @@ export default {
 
   setDriverCurrentlyDelivering: (
     telegramId: number,
-    bookindIds: string[]
+    bookingdIds: string[]
   ): Promise<string> =>
     redis.set(
       `${keys.CURRENTLY_DELIVERING}:${telegramId}`,
-      JSON.stringify(bookindIds)
+      JSON.stringify(bookingdIds)
     ),
   setDriverDoneDelivering: (telegramId: number): Promise<number> =>
     redis.del(`${keys.CURRENTLY_DELIVERING}:${telegramId}`),
-  getDriverCurrentDelivering: (telegramId: number): Promise<string[]> =>
+  getDriverCurrentlyDelivering: (telegramId: number): Promise<string[]> =>
     redis
       .get(`${keys.CURRENTLY_DELIVERING}:${telegramId}`)
       .then((res) => JSON.parse(res)),

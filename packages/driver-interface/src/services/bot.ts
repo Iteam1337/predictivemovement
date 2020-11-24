@@ -167,7 +167,7 @@ export const onPhotoReceived = async (
   telegramId: number,
   photoSizes: PhotoSize[]
 ): Promise<Message> => {
-  const bookingIds = await cache.getDriverCurrentDelivering(telegramId)
+  const bookingIds = await cache.getDriverCurrentlyDelivering(telegramId)
   if (!bookingIds) return messaging.sendCouldNotSavePhoto(telegramId)
   const highestResPhotoId = photoSizes[photoSizes.length - 1].file_id
   return cache

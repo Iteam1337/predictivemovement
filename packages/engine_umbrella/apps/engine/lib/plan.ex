@@ -112,6 +112,20 @@ defmodule Plan do
           |> Osrm.route()
         )
       end)
+      |> Enum.map(fn vehicle ->
+        %{"legs" => legs} = vehicle.current_route |> Jason.decode!()
+
+        vehicle
+        |> Map.put(
+          :activities,
+          Enum.zip(vehicle.activities, [%{"distance" => 0, "duration" => 0} | legs])
+          |> Enum.map(fn {activity, %{"distance" => distance, "duration" => duration}} ->
+            activity
+            |> Map.put(:distance, distance)
+            |> Map.put(:duration, duration)
+          end)
+        )
+      end)
 
     PlanStore.put_plan(%{
       vehicles: vehicles,

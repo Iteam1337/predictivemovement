@@ -98,12 +98,24 @@ const RouteActivities = ({ route }: Props) => {
       : `/bookings/${activityId}`
   }
 
+  const getDistance = (distance: number) => {
+    return Math.round(distance / 1000)
+  }
+  const getDuration = (duration: number) => {
+    return Math.round(duration / 60)
+  }
+
   return (
     <Wrapper>
       {groupByLocation(activities).map((activityGroup, index) => (
         <ActivityInfo key={index}>
           <p>{index + 1}</p>
           <p>{getLabelForActivities(activityGroup[0].type)}</p>
+
+          <p>
+            {getDistance(activityGroup[0].distance)} km, c:a
+            {getDuration(activityGroup[0].duration)} min
+          </p>
           <ActivityGroup>
             {activityGroup.map((activity, i) => (
               <Elements.Links.RoundedLink

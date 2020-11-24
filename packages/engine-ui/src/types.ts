@@ -120,4 +120,6 @@ export interface Activity {
   index: number
   type: string
   id: string
+  distance: number
+  duration: number
 }

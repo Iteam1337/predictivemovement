@@ -53,10 +53,6 @@ defmodule Vehicle do
     updated_vehicle =
       current_vehicle
       |> Map.merge(offer)
-      |> RMQ.publish(
-        Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
-        "new_instructions"
-      )
 
     {:reply, updated_vehicle, updated_vehicle}
   end
@@ -143,8 +139,13 @@ defmodule Vehicle do
     end
   end
 
-  def apply_offer_accepted(id, offer),
-    do: GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
+  def apply_offer_accepted(id, offer) do
+    GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
+    |> RMQ.publish(
+      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+      "new_instructions"
+    )
+  end
 
   def apply_vehicle_to_state(%Vehicle{id: id} = vehicle) do
     GenServer.start_link(

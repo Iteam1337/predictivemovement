@@ -146,10 +146,6 @@ defmodule Booking do
     timestamp = DateTime.utc_now()
 
     apply_assign_to_state(booking_id, vehicle, timestamp)
-    |> RMQ.publish(
-      Application.fetch_env!(:engine, :outgoing_booking_exchange),
-      "assigned"
-    )
 
     %BookingAssigned{
       booking_id: booking_id,
@@ -159,23 +155,29 @@ defmodule Booking do
     |> ES.add_event()
   end
 
-  def apply_assign_to_state(booking_id, vehicle, timestamp),
-    do: GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
+  def apply_assign_to_state(booking_id, vehicle, timestamp) do
+    GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
+    |> RMQ.publish(
+      Application.fetch_env!(:engine, :outgoing_booking_exchange),
+      "assigned"
+    )
+  end
 
   def add_event(booking_id, status)
       when status in ["picked_up", "delivered", "delivery_failed"] do
     timestamp = DateTime.utc_now()
 
     apply_event_to_state(booking_id, status, timestamp)
-    |> RMQ.publish(@outgoing_booking_exchange, status)
 
     status
     |> event_to_event_store_struct(booking_id, timestamp)
     |> ES.add_event()
   end
 
-  def apply_event_to_state(booking_id, status, timestamp),
-    do: GenServer.call(via_tuple(booking_id), {:add_event, status, timestamp})
+  def apply_event_to_state(booking_id, status, timestamp) do
+    GenServer.call(via_tuple(booking_id), {:add_event, status, timestamp})
+    |> RMQ.publish(@outgoing_booking_exchange, status)
+  end
 
   ### Internal
 

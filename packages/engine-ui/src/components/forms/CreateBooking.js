@@ -120,8 +120,6 @@ const Component = ({
             Paketspecifikationer
           </Elements.Form.Label>
           <FormInputs.ExternalIdSearchInput
-            required
-            formErrors={formErrors.externalId}
             placeholder="Referensnummer från avsändare"
             value={state.externalId}
             onFocus={() =>
@@ -130,10 +128,9 @@ const Component = ({
                 payload: 'start',
               })
             }
-            onChangeHandler={eventHandlers.handleAddressInputForBooking(
+            onChangeHandler={eventHandlers.handleTextInputChange(
               'externalId',
-              onChangeHandler,
-              setFormErrors
+              onChangeHandler
             )}
             onSearchResult={handleParcelSearchResults}
           />

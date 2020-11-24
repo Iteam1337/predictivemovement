@@ -19,6 +19,7 @@ defmodule Plan do
     |> case do
       {:ok, response} ->
         Jason.decode!(response, keys: :atoms)
+        |> get_in([:data, :solution])
 
       _ ->
         nil
@@ -90,8 +91,7 @@ defmodule Plan do
       do: IO.puts("No vehicles/bookings to calculate plan for")
 
   def calculate(vehicle_ids, booking_ids) do
-    %{data: %{solution: %{routes: routes, excluded: excluded}}} =
-      find_optimal_routes(vehicle_ids, booking_ids)
+    %{routes: routes, excluded: excluded} = find_optimal_routes(vehicle_ids, booking_ids)
 
     vehicles =
       routes

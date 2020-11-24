@@ -85,11 +85,10 @@ defmodule Vehicle do
     vehicle = struct(Vehicle, vehicle_fields)
 
     with true <- Vex.valid?(vehicle) do
-      vehicle
-      |> apply_vehicle_to_state()
-      |> (&%VehicleRegistered{vehicle: &1}).()
+      %VehicleRegistered{vehicle: vehicle}
       |> ES.add_event()
 
+      apply_vehicle_to_state(vehicle)
       vehicle_fields.id
     else
       _ ->
@@ -197,9 +196,8 @@ defmodule Vehicle do
 
     case send_offer(offer, id) do
       {:ok, true} ->
-        updated_state = apply_offer_accepted(id, offer)
-
         ES.add_event(%DriverAcceptedOffer{vehicle_id: id, offer: offer})
+        updated_state = apply_offer_accepted(id, offer)
 
         Enum.each(booking_ids, &Booking.assign(&1, updated_state))
 

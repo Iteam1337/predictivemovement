@@ -86,8 +86,12 @@ defmodule Booking do
       booking
       |> Map.put(:route, Osrm.route(pickup, delivery))
       |> add_event_to_events_list("new", DateTime.utc_now())
+      |> (fn boooking ->
+            ES.add_event(%BookingRegistered{booking: boooking})
+
+            booking
+          end).()
       |> apply_booking_to_state()
-      |> (&ES.add_event(%BookingRegistered{booking: &1})).()
 
       id
     else
@@ -99,9 +103,9 @@ defmodule Booking do
 
   def update(%{id: id} = booking_update) do
     with true <- Vex.valid?(struct(Booking, booking_update)),
+         _ <- ES.add_event(%BookingUpdated{booking: booking_update}),
          true <- GenServer.call(via_tuple(id), {:update, booking_update}) do
       RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
-      ES.add_event(%BookingUpdated{booking: booking_update})
       id
     else
       e ->
@@ -145,14 +149,14 @@ defmodule Booking do
   def assign(booking_id, vehicle) do
     timestamp = DateTime.utc_now()
 
-    apply_assign_to_state(booking_id, vehicle, timestamp)
-
     %BookingAssigned{
       booking_id: booking_id,
       vehicle: vehicle,
       timestamp: timestamp
     }
     |> ES.add_event()
+
+    apply_assign_to_state(booking_id, vehicle, timestamp)
   end
 
   def apply_assign_to_state(booking_id, vehicle, timestamp) do
@@ -167,11 +171,11 @@ defmodule Booking do
       when status in ["picked_up", "delivered", "delivery_failed"] do
     timestamp = DateTime.utc_now()
 
-    apply_event_to_state(booking_id, status, timestamp)
-
     status
     |> event_to_event_store_struct(booking_id, timestamp)
     |> ES.add_event()
+
+    apply_event_to_state(booking_id, status, timestamp)
   end
 
   def apply_event_to_state(booking_id, status, timestamp) do

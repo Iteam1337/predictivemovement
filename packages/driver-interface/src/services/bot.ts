@@ -178,7 +178,7 @@ export const onPhotoReceived = async (
         photoIds.concat([highestResPhotoId])
       )
     )
-    .then(() => messaging.sendPhotoReceived(telegramId))
+    .then(() => messaging.sendPhotoReceived(bookingIds, telegramId))
 }
 
 export const beginDeliveryAcknowledgement = async (

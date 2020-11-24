@@ -144,7 +144,12 @@ defmodule Booking do
 
   def assign(booking_id, vehicle) do
     timestamp = DateTime.utc_now()
+
     apply_assign_to_state(booking_id, vehicle, timestamp)
+    |> RMQ.publish(
+      Application.fetch_env!(:engine, :outgoing_booking_exchange),
+      "assigned"
+    )
 
     %BookingAssigned{
       booking_id: booking_id,
@@ -160,7 +165,9 @@ defmodule Booking do
   def add_event(booking_id, status)
       when status in ["picked_up", "delivered", "delivery_failed"] do
     timestamp = DateTime.utc_now()
+
     apply_event_to_state(booking_id, status, timestamp)
+    |> RMQ.publish(@outgoing_booking_exchange, status)
 
     status
     |> event_to_event_store_struct(booking_id, timestamp)
@@ -190,13 +197,9 @@ defmodule Booking do
         metadata: vehicle.metadata
       })
       |> add_event_to_events_list("assigned", timestamp)
-      |> RMQ.publish(
-        Application.fetch_env!(:engine, :outgoing_booking_exchange),
-        "assigned"
-      )
 
     Logger.debug("booking was assigned", updated_state)
-    {:reply, true, updated_state}
+    {:reply, updated_state, updated_state}
   end
 
   def handle_call({:add_event, status, timestamp}, _, state) do
@@ -205,9 +208,8 @@ defmodule Booking do
     updated_state =
       state
       |> add_event_to_events_list(status, timestamp)
-      |> RMQ.publish(@outgoing_booking_exchange, status)
 
-    {:reply, true, updated_state}
+    {:reply, updated_state, updated_state}
   end
 
   def handle_call({:update, updated_booking}, _from, state) do

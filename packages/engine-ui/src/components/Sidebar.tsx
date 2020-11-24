@@ -18,9 +18,10 @@ const Container = styled.div`
   display: flex;
 `
 
-const Content = styled.div`
+const Content = styled.div<{isMobile: Boolean}>`
   padding: 2rem;
-  width: 350px;
+  width: ${({isMobile}) => isMobile ? '100%' : '350px' };
+  
   overflow: auto;
 `
 
@@ -28,6 +29,7 @@ interface Props {
   bookings: Booking[]
   plan: IPlan
   transports: Transport[]
+  isMobile: Boolean
   createBooking: (params: any) => void
   deleteBooking: (params: any) => void
   dispatchOffers: (params: any) => void
@@ -45,7 +47,7 @@ const Sidebar = (state: Props) => {
           <Redirect from="/" to="/bookings" />
         </Route>
         <Route>
-          <Content>
+          <Content isMobile={state.isMobile}>
             <RouterSwitch>
               <Route path="/bookings">
                 <Bookings

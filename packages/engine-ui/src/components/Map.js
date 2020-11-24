@@ -103,7 +103,7 @@ const Map = ({ data }) => {
         onDrag={() => hideTooltip}
         onHover={({ object }) => setHover(Boolean(object))}
       >
-        <StaticMap mapStyle="mapbox://styles/mapbox/dark-v10" />
+        <StaticMap mapStyle="mapbox://styles/izabella123/ckhucn6ed1pwi19mrjwnlcp1b" />
       </DeckGL>
       {UIState.showMapTooltip && (
         <Tooltip position={UIState.lastClickedPosition} />

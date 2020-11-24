@@ -15,14 +15,11 @@ open
       .then(() =>
         ch.consume(queues.OFFER_BOOKING_TO_VEHICLE, async (message) => {
           const { vehicle } = JSON.parse(message.content.toString())
-          const fromTelegram = vehicle.metadata && vehicle.metadata.telegram
-          const queue = fromTelegram
-            ? queues.OFFER_BOOKING_TO_TELEGRAM_VEHICLE
-            : queues.AUTO_ACCEPT_OFFERS
+ 
           console.log("Received pickup offer to:", vehicle)
           console.log("To queue:", queue)
 
-          ch.sendToQueue(queue, message.content, message.properties)
+          ch.sendToQueue(queues.AUTO_ACCEPT_OFFERS, message.content, message.properties)
 
           ch.ack(message)
         })

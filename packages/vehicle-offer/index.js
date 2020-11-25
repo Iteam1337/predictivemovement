@@ -17,7 +17,6 @@ open
           const { vehicle } = JSON.parse(message.content.toString())
  
           console.log("Received pickup offer to:", vehicle)
-          console.log("To queue:", queue)
 
           ch.sendToQueue(queues.AUTO_ACCEPT_OFFERS, message.content, message.properties)
 

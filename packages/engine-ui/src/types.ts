@@ -30,6 +30,7 @@ interface BookingRoute {
 
 export interface Booking {
   id: string
+  external_id?: string
   pickup: ParcelAddress
   delivery: ParcelAddress
   metadata: Metadata

@@ -20,6 +20,17 @@ defmodule Generator do
     |> RMQ.publish(@transports_exchange, "registered")
   end
 
+  def add_transport(phone: phone) when is_binary(phone) do
+    formatted_phone =
+      phone
+      |> String.replace_leading("+", "")
+      |> String.replace_leading("0", "46")
+
+    %{metadata: %{driver: %{contact: formatted_phone}}}
+    |> TransportGenerator.generate_transport_props()
+    |> RMQ.publish(@transports_exchange, "registered")
+  end
+
   def add_booking(properties \\ %{})
 
   def add_booking(properties) when is_map(properties) do

@@ -167,9 +167,18 @@ export const onPhotoReceived = async (
   telegramId: number,
   photoSizes: PhotoSize[]
 ): Promise<Message> => {
-  const bookingIds = await cache.getDriverCurrentDelivering(telegramId)
-  if (!bookingIds) return messaging.sendCouldNotSavePhoto(telegramId)
+  const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
+    telegramId
+  )
+  if (!instructionGroupId) return messaging.sendCouldNotSavePhoto(telegramId)
   const highestResPhotoId = photoSizes[photoSizes.length - 1].file_id
+  const bookingIds = await cache
+    .getCurrentlyDeliveringInstructionGroupId(telegramId)
+    .then(cache.getInstructionGroup)
+    .then((instructionGroup: Instruction[]) =>
+      instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
+    )
+
   return cache
     .getDeliveryReceiptPhotos(bookingIds)
     .then((photoIds: string[]) =>
@@ -178,7 +187,7 @@ export const onPhotoReceived = async (
         photoIds.concat([highestResPhotoId])
       )
     )
-    .then(() => messaging.sendPhotoReceived(telegramId))
+    .then(() => messaging.sendPhotoReceived(instructionGroupId, telegramId))
 }
 
 export const beginDeliveryAcknowledgement = async (
@@ -186,11 +195,8 @@ export const beginDeliveryAcknowledgement = async (
   instructionGroupId: string
 ): Promise<Message> =>
   cache
-    .getInstructionGroup(instructionGroupId)
-    .then((instructionGroup: Instruction[]) =>
-      instructionGroup.map(({ id }) => id)
-    )
-    .then((bookingIds: string[]) =>
-      cache.setDriverCurrentlyDelivering(telegramId, bookingIds)
+    .setDriverCurrentlyDeliveringInstructionGroupId(
+      telegramId,
+      instructionGroupId
     )
     .then(() => messaging.sendBeginDeliveryAcknowledgement(telegramId))

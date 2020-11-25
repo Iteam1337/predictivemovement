@@ -101,7 +101,7 @@ defmodule Booking do
     end
   end
 
-  def update(%{id: id} = booking_update) do
+  def update(%{id: "pmb-" <> _ = id} = booking_update) do
     with true <- Vex.valid?(struct(Booking, booking_update)),
          _ <- ES.add_event(%BookingUpdated{booking: booking_update}),
          true <- GenServer.call(via_tuple(id), {:update, booking_update}) do
@@ -115,7 +115,7 @@ defmodule Booking do
     end
   end
 
-  def apply_booking_to_state(%Booking{id: id} = booking) do
+  def apply_booking_to_state(%Booking{id: "pmb-" <> _ = id} = booking) do
     GenServer.start_link(
       __MODULE__,
       booking,
@@ -128,14 +128,14 @@ defmodule Booking do
     booking
   end
 
-  def get(id), do: GenServer.call(via_tuple(id), :get)
+  def get("pmb-" <> _ = id), do: GenServer.call(via_tuple(id), :get)
 
-  def delete(id) do
+  def delete("pmb-" <> _ = id) do
     ES.add_event(%BookingDeleted{id: id})
     apply_delete_to_state(id)
   end
 
-  def apply_delete_to_state(id) do
+  def apply_delete_to_state("pmb-" <> _ = id) do
     Engine.BookingStore.delete_booking(id)
     GenServer.stop(via_tuple(id))
 
@@ -146,7 +146,7 @@ defmodule Booking do
     )
   end
 
-  def assign(booking_id, vehicle) do
+  def assign("pmb-" <> _ = booking_id, vehicle) do
     timestamp = DateTime.utc_now()
 
     %BookingAssigned{
@@ -159,7 +159,7 @@ defmodule Booking do
     apply_assign_to_state(booking_id, vehicle, timestamp)
   end
 
-  def apply_assign_to_state(booking_id, vehicle, timestamp) do
+  def apply_assign_to_state("pmb-" <> _ = booking_id, vehicle, timestamp) do
     GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
     |> RMQ.publish(
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
@@ -167,7 +167,7 @@ defmodule Booking do
     )
   end
 
-  def add_event(booking_id, status)
+  def add_event("pmb-" <> _ = booking_id, status)
       when status in ["picked_up", "delivered", "delivery_failed"] do
     timestamp = DateTime.utc_now()
 
@@ -178,7 +178,7 @@ defmodule Booking do
     apply_event_to_state(booking_id, status, timestamp)
   end
 
-  def apply_event_to_state(booking_id, status, timestamp) do
+  def apply_event_to_state("pmb-" <> _ = booking_id, status, timestamp) do
     GenServer.call(via_tuple(booking_id), {:add_event, status, timestamp})
     |> RMQ.publish(@outgoing_booking_exchange, status)
   end

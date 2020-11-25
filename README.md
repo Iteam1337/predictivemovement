@@ -37,7 +37,7 @@ To debug run:
 Set env variables
 
     export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
-    export TELEGRAM_BOT_TOKEN=<FROM LASTPASS> / create your own from telegra
+    export TELEGRAM_BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
     export GOOGLE_API_TOKEN=<FROM LASTPASS>
 
 Start dependencies

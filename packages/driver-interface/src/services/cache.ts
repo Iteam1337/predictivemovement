@@ -72,11 +72,11 @@ export default {
 
   setDriverCurrentlyDelivering: (
     telegramId: number,
-    bookingdIds: string[]
+    bookingIds: string[]
   ): Promise<string> =>
     redis.set(
       `${keys.CURRENTLY_DELIVERING}:${telegramId}`,
-      JSON.stringify(bookingdIds)
+      JSON.stringify(bookingIds)
     ),
   setDriverDoneDelivering: (telegramId: number): Promise<number> =>
     redis.del(`${keys.CURRENTLY_DELIVERING}:${telegramId}`),

@@ -296,7 +296,7 @@ const Component = ({
             />
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              pattern="^[0-9]*$"
+              pattern="^[0-9]*$|^-$"
               iconInset
               name="sender"
               value={state.sender.contact}
@@ -404,7 +404,7 @@ const Component = ({
             <FormInputs.TextInput
               iconInset
               name="recipient-contact"
-              pattern="^[0-9]*$"
+              pattern="^[0-9]*$|^-$"
               value={state.recipient.contact}
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleNestedInputChange(

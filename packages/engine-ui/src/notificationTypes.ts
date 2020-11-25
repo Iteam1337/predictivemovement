@@ -10,6 +10,8 @@ export enum BookingStatus {
 
 export enum TransportStatus {
   NEW = 'new',
+  FINISHED = 'finished',
+  LOGIN = 'login',
   NEW_INSTRUCTIONS = 'new_instructions',
 }
 

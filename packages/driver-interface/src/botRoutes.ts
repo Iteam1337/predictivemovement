@@ -52,7 +52,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.on('callback_query', async (msg: TelegrafContext) => {
     const callbackPayload = JSON.parse(msg.update.callback_query.data)
     const telegramId = msg.update.callback_query.from.id
-    const { e: event, id: instructionGroupId, bookingIds } = callbackPayload
+    const { e: event, id: instructionGroupId } = callbackPayload
 
     switch (event) {
       case 'arrived':
@@ -63,17 +63,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
           instructionGroupId
         )
       case 'delivered':
-        return cache
-          .setDriverDoneDelivering(telegramId)
-          .then(() =>
-            Promise.all(
-              bookingIds.map((bookingId: string) =>
-                amqp.publishBookingEvent(bookingId, 'delivered')
-              )
-            )
-          )
-          .then(() => botServices.handleNextDriverInstruction(telegramId))
-
+        await cache.setDriverDoneDelivering(telegramId)
       case 'picked_up':
       case 'delivery_failed': {
         return cache

@@ -297,7 +297,7 @@ export const sendDeliveryInformation = (
 }
 
 export const sendPhotoReceived = (
-  bookingIds: string[],
+  instructionGroupId: string,
   telegramId: number
 ): Promise<Message> =>
   bot.telegram.sendMessage(
@@ -312,7 +312,7 @@ export const sendPhotoReceived = (
               text: 'Klar',
               callback_data: JSON.stringify({
                 e: 'delivered',
-                bookingIds,
+                id: instructionGroupId,
               }),
             },
           ],

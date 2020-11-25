@@ -70,20 +70,16 @@ export default {
       .get(`${keys.INSTRUCTION_GROUPS}:${id}`)
       .then((res) => JSON.parse(res)),
 
-  setDriverCurrentlyDelivering: (
+  setDriverCurrentlyDeliveringInstructionGroupId: (
     telegramId: number,
-    bookingIds: string[]
+    instructionGroupId: string
   ): Promise<string> =>
-    redis.set(
-      `${keys.CURRENTLY_DELIVERING}:${telegramId}`,
-      JSON.stringify(bookingIds)
-    ),
+    redis.set(`${keys.CURRENTLY_DELIVERING}:${telegramId}`, instructionGroupId),
   setDriverDoneDelivering: (telegramId: number): Promise<number> =>
     redis.del(`${keys.CURRENTLY_DELIVERING}:${telegramId}`),
-  getDriverCurrentlyDelivering: (telegramId: number): Promise<string[]> =>
-    redis
-      .get(`${keys.CURRENTLY_DELIVERING}:${telegramId}`)
-      .then((res) => JSON.parse(res)),
+  getCurrentlyDeliveringInstructionGroupId: (
+    telegramId: number
+  ): Promise<string> => redis.get(`${keys.CURRENTLY_DELIVERING}:${telegramId}`),
   saveDeliveryReceiptPhoto: (
     bookingIds: string[],
     photoIds: string[]

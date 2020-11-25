@@ -34,6 +34,10 @@ To debug run:
 
 ### Running Predictive Movement locally
 
+Set build variables
+
+    export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
+
 Start dependencies
 
     docker-compose up -d
@@ -41,6 +45,7 @@ Start dependencies
 run event_store migrations and start the engine
 
     cd packages/engine_umbrella/
+    mix deps.get
     iex -S mix dev
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)

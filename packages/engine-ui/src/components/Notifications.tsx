@@ -38,6 +38,8 @@ const notificationMessages = {
   [EntityType.TRANSPORT]: {
     [TransportStatus.NEW]: 'En ny transport har lags till:',
     [TransportStatus.NEW_INSTRUCTIONS]: 'En ny rutt har bekräftats:',
+    [TransportStatus.LOGIN]: 'En förare har loggat in:',
+    [TransportStatus.FINISHED]: 'En transport har slutfört sin rutt:',
   },
 }
 

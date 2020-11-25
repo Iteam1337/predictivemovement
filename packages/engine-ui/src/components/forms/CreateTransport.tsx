@@ -117,7 +117,7 @@ const Component = ({
               'startPosition',
               onChangeHandler
             )}
-            onFocus={() =>
+            onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
                 payload: 'start',
@@ -142,7 +142,7 @@ const Component = ({
                 'endPosition',
                 onChangeHandler
               )}
-              onFocus={() =>
+              onFocusHandler={() =>
                 dispatch({
                   type: 'focusInput',
                   payload: 'end',

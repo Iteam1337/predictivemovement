@@ -15,6 +15,7 @@ module.exports = (io) => {
     publishDeleteBooking,
     publishDeleteTransport,
     publishMoveBooking,
+    transportEvents,
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,
@@ -76,6 +77,13 @@ module.exports = (io) => {
     _(bookingNotifications.fork()).each((booking) => {
       socket.emit('notification', helpers.bookingToNotification(booking))
     })
+
+    _(transportEvents.fork()).each(({ id, event }) =>
+      socket.emit(
+        'notification',
+        helpers.transportToNotification({ id }, event)
+      )
+    )
 
     _(transportNotifications.fork()).each((transport) => {
       socket.emit('notification', helpers.transportToNotification(transport))

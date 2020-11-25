@@ -26,6 +26,7 @@ const DropdownButton = styled.button`
 
 const Component = ({
   onChangeHandler,
+  onFocusHandler,
   placeholder,
   value,
   formError,
@@ -123,7 +124,10 @@ const Component = ({
         value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
-        onFocus={() => setShowDropdown(getFavoriteAddresses().length > 0)}
+        onFocus={() => {
+          setShowDropdown(getFavoriteAddresses().length > 0)
+          return onFocusHandler()
+        }}
         onBlur={() => {
           setShowDropdown(false)
         }}

@@ -24,17 +24,12 @@ const bookingToNotification = (booking) => ({
   booking,
 })
 
-const transportToNotification = (transport) => ({
-  /* We currently
-   * only have notifications for when a transport
-   * has been created, hence the 'success' severity status
-   * and the 'new' event.status.
-   */
-  severity: severityByEventStatus(transport.status),
+const transportToNotification = (transport, event) => ({
+  severity: severityByEventStatus(event || transport.status),
   type: 'transport',
   event: {
     id: transport.id,
-    status: transport.status,
+    status: event || transport.status,
   },
   transport,
 })

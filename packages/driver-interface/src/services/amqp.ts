@@ -44,3 +44,27 @@ export const publishBookingEvent = (
         )
     )
     .catch(console.warn)
+
+export const publishTransportEvent = (
+  transportId: string,
+  event: string
+): Promise<boolean | void> =>
+  open
+    .then((conn) => conn.createChannel())
+    .then((openChannel) =>
+      openChannel
+        .assertExchange(exchanges.INCOMING_VEHICLE_UPDATES, 'topic', {
+          durable: true,
+        })
+        .then(() =>
+          openChannel.publish(
+            exchanges.INCOMING_VEHICLE_UPDATES,
+            event,
+            Buffer.from(JSON.stringify({ id: transportId, status: event })),
+            {
+              persistent: true,
+            }
+          )
+        )
+    )
+    .catch(console.warn)

@@ -35,6 +35,10 @@ const MoveMenu = ({
   const [menuIsOpen, toggleMenu] = React.useState(false)
   const menuEl = React.useRef(null)
 
+  if (transports.length === 1 && transports[0].id === currentTransportId) {
+    return null
+  }
+
   return (
     <>
       <MenuButton onClick={() => toggleMenu((isOpen) => !isOpen)} ref={menuEl}>
@@ -45,16 +49,18 @@ const MoveMenu = ({
         anchorEl={menuEl.current}
         onClose={() => toggleMenu((isOpen) => !isOpen)}
       >
-        {transports.map(({ id }) => (
+        {transports.map(({ id, metadata }) => (
           <MenuItem
             key={id}
+            disabled={id === currentTransportId}
             selected={currentTransportId === id}
             onClick={() => {
               toggleMenu((isOpen) => !isOpen)
               moveBooking(bookingId, id)
             }}
           >
-            {helpers.getLastFourChars(id).toUpperCase()}
+            {metadata?.profile?.toUpperCase() ||
+              helpers.getLastFourChars(id).toUpperCase()}
           </MenuItem>
         ))}
       </Menu>

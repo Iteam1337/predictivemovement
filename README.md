@@ -48,6 +48,20 @@ run event_store migrations and start the engine
     mix deps.get
     iex -S mix dev
 
+### Helper/utility functions for populating the state
+
+The umbrella project has an application "message_generator" which is used to create rabbitMQ messages for producing transports and bookings. First start the umbrella project in an elixir shell
+
+    cd packages/engine_umbrella/
+    iex -S mix
+
+Then the Generator module is available inside the shell. 
+
+    add_booking/0      add_booking/1      add_transport/0    add_transport/1
+
+The argument can be a map containing properties or an atom for creating a generic one close to a city, (`:stockholm`, `:gothenburg`, `:ljusdal`)
+or in the case of the add_transport; a keyword list can also be used containing `:phone`, i.e: `Generator.add_transport(phone: "0735333")`
+
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 
 ## Release

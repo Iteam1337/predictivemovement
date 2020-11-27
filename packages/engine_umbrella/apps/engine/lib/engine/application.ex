@@ -32,6 +32,12 @@ defmodule Engine.Application do
   defp apply_event(%DriverAcceptedOffer{vehicle_id: vehicle_id, offer: offer}),
     do: Vehicle.apply_offer_accepted(vehicle_id, offer)
 
+  defp apply_event(%BookingUpdated{booking: booking}),
+    do: Booking.apply_update_to_state(booking)
+
+  defp apply_event(event),
+    do: IO.inspect(event, label: "Couldn't process event")
+
   def init_from_eventstore() do
     Logger.info("Restoring Vehicles & Bookings from storage")
 

@@ -104,8 +104,7 @@ defmodule Booking do
   def update(%{id: id} = booking_update) do
     with true <- Vex.valid?(struct(Booking, booking_update)),
          _ <- ES.add_event(%BookingUpdated{booking: booking_update}),
-         true <- GenServer.call(via_tuple(id), {:update, booking_update}) do
-      RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
+         true <- apply_update_to_state(booking_update) do
       id
     else
       e ->
@@ -165,6 +164,12 @@ defmodule Booking do
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "assigned"
     )
+  end
+
+  def apply_update_to_state(%{id: id} = booking_update) do
+    GenServer.call(via_tuple(id), {:update, booking_update})
+    RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
+    true
   end
 
   def add_event(booking_id, status)

@@ -86,11 +86,11 @@ defmodule Booking do
       booking
       |> Map.put(:route, Osrm.route(pickup, delivery))
       |> add_event_to_events_list("new", DateTime.utc_now())
-      |> (fn boooking ->
-            ES.add_event(%BookingRegistered{booking: boooking})
+      |> (fn booking ->
+        ES.add_event(%BookingRegistered{booking: booking})
 
-            booking
-          end).()
+        booking
+      end).()
       |> apply_booking_to_state()
 
       id

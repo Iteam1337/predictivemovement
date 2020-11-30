@@ -241,8 +241,6 @@ module.exports = (io) => {
 
       return {
         ...transport,
-        current_route: JSON.parse(transport.current_route),
-        metadata: JSON.parse(transport.metadata),
         status: transportRes.fields.routingKey,
       }
     })
@@ -265,8 +263,6 @@ module.exports = (io) => {
 
       return {
         ...booking,
-        route: JSON.parse(booking.route),
-        metadata: JSON.parse(booking.metadata),
         status: bookingRes.fields.routingKey,
       }
     })

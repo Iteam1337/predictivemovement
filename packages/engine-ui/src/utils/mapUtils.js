@@ -81,41 +81,36 @@ const planToFeature = (plan) => {
   let index = 0
   try {
     return [
-      ...plan.flatMap(
-        ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
-          index = i
-          if (currentRoute && activities && activities.length) {
-            const route = line(
-              currentRoute.geometry.coordinates.map(({ lat, lon }) => [
-                lon,
-                lat,
-              ]),
-              {
+      ...plan.flatMap(({ id, activities, currentRoute, routeIndex }, i) => {
+        index = i
+        if (currentRoute && activities?.length) {
+          const route = line(
+            currentRoute.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+            {
+              id,
+              properties: {
+                color: getColor(routeIndex || 0, 3),
+                offset: 0,
+                type: 'plan',
+              },
+            }
+          )
+
+          const points = activities
+            .filter(({ type }) => type !== 'start')
+            .map(({ address }) =>
+              point([address.lon, address.lat], {
                 id,
                 properties: {
-                  color: getColor(routeIndex || 0, 3),
-                  offset: 0,
-                  type: 'plan',
+                  color: getColor(routeIndex || 0, 4),
                 },
-              }
+              })
             )
 
-            const points = activities
-              .filter(({ type }) => type !== 'start')
-              .map(({ address }) =>
-                point([address.lon, address.lat], {
-                  id,
-                  properties: {
-                    color: getColor(routeIndex || 0, 4),
-                  },
-                })
-              )
-
-            return [...points, route]
-          }
-          return []
+          return [...points, route]
         }
-      ),
+        return []
+      }),
     ]
   } catch (error) {
     console.log(index, error)
@@ -165,13 +160,13 @@ const transportIcon = (transports) => {
   try {
     return [
       ...transports.flatMap(
-        ({ id, tail, start_address, location, color }, i) => {
+        ({ id, tail, startAddress, location, color }, i) => {
           index = i
           return [
             point(
               [
-                location?.lon || start_address.lon,
-                location?.lat || start_address.lat,
+                location?.lon || startAddress.lon,
+                location?.lat || startAddress.lat,
               ],
               {
                 properties: {

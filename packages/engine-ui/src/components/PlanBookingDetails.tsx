@@ -103,8 +103,8 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
               Upphämtning
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{booking.pickup.street}</CapitalizeParagraph>
-            {booking.pickup.time_windows &&
-              booking.pickup.time_windows.map((timeWindow) => (
+            {booking.pickup.timeWindows &&
+              booking.pickup.timeWindows.map((timeWindow) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
                   {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
                     ? `${moment(timeWindow.earliest).format(
@@ -143,8 +143,8 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{booking.delivery.street}</CapitalizeParagraph>
 
-            {booking.delivery.time_windows &&
-              booking.delivery.time_windows.map((timeWindow: any) => (
+            {booking.delivery.timeWindows &&
+              booking.delivery.timeWindows.map((timeWindow: any) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
                   {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
                   {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}

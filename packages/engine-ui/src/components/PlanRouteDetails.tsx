@@ -61,7 +61,7 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
   }
 
   const getMapCoordinates = () => {
-    if (!route.activities) return route.start_address
+    if (!route.activities) return route.startAddress
     return calculateCenter(route.activities)
   }
 
@@ -108,7 +108,7 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
               }
               to={`/transports/${route.id}`}
               onClick={() =>
-                panMapView(route.start_address.lat, route.start_address.lon)
+                panMapView(route.startAddress.lat, route.startAddress.lon)
               }
             >
               {route.metadata.profile?.toUpperCase() ||

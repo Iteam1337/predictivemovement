@@ -23,9 +23,25 @@ module.exports = (io) => {
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto((booking) => bookingsCache.set(booking.id, booking))
+      .map((b) => {
+        const {
+          assigned_to,
+          external_id,
+          requires_transport_id,
+          ...booking
+        } = b
+
+        return {
+          ...booking,
+          assignedTo: assigned_to,
+          externalId: external_id,
+          requiresTransportId: requires_transport_id,
+        }
+      })
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
+        console.log('bookings', JSON.stringify(bookings))
         socket.emit('bookings', bookings)
       })
 
@@ -81,8 +97,7 @@ module.exports = (io) => {
 
     socket.on('new-booking', (params) => {
       const booking = {
-        externalId: params.externalId,
-        senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
+        external_id: params.externalId,
         bookingDate: new Date().toISOString(),
         size: params.size,
         pickup: {
@@ -123,8 +138,8 @@ module.exports = (io) => {
       const transport = {
         id: params.id || id62(),
         capacity: params.capacity,
-        earliest_start: params.timewindow.start,
-        latest_end: params.timewindow.end,
+        earliest_start: params.earliestStart,
+        latest_end: params.latestEnd,
         start_address: params.startPosition,
         end_address:
           params.endPosition.hasOwnProperty('lon') &&

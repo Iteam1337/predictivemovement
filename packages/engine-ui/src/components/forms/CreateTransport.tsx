@@ -43,7 +43,7 @@ const Component = ({
   const handleDriverTimeRestrictionChange = (date: string, property: string) =>
     onChangeHandler((currentState: FormState) => ({
       ...currentState,
-      timewindow: { ...currentState.timewindow, [property]: date },
+      [property]: date,
     }))
 
   const handleTransportPresetSelectChange = (
@@ -99,7 +99,10 @@ const Component = ({
           <Elements.Layout.TimeRestrictionWrapper>
             <FormInputs.TimeRestriction.TransportTimeRestrictionPair
               handleFocus={() => dispatch({ type: 'resetInputClickState' })}
-              timewindow={formState.timewindow}
+              timewindow={{
+                earliestStart: formState.earliestStart,
+                latestEnd: formState.latestEnd,
+              }}
               onChangeHandler={handleDriverTimeRestrictionChange}
             />
           </Elements.Layout.TimeRestrictionWrapper>

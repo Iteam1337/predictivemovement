@@ -43,8 +43,8 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
             to={`/transports/${transport.id}`}
             onClick={() =>
               onClickHandler(
-                transport.start_address.lat,
-                transport.start_address.lon
+                transport.startAddress.lat,
+                transport.startAddress.lon
               )
             }
           >

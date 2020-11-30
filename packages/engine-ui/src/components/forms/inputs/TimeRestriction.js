@@ -121,7 +121,7 @@ export const BookingTimeRestrictionPair = ({
 
 export const TransportTimeRestrictionPair = ({
   onChangeHandler,
-  timewindow,
+  timewindow: { earliestStart, latestEnd },
   handleFocus,
 }) => {
   const timeRestrictionInputRef = React.useRef()
@@ -129,8 +129,8 @@ export const TransportTimeRestrictionPair = ({
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
         <TransportTimeRestriction
-          selected={timewindow.start}
-          onChangeHandler={(date) => onChangeHandler(date, 'start', 'start')}
+          selected={earliestStart}
+          onChangeHandler={(date) => onChangeHandler(date, 'eartliestStart')}
           placeholderText="Starttid"
           inputElement={
             <DateInput
@@ -143,9 +143,9 @@ export const TransportTimeRestrictionPair = ({
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
         <TransportTimeRestriction
-          selected={timewindow.end}
-          minDate={timewindow.start ? new Date(timewindow.start) : new Date()}
-          onChangeHandler={(date) => onChangeHandler(date, 'end', 'end')}
+          selected={latestEnd}
+          minDate={earliestStart ? new Date(earliestStart) : new Date()}
+          onChangeHandler={(date) => onChangeHandler(date, 'latestEnd')}
           placeholderText="Sluttid"
           inputElement={
             <DateInput

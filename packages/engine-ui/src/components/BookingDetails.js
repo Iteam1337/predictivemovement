@@ -195,8 +195,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
               Upphämtning
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
-            {pickup.time_windows &&
-              pickup.time_windows.map((timeWindow) => (
+            {pickup.timeWindows &&
+              pickup.timeWindows.map((timeWindow) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
                   {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
                     ? `${moment(timeWindow.earliest).format(
@@ -233,8 +233,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
 
-            {delivery.time_windows &&
-              delivery.time_windows.map((timeWindow) => (
+            {delivery.timeWindows &&
+              delivery.timeWindows.map((timeWindow) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
                   {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
                   {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}

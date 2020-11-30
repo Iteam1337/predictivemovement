@@ -15,7 +15,7 @@ const parcelSizePresets = {
   big: { weight: 50, measurements: '36x36x36' },
 }
 
-const initialState = {
+export const initialState = {
   externalId: '',
   cargo: '',
   fragile: false,

@@ -30,7 +30,7 @@ interface BookingRoute {
 
 export interface Booking {
   id: string
-  external_id?: string
+  externalId?: string
   pickup: ParcelAddress
   delivery: ParcelAddress
   metadata: Metadata
@@ -44,7 +44,7 @@ type ParcelAddress = {
   lon: number
   street: string
   city: string
-  time_windows: TimeWindow[] | null
+  timeWindows: TimeWindow[] | null
 }
 
 type Size = {
@@ -68,18 +68,18 @@ export type InAppColor = string
 
 export type Transport = {
   activities: Activity[] | null
-  booking_ids: string[] | null
+  bookingIds: string[] | null
   busy: any
   capacity?: { weight?: number; volume?: number }
   color: InAppColor
-  current_route: any
-  earliest_start: Date
-  end_address: Address
+  currentRoute: any
+  earliestStart: Date
+  endAddress: Address
   id: string
-  latest_end: Date
+  latestEnd: Date
   metadata: { profile?: string }
   name?: string
-  start_address: Address
+  startAddress: Address
 }
 
 export type NotificationType = Transport | Booking
@@ -98,16 +98,16 @@ export interface Plan {
 
 export interface Route {
   activities: Activity[] | null
-  booking_ids: string[] | null
+  bookingIds: string[] | null
   busy: any
   capacity?: { weight?: number; volume?: number }
-  current_route: any
-  earliest_start: Date
-  end_address: Address
+  currentRoute: any
+  earliestStart: Date
+  endAddress: Address
   id: string
-  latest_end: Date
+  latestEnd: Date
   metadata: { profile?: string }
-  start_address: Address
+  startAddress: Address
 }
 
 export interface Address {

@@ -36,7 +36,7 @@ defmodule BookingUpdatesProcessorTest do
 
     booking_id =
       Booking.make(%{
-        externalId: 1,
+        external_id: 1,
         size: %{weight: 1, measurements: [1, 1, 1]},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
         delivery: %{lat: 61.80762475411504, lon: 17.05761905846783},
@@ -62,7 +62,7 @@ defmodule BookingUpdatesProcessorTest do
 
     booking_id =
       Booking.make(%{
-        externalId: 1,
+        external_id: 1,
         size: %{weight: 1, measurements: [1, 1, 1]},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
         delivery: %{lat: 61.80762475411504, lon: 17.05761905846783},

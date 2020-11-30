@@ -59,7 +59,7 @@ module.exports = (io) => {
 
       return {
         ...transport,
-        current_route: JSON.parse(transport.current_route),
+        currentRoute: JSON.parse(transport.current_route),
         metadata: JSON.parse(transport.metadata),
       }
     })
@@ -79,7 +79,7 @@ module.exports = (io) => {
         ...planFromMsg,
         transports: planFromMsg.vehicles.map((route) => ({
           ...route,
-          current_route: JSON.parse(route.current_route),
+          currentRoute: JSON.parse(route.current_route),
           metadata: JSON.parse(route.metadata),
         })),
       }
@@ -133,6 +133,7 @@ module.exports = (io) => {
   ///////// Publishers
 
   const createBooking = (booking) => {
+    console.log('booking to create', booking)
     return amqp
       .exchange('incoming_booking_updates', 'topic', {
         durable: true,
@@ -206,7 +207,7 @@ module.exports = (io) => {
 
       return {
         ...transport,
-        current_route: JSON.parse(transport.current_route),
+        currentRoute: JSON.parse(transport.current_route),
         metadata: JSON.parse(transport.metadata),
         status: transportRes.fields.routingKey,
       }

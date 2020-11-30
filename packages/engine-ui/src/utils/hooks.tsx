@@ -59,12 +59,12 @@ export const useFilteredStateFromQueryParams = (state: State) => {
     if (transportDetailView) {
       return transport
     }
-    const { current_route, ...rest } = transport
+    const { currentRoute, ...rest } = transport
 
     return rest
   }
   const includeOneTransportIfDetailView = (
-    transport: Transport | Omit<Transport, 'current_route'>
+    transport: Transport | Omit<Transport, 'currentRoute'>
   ) =>
     transportDetailView ? transportDetailView.params.id === transport.id : true
 

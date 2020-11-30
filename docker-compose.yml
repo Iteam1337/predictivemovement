@@ -40,6 +40,7 @@ services:
     build: ./packages/engine-server
     environment:
       - AMQP_URL=amqp://rabbitmq
+      - POSTNORD_KEY=${POSTNORD_KEY}
     ports:
       - 4000:4000
     networks:

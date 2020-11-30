@@ -196,12 +196,12 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
                   {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
                     ? `${moment(timeWindow.earliest).format(
-                        'YYYY-MM-DD, hh:mm'
-                      )} - ${moment(timeWindow.latest).format('hh:mm')}`
+                        'YYYY-MM-DD, HH:mm'
+                      )} - ${moment(timeWindow.latest).format('HH:mm')}`
                     : `${moment(timeWindow.earliest).format(
-                        'YYYY-MM-DD, hh:mm'
+                        'YYYY-MM-DD, HH:mm'
                       )} -
-              ${moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}`}
+              ${moment(timeWindow.latest).format('YYYY-MM-DD, HH:mm')}`}
                 </Elements.Typography.SmallInfoBold>
               ))}
           </Elements.Layout.MarginBottomContainer>
@@ -232,8 +232,14 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             {delivery.time_windows &&
               delivery.time_windows.map((timeWindow) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
-                  {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
-                  {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}
+                  {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
+                    ? `${moment(timeWindow.earliest).format(
+                        'YYYY-MM-DD, HH:mm'
+                      )} - ${moment(timeWindow.latest).format('HH:mm')}`
+                    : `${moment(timeWindow.earliest).format(
+                        'YYYY-MM-DD, HH:mm'
+                      )} -
+              ${moment(timeWindow.latest).format('YYYY-MM-DD, HH:mm')}`}
                 </Elements.Typography.SmallInfoBold>
               ))}
           </Elements.Layout.MarginBottomContainer>

@@ -20,17 +20,42 @@ const DropdownButton = styled.button`
   :focus {
     outline-color: #13c57b;
   }
+  background-color: #f1f3f5;
+  margin: 0;
 `
 
 const Component = ({
   onChangeHandler,
+  onFocusHandler,
   placeholder,
   value,
   formError,
   ...rest
 }) => {
+  const getFavoriteAddresses = () => {
+    let favoriteAddresses
+
+    try {
+      favoriteAddresses =
+        JSON.parse(localStorage.getItem('favoriteAddresses')) || []
+    } catch (ex) {
+      favoriteAddresses = []
+    }
+
+    return favoriteAddresses
+  }
+
+  const isFavorite = (name) => {
+    return getFavoriteAddresses().some((a) => a.name === name)
+  }
+
   const [showDropdown, setShowDropdown] = React.useState(false)
-  const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses([])
+  const [showSaveFavorite, setShowSaveFavorite] = React.useState(false)
+  const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses(
+    getFavoriteAddresses()
+  )
+
+  const [selectedAddress, setSelectedAddress] = React.useState({})
 
   const searchWithDebounce = React.useMemo(
     () => debounce((q) => search(q, () => setShowDropdown(true)), 300),
@@ -39,6 +64,7 @@ const Component = ({
 
   const onSearchInputHandler = (event) => {
     event.persist()
+    setShowSaveFavorite(false)
     searchWithDebounce(event.target.value)
 
     return onChangeHandler({ name: event.target.value })
@@ -47,12 +73,34 @@ const Component = ({
   const handleDropdownSelect = (event, address) => {
     event.persist()
     setShowDropdown(false)
-
-    return onChangeHandler({
+    setShowSaveFavorite(!isFavorite(address.name))
+    const selected = {
       ...address,
       name: `${address.name}, ${address.county}`,
       street: address.name,
-    })
+    }
+    setSelectedAddress(address)
+    return onChangeHandler(selected)
+  }
+
+  const saveAsFavorite = () => {
+    const favoriteAddresses = getFavoriteAddresses()
+
+    if (isFavorite(selectedAddress.name)) return false
+
+    const displayName = prompt(
+      'Namn på denna favoritposition',
+      `${selectedAddress.name}, ${selectedAddress.county}`
+    )
+    if (!displayName) return false
+    selectedAddress.displayName = displayName
+
+    localStorage.setItem(
+      'favoriteAddresses',
+      JSON.stringify(favoriteAddresses.concat([selectedAddress]))
+    )
+
+    setShowSaveFavorite(false)
   }
 
   return (
@@ -76,6 +124,13 @@ const Component = ({
         value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
+        onFocus={() => {
+          setShowDropdown(getFavoriteAddresses().length > 0)
+          return onFocusHandler()
+        }}
+        onBlur={() => {
+          setShowDropdown(false)
+        }}
         iconInset
       />
 
@@ -85,12 +140,24 @@ const Component = ({
             <DropdownButton
               key={index}
               name={address.name}
-              onClick={(event) => handleDropdownSelect(event, address)}
+              onMouseDown={(event) => handleDropdownSelect(event, address)}
             >
-              {address.name}, {address.county}
+              {address.displayName}
             </DropdownButton>
           ))}
         </DropdownWrapper>
+      )}
+
+      {showSaveFavorite && (
+        <Elements.Buttons.CancelButton
+          padding="0.5rem"
+          style={{
+            marginTop: '0.5rem',
+          }}
+          onClick={saveAsFavorite}
+        >
+          Spara som favoritposition
+        </Elements.Buttons.CancelButton>
       )}
     </Elements.Layout.InputInnerContainer>
   )

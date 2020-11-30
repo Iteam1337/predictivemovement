@@ -8,11 +8,14 @@ import * as Elements from '../shared-elements'
 import * as helpers from '../utils/helpers'
 import { Route, InAppColor, Activity } from '../types'
 import * as stores from '../utils/state/stores'
+import MoveMenu from './MoveMenu'
 
 interface Props {
-  route: Route
   color?: InAppColor
+  route: Route
   routeNumber: number
+  transports: Route[]
+  moveBooking: (bookingId: string, transportId: string) => void
 }
 
 const RouteTitleWrapper = styled.div`
@@ -29,7 +32,25 @@ const Chevron = styled(Icons.Arrow)`
   justify-self: flex-end;
 `
 
-const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
+const BookingsList = styled.ul`
+  list-style: none;
+  padding: 0;
+`
+
+const BookingListItem = styled.li`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+  margin-left: 1rem;
+`
+
+const PlanRouteDetails = ({
+  route,
+  routeNumber,
+  transports,
+  color,
+  moveBooking,
+}: Props) => {
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
@@ -90,7 +111,6 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
         </Elements.Typography.StrongParagraph>
         <Chevron active={routeId === route.id ? true : undefined} />
       </RouteTitleWrapper>
-
       {routeId === route.id && (
         <>
           <Elements.Layout.FlexRowWrapper>
@@ -111,10 +131,26 @@ const PlanRouteDetails = ({ route, routeNumber, color }: Props) => {
                 panMapView(route.startAddress.lat, route.startAddress.lon)
               }
             >
-              {route.metadata.profile?.toUpperCase() ||
+              {route.metadata?.profile?.toUpperCase() ||
                 helpers.getLastFourChars(route.id).toUpperCase()}
             </Elements.Links.RoundedLink>
           </Elements.Layout.FlexRowWrapper>
+          Bookingar på rutt:
+          <BookingsList>
+            {route.booking_ids?.map((bookingId) => (
+              <BookingListItem key={bookingId}>
+                <Elements.Links.RoundedLink to={`/bookings/${bookingId}`}>
+                  {helpers.getLastFourChars(bookingId).toUpperCase()}
+                </Elements.Links.RoundedLink>
+                <MoveMenu
+                  transports={transports}
+                  bookingId={bookingId}
+                  currentTransportId={route.id}
+                  moveBooking={moveBooking}
+                />
+              </BookingListItem>
+            ))}
+          </BookingsList>
           <RouteActivities route={route} />
         </>
       )}

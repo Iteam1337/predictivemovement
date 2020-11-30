@@ -30,7 +30,7 @@ const Component = ({
   const history = useHistory()
   const [useCustomCapacity, setUseCustomCapacity] = React.useState(false)
   const [showEndPositionInput, setShowEndPositionInput] = React.useState(false)
-
+  const isMobile = window.innerWidth <= 645
   const toggleShowEndPositionInput = () => {
     setShowEndPositionInput((showEndPosition) => !showEndPosition)
 
@@ -120,7 +120,7 @@ const Component = ({
               'startPosition',
               onChangeHandler
             )}
-            onFocus={() =>
+            onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
                 payload: 'start',
@@ -145,7 +145,7 @@ const Component = ({
                 'endPosition',
                 onChangeHandler
               )}
-              onFocus={() =>
+              onFocusHandler={() =>
                 dispatch({
                   type: 'focusInput',
                   payload: 'end',
@@ -287,16 +287,17 @@ const Component = ({
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
-
-      <Elements.Layout.ButtonWrapper>
+      <Elements.Layout.ButtonWrapper isMobile={isMobile}>
         <Elements.Buttons.CancelButton
           type="button"
+          width={`${isMobile && '100%'}`}
+          marginTop={`${isMobile && '0.7rem'}`}
           onClick={() => history.push('/transports')}
         >
           Avbryt
         </Elements.Buttons.CancelButton>
         <Elements.Buttons.SubmitButton
-          width="48.5%"
+          width={`${isMobile ? '100%' : '48.5%'}`}
           padding="0.75rem 0"
           type="submit"
         >

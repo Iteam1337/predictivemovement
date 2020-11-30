@@ -38,6 +38,8 @@ const notificationMessages = {
   [EntityType.TRANSPORT]: {
     [TransportStatus.NEW]: 'En ny transport har lags till:',
     [TransportStatus.NEW_INSTRUCTIONS]: 'En ny rutt har bekräftats:',
+    [TransportStatus.LOGIN]: 'En förare har loggat in:',
+    [TransportStatus.FINISHED]: 'En transport har slutfört sin rutt:',
   },
 }
 
@@ -103,7 +105,7 @@ const Notifications: React.FC<{
             notification.type,
             messageElementFromNotification(notification),
             notification.type === EntityType.TRANSPORT
-              ? notification.transport.metadata.profile
+              ? notification.transport.metadata?.profile
               : undefined
           )}
         </NotificationComponent>

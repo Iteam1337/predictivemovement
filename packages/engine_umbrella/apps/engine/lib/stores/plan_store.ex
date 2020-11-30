@@ -11,18 +11,17 @@ defmodule PlanStore do
     {:ok, %{vehicles: []}}
   end
 
-  def handle_call({:put, new_plan}, _from, _state) do
-    IO.puts("publishing new plan")
-    RMQ.publish(new_plan, @outgoing_plan_exchange)
-    {:reply, :ok, new_plan}
-  end
+  def handle_call({:put, new_plan}, _from, _state), do: {:reply, new_plan, new_plan}
 
   def handle_call(:get, _from, state) do
     {:reply, state, state}
   end
 
   def put_plan(plan) do
+    IO.puts("publishing new plan")
+
     GenServer.call(__MODULE__, {:put, plan})
+    |> RMQ.publish(@outgoing_plan_exchange)
   end
 
   def get_plan() do

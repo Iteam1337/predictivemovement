@@ -77,7 +77,7 @@ export type Transport = {
   endAddress: Address
   id: string
   latestEnd: Date
-  metadata: { profile?: string }
+  metadata?: { profile?: string }
   name?: string
   startAddress: Address
 }
@@ -106,7 +106,7 @@ export interface Route {
   endAddress: Address
   id: string
   latestEnd: Date
-  metadata: { profile?: string }
+  metadata?: { profile?: string }
   startAddress: Address
 }
 

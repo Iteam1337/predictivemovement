@@ -8,11 +8,11 @@ defmodule Engine.Adapters.RMQRPCWorker do
     RMQ.get_connection()
   end
 
-  def call(data, queue) do
+  def call(data, queue, timeout \\ 20000) do
     {:ok, pid} = GenServer.start_link(__MODULE__, [])
 
     try do
-      {:ok, GenServer.call(pid, {:call, data, queue})}
+      {:ok, GenServer.call(pid, {:call, data, queue}, timeout)}
     catch
       :exit, {:timeout, _} ->
         Logger.error("RPC call to #{queue} timed out")
@@ -32,12 +32,14 @@ defmodule Engine.Adapters.RMQRPCWorker do
       )
 
     Basic.consume(channel, queue_name, nil, no_ack: false)
-    IO.puts("Engine wants response from #{queue} to #{queue_name}")
+    Logger.info("Engine wants response from #{queue} to #{queue_name}")
 
     correlation_id =
       :erlang.unique_integer()
       |> :erlang.integer_to_binary()
       |> Base.encode64()
+
+    start_of_rpc = Time.utc_now()
 
     Basic.publish(
       channel,
@@ -50,6 +52,12 @@ defmodule Engine.Adapters.RMQRPCWorker do
     )
 
     msg = wait_for_messages(channel, correlation_id)
+
+    Logger.info(
+      "Engine got response from #{queue_name} for #{queue}, which took #{
+        Time.diff(Time.utc_now(), start_of_rpc)
+      } seconds"
+    )
 
     {:stop, :normal, msg, conn}
   end

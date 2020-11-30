@@ -24,6 +24,20 @@ const Component = ({
     pickup: false,
     delivery: false,
   })
+  const isMobile = window.innerWidth <= 645
+
+  const handleParcelSearchResults = ({ weight, measurements }) => {
+    if (!weight || !measurements) return null
+
+    onChangeHandler((currentState) => ({
+      ...currentState,
+      size: {
+        weight,
+        measurements: measurements.length ? measurements.join('x') : null,
+      },
+    }))
+    setUseCustomSize(true)
+  }
 
   const handleBookingTimeRestrictionChange = (date, type, property) =>
     onChangeHandler((currentState) => {
@@ -59,13 +73,6 @@ const Component = ({
       : addTimeRestrictionWindow(propertyName)
   }
 
-  const handleFragileParcelChange = () => {
-    onChangeHandler((currentState) => ({
-      ...currentState,
-      fragile: !currentState.fragile,
-    }))
-  }
-
   const handleParcelSizeSelectChange = (e) => {
     if (e.target.value === 'custom') {
       setUseCustomSize(!useCustomSize)
@@ -77,7 +84,7 @@ const Component = ({
         },
       }))
     }
-    
+
     return onChangeHandler((currentState) => ({
       ...currentState,
       size: parcelSizePresets[e.target.value],
@@ -112,14 +119,20 @@ const Component = ({
           <Elements.Form.Label htmlFor="parceldetails">
             Paketspecifikationer
           </Elements.Form.Label>
-          <FormInputs.TextInput
-            name="external-id"
-            value={state.externalId}
+          <FormInputs.ExternalIdSearchInput
             placeholder="Referensnummer från avsändare"
+            value={state.externalId}
+            onFocus={() =>
+              dispatch({
+                type: 'focusInput',
+                payload: 'start',
+              })
+            }
             onChangeHandler={eventHandlers.handleTextInputChange(
               'externalId',
               onChangeHandler
             )}
+            onSearchResult={handleParcelSearchResults}
           />
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer>
@@ -202,7 +215,7 @@ const Component = ({
           formErrors={formErrors.pickup}
           placeholder="Adress (sök eller klicka på karta)"
           value={state.pickup.name}
-          onFocus={() =>
+          onFocusHandler={() =>
             dispatch({
               type: 'focusInput',
               payload: 'start',
@@ -283,7 +296,7 @@ const Component = ({
             />
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              pattern="^[0-9]*$"
+              pattern="^[0-9]*$|^-$"
               iconInset
               name="sender"
               value={state.sender.contact}
@@ -307,7 +320,7 @@ const Component = ({
           placeholder="Adress (sök eller klicka på karta)"
           value={state.delivery.name}
           formErrors={formErrors.delivery}
-          onFocus={() =>
+          onFocusHandler={() =>
             dispatch({
               type: 'focusInput',
               payload: 'end',
@@ -391,7 +404,7 @@ const Component = ({
             <FormInputs.TextInput
               iconInset
               name="recipient-contact"
-              pattern="^[0-9]*$"
+              pattern="^[0-9]*$|^-$"
               value={state.recipient.contact}
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleNestedInputChange(
@@ -405,15 +418,17 @@ const Component = ({
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
-      <Elements.Layout.ButtonWrapper>
+      <Elements.Layout.ButtonWrapper isMobile={isMobile}>
         <Elements.Buttons.CancelButton
           type="button"
+          width={`${isMobile && '100%'}`}
+          marginTop={`${isMobile && '0.7rem'}`}
           onClick={() => history.push('/bookings')}
         >
           Avbryt
         </Elements.Buttons.CancelButton>
         <Elements.Buttons.SubmitButton
-          width="48.5%"
+          width={`${isMobile ? '100%' : '48.5%'}`}
           padding="0.75rem 0"
           type="submit"
         >

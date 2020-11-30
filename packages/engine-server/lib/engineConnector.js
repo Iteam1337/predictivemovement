@@ -3,6 +3,10 @@ const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, transportsCache } = require('./cache')
 
 const routingKeys = {
+  TRANSPORT: {
+    LOGIN: 'login',
+    FINISHED: 'finished',
+  },
   NEW: 'new',
   REGISTERED: 'registered',
   ASSIGNED: 'assigned',
@@ -11,6 +15,7 @@ const routingKeys = {
   PICKED_UP: 'picked_up',
   NEW_INSTRUCTIONS: 'new_instructions',
   DELETED: 'deleted',
+  BOOKING_MOVED: 'booking_moved',
   UPDATED: 'updated',
 }
 
@@ -182,6 +187,21 @@ module.exports = (io) => {
       .then(() => console.log(` [x] Delete booking ${id}`))
   }
 
+  const publishMoveBooking = (bookingId, transportId) => {
+    return amqp
+      .exchange('incoming_booking_updates', 'topic', { durable: true })
+      .publish(
+        JSON.stringify({ id: bookingId, requires_transport_id: transportId }),
+        routingKeys.BOOKING_MOVED,
+        {
+          persistent: true,
+        }
+      )
+      .then(() =>
+        console.log(` Move booking ${bookingId} to transport ${transportId} `)
+      )
+  }
+
   const publishDeleteTransport = (id) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', {
@@ -192,6 +212,21 @@ module.exports = (io) => {
       })
       .then(() => console.log(` [x] Delete transport ${id}`))
   }
+
+  const transportEvents = amqp
+    .exchange('incoming_vehicle_updates', 'topic', { durable: true })
+    .queue('transport_notifications.admin_ui', { durable: true })
+    .subscribe({ noAck: true }, [
+      routingKeys.TRANSPORT.LOGIN,
+      routingKeys.TRANSPORT.FINISHED,
+    ])
+    .map((res) => {
+      const { id } = res.json()
+      return {
+        id,
+        event: res.fields.routingKey,
+      }
+    })
 
   const transportNotifications = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
@@ -272,9 +307,11 @@ module.exports = (io) => {
     plan,
     publishDeleteBooking,
     publishDeleteTransport,
+    publishMoveBooking,
     dispatchOffers,
     createTransport,
     createBooking,
+    transportEvents,
     transportLocationUpdates,
     transportNotifications,
     bookingNotifications,

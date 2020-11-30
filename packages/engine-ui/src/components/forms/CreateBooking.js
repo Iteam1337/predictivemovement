@@ -120,8 +120,6 @@ const Component = ({
             Paketspecifikationer
           </Elements.Form.Label>
           <FormInputs.ExternalIdSearchInput
-            required
-            formErrors={formErrors.externalId}
             placeholder="Referensnummer från avsändare"
             value={state.externalId}
             onFocus={() =>
@@ -130,10 +128,9 @@ const Component = ({
                 payload: 'start',
               })
             }
-            onChangeHandler={eventHandlers.handleAddressInputForBooking(
+            onChangeHandler={eventHandlers.handleTextInputChange(
               'externalId',
-              onChangeHandler,
-              setFormErrors
+              onChangeHandler
             )}
             onSearchResult={handleParcelSearchResults}
           />
@@ -218,7 +215,7 @@ const Component = ({
           formErrors={formErrors.pickup}
           placeholder="Adress (sök eller klicka på karta)"
           value={state.pickup.name}
-          onFocus={() =>
+          onFocusHandler={() =>
             dispatch({
               type: 'focusInput',
               payload: 'start',
@@ -299,7 +296,7 @@ const Component = ({
             />
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              pattern="^[0-9]*$"
+              pattern="^[0-9]*$|^-$"
               iconInset
               name="sender"
               value={state.sender.contact}
@@ -323,7 +320,7 @@ const Component = ({
           placeholder="Adress (sök eller klicka på karta)"
           value={state.delivery.name}
           formErrors={formErrors.delivery}
-          onFocus={() =>
+          onFocusHandler={() =>
             dispatch({
               type: 'focusInput',
               payload: 'end',
@@ -407,7 +404,7 @@ const Component = ({
             <FormInputs.TextInput
               iconInset
               name="recipient-contact"
-              pattern="^[0-9]*$"
+              pattern="^[0-9]*$|^-$"
               value={state.recipient.contact}
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               onChangeHandler={eventHandlers.handleNestedInputChange(

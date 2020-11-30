@@ -44,31 +44,6 @@ defmodule Vehicle do
   def handle_call(:get, _from, state), do: {:reply, state, state}
 
   def handle_call(
-        {:offer, %{} = offer},
-        _from,
-        vehicle
-      ) do
-    Logger.debug("offer to vehicle #{vehicle.id}")
-
-    RMQRPCWorker.call(
-      %{
-        vehicle: %{id: vehicle.id, metadata: vehicle.metadata},
-        current_route: offer.current_route,
-        activities: offer.activities,
-        booking_ids: offer.booking_ids
-      },
-      "offer_booking_to_vehicle"
-    )
-    |> case do
-      {:ok, response} ->
-        {:reply, Jason.decode(response), vehicle}
-
-      _ ->
-        {:reply, false, vehicle}
-    end
-  end
-
-  def handle_call(
         {:apply_offer_accepted, offer},
         _from,
         current_vehicle
@@ -78,10 +53,6 @@ defmodule Vehicle do
     updated_vehicle =
       current_vehicle
       |> Map.merge(offer)
-      |> RMQ.publish(
-        Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
-        "new_instructions"
-      )
 
     {:reply, updated_vehicle, updated_vehicle}
   end
@@ -114,11 +85,10 @@ defmodule Vehicle do
     vehicle = struct(Vehicle, vehicle_fields)
 
     with true <- Vex.valid?(vehicle) do
-      vehicle
-      |> apply_vehicle_to_state()
-      |> (&%VehicleRegistered{vehicle: &1}).()
+      %VehicleRegistered{vehicle: vehicle}
       |> ES.add_event()
 
+      apply_vehicle_to_state(vehicle)
       vehicle_fields.id
     else
       _ ->
@@ -168,8 +138,13 @@ defmodule Vehicle do
     end
   end
 
-  def apply_offer_accepted(id, offer),
-    do: GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
+  def apply_offer_accepted(id, offer) do
+    GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
+    |> RMQ.publish(
+      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+      "new_instructions"
+    )
+  end
 
   def apply_vehicle_to_state(%Vehicle{id: id} = vehicle) do
     GenServer.start_link(
@@ -219,16 +194,36 @@ defmodule Vehicle do
         |> Osrm.route()
     }
 
-    case GenServer.call(via_tuple(id), {:offer, offer}) do
+    case send_offer(offer, id) do
       {:ok, true} ->
-        updated_state = apply_offer_accepted(id, offer)
-
         ES.add_event(%DriverAcceptedOffer{vehicle_id: id, offer: offer})
+        updated_state = apply_offer_accepted(id, offer)
 
         Enum.each(booking_ids, &Booking.assign(&1, updated_state))
 
       {:ok, false} ->
-        Logger.info("Driver didnt want the booking :(")
+        Logger.info("Driver didnt accept booking :(")
+    end
+  end
+
+  def send_offer(offer, vehicle_id) do
+    Logger.debug("offer to vehicle #{vehicle_id}")
+
+    RMQRPCWorker.call(
+      %{
+        vehicle: %{id: vehicle_id},
+        current_route: offer.current_route,
+        activities: offer.activities,
+        booking_ids: offer.booking_ids
+      },
+      "offer_booking_to_vehicle"
+    )
+    |> case do
+      {:ok, response} ->
+        Jason.decode(response)
+
+      _ ->
+        {:ok, false}
     end
   end
 end

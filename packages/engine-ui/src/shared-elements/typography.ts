@@ -31,8 +31,8 @@ const InfoMd = styled.p`
   margin-bottom: 0.25rem;
 `
 
-const SemiBoldParagraph = styled.p`
-  font-weight: semibold;
+const BoldParagraph = styled.p`
+  font-weight: bold;
 `
 
 const InfoSmStrong = styled(InfoSm)`
@@ -99,7 +99,7 @@ export {
   RoundedLabelDisplay,
   CleanH4,
   SmallInfoBold,
-  SemiBoldParagraph,
+  BoldParagraph,
   SpanBold,
   InfoSmStrong,
   ErrorMessage,

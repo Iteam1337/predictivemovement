@@ -1,10 +1,13 @@
 import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
-import transportDefaultIcon from '../assets/transport.svg'
-import transportSelectedIcon from '../assets/transport--selected.svg'
 import parcelIcon from '../assets/parcel.svg'
 import * as helpers from './helpers'
 import excludedParcelIcon from '../assets/excluded-parcel.svg'
+import IconClusterLayer from './IconClusterLayer'
+import iconMapping from '../assets/location-icon-mapping.json'
+import iconMappingTransports from '../assets/icon-mapping-transports.json'
+import iconAtlasBookings from '../assets/icon-atlas-bookings.png'
+import iconAtlasTransports from '../assets/icon-atlas-transports.png'
 
 const point = (coordinates, props) => ({
   type: 'Feature',
@@ -184,56 +187,6 @@ const toGeoJsonLayer = (id, data, callback) =>
     onClick: callback,
   })
 
-const toTransportIconLayer = (transports, activeId) => {
-  if (!transports.length) {
-    return
-  }
-
-  const iconData = transports.flatMap(
-    ({ id, start_address, location, color }) => ({
-      coordinates: [
-        location?.lon || start_address.lon,
-        location?.lat || start_address.lat,
-      ],
-      properties: {
-        id,
-        color,
-        icon: transportDefaultIcon,
-        highlightIcon: transportSelectedIcon,
-        size: 7,
-        highlightSize: 9,
-        type: 'transport',
-      },
-    })
-  )
-
-  return new IconLayer({
-    id: 'transport-icon',
-    data: iconData,
-    pickable: true,
-    getIcon: (d) => {
-      return {
-        url:
-          d.properties.id === activeId
-            ? d.properties.highlightIcon
-            : d.properties.icon,
-        mask: true,
-        width: 128,
-        height: 128,
-      }
-    },
-    sizeScale: 5,
-    getPosition: (d) => d.coordinates,
-    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
-    getSize: (d) =>
-      d.properties.id === activeId
-        ? d.properties.highlightSize
-        : d.properties.size,
-    getColor: (d) =>
-      helpers.hexToRGBA(d.properties.color, d.properties.opacity),
-  })
-}
-
 const toExcludedBookingIcon = (booking, activeId) => {
   if (!booking) {
     return
@@ -313,6 +266,61 @@ const toBookingIconLayer = (
   })
 }
 
+const toIconClusterLayer = ({ data, type, properties }) => {
+  const layerProps = {
+    data,
+    pickable: true,
+    getPosition: (d) => d.coordinates,
+    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
+    getColor: (d) =>
+      helpers.hexToRGBA(
+        d.properties.active ? '#19DE8B' : '#ffffff',
+        d.properties.opacity
+      ),
+
+    iconAtlas: iconAtlasBookings,
+    iconMapping,
+    ...properties,
+  }
+
+  return new IconClusterLayer({
+    ...layerProps,
+    id: `icon-cluster-${type}`,
+    sizeScale: 45,
+  })
+}
+
+const toTransportIconLayer = (transports, activeId) => {
+  if (!transports.length) {
+    return
+  }
+
+  return toIconClusterLayer({
+    type: 'transports',
+    data: transports.flatMap(({ id, start_address, location, color }) => ({
+      coordinates: [
+        location?.lon || start_address.lon,
+        location?.lat || start_address.lat,
+      ],
+      active: id === activeId,
+      color,
+    })),
+    properties: {
+      iconAtlas: iconAtlasTransports,
+      iconMapping: iconMappingTransports,
+      getColor: (d) => {
+        if (d.properties.cluster) {
+          return helpers.hexToRGBA(
+            d.properties.active ? '#19DE8B' : '#ffffff',
+            d.properties.opacity
+          )
+        }
+        return helpers.hexToRGBA(d.properties.color, d.properties.opacity)
+      },
+    },
+  })
+}
+
 export {
   feature,
   point,
@@ -322,6 +330,7 @@ export {
   toGeoJsonLayer,
   toBookingIconLayer,
   toTransportIconLayer,
+  toIconClusterLayer,
   toTextLayer,
   routeActivitiesToFeature,
   toExcludedBookingIcon,

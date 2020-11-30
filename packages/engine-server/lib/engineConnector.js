@@ -133,7 +133,6 @@ module.exports = (io) => {
   ///////// Publishers
 
   const createBooking = (booking) => {
-    console.log('booking to create', booking)
     return amqp
       .exchange('incoming_booking_updates', 'topic', {
         durable: true,

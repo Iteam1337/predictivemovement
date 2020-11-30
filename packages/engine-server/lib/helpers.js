@@ -21,7 +21,6 @@ const bookingToNotification = (booking) => ({
     id: booking.id,
     status: booking.status,
   },
-  booking,
 })
 
 const transportToNotification = (transport, event) => ({
@@ -31,7 +30,7 @@ const transportToNotification = (transport, event) => ({
     id: transport.id,
     status: event || transport.status,
   },
-  transport,
+  transportName: transport.metadata?.profile,
 })
 
 const changeFormatOnPhoneNumber = (phoneNumber) => {

@@ -108,50 +108,48 @@ const RouteActivities = ({ route }: Props) => {
   return (
     <Wrapper>
       {groupByLocation(activities).map((activityGroup, index) => (
-        <>
-          <ActivityInfo key={index}>
-            <p>{index + 1}</p>
+        <ActivityInfo key={index}>
+          <p>{index + 1}</p>
 
-            <div>
-              <p>
-                {getDistance(activityGroup[0].distance)} km, c:a
-                {getDuration(activityGroup[0].duration)} min
-              </p>
-            </div>
-            <div>
-              <p>{getLabelForActivities(activityGroup[0].type)}</p>
-            </div>
-            <ActivityGroup>
-              {activityGroup.map((activity, i) => (
-                <Elements.Links.RoundedLink
-                  key={i}
-                  onMouseOver={() =>
-                    setUIState({
-                      type: 'highlightBooking',
-                      payload: activity.id,
-                    })
-                  }
-                  onMouseLeave={() =>
-                    setUIState({ type: 'highlightBooking', payload: undefined })
-                  }
-                  to={() => redirectTo(activity.id)}
-                  onClick={() =>
-                    setMap({
-                      latitude: activity.address.lat,
-                      longitude: activity.address.lon,
-                      zoom: 10,
-                      transitionDuration: 2000,
-                      transitionInterpolator: new FlyToInterpolator(),
-                      transitionEasing: (t: number) => t * (2 - t),
-                    })
-                  }
-                >
-                  {helpers.getLastFourChars(activity.id).toUpperCase()}
-                </Elements.Links.RoundedLink>
-              ))}
-            </ActivityGroup>
-          </ActivityInfo>
-        </>
+          <div>
+            <p>
+              {getDistance(activityGroup[0].distance)} km, c:a
+              {getDuration(activityGroup[0].duration)} min
+            </p>
+          </div>
+          <div>
+            <p>{getLabelForActivities(activityGroup[0].type)}</p>
+          </div>
+          <ActivityGroup>
+            {activityGroup.map((activity, i) => (
+              <Elements.Links.RoundedLink
+                key={i}
+                onMouseOver={() =>
+                  setUIState({
+                    type: 'highlightBooking',
+                    payload: activity.id,
+                  })
+                }
+                onMouseLeave={() =>
+                  setUIState({ type: 'highlightBooking', payload: undefined })
+                }
+                to={() => redirectTo(activity.id)}
+                onClick={() =>
+                  setMap({
+                    latitude: activity.address.lat,
+                    longitude: activity.address.lon,
+                    zoom: 10,
+                    transitionDuration: 2000,
+                    transitionInterpolator: new FlyToInterpolator(),
+                    transitionEasing: (t: number) => t * (2 - t),
+                  })
+                }
+              >
+                {helpers.getLastFourChars(activity.id).toUpperCase()}
+              </Elements.Links.RoundedLink>
+            ))}
+          </ActivityGroup>
+        </ActivityInfo>
       ))}
     </Wrapper>
   )

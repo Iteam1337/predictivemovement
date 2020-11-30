@@ -34,7 +34,12 @@ const Map = ({ data }) => {
     }
 
     hideTooltip()
-    const type = event.object.properties.type
+    const type = event.object.properties?.type
+
+    if (!type) {
+      return
+    }
+
     const id = event.object.id || event.object.properties.id
     switch (type) {
       case 'booking':

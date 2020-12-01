@@ -85,8 +85,7 @@ defmodule BookingUpdatesProcessorTest do
     RMQ.publish(
       %{
         assigned_to: %{
-          id: vehicle_id,
-          metadata: %{telegram: %{senderId: 1_242_301_357}}
+          id: vehicle_id
         },
         delivery: %{lat: 61.75485695153156, lon: 15.989146086447738},
         events: [],

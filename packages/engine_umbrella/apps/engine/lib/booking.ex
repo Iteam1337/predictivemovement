@@ -146,21 +146,21 @@ defmodule Booking do
     )
   end
 
-  def assign(booking_id, vehicle) do
+  def assign(booking_id, %{id: vehicle_id}) do
     timestamp = DateTime.utc_now()
 
     %BookingAssigned{
       booking_id: booking_id,
-      vehicle: vehicle,
+      vehicle_id: vehicle_id,
       timestamp: timestamp
     }
     |> ES.add_event()
 
-    apply_assign_to_state(booking_id, vehicle, timestamp)
+    apply_assign_to_state(booking_id, vehicle_id, timestamp)
   end
 
-  def apply_assign_to_state(booking_id, vehicle, timestamp) do
-    GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
+  def apply_assign_to_state(booking_id, vehicle_id, timestamp) do
+    GenServer.call(via_tuple(booking_id), {:assign, vehicle_id, timestamp})
     |> Map.from_struct()
     |> Map.take([:assigned_to, :events, :id])
     |> RMQ.publish(
@@ -205,12 +205,11 @@ defmodule Booking do
 
   def handle_call(:get, _from, state), do: {:reply, state, state}
 
-  def handle_call({:assign, vehicle, timestamp}, _from, state) do
+  def handle_call({:assign, vehicle_id, timestamp}, _from, state) do
     updated_state =
       state
       |> Map.put(:assigned_to, %{
-        id: vehicle.id,
-        metadata: vehicle.metadata
+        id: vehicle_id
       })
       |> add_event_to_events_list("assigned", timestamp)
 

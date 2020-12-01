@@ -84,13 +84,12 @@ defmodule Booking do
 
     with true <- Vex.valid?(booking) do
       booking
-      |> Map.put(:route, Osrm.route(pickup, delivery))
       |> add_event_to_events_list("new", DateTime.utc_now())
       |> (fn booking ->
-        ES.add_event(%BookingRegistered{booking: booking})
+            ES.add_event(%BookingRegistered{booking: booking})
 
-        booking
-      end).()
+            booking
+          end).()
       |> apply_booking_to_state()
 
       id
@@ -114,14 +113,16 @@ defmodule Booking do
     end
   end
 
-  def apply_booking_to_state(%Booking{id: id} = booking) do
+  def apply_booking_to_state(%Booking{id: id, pickup: pickup, delivery: delivery} = booking) do
     GenServer.start_link(
       __MODULE__,
       booking,
       name: via_tuple(id)
     )
 
-    RMQ.publish(booking, @outgoing_booking_exchange, "new")
+    booking
+    |> Map.put(:route, Osrm.route(pickup, delivery))
+    |> RMQ.publish(@outgoing_booking_exchange, "new")
 
     Engine.BookingStore.put_booking(id)
     booking

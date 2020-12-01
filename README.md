@@ -55,7 +55,7 @@ The umbrella project has an application "message_generator" which is used to cre
     cd packages/engine_umbrella/
     iex -S mix
 
-Then the Generator module is available inside the shell. 
+Then the Generator module is available inside the shell.
 
     add_booking/0      add_booking/1      add_transport/0    add_transport/1
 
@@ -83,3 +83,41 @@ export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
 export REACT_APP_ENGINE_SERVER=https://engine-server.iteamdev.io
 skaffold run --profile prod
 ```
+
+## Vocabulary
+
+```
+Transport (previously vehicle){
+    id
+    busy
+    activities
+    current_route
+    booking_ids
+    metadata
+    start_address
+    end_address
+    earliest_start
+    latest_end
+    profile
+    capacity
+}
+```
+
+```
+Booking {
+    id
+    pickup
+    delivery
+    assigned_to
+    external_id
+    events
+    metadata
+    size
+    route
+    requires_transport_id
+}
+```
+
+Plan
+
+Route

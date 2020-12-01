@@ -43,9 +43,10 @@ module.exports = (io) => {
     .map((bookingRes) => {
       const booking = bookingRes.json()
       if (booking.route) booking.route = JSON.parse(booking.route)
+      if (booking.metadata) booking.metadata = JSON.parse(booking.metadata)
+
       return {
         ...booking,
-        metadata: JSON.parse(booking.metadata),
         status: bookingRes.fields.routingKey,
       }
     })

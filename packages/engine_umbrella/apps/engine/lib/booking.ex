@@ -161,6 +161,8 @@ defmodule Booking do
 
   def apply_assign_to_state(booking_id, vehicle, timestamp) do
     GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
+    |> Map.from_struct()
+    |> Map.take([:assigned_to, :events, :id])
     |> RMQ.publish(
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "assigned"
@@ -186,6 +188,8 @@ defmodule Booking do
 
   def apply_event_to_state(booking_id, status, timestamp) do
     GenServer.call(via_tuple(booking_id), {:add_event, status, timestamp})
+    |> Map.from_struct()
+    |> Map.take([:events, :id])
     |> RMQ.publish(@outgoing_booking_exchange, status)
   end
 

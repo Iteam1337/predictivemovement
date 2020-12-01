@@ -26,8 +26,8 @@ module.exports = (io) => {
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .map((newBooking) => {
-        const oldBooking = bookingsCache.get(booking.id)
-        bookingsCache.set(booking.id, { ...oldBooking, ...newBooking })
+        const oldBooking = bookingsCache.get(newBooking.id)
+        bookingsCache.set(newBooking.id, { ...oldBooking, ...newBooking })
         return { ...newBooking, ...oldBooking }
       })
       .batchWithTimeOrCount(1000, 1000)

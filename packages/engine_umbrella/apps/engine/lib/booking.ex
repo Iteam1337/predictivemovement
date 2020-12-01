@@ -17,7 +17,6 @@ defmodule Booking do
     :events,
     :metadata,
     :size,
-    :route,
     :requires_transport_id
   ]
 

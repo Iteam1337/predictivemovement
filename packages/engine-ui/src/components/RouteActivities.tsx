@@ -16,8 +16,6 @@ const ActivityInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  margin-bottom: 2rem;
-  padding: 1rem 0;
 
   p {
     margin: 0;
@@ -36,17 +34,54 @@ const Wrapper = styled.div`
   overflow: auto;
 `
 
-const Line = styled.div`
-  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-  flex: 1;
-  height: 1px;
+const PickUpInfo = styled.div`
+  border-left: 3px solid #19aa6e;
+  flex: 4;
+  height: 130px;
+  padding: 1rem;
+`
+
+const Circle = styled.div<{ active: boolean }>`
+  background-color: ${(props) => (props.active ? '#d4693f' : '#fff')};
+  border: 3px solid #19aa6e;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  top: 43%;
+  margin-left: -3.15rem;
+  position: relative;
+  z-index: 2;
+`
+
+const SpeechBubble = styled.div`
+  position: relative;
+  border: 2px solid #19aa6e;
+  text-align: center;
+  padding: 7px;
+  border-radius: 5px;
+  margin-left: 1rem;
+  margin-right: -1rem;
+  height: 100%;
+
+  :after {
+    content: '';
+    position: absolute;
+    display: block;
+    z-index: 1;
+    border-style: solid;
+    border-color: transparent #19aa6e;
+    border-width: 10px 10px 10px 0;
+    top: 50%;
+    left: -10px;
+    margin-top: -10px;
+  }
 `
 
 const TimeWrapper = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
-  margin-bottom: 1rem;
+  height: 100%;
 `
 const EndOfTransportWrapper = styled.div`
   display: flex;
@@ -56,7 +91,7 @@ const EndOfTransportWrapper = styled.div`
 
 const SmallParagraph = styled.p`
   font-size: 12px;
-  margin-left: 0.25rem;
+  margin: 0;
 `
 
 interface Props {
@@ -98,7 +133,6 @@ const RouteActivities = ({ route }: Props) => {
 
   const maybeActivities = route.activities || []
   const activities = maybeActivities.slice(1, -1)
-  const transportEndPos = Array.from(maybeActivities).reverse()[0]
 
   const isProposedPlan = useRouteMatch({
     path: ['/plans/routes/:routeId'],
@@ -133,74 +167,89 @@ const RouteActivities = ({ route }: Props) => {
       <Elements.Typography.BoldParagraph>
         Start
       </Elements.Typography.BoldParagraph>
-      {groupByLocation(activities).map((activityGroup, index) => (
-        <>
+      {groupByLocation(activities).map((activityGroup, index) => {
+        return (
           <ActivityInfo key={index}>
             <TimeWrapper>
-              <Line />
-              <SmallParagraph>
-                {getDuration(activityGroup[0].duration)} min (
-                {getDistance(activityGroup[0].distance)} km)
-              </SmallParagraph>
-            </TimeWrapper>
-            <div
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div>
-                <Elements.Typography.BoldParagraph>
-                  {getLabelForActivities(activityGroup[0].type)}
-                </Elements.Typography.BoldParagraph>
+              <div style={{ flex: '1' }}>
+                <SmallParagraph>
+                  {getDuration(activityGroup[0].duration)} min
+                </SmallParagraph>
+                <SmallParagraph>
+                  ({getDistance(activityGroup[0].distance)} km)
+                </SmallParagraph>
               </div>
-
-              <ActivityGroup>
-                {activityGroup.map((activity, i) => (
-                  <Elements.Links.RoundedLink
-                    key={i}
-                    onMouseOver={() =>
-                      setUIState({
-                        type: 'highlightBooking',
-                        payload: activity.id,
-                      })
-                    }
-                    onMouseLeave={() =>
-                      setUIState({
-                        type: 'highlightBooking',
-                        payload: undefined,
-                      })
-                    }
-                    to={() => redirectTo(activity.id)}
-                    onClick={() =>
-                      setMap({
-                        latitude: activity.address.lat,
-                        longitude: activity.address.lon,
-                        zoom: 10,
-                        transitionDuration: 2000,
-                        transitionInterpolator: new FlyToInterpolator(),
-                        transitionEasing: (t: number) => t * (2 - t),
-                      })
-                    }
+              <PickUpInfo style={{ flex: '4' }}>
+                <SpeechBubble>
+                  <Circle active={false} />
+                  <div
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginTop: '-15px',
+                    }}
                   >
-                    {helpers.getLastFourChars(activity.id).toUpperCase()}
-                  </Elements.Links.RoundedLink>
-                ))}
-              </ActivityGroup>
-            </div>
+                    <p
+                      style={{
+                        fontSize: '0.80rem',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {getLabelForActivities(activityGroup[0].type)}
+                    </p>
+                    <ActivityGroup>
+                      {activityGroup.map((activity, i) => (
+                        <Elements.Links.RoundedLink
+                          key={i}
+                          onMouseOver={() =>
+                            setUIState({
+                              type: 'highlightBooking',
+                              payload: activity.id,
+                            })
+                          }
+                          onMouseLeave={() =>
+                            setUIState({
+                              type: 'highlightBooking',
+                              payload: undefined,
+                            })
+                          }
+                          to={() => redirectTo(activity.id)}
+                          onClick={() =>
+                            setMap({
+                              latitude: activity.address.lat,
+                              longitude: activity.address.lon,
+                              zoom: 10,
+                              transitionDuration: 2000,
+                              transitionInterpolator: new FlyToInterpolator(),
+                              transitionEasing: (t: number) => t * (2 - t),
+                            })
+                          }
+                        >
+                          {helpers.getLastFourChars(activity.id).toUpperCase()}
+                        </Elements.Links.RoundedLink>
+                      ))}
+                    </ActivityGroup>
+                  </div>
+                  <div style={{ textAlign: 'left' }}>
+                    <SmallParagraph>
+                      {activityGroup[0].address.street}
+                    </SmallParagraph>
+                    <SmallParagraph>
+                      {activityGroup[0].address.city}
+                    </SmallParagraph>
+                  </div>
+                </SpeechBubble>
+              </PickUpInfo>
+            </TimeWrapper>
           </ActivityInfo>
-        </>
-      ))}
+        )
+      })}
       <EndOfTransportWrapper>
         <Elements.Typography.BoldParagraph>
           Slut
         </Elements.Typography.BoldParagraph>
-        <SmallParagraph>
-          {getDuration(transportEndPos.duration)} min (
-          {getDistance(transportEndPos.distance)} km)
-        </SmallParagraph>
       </EndOfTransportWrapper>
     </Wrapper>
   )

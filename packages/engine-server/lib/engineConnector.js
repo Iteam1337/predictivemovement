@@ -42,15 +42,13 @@ module.exports = (io) => {
     ])
     .map((bookingRes) => {
       const booking = bookingRes.json()
-
+      if (booking.route) booking.route = JSON.parse(booking.route)
       return {
         ...booking,
-        route: JSON.parse(booking.route),
         metadata: JSON.parse(booking.metadata),
         status: bookingRes.fields.routingKey,
       }
     })
-
   const transports = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: true,

@@ -91,7 +91,6 @@ Transport (previously vehicle){
     id
     busy
     activities
-    current_route
     booking_ids
     metadata
     start_address
@@ -113,7 +112,6 @@ Booking {
     events
     metadata
     size
-    route
     requires_transport_id
 }
 ```

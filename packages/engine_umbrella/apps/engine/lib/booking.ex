@@ -49,18 +49,7 @@ defmodule Booking do
 
   def valid_measurements(_), do: false
 
-  def generate_id do
-    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
-
-    generated =
-      UUID.uuid4()
-      |> Base.encode64(padding: false)
-      |> String.replace(["+", "/"], Enum.random(alphabet))
-      |> String.slice(0, 8)
-      |> String.downcase()
-
-    "pmb-" <> generated
-  end
+  def generate_id, do: "pmb-" <> Engine.Utils.generate_id()
 
   def make(%{
         pickup: pickup,

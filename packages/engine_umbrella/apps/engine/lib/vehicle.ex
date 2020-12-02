@@ -61,18 +61,7 @@ defmodule Vehicle do
     {:reply, true, updated_vehicle}
   end
 
-  def generate_id do
-    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
-
-    generated =
-      UUID.uuid4()
-      |> Base.encode64(padding: false)
-      |> String.replace(["+", "/"], Enum.random(alphabet))
-      |> String.slice(0, 8)
-      |> String.downcase()
-
-    "pmv-" <> generated
-  end
+  def generate_id, do: "pmv-" <> Engine.Utils.generate_id()
 
   def make(vehicle_info) do
     vehicle_fields =

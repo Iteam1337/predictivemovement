@@ -9,7 +9,6 @@ import * as botRoutes from './botRoutes'
 import { session } from 'telegraf'
 import * as consumers from './consumers'
 
-
 bot.use(session())
 
 consumers.register()

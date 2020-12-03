@@ -73,7 +73,8 @@ Go into every folder and run the start command for the service.
 
     cd packages/engine_umbrella/
     mix deps.get
-    iex -S mix dev
+    mix dev
+    iex -S mix
 
 ### Helper/utility functions for populating the state
 

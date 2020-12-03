@@ -13,6 +13,16 @@ const InfoSm = styled.p`
   margin-bottom: 0.25rem;
 `
 
+const InfoMd = styled.p`
+  font-size: 0.875rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+`
+
+const InfoMdStrong = styled(InfoMd)`
+  font-weight: bold;
+`
+
 const SmallInfoBold = styled.p`
   font-weight: bold;
   font-size: 0.75rem;
@@ -22,13 +32,6 @@ const SmallInfoBold = styled.p`
 const ErrorMessage = styled(InfoSm)`
   color: red;
   margin-top: 0.25rem;
-`
-
-const InfoMd = styled.p`
-  font-style: italic;
-  font-size: 1rem;
-  margin-top: 0;
-  margin-bottom: 0.25rem;
 `
 
 const BoldParagraph = styled.p`
@@ -103,4 +106,5 @@ export {
   SpanBold,
   InfoSmStrong,
   ErrorMessage,
+  InfoMdStrong,
 }

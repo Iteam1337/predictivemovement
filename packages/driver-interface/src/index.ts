@@ -19,22 +19,24 @@ botRoutes.init(bot)
 
 bot.launch()
 
-bot.catch((e, { update: { callback_query, message } }: TelegrafContext) => {
-  let telegramId: number
-  let request: string
-  if (callback_query) {
-    telegramId = callback_query.from.id
-    request = `callback with data '${callback_query.data}'`
-  } else {
-    telegramId = message.from?.id
-    request = `message: '${message.text}'`
-  }
-  console.error(
-    `Failed when handling ${request} from telegram id: ${telegramId}. Exception: ${e}`
-  )
+bot.catch(
+  (e: Error, { update: { callback_query, message } }: TelegrafContext) => {
+    let telegramId: number
+    let request: string
+    if (callback_query) {
+      telegramId = callback_query.from.id
+      request = `callback with data '${callback_query.data}'`
+    } else {
+      telegramId = message.from?.id
+      request = `message: '${message.text}'`
+    }
+    console.error(
+      `Failed when handling ${request} from telegram id: ${telegramId}. Exception: ${e}`
+    )
 
-  return sendUnhandledError(telegramId)
-})
+    return sendUnhandledError(telegramId)
+  }
+)
 
 const app = express()
   .use(cors())

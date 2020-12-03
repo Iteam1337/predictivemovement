@@ -5,15 +5,15 @@ services:
     image: rabbitmq:3-management
     tmpfs: /var/lib/rabbitmq
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 127.0.0.1:5672:5672
+      - 127.0.0.1:15672:15672
     networks:
       - predictivemovement
   redis:
     image: redis
     container_name: redis
     ports:
-      - 6379:6379
+      - 127.0.0.1:6379:6379
     networks:
       - predictivemovement
   postgres:
@@ -22,7 +22,7 @@ services:
       - PGDATA=/pgtmpfs
       - POSTGRES_PASSWORD=postgres
     ports:
-      - 5432:5432
+      - 127.0.0.1:5432:5432
     tmpfs: /pgtmpfs
     networks:
       - predictivemovement
@@ -33,7 +33,7 @@ services:
         - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
         - REACT_APP_ENGINE_SERVER=http://localhost:4000
     ports:
-      - 3000:80
+      - 127.0.0.1:3000:80
     networks:
       - predictivemovement
   admin-server:
@@ -41,7 +41,7 @@ services:
     environment:
       - AMQP_URL=amqp://rabbitmq
     ports:
-      - 4000:4000
+      - 127.0.0.1:4000:4000
     networks:
       - predictivemovement
   driver-interface:

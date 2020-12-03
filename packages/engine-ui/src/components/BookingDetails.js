@@ -1,7 +1,6 @@
 import React from 'react'
 import * as Elements from '../shared-elements'
 import styled from 'styled-components'
-import Dot from '../assets/dot.svg'
 import MainRouteLayout from './layout/MainRouteLayout'
 import { useParams, useHistory } from 'react-router-dom'
 import * as helpers from '../utils/helpers'
@@ -17,51 +16,63 @@ const Paragraph = styled.p`
 const CapitalizeParagraph = styled(Paragraph)`
   text-transform: capitalize;
 `
+const ExpectedEventWrapper = styled.div`
+  margin-left: 3.5rem;
+`
 
-const Timeline = styled.div`
-  margin-top: 1.5rem;
+const ExpectedEventParagraph = styled.p`
+  margin: 0;
+  color: rgb(0, 0, 0, 0.3);
+`
 
-  ol {
-    list-style-type: none;
-    padding: 0;
-  }
+const Line = styled.div`
+  width: 1px;
+  border-left: 2px solid ${(props) => (props.status ? '#19de8b' : '#a8a8a8')};
+  position: absolute;
+  /* background-color: ${(props) => (props.status ? '#19de8b' : '#a8a8a8')}; */
+  height: 90%;
+  margin-left: -0.68rem;
+  top: -1.5rem;
+`
 
-  li {
-    position: relative;
-    margin: 0;
-    padding-bottom: 1em;
-    padding-left: 1em;
-    display: flex;
-    align-items: flex-end;
-  }
+const TimelineListItem = styled.li`
+  position: relative;
+  margin: 0;
+  padding-bottom: 1em;
+  padding-left: 1em;
+  display: flex;
+  align-items: flex-end;
 
-  img {
-    padding-right: 0.5rem;
-  }
-
-  li:after {
+  :before {
     content: '';
-    background-color: #19de8b;
-    position: absolute;
-    bottom: -4px;
-    top: 4px;
-    left: 0.3rem;
-    width: 2px;
-  }
-
-  li:before {
-    content: '';
-    background-image: url(${Dot});
+    background-color: ${(props) => (props.status ? '#19de8b' : '#a8a8a8')};
+    border-radius: 50%;
     position: absolute;
     left: 0;
     top: 3px;
     height: 12px;
     width: 12px;
+    z-index: 2;
   }
 
-  li:last-child:after {
+  :last-child:after {
     content: '';
     width: 0;
+  }
+`
+
+const Timeline = styled.div`
+  margin-top: 1.5rem;
+  ol {
+    list-style-type: none;
+    padding: 0;
+  }
+  img {
+    padding-right: 0.5rem;
+  }
+
+  & ${TimelineListItem}:nth-child(1) ${Line} {
+    display: none;
   }
 `
 
@@ -135,12 +146,23 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   if (!address) return <p>Laddar bokning...</p>
 
   const {
+    events,
     pickup,
     delivery,
     id,
     metadata: { cargo, fragile, sender, recipient },
     size: { measurement, weight },
   } = booking
+
+  const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
+
+  const bookingEvents = events.map((event) => event.type)
+
+  const eventsList = events.concat(
+    expectedEvents.filter((event) => {
+      return !bookingEvents.includes(event)
+    })
+  )
 
   return (
     <MainRouteLayout redirect="/bookings">
@@ -275,21 +297,37 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
           </Elements.Typography.StrongParagraph>
           {booking.events.length ? (
             <ol>
-              {booking.events.map((event, index) => (
-                <li key={index}>
-                  <Elements.Typography.NoMarginParagraph>
-                    {moment(event.timestamp).format('HH:mm')}
-                  </Elements.Typography.NoMarginParagraph>
-                  <Elements.Layout.MarginLeftContainerSm>
-                    <Elements.Typography.NoMarginParagraph>
-                      {parseEventTypeToHumanReadable(event.type)}
-                    </Elements.Typography.NoMarginParagraph>
-                  </Elements.Layout.MarginLeftContainerSm>
-                </li>
-              ))}
+              {eventsList.map((event, index) => {
+                return (
+                  <TimelineListItem
+                    key={index}
+                    status={event.type ? true : false}
+                  >
+                    <Line status={event.type ? true : false} />
+                    {event.type ? (
+                      <>
+                        <Elements.Typography.NoMarginParagraph>
+                          {moment(event.timestamp).format('HH:mm')}
+                        </Elements.Typography.NoMarginParagraph>
+                        <Elements.Layout.MarginLeftContainerSm>
+                          <Elements.Typography.NoMarginParagraph>
+                            {parseEventTypeToHumanReadable(event.type)}
+                          </Elements.Typography.NoMarginParagraph>
+                        </Elements.Layout.MarginLeftContainerSm>
+                      </>
+                    ) : (
+                      <ExpectedEventWrapper>
+                        <ExpectedEventParagraph>
+                          {parseEventTypeToHumanReadable(event)}
+                        </ExpectedEventParagraph>
+                      </ExpectedEventWrapper>
+                    )}
+                  </TimelineListItem>
+                )
+              })}
             </ol>
           ) : (
-            <CapitalizeParagraph>{booking.status}</CapitalizeParagraph>
+            <CapitalizeParagraph>{booking.status} </CapitalizeParagraph>
           )}
         </Timeline>
         <Elements.Layout.MarginTopContainer alignItems="center">

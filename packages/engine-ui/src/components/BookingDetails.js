@@ -65,9 +65,20 @@ const Timeline = styled.div`
   }
 `
 
-const formatDateLong = (date) => moment(date).format('YYYY-MM-DD, HH:mm')
+const timeWindowToElement = ({ earliest, latest }) => {
+  const formatDateLong = (date) => moment(date).format('YYYY-MM-DD, HH:mm')
+  const formatDateShort = (date) => moment(date).format('HH:mm')
 
-const formatDateShort = (date) => moment(date).format('HH:mm')
+  const isSameDay = moment(earliest).isSame(latest, 'day')
+
+  return (
+    <Elements.Typography.SmallInfoBold key={earliest}>
+      {`${formatDateLong(earliest)} - ${
+        isSameDay ? formatDateShort(latest) : formatDateLong(latest)
+      }`}
+    </Elements.Typography.SmallInfoBold>
+  )
+}
 
 const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const { bookingId } = useParams()
@@ -196,18 +207,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
             {pickup.time_windows &&
-              pickup.time_windows.map(({ earliest, latest }) => {
-                const isSameDay = moment(earliest).isSame(latest, 'day')
-                return (
-                  <Elements.Typography.SmallInfoBold key={earliest}>
-                    {`${formatDateLong(earliest)} - ${
-                      isSameDay
-                        ? formatDateShort(latest)
-                        : formatDateLong(latest)
-                    }`}
-                  </Elements.Typography.SmallInfoBold>
-                )
-              })}
+              pickup.time_windows.map(timeWindowToElement)}
           </Elements.Layout.MarginBottomContainer>
           {sender.name && (
             <Elements.Layout.FlexRowBaselineContainer>
@@ -233,18 +233,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
             {delivery.time_windows &&
-              delivery.time_windows.map(({ earliest, latest }) => {
-                const isSameDay = moment(earliest).isSame(latest, 'day')
-                return (
-                  <Elements.Typography.SmallInfoBold key={earliest}>
-                    {`${formatDateLong(earliest)} - ${
-                      isSameDay
-                        ? formatDateShort(latest)
-                        : formatDateLong(latest)
-                    }`}
-                  </Elements.Typography.SmallInfoBold>
-                )
-              })}
+              delivery.time_windows.map(timeWindowToElement)}
           </Elements.Layout.MarginBottomContainer>
           {sender.name && (
             <Elements.Layout.FlexRowBaselineContainer>

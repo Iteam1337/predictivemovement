@@ -63,6 +63,10 @@ create .env-file in packages/driver-interface/.env with
     GOOGLE_API_TOKEN=<FROM LASTPASS>
     BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
 
+create .env-file in packages/engine-ui/.env with
+
+    REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
+
 Go into every folder and run the start command for the service.
 
 #### run event_store migrations and start the engine

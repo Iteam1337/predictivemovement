@@ -173,7 +173,6 @@ const RouteActivities = ({ route }: Props) => {
         Start
       </Elements.Typography.BoldParagraph>
       {activities.map((activity, index) => {
-        console.log(activity)
         return (
           <ActivityInfo key={index}>
             <TimelineItem>

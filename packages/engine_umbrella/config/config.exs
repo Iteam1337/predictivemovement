@@ -1,8 +1,5 @@
 import Config
 
-config :engine, :plan, Plan
-config :engine, :vehicle, Vehicle
-
 config :engine, :outgoing_vehicle_exchange, "outgoing_vehicle_updates"
 config :engine, :incoming_vehicle_exchange, "incoming_vehicle_updates"
 config :engine, :outgoing_booking_exchange, "outgoing_booking_updates"

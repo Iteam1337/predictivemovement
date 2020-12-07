@@ -65,6 +65,21 @@ const Timeline = styled.div`
   }
 `
 
+const timeWindowToElement = ({ earliest, latest }) => {
+  const formatDateLong = (date) => moment(date).format('YYYY-MM-DD, HH:mm')
+  const formatDateShort = (date) => moment(date).format('HH:mm')
+
+  const isSameDay = moment(earliest).isSame(latest, 'day')
+
+  return (
+    <Elements.Typography.SmallInfoBold key={earliest}>
+      {`${formatDateLong(earliest)} - ${
+        isSameDay ? formatDateShort(latest) : formatDateLong(latest)
+      }`}
+    </Elements.Typography.SmallInfoBold>
+  )
+}
+
 const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const { bookingId } = useParams()
   const history = useHistory()
@@ -195,19 +210,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
               Upphämtning
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
-            {pickup.timeWindows &&
-              pickup.timeWindows.map((timeWindow) => (
-                <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
-                  {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
-                    ? `${moment(timeWindow.earliest).format(
-                        'YYYY-MM-DD, hh:mm'
-                      )} - ${moment(timeWindow.latest).format('hh:mm')}`
-                    : `${moment(timeWindow.earliest).format(
-                        'YYYY-MM-DD, hh:mm'
-                      )} -
-              ${moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}`}
-                </Elements.Typography.SmallInfoBold>
-              ))}
+            {pickup.timeWindows && pickup.timeWindows.map(timeWindowToElement)}
           </Elements.Layout.MarginBottomContainer>
           {sender.name && (
             <Elements.Layout.FlexRowBaselineContainer>
@@ -232,14 +235,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
               Avlämning
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
-
             {delivery.timeWindows &&
-              delivery.timeWindows.map((timeWindow) => (
-                <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
-                  {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
-                  {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}
-                </Elements.Typography.SmallInfoBold>
-              ))}
+              delivery.timeWindows.map(timeWindowToElement)}
           </Elements.Layout.MarginBottomContainer>
           {sender.name && (
             <Elements.Layout.FlexRowBaselineContainer>

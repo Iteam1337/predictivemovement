@@ -40,8 +40,19 @@ services:
     build: ./packages/engine-server
     environment:
       - AMQP_URL=amqp://rabbitmq
+      - POSTNORD_KEY=${POSTNORD_KEY}
     ports:
       - 4000:4000
+    networks:
+      - predictivemovement
+  driver-interface:
+    build: ./packages/driver-interface
+    environment:
+      - BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - GOOGLE_API_TOKEN=${GOOGLE_API_TOKEN}
+      - AMQP_HOST=rabbitmq
+      - AMQP_URL=amqp://rabbitmq
+      - REDIS_URL=redis://redis:6379
     networks:
       - predictivemovement
   predictivemovement-route-optimization-jsprit:

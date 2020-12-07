@@ -1,12 +1,11 @@
 import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
 import styled from 'styled-components'
-import { Activity, Route } from '../types'
+import { Route } from '../types'
 import * as helpers from '../utils/helpers'
 import * as Elements from '../shared-elements'
 import { useRouteMatch } from 'react-router-dom'
 import * as stores from '../utils/state/stores'
-import triangleIcon from '../assets/triangle.svg'
 
 const ActivityGroup = styled.div`
   margin-left: auto;
@@ -174,6 +173,7 @@ const RouteActivities = ({ route }: Props) => {
         Start
       </Elements.Typography.BoldParagraph>
       {activities.map((activity, index) => {
+        console.log(activity)
         return (
           <ActivityInfo key={index}>
             <TimelineItem>

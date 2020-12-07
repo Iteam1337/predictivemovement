@@ -14,6 +14,7 @@ const Component = ({
   formErrors,
   setFormErrors,
   parcelSizePresets,
+  type,
 }) => {
   const history = useHistory()
   const [useCustomSize, setUseCustomSize] = React.useState(false)
@@ -45,7 +46,9 @@ const Component = ({
         ...currentState,
         [type]: {
           ...currentState[type],
-          timewindow: { ...currentState[type].timewindow, [property]: date },
+          timeWindows: [
+            { ...currentState[type].timeWindows[0], [property]: date },
+          ],
         },
       }
     })
@@ -55,7 +58,7 @@ const Component = ({
       ...currentState,
       [type]: {
         ...currentState[type],
-        timewindow: { earliest: null, latest: null },
+        timeWindows: [{ earliest: null, latest: null }],
       },
     }))
 
@@ -65,10 +68,10 @@ const Component = ({
       [propertyName]: !currentState[propertyName],
     }))
 
-    return state[propertyName].timewindow
+    return state[propertyName].timeWindows
       ? onChangeHandler((currentState) => ({
           ...currentState,
-          [propertyName]: { ...currentState[propertyName], timewindow: null },
+          [propertyName]: { ...currentState[propertyName], timeWindows: null },
         }))
       : addTimeRestrictionWindow(propertyName)
   }
@@ -138,8 +141,9 @@ const Component = ({
         <Elements.Layout.InputContainer>
           <FormInputs.TextInput
             name="cargo"
-            value={state.cargo}
-            onChangeHandler={eventHandlers.handleTextInputChange(
+            value={state.metadata.cargo}
+            onChangeHandler={eventHandlers.handleNestedInputChange(
+              'metadata',
               'cargo',
               onChangeHandler
             )}
@@ -237,8 +241,8 @@ const Component = ({
         <FormInputs.TextInput
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           name="sender-info"
-          value={state.sender.info}
-          onChangeHandler={eventHandlers.handleNestedInputChange(
+          value={state.metadata.sender.info}
+          onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
             'sender',
             'info',
             onChangeHandler
@@ -252,13 +256,14 @@ const Component = ({
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
         />
         <Elements.Layout.TimeRestrictionWrapper>
-          {showBookingTimeRestriction.pickup && state.pickup.timewindow && (
-            <FormInputs.TimeRestriction.BookingTimeRestrictionPair
-              typeProperty="pickup"
-              timewindow={state.pickup.timewindow}
-              onChangeHandler={handleBookingTimeRestrictionChange}
-            />
-          )}
+          {showBookingTimeRestriction.pickup &&
+            state.pickup.timeWindows?.length && (
+              <FormInputs.TimeRestriction.BookingTimeRestrictionPair
+                typeProperty="pickup"
+                timeWindow={state.pickup.timeWindows[0]}
+                onChangeHandler={handleBookingTimeRestrictionChange}
+              />
+            )}
         </Elements.Layout.TimeRestrictionWrapper>
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputBlock>
@@ -274,8 +279,8 @@ const Component = ({
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="sendername"
-              value={state.sender.name}
-              onChangeHandler={eventHandlers.handleNestedInputChange(
+              value={state.metadata.sender.name}
+              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'sender',
                 'name',
                 onChangeHandler
@@ -299,8 +304,8 @@ const Component = ({
               pattern="^[0-9]*$|^-$"
               iconInset
               name="sender"
-              value={state.sender.contact}
-              onChangeHandler={eventHandlers.handleNestedInputChange(
+              value={state.metadata.sender.contact}
+              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'sender',
                 'contact',
                 onChangeHandler
@@ -342,8 +347,8 @@ const Component = ({
         <FormInputs.TextInput
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           name="recipient-info"
-          value={state.recipient.info}
-          onChangeHandler={eventHandlers.handleNestedInputChange(
+          value={state.metadata.recipient.info}
+          onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
             'recipient',
             'info',
             onChangeHandler
@@ -358,13 +363,14 @@ const Component = ({
           }
         />
         <Elements.Layout.TimeRestrictionWrapper>
-          {showBookingTimeRestriction.delivery && state.delivery.timewindow && (
-            <FormInputs.TimeRestriction.BookingTimeRestrictionPair
-              typeProperty="delivery"
-              timewindow={state.delivery.timewindow}
-              onChangeHandler={handleBookingTimeRestrictionChange}
-            />
-          )}
+          {showBookingTimeRestriction.delivery &&
+            state.delivery.timeWindows?.length && (
+              <FormInputs.TimeRestriction.BookingTimeRestrictionPair
+                typeProperty="delivery"
+                timeWindow={state.delivery.timeWindows[0]}
+                onChangeHandler={handleBookingTimeRestrictionChange}
+              />
+            )}
         </Elements.Layout.TimeRestrictionWrapper>
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputBlock>
@@ -381,8 +387,8 @@ const Component = ({
               iconInset
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="recipient-name"
-              value={state.recipient.name}
-              onChangeHandler={eventHandlers.handleNestedInputChange(
+              value={state.metadata.recipient.name}
+              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'recipient',
                 'name',
                 onChangeHandler
@@ -405,9 +411,9 @@ const Component = ({
               iconInset
               name="recipient-contact"
               pattern="^[0-9]*$|^-$"
-              value={state.recipient.contact}
+              value={state.metadata.recipient.contact}
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              onChangeHandler={eventHandlers.handleNestedInputChange(
+              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'recipient',
                 'contact',
                 onChangeHandler
@@ -432,7 +438,7 @@ const Component = ({
           padding="0.75rem 0"
           type="submit"
         >
-          Lägg till
+          {type !== 'edit' ? 'Lägg till' : 'Uppdatera'}
         </Elements.Buttons.SubmitButton>
       </Elements.Layout.ButtonWrapper>
     </form>

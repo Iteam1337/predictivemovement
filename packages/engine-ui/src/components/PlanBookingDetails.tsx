@@ -76,13 +76,13 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
             </Elements.Typography.SpanBold>
             {booking.metadata.fragile ? 'Ja' : 'Nej'}
           </Paragraph>
-          {booking.size.measurement && (
+          {booking.size.measurements && (
             <Paragraph>
               <Elements.Typography.SpanBold>
                 Mått:{' '}
               </Elements.Typography.SpanBold>
-              {booking.size.measurement.map((item, index) =>
-                booking.size.measurement?.length === index + 1
+              {booking.size.measurements.map((item, index) =>
+                booking.size.measurements?.length === index + 1
                   ? `${item} cm `
                   : `${item}x`
               )}

@@ -86,7 +86,7 @@ const TransportTimeRestriction = ({
 
 export const BookingTimeRestrictionPair = ({
   onChangeHandler,
-  timewindow,
+  timeWindow,
   typeProperty,
 }) => {
   const timeRestrictionInputRef = React.useRef()
@@ -94,7 +94,7 @@ export const BookingTimeRestrictionPair = ({
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
         <BookingTimeRestriction
-          selected={timewindow.earliest}
+          selected={timeWindow.earliest}
           onChangeHandler={(date) =>
             onChangeHandler(date, typeProperty, 'earliest')
           }
@@ -104,9 +104,9 @@ export const BookingTimeRestrictionPair = ({
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
         <BookingTimeRestriction
-          selected={timewindow.latest}
+          selected={timeWindow.latest}
           minDate={
-            timewindow.earliest ? new Date(timewindow.earliest) : new Date()
+            timeWindow.earliest ? new Date(timeWindow.earliest) : new Date()
           }
           onChangeHandler={(date) =>
             onChangeHandler(date, typeProperty, 'latest')
@@ -121,7 +121,7 @@ export const BookingTimeRestrictionPair = ({
 
 export const TransportTimeRestrictionPair = ({
   onChangeHandler,
-  timewindow: { earliestStart, latestEnd },
+  timeWindow: { earliestStart, latestEnd },
   handleFocus,
 }) => {
   const timeRestrictionInputRef = React.useRef()

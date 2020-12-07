@@ -103,6 +103,7 @@ const Bookings: React.FC<{
   bookings: Booking[]
   createBooking: (params: any) => void
   deleteBooking: (params: any) => void
+  updateBooking: (params: any) => void
 }> = (props) => {
   const setMap = stores.map((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
@@ -193,7 +194,10 @@ const Bookings: React.FC<{
         </Route>
 
         <Route exact path={`${path}/edit-booking/:bookingId`}>
-          <EditBooking bookings={props.bookings} />
+          <EditBooking
+            bookings={props.bookings}
+            updateBooking={props.updateBooking}
+          />
         </Route>
 
         <Route exact path={`${path}/:bookingId`}>

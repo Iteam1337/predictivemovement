@@ -40,6 +40,7 @@ export interface Booking {
 }
 
 type ParcelAddress = {
+  name?: string
   lat: number
   lon: number
   street: string
@@ -49,7 +50,7 @@ type ParcelAddress = {
 
 type Size = {
   weight?: number
-  measurement?: number[]
+  measurements?: number[]
 }
 
 type Metadata = {

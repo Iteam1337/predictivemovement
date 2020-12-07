@@ -58,9 +58,9 @@ module.exports = (io) => {
       .each((transports) => socket.emit('transports', transports))
 
     _.merge([_(planCache.values()), plan.fork()])
-      .map((plan) => ({
+      .map(({ excluded_booking_ids, ...plan }) => ({
         ...plan,
-        excluded_booking_ids: plan.excluded_booking_ids.map((booking) => {
+        excludedBookingIds: excluded_booking_ids.map((booking) => {
           const b = bookingsCache.get(booking.id)
           if (!b) return booking
           return {
@@ -111,28 +111,24 @@ module.exports = (io) => {
         bookingDate: new Date().toISOString(),
         size: params.size,
         pickup: {
-          time_windows: params.pickup.timewindow
-            ? [params.pickup.timewindow]
-            : undefined,
+          time_windows: params.pickup.timeWindow,
           lat: params.pickup.lat,
           lon: params.pickup.lon,
           street: params.pickup.street,
           city: params.pickup.city,
         },
         delivery: {
-          time_windows: params.delivery.timewindow
-            ? [params.delivery.timewindow]
-            : undefined,
+          time_windows: params.delivery.timeWindows,
           lat: params.delivery.lat,
           lon: params.delivery.lon,
           street: params.delivery.street,
           city: params.delivery.city,
         },
         metadata: {
-          sender: params.sender,
-          recipient: params.recipient,
-          cargo: params.cargo,
-          fragile: params.fragile,
+          sender: params.metadata.sender,
+          recipient: params.metadata.recipient,
+          cargo: params.metadata.cargo,
+          fragile: params.metadata.fragile,
         },
       }
 

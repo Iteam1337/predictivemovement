@@ -99,7 +99,7 @@ const Component = ({
           <Elements.Layout.TimeRestrictionWrapper>
             <FormInputs.TimeRestriction.TransportTimeRestrictionPair
               handleFocus={() => dispatch({ type: 'resetInputClickState' })}
-              timewindow={{
+              timeWindow={{
                 earliestStart: formState.earliestStart,
                 latestEnd: formState.latestEnd,
               }}

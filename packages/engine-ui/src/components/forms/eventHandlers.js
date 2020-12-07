@@ -22,6 +22,24 @@ export const handleNestedInputChange = (
   }))
 }
 
+export const handleMetadataNestedInputChange = (
+  propertyName,
+  nestedPropertyName,
+  callback
+) => (event) => {
+  event.persist()
+  return callback((currentState) => ({
+    ...currentState,
+    metadata: {
+      ...currentState.metadata,
+      [propertyName]: {
+        ...currentState.metadata[propertyName],
+        [nestedPropertyName]: event.target.value,
+      },
+    },
+  }))
+}
+
 export const handleAddressInputForBooking = (
   propertyName,
   callback,
@@ -31,6 +49,7 @@ export const handleAddressInputForBooking = (
   return callback((currentState) => ({
     ...currentState,
     [propertyName]: {
+      ...currentState[propertyName],
       name,
       lon,
       lat,

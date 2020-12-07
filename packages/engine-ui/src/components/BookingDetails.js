@@ -143,7 +143,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
     delivery,
     id,
     metadata: { cargo, fragile, sender, recipient },
-    size: { measurement, weight },
+    size: { measurements, weight },
   } = booking
 
   return (
@@ -170,13 +170,13 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             </Elements.Typography.SpanBold>
             {fragile ? 'Ja' : 'Nej'}
           </Paragraph>
-          {measurement && (
+          {measurements && (
             <Paragraph>
               <Elements.Typography.SpanBold>
                 Mått:{' '}
               </Elements.Typography.SpanBold>
-              {measurement.map((item, index) =>
-                measurement.length === index + 1 ? `${item} cm ` : `${item}x`
+              {measurements.map((item, index) =>
+                measurements.length === index + 1 ? `${item} cm ` : `${item}x`
               )}
             </Paragraph>
           )}

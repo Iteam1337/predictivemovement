@@ -137,7 +137,7 @@ const PlanRouteDetails = ({
           </Elements.Layout.FlexRowWrapper>
           Bookingar på rutt:
           <BookingsList>
-            {route.booking_ids?.map((bookingId) => (
+            {route.bookingIds?.map((bookingId) => (
               <BookingListItem key={bookingId}>
                 <Elements.Links.RoundedLink to={`/bookings/${bookingId}`}>
                   {helpers.getLastFourChars(bookingId).toUpperCase()}

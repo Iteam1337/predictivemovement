@@ -81,8 +81,6 @@ const toTextLayer = (data) =>
   })
 
 const planToFeature = (plan, transports) => {
-  console.log('transport ', transports)
-  console.log('plan ', plan)
   let index = 0
   try {
     return [

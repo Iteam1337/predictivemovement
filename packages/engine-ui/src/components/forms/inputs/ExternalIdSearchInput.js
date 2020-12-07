@@ -52,6 +52,7 @@ const Component = ({
         error={formError}
         name="externalId"
         type="text"
+        value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
         iconInset

@@ -1,11 +1,12 @@
 import React, { SetStateAction } from 'react'
 import { useRouteMatch } from 'react-router-dom'
-import { FormState } from '../components/CreateTransport'
+import { FormState as CreateTransportState } from '../components/CreateTransport'
 import { Booking, Route, Transport } from '../types'
 import * as helpers from './helpers'
 import { State } from './reducer'
 import * as stores from './state/stores'
 import { useSocket } from 'use-socketio'
+import { FormBooking } from '../components/EditBooking/EditBooking'
 
 export const useFilteredStateFromQueryParams = (state: State) => {
   const includeBookings = useRouteMatch({
@@ -150,10 +151,12 @@ export const useGetParcelInfo = (initialState = []) => {
   return [find, suggested]
 }
 
-export const useFormStateWithMapClickControl = (
+export const useFormStateWithMapClickControl = <
+  T extends CreateTransportState | FormBooking
+>(
   start: string,
   end: string,
-  set: (callback: SetStateAction<FormState>) => void
+  set: (callback: SetStateAction<T>) => void
 ) => {
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 

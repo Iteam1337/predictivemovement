@@ -3,6 +3,7 @@ import { Booking } from '../../types'
 import * as Elements from '../../shared-elements'
 import Form from '../forms/CreateBooking'
 import * as stores from '../../utils/state/stores'
+import * as hooks from '../../utils/hooks'
 
 interface Props {
   booking: Booking
@@ -10,7 +11,8 @@ interface Props {
   setIsFinished: (isFinished: boolean) => void
 }
 
-interface FormBooking extends Omit<Booking, 'size'> {
+export interface FormBooking extends Omit<Booking, 'size'> {
+  [key: string]: any
   size: {
     measurements: string
     weight: string
@@ -18,9 +20,9 @@ interface FormBooking extends Omit<Booking, 'size'> {
 }
 
 const parcelSizePresets = {
-  small: { weight: 1, measurements: '18x18x18' },
-  medium: { weight: 10, measurements: '24x24x24' },
-  big: { weight: 50, measurements: '36x36x36' },
+  small: { weight: '1', measurements: '18x18x18' },
+  medium: { weight: '10', measurements: '24x24x24' },
+  big: { weight: '50', measurements: '36x36x36' },
 }
 
 const isValidAddress = ({ lat, lon }: { lat: number; lon: number }) =>
@@ -29,14 +31,6 @@ const isValidAddress = ({ lat, lon }: { lat: number; lon: number }) =>
 const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
   const formBooking = {
     ...booking,
-    pickup: {
-      ...booking.pickup,
-      name: `${booking.pickup.street}, ${booking.pickup.city}`,
-    },
-    delivery: {
-      ...booking.delivery,
-      name: `${booking.delivery.street}, ${booking.delivery.city}`,
-    },
     size: {
       weight: booking.size.weight ? booking.size.weight.toString() : '',
       measurements: booking.size.measurements
@@ -45,9 +39,11 @@ const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
     },
   }
 
-  const [state, setState] = React.useState<FormBooking>(formBooking)
+  const [state, setState] = React.useState(formBooking)
 
   const setUIState = stores.ui((state) => state.dispatch)
+  hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
+
   const [formErrors, setFormErrors] = React.useState({
     pickup: false,
     delivery: false,

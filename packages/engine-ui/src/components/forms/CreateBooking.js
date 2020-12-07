@@ -6,6 +6,20 @@ import nameIcon from '../../assets/contact-name.svg'
 import * as eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
 
+const getSizePreset = ({ size: { weight, measurements } }, presets) => {
+  if (!weight || !measurements) {
+    return {
+      weight: '',
+      measurements: '',
+    }
+  }
+
+  return Object.keys(presets).find(
+    (p) =>
+      measurements === presets[p].measurements && weight === presets[p].weight
+  )
+}
+
 const Component = ({
   onChangeHandler,
   onSubmitHandler,
@@ -17,7 +31,10 @@ const Component = ({
   type,
 }) => {
   const history = useHistory()
-  const [useCustomSize, setUseCustomSize] = React.useState(false)
+  const sizePreset = getSizePreset(state, parcelSizePresets) || 'custom'
+  const [useCustomSize, setUseCustomSize] = React.useState(
+    sizePreset === 'custom'
+  )
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
@@ -102,6 +119,8 @@ const Component = ({
         return 'Medium'
       case 'big':
         return 'Stor'
+      default:
+        return ''
     }
   }
 
@@ -160,6 +179,7 @@ const Component = ({
             <FormInputs.ParcelSize
               onChange={handleParcelSizeSelectChange}
               options={parcelSizeSelectOptions}
+              defaultValue={sizePreset}
             />
           )}
           {useCustomSize && (

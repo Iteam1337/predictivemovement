@@ -61,8 +61,8 @@ type Metadata = {
 }
 
 type TimeWindow = {
-  earliest: string
-  latest: string
+  earliest: string | Date
+  latest: string | Date
 }
 
 export type InAppColor = string

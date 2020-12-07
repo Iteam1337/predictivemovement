@@ -37,6 +37,22 @@ const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
         ? booking.size.measurements.join('x')
         : '',
     },
+    pickup: {
+      ...booking.pickup,
+      timeWindows:
+        booking.pickup.timeWindows?.map((t) => ({
+          earliest: t.earliest ? new Date(t.earliest) : '',
+          latest: t.latest ? new Date(t.latest) : '',
+        })) || null,
+    },
+    delivery: {
+      ...booking.delivery,
+      timeWindows:
+        booking.delivery.timeWindows?.map((t) => ({
+          earliest: t.earliest ? new Date(t.earliest) : '',
+          latest: t.latest ? new Date(t.latest) : '',
+        })) || null,
+    },
   }
 
   const [state, setState] = React.useState(formBooking)

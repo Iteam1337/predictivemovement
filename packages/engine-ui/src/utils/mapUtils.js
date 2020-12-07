@@ -292,10 +292,10 @@ const toTransportIconLayer = (transports, activeId) => {
 
   return toIconClusterLayer({
     type: 'transports',
-    data: transports.flatMap(({ id, start_address, location, color }) => ({
+    data: transports.flatMap(({ id, startAddress, location, color }) => ({
       coordinates: [
-        location?.lon || start_address.lon,
-        location?.lat || start_address.lat,
+        location?.lon || startAddress.lon,
+        location?.lat || startAddress.lat,
       ],
       active: id === activeId,
       color,

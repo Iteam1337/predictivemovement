@@ -39,9 +39,10 @@ const Component = ({
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState({
-    pickup: false,
-    delivery: false,
+    pickup: !!state.pickup.timeWindows?.length || false,
+    delivery: !!state.delivery.timeWindows?.length || false,
   })
+
   const isMobile = window.innerWidth <= 645
 
   const handleParcelSearchResults = ({ weight, measurements }) => {
@@ -271,6 +272,7 @@ const Component = ({
         />
 
         <FormInputs.Checkbox
+          defaultChecked={!!state.pickup.timeWindows?.length}
           label="Tidspassning"
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}

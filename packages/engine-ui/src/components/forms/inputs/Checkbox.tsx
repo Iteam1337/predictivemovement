@@ -74,13 +74,15 @@ const CheckboxLabel = styled.label`
 
 const Checkbox: React.FC<{
   name?: string
+  defaultChecked?: boolean
   onChangeHandler: (event: any) => void
   label: string
   onFocus?: () => void
-}> = ({ name, onChangeHandler, label, ...rest }) => {
+}> = ({ name, onChangeHandler, label, defaultChecked = false, ...rest }) => {
   return (
     <CustomCheckboxContainer>
       <HiddenCheckbox
+        defaultChecked={defaultChecked}
         name={name}
         type="checkbox"
         onChange={onChangeHandler}

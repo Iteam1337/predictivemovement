@@ -3,6 +3,11 @@ const helpers = require('./helpers')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, transportsCache, planCache } = require('./cache')
 const parcel = require('./parcel')
+const {
+  toIncomingBooking,
+  toIncomingTransport,
+  toIncomingPlan,
+} = require('./mappings')
 
 module.exports = (io) => {
   const {
@@ -26,25 +31,10 @@ module.exports = (io) => {
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .doto((booking) => bookingsCache.set(booking.id, booking))
-      .map((b) => {
-        const {
-          assigned_to,
-          external_id,
-          requires_transport_id,
-          ...booking
-        } = b
-
-        return {
-          ...booking,
-          assignedTo: assigned_to,
-          externalId: external_id,
-          requiresTransportId: requires_transport_id,
-        }
-      })
+      .map(toIncomingBooking)
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
-        console.log('bookings', JSON.stringify(bookings))
         socket.emit('bookings', bookings)
       })
 
@@ -53,6 +43,7 @@ module.exports = (io) => {
       .doto((transport) => {
         transportsCache.set(transport.id, transport)
       })
+      .map(toIncomingTransport)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each((transports) => socket.emit('transports', transports))
@@ -60,7 +51,7 @@ module.exports = (io) => {
     _.merge([_(planCache.values()), plan.fork()])
       .map(({ excluded_booking_ids, ...plan }) => ({
         ...plan,
-        excludedBookingIds: excluded_booking_ids.map((booking) => {
+        excludedBookingIds: excluded_booking_ids?.map((booking) => {
           const b = bookingsCache.get(booking.id)
           if (!b) return booking
           return {
@@ -73,6 +64,7 @@ module.exports = (io) => {
       .doto((data) => {
         planCache.set('plan', data)
       })
+      .map(toIncomingPlan)
       .each((data) => socket.emit('plan-update', data))
 
     _(transportLocationUpdates.fork()).each(({ id, location }) => {
@@ -111,7 +103,7 @@ module.exports = (io) => {
         bookingDate: new Date().toISOString(),
         size: params.size,
         pickup: {
-          time_windows: params.pickup.timeWindow,
+          time_windows: params.pickup.timeWindows,
           lat: params.pickup.lat,
           lon: params.pickup.lon,
           street: params.pickup.street,

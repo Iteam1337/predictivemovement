@@ -130,7 +130,7 @@ export const TransportTimeRestrictionPair = ({
       <Elements.Layout.TextInputPairItem>
         <TransportTimeRestriction
           selected={earliestStart}
-          onChangeHandler={(date) => onChangeHandler(date, 'eartliestStart')}
+          onChangeHandler={(date) => onChangeHandler(date, 'earliestStart')}
           placeholderText="Starttid"
           inputElement={
             <DateInput

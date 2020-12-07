@@ -80,7 +80,9 @@ const toTextLayer = (data) =>
     getSize: 20,
   })
 
-const planToFeature = (plan) => {
+const planToFeature = (plan, transports) => {
+  console.log('transport ', transports)
+  console.log('plan ', plan)
   let index = 0
   try {
     return [
@@ -96,7 +98,9 @@ const planToFeature = (plan) => {
               {
                 id,
                 properties: {
-                  color: getColor(routeIndex || 0, 3),
+                  color:
+                    transports.find((t) => t.id === id)?.color ||
+                    getColor(routeIndex || 0, 3),
                   offset: 0,
                   type: 'plan',
                 },

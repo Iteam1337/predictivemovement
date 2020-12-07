@@ -103,35 +103,6 @@ interface Props {
   route: Route
 }
 
-// const groupByLocation = (activities: Activity[]) => {
-//   const { data } = activities.reduce<{
-//     type: string
-//     address: string
-//     data: Activity[][]
-//   }>(
-//     (prev, curr) => {
-//       const currAddress = JSON.stringify(curr.address)
-//       if (prev.type === curr.type && prev.address === currAddress) {
-//         const [last] = prev.data.slice(0).reverse()
-
-//         return {
-//           ...prev,
-//           data: [...prev.data.slice(0, -1), [...last, curr]],
-//         }
-//       }
-
-//       return {
-//         type: curr.type,
-//         address: currAddress,
-//         data: [...prev.data, [curr]],
-//       }
-//     },
-//     { type: '', address: '', data: [] }
-//   )
-
-//   return data
-// }
-
 const RouteActivities = ({ route }: Props) => {
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)

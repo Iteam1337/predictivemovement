@@ -29,7 +29,6 @@ const Line = styled.div`
   width: 1px;
   border-left: 2px solid ${(props) => (props.status ? '#19de8b' : '#a8a8a8')};
   position: absolute;
-  /* background-color: ${(props) => (props.status ? '#19de8b' : '#a8a8a8')}; */
   height: 90%;
   margin-left: -0.68rem;
   top: -1.5rem;
@@ -45,7 +44,8 @@ const TimelineListItem = styled.li`
 
   :before {
     content: '';
-    background-color: ${(props) => (props.status ? '#19de8b' : '#a8a8a8')};
+    background-color: ${(props) =>
+      props.error ? 'red' : props.status ? '#19de8b' : '#a8a8a8'};
     border-radius: 50%;
     position: absolute;
     left: 0;
@@ -157,13 +157,11 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
 
   const bookingEvents = events.map((event) => event.type)
-
   const eventsList = events.concat(
     expectedEvents.filter((event) => {
       return !bookingEvents.includes(event)
     })
   )
-
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
@@ -302,6 +300,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
                   <TimelineListItem
                     key={index}
                     status={event.type ? true : false}
+                    error={event.type === 'delivery_failed'}
                   >
                     <Line status={event.type ? true : false} />
                     {event.type ? (

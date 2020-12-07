@@ -5,6 +5,8 @@ import * as helpers from '../helpers'
 import { Booking, Instruction } from '../types'
 import { getDirectionsUrl, getDirectionsFromInstructionGroups } from './google'
 import { getAddressFromCoordinate } from './pelias'
+const PHONE_GROUPCHAT_ERROR =
+  'Bad Request: phone number can be requested in private chats only'
 
 export const onBotStart = (ctx: TelegrafContext): void => {
   ctx.reply(
@@ -15,12 +17,22 @@ export const promptForLogin = (ctx: TelegrafContext): Promise<Message> =>
   ctx.reply('Du är inte inloggad. Logga in först genom att skriva /login')
 
 export const requestPhoneNumber = (ctx: TelegrafContext): Promise<Message> =>
-  ctx.reply('Klicka på "Skicka telefonnummer" för att logga in', {
-    reply_markup: {
-      one_time_keyboard: true,
-      keyboard: [[{ text: '📲 Skicka telefonnummer', request_contact: true }]],
-    },
-  })
+  ctx
+    .reply('Klicka på "Skicka telefonnummer" för att logga in', {
+      reply_markup: {
+        one_time_keyboard: true,
+        keyboard: [
+          [{ text: '📲 Skicka telefonnummer', request_contact: true }],
+        ],
+      },
+    })
+    .catch((e) => {
+      console.error(e.description)
+      if (e.description === PHONE_GROUPCHAT_ERROR)
+        return ctx.reply(
+          'Det verkar som att du har lagt till Förarboten i en gruppchatt, detta stöds tyvärr inte. Var vänlig starta en ny chat direkt med Förarboten istället.'
+        )
+    })
 
 export const onNoVehicleFoundFromId = (
   ctx: TelegrafContext
@@ -296,7 +308,10 @@ export const sendDeliveryInformation = (
   )
 }
 
-export const sendPhotoReceived = (telegramId: number): Promise<Message> =>
+export const sendPhotoReceived = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
     `Tack, ditt foto har sparats!\nDu kan ta fler foton om du vill, tryck annars på _Klar_ om du är färdig med kvittensen.`,
@@ -309,6 +324,7 @@ export const sendPhotoReceived = (telegramId: number): Promise<Message> =>
               text: 'Klar',
               callback_data: JSON.stringify({
                 e: 'delivered',
+                id: instructionGroupId,
               }),
             },
           ],

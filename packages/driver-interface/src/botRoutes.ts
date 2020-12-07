@@ -35,11 +35,16 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.command('/login', messaging.requestPhoneNumber)
 
   bot.on('message', (ctx) => {
+    console.log('message received', ctx.message)
     const msg = ctx.message
     if (msg.contact && msg.contact.phone_number)
       return botServices.onLogin(msg.contact.phone_number, ctx)
     if (msg.location) return botServices.onLocationMessage(msg)
-    if (msg.photo) return botServices.onPhotoReceived(msg.from.id, msg.photo)
+    if (msg.photo) {
+      console.log('saving photo', JSON.stringify(msg, null, 2))
+      console.log('telegram id of photo sender is', msg.from.id)
+      return botServices.onPhotoReceived(msg.from.id, msg.photo)
+    }
   })
 
   bot.on('edited_message', (ctx) => {
@@ -63,7 +68,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
           instructionGroupId
         )
       case 'delivered':
-        cache.setDriverDoneDelivering(telegramId)
+        await cache.setDriverDoneDelivering(telegramId)
       case 'picked_up':
       case 'delivery_failed': {
         return cache

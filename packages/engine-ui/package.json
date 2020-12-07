@@ -25,6 +25,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
     "styled-components": "^5.0.0",
+    "supercluster": "^7.1.0",
     "typescript": "^4.0.5",
     "use-socketio": "^2.0.4",
     "web-vitals": "^0.2.4",

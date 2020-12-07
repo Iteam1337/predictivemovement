@@ -34,7 +34,12 @@ const Map = ({ data }) => {
     }
 
     hideTooltip()
-    const type = event.object.properties.type
+    const type = event.object.properties?.type
+
+    if (!type) {
+      return
+    }
+
     const id = event.object.id || event.object.properties.id
     switch (type) {
       case 'booking':
@@ -80,11 +85,13 @@ const Map = ({ data }) => {
     showTextLayer &&
       mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
     mapUtils.toTransportIconLayer(data.transports, UIState.highlightTransport),
-    mapUtils.toBookingIconLayer(
-      data.bookings,
-      'pickup',
-      UIState.highlightBooking
-    ),
+    mapUtils.toIconClusterLayer({
+      type: 'bookings',
+      data: data.bookings.flatMap(({ id, pickup }) => ({
+        coordinates: [pickup.lon, pickup.lat],
+        active: id === UIState.highlightBooking,
+      })),
+    }),
   ]
 
   return (

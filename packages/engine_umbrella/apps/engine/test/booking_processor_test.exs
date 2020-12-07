@@ -137,7 +137,7 @@ defmodule BookingProcessorTest do
 
   test "time window constrains is passed on from vehicle to plan" do
     earliest_start = "12:05"
-    latest_end = "18:05"
+    latest_end = Time.utc_now() |> Time.add(60 * 60 * 3) |> Time.to_string() |> String.slice(0..4)
 
     TransportGenerator.generate_transport_props(%{
       earliest_start: earliest_start,

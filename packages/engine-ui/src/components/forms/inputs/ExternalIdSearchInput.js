@@ -31,9 +31,8 @@ const Component = ({
 
   const onSearchInputHandler = (event) => {
     event.persist()
-    searchWithDebounce(event.target.value)
-
-    return onChangeHandler(event.target.value)
+    searchWithDebounce(event.currentTarget.value)
+    return onChangeHandler(event)
   }
   return (
     <Elements.Layout.InputInnerContainer>

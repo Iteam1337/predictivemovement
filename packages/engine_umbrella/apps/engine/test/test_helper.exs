@@ -1,6 +1,9 @@
 ExUnit.start()
 
 defmodule TestHelper do
+  Mox.defmock(Engine.Adapters.MockRMQ, for: Engine.Behaviours.QueuePublisher)
+  Application.put_env(:engine, Adapters.RMQ, Engine.Adapters.MockRMQ)
+
   def wait_for_message(channel),
     do:
       wait_for_x_messages(1, channel)

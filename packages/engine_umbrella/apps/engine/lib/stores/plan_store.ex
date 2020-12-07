@@ -1,6 +1,7 @@
 defmodule PlanStore do
   use GenServer
   alias Engine.Adapters.RMQ
+  @rmq Application.get_env(:engine, Adapters.RMQ, Engine.Adapters.MockRMQ)
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
 
   def start_link(_) do

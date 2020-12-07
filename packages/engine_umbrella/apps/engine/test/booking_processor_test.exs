@@ -9,6 +9,7 @@ defmodule BookingProcessorTest do
 
   setup :clear_state
 
+  @tag :only
   test "creates a plan for one vehicle and one booking" do
     TransportGenerator.generate_transport_props()
     |> Vehicle.make()

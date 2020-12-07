@@ -86,6 +86,36 @@ defmodule Plan do
     |> elem(0)
   end
 
+  def add_activity_address_info(activity, _vehicle) when is_map_key(activity, :id) do
+    %{pickup: pickup, delivery: delivery} = Booking.get(activity.id)
+
+    with true <- activity.type == "pickupShipment" do
+      merge_activity_address_info(activity, pickup)
+    else
+      _ ->
+        merge_activity_address_info(activity, delivery)
+    end
+  end
+
+  def add_activity_address_info(activity, %{start_address: start_address})
+      when activity.type == "start" do
+    merge_activity_address_info(activity, start_address)
+  end
+
+  def add_activity_address_info(activity, %{end_address: end_address})
+      when activity.type == "end" do
+    merge_activity_address_info(activity, end_address)
+  end
+
+  def merge_activity_address_info(activity, address) do
+    activity |> Map.update!(:address, fn existing -> Map.merge(address, existing) end)
+  end
+
+  def update_activities_address(activities, vehicle) do
+    activities
+    |> Enum.map(fn activity -> add_activity_address_info(activity, vehicle) end)
+  end
+
   def calculate(vehicle_ids, booking_ids)
       when length(vehicle_ids) == 0 or length(booking_ids) == 0,
       do: IO.puts("No vehicles/bookings to calculate plan for")
@@ -125,6 +155,11 @@ defmodule Plan do
             |> Map.put(:duration, duration)
           end)
         )
+      end)
+      |> Enum.map(fn vehicle ->
+        Map.update!(vehicle, :activities, fn activities ->
+          update_activities_address(activities, vehicle)
+        end)
       end)
 
     PlanStore.put_plan(%{

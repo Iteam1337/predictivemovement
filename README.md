@@ -34,19 +34,47 @@ To debug run:
 
 ### Running Predictive Movement locally
 
-Set build variables
+You will need the following API keys
+POSTNORD_KEY - for engine-server
+REACT_APP_MAPBOX_ACCESS_TOKEN - for engine-ui
+GOOGLE_API_TOKEN - for driver-interface
+TELEGRAM_BOT_TOKEN - for driver-interface
+
+#### Via docker-compose:
+
+Set project build variables
 
     export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
+
+Set project env variables
+
+    export GOOGLE_API_TOKEN=<FROM LASTPASS>
+    export TELEGRAM_BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
+    export POSTNORD_KEY=<FROM LASTPASS>
 
 Start dependencies
 
     docker-compose up -d
 
-run event_store migrations and start the engine
+#### Locally (outside of docker):
+
+create .env-file in packages/driver-interface/.env with
+
+    GOOGLE_API_TOKEN=<FROM LASTPASS>
+    BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
+
+create .env-file in packages/engine-ui/.env with
+
+    REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
+
+Go into every folder and run the start command for the service.
+
+#### run event_store migrations and start the engine
 
     cd packages/engine_umbrella/
     mix deps.get
-    iex -S mix dev
+    mix dev
+    iex -S mix
 
 ### Helper/utility functions for populating the state
 
@@ -55,7 +83,7 @@ The umbrella project has an application "message_generator" which is used to cre
     cd packages/engine_umbrella/
     iex -S mix
 
-Then the Generator module is available inside the shell. 
+Then the Generator module is available inside the shell.
 
     add_booking/0      add_booking/1      add_transport/0    add_transport/1
 

@@ -41,6 +41,12 @@ const TimeContainer = styled.div`
   flex-basis: 15%;
 `
 
+const Details = styled.div`
+  p:first-of-type {
+    margin-top: 0.25rem;
+  }
+`
+
 const ActivityListItemContainer = styled.div`
   padding: 1rem;
   border-left: 3px solid #19aa6e;
@@ -186,7 +192,6 @@ const RouteActivities = ({ route }: Props) => {
                     style={{
                       display: 'flex',
                       alignItems: 'baseline',
-                      marginBottom: '.5rem',
                     }}
                   >
                     <Elements.Typography.InfoMdStrong>
@@ -222,11 +227,10 @@ const RouteActivities = ({ route }: Props) => {
                       </Elements.Links.RoundedLink>
                     </ActivityGroup>
                   </div>
-
-                  <div style={{ textAlign: 'left' }}>
+                  <Details>
                     <SmallParagraph>{activity.address.street}</SmallParagraph>
                     <SmallParagraph>{activity.address.city}</SmallParagraph>
-                  </div>
+                  </Details>
                 </SpeechBubble>
               </ActivityListItemContainer>
             </TimelineItem>

@@ -21,7 +21,6 @@ defmodule BookingUpdatesProcessorTest do
     )
 
     on_exit(fn ->
-      clear_state()
       AMQP.Channel.close(channel)
       AMQP.Connection.close(connection)
     end)

@@ -7,6 +7,8 @@ defmodule BookingProcessorTest do
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
+  setup :clear_state
+
   test "creates a plan for one vehicle and one booking" do
     TransportGenerator.generate_transport_props()
     |> Vehicle.make()
@@ -18,7 +20,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert Map.get(plan, :booking_ids) |> length() == 1
     assert Map.get(plan, :vehicles) |> length() == 1
@@ -47,7 +48,6 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
     assert plan |> Map.get(:vehicles) |> length() == 1
     assert plan |> Map.get(:booking_ids) |> length() == 2
   end
@@ -78,8 +78,6 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     assert 2 ==
              plan
              |> Map.get(:vehicles)
@@ -106,8 +104,6 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
     assert first_vehicle |> Map.get(:end_address) == %{lat: 61.829182, lon: 16.0896213}
@@ -128,15 +124,15 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
     assert first_vehicle |> Map.get(:end_address) == %{lat: 51.829182, lon: 17.0896213}
   end
 
   test "time window constrains is passed on from vehicle to plan" do
-    earliest_start = "12:05"
+    earliest_start =
+      Time.utc_now() |> Time.add(60 * 60 * -3) |> Time.to_string() |> String.slice(0..4)
+
     latest_end = Time.utc_now() |> Time.add(60 * 60 * 3) |> Time.to_string() |> String.slice(0..4)
 
     TransportGenerator.generate_transport_props(%{
@@ -152,8 +148,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-
-    clear_state()
 
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
@@ -180,8 +174,6 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     first_vehicle = plan |> Map.get(:vehicles) |> List.first()
 
     assert first_vehicle |> Map.get(:capacity) == %{weight: 731, volume: 18}
@@ -202,7 +194,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
@@ -222,7 +213,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert plan |> Map.get(:vehicles) |> length() == 0
   end
@@ -250,7 +240,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert Map.get(plan, :vehicles) |> length() == 1
     assert Map.get(plan, :booking_ids) |> length() == 3
@@ -322,7 +311,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert Map.get(plan, :vehicles) |> length() == 1
     assert Map.get(plan, :excluded_booking_ids) |> length() == 1

@@ -33,7 +33,7 @@ defmodule TestHelper do
     end
   end
 
-  def clear_state() do
+  def clear_state(_context) do
     Engine.VehicleStore.clear()
     Engine.BookingStore.clear()
   end

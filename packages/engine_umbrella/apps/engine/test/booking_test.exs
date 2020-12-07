@@ -3,13 +3,14 @@ defmodule BookingTest do
   alias MessageGenerator.BookingGenerator
   use ExUnit.Case
 
+  setup :clear_state
+
   test "it allows booking creation" do
     result =
       BookingGenerator.generate_booking_props()
       |> Booking.make()
 
     assert is_binary(result)
-    clear_state()
   end
 
   test "does not allow malformed size (weight)" do
@@ -66,7 +67,6 @@ defmodule BookingTest do
       |> Booking.make()
 
     assert is_binary(result)
-    clear_state()
   end
 
   test "should validate booking addresses containing lat/lon" do

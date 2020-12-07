@@ -9,7 +9,6 @@ defmodule VehicleTest do
       |> Vehicle.make()
 
     assert is_binary(result)
-    clear_state()
   end
 
   test "required start address" do

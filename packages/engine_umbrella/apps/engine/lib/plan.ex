@@ -142,20 +142,7 @@ defmodule Plan do
           |> Osrm.route()
         )
       end)
-      |> Enum.map(fn vehicle ->
-        %{"legs" => legs} = vehicle.current_route |> Jason.decode!()
-
-        vehicle
-        |> Map.put(
-          :activities,
-          Enum.zip(vehicle.activities, [%{"distance" => 0, "duration" => 0} | legs])
-          |> Enum.map(fn {activity, %{"distance" => distance, "duration" => duration}} ->
-            activity
-            |> Map.put(:distance, distance)
-            |> Map.put(:duration, duration)
-          end)
-        )
-      end)
+      |> Enum.map(&add_distance_durations/1)
       |> Enum.map(fn vehicle ->
         Map.update!(vehicle, :activities, fn activities ->
           update_activities_address(activities, vehicle)
@@ -167,6 +154,24 @@ defmodule Plan do
       booking_ids: booking_ids,
       excluded_booking_ids: Enum.map(excluded, &handle_booking_failure/1)
     })
+  end
+
+  def add_distance_durations(vehicle) do
+    distance_durations =
+      vehicle
+      |> Map.get(:current_route)
+      |> Jason.decode!()
+      |> Map.get("legs")
+      |> Enum.map(fn legs -> Map.take(legs, ["distance", "duration"]) end)
+
+    Map.update!(vehicle, :activities, fn activities ->
+      Enum.zip(activities, distance_durations)
+      |> Enum.map(fn {activity, distance_duration} ->
+        distance_duration
+        |> Enum.reduce(%{}, fn {key, val}, acc -> Map.put(acc, String.to_atom(key), val) end)
+        |> Map.merge(activity)
+      end)
+    end)
   end
 
   defp handle_booking_failure(%{id: id, failure: %{status_msg: @jsprit_time_constraint_msg}}),

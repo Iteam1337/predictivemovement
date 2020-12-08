@@ -56,4 +56,35 @@ defmodule PlanTest do
     assert Plan.insert_time_matrix(TimeMatrixMock.get_vehicles_and_bookings())
            |> Map.get(:vehicles) == expected_vehicles
   end
+
+  test "adds distance and time on vehicle activites" do
+    vehicle =
+      %{
+        activities: [
+          %{address: %{lat: 61.833656311035156, lon: 15.978939056396484}},
+          %{address: %{lat: 61.87600326538086, lon: 15.957921028137207}},
+          %{address: %{lat: 61.85926055908203, lon: 16.17622184753418}}
+        ],
+        current_route: %{
+          legs: [
+            %{"distance" => 23585.6, "duration" => 1858},
+            %{"distance" => 3302.1, "duration" => 285.1},
+            %{"distance" => 22236.6, "duration" => 1540.1}
+          ]
+        }
+      }
+      |> Map.update!(:current_route, &Jason.encode!/1)
+
+    res =
+      vehicle
+      |> Plan.add_distance_durations()
+      |> Map.get(:activities)
+      |> Enum.map(fn activity -> Map.take(activity, [:distance, :duration]) end)
+
+    assert res == [
+             %{distance: 23585.6, duration: 1858},
+             %{distance: 3302.1, duration: 285.1},
+             %{distance: 22236.6, duration: 1540.1}
+           ]
+  end
 end

@@ -17,7 +17,7 @@ const App = () => {
   const [notifications, updateNotifications] = React.useState<
     notificationTypes.Notification[]
   >([])
-  const isMobile = window.innerWidth <= 645;
+  const isMobile = window.innerWidth <= 645
 
   const createTransport = (params: any) => {
     socket.emit('create-transport', params)
@@ -109,9 +109,11 @@ const App = () => {
         deleteTransport={deleteTransport}
         moveBooking={moveBooking}
       />
-      {!isMobile && <Route path="/">
-        <Map data={mapData} />
-      </Route>}
+      {!isMobile && (
+        <Route path="/">
+          <Map data={mapData} state={state} />
+        </Route>
+      )}
     </>
   )
 }

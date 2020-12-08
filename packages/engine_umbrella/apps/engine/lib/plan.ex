@@ -162,15 +162,16 @@ defmodule Plan do
       |> Map.get(:current_route)
       |> Jason.decode!()
       |> Map.get("legs")
-      |> Enum.map(fn legs -> Map.take(legs, ["distance", "duration"]) end)
+      |> Enum.map(fn legs ->
+        legs
+        |> Enum.reduce(%{}, fn {key, val}, acc -> Map.put(acc, String.to_atom(key), val) end)
+        |> Map.take([:distance, :duration])
+      end)
 
     Map.update!(vehicle, :activities, fn activities ->
       Enum.zip(activities, distance_durations)
-      |> Enum.map(fn {activity, distance_duration} ->
-        distance_duration
-        |> Enum.reduce(%{}, fn {key, val}, acc -> Map.put(acc, String.to_atom(key), val) end)
-        |> Map.merge(activity)
-      end)
+      |> Enum.map(fn {activity, distance_duration} -> Map.merge(activity, distance_duration) end)
+      |> List.insert_at(0, %{distance: 0, duration: 0})
     end)
   end
 

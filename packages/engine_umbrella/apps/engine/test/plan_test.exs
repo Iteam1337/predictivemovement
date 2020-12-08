@@ -57,6 +57,7 @@ defmodule PlanTest do
            |> Map.get(:vehicles) == expected_vehicles
   end
 
+  @tag :only
   test "adds distance and time on vehicle activites" do
     vehicle =
       %{
@@ -82,6 +83,7 @@ defmodule PlanTest do
       |> Enum.map(fn activity -> Map.take(activity, [:distance, :duration]) end)
 
     assert res == [
+             %{distance: 0, duration: 0},
              %{distance: 23585.6, duration: 1858},
              %{distance: 3302.1, duration: 285.1},
              %{distance: 22236.6, duration: 1540.1}

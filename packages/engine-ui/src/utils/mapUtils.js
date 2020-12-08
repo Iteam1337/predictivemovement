@@ -1,5 +1,6 @@
 import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
+import { PathStyleExtension } from '@deck.gl/extensions'
 import parcelIcon from '../assets/parcel.svg'
 import * as helpers from './helpers'
 import excludedParcelIcon from '../assets/excluded-parcel.svg'
@@ -175,20 +176,22 @@ const toGeoJsonLayer = (id, data, callback) =>
     stroked: false,
     filled: true,
     extruded: true,
-    lineWidthScale: 1,
-    lineWidthMinPixels: 3,
+    lineWidthScale: 2,
+    lineWidthMinPixels: 1.5,
     getFillColor: ({ properties }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 190),
     highlightColor: ({ object: { properties } }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getRadius: (d) => d.properties.size || 300,
-    getLineWidth: 5,
+    getLineWidth: 10,
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
     lineJointRounded: true,
     onClick: callback,
+    getOffset: 1.4,
+    extensions: [new PathStyleExtension({ offset: true })],
   })
 
 const toExcludedBookingIcon = (booking, activeId) => {

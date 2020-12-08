@@ -111,7 +111,9 @@ const planToFeature = (plan, transports) => {
                 point([address.lon, address.lat], {
                   id,
                   properties: {
-                    color: getColor(routeIndex || 0, 4),
+                    color:
+                      transports.find((t) => t.id === id)?.color ||
+                      getColor(routeIndex || 0, 4),
                   },
                 })
               )

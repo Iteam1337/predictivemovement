@@ -60,10 +60,10 @@ module.exports = (io) => {
     .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
     .map((transportRes) => {
       const transport = transportRes.json()
-
+      if (transport.current_route)
+        transport.current_route = JSON.parse(transport.current_route)
       return {
         ...transport,
-        current_route: JSON.parse(transport.current_route),
         metadata: JSON.parse(transport.metadata),
       }
     })
@@ -78,14 +78,17 @@ module.exports = (io) => {
     .subscribe({ noAck: true })
     .map((msg) => {
       const planFromMsg = msg.json()
-
       const plan = {
         ...planFromMsg,
-        transports: planFromMsg.vehicles.map((route) => ({
-          ...route,
-          current_route: JSON.parse(route.current_route),
-          metadata: JSON.parse(route.metadata),
-        })),
+        transports: planFromMsg.vehicles.map((route) => {
+          if (route.current_route)
+            route.current_route = JSON.parse(route.current_route)
+
+          return {
+            ...route,
+            metadata: JSON.parse(route.metadata),
+          }
+        }),
       }
 
       return plan

@@ -46,7 +46,8 @@ defmodule BookingUpdatesProcessorTest do
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
     send_status_msg(booking_id, vehicle_id, "picked_up")
     update = wait_for_message(channel)
-    assert Map.get(update, :metadata) == "{\"senderId\":\"telegramIdString\"}"
+    assert Map.get(update, :id) == booking_id
+    assert Map.get(update, :events) |> List.first() |> Map.get(:type) == "picked_up"
 
     assert :picked_up ==
              Booking.get(booking_id)
@@ -72,7 +73,8 @@ defmodule BookingUpdatesProcessorTest do
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
     send_status_msg(booking_id, vehicle_id, "delivered")
     update = wait_for_message(channel)
-    assert Map.get(update, :metadata) == "{\"senderId\":\"telegramIdString\"}"
+    assert Map.get(update, :id) == booking_id
+    assert Map.get(update, :events) |> List.first() |> Map.get(:type) == "delivered"
 
     assert :delivered ==
              Booking.get(booking_id)
@@ -85,8 +87,7 @@ defmodule BookingUpdatesProcessorTest do
     RMQ.publish(
       %{
         assigned_to: %{
-          id: vehicle_id,
-          metadata: %{telegram: %{senderId: 1_242_301_357}}
+          id: vehicle_id
         },
         delivery: %{lat: 61.75485695153156, lon: 15.989146086447738},
         events: [],

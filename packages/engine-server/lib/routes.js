@@ -25,7 +25,11 @@ module.exports = (io) => {
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
-      .doto((booking) => bookingsCache.set(booking.id, booking))
+      .map((newBooking) => {
+        const oldBooking = bookingsCache.get(newBooking.id)
+        bookingsCache.set(newBooking.id, { ...oldBooking, ...newBooking })
+        return { ...newBooking, ...oldBooking }
+      })
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {

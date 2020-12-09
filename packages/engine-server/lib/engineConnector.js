@@ -42,15 +42,14 @@ module.exports = (io) => {
     ])
     .map((bookingRes) => {
       const booking = bookingRes.json()
+      if (booking.route) booking.route = JSON.parse(booking.route)
+      if (booking.metadata) booking.metadata = JSON.parse(booking.metadata)
 
       return {
         ...booking,
-        route: JSON.parse(booking.route),
-        metadata: JSON.parse(booking.metadata),
         status: bookingRes.fields.routingKey,
       }
     })
-
   const transports = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: true,
@@ -241,8 +240,6 @@ module.exports = (io) => {
 
       return {
         ...transport,
-        current_route: JSON.parse(transport.current_route),
-        metadata: JSON.parse(transport.metadata),
         status: transportRes.fields.routingKey,
       }
     })
@@ -265,8 +262,6 @@ module.exports = (io) => {
 
       return {
         ...booking,
-        route: JSON.parse(booking.route),
-        metadata: JSON.parse(booking.metadata),
         status: bookingRes.fields.routingKey,
       }
     })

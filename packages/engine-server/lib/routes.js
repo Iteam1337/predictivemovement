@@ -54,6 +54,7 @@ module.exports = (io) => {
           }
         }),
       }))
+      .map(helpers.addActivityAddressInfo)
       .doto((data) => {
         planCache.set('plan', data)
       })

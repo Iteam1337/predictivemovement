@@ -1,6 +1,6 @@
 defmodule MessageGenerator.Adapters.Pelias do
   def get_address_info_from_coordinates(lat, lon) do
-    %{"county" => city, "name" => name, "street" => street} =
+    res =
       HTTPoison.get!("https://pelias.iteamdev.io/v1/reverse?point.lat=#{lat}&point.lon=#{lon}")
       |> Map.get(:body)
       |> Jason.decode!()
@@ -8,6 +8,10 @@ defmodule MessageGenerator.Adapters.Pelias do
       |> List.first()
       |> Map.get("properties")
 
-    %{city: city, name: name, street: street}
+    %{
+      city: Map.get(res, "country"),
+      name: Map.get(res, "name"),
+      street: Map.get(res, "street", "no street found")
+    }
   end
 end

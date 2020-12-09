@@ -1,6 +1,5 @@
 defmodule PlanTest do
   use ExUnit.Case
-  alias MessageGenerator.BookingGenerator
 
   test "insert time matrix correctly" do
     expected_vehicles = [

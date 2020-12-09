@@ -64,7 +64,8 @@ defmodule PlanTest do
         activities: [
           %{address: %{lat: 61.833656311035156, lon: 15.978939056396484}},
           %{address: %{lat: 61.87600326538086, lon: 15.957921028137207}},
-          %{address: %{lat: 61.85926055908203, lon: 16.17622184753418}}
+          %{address: %{lat: 61.85926055908203, lon: 16.17622184753418}},
+          %{address: %{lat: 61.2131314, lon: 16.1231314}}
         ],
         current_route: %{
           legs: [
@@ -87,84 +88,6 @@ defmodule PlanTest do
              %{distance: 23585.6, duration: 1858},
              %{distance: 3302.1, duration: 285.1},
              %{distance: 22236.6, duration: 1540.1}
-           ]
-  end
-
-  test "adds addresses" do
-    booking_id =
-      BookingGenerator.generate_booking_props(%{
-        pickup: %{
-          name: "storgatan 8",
-          street: "storgatan 8",
-          city: "Stockholm",
-          lat: 1,
-          lon: 2
-        },
-        delivery: %{
-          name: "östermalmsgatan 8",
-          street: "östermalmsgatan 8",
-          city: "Stockholm",
-          lat: 13,
-          lon: 23
-        }
-      })
-      |> Booking.make()
-
-    vehicle = %{
-      start_address: %{
-        city: "Stockholm",
-        lat: 59.336126,
-        lon: 18.014475,
-        name: "Kellgrensgatan 14, Stockholm",
-        street: "Kellgrensgatan 14"
-      },
-      end_address: %{
-        city: "Stockholm",
-        lat: 59.336126,
-        lon: 18.014475,
-        name: "Kellgrensgatan 14, Stockholm",
-        street: "Kellgrensgatan 14"
-      },
-      booking_ids: ["pmb-nta0ywni"],
-      activities: [
-        %{type: "start", address: %{lat: 61.833656311035156, lon: 15.978939056396484}},
-        %{
-          id: booking_id,
-          type: "pickupShipment",
-          address: %{lat: 61.87600326538086, lon: 15.957921028137207}
-        },
-        %{
-          id: booking_id,
-          type: "deliverShipment",
-          address: %{lat: 61.85926055908203, lon: 16.17622184753418}
-        }
-      ]
-    }
-
-    addresses =
-      vehicle
-      |> Plan.add_address_info()
-      |> Map.get(:activities)
-      |> Enum.map(fn activity ->
-        Map.get(activity, :address) |> Map.take([:city, :name, :street])
-      end)
-
-    assert addresses == [
-             %{
-               name: "Kellgrensgatan 14, Stockholm",
-               city: "Stockholm",
-               street: "Kellgrensgatan 14"
-             },
-             %{
-               city: "Stockholm",
-               name: "storgatan 8",
-               street: "storgatan 8"
-             },
-             %{
-               city: "Stockholm",
-               name: "östermalmsgatan 8",
-               street: "östermalmsgatan 8"
-             }
            ]
   end
 end

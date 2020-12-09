@@ -4,7 +4,6 @@ defmodule BookingProcessorTest do
   alias MessageGenerator.BookingGenerator
 
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   test "creates a plan for one vehicle and one booking" do

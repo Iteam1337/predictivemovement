@@ -113,6 +113,8 @@ export interface Address {
   lat: number
   lon: number
   name?: string
+  city?: string
+  street?: string
 }
 
 export interface Activity {
@@ -120,4 +122,6 @@ export interface Activity {
   index: number
   type: string
   id: string
+  distance: number
+  duration: number
 }

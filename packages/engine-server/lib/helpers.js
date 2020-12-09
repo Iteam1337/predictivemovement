@@ -1,5 +1,5 @@
 const PhoneNumber = require('awesome-phonenumber')
-
+const { bookingsCache } = require('../lib/cache')
 const severityByEventStatus = (status) => {
   const map = {
     new: 'success',
@@ -45,9 +45,38 @@ const changeFormatOnPhoneNumber = (phoneNumber) => {
   return phoneNumberData.getNumber('e164').replace('+', '')
 }
 
+const addActivityAddressInfo = (plan) => ({
+  ...plan,
+  transports: plan.transports.map((transport) => ({
+    ...transport,
+    activities: transport.activities.map((activity) => {
+      const { id, type } = activity
+      let addressWithInfo
+      if (id) {
+        addressWithInfo = getAddressInfoFromBookingId(type, id)
+      } else if (type === 'start') {
+        addressWithInfo = transport.start_address
+      } else if (type === 'end') {
+        addressWithInfo = transport.end_address
+      }
+      return {
+        ...activity,
+        address: addressWithInfo,
+      }
+    }),
+  })),
+})
+
+function getAddressInfoFromBookingId(type, id) {
+  booking = bookingsCache.get(id)
+  if (type === 'pickupShipment') return booking.pickup
+  else return booking.delivery
+}
+
 module.exports = {
   severityByEventStatus,
   bookingToNotification,
   transportToNotification,
   changeFormatOnPhoneNumber,
+  addActivityAddressInfo,
 }

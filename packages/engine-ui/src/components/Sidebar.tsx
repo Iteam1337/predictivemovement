@@ -18,10 +18,10 @@ const Container = styled.div`
   display: flex;
 `
 
-const Content = styled.div<{isMobile: Boolean}>`
+const Content = styled.div<{ isMobile: Boolean }>`
   padding: 2rem;
-  width: ${({isMobile}) => isMobile ? '100%' : '350px' };
-  
+  width: ${({ isMobile }) => (isMobile ? '100%' : '400px')};
+
   overflow: auto;
 `
 

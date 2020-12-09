@@ -111,6 +111,7 @@ defmodule Booking do
     )
 
     booking
+    |> Map.from_struct()
     |> Map.put(:route, Osrm.route(pickup, delivery))
     |> RMQ.publish(@outgoing_booking_exchange, "new")
 

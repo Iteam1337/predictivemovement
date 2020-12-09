@@ -169,11 +169,11 @@ defmodule Plan do
         |> Enum.reduce(%{}, fn {key, val}, acc -> Map.put(acc, String.to_atom(key), val) end)
         |> Map.take([:distance, :duration])
       end)
+      |> List.insert_at(0, %{distance: 0, duration: 0})
 
     Map.update!(vehicle, :activities, fn activities ->
       Enum.zip(activities, distance_durations)
       |> Enum.map(fn {activity, distance_duration} -> Map.merge(activity, distance_duration) end)
-      |> List.insert_at(0, %{distance: 0, duration: 0})
     end)
   end
 

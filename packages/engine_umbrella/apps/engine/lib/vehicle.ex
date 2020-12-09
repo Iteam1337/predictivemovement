@@ -86,7 +86,7 @@ defmodule Vehicle do
   end
 
   def update(%{
-        id: id,
+        id: "pmv-" <> _ = id,
         start_address: start_address,
         end_address: end_address,
         earliest_start: earliest_start,
@@ -126,7 +126,7 @@ defmodule Vehicle do
     end
   end
 
-  def apply_offer_accepted(id, offer) do
+  def apply_offer_accepted("pmv-" <> _ = id, offer) do
     GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
     |> Map.put(:current_route, get_route_from_activities(offer.activities))
     |> RMQ.publish(
@@ -135,7 +135,7 @@ defmodule Vehicle do
     )
   end
 
-  def apply_vehicle_to_state(%Vehicle{id: id} = vehicle) do
+  def apply_vehicle_to_state(%Vehicle{id: "pmv-" <> _ = id} = vehicle) do
     GenServer.start_link(
       __MODULE__,
       vehicle,
@@ -153,12 +153,12 @@ defmodule Vehicle do
     vehicle
   end
 
-  def delete(id) do
+  def delete("pmv-" <> _ = id) do
     ES.add_event(%VehicleDeleted{id: id})
     apply_delete_to_state(id)
   end
 
-  def apply_delete_to_state(id) do
+  def apply_delete_to_state("pmv-" <> _ = id) do
     Engine.VehicleStore.delete_vehicle(id)
     GenServer.stop(via_tuple(id))
 
@@ -171,7 +171,7 @@ defmodule Vehicle do
 
   defp via_tuple(id), do: {:via, :gproc, {:n, :l, {:vehicle_id, id}}}
 
-  def get(id), do: GenServer.call(via_tuple(id), :get)
+  def get("pmv-" <> _ = id), do: GenServer.call(via_tuple(id), :get)
 
   defp get_route_from_activities(activities),
     do:
@@ -179,7 +179,7 @@ defmodule Vehicle do
       |> Enum.map(fn %{address: address} -> address end)
       |> Osrm.route()
 
-  def offer(%Vehicle{id: id, activities: activities, booking_ids: booking_ids}) do
+  def offer(%Vehicle{id: "pmv-" <> _ = id, activities: activities, booking_ids: booking_ids}) do
     offer = %{
       booking_ids: booking_ids,
       activities: activities
@@ -201,7 +201,7 @@ defmodule Vehicle do
     end
   end
 
-  def send_offer(offer, vehicle_id) do
+  def send_offer(offer, "pmv-" <> _ = vehicle_id) do
     Logger.debug("offer to vehicle #{vehicle_id}")
 
     RMQRPCWorker.call(

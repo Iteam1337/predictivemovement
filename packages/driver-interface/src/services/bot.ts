@@ -184,7 +184,7 @@ export const onPhotoReceived = async (
     .then((instructionGroup: Instruction[]) =>
       instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
     )
-
+  console.log('saving photo for bookingIds', bookingIds)
   return cache
     .getDeliveryReceiptPhotos(bookingIds)
     .then((photoIds: string[]) =>
@@ -194,6 +194,10 @@ export const onPhotoReceived = async (
       )
     )
     .then(() => messaging.sendPhotoReceived(instructionGroupId, telegramId))
+    .then((e) => {
+      console.log('photo successfully received')
+      return e
+    })
 }
 
 export const beginDeliveryAcknowledgement = async (
@@ -206,3 +210,10 @@ export const beginDeliveryAcknowledgement = async (
       instructionGroupId
     )
     .then(() => messaging.sendBeginDeliveryAcknowledgement(telegramId))
+
+export async function onArrived(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
+
+  return handleDriverArrivedToPickupOrDeliveryPosition(vehicleId, telegramId)
+}

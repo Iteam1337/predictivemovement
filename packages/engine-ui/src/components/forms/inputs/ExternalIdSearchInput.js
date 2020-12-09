@@ -14,7 +14,7 @@ const Component = ({
   formError,
   ...rest
 }) => {
-  const [search, parcelInfo] = hooks.useGetParcelInfo([])
+  const [search] = hooks.useGetParcelInfo([])
   const [resultsIsFound, setResultsIsFound] = useState(false)
 
   useSocket('parcel-info', ({ weight, measurements }) => {

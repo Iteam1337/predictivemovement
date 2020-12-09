@@ -6,23 +6,12 @@ import Telegraf from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Instruction } from './types'
 
-async function onArrived(msg) {
-  const telegramId = msg.update.callback_query.from.id
-  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
-
-  return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
-    vehicleId,
-    telegramId
-  )
-}
-
 export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', async (ctx) => {
     const telegramId = ctx.update.message.from.id
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
-
     if (!vehicleId) return messaging.promptForLogin(ctx)
 
     const instructionGroups = await cache.getInstructions(vehicleId)
@@ -35,11 +24,16 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.command('/login', messaging.requestPhoneNumber)
 
   bot.on('message', (ctx) => {
+    console.log('message received', ctx.message)
     const msg = ctx.message
     if (msg.contact && msg.contact.phone_number)
       return botServices.onLogin(msg.contact.phone_number, ctx)
     if (msg.location) return botServices.onLocationMessage(msg)
-    if (msg.photo) return botServices.onPhotoReceived(msg.from.id, msg.photo)
+    if (msg.photo) {
+      console.log('saving photo', JSON.stringify(msg, null, 2))
+      console.log('telegram id of photo sender is', msg.from.id)
+      return botServices.onPhotoReceived(msg.from.id, msg.photo)
+    }
   })
 
   bot.on('edited_message', (ctx) => {
@@ -56,7 +50,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
 
     switch (event) {
       case 'arrived':
-        return onArrived(msg)
+        return botServices.onArrived(msg)
       case 'begin_delivery_acknowledgement':
         return botServices.beginDeliveryAcknowledgement(
           telegramId,

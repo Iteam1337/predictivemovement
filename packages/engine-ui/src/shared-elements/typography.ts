@@ -13,6 +13,16 @@ const InfoSm = styled.p`
   margin-bottom: 0.25rem;
 `
 
+const InfoMd = styled.p`
+  font-size: 0.875rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+`
+
+const InfoMdStrong = styled(InfoMd)`
+  font-weight: bold;
+`
+
 const SmallInfoBold = styled.p`
   font-weight: bold;
   font-size: 0.75rem;
@@ -24,15 +34,8 @@ const ErrorMessage = styled(InfoSm)`
   margin-top: 0.25rem;
 `
 
-const InfoMd = styled.p`
-  font-style: italic;
-  font-size: 1rem;
-  margin-top: 0;
-  margin-bottom: 0.25rem;
-`
-
-const SemiBoldParagraph = styled.p`
-  font-weight: semibold;
+const BoldParagraph = styled.p`
+  font-weight: bold;
 `
 
 const InfoSmStrong = styled(InfoSm)`
@@ -99,8 +102,9 @@ export {
   RoundedLabelDisplay,
   CleanH4,
   SmallInfoBold,
-  SemiBoldParagraph,
+  BoldParagraph,
   SpanBold,
   InfoSmStrong,
   ErrorMessage,
+  InfoMdStrong,
 }

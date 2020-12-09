@@ -1,12 +1,16 @@
 defmodule MessageGenerator.Address do
   alias MessageGenerator.Osrm
+  alias MessageGenerator.Adapters.Pelias
 
   def random(%{lon: lon, lat: lat}) do
     lon = lon + (Enum.random(0..100) - 50) / 200
     lat = lat + (Enum.random(0..100) - 50) / 500
 
     position = %{lon: lon, lat: lat}
-    parse(Osrm.nearest(position), position)
+    coordinates = parse(Osrm.nearest(position), position)
+
+    Pelias.get_address_info_from_coordinates(coordinates.lat, coordinates.lon)
+    |> Map.merge(coordinates)
   end
 
   # Useful for testing multiple packages at the same location

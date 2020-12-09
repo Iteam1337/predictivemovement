@@ -86,34 +86,34 @@ defmodule Plan do
     |> elem(0)
   end
 
-  def add_activity_address_info(activity, _vehicle) when is_map_key(activity, :id) do
-    %{pickup: pickup, delivery: delivery} = Booking.get(activity.id)
-
-    with true <- activity.type == "pickupShipment" do
-      merge_activity_address_info(activity, pickup)
-    else
-      _ ->
-        merge_activity_address_info(activity, delivery)
-    end
+  def add_activity_address_info(
+        %{type: "pickupShipment", id: booking_id} = activity,
+        _vehicle
+      ) do
+    Booking.get(booking_id)
+    |> Map.get(:pickup)
+    |> merge_activity_address_info(activity)
   end
 
-  def add_activity_address_info(activity, %{start_address: start_address})
-      when activity.type == "start" do
-    merge_activity_address_info(activity, start_address)
+  def add_activity_address_info(%{type: "deliverShipment", id: booking_id} = activity, _vehicle) do
+    Booking.get(booking_id)
+    |> Map.get(:delivery)
+    |> merge_activity_address_info(activity)
   end
 
-  def add_activity_address_info(activity, %{end_address: end_address})
-      when activity.type == "end" do
-    merge_activity_address_info(activity, end_address)
-  end
+  def add_activity_address_info(%{type: "start"} = activity, vehicle),
+    do: merge_activity_address_info(vehicle.start_address, activity)
 
-  def merge_activity_address_info(activity, address) do
-    activity |> Map.update!(:address, fn existing -> Map.merge(address, existing) end)
-  end
+  def add_activity_address_info(%{type: "end"} = activity, vehicle),
+    do: merge_activity_address_info(vehicle.end_address, activity)
 
-  def update_activities_address(activities, vehicle) do
-    activities
-    |> Enum.map(fn activity -> add_activity_address_info(activity, vehicle) end)
+  def merge_activity_address_info(%{city: city, name: name, street: street}, activity) do
+    Map.update!(activity, :address, fn existing ->
+      existing
+      |> Map.put(:city, city)
+      |> Map.put(:street, street)
+      |> Map.put(:name, name)
+    end)
   end
 
   def calculate(vehicle_ids, booking_ids)
@@ -143,17 +143,19 @@ defmodule Plan do
         )
       end)
       |> Enum.map(&add_distance_durations/1)
-      |> Enum.map(fn vehicle ->
-        Map.update!(vehicle, :activities, fn activities ->
-          update_activities_address(activities, vehicle)
-        end)
-      end)
+      |> Enum.map(&add_address_info/1)
 
     PlanStore.put_plan(%{
       vehicles: vehicles,
       booking_ids: booking_ids,
       excluded_booking_ids: Enum.map(excluded, &handle_booking_failure/1)
     })
+  end
+
+  def add_address_info(vehicle) do
+    Map.update!(vehicle, :activities, fn activities ->
+      Enum.map(activities, fn activity -> add_activity_address_info(activity, vehicle) end)
+    end)
   end
 
   def add_distance_durations(vehicle) do

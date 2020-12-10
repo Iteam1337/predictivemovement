@@ -113,6 +113,7 @@ defmodule Plan do
         )
       end)
       |> Enum.map(&add_distance_durations/1)
+      |> Enum.map(&Map.from_struct/1)
 
     PlanStore.put_plan(%{
       vehicles: vehicles,

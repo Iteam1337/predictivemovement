@@ -5,8 +5,7 @@ defmodule Booking do
   require Logger
   alias Engine.ES
   @derive Jason.Encoder
-
-  @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
+  @rmq Application.get_env(:engine, Adapters.RMQ)
 
   defstruct [
     :id,
@@ -50,6 +49,14 @@ defmodule Booking do
   def valid_measurements(_), do: false
 
   def generate_id, do: "pmb-" <> Engine.Utils.generate_id()
+
+  def publish(data, routing_key),
+    do:
+      @rmq.publish(
+        data,
+        Application.fetch_env!(:engine, :outgoing_booking_exchange),
+        routing_key
+      )
 
   def make(%{
         pickup: pickup,
@@ -129,7 +136,7 @@ defmodule Booking do
     booking
     |> Map.from_struct()
     |> Map.put(:route, Osrm.route(pickup, delivery))
-    |> RMQ.publish(@outgoing_booking_exchange, "new")
+    |> publish("new")
 
     Engine.BookingStore.put_booking(id)
     booking
@@ -146,11 +153,7 @@ defmodule Booking do
     Engine.BookingStore.delete_booking(id)
     GenServer.stop(via_tuple(id))
 
-    RMQ.publish(
-      id,
-      Application.fetch_env!(:engine, :outgoing_booking_exchange),
-      "deleted"
-    )
+    publish(id, "deleted")
   end
 
   def assign("pmb-" <> _ = booking_id, %{id: vehicle_id}) do
@@ -170,15 +173,12 @@ defmodule Booking do
     GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
     |> Map.from_struct()
     |> Map.take([:assigned_to, :events, :id])
-    |> RMQ.publish(
-      Application.fetch_env!(:engine, :outgoing_booking_exchange),
-      "assigned"
-    )
+    |> publish("assigned")
   end
 
   def apply_update_to_state(%{id: id} = booking_update) do
     GenServer.call(via_tuple(id), {:update, booking_update})
-    RMQ.publish(booking_update, @outgoing_booking_exchange, "updated")
+    publish(booking_update, "updated")
     true
   end
 
@@ -197,7 +197,7 @@ defmodule Booking do
     GenServer.call(via_tuple(booking_id), {:add_event, status, timestamp})
     |> Map.from_struct()
     |> Map.take([:events, :id])
-    |> RMQ.publish(@outgoing_booking_exchange, status)
+    |> publish(status)
   end
 
   ### Internal

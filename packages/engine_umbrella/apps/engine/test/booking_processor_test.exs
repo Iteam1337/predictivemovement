@@ -8,18 +8,15 @@ defmodule BookingProcessorTest do
 
   setup :clear_state
 
-  @tag :only
-  test "creates a plan for one vehicle and one booking" do
+  setup do
     Engine.Adapters.MockRMQ
-    |> expect(:publish, fn _, _ ->
-      IO.puts("hej")
-      {:ok, 30}
-    end)
-    |> expect(:publish, fn _, _, _ ->
-      IO.puts("hej")
-      {:ok, 30}
-    end)
+    |> stub(:publish, fn data, _, _ -> data end)
+    |> stub(:publish, fn data, _ -> data end)
 
+    :ok
+  end
+
+  test "creates a plan for one vehicle and one booking" do
     TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 

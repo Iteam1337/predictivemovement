@@ -1,6 +1,15 @@
 defmodule VehicleTest do
   alias MessageGenerator.TransportGenerator
   use ExUnit.Case
+  import Mox
+
+  setup do
+    Engine.Adapters.MockRMQ
+    |> stub(:publish, fn data, _, _ -> data end)
+    |> stub(:publish, fn data, _ -> data end)
+
+    :ok
+  end
 
   test "it allows vehicle creation" do
     result =

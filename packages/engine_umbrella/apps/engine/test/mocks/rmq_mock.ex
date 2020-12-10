@@ -5,6 +5,7 @@ defmodule Engine.Adapters.MockRMQ do
   def publish(_, _) do
   end
 
+  @impl
   def publish(_, _, _) do
   end
 end

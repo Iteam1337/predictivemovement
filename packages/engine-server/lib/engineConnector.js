@@ -35,6 +35,7 @@ module.exports = (io) => {
     })
     .subscribe({ noAck: true }, [
       routingKeys.NEW,
+      routingKeys.UPDATED,
       routingKeys.ASSIGNED,
       routingKeys.PICKED_UP,
       routingKeys.DELIVERED,
@@ -43,12 +44,20 @@ module.exports = (io) => {
     .map((bookingRes) => {
       const booking = bookingRes.json()
 
-      return {
-        ...booking,
-        route: JSON.parse(booking.route),
-        metadata: JSON.parse(booking.metadata),
-        status: bookingRes.fields.routingKey,
-      }
+      return Object.keys(booking).reduce(
+        (prev, curr) => {
+          switch (curr) {
+            case 'route':
+            case 'metadata':
+              return { ...prev, [curr]: JSON.parse(booking[curr]) }
+            default:
+              return { ...prev, [curr]: booking[curr] }
+          }
+        },
+        bookingRes.fields.routingKey === routingKeys.UPDATED
+          ? {}
+          : { status: bookingRes.fields.routingKey }
+      )
     })
 
   const transports = amqp

@@ -161,7 +161,7 @@ const Component = ({
         <Elements.Layout.InputContainer>
           <FormInputs.TextInput
             name="cargo"
-            value={state.metadata.cargo}
+            value={state.metadata.cargo || ''}
             onChangeHandler={eventHandlers.handleNestedInputChange(
               'metadata',
               'cargo',
@@ -262,7 +262,7 @@ const Component = ({
         <FormInputs.TextInput
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           name="sender-info"
-          value={state.metadata.sender.info}
+          value={state.metadata.sender.info || ''}
           onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
             'sender',
             'info',
@@ -301,7 +301,7 @@ const Component = ({
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="sendername"
-              value={state.metadata.sender.name}
+              value={state.metadata.sender.name || ''}
               onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'sender',
                 'name',
@@ -369,7 +369,7 @@ const Component = ({
         <FormInputs.TextInput
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           name="recipient-info"
-          value={state.metadata.recipient.info}
+          value={state.metadata.recipient.info || ''}
           onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
             'recipient',
             'info',
@@ -409,7 +409,7 @@ const Component = ({
               iconInset
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="recipient-name"
-              value={state.metadata.recipient.name}
+              value={state.metadata.recipient.name || ''}
               onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'recipient',
                 'name',

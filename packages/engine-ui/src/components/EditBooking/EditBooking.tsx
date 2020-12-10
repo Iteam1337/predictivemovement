@@ -83,16 +83,30 @@ const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
       return false
     }
 
-    updateBooking({
-      ...state,
-      size: {
-        ...state.size,
-        measurements: state.size.measurements
-          ? state.size.measurements.split('x').map(parseFloat)
-          : null,
-        weight: parseInt(state.size.weight) || 0,
-      },
-    })
+    const updatedBooking = (Object.keys(formBooking) as Array<
+      keyof typeof formBooking
+    >)
+      .filter(
+        (key) => JSON.stringify(formBooking[key]) !== JSON.stringify(state[key])
+      )
+      .reduce(
+        (prev, curr) => ({
+          ...prev,
+          [curr]:
+            curr === 'size'
+              ? {
+                  ...state.size,
+                  measurements: state.size.measurements
+                    ? state.size.measurements.split('x').map(parseFloat)
+                    : null,
+                  weight: parseInt(state.size.weight) || 0,
+                }
+              : state[curr],
+        }),
+        { id: state.id }
+      )
+
+    updateBooking(updatedBooking)
 
     return setIsFinished(true)
   }

@@ -103,7 +103,6 @@ defmodule Booking do
 
   def update(%{id: "pmb-" <> _ = id} = booking_update) do
     with true <- Vex.valid?(struct(Booking, booking_update)),
-         _ <- ES.add_event(%BookingUpdated{booking: booking_update}),
          true <- apply_update_to_state(booking_update) do
       id
     else

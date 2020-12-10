@@ -7,6 +7,7 @@ const {
   toIncomingBooking,
   toIncomingTransport,
   toIncomingPlan,
+  toOutgoingBooking,
 } = require('./mappings')
 
 module.exports = (io) => {
@@ -30,6 +31,10 @@ module.exports = (io) => {
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
+      .map((booking) => ({
+        ...(bookingsCache.get(booking.id) || {}),
+        ...booking,
+      }))
       .doto((booking) => bookingsCache.set(booking.id, booking))
       .map(toIncomingBooking)
       .batchWithTimeOrCount(1000, 1000)
@@ -97,35 +102,9 @@ module.exports = (io) => {
       socket.emit('notification', helpers.transportToNotification(transport))
     })
 
-    socket.on('new-booking', (params) => {
-      const booking = {
-        external_id: params.externalId,
-        bookingDate: new Date().toISOString(),
-        size: params.size,
-        pickup: {
-          time_windows: params.pickup.timeWindows,
-          lat: params.pickup.lat,
-          lon: params.pickup.lon,
-          street: params.pickup.street,
-          city: params.pickup.city,
-        },
-        delivery: {
-          time_windows: params.delivery.timeWindows,
-          lat: params.delivery.lat,
-          lon: params.delivery.lon,
-          street: params.delivery.street,
-          city: params.delivery.city,
-        },
-        metadata: {
-          sender: params.metadata.sender,
-          recipient: params.metadata.recipient,
-          cargo: params.metadata.cargo,
-          fragile: params.metadata.fragile,
-        },
-      }
-
-      createBooking(booking)
-    })
+    socket.on('new-booking', (booking) =>
+      createBooking(toOutgoingBooking(booking))
+    )
 
     socket.on('dispatch-offers', () => {
       console.log('received message to dispatch offers, from UI')
@@ -174,7 +153,9 @@ module.exports = (io) => {
       socket.emit('transport-deleted', id)
     })
 
-    socket.on('update-booking', updateBooking)
+    socket.on('update-booking', (updatedBooking) =>
+      updateBooking(toOutgoingBooking(updatedBooking))
+    )
     socket.on('update-vehicle', updateVehicle)
 
     socket.on('search-parcel', async (id) => {

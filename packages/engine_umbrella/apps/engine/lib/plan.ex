@@ -15,6 +15,7 @@ defmodule Plan do
       end)
     )
     |> insert_time_matrix()
+    |> IO.inspect(label: "boo")
     |> RMQRPCWorker.call("calculate_route_optimization")
     |> case do
       {:ok, response} ->

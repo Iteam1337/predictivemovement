@@ -10,7 +10,6 @@ defmodule Vehicle do
     :id,
     :busy,
     :activities,
-    :current_route,
     :booking_ids,
     :metadata,
     :start_address,
@@ -61,18 +60,7 @@ defmodule Vehicle do
     {:reply, true, updated_vehicle}
   end
 
-  def generate_id do
-    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
-
-    generated =
-      UUID.uuid4()
-      |> Base.encode64(padding: false)
-      |> String.replace(["+", "/"], Enum.random(alphabet))
-      |> String.slice(0, 8)
-      |> String.downcase()
-
-    "pmv-" <> generated
-  end
+  def generate_id, do: "pmv-" <> Engine.Utils.generate_id()
 
   def make(vehicle_info) do
     vehicle_fields =
@@ -140,6 +128,7 @@ defmodule Vehicle do
 
   def apply_offer_accepted("pmv-" <> _ = id, offer) do
     GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
+    |> Map.put(:current_route, get_route_from_activities(offer.activities))
     |> RMQ.publish(
       Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
       "new_instructions"
@@ -184,22 +173,28 @@ defmodule Vehicle do
 
   def get("pmv-" <> _ = id), do: GenServer.call(via_tuple(id), :get)
 
+  defp get_route_from_activities(activities),
+    do:
+      activities
+      |> Enum.map(fn %{address: address} -> address end)
+      |> Osrm.route()
+
   def offer(%Vehicle{id: "pmv-" <> _ = id, activities: activities, booking_ids: booking_ids}) do
     offer = %{
       booking_ids: booking_ids,
-      activities: activities,
-      current_route:
-        activities
-        |> Enum.map(fn %{address: address} -> address end)
-        |> Osrm.route()
+      activities: activities
     }
 
     case send_offer(offer, id) do
       {:ok, true} ->
-        ES.add_event(%DriverAcceptedOffer{vehicle_id: id, offer: offer})
-        updated_state = apply_offer_accepted(id, offer)
+        ES.add_event(%DriverAcceptedOffer{
+          offer: offer,
+          vehicle_id: id
+        })
 
-        Enum.each(booking_ids, &Booking.assign(&1, updated_state))
+        updated_vehicle = apply_offer_accepted(id, offer)
+
+        Enum.each(booking_ids, &Booking.assign(&1, updated_vehicle))
 
       {:ok, false} ->
         Logger.info("Driver didnt accept booking :(")
@@ -212,7 +207,7 @@ defmodule Vehicle do
     RMQRPCWorker.call(
       %{
         vehicle: %{id: vehicle_id},
-        current_route: offer.current_route,
+        current_route: get_route_from_activities(offer.activities),
         activities: offer.activities,
         booking_ids: offer.booking_ids
       },

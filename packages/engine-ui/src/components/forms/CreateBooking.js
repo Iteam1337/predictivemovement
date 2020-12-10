@@ -99,6 +99,8 @@ const Component = ({
         return 'Medium'
       case 'big':
         return 'Stor'
+      default:
+        return 'Storlek saknas'
     }
   }
 

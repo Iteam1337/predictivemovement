@@ -42,15 +42,14 @@ module.exports = (io) => {
     ])
     .map((bookingRes) => {
       const booking = bookingRes.json()
+      if (booking.route) booking.route = JSON.parse(booking.route)
+      if (booking.metadata) booking.metadata = JSON.parse(booking.metadata)
 
       return {
         ...booking,
-        route: JSON.parse(booking.route),
-        metadata: JSON.parse(booking.metadata),
         status: bookingRes.fields.routingKey,
       }
     })
-
   const transports = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: true,
@@ -61,10 +60,10 @@ module.exports = (io) => {
     .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
     .map((transportRes) => {
       const transport = transportRes.json()
-
+      if (transport.current_route)
+        transport.current_route = JSON.parse(transport.current_route)
       return {
         ...transport,
-        current_route: JSON.parse(transport.current_route),
         metadata: JSON.parse(transport.metadata),
       }
     })
@@ -79,14 +78,17 @@ module.exports = (io) => {
     .subscribe({ noAck: true })
     .map((msg) => {
       const planFromMsg = msg.json()
-
       const plan = {
         ...planFromMsg,
-        transports: planFromMsg.vehicles.map((route) => ({
-          ...route,
-          current_route: JSON.parse(route.current_route),
-          metadata: JSON.parse(route.metadata),
-        })),
+        transports: planFromMsg.vehicles.map((route) => {
+          if (route.current_route)
+            route.current_route = JSON.parse(route.current_route)
+
+          return {
+            ...route,
+            metadata: JSON.parse(route.metadata),
+          }
+        }),
       }
 
       return plan
@@ -241,8 +243,6 @@ module.exports = (io) => {
 
       return {
         ...transport,
-        current_route: JSON.parse(transport.current_route),
-        metadata: JSON.parse(transport.metadata),
         status: transportRes.fields.routingKey,
       }
     })
@@ -265,8 +265,6 @@ module.exports = (io) => {
 
       return {
         ...booking,
-        route: JSON.parse(booking.route),
-        metadata: JSON.parse(booking.metadata),
         status: bookingRes.fields.routingKey,
       }
     })

@@ -1,3 +1,4 @@
+Logger.configure(level: :none)
 ExUnit.start()
 
 defmodule TestHelper do

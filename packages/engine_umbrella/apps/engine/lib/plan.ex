@@ -1,9 +1,10 @@
 defmodule Plan do
   alias Engine.Adapters.RMQRPCWorker
+  import Logger
   @jsprit_time_constraint_msg "Time of time window constraint is in the past!"
 
   def find_optimal_routes(vehicle_ids, booking_ids) do
-    IO.puts("call calculate_route_optimization")
+    Logger.info("call calculate_route_optimization")
 
     %{}
     |> Map.put(:vehicles, Enum.map(vehicle_ids, &Vehicle.get/1))

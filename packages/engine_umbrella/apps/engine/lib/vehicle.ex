@@ -90,14 +90,13 @@ defmodule Vehicle do
     error_string =
       vehicle
       |> Vex.errors()
-      |> IO.inspect()
       |> Enum.map(fn
         {:error, obj, _, msg} when is_list(obj) -> Enum.join(obj, ": ") <> " " <> msg
         {:error, obj, _, msg} when is_atom(obj) -> Atom.to_string(obj) <> " " <> msg
       end)
       |> Enum.join("\n")
 
-    Logger.error("vehicle validation errors\n" <> error_string)
+    Logger.error("vehicle validation errors:\n" <> error_string)
     vehicle
   end
 

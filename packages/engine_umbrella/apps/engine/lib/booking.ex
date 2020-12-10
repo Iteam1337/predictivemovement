@@ -112,7 +112,7 @@ defmodule Booking do
       end)
       |> Enum.join("\n")
 
-    Logger.error("Booking validation errors\n" <> error_string)
+    Logger.error("Booking validation errors:\n" <> error_string)
 
     booking
   end

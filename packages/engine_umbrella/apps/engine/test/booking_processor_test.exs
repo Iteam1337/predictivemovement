@@ -24,7 +24,6 @@ defmodule BookingProcessorTest do
     assert Map.get(plan, :transports) |> List.first() |> Map.get(:earliest_start) == nil
   end
 
-  @tag :only
   test "creates a plan where one vehicle gets two bookings and one gets zero" do
     TransportGenerator.generate_transport_props()
     |> TransportGenerator.put_new_transport_addresses_from_city(:stockholm)

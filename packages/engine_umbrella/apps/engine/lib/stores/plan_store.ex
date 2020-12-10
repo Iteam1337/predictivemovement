@@ -22,6 +22,7 @@ defmodule PlanStore do
     Logger.info("publishing new plan")
 
     GenServer.call(__MODULE__, {:put, plan})
+    |> Map.update!(:vehicles, fn vehicles -> Enum.map(vehicles, &Map.from_struct/1) end)
     |> RMQ.publish(@outgoing_plan_exchange)
   end
 

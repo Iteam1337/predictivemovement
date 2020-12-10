@@ -22,7 +22,8 @@ defmodule PlanStore do
     IO.puts("publishing new plan")
 
     GenServer.call(__MODULE__, {:put, plan})
-    |> RMQ.publish(@outgoing_plan_exchange)
+    |> @rmq.publish(@outgoing_plan_exchange)
+    |> IO.inspect()
   end
 
   def get_plan() do

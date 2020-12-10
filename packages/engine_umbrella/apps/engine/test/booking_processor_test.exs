@@ -2,7 +2,7 @@ defmodule BookingProcessorTest do
   import TestHelper
   alias MessageGenerator.TransportGenerator
   alias MessageGenerator.BookingGenerator
-
+  import Mox
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
   use ExUnit.Case
 
@@ -10,6 +10,12 @@ defmodule BookingProcessorTest do
 
   @tag :only
   test "creates a plan for one vehicle and one booking" do
+    Engine.Adapters.MockRMQ
+    |> expect(:publish, fn _, _ ->
+      IO.puts("hej")
+      {:ok, 30}
+    end)
+
     TransportGenerator.generate_transport_props()
     |> Vehicle.make()
 

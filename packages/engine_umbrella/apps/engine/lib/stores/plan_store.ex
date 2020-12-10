@@ -8,7 +8,7 @@ defmodule PlanStore do
   end
 
   def init(_) do
-    {:ok, %{vehicles: []}}
+    {:ok, %{transports: []}}
   end
 
   def handle_call({:put, new_plan}, _from, _state), do: {:reply, new_plan, new_plan}

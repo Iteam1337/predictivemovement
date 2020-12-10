@@ -83,8 +83,9 @@ defmodule Booking do
       id
     else
       _ ->
-        IO.inspect(Vex.errors(booking), label: "booking validation errors")
-        Vex.errors(booking)
+        booking
+        |> print_validation_errors()
+        |> Vex.errors()
     end
   end
 
@@ -99,6 +100,21 @@ defmodule Booking do
 
         IO.inspect(Vex.errors(struct(Booking, booking_update)), label: "booking validation errors")
     end
+  end
+
+  def print_validation_errors(booking) do
+    error_string =
+      booking
+      |> Vex.errors()
+      |> Enum.map(fn
+        {:error, obj, _, msg} when is_list(obj) -> Enum.join(obj, ": ") <> " " <> msg
+        {:error, obj, _, msg} when is_atom(obj) -> Atom.to_string(obj) <> " " <> msg
+      end)
+      |> Enum.join("\n")
+
+    Logger.error("Booking validation errors\n" <> error_string)
+
+    booking
   end
 
   def apply_booking_to_state(

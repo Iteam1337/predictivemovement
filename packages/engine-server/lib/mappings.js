@@ -20,12 +20,17 @@ const toIncomingBooking = (booking) =>
     }
   }, {})
 
-const toOutgoingDestination = ({ timeWindows, ...rest }) => {
-  return {
-    time_windows: timeWindows,
-    ...rest,
-  }
-}
+const toOutgoingDestination = (destination) =>
+  Object.keys(destination).reduce((prev, curr) => {
+    switch (curr) {
+      case 'timeWindows':
+        return destination.timeWindows
+          ? { ...prev, time_windows: destination[timeWindows] }
+          : { ...prev }
+      default:
+        return { ...prev, [curr]: destination[curr] }
+    }
+  }, {})
 
 const toOutgoingBooking = (booking) =>
   Object.keys(booking).reduce((prev, curr) => {

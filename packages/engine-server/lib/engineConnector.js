@@ -49,7 +49,9 @@ module.exports = (io) => {
           switch (curr) {
             case 'route':
             case 'metadata':
-              return { ...prev, [curr]: JSON.parse(booking[curr]) }
+              return typeof booking[curr] === 'string'
+                ? { ...prev, [curr]: JSON.parse(booking[curr]) }
+                : { ...prev, [curr]: booking[curr] }
             default:
               return { ...prev, [curr]: booking[curr] }
           }

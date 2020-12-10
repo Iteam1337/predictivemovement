@@ -93,7 +93,7 @@ defmodule Plan do
   def calculate(vehicle_ids, booking_ids) do
     %{routes: routes, excluded: excluded} = find_optimal_routes(vehicle_ids, booking_ids)
 
-    vehicles =
+    transports =
       routes
       |> Enum.map(fn %{activities: activities, vehicle_id: id} ->
         booking_ids =
@@ -116,7 +116,7 @@ defmodule Plan do
       |> Enum.map(&Map.from_struct/1)
 
     PlanStore.put_plan(%{
-      vehicles: vehicles,
+      transports: transports,
       booking_ids: booking_ids,
       excluded_booking_ids: Enum.map(excluded, &handle_booking_failure/1)
     })

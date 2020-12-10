@@ -47,6 +47,7 @@ const TransportDetails: React.FC<{
 }> = ({ transports, deleteTransport, onUnmount }) => {
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
+  const setUIState = stores.ui((state) => state.dispatch)
 
   const [showInfo, setShowInfo] = React.useState({
     route: false,
@@ -156,6 +157,18 @@ const TransportDetails: React.FC<{
                       to={`/bookings/${bookingId}`}
                       key={bookingId}
                       onClick={() => handleBookingClick(bookingId)}
+                      onMouseOver={() =>
+                        setUIState({
+                          type: 'highlightBooking',
+                          payload: bookingId,
+                        })
+                      }
+                      onMouseLeave={() =>
+                        setUIState({
+                          type: 'highlightBooking',
+                          payload: undefined,
+                        })
+                      }
                     >
                       {helpers.getLastFourChars(bookingId).toUpperCase()}
                     </Elements.Links.RoundedLink>

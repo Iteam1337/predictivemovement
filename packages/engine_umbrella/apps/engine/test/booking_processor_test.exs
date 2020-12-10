@@ -4,7 +4,6 @@ defmodule BookingProcessorTest do
   alias MessageGenerator.BookingGenerator
 
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   test "creates a plan for one vehicle and one booking" do
@@ -136,7 +135,9 @@ defmodule BookingProcessorTest do
   end
 
   test "time window constrains is passed on from vehicle to plan" do
-    earliest_start = "12:05"
+    earliest_start =
+      Time.utc_now() |> Time.add(60 * 60 * -3) |> Time.to_string() |> String.slice(0..4)
+
     latest_end = Time.utc_now() |> Time.add(60 * 60 * 3) |> Time.to_string() |> String.slice(0..4)
 
     TransportGenerator.generate_transport_props(%{

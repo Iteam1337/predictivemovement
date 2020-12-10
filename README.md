@@ -111,3 +111,39 @@ export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
 export REACT_APP_ENGINE_SERVER=https://engine-server.iteamdev.io
 skaffold run --profile prod
 ```
+
+## Vocabulary
+
+```
+Transport (previously vehicle){
+    id
+    busy
+    activities
+    booking_ids
+    metadata
+    start_address
+    end_address
+    earliest_start
+    latest_end
+    profile
+    capacity
+}
+```
+
+```
+Booking {
+    id
+    pickup
+    delivery
+    assigned_to
+    external_id
+    events
+    metadata
+    size
+    requires_transport_id
+}
+```
+
+Plan
+
+Route

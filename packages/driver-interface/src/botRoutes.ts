@@ -6,23 +6,12 @@ import Telegraf from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Instruction } from './types'
 
-async function onArrived(msg) {
-  const telegramId = msg.update.callback_query.from.id
-  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
-
-  return botServices.handleDriverArrivedToPickupOrDeliveryPosition(
-    vehicleId,
-    telegramId
-  )
-}
-
 export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
 
   bot.command('/lista', async (ctx) => {
     const telegramId = ctx.update.message.from.id
     const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
-
     if (!vehicleId) return messaging.promptForLogin(ctx)
 
     const instructionGroups = await cache.getInstructions(vehicleId)
@@ -61,7 +50,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
 
     switch (event) {
       case 'arrived':
-        return onArrived(msg)
+        return botServices.onArrived(msg)
       case 'begin_delivery_acknowledgement':
         return botServices.beginDeliveryAcknowledgement(
           telegramId,

@@ -20,8 +20,7 @@ const Container = styled.div`
 
 const Content = styled.div<{ isMobile: Boolean }>`
   padding: 2rem;
-  width: ${({ isMobile }) => (isMobile ? '100%' : '350px')};
-
+  width: ${({ isMobile }) => (isMobile ? '100%' : '400px')};
   overflow: auto;
 `
 

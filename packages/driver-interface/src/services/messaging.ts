@@ -344,3 +344,11 @@ export const sendCouldNotSavePhoto = async (
   telegramId: number
 ): Promise<Message> =>
   bot.telegram.sendMessage(telegramId, 'Kunde inte spara bilden på servern.')
+
+export const sendUnhandledError = async (
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
+    'Tyvärr gick något fel.. Försök gärna igen efter en stund. Rapportera gärna in felet om det fortfarande inte fungerar.'
+  )

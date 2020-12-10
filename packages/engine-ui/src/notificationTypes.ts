@@ -45,14 +45,13 @@ export type BookingNotification = {
   severity: Severity
   type: EntityType.BOOKING
   event: BookingEvent
-  booking: types.Booking
 }
 
 export type TransportNotification = {
   severity: Severity
   type: EntityType.TRANSPORT
   event: TransportEvent
-  transport: types.Transport
+  transportName?: string
 }
 
 export type Notification = BookingNotification | TransportNotification

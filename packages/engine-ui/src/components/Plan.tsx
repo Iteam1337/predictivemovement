@@ -190,7 +190,7 @@ const Plan: React.FC<PlanProps> = ({
               )}
               <Elements.Buttons.SubmitButton
                 alignSelf="center"
-                marginTop="5rem"
+                marginTop="2rem"
                 onClick={handleOnClick}
               >
                 Bekräfta plan

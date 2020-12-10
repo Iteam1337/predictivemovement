@@ -121,7 +121,7 @@ const Component = ({
       case 'big':
         return 'Stor'
       default:
-        return ''
+        return 'Storlek saknas'
     }
   }
 

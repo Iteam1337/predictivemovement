@@ -144,7 +144,8 @@ export const useGetSuggestedAddresses = (initialState = []) => {
 export const useGetParcelInfo = (initialState = []) => {
   const { socket } = useSocket()
   const [suggested] = React.useState(initialState)
-  const find = (query: string, _callback: () => void) => {
+
+  const find = (query: string) => {
     socket.emit('search-parcel', query)
   }
 

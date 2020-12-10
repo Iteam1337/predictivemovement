@@ -80,7 +80,7 @@ module.exports = (io) => {
       const planFromMsg = msg.json()
       const plan = {
         ...planFromMsg,
-        transports: planFromMsg.vehicles.map((route) => {
+        transports: planFromMsg.transports.map((route) => {
           if (route.current_route)
             route.current_route = JSON.parse(route.current_route)
 

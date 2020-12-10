@@ -144,7 +144,7 @@ const Component = ({
           </Elements.Form.Label>
           <FormInputs.ExternalIdSearchInput
             placeholder="Referensnummer från avsändare"
-            value={state.externalId}
+            value={state.externalId || ''}
             onFocus={() =>
               dispatch({
                 type: 'focusInput',

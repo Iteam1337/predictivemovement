@@ -6,7 +6,6 @@ const parcel = require('./parcel')
 const {
   toIncomingBooking,
   toIncomingTransport,
-  toIncomingPlan,
   toOutgoingBooking,
 } = require('./mappings')
 
@@ -36,6 +35,7 @@ module.exports = (io) => {
         bookingsCache.set(newBooking.id, { ...oldBooking, ...newBooking })
         return { ...newBooking, ...oldBooking }
       })
+      .map(toIncomingBooking)
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
@@ -53,9 +53,9 @@ module.exports = (io) => {
       .each((transports) => socket.emit('transports', transports))
 
     _.merge([_(planCache.values()), plan.fork()])
-      .map(({ excluded_booking_ids, ...plan }) => ({
+      .map(({ excludedBookingIds, ...plan }) => ({
         ...plan,
-        excludedBookingIds: excluded_booking_ids?.map((booking) => {
+        excludedBookingIds: excludedBookingIds?.map((booking) => {
           const b = bookingsCache.get(booking.id)
           if (!b) return booking
           return {
@@ -69,7 +69,6 @@ module.exports = (io) => {
       .doto((data) => {
         planCache.set('plan', data)
       })
-      .map(toIncomingPlan)
       .each((data) => socket.emit('plan-update', data))
 
     _(transportLocationUpdates.fork()).each(({ id, location }) => {

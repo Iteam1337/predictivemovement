@@ -1,6 +1,7 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, transportsCache } = require('./cache')
+const { toIncomingPlan } = require('./mappings')
 
 const routingKeys = {
   TRANSPORT: {
@@ -84,23 +85,8 @@ module.exports = (io) => {
       durable: true,
     })
     .subscribe({ noAck: true })
-    .map((msg) => {
-      const planFromMsg = msg.json()
-      const plan = {
-        ...planFromMsg,
-        transports: planFromMsg.vehicles.map((route) => {
-          if (route.current_route)
-            route.currentRoute = JSON.parse(route.current_route)
-
-          return {
-            ...route,
-            metadata: JSON.parse(route.metadata),
-          }
-        }),
-      }
-
-      return plan
-    })
+    .map((msg) => msg.json())
+    .map(toIncomingPlan)
 
   amqp
     .exchange('outgoing_booking_updates', 'topic', {

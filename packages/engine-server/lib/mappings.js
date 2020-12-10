@@ -39,8 +39,6 @@ const toOutgoingBooking = (booking) =>
       case 'pickup':
       case 'delivery':
         return { ...prev, [curr]: toOutgoingDestination(booking[curr]) }
-      case 'metadata':
-        return { ...prev, [curr]: JSON.stringify(booking[curr]) }
       default:
         return { ...prev, [curr]: booking[curr] }
     }
@@ -64,10 +62,38 @@ const toIncomingTransport = ({
   endAddress: end_address,
 })
 
-const toIncomingPlan = ({ transports, booking_ids, ...plan }) => ({
+const toIncomingPlanTransport = (transport) =>
+  Object.keys(transport).reduce((prev, curr) => {
+    switch (curr) {
+      case 'booking_ids':
+        return { ...prev, bookingIds: transport[curr] }
+      case 'start_address':
+        return { ...prev, startAddress: transport[curr] }
+      case 'end_address':
+        return { ...prev, endAddress: transport[curr] }
+      case 'earliest_start':
+        return { ...prev, earliestStart: transport[curr] }
+      case 'latest_end':
+        return { ...prev, latestEnd: transport[curr] }
+      case 'metadata':
+        return { ...prev, [curr]: JSON.stringify(transport[curr]) }
+      case 'current_route':
+        return { ...prev, currentRoute: JSON.stringify(transport[curr]) }
+      default:
+        return { ...prev, [curr]: transport[curr] }
+    }
+  }, {})
+
+const toIncomingPlan = ({
+  vehicles,
+  booking_ids,
+  excluded_booking_ids,
+  ...plan
+}) => ({
   ...plan,
-  transports: transports.map(toIncomingTransport),
+  transports: vehicles.map(toIncomingPlanTransport),
   bookingIds: booking_ids,
+  excludedBookingIds: excluded_booking_ids,
 })
 
 module.exports = {

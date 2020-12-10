@@ -24,6 +24,7 @@ defmodule BookingProcessorTest do
     assert Map.get(plan, :transports) |> List.first() |> Map.get(:earliest_start) == nil
   end
 
+  @tag :only
   test "creates a plan where one vehicle gets two bookings and one gets zero" do
     TransportGenerator.generate_transport_props()
     |> TransportGenerator.put_new_transport_addresses_from_city(:stockholm)
@@ -81,11 +82,11 @@ defmodule BookingProcessorTest do
 
     assert 2 ==
              plan
-             |> Map.get(:vehicles)
+             |> Map.get(:transports)
              |> length()
 
     assert plan
-           |> Map.get(:vehicles)
+           |> Map.get(:transports)
            |> List.first()
            |> Map.get(:booking_ids)
            |> length() == 1
@@ -253,7 +254,7 @@ defmodule BookingProcessorTest do
     plan = PlanStore.get_plan()
     clear_state()
 
-    assert Map.get(plan, :vehicles) |> length() == 1
+    assert Map.get(plan, :transports) |> length() == 1
     assert Map.get(plan, :booking_ids) |> length() == 3
   end
 
@@ -325,7 +326,7 @@ defmodule BookingProcessorTest do
     plan = PlanStore.get_plan()
     clear_state()
 
-    assert Map.get(plan, :vehicles) |> length() == 1
+    assert Map.get(plan, :transports) |> length() == 1
     assert Map.get(plan, :excluded_booking_ids) |> length() == 1
 
     assert Map.get(plan, :excluded_booking_ids) |> List.first() |> Map.get(:id) ==

@@ -5,6 +5,7 @@ defmodule Vehicle do
   alias Engine.ES
   alias Engine.Adapters.{RMQ, RMQRPCWorker}
   @derive Jason.Encoder
+  @rmq Application.get_env(:engine, Adapters.RMQ)
 
   defstruct [
     :id,
@@ -61,6 +62,14 @@ defmodule Vehicle do
   end
 
   def generate_id, do: "pmv-" <> Engine.Utils.generate_id()
+
+  def publish(data, routing_key),
+    do:
+      @rmq.publish(
+        data,
+        Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
+        routing_key
+      )
 
   def make(vehicle_info) do
     vehicle_fields =
@@ -127,11 +136,7 @@ defmodule Vehicle do
 
       GenServer.call(via_tuple(id), {:update, vehicle})
 
-      RMQ.publish(
-        vehicle,
-        Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
-        "updated"
-      )
+      publish(vehicle, "updated")
 
       id
     else
@@ -145,10 +150,7 @@ defmodule Vehicle do
   def apply_offer_accepted("pmv-" <> _ = id, offer) do
     GenServer.call(via_tuple(id), {:apply_offer_accepted, offer})
     |> Map.put(:current_route, get_route_from_activities(offer.activities))
-    |> RMQ.publish(
-      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
-      "new_instructions"
-    )
+    |> publish("new_instructions")
   end
 
   def apply_vehicle_to_state(%Vehicle{id: "pmv-" <> _ = id} = vehicle) do
@@ -160,11 +162,7 @@ defmodule Vehicle do
 
     Engine.VehicleStore.put_vehicle(id)
 
-    RMQ.publish(
-      vehicle,
-      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
-      "new"
-    )
+    publish(vehicle, "new")
 
     vehicle
   end
@@ -178,11 +176,7 @@ defmodule Vehicle do
     Engine.VehicleStore.delete_vehicle(id)
     GenServer.stop(via_tuple(id))
 
-    RMQ.publish(
-      id,
-      Application.fetch_env!(:engine, :outgoing_vehicle_exchange),
-      "deleted"
-    )
+    publish(id, "deleted")
   end
 
   defp via_tuple(id), do: {:via, :gproc, {:n, :l, {:vehicle_id, id}}}

@@ -1,5 +1,4 @@
 defmodule VehicleTest do
-  import TestHelper
   alias MessageGenerator.TransportGenerator
   use ExUnit.Case
 

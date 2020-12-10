@@ -15,6 +15,10 @@ defmodule BookingProcessorTest do
       IO.puts("hej")
       {:ok, 30}
     end)
+    |> expect(:publish, fn _, _, _ ->
+      IO.puts("hej")
+      {:ok, 30}
+    end)
 
     TransportGenerator.generate_transport_props()
     |> Vehicle.make()

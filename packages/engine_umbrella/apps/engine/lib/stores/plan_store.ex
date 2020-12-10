@@ -1,5 +1,6 @@
 defmodule PlanStore do
   use GenServer
+  import Logger
   alias Engine.Adapters.RMQ
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
 
@@ -18,7 +19,7 @@ defmodule PlanStore do
   end
 
   def put_plan(plan) do
-    IO.puts("publishing new plan")
+    Logger.info("publishing new plan")
 
     GenServer.call(__MODULE__, {:put, plan})
     |> RMQ.publish(@outgoing_plan_exchange)

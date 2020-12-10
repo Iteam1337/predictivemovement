@@ -176,7 +176,7 @@ const toGeoJsonLayer = (id, data, callback) =>
     stroked: false,
     filled: true,
     extruded: true,
-    lineWidthScale: 2,
+    lineWidthScale: 1,
     lineWidthMinPixels: 1.5,
     getFillColor: ({ properties }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),

@@ -29,9 +29,13 @@ const getAddressFromCoordinate = ({ lon, lat }: { lon: number; lat: number }) =>
     .then((res) => res.json())
     .then(({ features: [topResult] }: { features: Feature[] }) => {
       if (!topResult) return Promise.reject('Inga resultat hittades...')
+
+      const label = topResult.properties.label.trim().split(',')
+      const county = label[label.length - 2]
+
       return {
         name: topResult.properties.name,
-        county: topResult.properties.county,
+        county: county,
       }
     })
 

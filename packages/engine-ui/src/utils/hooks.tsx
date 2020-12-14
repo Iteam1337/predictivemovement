@@ -33,8 +33,8 @@ export const useFilteredStateFromQueryParams = (state: State) => {
     exact: true,
   })
 
-  const includePlan = useRouteMatch<{ id: string }>({
-    path: ['/plans', '/transports/:id'],
+  const planView = useRouteMatch<{ id: string }>({
+    path: ['/plans'],
   })
 
   const planRouteDetailsView = useRouteMatch<{ routeId: string }>({
@@ -69,10 +69,15 @@ export const useFilteredStateFromQueryParams = (state: State) => {
   ) =>
     transportDetailView ? transportDetailView.params.id === transport.id : true
 
-  const includeOnePlanRouteIfDetailView = (route: Route) =>
-    planRouteDetailsView
-      ? planRouteDetailsView.params.routeId === route.id
-      : true
+  const includeOnePlanRouteIfDetailView = (route: Route) => {
+    if (transportDetailView) {
+      return transportDetailView.params.id === route.id
+    }
+    if (planRouteDetailsView) {
+      return planRouteDetailsView.params.routeId === route.id
+    }
+    return true
+  }
 
   return {
     data: {
@@ -90,8 +95,11 @@ export const useFilteredStateFromQueryParams = (state: State) => {
               .filter(includeOneTransportIfDetailView)
           : [],
       plan:
-        includePlan &&
-        state.plan.routes.find((route) => route.id === includePlan.params.id)
+        (transportDetailView &&
+          state.plan.routes.find(
+            (route) => route.id === transportDetailView.params.id
+          )) ||
+        planView
           ? {
               excludedBookings: state.plan.excludedBookings,
               routes: state.plan.routes

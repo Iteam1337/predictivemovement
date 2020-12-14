@@ -217,8 +217,8 @@ export const sendPickupInformation = (
         .concat(b.metadata.cargo ? `\nInnehåll: ${b.metadata.cargo}` : '')
         .concat(b.size.weight ? `\nVikt: ${b.size.weight}kg` : '')
         .concat(
-          b.size.measurement && b.size.measurement.length === 3
-            ? `\nMått: ${b.size.measurement[0]}x${b.size.measurement[1]}x${b.size.measurement[2]}cm`
+          b.size.measurements && b.size.measurements.length === 3
+            ? `\nMått: ${b.size.measurements[0]}x${b.size.measurements[1]}x${b.size.measurements[2]}cm`
             : ''
         )
     )
@@ -344,3 +344,11 @@ export const sendCouldNotSavePhoto = async (
   telegramId: number
 ): Promise<Message> =>
   bot.telegram.sendMessage(telegramId, 'Kunde inte spara bilden på servern.')
+
+export const sendUnhandledError = async (
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
+    'Tyvärr gick något fel.. Försök gärna igen efter en stund. Rapportera gärna in felet om det fortfarande inte fungerar.'
+  )

@@ -82,7 +82,7 @@ const PlanRouteDetails = ({
   }
 
   const getMapCoordinates = () => {
-    if (!route.activities) return route.start_address
+    if (!route.activities) return route.startAddress
     return calculateCenter(route.activities)
   }
 
@@ -128,7 +128,7 @@ const PlanRouteDetails = ({
               }
               to={`/transports/${route.id}`}
               onClick={() =>
-                panMapView(route.start_address.lat, route.start_address.lon)
+                panMapView(route.startAddress.lat, route.startAddress.lon)
               }
             >
               {route.metadata?.profile?.toUpperCase() ||
@@ -137,7 +137,7 @@ const PlanRouteDetails = ({
           </Elements.Layout.FlexRowWrapper>
           Bookingar på rutt:
           <BookingsList>
-            {route.booking_ids?.map((bookingId) => (
+            {route.bookingIds?.map((bookingId) => (
               <BookingListItem key={bookingId}>
                 <Elements.Links.RoundedLink to={`/bookings/${bookingId}`}>
                   {helpers.getLastFourChars(bookingId).toUpperCase()}

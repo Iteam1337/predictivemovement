@@ -30,6 +30,7 @@ interface BookingRoute {
 
 export interface Booking {
   id: string
+  externalId?: string
   pickup: ParcelAddress
   delivery: ParcelAddress
   metadata: Metadata
@@ -39,16 +40,17 @@ export interface Booking {
 }
 
 type ParcelAddress = {
+  name?: string
   lat: number
   lon: number
   street: string
   city: string
-  time_windows: TimeWindow[] | null
+  timeWindows: TimeWindow[] | null
 }
 
 type Size = {
   weight?: number
-  measurement?: number[]
+  measurements?: number[]
 }
 
 type Metadata = {
@@ -59,26 +61,26 @@ type Metadata = {
 }
 
 type TimeWindow = {
-  earliest: string
-  latest: string
+  earliest: string | Date
+  latest: string | Date
 }
 
 export type InAppColor = string
 
 export type Transport = {
   activities: Activity[] | null
-  booking_ids: string[] | null
+  bookingIds: string[] | null
   busy: any
   capacity?: { weight?: number; volume?: number }
   color: InAppColor
-  current_route: any
-  earliest_start: Date
-  end_address: Address
+  currentRoute: any
+  earliestStart: Date
+  endAddress: Address
   id: string
-  latest_end: Date
+  latestEnd: Date
   metadata?: { profile?: string }
   name?: string
-  start_address: Address
+  startAddress: Address
 }
 
 export type NotificationType = Transport | Booking
@@ -97,22 +99,24 @@ export interface Plan {
 
 export interface Route {
   activities: Activity[] | null
-  booking_ids: string[] | null
+  bookingIds: string[] | null
   busy: any
   capacity?: { weight?: number; volume?: number }
-  current_route: any
-  earliest_start: Date
-  end_address: Address
+  currentRoute: any
+  earliestStart: Date
+  endAddress: Address
   id: string
-  latest_end: Date
+  latestEnd: Date
   metadata?: { profile?: string }
-  start_address: Address
+  startAddress: Address
 }
 
 export interface Address {
   lat: number
   lon: number
   name?: string
+  city?: string
+  street?: string
 }
 
 export interface Activity {
@@ -120,4 +124,6 @@ export interface Activity {
   index: number
   type: string
   id: string
+  distance: number
+  duration: number
 }

@@ -43,26 +43,29 @@ const TransportCapacity: React.FC<{
 const ParcelSize: React.FC<{
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
   options: parcelSizeOptions[]
-}> = ({ onChange, options }) => {
-  return (
-    <Elements.Form.SelectInput name="size" onChange={onChange}>
-      {options.map(({ label, value, weight, measurements }) => {
-        if (value === 'custom') {
-          return (
-            <option key={value} value="custom">
-              Ange anpassad kapacitet
-            </option>
-          )
-        }
-
+  defaultValue?: string
+}> = ({ onChange, options, defaultValue }) => (
+  <Elements.Form.SelectInput
+    name="size"
+    onChange={onChange}
+    defaultValue={defaultValue}
+  >
+    {options.map(({ label, value, weight, measurements }) => {
+      if (value === 'custom') {
         return (
-          <option key={value} value={value}>
-            {label} ({measurements} cm, {weight} kg)
+          <option key={value} value="custom">
+            Ange anpassad kapacitet
           </option>
         )
-      })}
-    </Elements.Form.SelectInput>
-  )
-}
+      }
+
+      return (
+        <option key={value} value={value}>
+          {label} ({measurements} cm, {weight} kg)
+        </option>
+      )
+    })}
+  </Elements.Form.SelectInput>
+)
 
 export { TransportCapacity, ParcelSize }

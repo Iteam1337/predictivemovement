@@ -1,5 +1,6 @@
 defmodule PlanStore do
   use GenServer
+  import Logger
   alias Engine.Adapters.RMQ
   @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
 
@@ -8,7 +9,7 @@ defmodule PlanStore do
   end
 
   def init(_) do
-    {:ok, %{vehicles: []}}
+    {:ok, %{transports: []}}
   end
 
   def handle_call({:put, new_plan}, _from, _state), do: {:reply, new_plan, new_plan}
@@ -18,9 +19,10 @@ defmodule PlanStore do
   end
 
   def put_plan(plan) do
-    IO.puts("publishing new plan")
+    Logger.info("publishing new plan")
 
     GenServer.call(__MODULE__, {:put, plan})
+    |> Map.update!(:transports, fn transport -> Enum.map(transport, &Map.from_struct/1) end)
     |> RMQ.publish(@outgoing_plan_exchange)
   end
 

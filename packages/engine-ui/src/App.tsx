@@ -43,6 +43,10 @@ const App = () => {
     socket.emit('move-booking', { bookingId, transportId })
   }
 
+  const updateBooking = (booking: any) => {
+    socket.emit('update-booking', booking)
+  }
+
   useSocket('notification', (data: notificationTypes.Notification) => {
     updateNotifications((notifications) => notifications.concat(data))
   })
@@ -87,7 +91,7 @@ const App = () => {
       type: 'setPlan',
       payload: {
         routes: plan.transports,
-        excludedBookings: plan.excluded_booking_ids,
+        excludedBookings: plan.excludedBookingIds,
       },
     })
   })
@@ -108,6 +112,7 @@ const App = () => {
         deleteBooking={deleteBooking}
         deleteTransport={deleteTransport}
         moveBooking={moveBooking}
+        updateBooking={updateBooking}
       />
       {!isMobile && (
         <Route path="/">

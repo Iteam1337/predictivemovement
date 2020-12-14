@@ -210,3 +210,10 @@ export const beginDeliveryAcknowledgement = async (
       instructionGroupId
     )
     .then(() => messaging.sendBeginDeliveryAcknowledgement(telegramId))
+
+export async function onArrived(msg) {
+  const telegramId = msg.update.callback_query.from.id
+  const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
+
+  return handleDriverArrivedToPickupOrDeliveryPosition(vehicleId, telegramId)
+}

@@ -4,7 +4,6 @@ defmodule BookingProcessorTest do
   alias MessageGenerator.BookingGenerator
 
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @outgoing_plan_exchange Application.compile_env!(:engine, :outgoing_plan_exchange)
   use ExUnit.Case
 
   test "creates a plan for one vehicle and one booking" do
@@ -21,8 +20,8 @@ defmodule BookingProcessorTest do
     clear_state()
 
     assert Map.get(plan, :booking_ids) |> length() == 1
-    assert Map.get(plan, :vehicles) |> length() == 1
-    assert Map.get(plan, :vehicles) |> List.first() |> Map.get(:earliest_start) == nil
+    assert Map.get(plan, :transports) |> length() == 1
+    assert Map.get(plan, :transports) |> List.first() |> Map.get(:earliest_start) == nil
   end
 
   test "creates a plan where one vehicle gets two bookings and one gets zero" do
@@ -48,7 +47,7 @@ defmodule BookingProcessorTest do
     plan = PlanStore.get_plan()
 
     clear_state()
-    assert plan |> Map.get(:vehicles) |> length() == 1
+    assert plan |> Map.get(:transports) |> length() == 1
     assert plan |> Map.get(:booking_ids) |> length() == 2
   end
 
@@ -82,11 +81,11 @@ defmodule BookingProcessorTest do
 
     assert 2 ==
              plan
-             |> Map.get(:vehicles)
+             |> Map.get(:transports)
              |> length()
 
     assert plan
-           |> Map.get(:vehicles)
+           |> Map.get(:transports)
            |> List.first()
            |> Map.get(:booking_ids)
            |> length() == 1
@@ -108,7 +107,7 @@ defmodule BookingProcessorTest do
 
     clear_state()
 
-    first_vehicle = plan |> Map.get(:vehicles) |> List.first()
+    first_vehicle = plan |> Map.get(:transports) |> List.first()
 
     assert first_vehicle |> Map.get(:end_address) == %{lat: 61.829182, lon: 16.0896213}
   end
@@ -130,13 +129,15 @@ defmodule BookingProcessorTest do
 
     clear_state()
 
-    first_vehicle = plan |> Map.get(:vehicles) |> List.first()
+    first_vehicle = plan |> Map.get(:transports) |> List.first()
 
     assert first_vehicle |> Map.get(:end_address) == %{lat: 51.829182, lon: 17.0896213}
   end
 
   test "time window constrains is passed on from vehicle to plan" do
-    earliest_start = "12:05"
+    earliest_start =
+      Time.utc_now() |> Time.add(60 * 60 * -3) |> Time.to_string() |> String.slice(0..4)
+
     latest_end = Time.utc_now() |> Time.add(60 * 60 * 3) |> Time.to_string() |> String.slice(0..4)
 
     TransportGenerator.generate_transport_props(%{
@@ -155,7 +156,7 @@ defmodule BookingProcessorTest do
 
     clear_state()
 
-    first_vehicle = plan |> Map.get(:vehicles) |> List.first()
+    first_vehicle = plan |> Map.get(:transports) |> List.first()
 
     assert first_vehicle |> Map.get(:earliest_start) ==
              earliest_start
@@ -182,7 +183,7 @@ defmodule BookingProcessorTest do
 
     clear_state()
 
-    first_vehicle = plan |> Map.get(:vehicles) |> List.first()
+    first_vehicle = plan |> Map.get(:transports) |> List.first()
 
     assert first_vehicle |> Map.get(:capacity) == %{weight: 731, volume: 18}
   end
@@ -204,7 +205,7 @@ defmodule BookingProcessorTest do
     plan = PlanStore.get_plan()
     clear_state()
 
-    assert plan |> Map.get(:vehicles) |> length() == 0
+    assert plan |> Map.get(:transports) |> length() == 0
   end
 
   test "vehicle with too little weight capabilities doesn't get assigned" do
@@ -224,7 +225,7 @@ defmodule BookingProcessorTest do
     plan = PlanStore.get_plan()
     clear_state()
 
-    assert plan |> Map.get(:vehicles) |> length() == 0
+    assert plan |> Map.get(:transports) |> length() == 0
   end
 
   test "bookings with same pickup should work just fine" do
@@ -252,7 +253,7 @@ defmodule BookingProcessorTest do
     plan = PlanStore.get_plan()
     clear_state()
 
-    assert Map.get(plan, :vehicles) |> length() == 1
+    assert Map.get(plan, :transports) |> length() == 1
     assert Map.get(plan, :booking_ids) |> length() == 3
   end
 
@@ -324,7 +325,7 @@ defmodule BookingProcessorTest do
     plan = PlanStore.get_plan()
     clear_state()
 
-    assert Map.get(plan, :vehicles) |> length() == 1
+    assert Map.get(plan, :transports) |> length() == 1
     assert Map.get(plan, :excluded_booking_ids) |> length() == 1
 
     assert Map.get(plan, :excluded_booking_ids) |> List.first() |> Map.get(:id) ==

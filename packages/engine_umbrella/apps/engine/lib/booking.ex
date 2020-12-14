@@ -17,7 +17,6 @@ defmodule Booking do
     :events,
     :metadata,
     :size,
-    :route,
     :requires_transport_id
   ]
 
@@ -50,23 +49,12 @@ defmodule Booking do
 
   def valid_measurements(_), do: false
 
-  def generate_id do
-    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
-
-    generated =
-      UUID.uuid4()
-      |> Base.encode64(padding: false)
-      |> String.replace(["+", "/"], Enum.random(alphabet))
-      |> String.slice(0, 8)
-      |> String.downcase()
-
-    "pmb-" <> generated
-  end
+  def generate_id, do: "pmb-" <> Engine.Utils.generate_id()
 
   def make(%{
         pickup: pickup,
         delivery: delivery,
-        externalId: external_id,
+        external_id: external_id,
         metadata: metadata,
         size: size
       }) do
@@ -84,26 +72,25 @@ defmodule Booking do
 
     with true <- Vex.valid?(booking) do
       booking
-      |> Map.put(:route, Osrm.route(pickup, delivery))
       |> add_event_to_events_list("new", DateTime.utc_now())
       |> (fn booking ->
-        ES.add_event(%BookingRegistered{booking: booking})
+            ES.add_event(%BookingRegistered{booking: booking})
 
-        booking
-      end).()
+            booking
+          end).()
       |> apply_booking_to_state()
 
       id
     else
       _ ->
-        IO.inspect(Vex.errors(booking), label: "booking validation errors")
-        Vex.errors(booking)
+        booking
+        |> print_validation_errors()
+        |> Vex.errors()
     end
   end
 
   def update(%{id: "pmb-" <> _ = id} = booking_update) do
     with true <- Vex.valid?(struct(Booking, booking_update)),
-         _ <- ES.add_event(%BookingUpdated{booking: booking_update}),
          true <- apply_update_to_state(booking_update) do
       id
     else
@@ -114,14 +101,34 @@ defmodule Booking do
     end
   end
 
-  def apply_booking_to_state(%Booking{id: "pmb-" <> _ = id} = booking) do
+  def print_validation_errors(booking) do
+    error_string =
+      booking
+      |> Vex.errors()
+      |> Enum.map(fn
+        {:error, obj, _, msg} when is_list(obj) -> Enum.join(obj, ": ") <> " " <> msg
+        {:error, obj, _, msg} when is_atom(obj) -> Atom.to_string(obj) <> " " <> msg
+      end)
+      |> Enum.join("\n")
+
+    Logger.error("Booking validation errors:\n" <> error_string)
+
+    booking
+  end
+
+  def apply_booking_to_state(
+        %Booking{id: "pmb-" <> _ = id, pickup: pickup, delivery: delivery} = booking
+      ) do
     GenServer.start_link(
       __MODULE__,
       booking,
       name: via_tuple(id)
     )
 
-    RMQ.publish(booking, @outgoing_booking_exchange, "new")
+    booking
+    |> Map.from_struct()
+    |> Map.put(:route, Osrm.route(pickup, delivery))
+    |> RMQ.publish(@outgoing_booking_exchange, "new")
 
     Engine.BookingStore.put_booking(id)
     booking
@@ -145,21 +152,23 @@ defmodule Booking do
     )
   end
 
-  def assign("pmb-" <> _ = booking_id, vehicle) do
+  def assign("pmb-" <> _ = booking_id, %{id: vehicle_id}) do
     timestamp = DateTime.utc_now()
 
     %BookingAssigned{
       booking_id: booking_id,
-      vehicle: vehicle,
+      vehicle_id: vehicle_id,
       timestamp: timestamp
     }
     |> ES.add_event()
 
-    apply_assign_to_state(booking_id, vehicle, timestamp)
+    apply_assign_to_state(booking_id, vehicle_id, timestamp)
   end
 
   def apply_assign_to_state("pmb-" <> _ = booking_id, vehicle, timestamp) do
     GenServer.call(via_tuple(booking_id), {:assign, vehicle, timestamp})
+    |> Map.from_struct()
+    |> Map.take([:assigned_to, :events, :id])
     |> RMQ.publish(
       Application.fetch_env!(:engine, :outgoing_booking_exchange),
       "assigned"
@@ -185,6 +194,8 @@ defmodule Booking do
 
   def apply_event_to_state("pmb-" <> _ = booking_id, status, timestamp) do
     GenServer.call(via_tuple(booking_id), {:add_event, status, timestamp})
+    |> Map.from_struct()
+    |> Map.take([:events, :id])
     |> RMQ.publish(@outgoing_booking_exchange, status)
   end
 
@@ -200,12 +211,11 @@ defmodule Booking do
 
   def handle_call(:get, _from, state), do: {:reply, state, state}
 
-  def handle_call({:assign, vehicle, timestamp}, _from, state) do
+  def handle_call({:assign, vehicle_id, timestamp}, _from, state) do
     updated_state =
       state
       |> Map.put(:assigned_to, %{
-        id: vehicle.id,
-        metadata: vehicle.metadata
+        id: vehicle_id
       })
       |> add_event_to_events_list("assigned", timestamp)
 

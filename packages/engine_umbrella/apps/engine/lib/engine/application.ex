@@ -11,8 +11,8 @@ defmodule Engine.Application do
   defp apply_event(%BookingDeleted{id: id}),
     do: Booking.apply_delete_to_state(id)
 
-  defp apply_event(%BookingAssigned{booking_id: id, vehicle: vehicle, timestamp: time}),
-    do: Booking.apply_assign_to_state(id, vehicle, time)
+  defp apply_event(%BookingAssigned{booking_id: id, vehicle_id: vehicle_id, timestamp: time}),
+    do: Booking.apply_assign_to_state(id, vehicle_id, time)
 
   defp apply_event(%BookingPickedUp{booking_id: id, timestamp: time}),
     do: Booking.apply_event_to_state(id, "picked_up", time)

@@ -8,7 +8,8 @@ import bot from './adapters/bot'
 import * as botRoutes from './botRoutes'
 import { session } from 'telegraf'
 import * as consumers from './consumers'
-
+import { TelegrafContext } from 'telegraf/typings/context'
+import { sendUnhandledError } from './services/messaging'
 
 bot.use(session())
 
@@ -17,6 +18,25 @@ consumers.register()
 botRoutes.init(bot)
 
 bot.launch()
+
+bot.catch(
+  (e: Error, { update: { callback_query, message } }: TelegrafContext) => {
+    let telegramId: number
+    let request: string
+    if (callback_query) {
+      telegramId = callback_query.from.id
+      request = `callback with data '${callback_query.data}'`
+    } else {
+      telegramId = message.from?.id
+      request = `message: '${message.text}'`
+    }
+    console.error(
+      `Failed when handling ${request} from telegram id: ${telegramId}. Exception: ${e}`
+    )
+
+    return sendUnhandledError(telegramId)
+  }
+)
 
 const app = express()
   .use(cors())

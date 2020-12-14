@@ -15,15 +15,13 @@ const parcelSizePresets = {
   big: { weight: 50, measurements: '36x36x36' },
 }
 
-const initialState = {
+export const initialState = {
   externalId: '',
-  cargo: '',
-  fragile: false,
   pickup: {
     name: '',
     lat: undefined,
     lon: undefined,
-    timewindow: null,
+    timeWindows: null,
     street: '',
     city: '',
   },
@@ -33,11 +31,15 @@ const initialState = {
     lon: undefined,
     street: '',
     city: '',
-    timewindow: null,
+    timeWindows: null,
+  },
+  metadata: {
+    cargo: '',
+    fragile: false,
+    recipient: { name: '', contact: '', info: '' },
+    sender: { name: '', contact: '', info: '' },
   },
   size: parcelSizePresets.small,
-  sender: { name: '', contact: '', info: '' },
-  recipient: { name: '', contact: '', info: '' },
 }
 
 const isValidAddress = ({ lat, lon }) => !!(lat && lon)

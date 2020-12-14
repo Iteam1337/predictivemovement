@@ -76,13 +76,13 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
             </Elements.Typography.SpanBold>
             {booking.metadata.fragile ? 'Ja' : 'Nej'}
           </Paragraph>
-          {booking.size.measurement && (
+          {booking.size.measurements && (
             <Paragraph>
               <Elements.Typography.SpanBold>
                 Mått:{' '}
               </Elements.Typography.SpanBold>
-              {booking.size.measurement.map((item, index) =>
-                booking.size.measurement?.length === index + 1
+              {booking.size.measurements.map((item, index) =>
+                booking.size.measurements?.length === index + 1
                   ? `${item} cm `
                   : `${item}x`
               )}
@@ -103,9 +103,11 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
               Upphämtning
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{booking.pickup.street}</CapitalizeParagraph>
-            {booking.pickup.time_windows &&
-              booking.pickup.time_windows.map((timeWindow) => (
-                <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
+            {booking.pickup.timeWindows &&
+              booking.pickup.timeWindows.map((timeWindow) => (
+                <Elements.Typography.SmallInfoBold
+                  key={timeWindow.earliest as string}
+                >
                   {moment(timeWindow.earliest).isSame(timeWindow.latest, 'day')
                     ? `${moment(timeWindow.earliest).format(
                         'YYYY-MM-DD, hh:mm'
@@ -143,8 +145,8 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{booking.delivery.street}</CapitalizeParagraph>
 
-            {booking.delivery.time_windows &&
-              booking.delivery.time_windows.map((timeWindow: any) => (
+            {booking.delivery.timeWindows &&
+              booking.delivery.timeWindows.map((timeWindow: any) => (
                 <Elements.Typography.SmallInfoBold key={timeWindow.earliest}>
                   {moment(timeWindow.earliest).format('YYYY-MM-DD, hh:mm')} -{' '}
                   {moment(timeWindow.latest).format('YYYY-MM-DD, hh:mm')}

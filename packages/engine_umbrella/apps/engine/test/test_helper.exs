@@ -1,5 +1,3 @@
-Application.put_env(:engine, Adapters.RMQ, Engine.Adapters.MockRMQ)
-
 Logger.configure(level: :none)
 ExUnit.start()
 

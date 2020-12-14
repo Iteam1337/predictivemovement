@@ -21,7 +21,6 @@ const Container = styled.div`
 const Content = styled.div<{ isMobile: Boolean }>`
   padding: 2rem;
   width: ${({ isMobile }) => (isMobile ? '100%' : '400px')};
-
   overflow: auto;
 `
 
@@ -31,6 +30,7 @@ interface Props {
   transports: Transport[]
   isMobile: Boolean
   createBooking: (params: any) => void
+  updateBooking: (params: any) => void
   deleteBooking: (params: any) => void
   dispatchOffers: (params: any) => void
   createTransport: (params: any) => void
@@ -54,6 +54,7 @@ const Sidebar = (state: Props) => {
                   bookings={state.bookings}
                   createBooking={state.createBooking}
                   deleteBooking={state.deleteBooking}
+                  updateBooking={state.updateBooking}
                 />
               </Route>
               <Route path="/transports">

@@ -34,7 +34,7 @@ export interface Booking {
   external_id: string
   size: {
     weight?: number
-    measurement?: number[]
+    measurements?: number[]
   }
   id: string
   metadata: {

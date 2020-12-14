@@ -1,6 +1,7 @@
 import Config
 
 config :engine, Adapters.RMQ, Engine.Adapters.RMQ
+config :engine, :rmq_producer, BroadwayRabbitMQ.Producer
 
 config :engine, :outgoing_vehicle_exchange, "outgoing_vehicle_updates"
 config :engine, :incoming_vehicle_exchange, "incoming_vehicle_updates"

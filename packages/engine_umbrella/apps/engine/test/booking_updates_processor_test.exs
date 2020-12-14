@@ -38,10 +38,7 @@ defmodule BookingUpdatesProcessorTest do
     %{channel: channel}
   end
 
-  @tag :skip
-  test "pickup update is registered and published", %{channel: channel} do
-    AMQP.Basic.consume(channel, "look_for_picked_up_updates_in_test", nil, no_ack: true)
-
+  test "pickup update is registered", %{channel: channel} do
     vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =
@@ -54,10 +51,17 @@ defmodule BookingUpdatesProcessorTest do
       })
 
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
-    send_status_msg(booking_id, vehicle_id, "picked_up")
-    update = wait_for_message(channel)
-    assert Map.get(update, :id) == booking_id
-    assert Map.get(update, :events) |> List.first() |> Map.get(:type) == "picked_up"
+
+    ref =
+      Broadway.test_message(
+        Engine.BookingUpdatesProcessor,
+        Jason.encode!(%{
+          "id" => booking_id,
+          "status" => "picked_up"
+        })
+      )
+
+    assert_receive {:ack, ^ref, _, _}, 500
 
     assert :picked_up ==
              Booking.get(booking_id)
@@ -66,10 +70,7 @@ defmodule BookingUpdatesProcessorTest do
              |> Map.get(:type)
   end
 
-  @tag :skip
   test "delivered update is registered and published", %{channel: channel} do
-    AMQP.Basic.consume(channel, "look_for_delivered_updates_in_test", nil, no_ack: true)
-
     vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =
@@ -82,34 +83,22 @@ defmodule BookingUpdatesProcessorTest do
       })
 
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
-    send_status_msg(booking_id, vehicle_id, "delivered")
-    update = wait_for_message(channel)
-    assert Map.get(update, :id) == booking_id
-    assert Map.get(update, :events) |> List.first() |> Map.get(:type) == "delivered"
+
+    ref =
+      Broadway.test_message(
+        Engine.BookingUpdatesProcessor,
+        Jason.encode!(%{
+          "id" => booking_id,
+          "status" => "delivered"
+        })
+      )
+
+    assert_receive {:ack, ^ref, _, _}, 500
 
     assert :delivered ==
              Booking.get(booking_id)
              |> Map.get(:events)
              |> List.first()
              |> Map.get(:type)
-  end
-
-  def send_status_msg(booking_id, vehicle_id, status) do
-    RMQ.publish(
-      %{
-        assigned_to: %{
-          id: vehicle_id
-        },
-        delivery: %{lat: 61.75485695153156, lon: 15.989146086447738},
-        events: [],
-        id: booking_id,
-        metadata: %{},
-        pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
-        size: %{weight: 1, measurements: [1, 1, 1]},
-        status: status
-      },
-      @incoming_booking_exchange,
-      status
-    )
   end
 end

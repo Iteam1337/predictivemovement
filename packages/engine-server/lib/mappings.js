@@ -81,9 +81,9 @@ const toIncomingPlanTransport = (transport) =>
       case 'latest_end':
         return { ...prev, latestEnd: transport[curr] }
       case 'metadata':
-        return { ...prev, [curr]: JSON.stringify(transport[curr]) }
+        return { ...prev, [curr]: JSON.parse(transport[curr]) }
       case 'current_route':
-        return { ...prev, currentRoute: JSON.stringify(transport[curr]) }
+        return { ...prev, currentRoute: JSON.parse(transport[curr]) }
       default:
         return { ...prev, [curr]: transport[curr] }
     }

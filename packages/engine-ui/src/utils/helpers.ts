@@ -30,8 +30,8 @@ const getAddressFromCoordinate = ({ lon, lat }: { lon: number; lat: number }) =>
     .then(({ features: [topResult] }: { features: Feature[] }) => {
       if (!topResult) return Promise.reject('Inga resultat hittades...')
 
-      const label = topResult.properties.label.trim().split(',')
-      const county = label[label.length - 2]
+      const label = topResult.properties.label.split(',')
+      const county = label[label.length - 2].trim()
 
       return {
         name: topResult.properties.name,

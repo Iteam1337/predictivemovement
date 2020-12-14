@@ -112,19 +112,23 @@ export const useGetSuggestedAddresses = (initialState = []) => {
             geometry: {
               coordinates: [lon, lat],
             },
-            properties: { name, county },
+            properties: { name, label },
           }: {
             geometry: {
               coordinates: [lat: number, lon: number]
             }
-            properties: { name: string; county: string }
-          }) => ({
-            name,
-            county,
-            lon,
-            lat,
-            displayName: `${name}, ${county}`,
-          })
+            properties: { name: string; label: string }
+          }) => {
+            const address = label.split(',')
+            const county = address[address.length - 2].trim()
+            return {
+              name,
+              county,
+              lon,
+              lat,
+              displayName: `${name}, ${county}`,
+            }
+          }
         )
         set(parsedFeatures.length > 0 ? parsedFeatures : initialState)
 

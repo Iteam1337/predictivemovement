@@ -45,7 +45,6 @@ module.exports = {
 //   booking: {
 //     id: 493,
 //     destination: { lon: 16.143512, lat: 61.905908 },
-//     departure: { lon: 15.981676, lat: 61.847311 },
-//     bookingDate: '2020-04-07T13:09:15.732840Z'
+//     departure: { lon: 15.981676, lat: 61.847311 }
 //   }
 // }

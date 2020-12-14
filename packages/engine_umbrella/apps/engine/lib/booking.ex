@@ -54,7 +54,7 @@ defmodule Booking do
   def make(%{
         pickup: pickup,
         delivery: delivery,
-        externalId: external_id,
+        external_id: external_id,
         metadata: metadata,
         size: size
       }) do
@@ -90,7 +90,6 @@ defmodule Booking do
 
   def update(%{id: "pmb-" <> _ = id} = booking_update) do
     with true <- Vex.valid?(struct(Booking, booking_update)),
-         _ <- ES.add_event(%BookingUpdated{booking: booking_update}),
          true <- apply_update_to_state(booking_update) do
       id
     else

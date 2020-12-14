@@ -103,7 +103,11 @@ const Component: React.FC<{
   ])
 
   const createBookingOrTransportView = useRouteMatch<{}>({
-    path: ['/bookings/add-booking', '/transports/add-transport'],
+    path: [
+      '/bookings/add-booking',
+      '/transports/add-transport',
+      '/bookings/edit-booking/*',
+    ],
     exact: true,
   })
 
@@ -121,8 +125,10 @@ const Component: React.FC<{
   const handleClose = () => setUIState({ type: 'hideTooltip' })
 
   const entityTypeFromPathname = (pathname: string): EntityTypes => {
-    const [, type] = pathname.split('add-')
-    return type as EntityTypes
+    if (pathname.match('booking')) {
+      return EntityTypes.BOOKING
+    }
+    return EntityTypes.TRANSPORT
   }
 
   const getAddAsInputButton = (

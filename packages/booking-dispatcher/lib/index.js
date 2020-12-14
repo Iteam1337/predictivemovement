@@ -59,22 +59,19 @@ const bookingDispatcher = async (total) => {
         packageDeliveryAddress && packagePickupAddress
     )
     .slice(0, total)
-    .forEach(
-      ({ ShipmentDate, packageDeliveryAddress, packagePickupAddress }) => {
-        const booking = {
-          delivery: packageDeliveryAddress.coordinates,
-          id: id62(),
-          senderId: 'the-past',
-          bookingDate: ShipmentDate,
-          pickup: packagePickupAddress.coordinates,
-        }
-
-        publish(exchanges.bookings, exchanges.bookings.routingKeys.REGISTERED, {
-          ...booking,
-          assigned_to: null,
-        })
+    .forEach(({ packageDeliveryAddress, packagePickupAddress }) => {
+      const booking = {
+        delivery: packageDeliveryAddress.coordinates,
+        id: id62(),
+        senderId: 'the-past',
+        pickup: packagePickupAddress.coordinates,
       }
-    )
+
+      publish(exchanges.bookings, exchanges.bookings.routingKeys.REGISTERED, {
+        ...booking,
+        assigned_to: null,
+      })
+    })
 }
 
 amqp

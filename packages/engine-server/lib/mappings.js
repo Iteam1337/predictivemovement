@@ -81,22 +81,22 @@ const toIncomingPlanTransport = (transport) =>
       case 'latest_end':
         return { ...prev, latestEnd: transport[curr] }
       case 'metadata':
-        return { ...prev, [curr]: JSON.stringify(transport[curr]) }
+        return { ...prev, [curr]: JSON.parse(transport[curr]) }
       case 'current_route':
-        return { ...prev, currentRoute: JSON.stringify(transport[curr]) }
+        return { ...prev, currentRoute: JSON.parse(transport[curr]) }
       default:
         return { ...prev, [curr]: transport[curr] }
     }
   }, {})
 
 const toIncomingPlan = ({
-  vehicles,
+  transports,
   booking_ids,
   excluded_booking_ids,
   ...plan
 }) => ({
   ...plan,
-  transports: vehicles.map(toIncomingPlanTransport),
+  transports: transports.map(toIncomingPlanTransport),
   bookingIds: booking_ids,
   excludedBookingIds: excluded_booking_ids,
 })

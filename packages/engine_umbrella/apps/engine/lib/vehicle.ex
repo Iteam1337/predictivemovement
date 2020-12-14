@@ -80,9 +80,24 @@ defmodule Vehicle do
       vehicle_fields.id
     else
       _ ->
-        IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")
-        Vex.errors(vehicle)
+        vehicle
+        |> print_validation_errors()
+        |> Vex.errors()
     end
+  end
+
+  def print_validation_errors(vehicle) do
+    error_string =
+      vehicle
+      |> Vex.errors()
+      |> Enum.map(fn
+        {:error, obj, _, msg} when is_list(obj) -> Enum.join(obj, ": ") <> " " <> msg
+        {:error, obj, _, msg} when is_atom(obj) -> Atom.to_string(obj) <> " " <> msg
+      end)
+      |> Enum.join("\n")
+
+    Logger.error("vehicle validation errors:\n" <> error_string)
+    vehicle
   end
 
   def update(%{
@@ -121,8 +136,9 @@ defmodule Vehicle do
       id
     else
       _ ->
-        IO.inspect(Vex.errors(vehicle), label: "vehicle validation errors")
-        Vex.errors(vehicle)
+        vehicle
+        |> print_validation_errors()
+        |> Vex.errors()
     end
   end
 

@@ -159,12 +159,17 @@ const Plan: React.FC<PlanProps> = ({
       <Route exact path={[path, `${path}/routes/:routeId`]}>
         <PlanWrapper>
           <h3>Föreslagen plan</h3>
-          {!activeRoutes.length ? (
+          {!activeRoutes.length && !plan.excludedBookings.length ? (
             <Elements.Typography.NoInfoParagraph>
               Det finns inga föreslagna rutter...
             </Elements.Typography.NoInfoParagraph>
           ) : (
             <>
+              {!activeRoutes.length && (
+                <Elements.Typography.NoInfoParagraph>
+                  Planen saknar inkluderade bokningar...
+                </Elements.Typography.NoInfoParagraph>
+              )}
               {activeRoutes.map((route, i) => (
                 <PlanRouteDetails
                   key={i}
@@ -188,13 +193,16 @@ const Plan: React.FC<PlanProps> = ({
                   setOpen={handleExpand}
                 />
               )}
-              <Elements.Buttons.SubmitButton
-                alignSelf="center"
-                marginTop="2rem"
-                onClick={handleOnClick}
-              >
-                Bekräfta plan
-              </Elements.Buttons.SubmitButton>
+
+              {activeRoutes.length > 0 && (
+                <Elements.Buttons.SubmitButton
+                  alignSelf="center"
+                  marginTop="2rem"
+                  onClick={handleOnClick}
+                >
+                  Bekräfta plan
+                </Elements.Buttons.SubmitButton>
+              )}
             </>
           )}
         </PlanWrapper>

@@ -29,7 +29,11 @@ const SubmitButton = styled.button<{
   }
 `
 
-const CancelButton = styled.button<{ padding?: string, width?: string, marginTop?: string }>`
+const CancelButton = styled.button<{
+  padding?: string
+  width?: string
+  marginTop?: string
+}>`
   padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
   background: #fff;
   font-weight: 600;

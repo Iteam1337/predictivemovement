@@ -3,6 +3,11 @@ const helpers = require('./helpers')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, transportsCache, planCache } = require('./cache')
 const parcel = require('./parcel')
+const {
+  toIncomingBooking,
+  toIncomingTransport,
+  toOutgoingBooking,
+} = require('./mappings')
 
 module.exports = (io) => {
   const {
@@ -30,6 +35,7 @@ module.exports = (io) => {
         bookingsCache.set(newBooking.id, { ...oldBooking, ...newBooking })
         return { ...newBooking, ...oldBooking }
       })
+      .map(toIncomingBooking)
       .batchWithTimeOrCount(1000, 1000)
       .errors(console.error)
       .each((bookings) => {
@@ -41,14 +47,15 @@ module.exports = (io) => {
       .doto((transport) => {
         transportsCache.set(transport.id, transport)
       })
+      .map(toIncomingTransport)
       .batchWithTimeOrCount(1000, 2000)
       .errors(console.error)
       .each((transports) => socket.emit('transports', transports))
 
     _.merge([_(planCache.values()), plan.fork()])
-      .map((plan) => ({
+      .map(({ excludedBookingIds, ...plan }) => ({
         ...plan,
-        excluded_booking_ids: plan.excluded_booking_ids.map((booking) => {
+        excludedBookingIds: excludedBookingIds?.map((booking) => {
           const b = bookingsCache.get(booking.id)
           if (!b) return booking
           return {
@@ -94,40 +101,9 @@ module.exports = (io) => {
       socket.emit('notification', helpers.transportToNotification(transport))
     })
 
-    socket.on('new-booking', (params) => {
-      const booking = {
-        externalId: params.externalId,
-        senderId: 'the-UI', // we can get either some sender id in the message or socket id and then we could emit messages - similar to notifications
-        bookingDate: new Date().toISOString(),
-        size: params.size,
-        pickup: {
-          time_windows: params.pickup.timewindow
-            ? [params.pickup.timewindow]
-            : undefined,
-          lat: params.pickup.lat,
-          lon: params.pickup.lon,
-          street: params.pickup.street,
-          city: params.pickup.city,
-        },
-        delivery: {
-          time_windows: params.delivery.timewindow
-            ? [params.delivery.timewindow]
-            : undefined,
-          lat: params.delivery.lat,
-          lon: params.delivery.lon,
-          street: params.delivery.street,
-          city: params.delivery.city,
-        },
-        metadata: {
-          sender: params.sender,
-          recipient: params.recipient,
-          cargo: params.cargo,
-          fragile: params.fragile,
-        },
-      }
-
-      createBooking(booking)
-    })
+    socket.on('new-booking', (booking) =>
+      createBooking(toOutgoingBooking(booking))
+    )
 
     socket.on('dispatch-offers', () => {
       console.log('received message to dispatch offers, from UI')
@@ -138,8 +114,8 @@ module.exports = (io) => {
       const transport = {
         id: params.id || id62(),
         capacity: params.capacity,
-        earliest_start: params.timewindow.start,
-        latest_end: params.timewindow.end,
+        earliest_start: params.earliestStart,
+        latest_end: params.latestEnd,
         start_address: params.startPosition,
         end_address:
           params.endPosition.hasOwnProperty('lon') &&
@@ -176,7 +152,9 @@ module.exports = (io) => {
       socket.emit('transport-deleted', id)
     })
 
-    socket.on('update-booking', updateBooking)
+    socket.on('update-booking', (updatedBooking) =>
+      updateBooking(toOutgoingBooking(updatedBooking))
+    )
     socket.on('update-vehicle', updateVehicle)
 
     socket.on('search-parcel', async (id) => {

@@ -1,6 +1,7 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const { bookingsCache, transportsCache } = require('./cache')
+const { toIncomingPlan } = require('./mappings')
 
 const routingKeys = {
   TRANSPORT: {
@@ -35,6 +36,7 @@ module.exports = (io) => {
     })
     .subscribe({ noAck: true }, [
       routingKeys.NEW,
+      routingKeys.UPDATED,
       routingKeys.ASSIGNED,
       routingKeys.PICKED_UP,
       routingKeys.DELIVERED,
@@ -42,13 +44,22 @@ module.exports = (io) => {
     ])
     .map((bookingRes) => {
       const booking = bookingRes.json()
-      if (booking.route) booking.route = JSON.parse(booking.route)
-      if (booking.metadata) booking.metadata = JSON.parse(booking.metadata)
-
-      return {
-        ...booking,
-        status: bookingRes.fields.routingKey,
-      }
+      return Object.keys(booking).reduce(
+        (prev, curr) => {
+          switch (curr) {
+            case 'route':
+            case 'metadata':
+              return typeof booking[curr] === 'string'
+                ? { ...prev, [curr]: JSON.parse(booking[curr]) }
+                : { ...prev, [curr]: booking[curr] }
+            default:
+              return { ...prev, [curr]: booking[curr] }
+          }
+        },
+        bookingRes.fields.routingKey === routingKeys.UPDATED
+          ? {}
+          : { status: bookingRes.fields.routingKey }
+      )
     })
   const transports = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
@@ -61,7 +72,7 @@ module.exports = (io) => {
     .map((transportRes) => {
       const transport = transportRes.json()
       if (transport.current_route)
-        transport.current_route = JSON.parse(transport.current_route)
+        transport.currentRoute = JSON.parse(transport.current_route)
       return {
         ...transport,
         metadata: JSON.parse(transport.metadata),
@@ -76,23 +87,8 @@ module.exports = (io) => {
       durable: true,
     })
     .subscribe({ noAck: true })
-    .map((msg) => {
-      const planFromMsg = msg.json()
-      const plan = {
-        ...planFromMsg,
-        transports: planFromMsg.transports.map((route) => {
-          if (route.current_route)
-            route.current_route = JSON.parse(route.current_route)
-
-          return {
-            ...route,
-            metadata: JSON.parse(route.metadata),
-          }
-        }),
-      }
-
-      return plan
-    })
+    .map((msg) => msg.json())
+    .map(toIncomingPlan)
 
   amqp
     .exchange('outgoing_booking_updates', 'topic', {

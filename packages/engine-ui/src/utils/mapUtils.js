@@ -84,41 +84,36 @@ const planToFeature = (plan) => {
   let index = 0
   try {
     return [
-      ...plan.flatMap(
-        ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
-          index = i
-          if (currentRoute && activities && activities.length) {
-            const route = line(
-              currentRoute.geometry.coordinates.map(({ lat, lon }) => [
-                lon,
-                lat,
-              ]),
-              {
+      ...plan.flatMap(({ id, activities, currentRoute, routeIndex }, i) => {
+        index = i
+        if (currentRoute && activities?.length) {
+          const route = line(
+            currentRoute.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+            {
+              id,
+              properties: {
+                color: getColor(routeIndex || 0, 3),
+                offset: 0,
+                type: 'plan',
+              },
+            }
+          )
+
+          const points = activities
+            .filter(({ type }) => type !== 'start')
+            .map(({ address }) =>
+              point([address.lon, address.lat], {
                 id,
                 properties: {
-                  color: getColor(routeIndex || 0, 3),
-                  offset: 0,
-                  type: 'plan',
+                  color: getColor(routeIndex || 0, 4),
                 },
-              }
+              })
             )
 
-            const points = activities
-              .filter(({ type }) => type !== 'start')
-              .map(({ address }) =>
-                point([address.lon, address.lat], {
-                  id,
-                  properties: {
-                    color: getColor(routeIndex || 0, 4),
-                  },
-                })
-              )
-
-            return [...points, route]
-          }
-          return []
+          return [...points, route]
         }
-      ),
+        return []
+      }),
     ]
   } catch (error) {
     console.log(index, error)
@@ -297,10 +292,10 @@ const toTransportIconLayer = (transports, activeId) => {
 
   return toIconClusterLayer({
     type: 'transports',
-    data: transports.flatMap(({ id, start_address, location, color }) => ({
+    data: transports.flatMap(({ id, startAddress, location, color }) => ({
       coordinates: [
-        location?.lon || start_address.lon,
-        location?.lat || start_address.lat,
+        location?.lon || startAddress.lon,
+        location?.lat || startAddress.lat,
       ],
       active: id === activeId,
       color,

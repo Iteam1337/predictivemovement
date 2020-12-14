@@ -129,6 +129,10 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
     }
   }
 
+  const handleChangeClick = (bookingId) => {
+    history.push(`/bookings/edit-booking/${bookingId}`)
+  }
+
   const parseEventTypeToHumanReadable = (type) => {
     switch (type) {
       case 'new':
@@ -165,7 +169,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
     delivery,
     id,
     metadata: { cargo, fragile, sender, recipient },
-    size: { measurement, weight },
+    size: { measurements, weight },
   } = booking
 
   const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
@@ -200,13 +204,13 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             </Elements.Typography.SpanBold>
             {fragile ? 'Ja' : 'Nej'}
           </Paragraph>
-          {measurement && (
+          {measurements && (
             <Paragraph>
               <Elements.Typography.SpanBold>
                 Mått:{' '}
               </Elements.Typography.SpanBold>
-              {measurement.map((item, index) =>
-                measurement.length === index + 1 ? `${item} cm ` : `${item}x`
+              {measurements.map((item, index) =>
+                measurements.length === index + 1 ? `${item} cm ` : `${item}x`
               )}
             </Paragraph>
           )}
@@ -225,8 +229,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
               Upphämtning
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
-            {pickup.time_windows &&
-              pickup.time_windows.map(timeWindowToElement)}
+            {pickup.timeWindows && pickup.timeWindows.map(timeWindowToElement)}
           </Elements.Layout.MarginBottomContainer>
           {sender.name && (
             <Elements.Layout.FlexRowBaselineContainer>
@@ -251,8 +254,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
               Avlämning
             </Elements.Typography.StrongParagraph>
             <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
-            {delivery.time_windows &&
-              delivery.time_windows.map(timeWindowToElement)}
+            {delivery.timeWindows &&
+              delivery.timeWindows.map(timeWindowToElement)}
           </Elements.Layout.MarginBottomContainer>
           {sender.name && (
             <Elements.Layout.FlexRowBaselineContainer>
@@ -326,15 +329,26 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
             <CapitalizeParagraph>{booking.status} </CapitalizeParagraph>
           )}
         </Timeline>
-        <Elements.Layout.MarginTopContainer alignItems="center">
-          {booking.status === 'new' && (
-            <Elements.Buttons.CancelButton
-              onClick={() => handleDeleteClick(id)}
-            >
-              Radera bokning
-            </Elements.Buttons.CancelButton>
-          )}
-        </Elements.Layout.MarginTopContainer>
+
+        {booking.status === 'new' && (
+          <Elements.Layout.MarginTopContainer alignItems="center">
+            <Elements.Layout.ButtonWrapper>
+              <Elements.Buttons.SubmitButton
+                type="button"
+                onClick={() => handleChangeClick(id)}
+              >
+                Ändra bokning
+              </Elements.Buttons.SubmitButton>
+            </Elements.Layout.ButtonWrapper>
+            <Elements.Layout.ButtonWrapper>
+              <Elements.Buttons.CancelButton
+                onClick={() => handleDeleteClick(id)}
+              >
+                Radera bokning
+              </Elements.Buttons.CancelButton>
+            </Elements.Layout.ButtonWrapper>
+          </Elements.Layout.MarginTopContainer>
+        )}
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

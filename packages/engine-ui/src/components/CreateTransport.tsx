@@ -20,7 +20,8 @@ const initialState: FormState = {
   id: '',
   capacity: transportPresets.truck.small,
   driver: { name: '', contact: '' },
-  timewindow: { start: null, end: null },
+  earliestStart: null,
+  latestEnd: null,
   startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
   endPosition: null,
   metadata: {
@@ -38,12 +39,14 @@ export interface FormState {
     contact?: string
     name?: string
   }
+  earliestStart: string | null
   endPosition: {
     lat?: number
     lon?: number
     name?: string
   } | null
   id: string
+  latestEnd: string | null
   metadata: {
     profile: string
   }
@@ -51,10 +54,6 @@ export interface FormState {
     lat: number
     lon: number
     name?: string
-  }
-  timewindow: {
-    end: string | null
-    start: string | null
   }
 }
 
@@ -94,17 +93,16 @@ const CreateTransport = ({
     const endPosition = formState.endPosition || formState.startPosition
     onSubmit({
       ...formState,
-      timewindow:
-        formState.timewindow.start && formState.timewindow.end
-          ? {
-              start: moment(formState.timewindow.start).format('HH:mm'),
-              end: moment(formState.timewindow.end).format('HH:mm'),
-            }
-          : formState.timewindow,
+      earliestStart: formState.earliestStart
+        ? moment(formState.earliestStart).format('HH:mm')
+        : formState.earliestStart,
       capacity: {
         weight: parseInt(formState.capacity.weight),
         volume: parseFloat(formState.capacity.volume),
       },
+      latestEnd: formState.latestEnd
+        ? moment(formState.latestEnd).format('HH:mm')
+        : formState.latestEnd,
       startPosition: {
         ...formState.startPosition,
         name: formState.startPosition.name || undefined,

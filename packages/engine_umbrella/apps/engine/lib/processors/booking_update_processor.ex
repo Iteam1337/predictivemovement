@@ -41,7 +41,7 @@ defmodule Engine.BookingUpdateProcessor do
 
   def handle_message(_, %Message{data: booking_update} = msg, _) do
     booking_update
-    |> Jason.decode!(keys: :atoms!)
+    |> Jason.decode!(keys: :atoms)
     |> Booking.update()
 
     booking_ids = Engine.BookingStore.get_bookings()

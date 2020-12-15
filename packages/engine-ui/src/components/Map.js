@@ -7,7 +7,7 @@ import Tooltip from './Tooltip'
 
 import * as stores from '../utils/state/stores'
 
-const Map = ({ data }) => {
+const Map = ({ data, state }) => {
   const [isHovering, setHover] = React.useState(false)
   const history = useHistory()
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
@@ -60,12 +60,13 @@ const Map = ({ data }) => {
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-plan-layer',
-      mapUtils.planToFeature(data.plan.routes),
+      mapUtils.planToFeature(data.plan.routes, state.transports),
       handleClickEvent
     ),
     mapUtils.toGeoJsonLayer(
       'geojson-transport-layer',
       mapUtils.planToFeature(data.transports),
+
       handleClickEvent
     ),
     data.plan.routes

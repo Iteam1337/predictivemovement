@@ -12,7 +12,7 @@ defmodule PlanTest do
         earliest_start: nil,
         end_address: %{
           hint:
-            "XHsqgGB7KoAAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAACCAQAAEKf0AMicrwMQp_QAyJyvAwYAXw7sYsCD",
+            "WcYngF3GJ4AAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAAB7AQAAEKf0AMicrwMQp_QAyJyvAwYAXw5fKDfv",
           lat: 61.840584,
           lon: 16.033552
         },
@@ -22,7 +22,7 @@ defmodule PlanTest do
         profile: nil,
         start_address: %{
           hint:
-            "XHsqgGB7KoAAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAACCAQAAEKf0AMicrwMQp_QAyJyvAwYAXw7sYsCD",
+            "WcYngF3GJ4AAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAAB7AQAAEKf0AMicrwMQp_QAyJyvAwYAXw5fKDfv",
           lat: 61.840584,
           lon: 16.033552
         }
@@ -36,7 +36,7 @@ defmodule PlanTest do
         earliest_start: nil,
         end_address: %{
           hint:
-            "zvUngIoJA4AQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAACCAQAAUZrzALx2rgNRmvMAvHauAxMATwfsYsCD",
+            "n68ngET-AoAQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAAB7AQAAUZrzALx2rgNRmvMAvHauAxMATwdfKDfv",
           lat: 61.765308,
           lon: 15.964753
         },
@@ -46,7 +46,7 @@ defmodule PlanTest do
         profile: nil,
         start_address: %{
           hint:
-            "zvUngIoJA4AQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAACCAQAAUZrzALx2rgNRmvMAvHauAxMATwfsYsCD",
+            "n68ngET-AoAQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAAB7AQAAUZrzALx2rgNRmvMAvHauAxMATwdfKDfv",
           lat: 61.765308,
           lon: 15.964753
         }

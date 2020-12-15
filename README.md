@@ -76,6 +76,13 @@ Go into every folder and run the start command for the service.
     mix dev
     iex -S mix
 
+#### Running tests
+
+    cd packages/engine_umbrella/
+    mix deps.get
+    mix setupTestDatabase
+    mix test
+
 ### Helper/utility functions for populating the state
 
 The umbrella project has an application "message_generator" which is used to create rabbitMQ messages for producing transports and bookings. First start the umbrella project in an elixir shell

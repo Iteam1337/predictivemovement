@@ -1,7 +1,6 @@
 defmodule Booking do
   use GenServer
   use Vex.Struct
-  alias Engine.Adapters.RMQ
   require Logger
   alias Engine.ES
   @derive Jason.Encoder

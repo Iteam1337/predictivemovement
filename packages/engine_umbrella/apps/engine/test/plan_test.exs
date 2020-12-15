@@ -1,6 +1,5 @@
 defmodule PlanTest do
   use ExUnit.Case
-
   test "insert time matrix correctly" do
     expected_vehicles = [
       %{
@@ -12,7 +11,7 @@ defmodule PlanTest do
         earliest_start: nil,
         end_address: %{
           hint:
-            "WcYngF3GJ4AAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAAB7AQAAEKf0AMicrwMQp_QAyJyvAwYAXw5fKDfv",
+            "WLwggFy8IIAAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAAB6AQAAEKf0AMicrwMQp_QAyJyvAwYAXw7xFKHF",
           lat: 61.840584,
           lon: 16.033552
         },
@@ -22,7 +21,7 @@ defmodule PlanTest do
         profile: nil,
         start_address: %{
           hint:
-            "WcYngF3GJ4AAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAAB7AQAAEKf0AMicrwMQp_QAyJyvAwYAXw5fKDfv",
+            "WLwggFy8IIAAAAAAAgAAACEAAAApAAAAAAAAAIk3aUBgTEVCf_t_QgAAAAACAAAAIQAAACkAAAB6AQAAEKf0AMicrwMQp_QAyJyvAwYAXw7xFKHF",
           lat: 61.840584,
           lon: 16.033552
         }
@@ -36,7 +35,7 @@ defmodule PlanTest do
         earliest_start: nil,
         end_address: %{
           hint:
-            "n68ngET-AoAQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAAB7AQAAUZrzALx2rgNRmvMAvHauAxMATwdfKDfv",
+            "kKUggDeLAoAQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAAB6AQAAUZrzALx2rgNRmvMAvHauAxMATwfxFKHF",
           lat: 61.765308,
           lon: 15.964753
         },
@@ -46,17 +45,15 @@ defmodule PlanTest do
         profile: nil,
         start_address: %{
           hint:
-            "n68ngET-AoAQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAAB7AQAAUZrzALx2rgNRmvMAvHauAxMATwdfKDfv",
+            "kKUggDeLAoAQAAAAXAAAAHoDAABKBAAAbyS0QN0QAELmM5tDYBm_QwgAAAAuAAAAwAEAACUCAAB6AQAAUZrzALx2rgNRmvMAvHauAxMATwfxFKHF",
           lat: 61.765308,
           lon: 15.964753
         }
       }
     ]
-
     assert Plan.insert_time_matrix(TimeMatrixMock.get_vehicles_and_bookings())
            |> Map.get(:vehicles) == expected_vehicles
   end
-
   test "adds distance and time on vehicle activites" do
     vehicle =
       %{
@@ -75,13 +72,11 @@ defmodule PlanTest do
         }
       }
       |> Map.update!(:current_route, &Jason.encode!/1)
-
     res =
       vehicle
       |> Plan.add_distance_durations()
       |> Map.get(:activities)
       |> Enum.map(fn activity -> Map.take(activity, [:distance, :duration]) end)
-
     assert res == [
              %{distance: 0, duration: 0},
              %{distance: 23585.6, duration: 1858},

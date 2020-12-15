@@ -2,7 +2,6 @@ defmodule BookingUpdatesProcessorTest do
   use ExUnit.Case
   import TestHelper
   import Mox
-  alias Engine.Adapters.RMQ
 
   setup do
     Engine.Adapters.MockRMQ
@@ -12,33 +11,7 @@ defmodule BookingUpdatesProcessorTest do
     :ok
   end
 
-  def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
-  @outgoing_booking_exchange Application.compile_env!(:engine, :outgoing_booking_exchange)
-  @incoming_booking_exchange Application.compile_env!(:engine, :incoming_booking_exchange)
-
-  setup_all do
-    {:ok, connection} = AMQP.Connection.open(amqp_url())
-    {:ok, channel} = AMQP.Channel.open(connection)
-    AMQP.Queue.declare(channel, "look_for_picked_up_updates_in_test", durable: true)
-    AMQP.Queue.declare(channel, "look_for_delivered_updates_in_test", durable: true)
-
-    AMQP.Queue.bind(channel, "look_for_picked_up_updates_in_test", @outgoing_booking_exchange,
-      routing_key: "picked_up"
-    )
-
-    AMQP.Queue.bind(channel, "look_for_delivered_updates_in_test", @outgoing_booking_exchange,
-      routing_key: "delivered"
-    )
-
-    on_exit(fn ->
-      AMQP.Channel.close(channel)
-      AMQP.Connection.close(connection)
-    end)
-
-    %{channel: channel}
-  end
-
-  test "pickup update is registered", %{channel: channel} do
+  test "pickup update is registered" do
     vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =
@@ -70,7 +43,7 @@ defmodule BookingUpdatesProcessorTest do
              |> Map.get(:type)
   end
 
-  test "delivered update is registered and published", %{channel: channel} do
+  test "delivered update is registered and published" do
     vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =

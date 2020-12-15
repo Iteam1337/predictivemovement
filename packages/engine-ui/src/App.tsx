@@ -17,7 +17,7 @@ const App = () => {
   const [notifications, updateNotifications] = React.useState<
     notificationTypes.Notification[]
   >([])
-  const isMobile = window.innerWidth <= 645;
+  const isMobile = window.innerWidth <= 645
 
   const createTransport = (params: any) => {
     socket.emit('create-transport', params)
@@ -41,6 +41,10 @@ const App = () => {
 
   const moveBooking = (bookingId: string, transportId: string) => {
     socket.emit('move-booking', { bookingId, transportId })
+  }
+
+  const updateBooking = (booking: any) => {
+    socket.emit('update-booking', booking)
   }
 
   useSocket('notification', (data: notificationTypes.Notification) => {
@@ -87,7 +91,7 @@ const App = () => {
       type: 'setPlan',
       payload: {
         routes: plan.transports,
-        excludedBookings: plan.excluded_booking_ids,
+        excludedBookings: plan.excludedBookingIds,
       },
     })
   })
@@ -108,10 +112,13 @@ const App = () => {
         deleteBooking={deleteBooking}
         deleteTransport={deleteTransport}
         moveBooking={moveBooking}
+        updateBooking={updateBooking}
       />
-      {!isMobile && <Route path="/">
-        <Map data={mapData} />
-      </Route>}
+      {!isMobile && (
+        <Route path="/">
+          <Map data={mapData} state={state} />
+        </Route>
+      )}
     </>
   )
 }

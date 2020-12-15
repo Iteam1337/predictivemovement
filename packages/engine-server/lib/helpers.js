@@ -54,9 +54,9 @@ const addActivityAddressInfo = (plan) => ({
       if (id) {
         addressWithInfo = getAddressInfoFromBookingId(type, id)
       } else if (type === 'start') {
-        addressWithInfo = transport.start_address
+        addressWithInfo = transport.startAddress
       } else if (type === 'end') {
-        addressWithInfo = transport.end_address
+        addressWithInfo = transport.endAddress
       }
       return {
         ...activity,

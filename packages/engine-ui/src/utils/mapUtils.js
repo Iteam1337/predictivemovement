@@ -1,5 +1,6 @@
 import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
+import { PathStyleExtension } from '@deck.gl/extensions'
 import parcelIcon from '../assets/parcel.svg'
 import * as helpers from './helpers'
 import excludedParcelIcon from '../assets/excluded-parcel.svg'
@@ -80,45 +81,46 @@ const toTextLayer = (data) =>
     getSize: 20,
   })
 
-const planToFeature = (plan) => {
+const planToFeature = (plan, transports) => {
   let index = 0
   try {
     return [
-      ...plan.flatMap(
-        ({ id, activities, current_route: currentRoute, routeIndex }, i) => {
-          index = i
-          if (currentRoute && activities && activities.length) {
-            const route = line(
-              currentRoute.geometry.coordinates.map(({ lat, lon }) => [
-                lon,
-                lat,
-              ]),
-              {
+      ...plan.flatMap(({ id, activities, currentRoute, routeIndex }, i) => {
+        index = i
+        if (currentRoute && activities?.length) {
+          const route = line(
+            currentRoute.geometry.coordinates.map(({ lat, lon }) => [lon, lat]),
+            {
+              id,
+              properties: {
+                color:
+                  transports.find((t) => t.id === id)?.color ||
+                  getColor(routeIndex || 0, 3),
+                offset: 0,
+                type: 'plan',
+              },
+            }
+          )
+
+          const points = activities
+            .filter(({ type }) => type !== 'start')
+            .map(({ address }) =>
+              point([address.lon, address.lat], {
                 id,
                 properties: {
-                  color: getColor(routeIndex || 0, 3),
+                  color:
+                    transports.find((t) => t.id === id)?.color ||
+                    getColor(routeIndex || 0, 4),
                   offset: 0,
                   type: 'plan',
                 },
-              }
+              })
             )
 
-            const points = activities
-              .filter(({ type }) => type !== 'start')
-              .map(({ address }) =>
-                point([address.lon, address.lat], {
-                  id,
-                  properties: {
-                    color: getColor(routeIndex || 0, 4),
-                  },
-                })
-              )
-
-            return [...points, route]
-          }
-          return []
+          return [...points, route]
         }
-      ),
+        return []
+      }),
     ]
   } catch (error) {
     console.log(index, error)
@@ -172,19 +174,21 @@ const toGeoJsonLayer = (id, data, callback) =>
     filled: true,
     extruded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 3,
+    lineWidthMinPixels: 1.5,
     getFillColor: ({ properties }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 190),
     highlightColor: ({ object: { properties } }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getRadius: (d) => d.properties.size || 300,
-    getLineWidth: 5,
+    getLineWidth: 10,
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
     lineJointRounded: true,
     onClick: callback,
+    getOffset: 1.4,
+    extensions: [new PathStyleExtension({ offset: true })],
   })
 
 const toExcludedBookingIcon = (booking, activeId) => {
@@ -297,10 +301,10 @@ const toTransportIconLayer = (transports, activeId) => {
 
   return toIconClusterLayer({
     type: 'transports',
-    data: transports.flatMap(({ id, start_address, location, color }) => ({
+    data: transports.flatMap(({ id, startAddress, location, color }) => ({
       coordinates: [
-        location?.lon || start_address.lon,
-        location?.lat || start_address.lat,
+        location?.lon || startAddress.lon,
+        location?.lat || startAddress.lat,
       ],
       active: id === activeId,
       color,

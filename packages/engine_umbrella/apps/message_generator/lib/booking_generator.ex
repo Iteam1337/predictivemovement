@@ -12,7 +12,7 @@ defmodule MessageGenerator.BookingGenerator do
 
   def generate_booking_props(properties \\ %{}) do
     properties
-    |> Map.put_new(:externalId, Enum.random(0..100_000))
+    |> Map.put_new(:external_id, Enum.random(0..100_000))
     |> put_new_booking_addresses_from_city(:ljusdal)
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})
     |> Map.update(:metadata, @default_metadata, &Map.merge(@default_metadata, &1))

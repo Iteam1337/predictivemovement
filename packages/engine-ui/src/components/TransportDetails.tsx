@@ -118,15 +118,15 @@ const TransportDetails: React.FC<{
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {transport.earliest_start} - {transport.latest_end}
+            {transport.earliestStart} - {transport.latestEnd}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
-        {transport.end_address.name && (
+        {transport.endAddress.name && (
           <>
             <Elements.Typography.StrongParagraph>
               Slutposition
             </Elements.Typography.StrongParagraph>
-            <Paragraph>{transport.end_address.name}</Paragraph>
+            <Paragraph>{transport.endAddress.name}</Paragraph>
           </>
         )}
         <Line />
@@ -152,7 +152,7 @@ const TransportDetails: React.FC<{
               </RouteTitleWrapper>
               {showInfo.bookings && (
                 <Elements.Layout.LinkListContainer>
-                  {transport.booking_ids?.map((bookingId) => (
+                  {transport.bookingIds?.map((bookingId) => (
                     <Elements.Links.RoundedLink
                       to={`/bookings/${bookingId}`}
                       key={bookingId}

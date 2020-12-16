@@ -116,7 +116,7 @@ const App = () => {
       />
       {!isMobile && (
         <Route path="/">
-          <Map data={mapData} />
+          <Map data={mapData} state={state} />
         </Route>
       )}
     </>

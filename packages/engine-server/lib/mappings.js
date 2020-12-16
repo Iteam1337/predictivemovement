@@ -25,7 +25,7 @@ const toOutgoingDestination = (destination) =>
     switch (curr) {
       case 'timeWindows':
         return destination.timeWindows
-          ? { ...prev, time_windows: destination[timeWindows] }
+          ? { ...prev, time_windows: destination[curr] }
           : { ...prev }
       default:
         return { ...prev, [curr]: destination[curr] }

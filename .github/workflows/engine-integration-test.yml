@@ -63,5 +63,16 @@ jobs:
         run: npm i
       - name: Run tests
         run: npm test
+  run-engine-server-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/engine-server/
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: npm i
+      - name: Run tests
+        run: npm test
 
 

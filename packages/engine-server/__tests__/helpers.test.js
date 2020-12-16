@@ -56,14 +56,14 @@ describe('addActivityAddressInfo', () => {
               type: 'end',
             },
           ],
-          end_address: {
+          endAddress: {
             city: 'Ljusdal',
             lat: 61.82722667307152,
             lon: 16.072685608984035,
             name: 'Kyrksjön, Ljusdal',
             street: 'Kyrksjön',
           },
-          start_address: {
+          startAddress: {
             city: 'Ljusdal',
             lat: 61.82722667307152,
             lon: 16.072685608984035,

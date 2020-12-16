@@ -49,6 +49,6 @@ jobs:
       - name: Compile
         run: mix compile
       - name: create database
-        run: mix do event_store.create, event_store.init
+        run: mix setupTestDatabase
       - name: Run tests
         run: mix test

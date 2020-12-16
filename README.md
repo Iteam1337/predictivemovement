@@ -78,6 +78,8 @@ Go into every folder and run the start command for the service.
 
 #### Running tests
 
+Make sure you've started the dependencies with docker-compose up -d then run
+
     cd packages/engine_umbrella/
     mix deps.get
     mix setupTestDatabase

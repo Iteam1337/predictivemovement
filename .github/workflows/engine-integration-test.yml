@@ -54,10 +54,11 @@ jobs:
         run: mix test
   run-driver-interface-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/driver-interface/
     steps:
       - uses: actions/checkout@v2
-        with:
-          path: "packages/driver-interface"
       - name: Install modules
         run: npm i
       - name: Run tests

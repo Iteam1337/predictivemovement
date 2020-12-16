@@ -116,6 +116,7 @@ defmodule VehicleTest do
            ]
   end
 
+  @tag :only
   test "should allow vehicle to be updated" do
     id =
       TransportGenerator.generate_transport_props()
@@ -146,5 +147,25 @@ defmodule VehicleTest do
     assert end_address == updated_vehicle.end_address
     assert profile == updated_vehicle.profile
     assert capacity == updated_vehicle.capacity
+  end
+
+  @tag :only
+  test "should allow vehicle to be updated with partial data" do
+    id =
+      TransportGenerator.generate_transport_props()
+      |> Vehicle.make()
+
+    updated_vehicle = %{
+      id: id,
+      start_address: %{lat: 13.37, lon: 13.37}
+    }
+
+    Vehicle.update(updated_vehicle)
+
+    %{
+      start_address: start_address
+    } = Vehicle.get(id)
+
+    assert start_address == updated_vehicle.start_address
   end
 end

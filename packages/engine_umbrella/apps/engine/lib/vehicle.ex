@@ -23,25 +23,35 @@ defmodule Vehicle do
 
   @hour_and_minutes_format ~r/^((?:[01]\d|2[0-3]):[0-5]\d$)/
 
-  validates(:start_address, presence: true)
-  validates([:start_address, :lat], number: [is: true])
-  validates([:start_address, :lon], number: [is: true])
-  validates([:end_address, :lat], number: [is: true])
-  validates([:end_address, :lon], number: [is: true])
-  validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
-  validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
+  validates([:start_address, :lat], number: [is: true, if: &(!&1.start_address)])
 
-  validates([:capacity, :weight],
-    by: [function: &is_integer/1, message: "must be an integer"]
-  )
+  # validates([:start_address, :lon],
+  #   number: [is: true, [if: fn map -> !is_nil(map.start_address) end]]
+  # )
 
-  validates([:capacity, :volume], number: [is: true])
+  # validates([:end_address, :lat], number: [is: true, if: &Vehicle.end_address_exists?/1]])
+  # validates([:end_address, :lon], number: [is: true, if: &Vehicle.end_address_exists?/1]])
+
+  # validates([:end_address, :lat], number: [is: true])
+  # validates([:end_address, :lon], number: [is: true])
+  # validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
+  # validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
+
+  # validates([:capacity, :weight],
+  #   by: [function: &is_integer/1, message: "must be an integer"]
+  # )
+
+  # validates([:capacity, :volume], number: [is: true])
 
   def init(init_arg) do
     {:ok, init_arg}
   end
 
   def handle_call(:get, _from, state), do: {:reply, state, state}
+
+  def handle_call({:update, updated_vehicle}, _from, state) do
+    {:reply, true, Map.merge(state, updated_vehicle)}
+  end
 
   def handle_call(
         {:apply_offer_accepted, offer},
@@ -71,10 +81,10 @@ defmodule Vehicle do
         routing_key
       )
 
-  def make(vehicle_info) do
+  def make(%{start_address: start_address} = vehicle_info) do
     vehicle_fields =
       vehicle_info
-      |> Map.put_new(:end_address, Map.get(vehicle_info, :start_address))
+      |> Map.put_new(:end_address, start_address)
       |> Map.put(:id, generate_id())
       |> Map.put_new(:capacity, %{volume: 15, weight: 700})
       |> Map.update(:metadata, nil, &Jason.encode!/1)
@@ -104,47 +114,30 @@ defmodule Vehicle do
         {:error, obj, _, msg} when is_atom(obj) -> Atom.to_string(obj) <> " " <> msg
       end)
       |> Enum.join("\n")
+      |> IO.inspect(label: "errors")
 
     Logger.error("vehicle validation errors:\n" <> error_string)
     vehicle
   end
 
-  def update(%{
-        id: "pmv-" <> _ = id,
-        start_address: start_address,
-        end_address: end_address,
-        earliest_start: earliest_start,
-        latest_end: latest_end,
-        profile: profile,
-        capacity: capacity,
-        metadata: metadata
-      }) do
-    vehicle =
-      get(id)
-      |> Map.put(:start_address, start_address)
-      |> Map.put(:end_address, end_address)
-      |> Map.put(:earliest_start, earliest_start)
-      |> Map.put(:latest_end, latest_end)
-      |> Map.put(:profile, profile)
-      |> Map.put(:capacity, capacity)
-      |> Map.put(:metadata, metadata |> Jason.encode!())
-
-    with true <- Vex.valid?(vehicle) do
-      vehicle
-      |> (&%VehicleUpdated{vehicle: &1}).()
-      |> ES.add_event()
-
-      GenServer.call(via_tuple(id), {:update, vehicle})
-
-      publish(vehicle, "updated")
-
+  def update(%{id: "pmv-" <> _ = id} = vehicle_update) do
+    with true <- Vex.valid?(struct(Vehicle, vehicle_update)),
+         _ <- ES.add_event(%VehicleUpdated{vehicle: vehicle_update}),
+         _ <- apply_update_to_state(vehicle_update) do
       id
     else
-      _ ->
-        vehicle
+      e ->
+        struct(Vehicle, vehicle_update)
         |> print_validation_errors()
         |> Vex.errors()
     end
+  end
+
+  def apply_update_to_state(%{id: id} = update) do
+    GenServer.call(via_tuple(id), {:update, update})
+    publish(update, "updated")
+
+    true
   end
 
   def apply_offer_accepted("pmv-" <> _ = id, offer) do

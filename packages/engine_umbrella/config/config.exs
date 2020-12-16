@@ -1,7 +1,7 @@
 import Config
 
-config :engine, :plan, Plan
-config :engine, :vehicle, Vehicle
+config :engine, Adapters.RMQ, Engine.Adapters.RMQ
+config :engine, :rmq_producer, BroadwayRabbitMQ.Producer
 
 config :engine, :outgoing_vehicle_exchange, "outgoing_vehicle_updates"
 config :engine, :incoming_vehicle_exchange, "incoming_vehicle_updates"
@@ -17,3 +17,5 @@ config :engine, Engine.ES,
   password: "postgres",
   database: "eventstore",
   hostname: "localhost"
+
+if Mix.env() == :test, do: import_config("test.exs")

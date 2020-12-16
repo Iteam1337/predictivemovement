@@ -1,5 +1,6 @@
 import palette, { getColor } from './palette'
 import { GeoJsonLayer, IconLayer, TextLayer } from '@deck.gl/layers'
+import { PathStyleExtension } from '@deck.gl/extensions'
 import parcelIcon from '../assets/parcel.svg'
 import * as helpers from './helpers'
 import excludedParcelIcon from '../assets/excluded-parcel.svg'
@@ -80,7 +81,7 @@ const toTextLayer = (data) =>
     getSize: 20,
   })
 
-const planToFeature = (plan) => {
+const planToFeature = (plan, transports) => {
   let index = 0
   try {
     return [
@@ -92,7 +93,9 @@ const planToFeature = (plan) => {
             {
               id,
               properties: {
-                color: getColor(routeIndex || 0, 3),
+                color:
+                  transports.find((t) => t.id === id)?.color ||
+                  getColor(routeIndex || 0, 3),
                 offset: 0,
                 type: 'plan',
               },
@@ -105,7 +108,11 @@ const planToFeature = (plan) => {
               point([address.lon, address.lat], {
                 id,
                 properties: {
-                  color: getColor(routeIndex || 0, 4),
+                  color:
+                    transports.find((t) => t.id === id)?.color ||
+                    getColor(routeIndex || 0, 4),
+                  offset: 0,
+                  type: 'plan',
                 },
               })
             )
@@ -167,19 +174,21 @@ const toGeoJsonLayer = (id, data, callback) =>
     filled: true,
     extruded: true,
     lineWidthScale: 1,
-    lineWidthMinPixels: 3,
+    lineWidthMinPixels: 1.5,
     getFillColor: ({ properties }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getLineColor: (d) => helpers.hexToRGBA(d.properties.color, 190),
     highlightColor: ({ object: { properties } }) =>
       helpers.hexToRGBA(properties.color, properties.opacity),
     getRadius: (d) => d.properties.size || 300,
-    getLineWidth: 5,
+    getLineWidth: 10,
     getElevation: 30,
     pointRadiusScale: 1,
     pointRadiusMaxPixels: 10,
     lineJointRounded: true,
     onClick: callback,
+    getOffset: 1.4,
+    extensions: [new PathStyleExtension({ offset: true })],
   })
 
 const toExcludedBookingIcon = (booking, activeId) => {

@@ -1,4 +1,4 @@
-name: Integration tests
+name: Test suite
 
 on: [pull_request]
 
@@ -13,7 +13,7 @@ jobs:
         run: docker build packages/route-optimization-jsprit --tag iteam1337/pm-route-optimization-jsprit:latest
       - name: Push route-optimization-image
         run: docker push iteam1337/pm-route-optimization-jsprit:latest
-  run-integration-tests:
+  run-engine-integration-tests:
     needs: build-and-push-route-optimization
     env:
       AMQP_HOST: localhost
@@ -49,6 +49,30 @@ jobs:
       - name: Compile
         run: mix compile
       - name: create database
-        run: mix do event_store.create, event_store.init
+        run: mix setupTestDatabase
       - name: Run tests
         run: mix test
+  run-driver-interface-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/driver-interface/
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: npm i
+      - name: Run tests
+        run: npm test
+  run-engine-server-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/engine-server/
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: npm i
+      - name: Run tests
+        run: npm test
+
+

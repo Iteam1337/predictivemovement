@@ -2,9 +2,19 @@ defmodule BookingProcessorTest do
   import TestHelper
   alias MessageGenerator.TransportGenerator
   alias MessageGenerator.BookingGenerator
-
+  import Mox
   def amqp_url, do: "amqp://" <> Application.fetch_env!(:engine, :amqp_host)
   use ExUnit.Case
+
+  setup :clear_state
+
+  setup do
+    Engine.Adapters.MockRMQ
+    |> stub(:publish, fn data, _, _ -> data end)
+    |> stub(:publish, fn data, _ -> data end)
+
+    :ok
+  end
 
   test "creates a plan for one vehicle and one booking" do
     TransportGenerator.generate_transport_props()
@@ -17,7 +27,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert Map.get(plan, :booking_ids) |> length() == 1
     assert Map.get(plan, :transports) |> length() == 1
@@ -46,7 +55,6 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
     assert plan |> Map.get(:transports) |> length() == 1
     assert plan |> Map.get(:booking_ids) |> length() == 2
   end
@@ -77,8 +85,6 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     assert 2 ==
              plan
              |> Map.get(:transports)
@@ -105,10 +111,7 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     first_vehicle = plan |> Map.get(:transports) |> List.first()
-
     assert first_vehicle |> Map.get(:end_address) == %{lat: 61.829182, lon: 16.0896213}
   end
 
@@ -127,10 +130,7 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     first_vehicle = plan |> Map.get(:transports) |> List.first()
-
     assert first_vehicle |> Map.get(:end_address) == %{lat: 51.829182, lon: 17.0896213}
   end
 
@@ -153,8 +153,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-
-    clear_state()
 
     first_vehicle = plan |> Map.get(:transports) |> List.first()
 
@@ -181,10 +179,7 @@ defmodule BookingProcessorTest do
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
 
-    clear_state()
-
     first_vehicle = plan |> Map.get(:transports) |> List.first()
-
     assert first_vehicle |> Map.get(:capacity) == %{weight: 731, volume: 18}
   end
 
@@ -203,7 +198,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert plan |> Map.get(:transports) |> length() == 0
   end
@@ -223,7 +217,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert plan |> Map.get(:transports) |> length() == 0
   end
@@ -251,7 +244,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert Map.get(plan, :transports) |> length() == 1
     assert Map.get(plan, :booking_ids) |> length() == 3
@@ -323,7 +315,6 @@ defmodule BookingProcessorTest do
     booking_ids = Engine.BookingStore.get_bookings()
     Plan.calculate(vehicle_ids, booking_ids)
     plan = PlanStore.get_plan()
-    clear_state()
 
     assert Map.get(plan, :transports) |> length() == 1
     assert Map.get(plan, :excluded_booking_ids) |> length() == 1

@@ -45,8 +45,10 @@ const Component = ({
     return favoriteAddresses
   }
 
-  const isFavorite = (name) => {
-    return getFavoriteAddresses().some((a) => a.name === name)
+  const isFavorite = (name, county) => {
+    return getFavoriteAddresses().some(
+      (a) => a.name === name && a.county === county
+    )
   }
 
   const [showDropdown, setShowDropdown] = React.useState(false)
@@ -73,7 +75,7 @@ const Component = ({
   const handleDropdownSelect = (event, address) => {
     event.persist()
     setShowDropdown(false)
-    setShowSaveFavorite(!isFavorite(address.name))
+    setShowSaveFavorite(!isFavorite(address.name, address.county))
     const selected = {
       ...address,
       name: `${address.name}, ${address.county}`,
@@ -85,8 +87,7 @@ const Component = ({
 
   const saveAsFavorite = () => {
     const favoriteAddresses = getFavoriteAddresses()
-
-    if (isFavorite(selectedAddress.name)) return false
+    if (isFavorite(selectedAddress.name, selectedAddress.county)) return false
 
     const displayName = prompt(
       'Namn på denna favoritposition',

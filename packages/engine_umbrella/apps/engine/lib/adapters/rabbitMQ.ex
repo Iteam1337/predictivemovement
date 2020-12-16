@@ -1,5 +1,6 @@
 defmodule Engine.Adapters.RMQ do
   use GenServer
+  @behaviour Engine.Behaviours.QueuePublisher
   require Logger
   alias AMQP.{Exchange, Queue, Channel, Basic, Connection}
 
@@ -21,6 +22,7 @@ defmodule Engine.Adapters.RMQ do
     {:ok, %{conn: nil, channel: nil}}
   end
 
+  @impl Engine.Behaviours.QueuePublisher
   def publish(data, exchange_name) do
     GenServer.call(__MODULE__, {:publish, data, exchange_name, ""})
   end

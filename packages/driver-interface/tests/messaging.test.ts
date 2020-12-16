@@ -21,7 +21,7 @@ test('2 instruction groups with 1 entity in each ', () => {
     [
       {
         address: {
-          name: 'Storgatan 59, Stockholm, Sweden',
+          name: 'Storgatan 50, Stockholm, Sweden',
         },
         id: 'pmb-ztziodmw',
         type: 'deliverShipment',
@@ -32,7 +32,7 @@ test('2 instruction groups with 1 entity in each ', () => {
 
   expect(res).toBe(`🎁  Här är dina körningar:
 1\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
-2\. Lämna __ODMW__ vid Storgatan 59, Stockholm, Sweden`)
+2\. Lämna __ODMW__ vid Storgatan 50, Stockholm, Sweden`)
 })
 
 test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', () => {
@@ -58,14 +58,14 @@ test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', 
     [
       {
         address: {
-          name: 'Storgatan 59, Stockholm, Sweden',
+          name: 'Storgatan 50, Stockholm, Sweden',
         },
         id: 'pmb-ztziodmw',
         type: 'deliverShipment',
       },
       {
         address: {
-          name: 'Storgatan 59, Stockholm, Sweden',
+          name: 'Storgatan 50, Stockholm, Sweden',
         },
         id: 'pmb-zgy4njdj',
         type: 'deliverShipment',
@@ -77,7 +77,7 @@ test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', 
   expect(res).toBe(`🎁  Här är dina körningar:
 1\. Hämta __ODMW__ vid Kellgrensgatan 14, Stockholm, Sweden
 2\. Hämta __NJDJ__ vid Åkerivägen 3, Sweden
-3\. Lämna __ODMW__, __NJDJ__ vid Storgatan 59, Stockholm, Sweden`)
+3\. Lämna __ODMW__, __NJDJ__ vid Storgatan 50, Stockholm, Sweden`)
 })
 
 test('2 instruction group with 2 entities, 1 instruction group with 1 ', () => {
@@ -101,14 +101,14 @@ test('2 instruction group with 2 entities, 1 instruction group with 1 ', () => {
     [
       {
         address: {
-          name: 'Storgatan 59, Stockholm, Sweden',
+          name: 'Storgatan 50, Stockholm, Sweden',
         },
         id: 'pmb-ztziodmw',
         type: 'deliverShipment',
       },
       {
         address: {
-          name: 'Storgatan 59, Stockholm, Sweden',
+          name: 'Storgatan 50, Stockholm, Sweden',
         },
         id: 'pmb-mjgynwiy',
         type: 'deliverShipment',
@@ -137,7 +137,7 @@ test('2 instruction group with 2 entities, 1 instruction group with 1 ', () => {
 
   expect(res).toBe(`🎁  Här är dina körningar:
 1\. Hämta __ODMW__, __NWIY__ vid Kellgrensgatan 14, Stockholm, Sweden
-2\. Lämna __ODMW__, __NWIY__ vid Storgatan 59, Stockholm, Sweden
+2\. Lämna __ODMW__, __NWIY__ vid Storgatan 50, Stockholm, Sweden
 3\. Hämta __NJDJ__ vid Åkerivägen 3, Sweden
 4\. Lämna __NJDJ__ vid Stockholmsvägen 8, Sweden`)
 })

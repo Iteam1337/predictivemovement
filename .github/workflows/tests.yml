@@ -1,4 +1,4 @@
-name: Integration tests
+name: Test suite
 
 on: [pull_request]
 

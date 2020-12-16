@@ -77,7 +77,7 @@ defmodule PlanTest do
     )
   end
 
-  test "insert time matrix correctly" do
+  test "adds hints from matrix correctly " do
     map = %{
       bookings: [
         %{

@@ -1,55 +1,14 @@
 import React from 'react'
 import { useSocket } from 'use-socketio'
-import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { reducer, initState } from './utils/reducer'
-import { Route } from 'react-router-dom'
-import Map from './components/Map'
-import Logotype from './components/Logotype'
-import * as hooks from './utils/hooks'
-import Notifications from './components/Notifications'
-import * as notificationTypes from './notificationTypes'
+import { Switch, Route } from 'react-router-dom'
+
+import Home from './Home'
+import SignParcel from './SignParcel'
 
 const App = () => {
-  const { socket } = useSocket()
   const [state, dispatch] = React.useReducer(reducer, initState)
-  const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
-  const [notifications, updateNotifications] = React.useState<
-    notificationTypes.Notification[]
-  >([])
-  const isMobile = window.innerWidth <= 645
-
-  const createTransport = (params: any) => {
-    socket.emit('create-transport', params)
-  }
-
-  const createBooking = (params: any) => {
-    socket.emit('new-booking', params)
-  }
-
-  const dispatchOffers = () => {
-    socket.emit('dispatch-offers')
-  }
-
-  const deleteBooking = (id: string) => {
-    socket.emit('delete-booking', id)
-  }
-
-  const deleteTransport = (id: string) => {
-    socket.emit('delete-transport', id)
-  }
-
-  const moveBooking = (bookingId: string, transportId: string) => {
-    socket.emit('move-booking', { bookingId, transportId })
-  }
-
-  const updateBooking = (booking: any) => {
-    socket.emit('update-booking', booking)
-  }
-
-  useSocket('notification', (data: notificationTypes.Notification) => {
-    updateNotifications((notifications) => notifications.concat(data))
-  })
 
   useSocket('bookings', (bookings) => {
     dispatch({
@@ -96,30 +55,20 @@ const App = () => {
     })
   })
 
+  const handleParcelSignatureConfirm = (signature: string) => {
+    console.log(signature)
+  }
+
   return (
-    <>
-      {!isMobile && <Logotype />}
-      <Notifications
-        notifications={notifications}
-        updateNotifications={updateNotifications}
-      />
-      <Sidebar
-        {...state}
-        isMobile={isMobile}
-        createBooking={createBooking}
-        dispatchOffers={dispatchOffers}
-        createTransport={createTransport}
-        deleteBooking={deleteBooking}
-        deleteTransport={deleteTransport}
-        moveBooking={moveBooking}
-        updateBooking={updateBooking}
-      />
-      {!isMobile && (
-        <Route path="/">
-          <Map data={mapData} state={state} />
-        </Route>
-      )}
-    </>
+    <Switch>
+      <Route path="/sign/:id">
+        <SignParcel onSubmit={handleParcelSignatureConfirm} />
+      </Route>
+
+      <Route path="/">
+        <Home {...state} />
+      </Route>
+    </Switch>
   )
 }
 

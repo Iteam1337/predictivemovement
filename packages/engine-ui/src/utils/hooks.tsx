@@ -1,6 +1,6 @@
 import React, { SetStateAction } from 'react'
 import { useRouteMatch } from 'react-router-dom'
-import { FormState as CreateTransportState } from '../components/CreateTransport'
+import { FormState as TransportFormState } from '../components/CreateTransport'
 import { Booking, Route, Transport } from '../types'
 import * as helpers from './helpers'
 import { State } from './reducer'
@@ -15,7 +15,12 @@ export const useFilteredStateFromQueryParams = (state: State) => {
   })
 
   const includeTransports = useRouteMatch({
-    path: ['/plans', '/transports', '/transports/:id'],
+    path: [
+      '/plans',
+      '/transports',
+      '/transports/:id',
+      '/transports/edit-transport/:id',
+    ],
     exact: true,
   })
 
@@ -30,7 +35,7 @@ export const useFilteredStateFromQueryParams = (state: State) => {
   })
 
   const transportDetailView = useRouteMatch<{ id: string }>({
-    path: '/transports/:id',
+    path: ['/transports/:id', '/transports/edit-transport/:id'],
     exact: true,
   })
 
@@ -153,7 +158,7 @@ export const useGetParcelInfo = (initialState = []) => {
 }
 
 export const useFormStateWithMapClickControl = <
-  T extends CreateTransportState | FormBooking
+  T extends TransportFormState | FormBooking
 >(
   start: string,
   end: string,

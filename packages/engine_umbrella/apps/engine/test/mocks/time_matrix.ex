@@ -7,7 +7,6 @@ defmodule TimeMatrixMock do
             lon: 16.033552,
             lat: 61.840584
           },
-          profile: nil,
           metadata: %{},
           latest_end: nil,
           id: "pmv-5MNjCOZb",
@@ -30,7 +29,6 @@ defmodule TimeMatrixMock do
             lon: 15.964753,
             lat: 61.765308
           },
-          profile: nil,
           metadata: %{},
           latest_end: nil,
           id: "pmv-3EDtbNnn",

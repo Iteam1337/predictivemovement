@@ -56,6 +56,18 @@ const TransportDetails: React.FC<{
 
   React.useEffect(() => () => onUnmount(), [onUnmount])
 
+  React.useEffect(() => {
+    if (transport) {
+      setMap({
+        latitude: transport.startAddress.lat,
+        longitude: transport.startAddress.lon,
+        zoom: 10,
+        transitionDuration: 2000,
+        transitionInterpolator: new FlyToInterpolator(),
+        transitionEasing: (t: number) => t * (2 - t),
+      })
+    }
+  })
   const { transportId } = useParams<{ transportId: string }>()
   const transport = transports.find((v) => v.id === transportId)
 
@@ -67,6 +79,10 @@ const TransportDetails: React.FC<{
         Kunde inte hitta transport med id: <b>{transportId}</b>
       </p>
     )
+
+  const handleChangeClick = (transportId: string) => {
+    history.push(`/transports/edit-transport/${transportId}`)
+  }
 
   const handleDeleteClick = (transportId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
@@ -224,11 +240,21 @@ const TransportDetails: React.FC<{
           </>
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">
-          <Elements.Buttons.CancelButton
-            onClick={() => handleDeleteClick(transport.id)}
-          >
-            Radera transport
-          </Elements.Buttons.CancelButton>
+          <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.SubmitButton
+              type="button"
+              onClick={() => handleChangeClick(transport.id)}
+            >
+              Ändra transport
+            </Elements.Buttons.SubmitButton>
+          </Elements.Layout.ButtonWrapper>
+          <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.CancelButton
+              onClick={() => handleDeleteClick(transport.id)}
+            >
+              Radera transport
+            </Elements.Buttons.CancelButton>
+          </Elements.Layout.ButtonWrapper>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

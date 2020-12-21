@@ -16,7 +16,6 @@ defmodule Vehicle do
     :end_address,
     :earliest_start,
     :latest_end,
-    :profile,
     :capacity
   ]
 
@@ -106,7 +105,6 @@ defmodule Vehicle do
         end_address: end_address,
         earliest_start: earliest_start,
         latest_end: latest_end,
-        profile: profile,
         capacity: capacity,
         metadata: metadata
       }) do
@@ -116,7 +114,6 @@ defmodule Vehicle do
       |> Map.put(:end_address, end_address)
       |> Map.put(:earliest_start, earliest_start)
       |> Map.put(:latest_end, latest_end)
-      |> Map.put(:profile, profile)
       |> Map.put(:capacity, capacity)
       |> Map.put(:metadata, metadata |> Jason.encode!())
 

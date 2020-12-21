@@ -71,6 +71,7 @@ module.exports = (io) => {
     .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
     .map((transportRes) => {
       const transport = transportRes.json()
+
       if (transport.current_route)
         transport.currentRoute = JSON.parse(transport.current_route)
       return {
@@ -280,17 +281,17 @@ module.exports = (io) => {
       )
   }
 
-  const updateVehicle = (vehicle) => {
+  const updateTransport = (transport) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', {
         durable: true,
       })
-      .publish(vehicle, routingKeys.UPDATED, {
+      .publish(transport, routingKeys.UPDATED, {
         persistent: true,
       })
       .then(() =>
         console.log(
-          ` [x] Updated vehicle '${JSON.stringify(vehicle, null, 2)}'`
+          ` [x] Updated transport '${JSON.stringify(transport, null, 2)}'`
         )
       )
   }
@@ -310,6 +311,6 @@ module.exports = (io) => {
     transportNotifications,
     bookingNotifications,
     updateBooking,
-    updateVehicle,
+    updateTransport,
   }
 }

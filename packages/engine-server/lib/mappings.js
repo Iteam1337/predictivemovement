@@ -1,3 +1,5 @@
+const helpers = require('./helpers')
+
 const toIncomingDestination = ({ time_windows, ...rest }) => ({
   ...rest,
   timeWindows: time_windows,
@@ -67,6 +69,42 @@ const toIncomingTransport = ({
   endAddress: end_address,
 })
 
+const toOutgoingTransport = (transport) =>
+  Object.keys(transport).reduce((acc, curr) => {
+    switch (curr) {
+      case 'earliestStart':
+        return { ...acc, earliest_start: transport[curr] }
+      case 'latestEnd':
+        return { ...acc, latest_end: transport[curr] }
+      case 'startAddress':
+        return { ...acc, start_address: transport[curr] }
+      case 'endAddress':
+        return {
+          ...acc,
+          end_address:
+            transport[curr].hasOwnProperty('lon') &&
+            transport[curr].hasOwnProperty('lat')
+              ? transport[curr]
+              : transport['startAddress'],
+        }
+      case 'metadata':
+        return {
+          ...acc,
+          metadata: {
+            ...transport[curr],
+            driver: {
+              ...transport[curr].driver,
+              contact: helpers.changeFormatOnPhoneNumber(
+                transport[curr].driver.contact
+              ),
+            },
+          },
+        }
+      default:
+        return { ...acc, [curr]: transport[curr] }
+    }
+  }, {})
+
 const toIncomingPlanTransport = (transport) =>
   Object.keys(transport).reduce((prev, curr) => {
     switch (curr) {
@@ -106,4 +144,5 @@ module.exports = {
   toIncomingPlan,
   toIncomingTransport,
   toOutgoingBooking,
+  toOutgoingTransport,
 }

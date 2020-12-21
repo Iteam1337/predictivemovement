@@ -58,6 +58,7 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
         )
       case 'delivered':
         await cache.setDriverDoneDelivering(telegramId)
+        break
       case 'picked_up':
       case 'delivery_failed': {
         return cache

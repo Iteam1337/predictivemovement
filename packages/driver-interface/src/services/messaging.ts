@@ -332,6 +332,7 @@ export const sendPhotoReceived = (
       },
     }
   )
+
 export const sendBeginDeliveryAcknowledgement = (
   telegramId: number
 ): Promise<Message> =>

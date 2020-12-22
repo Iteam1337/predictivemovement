@@ -27,8 +27,17 @@ defmodule Plan do
     end
   end
 
-  def insert_time_matrix(%{vehicles: vehicles, bookings: bookings} = items) do
-    matrix =
+  def insert_time_matrix(items),
+    do:
+      items
+      |> map_vehicles_and_bookings_to_coordinates()
+      |> Osrm.get_time_between_coordinates()
+      |> Map.delete(:code)
+      |> (fn matrix -> Map.put(items, :matrix, matrix) end).()
+      |> add_hints_from_matrix()
+
+  def map_vehicles_and_bookings_to_coordinates(%{vehicles: vehicles, bookings: bookings}),
+    do:
       bookings
       |> Enum.flat_map(fn %{pickup: pickup, delivery: delivery} -> [pickup, delivery] end)
       |> Enum.concat(
@@ -36,14 +45,8 @@ defmodule Plan do
           [start_address, end_address]
         end)
       )
-      |> Osrm.get_time_between_coordinates()
-      |> Map.delete(:code)
 
-    Map.put(items, :matrix, matrix)
-    |> add_hints_from_matrix()
-  end
-
-  defp add_hints_from_matrix(%{bookings: bookings} = map) do
+  def add_hints_from_matrix(%{bookings: bookings} = map) do
     {booking_hints, vehicle_hints} =
       map
       |> get_in([:matrix, "sources"])

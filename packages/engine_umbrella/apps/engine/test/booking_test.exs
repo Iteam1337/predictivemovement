@@ -2,6 +2,17 @@ defmodule BookingTest do
   import TestHelper
   alias MessageGenerator.BookingGenerator
   use ExUnit.Case
+  import Mox
+
+  setup :clear_state
+
+  setup do
+    Engine.Adapters.MockRMQ
+    |> stub(:publish, fn data, _, _ -> data end)
+    |> stub(:publish, fn data, _ -> data end)
+
+    :ok
+  end
 
   test "it allows booking creation" do
     result =
@@ -9,7 +20,6 @@ defmodule BookingTest do
       |> Booking.make()
 
     assert is_binary(result)
-    clear_state()
   end
 
   test "does not allow malformed size (weight)" do
@@ -66,7 +76,6 @@ defmodule BookingTest do
       |> Booking.make()
 
     assert is_binary(result)
-    clear_state()
   end
 
   test "should validate booking addresses containing lat/lon" do

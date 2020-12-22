@@ -39,8 +39,8 @@ export const useFilteredStateFromQueryParams = (state: State) => {
     exact: true,
   })
 
-  const planView = useRouteMatch({
-    path: '/plans',
+  const planView = useRouteMatch<{ id: string }>({
+    path: ['/plans'],
   })
 
   const planRouteDetailsView = useRouteMatch<{ routeId: string }>({
@@ -75,10 +75,15 @@ export const useFilteredStateFromQueryParams = (state: State) => {
   ) =>
     transportDetailView ? transportDetailView.params.id === transport.id : true
 
-  const includeOnePlanRouteIfDetailView = (route: Route) =>
-    planRouteDetailsView
-      ? planRouteDetailsView.params.routeId === route.id
-      : true
+  const includeOnePlanRouteIfDetailView = (route: Route) => {
+    if (transportDetailView) {
+      return transportDetailView.params.id === route.id
+    }
+    if (planRouteDetailsView) {
+      return planRouteDetailsView.params.routeId === route.id
+    }
+    return true
+  }
 
   return {
     data: {
@@ -95,14 +100,19 @@ export const useFilteredStateFromQueryParams = (state: State) => {
               .map(includeTransportRouteIfDetailView)
               .filter(includeOneTransportIfDetailView)
           : [],
-      plan: planView
-        ? {
-            excludedBookings: state.plan.excludedBookings,
-            routes: state.plan.routes
-              .map((r: Route, i: number) => ({ ...r, routeIndex: i }))
-              .filter(includeOnePlanRouteIfDetailView),
-          }
-        : { excludedBookings: [], routes: [] },
+      plan:
+        (transportDetailView &&
+          state.plan.routes.find(
+            (route) => route.id === transportDetailView.params.id
+          )) ||
+        planView
+          ? {
+              excludedBookings: state.plan.excludedBookings,
+              routes: state.plan.routes
+                .map((r: Route, i: number) => ({ ...r, routeIndex: i }))
+                .filter(includeOnePlanRouteIfDetailView),
+            }
+          : { excludedBookings: [], routes: [] },
     },
   }
 }
@@ -118,19 +128,23 @@ export const useGetSuggestedAddresses = (initialState = []) => {
             geometry: {
               coordinates: [lon, lat],
             },
-            properties: { name, county },
+            properties: { name, label },
           }: {
             geometry: {
               coordinates: [lat: number, lon: number]
             }
-            properties: { name: string; county: string }
-          }) => ({
-            name,
-            county,
-            lon,
-            lat,
-            displayName: `${name}, ${county}`,
-          })
+            properties: { name: string; label: string }
+          }) => {
+            const address = label.split(',')
+            const county = address[address.length - 2].trim()
+            return {
+              name,
+              county,
+              lon,
+              lat,
+              displayName: `${name}, ${county}`,
+            }
+          }
         )
         set(parsedFeatures.length > 0 ? parsedFeatures : initialState)
 

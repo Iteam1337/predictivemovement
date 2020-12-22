@@ -127,7 +127,6 @@ defmodule VehicleTest do
       end_address: %{lat: 13.37, lon: 13.37},
       earliest_start: nil,
       latest_end: nil,
-      profile: "1337",
       capacity: %{volume: 1337, weight: 1337},
       metadata:
         "{\"recipient\":{\"contact\":\"0701234567\"},\"sender\":{\"contact\":\"0701234567\"}}"
@@ -138,13 +137,11 @@ defmodule VehicleTest do
     %{
       start_address: start_address,
       end_address: end_address,
-      profile: profile,
       capacity: capacity
     } = Vehicle.get(id)
 
     assert start_address == updated_vehicle.start_address
     assert end_address == updated_vehicle.end_address
-    assert profile == updated_vehicle.profile
     assert capacity == updated_vehicle.capacity
   end
 end

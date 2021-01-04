@@ -175,11 +175,14 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
 
   const bookingEvents = events.map((event) => event.type)
-  const eventsList = events.concat(
-    expectedEvents.filter((event) => {
-      return !bookingEvents.includes(event)
-    })
-  )
+  const eventsList = events
+    .sort((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1))
+    .concat(
+      expectedEvents.filter((event) => {
+        return !bookingEvents.includes(event)
+      })
+    )
+
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>

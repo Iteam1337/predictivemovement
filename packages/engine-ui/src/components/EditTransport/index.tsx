@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 import MainRouteLayout from '../layout/MainRouteLayout'
 import { Transport } from '../../types'
 import { useHistory, useParams } from 'react-router-dom'
@@ -11,6 +12,12 @@ interface Props {
   transports: Transport[]
   updateTransport: (params: any) => void
 }
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 const EditTransportRoute = ({ transports, updateTransport }: Props) => {
   const { transportId } = useParams<{ transportId: string }>()
@@ -64,7 +71,9 @@ const EditTransportRoute = ({ transports, updateTransport }: Props) => {
           Kunde inte hitta transport med id: <b>{transportId}</b>
         </p>
       ) : loading ? (
-        <p>Laddar</p>
+        <LoadingWrapper>
+          <p>Laddar...</p>
+        </LoadingWrapper>
       ) : (
         <EditTransport
           transport={{

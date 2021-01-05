@@ -2,6 +2,7 @@ import create from 'zustand'
 import * as reducers from './reducers'
 import * as types from './types'
 import { FlyToInterpolator } from 'react-map-gl'
+import { Switch } from '@material-ui/core'
 
 const ui = create<types.UIState>(
   (set): types.UIState => ({
@@ -32,4 +33,73 @@ const map = create<types.MapState>(
   })
 )
 
-export { ui, map }
+const initialDataState = {
+  bookings: [],
+  transports: [],
+  plan: { excludedBookings: [], routes: [] },
+}
+
+const dataState = create<types.DataState>(
+  (set, get): types.DataState => ({
+    ...initialDataState,
+    set: (data) => set({ ...get(), ...data }),
+  })
+)
+
+const mapLayerReducer = (
+  initialState: any,
+  state: any,
+  action: types.MapLayerStateReducerAction
+) => {
+  switch (action.type) {
+    case 'bookingIcons':
+      return Object.assign({}, initialState, {
+        bookings: state.bookings.map((booking: any) => {
+          const { route, ...rest } = booking
+          return rest
+        }),
+      })
+
+    case 'bookingDetails':
+      return Object.assign({}, initialState, {
+        bookings: state.bookings.filter(
+          (booking: any) => booking.id === action.payload.bookingId
+        ),
+      })
+
+    case 'transportDetails':
+      return Object.assign({}, initialState, {
+        transports: state.transports.filter(
+          (transport: any) => transport.id === action.payload.transportId
+        ),
+      })
+
+    case 'transportIcons':
+      return { ...initialState, transports: state.transports }
+
+    // case 'plan':
+    //   return { ...initialState, plan: state.plan }
+    default:
+      return initialState
+  }
+}
+
+// const mapLayerState = create<types.MapLayerState>(
+//   (set, get): types.MapLayerState => ({
+//     layers: [],
+// set: (action) =>
+//   set((state) => mapLayerReducer(dataState.getState(), state, action)),
+//   })
+// )
+
+const mapLayerState = create<types.MapLayerState>(
+  (set): types.MapLayerState => ({
+    ...initialDataState,
+    set: (action) =>
+      set(() =>
+        mapLayerReducer(initialDataState, dataState.getState(), action)
+      ),
+  })
+)
+
+export { ui, map, dataState, mapLayerState }

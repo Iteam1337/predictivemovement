@@ -6,7 +6,8 @@ import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
 import NotFound from './NotFound'
-import { Booking, Plan as IPlan, Transport } from '../types'
+
+import * as stores from '../utils/state/stores'
 
 const Container = styled.div`
   position: absolute;
@@ -25,9 +26,9 @@ const Content = styled.div<{ isMobile: Boolean }>`
 `
 
 interface Props {
-  bookings: Booking[]
-  plan: IPlan
-  transports: Transport[]
+  // bookings: Booking[]
+  // plan: IPlan
+  // transports: Transport[]
   isMobile: Boolean
   createBooking: (params: any) => void
   updateBooking: (params: any) => void
@@ -39,45 +40,39 @@ interface Props {
 }
 
 const Sidebar = (state: Props) => {
+  const dataState = stores.dataState((state) => state)
+
   return (
     <Container>
       <Navigation />
-      <RouterSwitch>
-        <Route exact path="/">
-          <Redirect from="/" to="/bookings" />
+      <Route exact path="/">
+        <Redirect from="/" to="/bookings" />
+      </Route>
+      <Content isMobile={state.isMobile}>
+        <Route path="/bookings">
+          <Bookings
+            createBooking={state.createBooking}
+            deleteBooking={state.deleteBooking}
+            updateBooking={state.updateBooking}
+          />
         </Route>
-        <Route>
-          <Content isMobile={state.isMobile}>
-            <RouterSwitch>
-              <Route path="/bookings">
-                <Bookings
-                  bookings={state.bookings}
-                  createBooking={state.createBooking}
-                  deleteBooking={state.deleteBooking}
-                  updateBooking={state.updateBooking}
-                />
-              </Route>
-              <Route path="/transports">
-                <Transports
-                  transports={state.transports}
-                  createTransport={state.createTransport}
-                  deleteTransport={state.deleteTransport}
-                />
-              </Route>
-              <Route path="/plans">
-                <Plan
-                  plan={state.plan}
-                  dispatchOffers={state.dispatchOffers}
-                  transports={state.transports}
-                  bookings={state.bookings}
-                  moveBooking={state.moveBooking}
-                />
-              </Route>
-              <Route component={NotFound} />
-            </RouterSwitch>
-          </Content>
+        <Route path="/transports">
+          <Transports
+            createTransport={state.createTransport}
+            deleteTransport={state.deleteTransport}
+          />
         </Route>
-      </RouterSwitch>
+        <Route path="/plans">
+          <Plan
+            plan={dataState.plan}
+            dispatchOffers={state.dispatchOffers}
+            transports={dataState.transports}
+            bookings={dataState.bookings}
+            moveBooking={state.moveBooking}
+          />
+        </Route>
+        <Route component={NotFound} />
+      </Content>
     </Container>
   )
 }

@@ -1,4 +1,6 @@
 import { FlyToInterpolator } from 'react-map-gl'
+import { getLineAndCharacterOfPosition } from 'typescript'
+import { Booking, Transport, Plan } from '../../types'
 
 export enum lastFocusedInput {
   START = 'start',
@@ -43,3 +45,27 @@ export type MapState = {
   transitionInterpolator: FlyToInterpolator
   transitionEasing: (t: number) => number
 } & { set: (args: Partial<MapState>) => void }
+
+export type DataState = {
+  bookings: Booking[]
+  transports: Transport[]
+  plan: Plan
+} & { set: (args: Partial<DataState>) => void }
+
+export type MapLayerStateReducerAction =
+  | {
+      type: 'bookingIcons'
+    }
+  | {
+      type: 'transportIcons'
+    }
+  | { type: 'bookingDetails'; payload: { bookingId: string } }
+  | { type: 'transportDetails'; payload: { transportId: string } }
+
+export type MapLayerState = {
+  bookings: Booking[]
+  transports: Transport[]
+  plan: Plan
+} & {
+  set: (action: MapLayerStateReducerAction) => void
+}

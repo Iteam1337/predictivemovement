@@ -7,6 +7,7 @@ import * as helpers from '../utils/helpers'
 import moment from 'moment'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
+import * as stores from '../utils/state/stores'
 
 const Paragraph = styled.p`
   margin-bottom: 0.25rem;
@@ -93,12 +94,22 @@ const timeWindowToElement = ({ earliest, latest }) => {
 const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const { bookingId } = useParams()
   const history = useHistory()
-
   const booking = bookings.find((b) => b.id === bookingId)
+
   const [address, setAddress] = React.useState()
 
-  React.useEffect(() => () => onUnmount(), [onUnmount])
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+  const statebookings = stores.dataState((state) => state.bookings)
 
+  React.useEffect(() => {
+    return () => onUnmount()
+  }, [onUnmount])
+
+  React.useEffect(() => {
+    if (!booking) return
+
+    setMapLayers({ type: 'bookingDetails', payload: { bookingId } })
+  }, [setMapLayers, statebookings, booking, bookingId])
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
       pickupCoordinates,

@@ -7,7 +7,7 @@ import Tooltip from './Tooltip'
 
 import * as stores from '../utils/state/stores'
 
-const Map = ({ data, state }) => {
+const Map = ({ layers, state }) => {
   const [isHovering, setHover] = React.useState(false)
   const history = useHistory()
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
@@ -51,49 +51,6 @@ const Map = ({ data, state }) => {
         return
     }
   }
-
-  const layers = [
-    mapUtils.toGeoJsonLayer(
-      'geojson-bookings-layer',
-      mapUtils.bookingToFeature(data.bookings),
-      handleClickEvent
-    ),
-    mapUtils.toGeoJsonLayer(
-      'geojson-plan-layer',
-      mapUtils.planToFeature(data.plan.routes, state.transports),
-      handleClickEvent
-    ),
-    mapUtils.toGeoJsonLayer(
-      'geojson-transport-layer',
-      mapUtils.planToFeature(data.transports),
-
-      handleClickEvent
-    ),
-    data.plan.routes
-      .map((route) =>
-        mapUtils.toBookingIconLayer(
-          route.activities?.slice(1, -1),
-          'address',
-          UIState.highlightBooking,
-          { offset: [40, 0] }
-        )
-      )
-      .concat(
-        data.plan.excludedBookings.map((b) =>
-          mapUtils.toExcludedBookingIcon(b, UIState.highlightBooking)
-        )
-      ),
-    showTextLayer &&
-      mapUtils.toTextLayer(mapUtils.routeActivitiesToFeature(data.plan.routes)),
-    mapUtils.toTransportIconLayer(data.transports, UIState.highlightTransport),
-    mapUtils.toIconClusterLayer({
-      type: 'bookings',
-      data: data.bookings.flatMap(({ id, pickup }) => ({
-        coordinates: [pickup.lon, pickup.lat],
-        active: id === UIState.highlightBooking,
-      })),
-    }),
-  ]
 
   return (
     <>

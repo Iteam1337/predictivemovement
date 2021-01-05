@@ -2,7 +2,7 @@ import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
 import * as Elements from '../shared-elements/'
 import * as Icons from '../assets/Icons'
-import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
+import { useRouteMatch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import styled from 'styled-components'
@@ -100,18 +100,23 @@ const Wrapper = styled.div`
 `
 
 const Bookings: React.FC<{
-  bookings: Booking[]
   createBooking: (params: any) => void
   deleteBooking: (params: any) => void
   updateBooking: (params: any) => void
 }> = (props) => {
   const setMap = stores.map((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
-  const { path, url } = useRouteMatch()
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+  const bookings = stores.dataState((state) => state.bookings)
+  const { url } = useRouteMatch()
 
-  const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
-    props.bookings,
+  const sortedBookings = React.useMemo(() => sortBookingsByStatus(bookings), [
+    bookings,
   ])
+
+  React.useEffect(() => {
+    setMapLayers({ type: 'bookingIcons' })
+  }, [setMapLayers, bookings])
 
   const [expandedSection, setExpandedSection] = React.useState({
     new: true,
@@ -135,82 +140,80 @@ const Bookings: React.FC<{
       [type]: !currentState[type],
     }))
 
+  const onUnmount = React.useCallback(
+    () => setMapLayers({ type: 'bookingIcons' }),
+    [setMapLayers]
+  )
+
   return (
     <Wrapper>
-      <Switch>
-        <Route exact path={path}>
-          <Elements.Layout.MarginTopContainer>
-            <BookingToggleList
-              isOpen={expandedSection.new}
-              setOpen={() => handleExpand('new')}
-              bookings={bookings.new}
-              onClickHandler={onClickHandler}
-              text="Öppna bokningar"
-              onMouseEnterHandler={(id: string) =>
-                setUIState({ type: 'highlightBooking', payload: id })
-              }
-              onMouseLeaveHandler={() =>
-                setUIState({ type: 'highlightBooking', payload: undefined })
-              }
-            />
-            <BookingToggleList
-              isOpen={expandedSection.assigned}
-              setOpen={() => handleExpand('assigned')}
-              bookings={[...bookings.assigned, ...bookings.picked_up]}
-              onClickHandler={onClickHandler}
-              text="Bekräftade bokningar"
-              onMouseEnterHandler={(id: string) =>
-                setUIState({ type: 'highlightBooking', payload: id })
-              }
-              onMouseLeaveHandler={() =>
-                setUIState({ type: 'highlightBooking', payload: undefined })
-              }
-            />
-            <BookingToggleList
-              isOpen={expandedSection.delivered}
-              setOpen={() => handleExpand('delivered')}
-              bookings={bookings.delivered}
-              onClickHandler={onClickHandler}
-              text="Levererade bokningar"
-              onMouseEnterHandler={(id: string) =>
-                setUIState({ type: 'highlightBooking', payload: id })
-              }
-              onMouseLeaveHandler={() =>
-                setUIState({ type: 'highlightBooking', payload: undefined })
-              }
-            />
-          </Elements.Layout.MarginTopContainer>
-          <Elements.Layout.FlexRowInCenter>
-            <Link to={`${url}/add-booking`}>
-              <Elements.Buttons.SubmitButton color="#666666">
-                + Lägg till bokning
-              </Elements.Buttons.SubmitButton>
-            </Link>
-          </Elements.Layout.FlexRowInCenter>
-        </Route>
-
-        <Route exact path={`${path}/add-booking`}>
-          <CreateBooking onSubmit={props.createBooking} />
-        </Route>
-
-        <Route exact path={`${path}/edit-booking/:bookingId`}>
-          <EditBooking
-            bookings={props.bookings}
-            updateBooking={props.updateBooking}
-          />
-        </Route>
-
-        <Route exact path={`${path}/:bookingId`}>
-          <BookingDetails
-            bookings={props.bookings}
-            deleteBooking={props.deleteBooking}
-            onUnmount={() =>
+      <Route exact path={'/bookings'}>
+        <Elements.Layout.MarginTopContainer>
+          <BookingToggleList
+            isOpen={expandedSection.new}
+            setOpen={() => handleExpand('new')}
+            bookings={sortedBookings.new}
+            onClickHandler={onClickHandler}
+            text="Öppna bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
               setUIState({ type: 'highlightBooking', payload: undefined })
             }
           />
-        </Route>
-        <Route component={NotFound} />
-      </Switch>
+          <BookingToggleList
+            isOpen={expandedSection.assigned}
+            setOpen={() => handleExpand('assigned')}
+            bookings={[...sortedBookings.assigned, ...sortedBookings.picked_up]}
+            onClickHandler={onClickHandler}
+            text="Bekräftade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              setUIState({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+          <BookingToggleList
+            isOpen={expandedSection.delivered}
+            setOpen={() => handleExpand('delivered')}
+            bookings={sortedBookings.delivered}
+            onClickHandler={onClickHandler}
+            text="Levererade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              setUIState({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+        </Elements.Layout.MarginTopContainer>
+        <Elements.Layout.FlexRowInCenter>
+          <Link to={`${url}/add-booking`}>
+            <Elements.Buttons.SubmitButton color="#666666">
+              + Lägg till bokning
+            </Elements.Buttons.SubmitButton>
+          </Link>
+        </Elements.Layout.FlexRowInCenter>
+      </Route>
+
+      <Route exact path={`${'/bookings'}/add-booking`}>
+        <CreateBooking onSubmit={props.createBooking} />
+      </Route>
+
+      <Route exact path={`${'/bookings'}/edit-booking/:bookingId`}>
+        <EditBooking bookings={bookings} updateBooking={props.updateBooking} />
+      </Route>
+
+      <Route exact path={`${'/bookings'}/:bookingId`}>
+        <BookingDetails
+          bookings={bookings}
+          deleteBooking={props.deleteBooking}
+          onUnmount={onUnmount}
+        />
+      </Route>
+      <Route component={NotFound} />
     </Wrapper>
   )
 }

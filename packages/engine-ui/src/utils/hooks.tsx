@@ -1,14 +1,16 @@
 import React, { SetStateAction } from 'react'
 import { useRouteMatch } from 'react-router-dom'
 import { FormState as CreateTransportState } from '../components/CreateTransport'
-import { Booking, Route, Transport } from '../types'
 import * as helpers from './helpers'
-import { State } from './reducer'
 import * as stores from './state/stores'
 import { useSocket } from 'use-socketio'
 import { FormBooking } from '../components/EditBooking/EditBooking'
+import * as mapUtils from '../utils/mapUtils'
+import * as types from '../types'
 
-export const useFilteredStateFromQueryParams = (state: State) => {
+export const useFilteredStateFromQueryParams = (
+  state: types.state.DataState
+) => {
   const includeBookings = useRouteMatch({
     path: ['/bookings', '/bookings/:id'],
     exact: true,
@@ -43,7 +45,7 @@ export const useFilteredStateFromQueryParams = (state: State) => {
     exact: true,
   })
 
-  const includeBookingRouteIfDetailView = (booking: Booking) => {
+  const includeBookingRouteIfDetailView = (booking: types.Booking) => {
     if (bookingDetailView) {
       return booking
     }
@@ -54,10 +56,10 @@ export const useFilteredStateFromQueryParams = (state: State) => {
   }
 
   const includeOneBookingIfDetailView = (
-    booking: Booking | Omit<Booking, 'route'>
+    booking: types.Booking | Omit<types.Booking, 'route'>
   ) => (bookingDetailView ? bookingDetailView.params.id === booking.id : true)
 
-  const includeTransportRouteIfDetailView = (transport: Transport) => {
+  const includeTransportRouteIfDetailView = (transport: types.Transport) => {
     if (transportDetailView) {
       return transport
     }
@@ -65,12 +67,13 @@ export const useFilteredStateFromQueryParams = (state: State) => {
 
     return rest
   }
+
   const includeOneTransportIfDetailView = (
-    transport: Transport | Omit<Transport, 'currentRoute'>
+    transport: types.Transport | Omit<types.Transport, 'currentRoute'>
   ) =>
     transportDetailView ? transportDetailView.params.id === transport.id : true
 
-  const includeOnePlanRouteIfDetailView = (route: Route) => {
+  const includeOnePlanRouteIfDetailView = (route: types.Route) => {
     if (transportDetailView) {
       return transportDetailView.params.id === route.id
     }
@@ -104,7 +107,7 @@ export const useFilteredStateFromQueryParams = (state: State) => {
           ? {
               excludedBookings: state.plan.excludedBookings,
               routes: state.plan.routes
-                .map((r: Route, i: number) => ({ ...r, routeIndex: i }))
+                .map((r: types.Route, i: number) => ({ ...r, routeIndex: i }))
                 .filter(includeOnePlanRouteIfDetailView),
             }
           : { excludedBookings: [], routes: [] },
@@ -235,3 +238,70 @@ export const useFormStateWithMapClickControl = <
     return () => setUIState({ type: 'resetInputClickState' })
   }, [setUIState])
 }
+
+export const useMapLayers = (
+  state: types.state.DataState,
+  mapState: types.state.MapLayerState,
+  UIState: types.state.UIState,
+  handleClick: (event: any) => void,
+  showTextLayer: boolean
+) =>
+  React.useMemo(
+    () => [
+      mapUtils.toGeoJsonLayer(
+        'geojson-bookings-layer',
+        mapUtils.bookingToFeature(mapState.bookings),
+        handleClick
+      ),
+      mapUtils.toGeoJsonLayer(
+        'geojson-plan-layer',
+        mapUtils.planToFeature(mapState.plan.routes, state.transports),
+        handleClick
+      ),
+      mapUtils.toGeoJsonLayer(
+        'geojson-transport-layer',
+        mapUtils.planToFeature(mapState.transports),
+        handleClick
+      ),
+      ...mapState.plan.routes
+        .map((route) =>
+          mapUtils.toBookingIconLayer(
+            route.activities?.slice(1, -1),
+            'address',
+            UIState.highlightBooking,
+            { offset: [40, 0] }
+          )
+        )
+        .concat(
+          mapState.plan.excludedBookings.map((b) =>
+            mapUtils.toExcludedBookingIcon(b, UIState.highlightBooking)
+          )
+        ),
+      mapUtils.toTransportIconLayer(
+        mapState.transports,
+        UIState.highlightTransport
+      ),
+      mapUtils.toIconClusterLayer({
+        type: 'bookings',
+        data: mapState.bookings.flatMap(({ id, pickup }) => ({
+          coordinates: [pickup.lon, pickup.lat],
+          active: id === UIState.highlightBooking,
+        })),
+        properties: {},
+      }),
+      mapUtils.toTextLayer(
+        mapUtils.routeActivitiesToFeature(showTextLayer && mapState.plan.routes)
+      ),
+    ],
+    [
+      UIState.highlightBooking,
+      UIState.highlightTransport,
+      handleClick,
+      mapState.bookings,
+      mapState.plan.excludedBookings,
+      mapState.plan.routes,
+      mapState.transports,
+      showTextLayer,
+      state.transports,
+    ]
+  )

@@ -56,6 +56,8 @@ const routeAssignedToBooking = (assignedTo) =>
   )
 
 const routeActivitiesToFeature = (plan) => {
+  if (!plan) return []
+
   return [
     ...plan.flatMap(({ activities, id }) => {
       const routeActivities = activities
@@ -71,8 +73,9 @@ const routeActivitiesToFeature = (plan) => {
   ]
 }
 
-const toTextLayer = (data) =>
-  new TextLayer({
+const toTextLayer = (data) => {
+  if (data) return new TextLayer()
+  return new TextLayer({
     id: 'text-layer',
     data,
     fontFamily: 'Roboto Mono',
@@ -80,6 +83,7 @@ const toTextLayer = (data) =>
     getPosition: (d) => d.geometry.coordinates,
     getSize: 20,
   })
+}
 
 const planToFeature = (plan, transports) => {
   let index = 0
@@ -128,7 +132,7 @@ const planToFeature = (plan, transports) => {
 }
 
 const bookingToFeature = (bookings) => {
-  return bookings.flatMap(({ id, pickup, delivery, status, route }) => {
+  const ok = bookings.flatMap(({ id, pickup, delivery, status, route }) => {
     const points = [
       point([delivery.lon, delivery.lat], {
         id,
@@ -162,6 +166,8 @@ const bookingToFeature = (bookings) => {
     }
     return route ? points : []
   })
+
+  return ok
 }
 
 const toGeoJsonLayer = (id, data, callback) =>
@@ -193,7 +199,7 @@ const toGeoJsonLayer = (id, data, callback) =>
 
 const toExcludedBookingIcon = (booking, activeId) => {
   if (!booking) {
-    return
+    return new IconLayer()
   }
 
   const iconData = [
@@ -295,10 +301,6 @@ const toIconClusterLayer = ({ data, type, properties }) => {
 }
 
 const toTransportIconLayer = (transports, activeId) => {
-  if (!transports.length) {
-    return
-  }
-
   return toIconClusterLayer({
     type: 'transports',
     data: transports.flatMap(({ id, startAddress, location, color }) => ({

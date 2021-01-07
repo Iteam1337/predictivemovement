@@ -1,6 +1,5 @@
 import { FlyToInterpolator } from 'react-map-gl'
-import { getLineAndCharacterOfPosition } from 'typescript'
-import { Booking, Transport, Plan } from '../../types'
+import { Booking, Transport, Plan } from './'
 
 export enum lastFocusedInput {
   START = 'start',
@@ -46,12 +45,6 @@ export type MapState = {
   transitionEasing: (t: number) => number
 } & { set: (args: Partial<MapState>) => void }
 
-export type DataState = {
-  bookings: Booking[]
-  transports: Transport[]
-  plan: Plan
-} & { set: (args: Partial<DataState>) => void }
-
 export type MapLayerStateReducerAction =
   | {
       type: 'bookingIcons'
@@ -62,10 +55,50 @@ export type MapLayerStateReducerAction =
   | { type: 'bookingDetails'; payload: { bookingId: string } }
   | { type: 'transportDetails'; payload: { transportId: string } }
 
+export type DataStateReducerAction =
+  | {
+      type: 'setTransports'
+      payload: Transport[]
+    }
+  | {
+      type: 'updateTransport'
+      payload: Transport
+    }
+  | {
+      type: 'deleteTransport'
+      payload: Transport['id']
+    }
+  | {
+      type: 'deleteBooking'
+      payload: Booking['id']
+    }
+  | {
+      type: 'setBookings'
+      payload: Booking[]
+    }
+  | {
+      type: 'setPlan'
+      payload: Plan
+    }
+  | { type: 'clearState' }
+
+export type DataState = {
+  bookings: Booking[]
+  transports: Transport[]
+  assignedBookings: Booking[]
+  plan: Plan
+}
+
 export type MapLayerState = {
   bookings: Booking[]
   transports: Transport[]
   plan: Plan
-} & {
+}
+
+export type DataStateWithSet = DataState & {
+  set: (action: DataStateReducerAction) => void
+}
+
+export type MapLayerStateWithSet = MapLayerState & {
   set: (action: MapLayerStateReducerAction) => void
 }

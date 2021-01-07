@@ -1,13 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import Bookings from './Bookings'
-import { Switch as RouterSwitch, Route, Redirect } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
 import NotFound from './NotFound'
-
-import * as stores from '../utils/state/stores'
 
 const Container = styled.div`
   position: absolute;
@@ -26,9 +24,6 @@ const Content = styled.div<{ isMobile: Boolean }>`
 `
 
 interface Props {
-  // bookings: Booking[]
-  // plan: IPlan
-  // transports: Transport[]
   isMobile: Boolean
   createBooking: (params: any) => void
   updateBooking: (params: any) => void
@@ -40,8 +35,6 @@ interface Props {
 }
 
 const Sidebar = (state: Props) => {
-  const dataState = stores.dataState((state) => state)
-
   return (
     <Container>
       <Navigation />
@@ -64,10 +57,7 @@ const Sidebar = (state: Props) => {
         </Route>
         <Route path="/plans">
           <Plan
-            plan={dataState.plan}
             dispatchOffers={state.dispatchOffers}
-            transports={dataState.transports}
-            bookings={dataState.bookings}
             moveBooking={state.moveBooking}
           />
         </Route>

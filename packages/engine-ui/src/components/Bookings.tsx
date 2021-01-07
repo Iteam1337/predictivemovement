@@ -6,20 +6,20 @@ import { useRouteMatch, Route, Link } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import styled from 'styled-components'
-import { Booking } from '../types'
+import * as types from '../types'
 import NotFound from './NotFound'
 
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import EditBooking from './EditBooking'
 
-const sortBookingsByStatus = (bookings: Booking[]) =>
+const sortBookingsByStatus = (bookings: types.Booking[]) =>
   bookings.reduce<{
-    new: Booking[]
-    assigned: Booking[]
-    delivered: Booking[]
-    delivery_failed: Booking[]
-    picked_up: Booking[]
+    new: types.Booking[]
+    assigned: types.Booking[]
+    delivered: types.Booking[]
+    delivery_failed: types.Booking[]
+    picked_up: types.Booking[]
   }>(
     (prev, current) => ({
       ...prev,
@@ -35,7 +35,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
   )
 
 const BookingToggleList: React.FC<{
-  bookings: Booking[]
+  bookings: types.Booking[]
   text: string
   onClickHandler: (lat: number, lon: number) => void
   onMouseEnterHandler: (id: string) => void

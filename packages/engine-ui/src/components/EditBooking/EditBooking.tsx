@@ -1,17 +1,17 @@
 import React from 'react'
-import { Booking } from '../../types'
+import * as types from '../../types'
 import * as Elements from '../../shared-elements'
 import Form from '../forms/CreateBooking'
 import * as stores from '../../utils/state/stores'
 import * as hooks from '../../utils/hooks'
 
 interface Props {
-  booking: Booking
+  booking: types.Booking
   updateBooking: (params: any) => void
   setIsFinished: (isFinished: boolean) => void
 }
 
-export interface FormBooking extends Omit<Booking, 'size'> {
+export interface FormBooking extends Omit<types.Booking, 'size'> {
   [key: string]: any
   size: {
     measurements: string

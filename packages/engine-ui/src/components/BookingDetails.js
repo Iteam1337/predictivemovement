@@ -110,6 +110,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
 
     setMapLayers({ type: 'bookingDetails', payload: { bookingId } })
   }, [setMapLayers, statebookings, booking, bookingId])
+
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
       pickupCoordinates,

@@ -1,3 +1,5 @@
+import * as state from './state'
+
 export enum BookingStatus {
   NEW = 'new',
   ASSIGNED = 'assigned',
@@ -127,3 +129,5 @@ export interface Activity {
   distance: number
   duration: number
 }
+
+export { state }

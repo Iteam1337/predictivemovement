@@ -1,7 +1,11 @@
-import { getColor } from './palette'
-import * as types from '../types'
+import { getColor } from '../../palette'
+import * as stateTypes from '../../../types/state'
 
-export const reducer = (state: State, action: any) => {
+const reducer = (
+  initState: stateTypes.DataState,
+  state: stateTypes.DataState,
+  action: stateTypes.DataStateReducerAction
+) => {
   switch (action.type) {
     case 'setTransports':
       return {
@@ -69,19 +73,4 @@ export const reducer = (state: State, action: any) => {
   }
 }
 
-export type State = {
-  bookings: types.Booking[]
-  assignedBookings: types.Booking[]
-  transports: types.Transport[]
-  plan: types.Plan
-}
-
-export const initState: State = {
-  bookings: [],
-  assignedBookings: [],
-  transports: [],
-  plan: {
-    excludedBookings: [],
-    routes: [],
-  },
-}
+export default reducer

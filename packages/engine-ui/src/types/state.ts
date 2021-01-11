@@ -57,6 +57,7 @@ export type MapLayerStateReducerAction =
     }
   | { type: 'bookingDetails'; payload: { bookingId: string } }
   | { type: 'transportDetails'; payload: { transportId: string } }
+  | { type: 'planRouteDetails'; payload: { routeId: string } }
 
 export type DataStateReducerAction =
   | {

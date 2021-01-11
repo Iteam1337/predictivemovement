@@ -4,7 +4,7 @@ const reducer = (
   initialState: types.MapLayerState,
   state: types.DataState,
   action: types.MapLayerStateReducerAction
-) => {
+): types.MapLayerState => {
   switch (action.type) {
     case 'bookingIcons':
       return Object.assign({}, initialState, {
@@ -26,6 +26,20 @@ const reducer = (
         transports: state.transports.filter(
           (transport) => transport.id === action.payload.transportId
         ),
+        plan: Object.assign({}, initialState.plan, {
+          routes: state.plan.routes.filter(
+            (route) => route.id === action.payload.transportId
+          ),
+        }),
+      })
+
+    case 'planRouteDetails':
+      return Object.assign({}, initialState, {
+        plan: Object.assign({}, initialState.plan, {
+          routes: state.plan.routes.filter(
+            (route) => route.id === action.payload.routeId
+          ),
+        }),
       })
 
     case 'transportIcons':

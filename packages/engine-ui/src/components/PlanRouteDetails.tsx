@@ -56,6 +56,13 @@ const PlanRouteDetails = ({
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+
+  React.useEffect(() => {
+    if (routeId) {
+      setMapLayers({ type: 'planRouteDetails', payload: { routeId } })
+    }
+  }, [setMapLayers, routeId])
 
   const panMapView = (latitude: number, longitude: number) =>
     setMap({

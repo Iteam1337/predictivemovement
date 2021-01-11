@@ -8,7 +8,7 @@ import * as types from '../types'
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import NotFound from './NotFound'
-import PlanBookingDetails from './PlanBookingDetails'
+import RouteActivityDetails from './RouteActivityDetails'
 import PlanRouteDetails from './PlanRouteDetails'
 import Success from './SuccessScreen'
 
@@ -213,7 +213,7 @@ const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
         </PlanWrapper>
       </Route>
       <Route exact path={`${path}/routes/:routeId/:activityId`}>
-        <PlanBookingDetails
+        <RouteActivityDetails
           bookings={bookings}
           onUnmount={() =>
             setUIState({ type: 'highlightBooking', payload: undefined })

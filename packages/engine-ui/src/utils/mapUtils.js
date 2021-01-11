@@ -237,7 +237,8 @@ const toBookingIconLayer = (
   data,
   coordinatesProp,
   activeId,
-  options = { offset: [0, 0] }
+  options = { offset: [0, 0] },
+  index
 ) => {
   const iconData = data.flatMap((d) => ({
     coordinates: [d[coordinatesProp].lon, d[coordinatesProp].lat],
@@ -252,7 +253,7 @@ const toBookingIconLayer = (
   }))
 
   return new IconLayer({
-    id: 'booking-icon',
+    id: `booking-icon-${index}`,
     data: iconData,
     pickable: true,
     getPixelOffset: options.offset,

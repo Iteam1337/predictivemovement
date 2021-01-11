@@ -264,12 +264,13 @@ export const useMapLayers = (
         handleClick
       ),
       ...mapState.plan.routes
-        .map((route) =>
+        .map((route, i) =>
           mapUtils.toBookingIconLayer(
             route.activities?.slice(1, -1),
             'address',
             UIState.highlightBooking,
-            { offset: [40, 0] }
+            { offset: [40, 0] },
+            i
           )
         )
         .concat(

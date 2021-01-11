@@ -14,7 +14,7 @@ Predictive Movement is a project financed by, among others, Sweden’s Innovatio
 
 The source code for the project is contained in this mono-repo. Within the [packages](packages) folder you will find all included packages. Here is a summary of the components:
 
-- [Engine](packages/engine_umbrella/engine) The main logic written in Elixir
+- [Engine](packages/engine_umbrella/apps/engine) The main logic written in Elixir
 - [Driver interface](packages/driver-interface) Bot in Telegram for communicating with drivers
 - [Booking interface](packages/booking-interface) Bot in Telegram for communicating with bookers of transport
 - [Engine UI](packages/engine-ui) Main UI for visualising current bookings and cars

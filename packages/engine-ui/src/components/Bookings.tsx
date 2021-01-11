@@ -2,7 +2,7 @@ import React from 'react'
 import { FlyToInterpolator } from 'react-map-gl'
 import * as Elements from '../shared-elements/'
 import * as Icons from '../assets/Icons'
-import { useRouteMatch, Route, Link } from 'react-router-dom'
+import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import styled from 'styled-components'
@@ -93,12 +93,6 @@ const BookingToggleList: React.FC<{
   )
 }
 
-const Wrapper = styled.div`
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-`
-
 const Bookings: React.FC<{
   createBooking: (params: any) => void
   deleteBooking: (params: any) => void
@@ -151,7 +145,7 @@ const Bookings: React.FC<{
   )
 
   return (
-    <Wrapper>
+    <Switch>
       <Route exact path={'/bookings'}>
         <Elements.Layout.MarginTopContainer>
           <BookingToggleList
@@ -220,7 +214,7 @@ const Bookings: React.FC<{
         />
       </Route>
       <Route component={NotFound} />
-    </Wrapper>
+    </Switch>
   )
 }
 

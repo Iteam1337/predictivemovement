@@ -91,15 +91,17 @@ const timeWindowToElement = ({ earliest, latest }) => {
   )
 }
 
-const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
+const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
   const { bookingId } = useParams()
   const history = useHistory()
   const booking = bookings.find((b) => b.id === bookingId)
-
   const [address, setAddress] = React.useState()
-
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const statebookings = stores.dataState((state) => state.bookings)
+
+  React.useEffect(() => {
+    onMount()
+  }, [onMount])
 
   React.useEffect(() => {
     return () => onUnmount()

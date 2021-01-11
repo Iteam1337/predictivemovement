@@ -140,9 +140,14 @@ const Bookings: React.FC<{
       [type]: !currentState[type],
     }))
 
-  const onUnmount = React.useCallback(
+  const onBookingDetailsUnmount = React.useCallback(
     () => setMapLayers({ type: 'bookingIcons' }),
     [setMapLayers]
+  )
+
+  const onBookingDetailsMount = React.useCallback(
+    () => setUIState({ type: 'highlightBooking', payload: undefined }),
+    [setUIState]
   )
 
   return (
@@ -210,7 +215,8 @@ const Bookings: React.FC<{
         <BookingDetails
           bookings={bookings}
           deleteBooking={props.deleteBooking}
-          onUnmount={onUnmount}
+          onUnmount={onBookingDetailsUnmount}
+          onMount={onBookingDetailsMount}
         />
       </Route>
       <Route component={NotFound} />

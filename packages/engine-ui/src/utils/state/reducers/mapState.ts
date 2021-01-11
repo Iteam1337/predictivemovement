@@ -31,8 +31,8 @@ const reducer = (
     case 'transportIcons':
       return { ...initialState, transports: state.transports }
 
-    // case 'plan':
-    //   return { ...initialState, plan: state.plan }
+    case 'plan':
+      return { ...initialState, plan: state.plan }
     default:
       return initialState
   }

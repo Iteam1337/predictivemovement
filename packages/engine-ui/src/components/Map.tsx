@@ -11,6 +11,7 @@ const Map: React.FC = () => {
   const [isHovering, setHover] = React.useState(false)
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
+
   const dataState = stores.dataState(React.useCallback((state) => state, []))
   const mapLayersState = stores.mapLayerState(
     React.useCallback((state) => state, [])

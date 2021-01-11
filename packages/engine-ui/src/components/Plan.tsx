@@ -98,12 +98,17 @@ const BookingToggleList: React.FC<{
 
 const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
   const history = useHistory()
+  const setMapLayers = stores.mapLayerState((state) => state.set)
 
   const [plan, bookings, transports] = stores.dataState((state) => [
     state.plan,
     state.bookings,
     state.transports,
   ])
+
+  React.useEffect(() => {
+    setMapLayers({ type: 'plan' })
+  }, [setMapLayers, plan])
 
   const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0

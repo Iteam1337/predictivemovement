@@ -13,13 +13,19 @@ const Transports: React.FC<{
 }> = ({ createTransport, deleteTransport }) => {
   const { path, url } = useRouteMatch()
   const setMapLayers = stores.mapLayerState((state) => state.set)
+  const setUIState = stores.ui((state) => state.dispatch)
   const transports = stores.dataState((state) => state.transports)
 
   React.useEffect(() => {
     setMapLayers({ type: 'transportIcons' })
   }, [setMapLayers, transports])
 
-  const onUnmount = React.useCallback(
+  const onTransportDetailsMount = React.useCallback(
+    () => setUIState({ type: 'highlightTransport', payload: undefined }),
+    [setUIState]
+  )
+
+  const onTransportDetailsUnmount = React.useCallback(
     () => setMapLayers({ type: 'transportIcons' }),
     [setMapLayers]
   )
@@ -42,7 +48,8 @@ const Transports: React.FC<{
       </Route>
       <Route exact path={`${path}/:transportId`}>
         <TransportDetails
-          onUnmount={onUnmount}
+          onMount={onTransportDetailsMount}
+          onUnmount={onTransportDetailsUnmount}
           deleteTransport={deleteTransport}
         />
       </Route>

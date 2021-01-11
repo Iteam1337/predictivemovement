@@ -38,10 +38,10 @@ const Sidebar = (state: Props) => {
   return (
     <Container>
       <Navigation />
-      <Route exact path="/">
-        <Redirect from="/" to="/bookings" />
-      </Route>
       <Content isMobile={state.isMobile}>
+        <Route exact path="/">
+          <Redirect from="/" to="/bookings" />
+        </Route>
         <Route path="/bookings">
           <Bookings
             createBooking={state.createBooking}
@@ -61,7 +61,6 @@ const Sidebar = (state: Props) => {
             moveBooking={state.moveBooking}
           />
         </Route>
-        <Route component={NotFound} />
       </Content>
     </Container>
   )

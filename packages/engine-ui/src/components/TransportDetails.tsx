@@ -40,9 +40,10 @@ const RouteTitleWrapper = styled.div`
 `
 
 const TransportDetails: React.FC<{
+  onMount: () => void
   deleteTransport: (id: string) => void
   onUnmount: () => void
-}> = ({ deleteTransport, onUnmount }) => {
+}> = ({ deleteTransport, onUnmount, onMount }) => {
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
   const setUIState = stores.ui((state) => state.dispatch)
@@ -57,6 +58,10 @@ const TransportDetails: React.FC<{
 
   const { transportId } = useParams<{ transportId: string }>()
   const transport = transports.find((v) => v.id === transportId)
+
+  React.useEffect(() => {
+    onMount()
+  }, [onMount])
 
   React.useEffect(() => {
     return () => onUnmount()

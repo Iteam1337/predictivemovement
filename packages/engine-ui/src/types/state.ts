@@ -50,6 +50,9 @@ export type MapLayerStateReducerAction =
       type: 'bookingIcons'
     }
   | {
+      type: 'plan'
+    }
+  | {
       type: 'transportIcons'
     }
   | { type: 'bookingDetails'; payload: { bookingId: string } }

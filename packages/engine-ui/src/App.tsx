@@ -9,6 +9,7 @@ import Notifications from './components/Notifications'
 import * as notificationTypes from './notificationTypes'
 import * as stores from './utils/state/stores'
 import * as types from './types'
+import NotFound from './components/NotFound'
 
 const App = () => {
   const { socket } = useSocket()
@@ -75,8 +76,14 @@ const App = () => {
     setDataState({ type: 'setTransports', payload: transports })
   })
 
-  useSocket('plan-update', (plan: types.Plan) => {
-    setDataState({ type: 'setPlan', payload: plan })
+  useSocket('plan-update', (params) => {
+    setDataState({
+      type: 'setPlan',
+      payload: {
+        routes: params.transports,
+        excludedBookings: params.excludedBookingIds,
+      },
+    })
   })
 
   return (
@@ -101,6 +108,7 @@ const App = () => {
           <Map />
         </Route>
       )}
+      <Route component={NotFound} />
     </>
   )
 }

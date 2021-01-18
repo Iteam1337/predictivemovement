@@ -77,7 +77,7 @@ const SpeechBubble = styled.div<{ highlight: boolean }>`
 
   border: ${(p) =>
     p.highlight
-      ? '1px solid rgba(0, 0, 0, 0.6) '
+      ? '1px solid rgba(0, 0, 0, 1)'
       : '1px solid rgba(0, 0, 0, 0.3)'};
 `
 

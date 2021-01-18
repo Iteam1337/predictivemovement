@@ -1,0 +1,302 @@
+openapi: 3.0.0
+info:
+  description: |
+    This is the OpenAPI for Predictive Movement.
+  version: 1.0.0-oas3
+  title: Predictive Movement API
+  contact:
+    email: ram@iteam.se
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+paths:
+  /transports:
+    get:
+      description: Gets all the transports to which you have access
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transport"
+  /itinerary:
+    get:
+      parameters:
+        - name: transportId
+          in: query
+          description: ID of the transport to which the itinerary is assigned
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Itinerary"
+  "/activity/{activity_id}/complete":
+    post:
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  "/activity/{activity_id}/fail":
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                reason:
+                  type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiResponse"
+  /me:
+    get:
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /users:
+    post:
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: "#/components/requestBodies/User"
+      description: Create a new user
+      summary: User
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+servers:
+  - url: "https://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0"
+  - url: "http://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0"
+components:
+  requestBodies:
+    User:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/User"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Auth:
+      type: object
+      properties:
+        token:
+          type: string
+    Activity:
+      type: object
+      properties:
+        id:
+          nullable: false
+          type: string
+        booking_id:
+          type: string
+        distance:
+          type: number
+        duration:
+          type: number
+        type:
+          type: string
+          enum: [start, end, pickup, delivery]
+
+        address:
+          type: object
+          properties:
+            lat:
+              type: number
+            lon:
+              type: number
+    Transport:
+      type: object
+      properties:
+        transport_id:
+          type: string
+        busy:
+          type: boolean
+        capacity:
+          type: object
+          properties:
+            volume:
+              type: number
+            weight:
+              type: number
+        earliestStart:
+          type: string
+        latestEnd:
+          type: string
+        metadata:
+          type: object
+        startAddress:
+          type: object
+          properties:
+            city:
+              type: string
+            street:
+              type: string
+            name:
+              type: string
+            lon:
+              type: number
+            lat:
+              type: number
+        endAddress:
+          type: object
+          properties:
+            city:
+              type: string
+            street:
+              type: string
+            name:
+              type: string
+            lon:
+              type: number
+            lat:
+              type: number
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: int64
+        tripId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+        complete:
+          type: boolean
+          default: false
+      xml:
+        name: Order
+      required:
+        - id
+        - tripId
+        - quantity
+        - shipDate
+        - status
+        - complete
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+      xml:
+        name: User
+      required:
+        - id
+        - username
+        - firstName
+        - lastName
+        - email
+        - phone
+    Place:
+      type: object
+      required:
+        - position
+        - dropoff
+      properties:
+        position:
+          $ref: "#/components/schemas/Position"
+        address:
+          type: string
+    Position:
+      type: object
+      required:
+        - lon
+        - lat
+      properties:
+        lon:
+          type: number
+          format: float
+        lat:
+          type: number
+          format: float
+    Plan:
+      type: object
+    Itinerary:
+      type: object
+      properties:
+        transport_id:
+          type: string
+        route:
+          type: object
+        activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Activity"
+      xml:
+        name: Trips
+      required:
+        - transport_id
+        - route
+        - activities
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string

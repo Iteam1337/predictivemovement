@@ -5,7 +5,6 @@ import { Route, Redirect } from 'react-router-dom'
 import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
-import NotFound from './NotFound'
 
 const Container = styled.div`
   position: absolute;

@@ -5,7 +5,6 @@ import * as Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
-import styled from 'styled-components'
 import * as types from '../types'
 import NotFound from './NotFound'
 

@@ -34,6 +34,7 @@ const Map: React.FC = () => {
           x,
           y,
         } = event
+
         return setUIState({
           type: 'lastClickedPosition',
           payload: { lat, lon, x, y },

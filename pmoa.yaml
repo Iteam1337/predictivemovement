@@ -12,7 +12,7 @@ info:
 paths:
   /transports:
     get:
-      description: Gets all the transports to which you have access
+      description: Get all the transports to which you have access
       security:
         - bearerAuth: []
       responses:
@@ -26,6 +26,9 @@ paths:
                   $ref: "#/components/schemas/Transport"
   /itinerary:
     get:
+      description: Get an itinerary
+      security:
+        - bearerAuth: []
       parameters:
         - name: transportId
           in: query
@@ -33,8 +36,6 @@ paths:
           required: true
           schema:
             type: string
-      security:
-        - bearerAuth: []
       responses:
         "200":
           description: OK
@@ -44,6 +45,7 @@ paths:
                 $ref: "#/components/schemas/Itinerary"
   "/activity/{activity_id}/complete":
     post:
+      description: Create an event for an activity of type complete
       security:
         - bearerAuth: []
       responses:
@@ -53,8 +55,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiResponse"
-  "/activity/{activity_id}/fail":
+  "/activity/{activity_id}/failure":
     post:
+      description: Create an event for an activity of type failure
       requestBody:
         required: true
         content:
@@ -74,6 +77,7 @@ paths:
                 $ref: "#/components/schemas/ApiResponse"
   /me:
     get:
+      description: Get your own user profile
       security:
         - bearerAuth: []
       responses:
@@ -90,7 +94,6 @@ paths:
       requestBody:
         $ref: "#/components/requestBodies/User"
       description: Create a new user
-      summary: User
       responses:
         "200":
           description: OK
@@ -134,14 +137,11 @@ components:
         type:
           type: string
           enum: [start, end, pickup, delivery]
-
         address:
           type: object
           properties:
-            lat:
-              type: number
-            lon:
-              type: number
+            schema:
+              $ref: "#/components/schemas/Position"
     Transport:
       type: object
       properties:

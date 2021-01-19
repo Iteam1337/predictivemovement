@@ -4,9 +4,5 @@
   "devDependencies": {},
   "dependencies": {
     "csv-writer": "^1.6.0"
-  },
-  "scripts": {
-    "docs:watch": "npx redoc-cli serve pmoa.yaml --watch",
-    "docs:build": "npx redoc-cli build pmoa.yaml -o pm-redoc.html"
   }
 }

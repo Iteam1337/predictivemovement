@@ -8,24 +8,29 @@ info:
     email: ram@iteam.se
   license:
     name: Apache 2.0
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 paths:
   /transports:
     get:
-      description: Gets all the transports to which you have access
+      operationId: 'getTransports'
+      description: Get all the transports to which you have access
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Transport"
+                  $ref: '#/components/schemas/Transport'
   /itinerary:
     get:
+      operationId: 'getItinerary'
+      description: Get an itinerary
+      security:
+        - bearerAuth: []
       parameters:
         - name: transportId
           in: query
@@ -33,24 +38,28 @@ paths:
           required: true
           schema:
             type: string
-      security:
-        - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Itinerary"
-  "/activity/{activity_id}/complete":
+                $ref: '#/components/schemas/Itinerary'
+  '/activity/{activity_id}/complete':
     post:
+      description: Create an event for an activity of type complete
       security:
         - bearerAuth: []
       responses:
-        "204":
+        '204':
           description: OK
-  "/activity/{activity_id}/fail":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  '/activity/{activity_id}/failure':
     post:
+      description: Create an event for an activity of type failure
       requestBody:
         required: true
         content:
@@ -62,41 +71,41 @@ paths:
       security:
         - bearerAuth: []
       responses:
-        "204":
+        '204':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApiResponse"
+                $ref: '#/components/schemas/ApiResponse'
   /me:
     get:
+      description: Get your own user profile
       security:
         - bearerAuth: []
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
   /users:
     post:
       security:
         - bearerAuth: []
       requestBody:
-        $ref: "#/components/requestBodies/User"
+        $ref: '#/components/requestBodies/User'
       description: Create a new user
-      summary: User
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: '#/components/schemas/User'
 servers:
-  - url: "https://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0"
-  - url: "http://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0"
+  - url: 'https://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0'
+  - url: 'http://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0'
 components:
   requestBodies:
     User:
@@ -104,7 +113,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/User"
+            $ref: '#/components/schemas/User'
   securitySchemes:
     bearerAuth:
       type: http
@@ -119,6 +128,7 @@ components:
       type: object
       properties:
         id:
+          nullable: false
           type: string
         booking_id:
           type: string
@@ -129,9 +139,11 @@ components:
         type:
           type: string
           enum: [start, end, pickup, delivery]
-              type: number
-            lon:
-              type: number
+        address:
+          type: object
+          properties:
+            schema:
+              $ref: '#/components/schemas/Position'
     Transport:
       type: object
       properties:
@@ -148,8 +160,10 @@ components:
               type: number
         earliestStart:
           type: string
+          format: date-time
         latestEnd:
           type: string
+          format: date-time
         metadata:
           type: object
         startAddress:
@@ -161,10 +175,10 @@ components:
               type: string
             name:
               type: string
-            lon:
-              type: number
-            lat:
-              type: number
+            position:
+              properties:
+                schema:
+                  $ref: '#/components/schemas/Position'
         endAddress:
           type: object
           properties:
@@ -205,6 +219,13 @@ components:
           default: false
       xml:
         name: Order
+      required:
+        - id
+        - tripId
+        - quantity
+        - shipDate
+        - status
+        - complete
     User:
       type: object
       properties:
@@ -225,6 +246,13 @@ components:
           type: string
       xml:
         name: User
+      required:
+        - id
+        - username
+        - firstName
+        - lastName
+        - email
+        - phone
     Place:
       type: object
       required:
@@ -232,7 +260,7 @@ components:
         - dropoff
       properties:
         position:
-          $ref: "#/components/schemas/Position"
+          $ref: '#/components/schemas/Position'
         address:
           type: string
     Position:
@@ -259,9 +287,13 @@ components:
         activities:
           type: array
           items:
-            $ref: "#/components/schemas/Activity"
+            $ref: '#/components/schemas/Activity'
       xml:
         name: Trips
+      required:
+        - transport_id
+        - route
+        - activities
     ApiResponse:
       type: object
       properties:

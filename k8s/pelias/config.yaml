@@ -81,11 +81,11 @@ data:
         },
         "openstreetmap": {
           "download": [{
-              "sourceURL": "https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf"
+              "sourceURL": "https://download.geofabrik.de/europe/sweden-latest.osm.pbf"
           }],
           "datapath": "/data/openstreetmap",
           "import": [{
-            "filename": "planet-latest.osm.pbf"
+            "filename": "sweden-latest.osm.pbf"
           }]
         },
         "polyline": {

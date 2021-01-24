@@ -99,7 +99,7 @@ data:
           "datapath": "/data/whosonfirst"
         },
         "csv": {
-          "datapath": "/data/csv"
+          "datapath": "/data/lantmateriet/"
         }
       }
     }

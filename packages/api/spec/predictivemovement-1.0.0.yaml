@@ -235,6 +235,35 @@ components:
               type: string
             position:
               $ref: '#/components/schemas/Position'
+        details:
+          properties:
+            schema:
+              $ref: '#/components/schemas/BookingDetails'
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+        complete:
+          type: boolean
+          default: false
+      xml:
+        name: Order
+      required:
+        - id
+        - tripId
+        - quantity
+        - shipDate
+        - status
+        - complete
+    BookingDetails:
+      type: object
+      properties:
         metadata:
           type: object
           properties:
@@ -261,43 +290,24 @@ components:
                   type: string
                 info:
                   type: string
-        size:
+        weight:
+          type: number
+        volume:
+          type: number
+        dimensions:
           type: object
           properties:
-            mesurements:
-              type: array
-              items:
-                type: integer
-                format: int64
-                example: [1, 2, 3]
-            weight:
-              type: integer
-              format: int32
+            width:
+              type: number
+            height:
+              type: number
+            length:
+              type: number
+        loadingMeters:
+          type: number
         quantity:
           type: integer
           format: int32
-        shipDate:
-          type: string
-          format: date-time
-        status:
-          type: string
-          description: Order Status
-          enum:
-            - placed
-            - approved
-            - delivered
-        complete:
-          type: boolean
-          default: false
-      xml:
-        name: Order
-      required:
-        - id
-        - tripId
-        - quantity
-        - shipDate
-        - status
-        - complete
     User:
       type: object
       properties:

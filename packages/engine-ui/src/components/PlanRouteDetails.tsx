@@ -16,7 +16,7 @@ interface Props {
   routeNumber: number
   transports: Route[]
   moveBooking: (bookingId: string, transportId: string) => void
-  onUnmount: () => void
+  onToggleMinimize: () => void
 }
 
 const RouteTitleWrapper = styled.div`
@@ -51,7 +51,7 @@ const PlanRouteDetails = ({
   transports,
   color,
   moveBooking,
-  onUnmount,
+  onToggleMinimize,
 }: Props) => {
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
@@ -75,6 +75,7 @@ const PlanRouteDetails = ({
       transitionInterpolator: new FlyToInterpolator(),
       transitionEasing: (t: number) => t * (2 - t),
     })
+
   const calculateCenter = (activities: Activity[]) => {
     const coordinates = activities.reduce<{ lat: number; lon: number }>(
       (prev, curr) => ({
@@ -97,7 +98,7 @@ const PlanRouteDetails = ({
 
   const toggle = (id: string) => {
     if (id === routeId) {
-      onUnmount()
+      onToggleMinimize()
       return history.push(isCurrentPlan ? '/plans/current-plan' : '/plans')
     }
 

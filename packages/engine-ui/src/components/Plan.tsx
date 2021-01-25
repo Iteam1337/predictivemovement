@@ -99,6 +99,7 @@ const BookingToggleList: React.FC<{
 const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
   const history = useHistory()
   const setMapLayers = stores.mapLayerState((state) => state.set)
+  const plansRootView = useRouteMatch({ path: '/plans', strict: true })
 
   const [plan, bookings, transports] = stores.dataState((state) => [
     state.plan,
@@ -107,8 +108,10 @@ const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
   ])
 
   React.useEffect(() => {
-    setMapLayers({ type: 'plan' })
-  }, [setMapLayers, plan])
+    if (plansRootView?.isExact) {
+      setMapLayers({ type: 'plan' })
+    }
+  }, [setMapLayers, plan, plansRootView])
 
   const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0
@@ -151,7 +154,7 @@ const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
 
   const handleOnClose = () => history.push('/transports')
 
-  const onPlanDetailsUnmount = React.useCallback(
+  const onToggleMinimize = React.useCallback(
     () => setMapLayers({ type: 'plan' }),
     [setMapLayers]
   )
@@ -191,7 +194,7 @@ const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
                     transports.find((transport) => transport.id === route.id)
                       ?.color
                   }
-                  onUnmount={onPlanDetailsUnmount}
+                  onToggleMinimize={onToggleMinimize}
                 />
               ))}
               {plan.excludedBookings.length > 0 && (

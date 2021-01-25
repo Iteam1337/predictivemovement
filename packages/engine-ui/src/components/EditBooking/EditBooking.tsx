@@ -3,7 +3,7 @@ import * as types from '../../types'
 import * as Elements from '../../shared-elements'
 import Form from '../forms/CreateBooking'
 import * as stores from '../../utils/state/stores'
-import * as hooks from '../../utils/hooks'
+import * as hooks from '../../hooks'
 
 interface Props {
   booking: types.Booking

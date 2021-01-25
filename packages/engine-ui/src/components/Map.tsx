@@ -3,7 +3,7 @@ import { StaticMap } from 'react-map-gl'
 import DeckGL from '@deck.gl/react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
-import * as hooks from '../utils/hooks'
+import * as hooks from '../hooks'
 import * as stores from '../utils/state/stores'
 
 const Map: React.FC = () => {

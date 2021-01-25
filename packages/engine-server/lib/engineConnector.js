@@ -61,6 +61,7 @@ module.exports = (io) => {
           : { status: bookingRes.fields.routingKey }
       )
     })
+
   const transports = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: true,

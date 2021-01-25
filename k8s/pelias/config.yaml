@@ -93,6 +93,7 @@ data:
           "files": ["extract.0sv"]
         },
         "whosonfirst": {
+          "countryCode": "SE",
           "sqlite": false,
           "importPostalcodes": true,
           "datapath": "/data/whosonfirst"

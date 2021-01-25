@@ -77,6 +77,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+  /bookings/{booking_id}:
+    get:
+      description: Get info about a specific booking
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
   /me:
     get:
       description: Get your own user profile
@@ -201,6 +213,66 @@ components:
         tripId:
           type: integer
           format: int64
+        delivery:
+          type: object
+          properties:
+            city:
+              type: string
+            name:
+              type: string
+            street:
+              type: string
+            position:
+              $ref: '#/components/schemas/Position'
+        pickup:
+          type: object
+          properties:
+            city:
+              type: string
+            name:
+              type: string
+            street:
+              type: string
+            position:
+              $ref: '#/components/schemas/Position'
+        metadata:
+          type: object
+          properties:
+            cargo:
+              type: string
+            fragile:
+              type: boolean
+              default: false
+            recipient:
+              type: object
+              properties:
+                contact:
+                  type: string
+                name:
+                  type: string
+                info:
+                  type: string
+            sender:
+              type: object
+              properties:
+                contact:
+                  type: string
+                name:
+                  type: string
+                info:
+                  type: string
+        size:
+          type: object
+          properties:
+            mesurements:
+              type: array
+              items:
+                type: integer
+                format: int64
+                example: [1, 2, 3]
+            weight:
+              type: integer
+              format: int32
         quantity:
           type: integer
           format: int32

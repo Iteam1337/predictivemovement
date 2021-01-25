@@ -74,7 +74,7 @@ const routeActivitiesToFeature = (plan) => {
 }
 
 const toTextLayer = (data) => {
-  if (data) return new TextLayer()
+  if (!data) return new TextLayer()
   return new TextLayer({
     id: 'text-layer',
     data,

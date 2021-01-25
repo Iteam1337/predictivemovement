@@ -151,6 +151,11 @@ const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
 
   const handleOnClose = () => history.push('/transports')
 
+  const onPlanDetailsUnmount = React.useCallback(
+    () => setMapLayers({ type: 'plan' }),
+    [setMapLayers]
+  )
+
   if (isFinished)
     return (
       <Success
@@ -186,6 +191,7 @@ const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
                     transports.find((transport) => transport.id === route.id)
                       ?.color
                   }
+                  onUnmount={onPlanDetailsUnmount}
                 />
               ))}
               {plan.excludedBookings.length > 0 && (

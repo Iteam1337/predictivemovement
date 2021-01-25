@@ -16,6 +16,7 @@ interface Props {
   routeNumber: number
   transports: Route[]
   moveBooking: (bookingId: string, transportId: string) => void
+  onUnmount: () => void
 }
 
 const RouteTitleWrapper = styled.div`
@@ -50,6 +51,7 @@ const PlanRouteDetails = ({
   transports,
   color,
   moveBooking,
+  onUnmount,
 }: Props) => {
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
@@ -95,6 +97,7 @@ const PlanRouteDetails = ({
 
   const toggle = (id: string) => {
     if (id === routeId) {
+      onUnmount()
       return history.push(isCurrentPlan ? '/plans/current-plan' : '/plans')
     }
 

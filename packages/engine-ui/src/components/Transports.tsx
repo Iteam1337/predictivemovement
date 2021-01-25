@@ -15,10 +15,16 @@ const Transports: React.FC<{
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
   const transports = stores.dataState((state) => state.transports)
+  const transportsRootView = useRouteMatch({
+    path: '/transports',
+    strict: true,
+  })
 
   React.useEffect(() => {
-    setMapLayers({ type: 'transportIcons' })
-  }, [setMapLayers, transports])
+    if (transportsRootView?.isExact) {
+      setMapLayers({ type: 'transportIcons' })
+    }
+  }, [setMapLayers, transports, transportsRootView])
 
   const onTransportDetailsMount = React.useCallback(
     () => setUIState({ type: 'highlightTransport', payload: undefined }),

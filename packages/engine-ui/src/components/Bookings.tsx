@@ -102,14 +102,17 @@ const Bookings: React.FC<{
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const bookings = stores.dataState((state) => state.bookings)
   const { url } = useRouteMatch()
+  const bookingsRootView = useRouteMatch({ path: '/bookings', strict: true })
 
   const sortedBookings = React.useMemo(() => sortBookingsByStatus(bookings), [
     bookings,
   ])
 
   React.useEffect(() => {
-    setMapLayers({ type: 'bookingIcons' })
-  }, [setMapLayers, bookings])
+    if (bookingsRootView?.isExact) {
+      setMapLayers({ type: 'bookingIcons' })
+    }
+  }, [setMapLayers, bookings, bookingsRootView])
 
   const [expandedSection, setExpandedSection] = React.useState({
     new: true,

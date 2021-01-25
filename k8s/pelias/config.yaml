@@ -94,7 +94,6 @@ data:
         },
         "whosonfirst": {
           "sqlite": false,
-          "importVenues": false,
           "importPostalcodes": true,
           "datapath": "/data/whosonfirst"
         },

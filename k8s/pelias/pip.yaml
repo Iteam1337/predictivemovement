@@ -107,8 +107,6 @@ spec:
             httpGet:
               path: /12/12
               port: 3102
-            initialDelaySeconds: 300
-            periodSeconds: 60
       volumes:
         - name: config-volume
           configMap:
@@ -119,4 +117,3 @@ spec:
         - name: data-volume
           persistentVolumeClaim:
             claimName: pip-pvc
-            

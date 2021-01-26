@@ -132,7 +132,7 @@ const planToFeature = (plan, transports) => {
 }
 
 const bookingToFeature = (bookings) => {
-  const ok = bookings.flatMap(({ id, pickup, delivery, status, route }) => {
+  return bookings.flatMap(({ id, pickup, delivery, status, route }) => {
     const points = [
       point([delivery.lon, delivery.lat], {
         id,
@@ -166,8 +166,6 @@ const bookingToFeature = (bookings) => {
     }
     return route ? points : []
   })
-
-  return ok
 }
 
 const toGeoJsonLayer = (id, data, callback) =>

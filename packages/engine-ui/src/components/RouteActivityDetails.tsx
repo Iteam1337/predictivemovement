@@ -23,7 +23,7 @@ const CapitalizeParagraph = styled(Paragraph)`
   text-transform: capitalize;
 `
 
-const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
+const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
   const history = useHistory()
   const { routeId, activityId } = useParams<{
     routeId: string
@@ -197,4 +197,4 @@ const PlanBookingDetails = ({ bookings, onUnmount }: Props) => {
   )
 }
 
-export default PlanBookingDetails
+export default RouteActivityDetails

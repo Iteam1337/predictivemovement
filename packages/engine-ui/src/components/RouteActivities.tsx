@@ -65,9 +65,8 @@ const ActivityListItemContainer = styled.div`
   }
 `
 
-const SpeechBubble = styled.div`
+const SpeechBubble = styled.div<{ highlight: boolean }>`
   position: relative;
-  border: 1px solid rgba(0, 0, 0, 0.3);
   text-align: center;
   padding: 9px;
   border-radius: 5px;
@@ -76,9 +75,10 @@ const SpeechBubble = styled.div`
   height: 100%;
   margin-left: 0.5rem;
 
-  :hover {
-    border: 1px solid rgba(0, 0, 0, 0.6);
-  }
+  border: ${(p) =>
+    p.highlight
+      ? '1px solid rgba(0, 0, 0, 1)'
+      : '1px solid rgba(0, 0, 0, 0.3)'};
 `
 
 const TimelineItem = styled.div`
@@ -109,6 +109,7 @@ const RouteActivities = ({ route }: Props) => {
 
   const maybeActivities = route.activities || []
   const activities = maybeActivities.slice(1, -1)
+  const [highlightedActivity, setHighlightedActivity] = React.useState('')
 
   const isProposedPlan = useRouteMatch({
     path: ['/plans/routes/:routeId'],
@@ -157,7 +158,23 @@ const RouteActivities = ({ route }: Props) => {
               </TimeContainer>
 
               <ActivityListItemContainer>
-                <SpeechBubble>
+                <SpeechBubble
+                  onMouseOver={() => {
+                    setUIState({
+                      type: 'highlightBooking',
+                      payload: activity.id,
+                    })
+                    setHighlightedActivity(activity.id)
+                  }}
+                  onMouseLeave={() => {
+                    setUIState({
+                      type: 'highlightBooking',
+                      payload: undefined,
+                    })
+                    setHighlightedActivity('')
+                  }}
+                  highlight={highlightedActivity === activity.id}
+                >
                   <div
                     style={{
                       display: 'flex',
@@ -169,18 +186,6 @@ const RouteActivities = ({ route }: Props) => {
                     </Elements.Typography.InfoMdStrong>
                     <ActivityGroup>
                       <Elements.Links.RoundedLink
-                        onMouseOver={() =>
-                          setUIState({
-                            type: 'highlightBooking',
-                            payload: activity.id,
-                          })
-                        }
-                        onMouseLeave={() =>
-                          setUIState({
-                            type: 'highlightBooking',
-                            payload: undefined,
-                          })
-                        }
                         to={() => redirectTo(activity.id)}
                         onClick={() =>
                           setMap({

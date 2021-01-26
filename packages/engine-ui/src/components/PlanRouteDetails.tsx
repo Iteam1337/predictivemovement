@@ -16,6 +16,7 @@ interface Props {
   routeNumber: number
   transports: Route[]
   moveBooking: (bookingId: string, transportId: string) => void
+  onToggleMinimize: () => void
 }
 
 const RouteTitleWrapper = styled.div`
@@ -50,12 +51,20 @@ const PlanRouteDetails = ({
   transports,
   color,
   moveBooking,
+  onToggleMinimize,
 }: Props) => {
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
   const { routeId } = useParams<{ routeId: string | undefined }>()
   const isCurrentPlan = useRouteMatch({ path: ['/plans/current-plan'] })
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+
+  React.useEffect(() => {
+    if (routeId) {
+      setMapLayers({ type: 'planRouteDetails', payload: { routeId } })
+    }
+  }, [setMapLayers, routeId])
 
   const panMapView = (latitude: number, longitude: number) =>
     setMap({
@@ -66,6 +75,7 @@ const PlanRouteDetails = ({
       transitionInterpolator: new FlyToInterpolator(),
       transitionEasing: (t: number) => t * (2 - t),
     })
+
   const calculateCenter = (activities: Activity[]) => {
     const coordinates = activities.reduce<{ lat: number; lon: number }>(
       (prev, curr) => ({
@@ -88,6 +98,7 @@ const PlanRouteDetails = ({
 
   const toggle = (id: string) => {
     if (id === routeId) {
+      onToggleMinimize()
       return history.push(isCurrentPlan ? '/plans/current-plan' : '/plans')
     }
 

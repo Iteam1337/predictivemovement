@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import * as Elements from '../../../shared-elements'
 import searchParcelIcon from '../../../assets/black-parcel.svg'
 import checkIcon from '../../../assets/check-icon.svg'
-import * as hooks from '../../../utils/hooks'
+import * as hooks from '../../../hooks'
 import debounce from 'lodash.debounce'
 import { useSocket } from 'use-socketio'
 

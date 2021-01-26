@@ -1,7 +1,7 @@
+import { FlyToInterpolator } from 'react-map-gl'
 import create from 'zustand'
 import * as reducers from './reducers'
-import * as types from './types'
-import { FlyToInterpolator } from 'react-map-gl'
+import * as types from '../../types/state'
 
 const ui = create<types.UIState>(
   (set): types.UIState => ({
@@ -32,4 +32,28 @@ const map = create<types.MapState>(
   })
 )
 
-export { ui, map }
+const initialDataState: types.DataState = {
+  bookings: [],
+  transports: [],
+  assignedBookings: [],
+  plan: { excludedBookings: [], routes: [] },
+}
+
+const dataState = create<types.DataStateWithSet>(
+  (set, get): types.DataStateWithSet => ({
+    ...initialDataState,
+    set: (action) => set(() => reducers.state(initialDataState, get(), action)),
+  })
+)
+
+const mapLayerState = create<types.MapLayerStateWithSet>(
+  (set): types.MapLayerStateWithSet => ({
+    ...initialDataState,
+    set: (action) =>
+      set(() =>
+        reducers.mapState(initialDataState, dataState.getState(), action)
+      ),
+  })
+)
+
+export { ui, map, dataState, mapLayerState }

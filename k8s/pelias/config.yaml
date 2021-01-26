@@ -48,6 +48,9 @@ data:
             "retries": 1,
             "timeout": 5000
           }
+        },
+        "targets": {
+          "auto_discover": true
         }
       },
       "acceptance-tests": {

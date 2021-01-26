@@ -15,8 +15,6 @@ spec:
       volumeMounts:
         - name: config-volume
           mountPath: /etc/config
-        - name: data-volume
-          mountPath: /data/csv
         - name: lantmateriet
           mountPath: /data/lantmateriet
       env:
@@ -29,10 +27,7 @@ spec:
         items:
           - key: pelias.json
             path: pelias.json
-    - name: data-volume
-      configMap:
-        name: pelias-csv-import
     - name: lantmateriet
       hostPath:
         # directory location on host
-        path: /storage/lantmateriet
+        path: /storage/lantmateriet/csv

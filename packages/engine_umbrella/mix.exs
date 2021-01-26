@@ -20,7 +20,7 @@ defmodule ElixirUmbrella.MixProject do
   end
 
   def aliases do
-    [dev: ["event_store.create", "event_store.init"]]
+    [setup_dev: ["event_store.create", "event_store.init", "setupTestDatabase"]]
   end
 
   def application do

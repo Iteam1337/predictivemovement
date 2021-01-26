@@ -23,25 +23,18 @@ defmodule Vehicle do
 
   @hour_and_minutes_format ~r/^((?:[01]\d|2[0-3]):[0-5]\d$)/
 
-  validates([:start_address, :lat], number: [is: true, if: &(!&1.start_address)])
+  validates([:start_address, :lat], number: [is: true])
+  validates([:start_address, :lon], number: [is: true])
+  validates([:end_address, :lat], number: [is: true])
+  validates([:end_address, :lon], number: [is: true])
+  validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
+  validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
 
-  # validates([:start_address, :lon],
-  #   number: [is: true, [if: fn map -> !is_nil(map.start_address) end]]
-  # )
+  validates([:capacity, :weight],
+    by: [function: &is_integer/1, message: "must be an integer"]
+  )
 
-  # validates([:end_address, :lat], number: [is: true, if: &Vehicle.end_address_exists?/1]])
-  # validates([:end_address, :lon], number: [is: true, if: &Vehicle.end_address_exists?/1]])
-
-  # validates([:end_address, :lat], number: [is: true])
-  # validates([:end_address, :lon], number: [is: true])
-  # validates(:earliest_start, format: [with: @hour_and_minutes_format, allow_nil: true])
-  # validates(:latest_end, format: [with: @hour_and_minutes_format, allow_nil: true])
-
-  # validates([:capacity, :weight],
-  #   by: [function: &is_integer/1, message: "must be an integer"]
-  # )
-
-  # validates([:capacity, :volume], number: [is: true])
+  validates([:capacity, :volume], number: [is: true])
 
   def init(init_arg) do
     {:ok, init_arg}
@@ -65,10 +58,6 @@ defmodule Vehicle do
       |> Map.merge(offer)
 
     {:reply, updated_vehicle, updated_vehicle}
-  end
-
-  def handle_call({:update, updated_vehicle}, _from, _state) do
-    {:reply, true, updated_vehicle}
   end
 
   def generate_id, do: "pmv-" <> Engine.Utils.generate_id()
@@ -121,13 +110,16 @@ defmodule Vehicle do
   end
 
   def update(%{id: "pmv-" <> _ = id} = vehicle_update) do
-    with true <- Vex.valid?(struct(Vehicle, vehicle_update)),
+    updated_vehicle = get(id)
+    |> Map.merge(vehicle_update)
+
+    with true <- Vex.valid?(updated_vehicle),
          _ <- ES.add_event(%VehicleUpdated{vehicle: vehicle_update}),
          _ <- apply_update_to_state(vehicle_update) do
       id
     else
-      e ->
-        struct(Vehicle, vehicle_update)
+      _ ->
+        updated_vehicle
         |> print_validation_errors()
         |> Vex.errors()
     end

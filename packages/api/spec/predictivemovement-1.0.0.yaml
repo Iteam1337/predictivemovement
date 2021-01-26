@@ -79,9 +79,17 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
   /bookings/{booking_id}:
     get:
+      operationId: 'getBooking'
       description: Get info about a specific booking
       security:
         - bearerAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          description: ID of the booking that you want info about
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK
@@ -89,8 +97,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Booking'
+    delete:
+      operationId: 'deleteBooking'
+      description: Delete a booking based on bookingId
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: booking_id
+          in: path
+          description: ID of the booking that you want to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+
   /me:
     get:
+      operationId: 'getMe'
       description: Get your own user profile
       security:
         - bearerAuth: []

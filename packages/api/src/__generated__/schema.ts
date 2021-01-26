@@ -4,62 +4,194 @@
  */
 
 export interface paths {
-  '/transports': {
-    get: operations['getTransports']
-  }
-  '/itinerary': {
-    get: operations['getItinerary']
-  }
-  '/activity/{activity_id}/complete': {
+  "/transports": {
+    /** Get all the transports to which you have access */
+    get: operations["getTransports"];
+  };
+  "/itinerary": {
+    /** Get an itinerary */
+    get: operations["getItinerary"];
+  };
+  "/activity/{activity_id}/complete": {
     /** Create an event for an activity of type complete */
     post: {
       responses: {
         /** OK */
         204: {
-          'application/json': components['schemas']['ApiResponse']
-        }
-      }
-    }
-  }
-  '/activity/{activity_id}/failure': {
+          content: {
+            "application/json": components["schemas"]["ApiResponse"];
+          };
+        };
+      };
+    };
+  };
+  "/activity/{activity_id}/failure": {
     /** Create an event for an activity of type failure */
     post: {
-      requestBody: {
-        'application/json': {
-          reason?: string
-        }
-      }
       responses: {
         /** OK */
         204: {
-          'application/json': components['schemas']['ApiResponse']
-        }
-      }
-    }
-  }
-  '/me': {
+          content: {
+            "application/json": components["schemas"]["ApiResponse"];
+          };
+        };
+      };
+      requestBody: {
+        content: {
+          "application/json": {
+            reason?: string;
+          };
+        };
+      };
+    };
+  };
+  "/bookings/{booking_id}": {
+    /** Get info about a specific booking */
+    get: operations["getBooking"];
+    /** Delete a booking based on bookingId */
+    delete: operations["deleteBooking"];
+  };
+  "/me": {
     /** Get your own user profile */
-    get: {
-      responses: {
-        /** OK */
-        200: {
-          'application/json': components['schemas']['User']
-        }
-      }
-    }
-  }
-  '/users': {
+    get: operations["getMe"];
+  };
+  "/users": {
     /** Create a new user */
     post: {
-      requestBody: {}
       responses: {
         /** OK */
         200: {
-          'application/json': components['schemas']['User']
-        }
-      }
-    }
-  }
+          content: {
+            "application/json": components["schemas"]["User"];
+          };
+        };
+      };
+      requestBody: components["requestBodies"]["User"];
+    };
+  };
+}
+
+export interface components {
+  schemas: {
+    Auth: {
+      token?: string;
+    };
+    Activity: {
+      id?: string;
+      booking_id?: string;
+      distance?: number;
+      duration?: number;
+      type?: "start" | "end" | "pickup" | "delivery";
+      address?: {
+        schema?: components["schemas"]["Position"];
+      };
+    };
+    Transport: {
+      transport_id?: string;
+      busy?: boolean;
+      capacity?: {
+        volume?: number;
+        weight?: number;
+      };
+      earliestStart?: string;
+      latestEnd?: string;
+      metadata?: { [key: string]: any };
+      startAddress?: {
+        city?: string;
+        street?: string;
+        name?: string;
+        position?: {
+          schema?: components["schemas"]["Position"];
+        };
+      };
+      endAddress?: {
+        city?: string;
+        street?: string;
+        name?: string;
+        lon?: number;
+        lat?: number;
+      };
+    };
+    Booking: {
+      id: string;
+      tripId: number;
+      delivery?: {
+        city?: string;
+        name?: string;
+        street?: string;
+        position?: components["schemas"]["Position"];
+      };
+      pickup?: {
+        city?: string;
+        name?: string;
+        street?: string;
+        position?: components["schemas"]["Position"];
+      };
+      details?: {
+        schema?: components["schemas"]["BookingDetails"];
+      };
+      shipDate: string;
+      /** Order Status */
+      status: "placed" | "approved" | "delivered";
+      complete: boolean;
+    };
+    BookingDetails: {
+      metadata?: {
+        cargo?: string;
+        fragile?: boolean;
+        recipient?: {
+          contact?: string;
+          name?: string;
+          info?: string;
+        };
+        sender?: {
+          contact?: string;
+          name?: string;
+          info?: string;
+        };
+      };
+      weight?: number;
+      volume?: number;
+      dimensions?: {
+        width?: number;
+        height?: number;
+        length?: number;
+      };
+      loadingMeters?: number;
+      quantity?: number;
+    };
+    User: {
+      id: number;
+      username: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      password?: string;
+      phone: string;
+    };
+    Place: {
+      position: components["schemas"]["Position"];
+      address?: string;
+    };
+    Position: {
+      lon: number;
+      lat: number;
+    };
+    Plan: { [key: string]: any };
+    Itinerary: {
+      transport_id: string;
+      route: { [key: string]: any };
+      activities: components["schemas"]["Activity"][];
+    };
+    ApiResponse: {
+      code?: number;
+      type?: string;
+      message?: string;
+    };
+  };
+  requestBodies: {
+    User: { [key: string]: any };
+  };
 }
 
 export interface operations {
@@ -68,104 +200,72 @@ export interface operations {
     responses: {
       /** OK */
       200: {
-        'application/json': components['schemas']['Transport'][]
-      }
-    }
-  }
+        content: {
+          "application/json": components["schemas"]["Transport"][];
+        };
+      };
+    };
+  };
   /** Get an itinerary */
   getItinerary: {
     parameters: {
       query: {
         /** ID of the transport to which the itinerary is assigned */
-        transportId: string
-      }
-    }
+        transportId: string;
+      };
+    };
     responses: {
       /** OK */
       200: {
-        'application/json': components['schemas']['Itinerary']
-      }
-    }
-  }
-}
-
-export interface components {
-  schemas: {
-    Auth: {
-      token?: string
-    }
-    Activity: {
-      id?: string
-      booking_id?: string
-      distance?: number
-      duration?: number
-      type?: 'start' | 'end' | 'pickup' | 'delivery'
-      address?: {
-        schema?: components['schemas']['Position']
-      }
-    }
-    Transport: {
-      transport_id?: string
-      busy?: boolean
-      capacity?: {
-        volume?: number
-        weight?: number
-      }
-      earliestStart?: string
-      latestEnd?: string
-      metadata?: { [key: string]: any }
-      startAddress?: {
-        city?: string
-        street?: string
-        name?: string
-        position?: {
-          schema?: components['schemas']['Position']
-        }
-      }
-      endAddress?: {
-        city?: string
-        street?: string
-        name?: string
-        lon?: number
-        lat?: number
-      }
-    }
-    Booking: {
-      id: string
-      tripId: number
-      quantity: number
-      shipDate: string
-      /** Order Status */
-      status: 'placed' | 'approved' | 'delivered'
-      complete: boolean
-    }
-    User: {
-      id: number
-      username: string
-      firstName: string
-      lastName: string
-      email: string
-      password?: string
-      phone: string
-    }
-    Place: {
-      position: components['schemas']['Position']
-      address?: string
-    }
-    Position: {
-      lon: number
-      lat: number
-    }
-    Plan: { [key: string]: any }
-    Itinerary: {
-      transport_id: string
-      route: { [key: string]: any }
-      activities: components['schemas']['Activity'][]
-    }
-    ApiResponse: {
-      code?: number
-      type?: string
-      message?: string
-    }
-  }
+        content: {
+          "application/json": components["schemas"]["Itinerary"];
+        };
+      };
+    };
+  };
+  /** Get info about a specific booking */
+  getBooking: {
+    parameters: {
+      path: {
+        /** ID of the booking that you want info about */
+        bookingId: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Booking"];
+        };
+      };
+    };
+  };
+  /** Delete a booking based on bookingId */
+  deleteBooking: {
+    parameters: {
+      path: {
+        /** ID of the booking that you want to delete */
+        booking_id: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Booking"];
+        };
+      };
+    };
+  };
+  /** Get your own user profile */
+  getMe: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["User"];
+        };
+      };
+    };
+  };
 }

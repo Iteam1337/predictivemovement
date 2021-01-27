@@ -28,6 +28,4 @@ const publishDeleteBooking = (bookingId: string) => {
     .then(() => console.log(`[x] Delete booking ${bookingId}`))
 }
 
-export default {
-  publishDeleteBooking,
-}
+export { publishDeleteBooking }

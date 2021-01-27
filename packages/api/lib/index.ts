@@ -2,10 +2,10 @@ import OpenAPIBackend from 'openapi-backend'
 import express from 'express'
 import * as routeHandlers from './routeHandlers'
 
-const app = express()
+export const app = express()
 app.use(express.json())
 
-const api = new OpenAPIBackend({
+export const api = new OpenAPIBackend({
   definition: './spec/predictivemovement-1.0.0.yaml',
   strict: true,
   validate: true,
@@ -34,6 +34,3 @@ app.use((req, res, next) =>
 )
 
 api.init()
-app.listen(process.env.PORT || 9000, () =>
-  console.info(`api listening at http://localhost:${process.env.PORT || 9000}`)
-)

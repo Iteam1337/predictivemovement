@@ -1,6 +1,6 @@
 import { Handler } from 'openapi-backend'
 import { Request, Response } from 'express'
-import connectors from './lib/connectors'
+import * as connectors from './connectors'
 
 export const getTransports: Handler = (c, req: Request, res: Response) => {
   res.status(200).json({ result: 'ok' })
@@ -24,10 +24,11 @@ export const getMe: Handler = (_, req, res) =>
 export const deleteBooking: Handler = async (ctx, _, res: Response) => {
   const bookingId = ctx.request.params.booking_id
   try {
-    connectors.publishDeleteBooking(bookingId as string)
+    await connectors.publishDeleteBooking(bookingId as string)
     // res.status(404).json({ error: 'Not found' })
     return res.status(200).json({ result: 'ok', bookingId })
   } catch (error) {
-    return res.status(500).json(error)
+    console.error(error)
+    return res.status(404)
   }
 }

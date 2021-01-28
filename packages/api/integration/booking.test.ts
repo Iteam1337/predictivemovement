@@ -4,10 +4,36 @@ import request from 'supertest'
 
 describe('DELETE /bookings/:id', () => {
   const bookingId = 'pmb-123'
+  let mockConnector: any
+  let bookings: any[] = []
 
-  it('sends 400 if missing query param', () => {})
+  before(() => {
+    mockConnector = {
+      publishCreateBooking: (booking) =>
+        Promise.resolve(bookings.push(booking)),
+      publishDeleteBooking: (bookingId) => {
+        bookings = bookings.filter((b) => b.id !== bookingId)
+        return Promise.resolve('ok') || Promise.reject('not found')
+      },
+    }
+  })
 
-  it('fails to delete booking', () => {})
+  it('fails to publish delete booking message', async () => {
+    const mockFn = jest.spyOn(connectors, 'publishDeleteBooking')
+    const errorMsg = 'this is a test message'
+    mockFn.mockRejectedValue(errorMsg)
+
+    const { status, error } = await request(app).delete(
+      `/bookings/${bookingId}`
+    )
+
+    if (error) {
+      expect(error.text).toEqual(errorMsg)
+    }
+
+    expect(mockFn).toHaveBeenCalledWith(bookingId)
+    expect(status).toBe(500)
+  })
 
   it('deletes a booking and returns OK', async () => {
     const mockFn = jest.spyOn(connectors, 'publishDeleteBooking')
@@ -20,5 +46,20 @@ describe('DELETE /bookings/:id', () => {
       result: 'ok',
       bookingId: bookingId,
     })
+  })
+
+  it('sends 404 if booking is already deleted', async () => {
+    const { status: firstStatus } = await request(app).delete(
+      `/bookings/${bookingId}`
+    )
+    expect(firstStatus).toBe(200)
+
+    const { status, error } = await request(app).delete(
+      `/bookings/${bookingId}`
+    )
+    expect(status).toBe(404)
+
+    console.log('status: ', status)
+    console.log('error: ', error)
   })
 })

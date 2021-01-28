@@ -1,4 +1,5 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
+import { components } from './__generated__/schema'
 
 const routingKeys = {
   TRANSPORT: {
@@ -25,7 +26,10 @@ const publishDeleteBooking = (bookingId: string) => {
     .publish(bookingId, routingKeys.DELETED, {
       persistent: true,
     })
-    .then(() => console.log(`[x] Delete booking ${bookingId}`))
 }
 
-export { publishDeleteBooking }
+const publishCreateBooking = (booking: components['schemas']['Booking']) => {
+  throw new Error('Not implemented')
+}
+
+export { publishDeleteBooking, publishCreateBooking }

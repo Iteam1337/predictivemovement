@@ -28,7 +28,9 @@ export const deleteBooking: Handler = async (ctx, _, res: Response) => {
     // res.status(404).json({ error: 'Not found' })
     return res.status(200).json({ result: 'ok', bookingId })
   } catch (error) {
-    console.error(error)
-    return res.status(404)
+    // console.error(error)
+    return res.status(500).send(error)
+    // return res.status(500)
+    // res.render('error', { error })
   }
 }

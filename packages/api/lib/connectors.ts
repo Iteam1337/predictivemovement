@@ -1,5 +1,6 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
 import { components } from './__generated__/schema'
+import * as Highland from 'highland'
 
 const publishDeleteBooking = (bookingId: string) => {
   return amqp
@@ -38,7 +39,7 @@ const bookingNotifications = amqp
     'delivery_failed',
     'deleted',
   ])
-  .map((bookingRes) => {
+  .map((bookingRes: any) => {
     const booking = bookingRes.json()
 
     return {
@@ -48,21 +49,24 @@ const bookingNotifications = amqp
   })
 
 const waitForBookingNotification = (
-  stream: bookingNotifications,
+  stream: Highland.Stream<components['schemas']['Booking']>,
   bookingId: string,
   status: string
 ) =>
-  new Promise(
+  // new Promise<string>(
+  new Promise<void>(
     (resolve) =>
       stream
+        .tap(console.log)
         .fork() // do we fork here or do we expect the caller to have forked the stream before?
-        .filter(
-          (notification: { booking: { id: any }; status: any }) =>
-            notification.booking.id === bookingId &&
-            notification.status === status
-        )
-        .head() // Only pick the first
-        .done(resolve) // done consumes the stream
+        .filter((booking) => {
+          console.log('BIG FILTER')
+          // return booking.id === bookingId && status === booking.status
+          return true
+        })
+        .each(() => console.log('hello morning'))
+    // .head() // Only pick the first
+    // .done(() => resolve()) // done consumes the stream
   )
 
 export {

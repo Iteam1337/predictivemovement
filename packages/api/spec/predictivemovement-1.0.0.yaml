@@ -278,6 +278,8 @@ components:
             - placed
             - approved
             - delivered
+            - new
+            - deleted
         complete:
           type: boolean
           default: false

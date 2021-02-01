@@ -4,19 +4,19 @@ import request from 'supertest'
 
 describe('DELETE /bookings/:id', () => {
   const bookingId = 'pmb-123'
-  let mockConnector: any
-  let bookings: any[] = []
+  // let mockConnector: any
+  // let bookings: any[] = []
 
-  before(() => {
-    mockConnector = {
-      publishCreateBooking: (booking: any) =>
-        Promise.resolve(bookings.push(booking)),
-      publishDeleteBooking: (bookingId: string) => {
-        bookings = bookings.filter((b) => b.id !== bookingId)
-        return Promise.resolve('ok') || Promise.reject('not found')
-      },
-    }
-  })
+  // before(() => {
+  //   mockConnector = {
+  //     publishCreateBooking: (booking: any) =>
+  //       Promise.resolve(bookings.push(booking)),
+  //     publishDeleteBooking: (bookingId: string) => {
+  //       bookings = bookings.filter((b) => b.id !== bookingId)
+  //       return Promise.resolve('ok') || Promise.reject('not found')
+  //     },
+  //   }
+  // })
 
   xit('fails to publish delete booking message', async () => {
     const mockFn = jest.spyOn(connectors, 'publishDeleteBooking')

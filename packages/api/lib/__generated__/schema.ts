@@ -132,7 +132,7 @@ export interface components {
       };
       shipDate: string;
       /** Order Status */
-      status: "placed" | "approved" | "delivered";
+      status: "placed" | "approved" | "delivered" | "new" | "deleted";
       complete: boolean;
     };
     BookingDetails: {

@@ -1,5 +1,4 @@
 import {
-  publishCreateBooking,
   publishDeleteBooking,
   waitForBookingNotification,
   bookingNotifications,
@@ -10,6 +9,6 @@ const deleteBooking = async (bookingId: string) => {
   await waitForBookingNotification(bookingNotifications, bookingId, 'deleted')
 }
 
-const createBooking = (booking: any) => {}
+const createBooking = () => {}
 
 export { createBooking, deleteBooking }

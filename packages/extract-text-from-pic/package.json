@@ -1,0 +1,19 @@
+{
+  "name": "extract-text-from-pic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1",
+    "libphonenumber-js": "^1.9.9",
+    "node-tesseract-ocr": "^2.0.0",
+    "textract": "^2.5.0"
+  }
+}

@@ -1,12 +1,13 @@
 import {
   publishCreateBooking,
   publishDeleteBooking,
-  waitForMessage,
+  waitForBookingNotification,
+  bookingNotifications,
 } from './connectors'
 
 const deleteBooking = async (bookingId: string) => {
   await publishDeleteBooking(bookingId)
-  await waitForMessage('DELETED:' + bookingId)
+  await waitForBookingNotification(bookingNotifications, bookingId, 'deleted')
 }
 
 const createBooking = (booking: any) => {}

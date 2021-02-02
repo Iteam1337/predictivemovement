@@ -2,51 +2,42 @@ import * as connectors from '../../lib/connectors'
 import _ from 'highland'
 import * as Highland from 'highland'
 import { components } from '../../lib/__generated__/schema'
+type BookingNotification = components['schemas']['BookingNotification']
 
-const booking: components['schemas']['Booking'] = {
-  id: '123',
-  tripId: 123,
-  shipDate: `${new Date()}`,
+const bookingNotification: BookingNotification = {
+  bookingId: '123',
   status: 'new',
-  complete: false,
-  delivery: {
-    city: 'City',
-    name: 'City name',
-    street: 'Gatgatan 12',
-    /** Order Status */
-  },
+  message: 'new',
 }
 
 describe('bookings', () => {
   it('waits for correct message on the message queue', async () => {
     expect.assertions(1)
+    bookingNotification.status = 'deleted'
     // create a highland stream
-    const stream: Highland.Stream<components['schemas']['Booking']> = _(
-      (push, next) => {
-        push(null, booking)
-        next()
-      }
-    )
-    connectors.waitForBookingNotification(stream, '1337', 'deleted')
-    expect(true).toBe(true)
-
-    // await expect(
-    //   connectors.waitForBookingNotification(stream, '1337', 'deleted')
-    // ).resolves.not.toThrow()
-  })
-
-  xit('how would we test that is does not just always resolve?', async () => {
-    expect.assertions(1)
-    // create a highland stream
-    const stream: Highland.Stream<components['schemas']['Booking']> = _(
-      (push, next) => {
-        push(null, booking)
-        next()
-      }
-    )
+    const stream: Highland.Stream<BookingNotification> = _((push, next) => {
+      push(null, bookingNotification)
+      next()
+    })
 
     await expect(
-      connectors.waitForBookingNotification(stream, '1337', 'deleted')
+      connectors.waitForBookingNotification(stream, '123', 'deleted')
     ).resolves.not.toThrow()
+  })
+
+  it('gives an error when delete failed', async () => {
+    const message = 'it b0rked'
+    bookingNotification.status = 'error'
+    bookingNotification.message = message
+
+    const stream: Highland.Stream<BookingNotification> = _((push, next) => {
+      push(null, bookingNotification)
+      push(null, { bookingId: '123', status: 'deleted', message: 'hello' }) // will be ignored
+      next()
+    })
+
+    await expect(
+      connectors.waitForBookingNotification(stream, '123', 'deleted')
+    ).rejects.toThrow(message)
   })
 })

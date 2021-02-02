@@ -49,25 +49,25 @@ const bookingNotifications = amqp
   })
 
 const waitForBookingNotification = (
-  stream: Highland.Stream<components['schemas']['Booking']>,
+  stream: Highland.Stream<components['schemas']['BookingNotification']>,
   bookingId: string,
   status: string
 ) =>
-  // new Promise<string>(
-  new Promise<void>(
-    (resolve) =>
-      stream
-        .tap(console.log)
-        .fork() // do we fork here or do we expect the caller to have forked the stream before?
-        .filter((booking) => {
-          console.log('BIG FILTER')
-          // return booking.id === bookingId && status === booking.status
-          return true
-        })
-        .each(() => console.log('hello morning'))
-    // .head() // Only pick the first
-    // .done(() => resolve()) // done consumes the stream
-  )
+  stream
+    .fork() // do we fork here or do we expect the caller to have forked the stream before?
+    .filter(
+      (bookingNotification) => bookingNotification.bookingId === bookingId
+    )
+    .filter((bookingNotification) =>
+      [status, 'error'].includes(bookingNotification.status ?? '')
+    )
+    .tap(({ status, message }) => {
+      if (status === 'error') {
+        throw new Error(message)
+      }
+    })
+    .head() // Only pick the first
+    .toPromise(Promise)
 
 export {
   publishDeleteBooking,

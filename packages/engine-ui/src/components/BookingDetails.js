@@ -192,25 +192,6 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
   } = booking
 
   const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
-  const testEvents = [
-    {
-      timestamp: '2021-02-02T09:31:09.403852Z',
-      type: 'delivered',
-    },
-
-    {
-      timestamp: '2021-02-02T09:31:09.403852Z',
-      type: 'picked_up',
-    },
-    {
-      timestamp: '2021-02-02T09:31:09.403852Z',
-      type: 'assigned',
-    },
-    {
-      timestamp: '2021-02-02T09:31:09.403852Z',
-      type: 'new',
-    },
-  ]
 
   const bookingEvents = events.map((event) => event.type)
 
@@ -222,15 +203,6 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
       })
     )
 
-  // const bookingEvents = testEvents.map((event) => event.type)
-
-  // const eventsList = testEvents
-  //   .sort((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1))
-  //   .concat(
-  //     expectedEvents.filter((event) => {
-  //       return !bookingEvents.includes(event)
-  //     })
-  //   )
   console.log(booking)
 
   return (

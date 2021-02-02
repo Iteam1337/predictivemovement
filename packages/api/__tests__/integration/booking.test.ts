@@ -1,22 +1,46 @@
 import { app } from '../../lib/index'
 import * as connectors from '../../lib/connectors'
+import * as engineAdapter from '../../lib/engineAdapter'
 import request from 'supertest'
+import { components } from '../../lib/__generated__/schema'
+
+const booking: components['schemas']['Booking'] = {
+  id: 'pmb-123',
+  tripId: 234,
+  shipDate: new Date().toISOString(),
+  status: 'new',
+  complete: false,
+}
+
+describe('POST /bookings', () => {
+  it('creates a booking and returns the booking id', async () => {
+    const mockFn = jest.spyOn(engineAdapter, 'createBooking')
+    mockFn.mockReturnValue(Promise.resolve())
+
+    const { status, body } = await request(app).post(`/bookings`).send(booking)
+
+    expect(mockFn).toHaveBeenCalledWith(booking)
+    expect(status).toBe(200)
+    expect(body).toEqual({
+      result: 'ok',
+      bookingId: booking.id,
+    })
+  })
+
+  it('fails to create a booking', async () => {
+    const mockFn = jest.spyOn(engineAdapter, 'createBooking')
+    mockFn.mockReturnValue(Promise.resolve())
+
+    const { status } = await request(app)
+      .post(`/bookings`)
+      .send({ booking: '123' })
+
+    expect(status).toBe(400)
+  })
+})
 
 describe('DELETE /bookings/:id', () => {
   const bookingId = 'pmb-123'
-  // let mockConnector: any
-  // let bookings: any[] = []
-
-  // before(() => {
-  //   mockConnector = {
-  //     publishCreateBooking: (booking: any) =>
-  //       Promise.resolve(bookings.push(booking)),
-  //     publishDeleteBooking: (bookingId: string) => {
-  //       bookings = bookings.filter((b) => b.id !== bookingId)
-  //       return Promise.resolve('ok') || Promise.reject('not found')
-  //     },
-  //   }
-  // })
 
   xit('fails to publish delete booking message', async () => {
     const mockFn = jest.spyOn(connectors, 'publishDeleteBooking')
@@ -36,8 +60,8 @@ describe('DELETE /bookings/:id', () => {
   })
 
   it('deletes a booking and returns OK', async () => {
-    const mockFn = jest.spyOn(connectors, 'publishDeleteBooking')
-    mockFn.mockReturnValue(null)
+    const mockFn = jest.spyOn(engineAdapter, 'deleteBooking')
+    mockFn.mockReturnValue(Promise.resolve())
 
     const { status, body } = await request(app).delete(`/bookings/${bookingId}`)
 

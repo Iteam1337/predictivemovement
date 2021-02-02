@@ -339,6 +339,20 @@ components:
         quantity:
           type: integer
           format: int32
+    BookingNotification:
+      type: object
+      description: Booking notifications
+      properties:
+        bookingId:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+          enum:
+            - new
+            - deleted
+            - error
     User:
       type: object
       properties:

@@ -160,6 +160,12 @@ export interface components {
       loadingMeters?: number;
       quantity?: number;
     };
+    /** Booking notifications */
+    BookingNotification: {
+      bookingId?: string;
+      message?: string;
+      status?: "new" | "deleted" | "error";
+    };
     User: {
       id: number;
       username: string;

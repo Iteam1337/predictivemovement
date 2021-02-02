@@ -31,7 +31,7 @@ const getIcon = (size, active, iconMapping) => {
 }
 
 const getIconSize = (size, active) =>
-  Math.min(100, active ? size + 100 : size) / 100 + 1
+  Math.min(100, active ? size + 20 : size) / 100 + 1
 
 export default class IconClusterLayer extends CompositeLayer {
   shouldUpdateState({ changeFlags }) {
@@ -62,11 +62,14 @@ export default class IconClusterLayer extends CompositeLayer {
       })
 
       index.load(
-        props.data.map((d) => ({
-          geometry: { coordinates: props.getPosition(d) },
-          properties: d,
-        }))
+        props.data.map((d) => {
+          return {
+            geometry: { coordinates: props.getPosition(d) },
+            properties: d,
+          }
+        })
       )
+
       this.setState({ index })
     }
 
@@ -115,18 +118,19 @@ export default class IconClusterLayer extends CompositeLayer {
         iconMapping,
         sizeScale,
         getColor,
+        getSize: (d) =>
+          getIconSize(
+            d.properties.cluster ? d.properties.point_count : 1,
+            d.properties.active
+          ),
         transitions,
+
         getPosition: (d) => d.geometry.coordinates,
         getIcon: (d) =>
           getIcon(
             d.properties.cluster ? d.properties.point_count : 1,
             d.properties.active,
             iconMapping
-          ),
-        getSize: (d) =>
-          getIconSize(
-            d.properties.cluster ? d.properties.point_count : 1,
-            d.properties.active
           ),
       })
     )

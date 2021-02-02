@@ -26,7 +26,7 @@ module.exports = (io) => {
     transportNotifications,
     bookingNotifications,
     updateBooking,
-    updateTransport,
+    publishUpdateTransport,
   } = require('./engineConnector')(io)
 
   io.on('connection', function (socket) {
@@ -139,7 +139,7 @@ module.exports = (io) => {
     )
 
     socket.on('update-transport', (updatedTransport) =>
-      updateTransport(toOutgoingTransport(updatedTransport))
+      publishUpdateTransport(toOutgoingTransport(updatedTransport))
     )
 
     socket.on('search-parcel', async (id) => {

@@ -99,10 +99,10 @@ const EditTransportRoute = ({ transports, updateTransport }: Props) => {
             metadata: {
               ...transport.metadata,
               driver: {
-                ...transport.metadata.driver,
-                contact: transport.metadata.driver.contact?.startsWith('46')
-                  ? '+' + transport.metadata.driver.contact
-                  : transport.metadata.driver.contact,
+                ...(transport.metadata?.driver || {}),
+                contact: transport.metadata?.driver?.contact?.startsWith('46')
+                  ? '+' + transport.metadata?.driver?.contact
+                  : transport.metadata?.driver?.contact,
               },
             },
           }}

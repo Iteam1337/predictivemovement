@@ -109,6 +109,18 @@ module.exports = (io) => {
     console.log('deleted')
   }
 
+  const deleteTransport = (id) => {
+    transportsCache.delete(id)
+    io.emit('delete-transport', id)
+  }
+
+  const updateTransport = (partialTransport) => {
+    const transport = transportsCache.get(partialTransport.id)
+    const updatedTransport = Object.assign({}, transport, partialTransport)
+    transportsCache.set(transport.id, updatedTransport)
+    io.emit('transport-updated', updatedTransport)
+  }
+
   const transportLocationUpdates = amqp
     .exchange('incoming_vehicle_updates', 'topic', {
       durable: true,
@@ -129,11 +141,6 @@ module.exports = (io) => {
     .subscribe({ noAck: true }, [routingKeys.DELETED])
     .map((transportData) => transportData.json())
     .each(deleteTransport)
-
-  function deleteTransport(id) {
-    transportsCache.delete(id)
-    io.emit('delete-transport', id)
-  }
 
   ///////// Publishers
 
@@ -282,7 +289,18 @@ module.exports = (io) => {
       )
   }
 
-  const updateTransport = (transport) => {
+  const transportUpdates = amqp
+    .exchange('outgoing_vehicle_updates', 'topic', {
+      durable: true,
+    })
+    .queue('transport_updated', {
+      durable: true,
+    })
+    .subscribe({ noAck: true }, routingKeys.UPDATED)
+    .map((transportRes) => transportRes.json())
+    .each(updateTransport)
+
+  const publishUpdateTransport = (transport) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', {
         durable: true,
@@ -292,7 +310,11 @@ module.exports = (io) => {
       })
       .then(() =>
         console.log(
-          ` [x] Updated transport '${JSON.stringify(transport, null, 2)}'`
+          ` [x] Published update transport '${JSON.stringify(
+            transport,
+            null,
+            2
+          )}'`
         )
       )
   }
@@ -312,6 +334,7 @@ module.exports = (io) => {
     transportNotifications,
     bookingNotifications,
     updateBooking,
-    updateTransport,
+    publishUpdateTransport,
+    transportUpdates,
   }
 }

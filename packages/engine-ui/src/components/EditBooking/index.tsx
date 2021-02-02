@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { useParams } from 'react-router-dom'
-import { Booking } from '../../types'
+import * as types from '../../types'
 import MainRouteLayout from '../layout/MainRouteLayout'
 import EditBooking from './EditBooking'
 import Success from '../SuccessScreen'
@@ -10,7 +10,7 @@ import { useHistory } from 'react-router-dom'
 import { getAddressFromCoordinate } from '../../utils/helpers'
 
 interface Props {
-  bookings: Booking[]
+  bookings: types.Booking[]
   updateBooking: (params: any) => void
 }
 const LoadingWrapper = styled.div`
@@ -30,8 +30,8 @@ const EditBookingRoute = ({ bookings, updateBooking }: Props) => {
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
-      pickupCoordinates: Booking['pickup'],
-      deliveryCoordinates: Booking['delivery']
+      pickupCoordinates: types.Booking['pickup'],
+      deliveryCoordinates: types.Booking['delivery']
     ) => {
       const pickupAddress = await getAddressFromCoordinate(pickupCoordinates)
       const deliveryAddress = await getAddressFromCoordinate(

@@ -4,11 +4,11 @@ import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import * as Icons from '../assets/Icons'
 import * as Elements from '../shared-elements'
-import { Booking, ExcludedBooking, Plan as PlanType, Transport } from '../types'
+import * as types from '../types'
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import NotFound from './NotFound'
-import PlanBookingDetails from './PlanBookingDetails'
+import RouteActivityDetails from './RouteActivityDetails'
 import PlanRouteDetails from './PlanRouteDetails'
 import Success from './SuccessScreen'
 
@@ -35,10 +35,7 @@ const PlanWrapper = styled.div`
 `
 
 interface PlanProps {
-  plan: PlanType
-  transports: Transport[]
   dispatchOffers: (params: any) => void
-  bookings: Booking[]
   moveBooking: (bookingId: string, transportId: string) => void
 }
 
@@ -50,7 +47,7 @@ const Wrapper = styled.div`
 `
 
 const BookingToggleList: React.FC<{
-  excludedBookings: ExcludedBooking[]
+  excludedBookings: types.ExcludedBooking[]
   text: string
   onClickHandler: (lat: number, lon: number) => void
   onMouseEnterHandler: (id?: string) => void
@@ -99,20 +96,31 @@ const BookingToggleList: React.FC<{
   </Wrapper>
 )
 
-const Plan: React.FC<PlanProps> = ({
-  plan,
-  dispatchOffers,
-  transports,
-  bookings,
-  moveBooking,
-}) => {
+const Plan: React.FC<PlanProps> = ({ dispatchOffers, moveBooking }) => {
   const history = useHistory()
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+  const plansRootView = useRouteMatch({ path: '/plans', strict: true })
+
+  const [plan, bookings, transports] = stores.dataState((state) => [
+    state.plan,
+    state.bookings,
+    state.transports,
+  ])
+
+  React.useEffect(() => {
+    if (plansRootView?.isExact) {
+      setMapLayers({ type: 'plan' })
+    }
+  }, [setMapLayers, plan, plansRootView])
+
   const activeRoutes = plan.routes.filter(
     (d) => d.activities && d.activities.length > 0
   )
+
   const [expandedSection, setExpandedSection] = React.useState({
     isOpen: false,
   })
+
   const { path } = useRouteMatch()
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
@@ -145,6 +153,11 @@ const Plan: React.FC<PlanProps> = ({
   }
 
   const handleOnClose = () => history.push('/transports')
+
+  const onToggleMinimize = React.useCallback(
+    () => setMapLayers({ type: 'plan' }),
+    [setMapLayers]
+  )
 
   if (isFinished)
     return (
@@ -181,6 +194,7 @@ const Plan: React.FC<PlanProps> = ({
                     transports.find((transport) => transport.id === route.id)
                       ?.color
                   }
+                  onToggleMinimize={onToggleMinimize}
                 />
               ))}
               {plan.excludedBookings.length > 0 && (
@@ -208,7 +222,7 @@ const Plan: React.FC<PlanProps> = ({
         </PlanWrapper>
       </Route>
       <Route exact path={`${path}/routes/:routeId/:activityId`}>
-        <PlanBookingDetails
+        <RouteActivityDetails
           bookings={bookings}
           onUnmount={() =>
             setUIState({ type: 'highlightBooking', payload: undefined })

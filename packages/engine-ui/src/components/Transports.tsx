@@ -4,19 +4,39 @@ import CreateTransport from './CreateTransport'
 import TransportsList from './TransportsList'
 import TransportDetails from './TransportDetails'
 import * as stores from '../utils/state/stores'
-import { Transport } from '../types'
 import NotFound from './NotFound'
 import * as Elements from '../shared-elements'
 import EditTransport from './EditTransport'
 
 const Transports: React.FC<{
-  transports: Transport[]
   createTransport: (params: any) => void
   deleteTransport: (id: string) => void
   updateTransport: (params: any) => void
-}> = ({ transports, createTransport, deleteTransport, updateTransport }) => {
+}> = ({ createTransport, deleteTransport, updateTransport }) => {
   const { path, url } = useRouteMatch()
+  const setMapLayers = stores.mapLayerState((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
+  const transports = stores.dataState((state) => state.transports)
+  const transportsRootView = useRouteMatch({
+    path: '/transports',
+    strict: true,
+  })
+
+  React.useEffect(() => {
+    if (transportsRootView?.isExact) {
+      setMapLayers({ type: 'transportIcons' })
+    }
+  }, [setMapLayers, transports, transportsRootView])
+
+  const onTransportDetailsMount = React.useCallback(
+    () => setUIState({ type: 'highlightTransport', payload: undefined }),
+    [setUIState]
+  )
+
+  const onTransportDetailsUnmount = React.useCallback(
+    () => setMapLayers({ type: 'transportIcons' }),
+    [setMapLayers]
+  )
 
   return (
     <Switch>
@@ -42,11 +62,9 @@ const Transports: React.FC<{
       </Route>
       <Route exact path={`${path}/:transportId`}>
         <TransportDetails
-          transports={transports}
+          onMount={onTransportDetailsMount}
+          onUnmount={onTransportDetailsUnmount}
           deleteTransport={deleteTransport}
-          onUnmount={() =>
-            setUIState({ type: 'highlightTransport', payload: undefined })
-          }
         />
       </Route>
       <Route component={NotFound} />

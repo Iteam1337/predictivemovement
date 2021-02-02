@@ -7,6 +7,7 @@ import * as helpers from '../utils/helpers'
 import moment from 'moment'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
+import * as stores from '../utils/state/stores'
 
 const Paragraph = styled.p`
   margin-bottom: 0.25rem;
@@ -90,14 +91,27 @@ const timeWindowToElement = ({ earliest, latest }) => {
   )
 }
 
-const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
+const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
   const { bookingId } = useParams()
   const history = useHistory()
-
   const booking = bookings.find((b) => b.id === bookingId)
   const [address, setAddress] = React.useState()
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+  const statebookings = stores.dataState((state) => state.bookings)
 
-  React.useEffect(() => () => onUnmount(), [onUnmount])
+  React.useEffect(() => {
+    onMount()
+  }, [onMount])
+
+  React.useEffect(() => {
+    return () => onUnmount()
+  }, [onUnmount])
+
+  React.useEffect(() => {
+    if (!booking) return
+
+    setMapLayers({ type: 'bookingDetails', payload: { bookingId } })
+  }, [setMapLayers, statebookings, booking, bookingId])
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
@@ -175,11 +189,14 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount }) => {
   const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
 
   const bookingEvents = events.map((event) => event.type)
-  const eventsList = events.concat(
-    expectedEvents.filter((event) => {
-      return !bookingEvents.includes(event)
-    })
-  )
+  const eventsList = events
+    .sort((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1))
+    .concat(
+      expectedEvents.filter((event) => {
+        return !bookingEvents.includes(event)
+      })
+    )
+
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>

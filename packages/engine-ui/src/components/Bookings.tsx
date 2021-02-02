@@ -5,21 +5,20 @@ import * as Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
-import styled from 'styled-components'
-import { Booking } from '../types'
+import * as types from '../types'
 import NotFound from './NotFound'
 
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import EditBooking from './EditBooking'
 
-const sortBookingsByStatus = (bookings: Booking[]) =>
+const sortBookingsByStatus = (bookings: types.Booking[]) =>
   bookings.reduce<{
-    new: Booking[]
-    assigned: Booking[]
-    delivered: Booking[]
-    delivery_failed: Booking[]
-    picked_up: Booking[]
+    new: types.Booking[]
+    assigned: types.Booking[]
+    delivered: types.Booking[]
+    delivery_failed: types.Booking[]
+    picked_up: types.Booking[]
   }>(
     (prev, current) => ({
       ...prev,
@@ -35,7 +34,7 @@ const sortBookingsByStatus = (bookings: Booking[]) =>
   )
 
 const BookingToggleList: React.FC<{
-  bookings: Booking[]
+  bookings: types.Booking[]
   text: string
   onClickHandler: (lat: number, lon: number) => void
   onMouseEnterHandler: (id: string) => void
@@ -93,25 +92,27 @@ const BookingToggleList: React.FC<{
   )
 }
 
-const Wrapper = styled.div`
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-`
-
 const Bookings: React.FC<{
-  bookings: Booking[]
   createBooking: (params: any) => void
   deleteBooking: (params: any) => void
   updateBooking: (params: any) => void
 }> = (props) => {
   const setMap = stores.map((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
-  const { path, url } = useRouteMatch()
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+  const bookings = stores.dataState((state) => state.bookings)
+  const { url } = useRouteMatch()
+  const bookingsRootView = useRouteMatch({ path: '/bookings', strict: true })
 
-  const bookings = React.useMemo(() => sortBookingsByStatus(props.bookings), [
-    props.bookings,
+  const sortedBookings = React.useMemo(() => sortBookingsByStatus(bookings), [
+    bookings,
   ])
+
+  React.useEffect(() => {
+    if (bookingsRootView?.isExact) {
+      setMapLayers({ type: 'bookingIcons' })
+    }
+  }, [setMapLayers, bookings, bookingsRootView])
 
   const [expandedSection, setExpandedSection] = React.useState({
     new: true,
@@ -135,83 +136,87 @@ const Bookings: React.FC<{
       [type]: !currentState[type],
     }))
 
+  const onBookingDetailsUnmount = React.useCallback(
+    () => setMapLayers({ type: 'bookingIcons' }),
+    [setMapLayers]
+  )
+
+  const onBookingDetailsMount = React.useCallback(
+    () => setUIState({ type: 'highlightBooking', payload: undefined }),
+    [setUIState]
+  )
+
   return (
-    <Wrapper>
-      <Switch>
-        <Route exact path={path}>
-          <Elements.Layout.MarginTopContainer>
-            <BookingToggleList
-              isOpen={expandedSection.new}
-              setOpen={() => handleExpand('new')}
-              bookings={bookings.new}
-              onClickHandler={onClickHandler}
-              text="Öppna bokningar"
-              onMouseEnterHandler={(id: string) =>
-                setUIState({ type: 'highlightBooking', payload: id })
-              }
-              onMouseLeaveHandler={() =>
-                setUIState({ type: 'highlightBooking', payload: undefined })
-              }
-            />
-            <BookingToggleList
-              isOpen={expandedSection.assigned}
-              setOpen={() => handleExpand('assigned')}
-              bookings={[...bookings.assigned, ...bookings.picked_up]}
-              onClickHandler={onClickHandler}
-              text="Bekräftade bokningar"
-              onMouseEnterHandler={(id: string) =>
-                setUIState({ type: 'highlightBooking', payload: id })
-              }
-              onMouseLeaveHandler={() =>
-                setUIState({ type: 'highlightBooking', payload: undefined })
-              }
-            />
-            <BookingToggleList
-              isOpen={expandedSection.delivered}
-              setOpen={() => handleExpand('delivered')}
-              bookings={bookings.delivered}
-              onClickHandler={onClickHandler}
-              text="Levererade bokningar"
-              onMouseEnterHandler={(id: string) =>
-                setUIState({ type: 'highlightBooking', payload: id })
-              }
-              onMouseLeaveHandler={() =>
-                setUIState({ type: 'highlightBooking', payload: undefined })
-              }
-            />
-          </Elements.Layout.MarginTopContainer>
-          <Elements.Layout.FlexRowInCenter>
-            <Link to={`${url}/add-booking`}>
-              <Elements.Buttons.SubmitButton color="#666666">
-                + Lägg till bokning
-              </Elements.Buttons.SubmitButton>
-            </Link>
-          </Elements.Layout.FlexRowInCenter>
-        </Route>
-
-        <Route exact path={`${path}/add-booking`}>
-          <CreateBooking onSubmit={props.createBooking} />
-        </Route>
-
-        <Route exact path={`${path}/edit-booking/:bookingId`}>
-          <EditBooking
-            bookings={props.bookings}
-            updateBooking={props.updateBooking}
-          />
-        </Route>
-
-        <Route exact path={`${path}/:bookingId`}>
-          <BookingDetails
-            bookings={props.bookings}
-            deleteBooking={props.deleteBooking}
-            onUnmount={() =>
+    <Switch>
+      <Route exact path={'/bookings'}>
+        <Elements.Layout.MarginTopContainer>
+          <BookingToggleList
+            isOpen={expandedSection.new}
+            setOpen={() => handleExpand('new')}
+            bookings={sortedBookings.new}
+            onClickHandler={onClickHandler}
+            text="Öppna bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
               setUIState({ type: 'highlightBooking', payload: undefined })
             }
           />
-        </Route>
-        <Route component={NotFound} />
-      </Switch>
-    </Wrapper>
+          <BookingToggleList
+            isOpen={expandedSection.assigned}
+            setOpen={() => handleExpand('assigned')}
+            bookings={[...sortedBookings.assigned, ...sortedBookings.picked_up]}
+            onClickHandler={onClickHandler}
+            text="Bekräftade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              setUIState({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+          <BookingToggleList
+            isOpen={expandedSection.delivered}
+            setOpen={() => handleExpand('delivered')}
+            bookings={sortedBookings.delivered}
+            onClickHandler={onClickHandler}
+            text="Levererade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              setUIState({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+        </Elements.Layout.MarginTopContainer>
+        <Elements.Layout.FlexRowInCenter>
+          <Link to={`${url}/add-booking`}>
+            <Elements.Buttons.SubmitButton color="#666666">
+              + Lägg till bokning
+            </Elements.Buttons.SubmitButton>
+          </Link>
+        </Elements.Layout.FlexRowInCenter>
+      </Route>
+
+      <Route exact path={`${'/bookings'}/add-booking`}>
+        <CreateBooking onSubmit={props.createBooking} />
+      </Route>
+
+      <Route exact path={`${'/bookings'}/edit-booking/:bookingId`}>
+        <EditBooking bookings={bookings} updateBooking={props.updateBooking} />
+      </Route>
+
+      <Route exact path={`${'/bookings'}/:bookingId`}>
+        <BookingDetails
+          bookings={bookings}
+          deleteBooking={props.deleteBooking}
+          onUnmount={onBookingDetailsUnmount}
+          onMount={onBookingDetailsMount}
+        />
+      </Route>
+      <Route component={NotFound} />
+    </Switch>
   )
 }
 

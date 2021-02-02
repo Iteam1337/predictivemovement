@@ -2,7 +2,7 @@ import React from 'react'
 import * as Elements from '../../../shared-elements'
 import locationIcon from '../../../assets/location.svg'
 import styled from 'styled-components'
-import * as hooks from '../../../utils/hooks'
+import * as hooks from '../../../hooks'
 import debounce from 'lodash.debounce'
 import warningIcon from '../../../assets/warning.svg'
 

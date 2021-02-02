@@ -2,21 +2,26 @@ import React from 'react'
 import { useSocket } from 'use-socketio'
 import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { reducer, initState } from './utils/reducer'
 import { Route } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import * as hooks from './utils/hooks'
 import Notifications from './components/Notifications'
 import * as notificationTypes from './notificationTypes'
+import * as stores from './utils/state/stores'
+import * as types from './types'
+import NotFound from './components/NotFound'
 
 const App = () => {
   const { socket } = useSocket()
-  const [state, dispatch] = React.useReducer(reducer, initState)
-  const { data: mapData } = hooks.useFilteredStateFromQueryParams(state)
+
   const [notifications, updateNotifications] = React.useState<
     notificationTypes.Notification[]
   >([])
+
+  const setDataState = stores.dataState(
+    React.useCallback((state) => state.set, [])
+  )
+
   const isMobile = window.innerWidth <= 645
 
   const createTransport = (params: any) => {
@@ -55,47 +60,32 @@ const App = () => {
     updateNotifications((notifications) => notifications.concat(data))
   })
 
-  useSocket('bookings', (bookings) => {
-    dispatch({
-      type: 'setBookings',
-      payload: bookings,
-    })
+  useSocket('bookings', (bookings: types.Booking[]) => {
+    setDataState({ type: 'setBookings', payload: bookings })
   })
 
-  useSocket('delete-booking', (bookingId) => {
-    dispatch({
-      type: 'deleteBooking',
-      payload: bookingId,
-    })
+  useSocket('delete-booking', (bookingId: string) => {
+    setDataState({ type: 'deleteBooking', payload: bookingId })
   })
 
-  useSocket('transport-updated', (msg) => {
-    dispatch({
-      type: 'updateTransport',
-      payload: msg,
-    })
+  useSocket('transport-updated', (transport: types.Transport) => {
+    setDataState({ type: 'updateTransport', payload: transport })
   })
 
-  useSocket('transport-deleted', (transportId) => {
-    dispatch({
-      type: 'deleteTransport',
-      payload: transportId,
-    })
+  useSocket('transport-deleted', (transportId: string) => {
+    setDataState({ type: 'deleteTransport', payload: transportId })
   })
 
-  useSocket('transports', (newTransports) => {
-    dispatch({
-      type: 'setTransports',
-      payload: newTransports,
-    })
+  useSocket('transports', (transports: types.Transport[]) => {
+    setDataState({ type: 'setTransports', payload: transports })
   })
 
-  useSocket('plan-update', (plan) => {
-    dispatch({
+  useSocket('plan-update', (params) => {
+    setDataState({
       type: 'setPlan',
       payload: {
-        routes: plan.transports,
-        excludedBookings: plan.excludedBookingIds,
+        routes: params.transports,
+        excludedBookings: params.excludedBookingIds,
       },
     })
   })
@@ -108,7 +98,6 @@ const App = () => {
         updateNotifications={updateNotifications}
       />
       <Sidebar
-        {...state}
         isMobile={isMobile}
         createBooking={createBooking}
         dispatchOffers={dispatchOffers}
@@ -121,9 +110,10 @@ const App = () => {
       />
       {!isMobile && (
         <Route path="/">
-          <Map data={mapData} state={state} />
+          <Map />
         </Route>
       )}
+      <Route component={NotFound} />
     </>
   )
 }

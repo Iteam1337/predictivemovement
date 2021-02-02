@@ -1,6 +1,6 @@
-import * as types from './types'
+import * as types from '../../../types/state'
 
-const ui = (state: types.UIState, action: types.UIStateReducerAction) => {
+const reducer = (state: types.UIState, action: types.UIStateReducerAction) => {
   switch (action.type) {
     case 'focusInput':
       return { ...state, lastFocusedInput: action.payload }
@@ -45,4 +45,4 @@ const ui = (state: types.UIState, action: types.UIStateReducerAction) => {
   }
 }
 
-export { ui }
+export default reducer

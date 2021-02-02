@@ -27,7 +27,7 @@ spec:
               osrm-extract -p /opt/car.lua /data/sweden-latest.osm.pbf && \
               osrm-partition /data/sweden-latest.osrm && \
               osrm-customize /data/sweden-latest.osrm && \
-              osrm-routed --algorithm mld /data/sweden-latest.osrm
+              osrm-routed --algorithm mld --max-table-size 10000 /data/sweden-latest.osrm
           env:
             - name: DOWNLOAD_URL
               value: https://download.geofabrik.de/europe/sweden-latest.osm.pbf

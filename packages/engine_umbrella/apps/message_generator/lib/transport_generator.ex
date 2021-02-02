@@ -5,9 +5,19 @@ defmodule MessageGenerator.TransportGenerator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
+  defp default_metadata() do
+    %{
+      profile: "Generated transport #{Enum.random(1..100)}",
+      driver: %{ contact: "4676000#{Enum.random(1000..9999)}"}
+    }
+  end
+
   def generate_transport_props(properties \\ %{}) do
+    default_meta = default_metadata()
+
     properties
     |> put_new_transport_addresses_from_city(:ljusdal)
+    |> Map.update(:metadata, default_meta, &Map.merge(default_meta, &1))
   end
 
   def put_new_transport_addresses_from_city(map, :ljusdal),

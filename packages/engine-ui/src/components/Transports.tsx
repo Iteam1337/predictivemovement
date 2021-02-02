@@ -6,11 +6,13 @@ import TransportDetails from './TransportDetails'
 import * as stores from '../utils/state/stores'
 import NotFound from './NotFound'
 import * as Elements from '../shared-elements'
+import EditTransport from './EditTransport'
 
 const Transports: React.FC<{
   createTransport: (params: any) => void
   deleteTransport: (id: string) => void
-}> = ({ createTransport, deleteTransport }) => {
+  updateTransport: (params: any) => void
+}> = ({ createTransport, deleteTransport, updateTransport }) => {
   const { path, url } = useRouteMatch()
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
@@ -51,6 +53,12 @@ const Transports: React.FC<{
       </Route>
       <Route exact path={`${path}/add-transport`}>
         <CreateTransport onSubmit={createTransport} />
+      </Route>
+      <Route exact path={`${path}/edit-transport/:transportId`}>
+        <EditTransport
+          transports={transports}
+          updateTransport={updateTransport}
+        />
       </Route>
       <Route exact path={`${path}/:transportId`}>
         <TransportDetails

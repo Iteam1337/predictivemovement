@@ -18,9 +18,14 @@ type parcelSizeOptions = {
 const TransportCapacity: React.FC<{
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
   options: options[]
-}> = ({ onChange, options }) => {
+  defaultValue?: string
+}> = ({ onChange, options, defaultValue }) => {
   return (
-    <Elements.Form.SelectInput name="capacity" onChange={onChange}>
+    <Elements.Form.SelectInput
+      name="capacity"
+      onChange={onChange}
+      defaultValue={defaultValue}
+    >
       {options.map(({ label, value, weight, volume }) => {
         if (value === 'custom') {
           return (

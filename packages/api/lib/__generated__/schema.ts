@@ -51,6 +51,10 @@ export interface paths {
     /** Delete a booking based on bookingId */
     delete: operations["deleteBooking"];
   };
+  "/bookings": {
+    /** Create a booking */
+    post: operations["createBooking"];
+  };
   "/me": {
     /** Get your own user profile */
     get: operations["getMe"];
@@ -260,6 +264,24 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["Booking"];
         };
+      };
+    };
+  };
+  /** Create a booking */
+  createBooking: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": {
+            bookingId?: string;
+          };
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Booking"];
       };
     };
   };

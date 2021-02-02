@@ -116,7 +116,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Booking'
-
+  /bookings:
+    post:
+      operationId: 'createBooking'
+      description: Create a booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookingId:
+                    type: string
+                    format: int64
   /me:
     get:
       operationId: 'getMe'
@@ -288,7 +310,6 @@ components:
       required:
         - id
         - tripId
-        - quantity
         - shipDate
         - status
         - complete

@@ -11,8 +11,9 @@ import * as stores from '../utils/state/stores'
 import DeliveryDetails from './DeliveryDetails'
 
 const BorderContainer = styled.div`
-  padding-right: 3rem;
-  border-right: ${(props) => (props.border ? '1px solid #e5e5e5' : null)};
+  padding-right: ${(props) => (props.visible ? '0.5rem' : null)};
+  border-right: ${(props) => (props.visible ? '1px solid #e5e5e5' : null)};
+  width: ${(props) => (props.visible ? '300px' : '100%')}; ;
 `
 
 const Paragraph = styled.p`
@@ -207,7 +208,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <Elements.Layout.FlexContainer>
-          <BorderContainer border={booking.status === 'assigned'}>
+          <BorderContainer visible={booking.status === 'assigned'}>
             <Elements.Layout.FlexRowWrapper>
               <h3>Bokning</h3>
               <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">

@@ -57,7 +57,7 @@ const DeliveryDetails: React.FC<{
             {getDistance(parseInt(distance))}
           </Elements.Typography.InfoMd>
         </Elements.Layout.FlexRowWrapper>
-
+        <Elements.Layout.SectionWithMargin />
         {totalDuration && (
           <Elements.Layout.FlexRowWrapper>
             <Elements.Typography.InfoMd>

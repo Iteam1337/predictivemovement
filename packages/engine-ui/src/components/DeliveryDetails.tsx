@@ -2,6 +2,7 @@ import React from 'react'
 import * as Elements from '../shared-elements'
 import styled from 'styled-components'
 import * as stores from '../utils/state/stores'
+import { getDistance, getDuration } from '../utils/helpers'
 
 const Wrapper = styled.div`
   width: 290px;
@@ -31,22 +32,6 @@ const DeliveryDetails: React.FC<{
     (acc, activity) => acc + activity.duration,
     0
   )
-
-  const getDistance = (distance: number) => {
-    const dist = Math.round(distance / 1000)
-
-    return `${dist} km`
-  }
-
-  const getDuration = (duration: number) => {
-    const num = Math.round(duration / 60)
-    const hours = Math.floor(num / 60)
-    const minutes = num % 60
-    if (hours === 0) {
-      return `${minutes}min`
-    }
-    return `${hours}h ${minutes}min`
-  }
 
   return (
     <Wrapper>

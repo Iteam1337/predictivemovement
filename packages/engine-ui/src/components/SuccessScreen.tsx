@@ -4,11 +4,12 @@ import * as Icons from '../assets/Icons'
 import * as Elements from '../shared-elements'
 
 const Container = styled.div`
-  width: 100%;
+  width: 304px;
   display: flex;
   align-items: center;
   flex-flow: column nowrap;
   margin-top: 20vh;
+  text-align: center;
 
   div {
     gap: 10px;
@@ -46,15 +47,15 @@ const Component: React.FC<{
           <Elements.Buttons.CancelButton onClick={onClose}>
             Stäng
           </Elements.Buttons.CancelButton>
-          {onContinue && 
-          <Elements.Buttons.SubmitButton
-            onClick={onContinue}
-            type="button"
-            padding="0.75rem 1.25rem"
-          >
-            Lägg till ny
-          </Elements.Buttons.SubmitButton>
-          }
+          {onContinue && (
+            <Elements.Buttons.SubmitButton
+              onClick={onContinue}
+              type="button"
+              padding="0.75rem 1.25rem"
+            >
+              Lägg till ny
+            </Elements.Buttons.SubmitButton>
+          )}
         </Elements.Layout.ButtonWrapper>
       </Elements.Layout.MarginTopContainer>
     </Container>

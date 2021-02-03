@@ -12,7 +12,7 @@ import DeliveryDetails from './DeliveryDetails'
 
 const BorderContainer = styled.div`
   padding-right: 3rem;
-  border-right: 1px solid #e5e5e5;
+  border-right: ${(props) => (props.border ? '1px solid #e5e5e5' : null)};
 `
 
 const Paragraph = styled.p`
@@ -203,13 +203,11 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
       })
     )
 
-  console.log(booking)
-
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <Elements.Layout.FlexContainer>
-          <BorderContainer>
+          <BorderContainer border={booking.status === 'assigned'}>
             <Elements.Layout.FlexRowWrapper>
               <h3>Bokning</h3>
               <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">

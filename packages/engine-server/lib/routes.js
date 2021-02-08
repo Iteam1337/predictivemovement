@@ -1,7 +1,12 @@
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const _ = require('highland')
 const helpers = require('./helpers')
-const { bookingsCache, transportsCache, planCache } = require('./cache')
+const {
+  bookingsCache,
+  transportsCache,
+  planCache,
+  signaturesCache,
+} = require('./cache')
 const parcel = require('./parcel')
 const {
   toIncomingBooking,
@@ -104,6 +109,19 @@ module.exports = (io) => {
 
     socket.on('new-booking', (booking) =>
       createBooking(toOutgoingBooking(booking))
+    )
+
+    socket.on(
+      'signed-delivery',
+      ({ createdAt, signedBy, bookingId, transportId, signature }) => {
+        signaturesCache.set(bookingId, {
+          createdAt,
+          signedBy,
+          bookingId,
+          transportId,
+          signature,
+        })
+      }
     )
 
     socket.on('dispatch-offers', () => {

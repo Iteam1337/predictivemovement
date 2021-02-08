@@ -3,6 +3,10 @@ import { useParams } from 'react-router-dom'
 import SignatureCanvas from 'react-signature-canvas'
 import styled from 'styled-components'
 import * as Elements from './shared-elements/'
+import * as stores from './utils/state/stores'
+import SuccessScreen from './components/SuccessScreen'
+import nameIcon from './assets/contact-name.svg'
+import * as FormInputs from './components/forms/inputs'
 
 const Container = styled.div`
   padding: 1.875rem;
@@ -37,52 +41,133 @@ const ButtonContainer = styled.div`
   }
 `
 
-const Component: React.FC<{
-  onSubmit: (base64Signature: string) => void
-}> = ({ onSubmit }) => {
-  const nodeRef = React.useRef<SignatureCanvas>(null)
-  const params = useParams<{ t?: string; b?: string }>()
-  console.log('tis is params:', params)
-  const clear = () => nodeRef?.current?.clear()
+const Loading = () => {
+  return (
+    <Container>
+      <p>Laddar...</p>
+    </Container>
+  )
+}
 
+const BookingNotFound = () => {
+  return (
+    <Container>
+      <p>Booking not found</p>
+    </Container>
+  )
+}
+
+const Component: React.FC<{
+  onSubmit: (
+    bookingId: string,
+    transportId: string,
+    base64Signature: string,
+    signedBy: string,
+    createdAt: Date
+  ) => void
+}> = ({ onSubmit }) => {
+  const [signedBy, setSignedBy] = React.useState<string>('')
+  const [isFinished, setIsFinished] = React.useState<boolean>(false)
+  const nodeRef = React.useRef<SignatureCanvas>(null)
+  const params = useParams<{ bookingId?: string; transportId?: string }>()
+  const bookings = stores.dataState((state) => state.bookings)
+
+  const booking = bookings.find((b) => b.id === params.bookingId)
+
+  React.useEffect(() => {
+    if (booking?.metadata?.recipient?.name) {
+      setSignedBy(booking.metadata.recipient.name)
+    }
+  }, [booking])
+
+  const onTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setSignedBy(event.target.value)
+
+  const clear = () => nodeRef?.current?.clear()
   const confirm = () => {
     const signatureAsBase64 = nodeRef?.current?.getTrimmedCanvas().toDataURL()
-    if (!nodeRef.current?.isEmpty() && signatureAsBase64)
-      onSubmit(signatureAsBase64)
+
+    if (
+      !nodeRef.current?.isEmpty() &&
+      signatureAsBase64 &&
+      params.transportId &&
+      params.bookingId &&
+      signedBy
+    ) {
+      onSubmit(
+        params.transportId,
+        params.bookingId,
+        signatureAsBase64,
+        signedBy,
+        new Date()
+      )
+      setIsFinished(true)
+    }
   }
+
+  if (isFinished) {
+    return (
+      <SuccessScreen
+        infoText={'Signering klar! Du kan nu stänga detta fönster.'}
+      />
+    )
+  }
+  const hasBookings = Boolean(bookings.length)
 
   return (
     <Container>
-      <div>
-        <Elements.Typography.BoldParagraph>
-          Rita din signatur i rutan.
-        </Elements.Typography.BoldParagraph>
-        <CanvasContainer>
-          <SignatureCanvas
-            ref={nodeRef}
-            penColor="black"
-            canvasProps={{
-              className: 'signature_canvas',
-            }}
-          />
-        </CanvasContainer>
-      </div>
-      <ButtonContainer>
-        <Elements.Buttons.CancelButton
-          onClick={clear}
-          color="#666666"
-          width="150px"
-        >
-          Rensa
-        </Elements.Buttons.CancelButton>
-        <Elements.Buttons.SubmitButton
-          onClick={confirm}
-          color="#666666"
-          width="150px "
-        >
-          Bekräfta
-        </Elements.Buttons.SubmitButton>
-      </ButtonContainer>
+      {!hasBookings && <Loading />}
+      {hasBookings && !booking && <BookingNotFound />}
+      {hasBookings && booking && (
+        <>
+          <div>
+            <Elements.Typography.BoldParagraph>
+              Rita din signatur i rutan.
+            </Elements.Typography.BoldParagraph>
+            <CanvasContainer>
+              <SignatureCanvas
+                ref={nodeRef}
+                penColor="black"
+                canvasProps={{
+                  className: 'signature_canvas',
+                }}
+              />
+            </CanvasContainer>
+            <Elements.Layout.MarginTopContainerSm>
+              <Elements.Layout.InputInnerContainer>
+                <Elements.Icons.FormInputIcon
+                  alt="Contact name icon"
+                  src={`${nameIcon}`}
+                />
+                <FormInputs.TextInput
+                  onFocus={() => {}}
+                  name="signedByName"
+                  value={signedBy}
+                  onChangeHandler={onTextInputChange}
+                  placeholder="Namn"
+                  iconInset
+                />
+              </Elements.Layout.InputInnerContainer>
+            </Elements.Layout.MarginTopContainerSm>
+          </div>
+          <ButtonContainer>
+            <Elements.Buttons.CancelButton
+              onClick={clear}
+              color="#666666"
+              width="150px"
+            >
+              Rensa
+            </Elements.Buttons.CancelButton>
+            <Elements.Buttons.SubmitButton
+              onClick={confirm}
+              color="#666666"
+              width="150px "
+            >
+              Bekräfta
+            </Elements.Buttons.SubmitButton>
+          </ButtonContainer>
+        </>
+      )}
     </Container>
   )
 }

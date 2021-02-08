@@ -25,6 +25,22 @@ const App = () => {
 
   const isMobile = window.innerWidth <= 645
 
+  const createDeliverySignature = (
+    bookingId: string,
+    transportId: string,
+    signature: string,
+    signedBy: string,
+    createdAt: Date
+  ) => {
+    socket.emit('signed-delivery', {
+      bookingId,
+      transportId,
+      signature,
+      signedBy,
+      createdAt,
+    })
+  }
+
   const createTransport = (params: any) => {
     socket.emit('create-transport', params)
   }
@@ -91,10 +107,6 @@ const App = () => {
     })
   })
 
-  const handleParcelSignatureConfirm = (signature: string) => {
-    console.log(signature)
-  }
-
   return (
     <>
       {!isMobile && <Logotype />}
@@ -104,10 +116,10 @@ const App = () => {
       />
       <Switch>
         <Route exact path="/sign-delivery/:transportId/:bookingId">
-          <SignParcel onSubmit={handleParcelSignatureConfirm} />
+          <SignParcel onSubmit={createDeliverySignature} />
         </Route>
 
-        <Route path="/">
+        <Route path={['/bookings', '/']}>
           <Sidebar
             isMobile={isMobile}
             createBooking={createBooking}

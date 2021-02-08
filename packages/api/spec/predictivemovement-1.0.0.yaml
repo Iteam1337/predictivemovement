@@ -79,7 +79,53 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
   /bookings/{booking_id}:
     get:
+      operationId: 'getBooking'
       description: Get info about a specific booking
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: bookingId
+          in: path
+          description: ID of the booking that you want info about
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+    delete:
+      operationId: 'deleteBooking'
+      description: Delete a booking based on bookingId
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: booking_id
+          in: path
+          description: ID of the booking that you want to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+  /bookings:
+    post:
+      operationId: 'createBooking'
+      description: Create a booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booking'
       security:
         - bearerAuth: []
       responses:
@@ -88,9 +134,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Booking'
+                type: object
+                properties:
+                  bookingId:
+                    type: string
+                    format: int64
   /me:
     get:
+      operationId: 'getMe'
       description: Get your own user profile
       security:
         - bearerAuth: []
@@ -249,6 +300,8 @@ components:
             - placed
             - approved
             - delivered
+            - new
+            - deleted
         complete:
           type: boolean
           default: false
@@ -257,7 +310,6 @@ components:
       required:
         - id
         - tripId
-        - quantity
         - shipDate
         - status
         - complete
@@ -308,6 +360,20 @@ components:
         quantity:
           type: integer
           format: int32
+    BookingNotification:
+      type: object
+      description: Booking notifications
+      properties:
+        bookingId:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+          enum:
+            - new
+            - deleted
+            - error
     User:
       type: object
       properties:

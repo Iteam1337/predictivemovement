@@ -204,4 +204,18 @@ defmodule BookingTest do
     %{size: size} = Booking.get(id)
     assert new_size == size
   end
+
+  test "should allow booking to be deleted" do
+    assert Engine.BookingStore.get_bookings() |> length == 0
+
+    id =
+      BookingGenerator.generate_booking_props()
+      |> Booking.make()
+
+    assert Engine.BookingStore.get_bookings() |> length == 1
+
+    Booking.delete(id)
+
+    assert Engine.BookingStore.get_bookings() |> length == 0
+  end
 end

@@ -18,15 +18,22 @@ const Container = styled.div`
 
 const CanvasContainer = styled.div`
   background: white;
-  width: 100%;
+  width: 450px;
   height: 200px;
   border: 2px dashed grey;
+  @media (max-width: 640px) {
+    width: 350px;
+  }
 `
 
 const ButtonContainer = styled.div`
+  max-width: 450px;
   width: 100%;
   display: flex;
   gap: 0.875rem;
+  @media (max-width: 640px) {
+    width: 350px;
+  }
 `
 
 const Component: React.FC<{

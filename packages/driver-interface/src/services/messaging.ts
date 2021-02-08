@@ -1,10 +1,14 @@
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Message } from 'telegraf/typings/telegram-types'
+import { Markup } from 'telegraf'
+
 import bot from '../adapters/bot'
 import * as helpers from '../helpers'
 import { Booking, Instruction } from '../types'
 import { getDirectionsUrl, getDirectionsFromInstructionGroups } from './google'
 import { getAddressFromCoordinate } from './pelias'
+import cache from './cache'
+
 const PHONE_GROUPCHAT_ERROR =
   'Bad Request: phone number can be requested in private chats only'
 
@@ -333,13 +337,36 @@ export const sendPhotoReceived = (
     }
   )
 
-export const sendBeginDeliveryAcknowledgement = (
+export const sendBeginDeliveryAcknowledgement = async (
   telegramId: number
-): Promise<Message> =>
-  bot.telegram.sendMessage(
-    telegramId,
-    'Fotografera nu mottagaren tillsammans med paketet och skicka bilden här.'
+): Promise<Message> => {
+  const url = `${
+    process.env.ENGINE_UI_URL || 'http://127.0.0.1:3000'
+  }/sign/${await cache.getVehicleIdByTelegramId(telegramId)}`
+
+  const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
+    telegramId
   )
+  const instruction = await cache.getInstructionGroup(instructionGroupId)
+
+  console.log('instruction:', instruction)
+  return bot.telegram.sendMessage(
+    telegramId,
+    'Följ länken nedan för att signera leveransen.',
+    {
+      reply_markup: Markup.inlineKeyboard([
+        Markup.urlButton('Signera', url),
+        Markup.callbackButton(
+          'Jag har signerat',
+          JSON.stringify({
+            e: 'delivered',
+            id: instructionGroupId,
+          })
+        ),
+      ]),
+    }
+  )
+}
 
 export const sendCouldNotSavePhoto = async (
   telegramId: number

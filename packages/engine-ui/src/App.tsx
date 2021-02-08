@@ -56,6 +56,10 @@ const App = () => {
     socket.emit('update-transport', transport)
   }
 
+  useSocket('service-disruption', (status: any) => {
+    console.log(status)
+  })
+
   useSocket('notification', (data: notificationTypes.Notification) => {
     updateNotifications((notifications) => notifications.concat(data))
   })

@@ -10,6 +10,7 @@ import * as notificationTypes from './notificationTypes'
 import * as stores from './utils/state/stores'
 import * as types from './types'
 import NotFound from './components/NotFound'
+import ServerStatusBar from './components/ServerStatusBar'
 
 const App = () => {
   const { socket } = useSocket()
@@ -20,6 +21,10 @@ const App = () => {
 
   const setDataState = stores.dataState(
     React.useCallback((state) => state.set, [])
+  )
+
+  const [isServiceDisruption, setIsServiceDisruption] = React.useState<string>(
+    ''
   )
 
   const isMobile = window.innerWidth <= 645
@@ -56,8 +61,9 @@ const App = () => {
     socket.emit('update-transport', transport)
   }
 
-  useSocket('service-disruption', (status: any) => {
-    console.log(status)
+  useSocket('service-disruption', (data: any) => {
+    console.log(data.status)
+    setIsServiceDisruption(data.status.status)
   })
 
   useSocket('notification', (data: notificationTypes.Notification) => {
@@ -96,6 +102,7 @@ const App = () => {
 
   return (
     <>
+      <ServerStatusBar serviceDisruption={isServiceDisruption} />
       {!isMobile && <Logotype />}
       <Notifications
         notifications={notifications}

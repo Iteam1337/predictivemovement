@@ -153,11 +153,15 @@ module.exports = (io) => {
     })
 
     checkServiceStatus((status) => {
-      socket.emit('service-disruption', status === 'error')
+      socket.emit('service-disruption', {
+        status,
+      })
     })
   })
 
   serviceStatus.fork().each((status) => {
-    io.sockets.emit('service-disruption', status === 'error')
+    io.sockets.emit('service-disruption', {
+      status,
+    })
   })
 }

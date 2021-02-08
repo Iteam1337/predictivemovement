@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSocket } from 'use-socketio'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
 import Notifications from './components/Notifications'
@@ -102,26 +102,28 @@ const App = () => {
         notifications={notifications}
         updateNotifications={updateNotifications}
       />
-      <Route path="/sign/:id">
-        <SignParcel onSubmit={handleParcelSignatureConfirm} />
-      </Route>
-      <Sidebar
-        isMobile={isMobile}
-        createBooking={createBooking}
-        dispatchOffers={dispatchOffers}
-        createTransport={createTransport}
-        deleteBooking={deleteBooking}
-        deleteTransport={deleteTransport}
-        moveBooking={moveBooking}
-        updateBooking={updateBooking}
-        updateTransport={updateTransport}
-      />
-      {!isMobile && (
-        <Route path="/">
-          <Map />
+      <Switch>
+        <Route exact path="/sign-delivery/:transportId/:bookingId">
+          <SignParcel onSubmit={handleParcelSignatureConfirm} />
         </Route>
-      )}
-      <Route component={NotFound} />
+
+        <Route path="/">
+          <Sidebar
+            isMobile={isMobile}
+            createBooking={createBooking}
+            dispatchOffers={dispatchOffers}
+            createTransport={createTransport}
+            deleteBooking={deleteBooking}
+            deleteTransport={deleteTransport}
+            moveBooking={moveBooking}
+            updateBooking={updateBooking}
+            updateTransport={updateTransport}
+          />
+          {!isMobile && <Map />}
+        </Route>
+
+        <Route component={NotFound} />
+      </Switch>
     </>
   )
 }

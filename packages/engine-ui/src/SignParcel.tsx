@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import SignatureCanvas from 'react-signature-canvas'
 import styled from 'styled-components'
 import * as Elements from './shared-elements/'
@@ -40,7 +41,8 @@ const Component: React.FC<{
   onSubmit: (base64Signature: string) => void
 }> = ({ onSubmit }) => {
   const nodeRef = React.useRef<SignatureCanvas>(null)
-
+  const params = useParams<{ t?: string; b?: string }>()
+  console.log('tis is params:', params)
   const clear = () => nodeRef?.current?.clear()
 
   const confirm = () => {

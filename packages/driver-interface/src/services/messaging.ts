@@ -340,19 +340,22 @@ export const sendPhotoReceived = (
 export const sendBeginDeliveryAcknowledgement = async (
   telegramId: number
 ): Promise<Message> => {
-  const url = `${
-    process.env.ENGINE_UI_URL || 'http://127.0.0.1:3000'
-  }/sign/${await cache.getVehicleIdByTelegramId(telegramId)}`
-
   const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
     telegramId
   )
-  const instruction = await cache.getInstructionGroup(instructionGroupId)
+  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
+  const [instruction] = await cache.getInstructionGroup(instructionGroupId)
 
-  console.log('instruction:', instruction)
+  const url = `${
+    process.env.ENGINE_UI_URL || 'http://127.0.0.1:3000'
+  }/sign-delivery/${transportId}/${instruction.id}`
+
   return bot.telegram.sendMessage(
     telegramId,
-    'Följ länken nedan för att signera leveransen.',
+    `
+    Följ länken nedan för att signera leveransen.
+    Om signeringen ska ske på en annan enhet så kan du kopiera länken till sidan
+    där signeringen sker genom att hålla inne [Signera]-knappen och välja "Copy link".`,
     {
       reply_markup: Markup.inlineKeyboard([
         Markup.urlButton('Signera', url),

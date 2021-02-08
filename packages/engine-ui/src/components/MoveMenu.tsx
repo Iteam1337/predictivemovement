@@ -4,7 +4,7 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import styled from 'styled-components'
 import * as helpers from '../utils/helpers'
-import { Route } from '../types'
+import * as types from '../types'
 
 const MenuButton = styled.button`
   font-size: 0.75rem;
@@ -21,7 +21,7 @@ const MenuButton = styled.button`
 
 interface props {
   bookingId: string
-  transports: Route[]
+  transports: types.Route[]
   currentTransportId: string
   moveBooking: (bookingId: string, transportId: string) => void
 }

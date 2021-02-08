@@ -48,6 +48,9 @@ data:
             "retries": 1,
             "timeout": 5000
           }
+        },
+        "targets": {
+          "auto_discover": true
         }
       },
       "acceptance-tests": {
@@ -81,11 +84,11 @@ data:
         },
         "openstreetmap": {
           "download": [{
-              "sourceURL": "https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf"
+              "sourceURL": "https://download.geofabrik.de/europe/sweden-latest.osm.pbf"
           }],
           "datapath": "/data/openstreetmap",
           "import": [{
-            "filename": "planet-latest.osm.pbf"
+            "filename": "sweden-latest.osm.pbf"
           }]
         },
         "polyline": {
@@ -93,13 +96,13 @@ data:
           "files": ["extract.0sv"]
         },
         "whosonfirst": {
+          "countryCode": "SE",
           "sqlite": false,
-          "importVenues": false,
           "importPostalcodes": true,
           "datapath": "/data/whosonfirst"
         },
         "csv": {
-          "datapath": "/data/csv"
+          "datapath": "/data/lantmateriet/"
         }
       }
     }

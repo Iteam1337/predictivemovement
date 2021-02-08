@@ -19,22 +19,6 @@ defmodule VehicleTest do
     assert is_binary(result)
   end
 
-  test "required start address" do
-    result =
-      %{
-        id: 87147
-      }
-      |> Vehicle.make()
-
-    assert result == [
-             {:error, :start_address, :presence, "must be present"},
-             {:error, [:end_address, :lat], :number, "must be a number"},
-             {:error, [:end_address, :lon], :number, "must be a number"},
-             {:error, [:start_address, :lat], :number, "must be a number"},
-             {:error, [:start_address, :lon], :number, "must be a number"}
-           ]
-  end
-
   test "does not allow malformed time constraints" do
     result =
       TransportGenerator.generate_transport_props(%{earliest_start: "foo", latest_end: "bar"})
@@ -116,6 +100,7 @@ defmodule VehicleTest do
            ]
   end
 
+
   test "should allow vehicle to be updated" do
     id =
       TransportGenerator.generate_transport_props()
@@ -127,7 +112,6 @@ defmodule VehicleTest do
       end_address: %{lat: 13.37, lon: 13.37},
       earliest_start: nil,
       latest_end: nil,
-      profile: "1337",
       capacity: %{volume: 1337, weight: 1337},
       metadata:
         "{\"recipient\":{\"contact\":\"0701234567\"},\"sender\":{\"contact\":\"0701234567\"}}"
@@ -138,13 +122,75 @@ defmodule VehicleTest do
     %{
       start_address: start_address,
       end_address: end_address,
-      profile: profile,
       capacity: capacity
     } = Vehicle.get(id)
 
     assert start_address == updated_vehicle.start_address
     assert end_address == updated_vehicle.end_address
-    assert profile == updated_vehicle.profile
     assert capacity == updated_vehicle.capacity
+  end
+
+  test "should allow vehicle to be updated with partial data" do
+    id =
+      TransportGenerator.generate_transport_props()
+      |> Vehicle.make()
+
+
+    updated_vehicle = %{
+      id: id,
+      start_address: %{lat: 13.37, lon: 13.37}
+    }
+
+    Vehicle.update(updated_vehicle)
+
+    %{
+      start_address: start_address
+    } = Vehicle.get(id)
+
+    assert start_address == updated_vehicle.start_address
+  end
+
+  test "update should correctly run all validators" do
+    id =
+      TransportGenerator.generate_transport_props()
+      |> Vehicle.make()
+
+    updated_vehicle = %{
+      id: id,
+      earliest_start: "foo",
+      latest_end: "bar",
+      capacity: %{volume: 2, weight: 13.4},
+      start_address: %{
+        lat: "21321321",
+        lon: "2321312",
+        city: "",
+        name: "hafdoajgjagia",
+        street: ""
+      },
+      end_address: %{
+        lat: "21321321",
+        lon: "2321312",
+        city: "",
+        name: "hafdoajgjagia",
+        street: ""
+      }
+    }
+
+    result = Vehicle.update(updated_vehicle)
+
+    assert result == [
+      {
+        :error,
+        :earliest_start,
+        :format,
+        "must have the correct format"
+      },
+      {:error, :latest_end, :format, "must have the correct format"},
+      {:error, [:capacity, :weight], :by, "must be an integer"},
+      {:error, [:end_address, :lat], :number, "must be a number"},
+      {:error, [:end_address, :lon], :number, "must be a number"},
+      {:error, [:start_address, :lat], :number, "must be a number"},
+      {:error, [:start_address, :lon], :number, "must be a number"}
+    ]
   end
 end

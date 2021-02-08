@@ -73,7 +73,7 @@ Go into every folder and run the start command for the service.
 
     cd packages/engine_umbrella/
     mix deps.get
-    mix dev
+    mix setup_dev
     iex -S mix
 
 #### Running tests

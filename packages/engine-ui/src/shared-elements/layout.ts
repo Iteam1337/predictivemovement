@@ -6,7 +6,6 @@ const FlexRowWrapper = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  height: 50px;
 `
 const SectionWithMargin = styled.section`
   margin: 1.2rem 0;
@@ -57,7 +56,7 @@ const FlexContainer = styled.div`
 `
 
 const MarginBottomContainer = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -111,9 +110,9 @@ const TextInputPairItem = styled.div`
   width: 48.5%;
 `
 
-const ButtonWrapper = styled.div<{isMobile?: boolean }>`
+const ButtonWrapper = styled.div<{ isMobile?: boolean }>`
   display: flex;
-  flex-direction: ${({ isMobile }) => isMobile ? 'column-reverse': 'row'};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'column-reverse' : 'row')};
   justify-content: space-between;
   margin-top: 2rem;
 `

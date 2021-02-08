@@ -9,7 +9,6 @@ import * as Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import * as stores from '../utils/state/stores'
 import * as helpers from '../utils/helpers'
-import { Transport } from '../types'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -41,13 +40,15 @@ const RouteTitleWrapper = styled.div`
 `
 
 const TransportDetails: React.FC<{
-  transports: Transport[]
+  onMount: () => void
   deleteTransport: (id: string) => void
   onUnmount: () => void
-}> = ({ transports, deleteTransport, onUnmount }) => {
+}> = ({ deleteTransport, onUnmount, onMount }) => {
   const setMap = stores.map((state) => state.set)
   const history = useHistory()
   const setUIState = stores.ui((state) => state.dispatch)
+  const setMapLayers = stores.mapLayerState((state) => state.set)
+  const transports = stores.dataState((state) => state.transports)
 
   const [showInfo, setShowInfo] = React.useState({
     route: false,
@@ -55,10 +56,22 @@ const TransportDetails: React.FC<{
     status: false,
   })
 
-  React.useEffect(() => () => onUnmount(), [onUnmount])
-
   const { transportId } = useParams<{ transportId: string }>()
   const transport = transports.find((v) => v.id === transportId)
+
+  React.useEffect(() => {
+    onMount()
+  }, [onMount])
+
+  React.useEffect(() => {
+    return () => onUnmount()
+  }, [onUnmount])
+
+  React.useEffect(() => {
+    if (!transport) return
+
+    setMapLayers({ type: 'transportDetails', payload: { transportId } })
+  }, [setMapLayers, transports, transport, transportId])
 
   if (!transports.length) return <p>Laddar...</p>
 
@@ -68,6 +81,10 @@ const TransportDetails: React.FC<{
         Kunde inte hitta transport med id: <b>{transportId}</b>
       </p>
     )
+
+  const handleChangeClick = (transportId: string) => {
+    history.push(`/transports/edit-transport/${transportId}`)
+  }
 
   const handleDeleteClick = (transportId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
@@ -237,11 +254,21 @@ const TransportDetails: React.FC<{
           </>
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">
-          <Elements.Buttons.CancelButton
-            onClick={() => handleDeleteClick(transport.id)}
-          >
-            Radera transport
-          </Elements.Buttons.CancelButton>
+          <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.SubmitButton
+              type="button"
+              onClick={() => handleChangeClick(transport.id)}
+            >
+              Ändra transport
+            </Elements.Buttons.SubmitButton>
+          </Elements.Layout.ButtonWrapper>
+          <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.CancelButton
+              onClick={() => handleDeleteClick(transport.id)}
+            >
+              Radera transport
+            </Elements.Buttons.CancelButton>
+          </Elements.Layout.ButtonWrapper>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

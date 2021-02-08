@@ -61,6 +61,7 @@ module.exports = (io) => {
           : { status: bookingRes.fields.routingKey }
       )
     })
+
   const transports = amqp
     .exchange('outgoing_vehicle_updates', 'topic', {
       durable: true,
@@ -71,6 +72,7 @@ module.exports = (io) => {
     .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
     .map((transportRes) => {
       const transport = transportRes.json()
+
       if (transport.current_route)
         transport.currentRoute = JSON.parse(transport.current_route)
       return {
@@ -107,6 +109,18 @@ module.exports = (io) => {
     console.log('deleted')
   }
 
+  const deleteTransport = (id) => {
+    transportsCache.delete(id)
+    io.emit('delete-transport', id)
+  }
+
+  const updateTransport = (partialTransport) => {
+    const transport = transportsCache.get(partialTransport.id)
+    const updatedTransport = Object.assign({}, transport, partialTransport)
+    transportsCache.set(transport.id, updatedTransport)
+    io.emit('transport-updated', updatedTransport)
+  }
+
   const transportLocationUpdates = amqp
     .exchange('incoming_vehicle_updates', 'topic', {
       durable: true,
@@ -127,11 +141,6 @@ module.exports = (io) => {
     .subscribe({ noAck: true }, [routingKeys.DELETED])
     .map((transportData) => transportData.json())
     .each(deleteTransport)
-
-  function deleteTransport(id) {
-    transportsCache.delete(id)
-    io.emit('delete-transport', id)
-  }
 
   ///////// Publishers
 
@@ -280,17 +289,32 @@ module.exports = (io) => {
       )
   }
 
-  const updateVehicle = (vehicle) => {
+  const transportUpdates = amqp
+    .exchange('outgoing_vehicle_updates', 'topic', {
+      durable: true,
+    })
+    .queue('transport_updated', {
+      durable: true,
+    })
+    .subscribe({ noAck: true }, routingKeys.UPDATED)
+    .map((transportRes) => transportRes.json())
+    .each(updateTransport)
+
+  const publishUpdateTransport = (transport) => {
     return amqp
       .exchange('incoming_vehicle_updates', 'topic', {
         durable: true,
       })
-      .publish(vehicle, routingKeys.UPDATED, {
+      .publish(transport, routingKeys.UPDATED, {
         persistent: true,
       })
       .then(() =>
         console.log(
-          ` [x] Updated vehicle '${JSON.stringify(vehicle, null, 2)}'`
+          ` [x] Published update transport '${JSON.stringify(
+            transport,
+            null,
+            2
+          )}'`
         )
       )
   }
@@ -310,6 +334,7 @@ module.exports = (io) => {
     transportNotifications,
     bookingNotifications,
     updateBooking,
-    updateVehicle,
+    publishUpdateTransport,
+    transportUpdates,
   }
 }

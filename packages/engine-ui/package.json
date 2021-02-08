@@ -58,6 +58,7 @@
     ]
   },
   "devDependencies": {
+    "@danmarshall/deckgl-typings": "^4.4.2",
     "@iteam/eslint-config-react": "^0.2.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-signature-canvas": "^1.0.1",

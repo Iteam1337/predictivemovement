@@ -1,0 +1,388 @@
+openapi: 3.0.0
+info:
+  description: |
+    This is the OpenAPI for Predictive Movement.
+  version: 1.0.0-oas3
+  title: Predictive Movement API
+  contact:
+    email: ram@iteam.se
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /transports:
+    get:
+      operationId: 'getTransports'
+      description: Get all the transports to which you have access
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transport'
+  /itinerary:
+    get:
+      operationId: 'getItinerary'
+      description: Get an itinerary
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: transportId
+          in: query
+          description: ID of the transport to which the itinerary is assigned
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Itinerary'
+  '/activity/{activity_id}/complete':
+    post:
+      description: Create an event for an activity of type complete
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  '/activity/{activity_id}/failure':
+    post:
+      description: Create an event for an activity of type failure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                reason:
+                  type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /bookings/{booking_id}:
+    get:
+      description: Get info about a specific booking
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+  /me:
+    get:
+      description: Get your own user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users:
+    post:
+      security:
+        - bearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      description: Create a new user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+servers:
+  - url: 'https://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0'
+  - url: 'http://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0'
+components:
+  requestBodies:
+    User:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Auth:
+      type: object
+      properties:
+        token:
+          type: string
+    Activity:
+      type: object
+      properties:
+        id:
+          nullable: false
+          type: string
+        booking_id:
+          type: string
+        distance:
+          type: number
+        duration:
+          type: number
+        type:
+          type: string
+          enum: [start, end, pickup, delivery]
+        address:
+          type: object
+          properties:
+            schema:
+              $ref: '#/components/schemas/Position'
+    Transport:
+      type: object
+      properties:
+        transport_id:
+          type: string
+        busy:
+          type: boolean
+        capacity:
+          type: object
+          properties:
+            volume:
+              type: number
+            weight:
+              type: number
+        earliestStart:
+          type: string
+          format: date-time
+        latestEnd:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+        startAddress:
+          type: object
+          properties:
+            city:
+              type: string
+            street:
+              type: string
+            name:
+              type: string
+            position:
+              properties:
+                schema:
+                  $ref: '#/components/schemas/Position'
+        endAddress:
+          type: object
+          properties:
+            city:
+              type: string
+            street:
+              type: string
+            name:
+              type: string
+            lon:
+              type: number
+            lat:
+              type: number
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: int64
+        tripId:
+          type: integer
+          format: int64
+        delivery:
+          type: object
+          properties:
+            city:
+              type: string
+            name:
+              type: string
+            street:
+              type: string
+            position:
+              $ref: '#/components/schemas/Position'
+        pickup:
+          type: object
+          properties:
+            city:
+              type: string
+            name:
+              type: string
+            street:
+              type: string
+            position:
+              $ref: '#/components/schemas/Position'
+        details:
+          properties:
+            schema:
+              $ref: '#/components/schemas/BookingDetails'
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+        complete:
+          type: boolean
+          default: false
+      xml:
+        name: Order
+      required:
+        - id
+        - tripId
+        - quantity
+        - shipDate
+        - status
+        - complete
+    BookingDetails:
+      type: object
+      properties:
+        metadata:
+          type: object
+          properties:
+            cargo:
+              type: string
+            fragile:
+              type: boolean
+              default: false
+            recipient:
+              type: object
+              properties:
+                contact:
+                  type: string
+                name:
+                  type: string
+                info:
+                  type: string
+            sender:
+              type: object
+              properties:
+                contact:
+                  type: string
+                name:
+                  type: string
+                info:
+                  type: string
+        weight:
+          type: number
+        volume:
+          type: number
+        dimensions:
+          type: object
+          properties:
+            width:
+              type: number
+            height:
+              type: number
+            length:
+              type: number
+        loadingMeters:
+          type: number
+        quantity:
+          type: integer
+          format: int32
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+      xml:
+        name: User
+      required:
+        - id
+        - username
+        - firstName
+        - lastName
+        - email
+        - phone
+    Place:
+      type: object
+      required:
+        - position
+        - dropoff
+      properties:
+        position:
+          $ref: '#/components/schemas/Position'
+        address:
+          type: string
+    Position:
+      type: object
+      required:
+        - lon
+        - lat
+      properties:
+        lon:
+          type: number
+          format: float
+        lat:
+          type: number
+          format: float
+    Plan:
+      type: object
+    Itinerary:
+      type: object
+      properties:
+        transport_id:
+          type: string
+        route:
+          type: object
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+      xml:
+        name: Trips
+      required:
+        - transport_id
+        - route
+        - activities
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string

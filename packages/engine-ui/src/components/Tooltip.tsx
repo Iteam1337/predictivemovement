@@ -4,7 +4,7 @@ import * as Elements from '../shared-elements'
 import * as helpers from '../utils/helpers'
 import { useRouteMatch } from 'react-router-dom'
 import * as stores from '../utils/state/stores'
-import * as UIStateTypes from '../utils/state/types'
+import * as types from '../types'
 
 const Container = styled.div<{ x: number; y: number }>`
   position: absolute;
@@ -60,8 +60,8 @@ const useAddressFromCoordinate = ({
   lat,
   lon,
 }: {
-  lat: number
-  lon: number
+  lat: number | undefined
+  lon: number | undefined
 }) => {
   const [state, set] = React.useState<{
     error: Error | undefined
@@ -75,13 +75,15 @@ const useAddressFromCoordinate = ({
 
   React.useEffect(() => {
     set({ loading: true, data: undefined, error: undefined })
-
-    helpers
-      .getAddressFromCoordinate({ lat, lon })
-      .then((data) => set((current) => ({ ...current, loading: false, data })))
-      .catch((error) =>
-        set((current) => ({ ...current, loading: false, error }))
-      )
+    if (lat && lon)
+      helpers
+        .getAddressFromCoordinate({ lat, lon })
+        .then((data) =>
+          set((current) => ({ ...current, loading: false, data }))
+        )
+        .catch((error) =>
+          set((current) => ({ ...current, loading: false, error }))
+        )
   }, [lat, lon])
 
   return state
@@ -93,8 +95,8 @@ enum EntityTypes {
 }
 
 const Component: React.FC<{
-  position: { x: number; y: number; lat: number; lon: number }
-}> = ({ position: { lat, lon, ...rest } }) => {
+  position: { x?: number; y?: number; lat?: number; lon?: number }
+}> = ({ position: { lat, lon, x, y } }) => {
   const { data, error, loading } = useAddressFromCoordinate({ lat, lon })
 
   const [lastFocusedInput, setUIState] = stores.ui((state) => [
@@ -133,7 +135,7 @@ const Component: React.FC<{
 
   const getAddAsInputButton = (
     pathname: string,
-    inputCode: UIStateTypes.lastFocusedInput
+    inputCode: types.state.lastFocusedInput
   ) => (
     <Elements.Typography.InfoSmStrong>
       <AddButton
@@ -148,8 +150,10 @@ const Component: React.FC<{
     </Elements.Typography.InfoSmStrong>
   )
 
+  if (!x || !y || !lat || !lon) return null
+
   return (
-    <Container {...rest}>
+    <Container x={x} y={y}>
       <CloseButtonContainer>
         <CloseButton onClick={handleClose}>X</CloseButton>
       </CloseButtonContainer>

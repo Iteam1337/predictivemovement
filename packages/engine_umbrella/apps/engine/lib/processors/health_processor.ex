@@ -1,4 +1,7 @@
 defmodule Engine.HealthProcessor do
+  @moduledoc """
+  Check various health attributes of the application
+  """
   use Broadway
   require Logger
 
@@ -25,9 +28,31 @@ defmodule Engine.HealthProcessor do
     )
   end
 
-  def handle_message(_, %{ metadata: %{ amqp_channel: amqp_channel,  correlation_id: correlation_id, reply_to: reply_to }} = message, _) do
-    status = Engine.Health.is_alive?()
-    AMQP.Basic.publish(amqp_channel, "", reply_to, Jason.encode!(status))
+  def is_alive? do
+    {:ok, _} = Engine.Adapters.RMQ.get_connection()
+    true
+  rescue
+    _e ->
+      false
+  end
+
+  def handle_message(
+        _,
+        %{
+          metadata: %{
+            amqp_channel: amqp_channel,
+            correlation_id: correlation_id,
+            reply_to: reply_to
+          }
+        } = message,
+        _
+      ) do
+    status = is_alive?()
+
+    AMQP.Basic.publish(amqp_channel, "", reply_to, Jason.encode!(status),
+      correlation_id: correlation_id
+    )
+
     message
   end
 end

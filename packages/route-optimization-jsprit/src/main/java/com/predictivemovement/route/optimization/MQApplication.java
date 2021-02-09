@@ -51,13 +51,23 @@ public class MQApplication {
 		log.info("Message read from queue: {}", msg);
 
 		JSONObject routeRequest = new JSONObject(msg);
-		RouteOptimization routeOptimization = new RouteOptimization();
-		VRPSolution vrpSolution = routeOptimization.calculate(routeRequest);
-    
-		StatusResponse statusResponse = new StatusResponse(vrpSolution);
+
+		RouteProcessing routeProcessing = newRouteProcessing(routeRequest);
+		routeProcessing.calculate(routeRequest);
+
+		StatusResponse statusResponse = routeProcessing.getStatusResponse();
 		String response = statusResponse.toString();
 
 		log.info("Publishing result: {}", response);
 		return response;
+	}
+
+	protected RouteProcessing newRouteProcessing(JSONObject routeRequest) {
+		String metrics = routeRequest.optString("metrics", "false").toLowerCase();
+		if (metrics.equals("true")) {
+			return new RouteProcessingWithMetrics();
+		} else {
+			return new RouteProcessingBasic();
+		}
 	}
 }

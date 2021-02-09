@@ -1,0 +1,110 @@
+{
+    "vehicles": [
+        {
+            "start_address": {
+                "hint": "SUQDgFtAK4AXAAAAAAAAAEoIAAB5AQAA_rDQQQAAAACO9RNFTPXRQxcAAAAAAAAASggAAHkBAAByAQAA2Z0EAW4phgNsnwQB6jOGA0MAXxHEH59u",
+                "lon": 17.079769,
+                "lat": 59.124078
+            },
+            "id": "vehicle-0",
+            "end_address": {
+                "hint": "SUQDgFtAK4AXAAAAAAAAAEoIAAB5AQAA_rDQQQAAAACO9RNFTPXRQxcAAAAAAAAASggAAHkBAAByAQAA2Z0EAW4phgNsnwQB6jOGA0MAXxHEH59u",
+                "lon": 17.079769,
+                "lat": 59.124078
+            }
+        }
+    ],
+    "matrix": {
+        "code": "Ok",
+        "sources": [
+            {
+                "distance": 299.885281,
+                "hint": "SUQDgFtAK4AXAAAAAAAAAEoIAAB5AQAA_rDQQQAAAACO9RNFTPXRQxcAAAAAAAAASggAAHkBAAByAQAA2Z0EAW4phgNsnwQB6jOGA0MAXxHEH59u",
+                "name": "",
+                "location": [
+                    17.079769,
+                    59.124078
+                ]
+            },
+            {
+                "distance": 93.007204,
+                "hint": "tK8ngLavJ4AgAAAACQAAABYBAADDAAAALKa0QWtNvEDtw0FDJM4HQyAAAAAJAAAAFgEAAMMAAAByAQAATHoOASAakgNOeQ4B5xaSAwcAbxHEH59u",
+                "name": "",
+                "location": [
+                    17.726028,
+                    59.906592
+                ]
+            },
+            {
+                "distance": 201.643549,
+                "hint": "eQQogHsEKIARAAAAEwAAAE4LAAAcAwAAOWJFQe_fTkG91vtEsMQKRBEAAAATAAAATgsAABwDAAByAQAA10UJAfwxkgNFOwkBqDaSA1QAnwLEH59u",
+                "name": "",
+                "location": [
+                    17.384919,
+                    59.9127
+                ]
+            }
+        ],
+        "destinations": [
+            {
+                "distance": 299.885281,
+                "hint": "SUQDgFtAK4AXAAAAAAAAAEoIAAB5AQAA_rDQQQAAAACO9RNFTPXRQxcAAAAAAAAASggAAHkBAAByAQAA2Z0EAW4phgNsnwQB6jOGA0MAXxHEH59u",
+                "name": "",
+                "location": [
+                    17.079769,
+                    59.124078
+                ]
+            },
+            {
+                "distance": 93.007204,
+                "hint": "tK8ngLavJ4AgAAAACQAAABYBAADDAAAALKa0QWtNvEDtw0FDJM4HQyAAAAAJAAAAFgEAAMMAAAByAQAATHoOASAakgNOeQ4B5xaSAwcAbxHEH59u",
+                "name": "",
+                "location": [
+                    17.726028,
+                    59.906592
+                ]
+            },
+            {
+                "distance": 201.643549,
+                "hint": "eQQogHsEKIARAAAAEwAAAE4LAAAcAwAAOWJFQe_fTkG91vtEsMQKRBEAAAATAAAATgsAABwDAAByAQAA10UJAfwxkgNFOwkBqDaSA1QAnwLEH59u",
+                "name": "",
+                "location": [
+                    17.384919,
+                    59.9127
+                ]
+            }
+        ],
+        "durations": [
+            [
+                0,
+                7385.3,
+                7694
+            ],
+            [
+                7351.3,
+                0,
+                1809.4
+            ],
+            [
+                7667.5,
+                1856.1,
+                0
+            ]
+        ]
+    },
+    "bookings": [
+        {
+            "delivery": {
+                "hint": "eQQogHsEKIARAAAAEwAAAE4LAAAcAwAAOWJFQe_fTkG91vtEsMQKRBEAAAATAAAATgsAABwDAAByAQAA10UJAfwxkgNFOwkBqDaSA1QAnwLEH59u",
+                "lon": 17.384919,
+                "lat": 59.9127
+            },
+            "pickup": {
+                "hint": "tK8ngLavJ4AgAAAACQAAABYBAADDAAAALKa0QWtNvEDtw0FDJM4HQyAAAAAJAAAAFgEAAMMAAAByAQAATHoOASAakgNOeQ4B5xaSAwcAbxHEH59u",
+                "lon": 17.726028,
+                "lat": 59.906592
+            },
+            "id": "booking-0"
+        }
+    ]
+}

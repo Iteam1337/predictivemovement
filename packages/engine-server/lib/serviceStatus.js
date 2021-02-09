@@ -11,47 +11,78 @@ module.exports = {
   - add a function in elixir for readiness (good thing about this is that you can use as a readiness probe from k8s)
   - make rpc call to the readiness elixir function on a timebase and stream the result
   */
+
+  /*
+    engine-server starts -> 
+      
+      sends rpc call to engine to check health
+      gets reply OK
+      stores OK as latest check health status
+      emits to all sockets OK
+      ... X seconds passed
+
+      sends rpc call to engine to check health
+      gets reply OK
+      stores OK as latest check health status
+      emits to all sockets OK
+      ... X seconds passed
+
+      sends rpc call to engine to check health
+      gets reply OK
+      stores OK as latest check health status
+      emits to all sockets OK
+      ... X seconds passed
+      ...
+
+
+    socket connects to engine-server -> 
+      checks latest check health status
+      emit to socket OK
+  */
   serviceStatus: _([{ status: 'massive-disruption' }, { status: 'ok' }]),
 
   checkServiceStatus: async (cb) => {
-    try {
-      const correlationId = id62()
-      const conn = await open
-      const channel = await conn.createChannel()
-      await channel.assertQueue(CHECK_HEALTH_REPLY, {
-        exclusive: true,
-      })
+    setInterval(async () => {
+      try {
+        const correlationId = id62()
+        const conn = await open
+        const channel = await conn.createChannel()
+        await channel.assertQueue(CHECK_HEALTH_REPLY, {
+          exclusive: true,
+        })
 
-      channel.consume(
-        CHECK_HEALTH_REPLY,
-        (msg) => {
-          if (msg.properties.correlationId == correlationId) {
-            const isAlive = msg.content.toString() === 'true'
-            console.log('we got a result from ELIXIR', isAlive)
+        channel.consume(
+          CHECK_HEALTH_REPLY,
+          (msg) => {
+            if (msg.properties.correlationId == correlationId) {
+              const isAlive = msg.content.toString() === 'true'
+              console.log('we got a result from ELIXIR', isAlive)
 
-            channel.close()
-            clearTimeout(timeout)
-            cb({ status: isAlive ? 'ok' : 'massive-disruption' })
-          }
-        },
-        { noAck: true }
-      )
+              channel.close()
+              clearTimeout(timeout)
 
-      const payload = Buffer.from('')
-      const options = {
-        correlationId,
-        replyTo: CHECK_HEALTH_REPLY,
-      }
+              cb({ status: isAlive ? 'ok' : 'massive-disruption' })
+            }
+          },
+          { noAck: true }
+        )
 
-      channel.sendToQueue(CHECK_HEALTH, payload, options)
+        const payload = Buffer.from('')
+        const options = {
+          correlationId,
+          replyTo: CHECK_HEALTH_REPLY,
+        }
 
-      timeout = setTimeout(() => {
-        channel.close()
+        channel.sendToQueue(CHECK_HEALTH, payload, options)
+
+        timeout = setTimeout(() => {
+          channel.close()
+          cb({ status: 'massive-disruption' })
+        }, 10000)
+      } catch (ex) {
+        console.warn(ex)
         cb({ status: 'massive-disruption' })
-      }, 10000)
-    } catch (ex) {
-      console.warn(ex)
-      cb({ status: 'massive-disruption' })
-    }
+      }
+    }, 15000)
   },
 }

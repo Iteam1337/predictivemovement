@@ -82,6 +82,10 @@ const TransportDetails: React.FC<{
       </p>
     )
 
+  const handleChangeClick = (transportId: string) => {
+    history.push(`/transports/edit-transport/${transportId}`)
+  }
+
   const handleDeleteClick = (transportId: string) => {
     if (window.confirm('Är du säker på att du vill radera transporten?')) {
       deleteTransport(transportId)
@@ -250,11 +254,21 @@ const TransportDetails: React.FC<{
           </>
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">
-          <Elements.Buttons.CancelButton
-            onClick={() => handleDeleteClick(transport.id)}
-          >
-            Radera transport
-          </Elements.Buttons.CancelButton>
+          <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.SubmitButton
+              type="button"
+              onClick={() => handleChangeClick(transport.id)}
+            >
+              Ändra transport
+            </Elements.Buttons.SubmitButton>
+          </Elements.Layout.ButtonWrapper>
+          <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.CancelButton
+              onClick={() => handleDeleteClick(transport.id)}
+            >
+              Radera transport
+            </Elements.Buttons.CancelButton>
+          </Elements.Layout.ButtonWrapper>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

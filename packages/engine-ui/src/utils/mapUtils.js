@@ -280,7 +280,6 @@ const toIconClusterLayer = ({ data, type, properties }) => {
     data,
     pickable: true,
     getPosition: (d) => d.coordinates,
-    transitions: { getSize: { duration: 100 }, getColor: { duration: 100 } },
     getColor: (d) =>
       helpers.hexToRGBA(
         d.properties.active ? '#19DE8B' : '#ffffff',

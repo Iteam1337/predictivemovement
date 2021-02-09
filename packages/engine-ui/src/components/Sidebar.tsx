@@ -29,6 +29,7 @@ interface Props {
   deleteBooking: (params: any) => void
   dispatchOffers: (params: any) => void
   createTransport: (params: any) => void
+  updateTransport: (params: any) => void
   deleteTransport: (id: string) => void
   moveBooking: (bookingId: string, transportId: string) => void
 }
@@ -52,6 +53,7 @@ const Sidebar = (state: Props) => {
           <Transports
             createTransport={state.createTransport}
             deleteTransport={state.deleteTransport}
+            updateTransport={state.updateTransport}
           />
         </Route>
         <Route path="/plans">

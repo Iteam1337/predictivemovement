@@ -1,9 +1,9 @@
 const express = require('express')
 const app = express()
-const routes = require('./routes')
+const routes = require('./src/routes')
 
 routes.add(app)
 
-app.listen(3000, async () => {
+app.listen(4000, async () => {
   console.log('Running')
 })

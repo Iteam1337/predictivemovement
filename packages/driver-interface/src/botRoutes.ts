@@ -1,10 +1,8 @@
 import * as botServices from './services/bot'
 import * as messaging from './services/messaging'
-import * as amqp from './services/amqp'
 import cache from './services/cache'
 import Telegraf from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
-import { Instruction } from './types'
 
 export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
@@ -78,6 +76,12 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
         )
       case 'delivery_acknowledgement:photo':
         return botServices.handleDeliveryAcknowledgementByPhoto(telegramId)
+      case 'signature_confirm':
+        return botServices.handleFinishBookingInstructionGroup(
+          instructionGroupId,
+          'delivered',
+          telegramId
+        )
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

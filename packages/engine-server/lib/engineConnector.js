@@ -18,6 +18,7 @@ const routingKeys = {
   DELETED: 'deleted',
   BOOKING_MOVED: 'booking_moved',
   UPDATED: 'updated',
+  SIGNATURE_CONFIRMED: 'signature_confirmed',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -143,6 +144,19 @@ module.exports = (io) => {
     .each(deleteTransport)
 
   ///////// Publishers
+
+  const confirmDeliveryBySignature = (bookingId, transportId) => {
+    return amqp
+      .exchange('delivery_signatures', 'topic', {
+        durable: true,
+      })
+      .publish({ transportId, bookingId }, routingKeys.SIGNATURE_CONFIRMED, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(` [x] Confirm signature for booking: '${bookingId}'`)
+      )
+  }
 
   const createBooking = (booking) => {
     return amqp
@@ -336,5 +350,6 @@ module.exports = (io) => {
     updateBooking,
     publishUpdateTransport,
     transportUpdates,
+    confirmDeliveryBySignature,
   }
 }

@@ -42,9 +42,13 @@ const onDriverLoginSuccessful = async (
     .then((instructionGroups: Instruction[][]) => {
       if (!instructionGroups) return
 
-      return messaging
-        .sendSummary(telegramId, instructionGroups)
-        .then(() => handleNextDriverInstruction(telegramId))
+      cache
+        .setTelegramIdByVehicleId(transportId, telegramId)
+        .then(() =>
+          messaging
+            .sendSummary(telegramId, instructionGroups)
+            .then(() => handleNextDriverInstruction(telegramId))
+        )
     })
 }
 
@@ -213,6 +217,23 @@ export const beginDeliveryAcknowledgement = async (
       messaging.sendBeginDeliveryAcknowledgement(telegramId, instructionGroupId)
     )
 
+export const handleIncomingSignatureConfirmation = async (
+  transportId: string
+): Promise<Message> => {
+  const telegramId = await cache.getTelegramIdByVehicleId(transportId)
+  console.log('from bot, transportId: ', transportId)
+
+  console.log('from bot:', telegramId)
+
+  const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
+    Number(telegramId)
+  )
+  return messaging.sendSignatureConfirmation(
+    Number(telegramId),
+    instructionGroupId
+  )
+}
+
 export const handleDeliveryAcknowledgementBySignature = (
   telegramId: number,
   instructionGroupId: string
@@ -226,7 +247,7 @@ export const handleDeliveryAcknowledgementByPhoto = (
   telegramId: number
 ): Promise<Message> => messaging.sendDeliveryAcknowledgementByPhoto(telegramId)
 
-export async function onArrived(msg) {
+export async function onArrived(msg): Promise<Message | string> {
   const telegramId = msg.update.callback_query.from.id
   const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 

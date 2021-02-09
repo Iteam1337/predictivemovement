@@ -32,6 +32,7 @@ module.exports = (io) => {
     bookingNotifications,
     updateBooking,
     publishUpdateTransport,
+    confirmDeliveryBySignature,
   } = require('./engineConnector')(io)
 
   io.on('connection', function (socket) {
@@ -121,6 +122,7 @@ module.exports = (io) => {
           transportId,
           signature,
         })
+        return confirmDeliveryBySignature(bookingId, transportId)
       }
     )
 

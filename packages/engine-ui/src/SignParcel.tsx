@@ -95,8 +95,8 @@ const Component: React.FC<{
       signedBy
     ) {
       onSubmit(
-        params.transportId,
         params.bookingId,
+        params.transportId,
         signatureAsBase64,
         signedBy,
         new Date()

@@ -12,47 +12,46 @@ module.exports = {
   - make rpc call to the readiness elixir function on a timebase and stream the result
   */
   serviceStatus: _([{ status: 'massive-disruption' }, { status: 'ok' }]),
-  checkServiceStatus: (cb) => {
-    const correlationId = id62()
-    open
-      .then((conn) => conn.createChannel())
-      .then((channel) =>
-        channel
-          .assertQueue(CHECK_HEALTH_REPLY, {
-            exclusive: true,
-          })
-          .then(() =>
-            channel.consume(
-              CHECK_HEALTH_REPLY,
-              (msg) => {
-                if (msg.properties.correlationId == correlationId) {
-                  console.log(
-                    'we got a result from ELIXIR',
-                    msg.content.toString(),
-                    msg.properties
-                  )
 
-                  channel.close()
-
-                  cb({ status: 'massive-disruption' })
-                }
-              },
-              { noAck: true }
-            )
-          )
-      )
-      .catch(console.warn)
-
-    open
-      .then((conn) => conn.createChannel())
-      .then((channel) => {
-        const payload = Buffer.from(JSON.stringify({ hello: 'good song' }))
-        const options = {
-          correlationId,
-          replyTo: CHECK_HEALTH_REPLY,
-        }
-        return channel.sendToQueue(CHECK_HEALTH, payload, options)
+  checkServiceStatus: async (cb) => {
+    try {
+      const correlationId = id62()
+      const conn = await open
+      const channel = await conn.createChannel()
+      await channel.assertQueue(CHECK_HEALTH_REPLY, {
+        exclusive: true,
       })
-      .catch(console.warn)
+
+      channel.consume(
+        CHECK_HEALTH_REPLY,
+        (msg) => {
+          if (msg.properties.correlationId == correlationId) {
+            const isAlive = msg.content.toString() === 'true'
+            console.log('we got a result from ELIXIR', isAlive)
+
+            channel.close()
+            clearTimeout(timeout)
+            cb({ status: isAlive ? 'ok' : 'massive-disruption' })
+          }
+        },
+        { noAck: true }
+      )
+
+      const payload = Buffer.from('')
+      const options = {
+        correlationId,
+        replyTo: CHECK_HEALTH_REPLY,
+      }
+
+      channel.sendToQueue(CHECK_HEALTH, payload, options)
+
+      timeout = setTimeout(() => {
+        channel.close()
+        cb({ status: 'massive-disruption' })
+      }, 10000)
+    } catch (ex) {
+      console.warn(ex)
+      cb({ status: 'massive-disruption' })
+    }
   },
 }

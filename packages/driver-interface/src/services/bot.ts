@@ -184,7 +184,7 @@ export const onPhotoReceived = async (
     .then((instructionGroup: Instruction[]) =>
       instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
     )
-  console.log('saving photo for bookingIds', bookingIds)
+
   return cache
     .getDeliveryReceiptPhotos(bookingIds)
     .then((photoIds: string[]) =>
@@ -209,7 +209,22 @@ export const beginDeliveryAcknowledgement = async (
       telegramId,
       instructionGroupId
     )
-    .then(() => messaging.sendBeginDeliveryAcknowledgement(telegramId))
+    .then(() =>
+      messaging.sendBeginDeliveryAcknowledgement(telegramId, instructionGroupId)
+    )
+
+export const handleDeliveryAcknowledgementBySignature = (
+  telegramId: number,
+  instructionGroupId: string
+): Promise<Message> =>
+  messaging.sendDeliveryAcknowledgementBySignature(
+    telegramId,
+    instructionGroupId
+  )
+
+export const handleDeliveryAcknowledgementByPhoto = (
+  telegramId: number
+): Promise<Message> => messaging.sendDeliveryAcknowledgementByPhoto(telegramId)
 
 export async function onArrived(msg) {
   const telegramId = msg.update.callback_query.from.id
@@ -217,3 +232,19 @@ export async function onArrived(msg) {
 
   return handleDriverArrivedToPickupOrDeliveryPosition(vehicleId, telegramId)
 }
+
+export const handleFinishBookingInstructionGroup = (
+  instructionGroupId: string,
+  event: string,
+  telegramId: number
+): Promise<Message> =>
+  cache
+    .getAndDeleteInstructionGroup(instructionGroupId)
+    .then((instructionGroup: Instruction[]) =>
+      Promise.all(
+        instructionGroup.map(({ id: bookingId }: Instruction) =>
+          amqp.publishBookingEvent(bookingId, event)
+        )
+      )
+    )
+    .then(() => handleNextDriverInstruction(telegramId))

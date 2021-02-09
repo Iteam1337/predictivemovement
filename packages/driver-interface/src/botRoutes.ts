@@ -58,20 +58,26 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
         )
       case 'delivered':
         await cache.setDriverDoneDelivering(telegramId)
-        break
+        return botServices.handleFinishBookingInstructionGroup(
+          instructionGroupId,
+          event,
+          telegramId
+        )
       case 'picked_up':
       case 'delivery_failed': {
-        return cache
-          .getAndDeleteInstructionGroup(instructionGroupId)
-          .then((instructionGroup: Instruction[]) =>
-            Promise.all(
-              instructionGroup.map(({ id: bookingId }: Instruction) =>
-                amqp.publishBookingEvent(bookingId, event)
-              )
-            )
-          )
-          .then(() => botServices.handleNextDriverInstruction(telegramId))
+        return botServices.handleFinishBookingInstructionGroup(
+          instructionGroupId,
+          event,
+          telegramId
+        )
       }
+      case 'delivery_acknowledgement:signature':
+        return botServices.handleDeliveryAcknowledgementBySignature(
+          telegramId,
+          instructionGroupId
+        )
+      case 'delivery_acknowledgement:photo':
+        return botServices.handleDeliveryAcknowledgementByPhoto(telegramId)
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

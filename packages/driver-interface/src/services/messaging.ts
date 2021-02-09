@@ -321,28 +321,60 @@ export const sendPhotoReceived = (
     `Tack, ditt foto har sparats!\nDu kan ta fler foton om du vill, tryck annars på _Klar_ om du är färdig med kvittensen.`,
     {
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Klar',
-              callback_data: JSON.stringify({
-                e: 'delivered',
-                id: instructionGroupId,
-              }),
-            },
-          ],
-        ],
-      },
+      reply_markup: Markup.inlineKeyboard([
+        Markup.callbackButton(
+          'Klar',
+          JSON.stringify({
+            e: 'delivered',
+            id: instructionGroupId,
+          })
+        ),
+      ]),
     }
   )
 
-export const sendBeginDeliveryAcknowledgement = async (
+export const sendDeliveryAcknowledgementByPhoto = (
   telegramId: number
-): Promise<Message> => {
-  const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
-    telegramId
+): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
+    'Fotografera nu mottagaren tillsammans med paketet och skicka bilden här.'
   )
+
+export const sendBeginDeliveryAcknowledgement = (
+  telegramId: number,
+  instructionGroupId: string
+): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
+    `Ska leveransen bekräftas med en signatur eller med en bild?`.concat(
+      `\nOm mottagaren är tillgänglig så väljer du [Signera]`,
+      `\nOm mottagaren inte är tillgänglig så väljer du [Ta bild]`
+    ),
+    {
+      reply_markup: Markup.inlineKeyboard([
+        Markup.callbackButton(
+          'Signera',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:signature',
+            id: instructionGroupId,
+          })
+        ),
+        Markup.callbackButton(
+          'Ta bild',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:photo',
+            id: instructionGroupId,
+          })
+        ),
+      ]),
+    }
+  )
+
+export const sendDeliveryAcknowledgementBySignature = async (
+  telegramId: number,
+  instructionGroupId: string
+): Promise<Message> => {
   const transportId = await cache.getVehicleIdByTelegramId(telegramId)
   const [instruction] = await cache.getInstructionGroup(instructionGroupId)
 
@@ -352,10 +384,9 @@ export const sendBeginDeliveryAcknowledgement = async (
 
   return bot.telegram.sendMessage(
     telegramId,
-    `
-    Följ länken nedan för att signera leveransen.
-    Om signeringen ska ske på en annan enhet så kan du kopiera länken till sidan
-    där signeringen sker genom att hålla inne [Signera]-knappen och välja "Copy link".`,
+    `Följ länken nedan för att signera leveransen.`.concat(`
+    \nOm signeringen ska ske på en annan enhet så kan du kopiera länken till sidan
+    där signeringen sker genom att hålla inne [Signera]-knappen och välja "Copy link".`),
     {
       reply_markup: Markup.inlineKeyboard([
         Markup.urlButton('Signera', url),

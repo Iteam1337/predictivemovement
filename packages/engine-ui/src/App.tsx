@@ -24,7 +24,7 @@ const App = () => {
   )
 
   const [serverStatus, setServerStatus] = React.useState({
-    status: 'no server connection',
+    status: 'ok',
   })
 
   const isMobile = window.innerWidth <= 645

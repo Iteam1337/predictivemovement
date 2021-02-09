@@ -13,11 +13,11 @@ const ServerStatusBar = styled.div<{ status: string }>`
   font-size: 11pt;
 `
 
-const Component: React.FC<{ serviceDisruption: string }> = ({
-  serviceDisruption,
+const Component: React.FC<{ serverStatus: { status: string } }> = ({
+  serverStatus,
 }) => {
   return (
-    <ServerStatusBar status={serviceDisruption}>
+    <ServerStatusBar status={serverStatus.status}>
       Can't connect to the server, please try again later...
     </ServerStatusBar>
   )

@@ -23,9 +23,9 @@ const App = () => {
     React.useCallback((state) => state.set, [])
   )
 
-  const [isServiceDisruption, setIsServiceDisruption] = React.useState<string>(
-    ''
-  )
+  const [serverStatus, setServerStatus] = React.useState({
+    status: 'no server connection',
+  })
 
   const isMobile = window.innerWidth <= 645
 
@@ -62,8 +62,7 @@ const App = () => {
   }
 
   useSocket('service-disruption', (data: any) => {
-    console.log(data.status)
-    setIsServiceDisruption(data.status.status)
+    setServerStatus(data.status)
   })
 
   useSocket('notification', (data: notificationTypes.Notification) => {
@@ -102,7 +101,7 @@ const App = () => {
 
   return (
     <>
-      <ServerStatusBar serviceDisruption={isServiceDisruption} />
+      <ServerStatusBar serverStatus={serverStatus} />
       {!isMobile && <Logotype />}
       <Notifications
         notifications={notifications}

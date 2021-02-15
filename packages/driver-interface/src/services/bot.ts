@@ -247,6 +247,12 @@ export const handleDeliveryAcknowledgementByPhoto = (
   telegramId: number
 ): Promise<Message> => messaging.sendDeliveryAcknowledgementByPhoto(telegramId)
 
+export const handleDeliveryAcknowledgementManual = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
+  messaging.acceptManualSignature(instructionGroupId, telegramId)
+
 export async function onArrived(msg): Promise<Message | string> {
   const telegramId = msg.update.callback_query.from.id
   const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)

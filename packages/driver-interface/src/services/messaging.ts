@@ -312,6 +312,27 @@ export const sendDeliveryInformation = (
   )
 }
 
+export const acceptManualSignature = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
+    `Nu tar du som förare ansvar för att kvittens samlas in utanför plattformen. Tryck på _OK_ för ditt godkännande och för att komma vidare till nästa upphämtning.`,
+    {
+      parse_mode: 'Markdown',
+      reply_markup: Markup.inlineKeyboard([
+        Markup.callbackButton(
+          'OK',
+          JSON.stringify({
+            e: 'delivered',
+            id: instructionGroupId,
+          })
+        ),
+      ]),
+    }
+  )
+
 export const sendPhotoReceived = (
   instructionGroupId: string,
   telegramId: number
@@ -349,7 +370,8 @@ export const sendBeginDeliveryAcknowledgement = (
     telegramId,
     `Ska leveransen bekräftas med en signatur eller med en bild?`.concat(
       `\nOm mottagaren är tillgänglig så väljer du [Signera]`,
-      `\nOm mottagaren inte är tillgänglig så väljer du [Ta bild]`
+      `\nOm mottagaren inte är tillgänglig så väljer du [Ta bild]`,
+      `\nLeverera med manuell kvittens, välj då [Manuell kvittens]`
     ),
     {
       reply_markup: Markup.inlineKeyboard([
@@ -364,6 +386,13 @@ export const sendBeginDeliveryAcknowledgement = (
           'Ta bild',
           JSON.stringify({
             e: 'delivery_acknowledgement:photo',
+            id: instructionGroupId,
+          })
+        ),
+        Markup.callbackButton(
+          'Manuell kvittens',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:manual',
             id: instructionGroupId,
           })
         ),

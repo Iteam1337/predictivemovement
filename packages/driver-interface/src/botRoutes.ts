@@ -76,6 +76,11 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
         )
       case 'delivery_acknowledgement:photo':
         return botServices.handleDeliveryAcknowledgementByPhoto(telegramId)
+      case 'delivery_acknowledgement:manual':
+        return botServices.handleDeliveryAcknowledgementManual(
+          instructionGroupId,
+          telegramId
+        )
       case 'signature_confirmed':
         return botServices.handleFinishBookingInstructionGroup(
           instructionGroupId,

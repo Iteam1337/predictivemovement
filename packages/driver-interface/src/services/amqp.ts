@@ -68,3 +68,53 @@ export const publishTransportEvent = (
         )
     )
     .catch(console.warn)
+
+type SignatureReceipt = {
+  type: 'signature'
+  receipt: { base64String: string }
+  createdAt: Date
+  bookingId: string
+  transportId: string
+  signedBy: string
+}
+
+type PhotoReceipt = {
+  type: 'photo'
+  receipt: { photoId: string }
+  createdAt: Date
+  bookingId: string
+  transportId: string
+  signedBy: string
+}
+
+type ManualReceipt = {
+  type: 'manual'
+  createdAt: Date
+  bookingId: string
+  transportId: string
+}
+
+// type DeliveryReceipt = ManualReceipt | PhotoReceipt | SignatureReceipt
+
+export const publishReceiptByPhoto = (
+  receipt: PhotoReceipt
+): Promise<boolean | void> =>
+  open
+    .then((conn) => conn.createChannel())
+    .then((openChannel) =>
+      openChannel
+        .assertExchange(exchanges.DELIVERY_RECEIPTS, 'topic', {
+          durable: true,
+        })
+        .then(() =>
+          openChannel.publish(
+            exchanges.DELIVERY_RECEIPTS,
+            'new',
+            Buffer.from(JSON.stringify({ receipt })),
+            {
+              persistent: true,
+            }
+          )
+        )
+    )
+    .catch(console.warn)

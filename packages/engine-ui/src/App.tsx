@@ -35,7 +35,7 @@ const App = () => {
     socket.emit('signed-delivery', {
       bookingId,
       transportId,
-      signature,
+      receipt: { base64Signature: signature },
       signedBy,
       createdAt,
     })

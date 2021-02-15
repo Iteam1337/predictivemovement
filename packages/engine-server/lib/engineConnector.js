@@ -18,7 +18,7 @@ const routingKeys = {
   DELETED: 'deleted',
   BOOKING_MOVED: 'booking_moved',
   UPDATED: 'updated',
-  SIGNATURE_CONFIRMED: 'signature_confirmed',
+  RECEIPT_CONFIRMED: 'receipt_confirmed',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -93,6 +93,16 @@ module.exports = (io) => {
     .map((msg) => msg.json())
     .map(toIncomingPlan)
 
+  const receipts = amqp
+    .exchange('delivery_receipts', 'topic', {
+      durable: true,
+    })
+    .queue('delivery_receipts', {
+      durable: true,
+    })
+    .subscribe({ noAck: true }, 'new')
+    .map((msg) => msg.json())
+
   amqp
     .exchange('outgoing_booking_updates', 'topic', {
       durable: true,
@@ -107,7 +117,6 @@ module.exports = (io) => {
   function deleteBooking(id) {
     bookingsCache.delete(id)
     io.emit('delete-booking', id)
-    console.log('deleted')
   }
 
   const deleteTransport = (id) => {
@@ -145,16 +154,16 @@ module.exports = (io) => {
 
   ///////// Publishers
 
-  const confirmDeliveryBySignature = (bookingId, transportId) => {
+  const confirmDeliveryReceipt = (bookingId, transportId) => {
     return amqp
-      .exchange('delivery_signatures', 'topic', {
+      .exchange('delivery_receipts', 'topic', {
         durable: true,
       })
-      .publish({ transportId, bookingId }, routingKeys.SIGNATURE_CONFIRMED, {
+      .publish({ transportId, bookingId }, routingKeys.RECEIPT_CONFIRMED, {
         persistent: true,
       })
       .then(() =>
-        console.log(` [x] Confirm signature for booking: '${bookingId}'`)
+        console.log(` [x] Confirm receipt for booking: '${bookingId}'`)
       )
   }
 
@@ -350,6 +359,7 @@ module.exports = (io) => {
     updateBooking,
     publishUpdateTransport,
     transportUpdates,
-    confirmDeliveryBySignature,
+    confirmDeliveryReceipt,
+    receipts,
   }
 }

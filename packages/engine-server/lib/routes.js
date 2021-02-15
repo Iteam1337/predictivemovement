@@ -5,7 +5,7 @@ const {
   bookingsCache,
   transportsCache,
   planCache,
-  signaturesCache,
+  receiptsCache,
 } = require('./cache')
 const parcel = require('./parcel')
 const {
@@ -32,10 +32,17 @@ module.exports = (io) => {
     bookingNotifications,
     updateBooking,
     publishUpdateTransport,
-    confirmDeliveryBySignature,
+    confirmDeliveryReceipt,
+    receipts,
   } = require('./engineConnector')(io)
 
+  _(receipts.fork()).each(({ receipt }) => {
+    receiptsCache.set(receipt.bookingId, receipt)
+    confirmDeliveryReceipt(receipt.bookingId, receipt.transportId)
+  })
+
   io.on('connection', function (socket) {
+    console.count()
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .map((newBooking) => {
         const oldBooking = bookingsCache.get(newBooking.id)
@@ -115,7 +122,7 @@ module.exports = (io) => {
     socket.on(
       'signed-delivery',
       ({ createdAt, signedBy, bookingId, transportId, signature }) => {
-        signaturesCache.set(bookingId, {
+        receiptsCache.set(bookingId, {
           createdAt,
           signedBy,
           bookingId,
@@ -142,7 +149,6 @@ module.exports = (io) => {
     })
 
     socket.on('delete-booking', (id) => {
-      console.log('about to delete booking: ', id)
       bookingsCache.delete(id)
       publishDeleteBooking(id)
       socket.emit('delete-booking', id)

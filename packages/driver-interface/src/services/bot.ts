@@ -1,8 +1,10 @@
 import * as amqp from './amqp'
 import cache from './cache'
 import { v4 as uuid } from 'uuid'
-
+import bot from '../adapters/bot'
 import * as messaging from './messaging'
+import fetch from 'node-fetch'
+
 import {
   IncomingMessage,
   Message,
@@ -188,6 +190,7 @@ export const onPhotoReceived = async (
     .then((instructionGroup: Instruction[]) =>
       instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
     )
+  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
 
   return cache
     .getDeliveryReceiptPhotos(bookingIds)
@@ -197,9 +200,21 @@ export const onPhotoReceived = async (
         photoIds.concat([highestResPhotoId])
       )
     )
-    .then(() => messaging.sendPhotoReceived(instructionGroupId, telegramId))
+    .then(() =>
+      amqp.publishReceiptByPhoto({
+        type: 'photo',
+        bookingId: bookingIds[0],
+        createdAt: new Date(),
+        transportId,
+        receipt: {
+          photoId: highestResPhotoId,
+        },
+        signedBy: transportId,
+      })
+    )
+    .then(() => messaging.sendPhotoReceived(telegramId))
     .then((e) => {
-      console.log('photo successfully received')
+      console.log('photo successfully received and sent to server')
       return e
     })
 }
@@ -221,9 +236,6 @@ export const handleIncomingSignatureConfirmation = async (
   transportId: string
 ): Promise<Message> => {
   const telegramId = await cache.getTelegramIdByVehicleId(transportId)
-  console.log('from bot, transportId: ', transportId)
-
-  console.log('from bot:', telegramId)
 
   const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
     Number(telegramId)

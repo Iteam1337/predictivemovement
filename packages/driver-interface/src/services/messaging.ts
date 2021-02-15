@@ -333,25 +333,10 @@ export const acceptManualSignature = (
     }
   )
 
-export const sendPhotoReceived = (
-  instructionGroupId: string,
-  telegramId: number
-): Promise<Message> =>
+export const sendPhotoReceived = (telegramId: number): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
-    `Tack, ditt foto har sparats!\nDu kan ta fler foton om du vill, tryck annars på _Klar_ om du är färdig med kvittensen.`,
-    {
-      parse_mode: 'Markdown',
-      reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(
-          'Klar',
-          JSON.stringify({
-            e: 'delivered',
-            id: instructionGroupId,
-          })
-        ),
-      ]),
-    }
+    `Tack! Väntar nu på att kvittensen ska bekräftas...`
   )
 
 export const sendDeliveryAcknowledgementByPhoto = (

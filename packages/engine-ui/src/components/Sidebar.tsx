@@ -35,7 +35,6 @@ interface Props {
 }
 
 const Sidebar = (state: Props) => {
-  console.log('ok')
   return (
     <Container>
       <Navigation />

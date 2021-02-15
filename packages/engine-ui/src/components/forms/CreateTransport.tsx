@@ -305,6 +305,19 @@ const Component = ({
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label>Flotta</Elements.Form.Label>
+          <FormInputs.FleetInput
+            placeholder="Lägg till eller välj en flotta"
+            value={formState.metadata.fleet || ''}
+            onChangeHandler={eventHandlers.handleFleetInput(
+              'fleet',
+              onChangeHandler
+            )}
+          />
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
       <Elements.Layout.ButtonWrapper isMobile={isMobile}>
         <Elements.Buttons.CancelButton
           type="button"

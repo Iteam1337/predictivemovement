@@ -99,6 +99,10 @@ const App = () => {
     })
   })
 
+  React.useEffect(() => {
+    if (!socket.connected) setServerStatus({ status: 'massive-disruption' })
+  }, [socket, setServerStatus])
+
   return (
     <>
       <ServerStatusBar serverStatus={serverStatus} />

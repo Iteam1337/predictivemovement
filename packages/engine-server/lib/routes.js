@@ -36,13 +36,9 @@ module.exports = (io) => {
     receipts,
   } = require('./engineConnector')(io)
 
-  _(receipts.fork()).each(({ receipt }) => {
-    receiptsCache.set(receipt.bookingId, receipt)
-    confirmDeliveryReceipt(receipt.bookingId, receipt.transportId)
-  })
+  require('./receipts')(receipts, confirmDeliveryReceipt)
 
   io.on('connection', function (socket) {
-    console.count()
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .map((newBooking) => {
         const oldBooking = bookingsCache.get(newBooking.id)
@@ -129,7 +125,7 @@ module.exports = (io) => {
           transportId,
           signature,
         })
-        return confirmDeliveryBySignature(bookingId, transportId)
+        return confirmDeliveryReceipt(bookingId, transportId)
       }
     )
 

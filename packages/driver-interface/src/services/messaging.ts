@@ -318,7 +318,7 @@ export const acceptManualSignature = (
 ): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
-    `Nu tar du som förare ansvar för att kvittens samlas in utanför plattformen. Tryck på _OK_ för ditt godkännande och för att komma vidare till nästa upphämtning.`,
+    `Nu tar du som förare ansvar för att kvittens samlas in utanför plattformen. Tryck på "OK" för att godkänna och komma vidare till nästa steg.`,
     {
       parse_mode: 'Markdown',
       reply_markup: Markup.inlineKeyboard([
@@ -353,10 +353,11 @@ export const sendBeginDeliveryAcknowledgement = (
 ): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
+
     `Ska leveransen bekräftas med en signatur eller med en bild?`.concat(
-      `\nOm mottagaren är tillgänglig så väljer du [Signera]`,
-      `\nOm mottagaren inte är tillgänglig så väljer du [Ta bild]`,
-      `\nLeverera med manuell kvittens, välj då [Manuell kvittens]`
+      `\nOm mottagaren är tillgänglig så väljer du "Signera"`,
+      `\nOm mottagaren inte är tillgänglig så väljer du "Ta bild"`,
+      `\nLeverera med manuell kvittens, välj då "Manuell kvittens"`
     ),
     {
       reply_markup: Markup.inlineKeyboard([
@@ -398,20 +399,12 @@ export const sendDeliveryAcknowledgementBySignature = async (
 
   return bot.telegram.sendMessage(
     telegramId,
-    `Följ länken nedan för att signera leveransen.`.concat(`
-    \nOm signeringen ska ske på en annan enhet så kan du kopiera länken till sidan
-    där signeringen sker genom att hålla inne [Signera]-knappen och välja "Copy link".`),
+    `Följ länken nedan för att signera leveransen.`.concat(
+      `\nOm signeringen ska ske på en annan enhet så kan du kopiera länken till sidan`,
+      `\ndär signeringen sker genom att hålla inne "Signera"-knappen och välja "Copy link".`
+    ),
     {
-      reply_markup: Markup.inlineKeyboard([
-        Markup.urlButton('Signera', url),
-        Markup.callbackButton(
-          'Jag har signerat',
-          JSON.stringify({
-            e: 'delivered',
-            id: instructionGroupId,
-          })
-        ),
-      ]),
+      reply_markup: Markup.inlineKeyboard([Markup.urlButton('Signera', url)]),
     }
   )
 }
@@ -435,7 +428,7 @@ export const sendSignatureConfirmation = (
 ): Promise<Message> => {
   return bot.telegram.sendMessage(
     telegramId,
-    `Leveransen är nu bekräftad och signerad. Klicka på [Klar] för att gå vidare.`,
+    `Leveransen är nu bekräftad och signerad. Klicka på "Klar" för att gå vidare.`,
     {
       reply_markup: Markup.inlineKeyboard([
         Markup.callbackButton(

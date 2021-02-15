@@ -54,4 +54,29 @@ const SelectInput = styled.select`
   }
 `
 
-export { DateInput, Label, TextInput, SelectInput }
+const DropdownWrapper = styled.div`
+  width: 100%;
+  z-index: 1;
+  position: absolute;
+`
+
+const DropdownButton = styled.button`
+  width: inherit;
+  text-align: left;
+  padding: 0.5rem;
+  border: 1px solid grey;
+  :focus {
+    outline-color: #13c57b;
+  }
+  background-color: #f1f3f5;
+  margin: 0;
+`
+
+export {
+  DateInput,
+  Label,
+  TextInput,
+  SelectInput,
+  DropdownWrapper,
+  DropdownButton,
+}

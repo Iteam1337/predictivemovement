@@ -48,36 +48,33 @@ const Dropdown: React.FC<{
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     value: string
   ) => void
-}> = ({ items, handleDropdownSelect, searchValue }) => {
-  console.log(searchValue)
-  return (
-    <Elements.Form.DropdownWrapper>
-      {searchValue && (
-        <DropdownButtonWithAddButton
-          name={searchValue}
+}> = ({ items, handleDropdownSelect, searchValue }) => (
+  <Elements.Form.DropdownWrapper>
+    {searchValue && (
+      <DropdownButtonWithAddButton
+        name={searchValue}
+        onMouseDown={(event) => handleDropdownSelect(event, searchValue)}
+      >
+        {searchValue}
+        <button
+          type="button"
           onMouseDown={(event) => handleDropdownSelect(event, searchValue)}
         >
-          {searchValue}
-          <button
-            type="button"
-            onMouseDown={(event) => handleDropdownSelect(event, searchValue)}
-          >
-            +
-          </button>
-        </DropdownButtonWithAddButton>
-      )}
-      {items.map((value: string, index: number) => (
-        <Elements.Form.DropdownButton
-          key={index}
-          name={value}
-          onMouseDown={(event) => handleDropdownSelect(event, value)}
-        >
-          {value}
-        </Elements.Form.DropdownButton>
-      ))}
-    </Elements.Form.DropdownWrapper>
-  )
-}
+          +
+        </button>
+      </DropdownButtonWithAddButton>
+    )}
+    {items.map((value: string, index: number) => (
+      <Elements.Form.DropdownButton
+        key={index}
+        name={value}
+        onMouseDown={(event) => handleDropdownSelect(event, value)}
+      >
+        {value}
+      </Elements.Form.DropdownButton>
+    ))}
+  </Elements.Form.DropdownWrapper>
+)
 
 interface Props {
   onChangeHandler: any
@@ -99,9 +96,9 @@ const Component: React.FC<Props> = ({
 
   React.useEffect(() => {
     const getFleets = transports.flatMap(({ metadata }) => metadata.fleet)
-    const fleetNames: string[] = getFleets
+    const fleetNames = getFleets
       .filter((value, index) => getFleets.indexOf(value) === index)
-      .filter((name) => name !== '')
+      .filter((name) => Boolean(name))
       .sort()
     setFleets(fleetNames)
   }, [transports])

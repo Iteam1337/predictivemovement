@@ -11,7 +11,7 @@ import * as FormInputs from './components/forms/inputs'
 const Container = styled.div`
   padding: 1rem;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   margin: 0 auto;
   max-width: 500px;
   margin-top: 10rem;
@@ -19,15 +19,23 @@ const Container = styled.div`
     max-width: 300px;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     margin-top: 0;
+  }
+
+  @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+    margin: 0;
+  }
+
+  @media only screen and (device-width: 812px) and (device-height: 375px) and (-webkit-device-pixel-ratio: 3) {
+    margin: 0;
   }
 `
 
 const CanvasContainer = styled.div`
   background: white;
   height: 200px;
-  border: 1px dashed black;
+  border: 2px dashed black;
   border-radius: 10px;
   width: 99.9%;
   display: flex;
@@ -37,9 +45,13 @@ const ButtonContainer = styled.div`
   max-width: 300px;
   width: 100%;
   display: flex;
-  gap: 0.875rem;
+  button:first-of-type {
+    margin-right: 1rem;
+  }
 `
 const LoadingContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,6 +84,7 @@ const Component: React.FC<{
 }> = ({ onSubmit }) => {
   const [signedBy, setSignedBy] = React.useState<string>('')
   const [isFinished, setIsFinished] = React.useState<boolean>(false)
+  const [hasDrawn, setHasDrawn] = React.useState<boolean>(false)
   const nodeRef = React.useRef<SignatureCanvas>(null)
   const params = useParams<{ bookingId?: string; transportId?: string }>()
   const bookings = stores.dataState((state) => state.bookings)
@@ -86,6 +99,8 @@ const Component: React.FC<{
 
   const onTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSignedBy(event.target.value)
+
+  const onDrawEnd = () => setHasDrawn((current) => !current)
 
   const clear = () => nodeRef?.current?.clear()
   const confirm = () => {
@@ -130,6 +145,8 @@ const Component: React.FC<{
             </Elements.Typography.BoldParagraph>
             <CanvasContainer>
               <SignatureCanvas
+                clearOnResize={false}
+                onEnd={onDrawEnd}
                 ref={nodeRef}
                 penColor="black"
                 canvasProps={{
@@ -164,6 +181,7 @@ const Component: React.FC<{
               Rensa
             </Elements.Buttons.CancelButton>
             <Elements.Buttons.SubmitButton
+              disabled={!hasDrawn}
               onClick={confirm}
               color="#666666"
               width="150px "

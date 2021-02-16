@@ -9,8 +9,7 @@ const reducer = (
     case 'bookingIcons':
       return Object.assign({}, initialState, {
         bookings: state.bookings.map((booking) => {
-          const { route, ...rest } = booking
-          return rest
+          return { ...booking, route: undefined }
         }),
       })
 

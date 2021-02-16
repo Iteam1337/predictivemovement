@@ -3,6 +3,7 @@ import * as Elements from '../../../shared-elements'
 import * as stores from '../../../utils/state/stores'
 import styled from 'styled-components'
 import arrowIcon from '../../../assets/input-arrowdown.svg'
+import addIcon from '../../../assets/plus-sign.svg'
 
 const ShowDropdownIcon = styled.img`
   width: 10px;
@@ -14,10 +15,6 @@ const ShowDropdownButton = styled.button`
   height: 90%;
   top: 2px;
   border: none;
-  font-weight: 600;
-  color: ${({ color }) => color || 'inherit'};
-  font-size: 0.875rem;
-  border: none;
   background-color: #f1f3f5;
   :focus {
     outline: none;
@@ -27,16 +24,9 @@ const ShowDropdownButton = styled.button`
 const DropdownButtonWithAddButton = styled(Elements.Form.DropdownButton)`
   display: flex;
   justify-content: space-between;
-  button {
-    font-weight: 600;
-    color: ${({ color }) => color || 'inherit'};
-    font-size: 0.875rem;
-    border: none;
-    background-color: #f1f3f5;
-    :focus {
-      outline: none;
-    }
-  }
+  padding: 0.5rem 0.7rem;
+  padding-right: 0.95rem;
+  align-items: center;
 `
 
 const Dropdown: React.FC<{
@@ -54,12 +44,7 @@ const Dropdown: React.FC<{
         onMouseDown={(event) => handleDropdownSelect(event, searchValue)}
       >
         {searchValue}
-        <button
-          type="button"
-          onMouseDown={(event) => handleDropdownSelect(event, searchValue)}
-        >
-          +
-        </button>
+        <ShowDropdownIcon src={addIcon} />
       </DropdownButtonWithAddButton>
     )}
     {items.map((value: string, index: number) => (

@@ -10,6 +10,7 @@ import NotFound from './components/NotFound'
 import Sidebar from './components/Sidebar'
 import SignParcel from './SignParcel'
 import * as notificationTypes from './types/notification'
+import ServerStatusBar from './components/ServerStatusBar'
 
 const App = () => {
   const { socket } = useSocket()
@@ -20,6 +21,10 @@ const App = () => {
   const setDataState = stores.dataState(
     React.useCallback((state) => state.set, [])
   )
+
+  const [serverStatus, setServerStatus] = React.useState({
+    status: 'ok',
+  })
 
   const isMobile = window.innerWidth <= 645
 
@@ -71,6 +76,10 @@ const App = () => {
     socket.emit('update-transport', transport)
   }
 
+  useSocket('service-disruption', (data: any) => {
+    setServerStatus(data.status)
+  })
+
   useSocket('notification', (data: notificationTypes.Notification) => {
     setNotifications(data)
   })
@@ -105,8 +114,13 @@ const App = () => {
     })
   })
 
+  React.useEffect(() => {
+    if (!socket.connected) setServerStatus({ status: 'massive-disruption' })
+  }, [socket, setServerStatus])
+
   return (
     <>
+      <ServerStatusBar serverStatus={serverStatus} />
       {!isMobile && <Logotype />}
 
       <Switch>

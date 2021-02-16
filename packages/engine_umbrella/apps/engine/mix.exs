@@ -30,7 +30,7 @@ defmodule Engine.MixProject do
       {:message_generator, in_umbrella: true, only: :test},
       {:amqp, "~> 1.5"},
       {:broadway, "~> 0.6.0"},
-      {:broadway_rabbitmq, "~> 0.6.0"},
+      {:broadway_rabbitmq, "~> 0.6.5"},
       {:httpoison, "~> 1.6"},
       {:polyline, "~> 1.2"},
       {:jason, "~> 1.2"},

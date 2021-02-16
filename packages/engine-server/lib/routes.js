@@ -10,6 +10,8 @@ const {
   toOutgoingTransport,
 } = require('./mappings')
 
+const { serviceStatus, getStatus } = require('./serviceStatus')
+
 module.exports = (io) => {
   const {
     bookings,
@@ -148,6 +150,14 @@ module.exports = (io) => {
       const measurements = parcel.getMeasurements(response)
 
       socket.emit('parcel-info', { weight, measurements })
+    })
+
+    socket.emit('service-disruption', { status: getStatus() })
+  })
+
+  serviceStatus.fork().each((status) => {
+    io.sockets.emit('service-disruption', {
+      status,
     })
   })
 }

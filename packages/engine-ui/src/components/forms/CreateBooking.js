@@ -170,6 +170,18 @@ const Component = ({
             placeholder="Innehåll"
           />
         </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer>
+          <FormInputs.TextInput
+            name="customer"
+            value={state.metadata.customer || ''}
+            onChangeHandler={eventHandlers.handleNestedInputChange(
+              'metadata',
+              'customer',
+              onChangeHandler
+            )}
+            placeholder="Kund"
+          />
+        </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>

@@ -34,6 +34,7 @@ export const initialState = {
     timeWindows: null,
   },
   metadata: {
+    customer: '',
     cargo: '',
     fragile: false,
     recipient: { name: '', contact: '', info: '' },

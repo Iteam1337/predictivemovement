@@ -121,7 +121,6 @@ const App = () => {
   return (
     <>
       <ServerStatusBar serverStatus={serverStatus} />
-      {!isMobile && <Logotype />}
 
       <Switch>
         <Route exact path="/sign-delivery/:transportId/:bookingId">
@@ -141,6 +140,7 @@ const App = () => {
             updateTransport={updateTransport}
           />
           {!isMobile && <Map />}
+          {!isMobile && <Logotype />}
         </Route>
 
         <Route component={NotFound} />

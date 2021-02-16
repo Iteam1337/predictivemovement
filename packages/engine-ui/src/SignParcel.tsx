@@ -9,51 +9,55 @@ import nameIcon from './assets/contact-name.svg'
 import * as FormInputs from './components/forms/inputs'
 
 const Container = styled.div`
-  padding: 1.875rem;
-  display: flex;
-  flex-flow: column nowrap;
+  padding: 1rem;
   width: 100%;
   height: 100vh;
   margin: 0 auto;
-  align-items: center;
-  justify-content: center;
-  gap: 1.875rem;
   max-width: 500px;
+  margin-top: 10rem;
+  input {
+    max-width: 300px;
+  }
+
+  @media (max-width: 640px) {
+    margin-top: 0;
+  }
 `
 
 const CanvasContainer = styled.div`
   background: white;
-  width: 450px;
   height: 200px;
-  border: 2px dashed grey;
-  @media (max-width: 640px) {
-    width: 350px;
-  }
+  border: 1px dashed black;
+  border-radius: 10px;
+  width: 99.9%;
+  display: flex;
 `
 
 const ButtonContainer = styled.div`
-  max-width: 450px;
+  max-width: 300px;
   width: 100%;
   display: flex;
   gap: 0.875rem;
-  @media (max-width: 640px) {
-    width: 350px;
-  }
+`
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const Loading = () => {
   return (
-    <Container>
-      <p>Laddar...</p>
-    </Container>
+    <LoadingContainer>
+      <h2>Laddar...</h2>
+    </LoadingContainer>
   )
 }
 
 const BookingNotFound = () => {
   return (
-    <Container>
+    <LoadingContainer>
       <h2>Något gick fel, vi kunde inte hitta någon bokning att signera.</h2>
-    </Container>
+    </LoadingContainer>
   )
 }
 
@@ -150,6 +154,7 @@ const Component: React.FC<{
               </Elements.Layout.InputInnerContainer>
             </Elements.Layout.MarginTopContainerSm>
           </div>
+          <Elements.Layout.MarginTopContainer></Elements.Layout.MarginTopContainer>
           <ButtonContainer>
             <Elements.Buttons.CancelButton
               onClick={clear}

@@ -1,7 +1,6 @@
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Message } from 'telegraf/typings/telegram-types'
 import { Markup } from 'telegraf'
-
 import bot from '../adapters/bot'
 import * as helpers from '../helpers'
 import { Booking, Instruction } from '../types'
@@ -353,11 +352,11 @@ export const sendBeginDeliveryAcknowledgement = (
 ): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
-
-    `Ska leveransen bekräftas med en signatur eller med en bild?`.concat(
+    `Ska leveransen bekräftas med en signatur, med en bild eller manuellt?`.concat(
       `\nOm mottagaren är tillgänglig så väljer du "Signera"`,
       `\nOm mottagaren inte är tillgänglig så väljer du "Ta bild"`,
-      `\nLeverera med manuell kvittens, välj då "Manuell kvittens"`
+      `\nLeverera med manuell kvittens, välj då "Manuell kvittens"`,
+      `\nOm du vill avbryta leveransen, välj då "Avbryt"`
     ),
     {
       reply_markup: Markup.inlineKeyboard([
@@ -379,6 +378,13 @@ export const sendBeginDeliveryAcknowledgement = (
           'Manuell kvittens',
           JSON.stringify({
             e: 'delivery_acknowledgement:manual',
+            id: instructionGroupId,
+          })
+        ),
+        Markup.callbackButton(
+          'Avbryt',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:cancel_request',
             id: instructionGroupId,
           })
         ),
@@ -442,3 +448,26 @@ export const sendSignatureConfirmation = (
     }
   )
 }
+
+export const handleCancelDeliveryAcknowledgement = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(telegramId, `Vill du avbryta denna leverans?`, {
+    reply_markup: Markup.inlineKeyboard([
+      Markup.callbackButton(
+        'Ja',
+        JSON.stringify({
+          e: 'delivery_acknowledgement:cancel_confirm',
+          id: instructionGroupId,
+        })
+      ),
+      Markup.callbackButton(
+        'Nej',
+        JSON.stringify({
+          e: 'begin_delivery_acknowledgement',
+          id: instructionGroupId,
+        })
+      ),
+    ]),
+  })

@@ -81,6 +81,17 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
           instructionGroupId,
           telegramId
         )
+      case 'delivery_acknowledgement:cancel_request':
+        return botServices.handleCancelDeliveryAcknowledgement(
+          instructionGroupId,
+          telegramId
+        )
+      case 'delivery_acknowledgement:cancel_confirm':
+        return botServices.handleFinishBookingInstructionGroup(
+          instructionGroupId,
+          'delivery_failed',
+          telegramId
+        )
       case 'signature_confirmed':
         return botServices.handleFinishBookingInstructionGroup(
           instructionGroupId,

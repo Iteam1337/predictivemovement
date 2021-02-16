@@ -2,7 +2,6 @@ import * as amqp from './amqp'
 import cache from './cache'
 import { v4 as uuid } from 'uuid'
 import * as messaging from './messaging'
-
 import {
   IncomingMessage,
   Message,
@@ -262,6 +261,12 @@ export const handleDeliveryAcknowledgementManual = (
   telegramId: number
 ): Promise<Message> =>
   messaging.acceptManualSignature(instructionGroupId, telegramId)
+
+export const handleCancelDeliveryAcknowledgement = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
+  messaging.handleCancelDeliveryAcknowledgement(instructionGroupId, telegramId)
 
 export async function onArrived(msg): Promise<Message | string> {
   const telegramId = msg.update.callback_query.from.id

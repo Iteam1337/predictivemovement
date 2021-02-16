@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express()
 const routes = require('./src/routes')
+const PORT = process.env.PORT || 4000
 
 routes.add(app)
 
-app.listen(4000, async () => {
+app.listen(PORT, async () => {
   console.log('Running')
 })

@@ -18,7 +18,6 @@ const ShowDropdownButton = styled.button`
   color: ${({ color }) => color || 'inherit'};
   font-size: 0.875rem;
   border: none;
-  cursor: pointer;
   background-color: #f1f3f5;
   :focus {
     outline: none;
@@ -33,7 +32,6 @@ const DropdownButtonWithAddButton = styled(Elements.Form.DropdownButton)`
     color: ${({ color }) => color || 'inherit'};
     font-size: 0.875rem;
     border: none;
-    cursor: pointer;
     background-color: #f1f3f5;
     :focus {
       outline: none;

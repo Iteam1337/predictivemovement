@@ -1,5 +1,6 @@
 import { FlyToInterpolator } from 'react-map-gl'
 import { Booking, Transport, Plan } from './'
+import * as notificationTypes from '../types/notification'
 
 export enum lastFocusedInput {
   START = 'start',
@@ -105,4 +106,11 @@ export type DataStateWithSet = DataState & {
 
 export type MapLayerStateWithSet = MapLayerState & {
   set: (action: MapLayerStateReducerAction) => void
+}
+
+export type NotificationsWithSet = {
+  notifications: notificationTypes.Notification[]
+} & {
+  addOne: (notification: notificationTypes.Notification) => void
+  deleteOneById: (id: string) => void
 }

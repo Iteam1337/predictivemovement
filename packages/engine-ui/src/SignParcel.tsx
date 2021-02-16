@@ -52,7 +52,7 @@ const Loading = () => {
 const BookingNotFound = () => {
   return (
     <Container>
-      <p>Booking not found</p>
+      <h2>Något gick fel, vi kunde inte hitta någon bokning att signera.</h2>
     </Container>
   )
 }

@@ -1,9 +1,7 @@
 import * as amqp from './amqp'
 import cache from './cache'
 import { v4 as uuid } from 'uuid'
-import bot from '../adapters/bot'
 import * as messaging from './messaging'
-import fetch from 'node-fetch'
 
 import {
   IncomingMessage,

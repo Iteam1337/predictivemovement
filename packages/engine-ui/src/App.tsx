@@ -4,20 +4,18 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import { Route, Switch } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import Notifications from './components/Notifications'
-import * as notificationTypes from './notificationTypes'
 import * as stores from './utils/state/stores'
 import * as types from './types'
 import NotFound from './components/NotFound'
 import Sidebar from './components/Sidebar'
 import SignParcel from './SignParcel'
+import * as notificationTypes from './types/notification'
 
 const App = () => {
   const { socket } = useSocket()
-
-  const [notifications, updateNotifications] = React.useState<
-    notificationTypes.Notification[]
-  >([])
+  const setNotifications = stores.notifications(
+    React.useCallback((state) => state.addOne, [])
+  )
 
   const setDataState = stores.dataState(
     React.useCallback((state) => state.set, [])
@@ -74,7 +72,7 @@ const App = () => {
   }
 
   useSocket('notification', (data: notificationTypes.Notification) => {
-    updateNotifications((notifications) => notifications.concat(data))
+    setNotifications(data)
   })
 
   useSocket('bookings', (bookings: types.Booking[]) => {
@@ -110,10 +108,7 @@ const App = () => {
   return (
     <>
       {!isMobile && <Logotype />}
-      <Notifications
-        notifications={notifications}
-        updateNotifications={updateNotifications}
-      />
+
       <Switch>
         <Route exact path="/sign-delivery/:transportId/:bookingId">
           <SignParcel onSubmit={createDeliverySignature} />

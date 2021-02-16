@@ -113,7 +113,6 @@ const CreateTransport = ({
       },
       metadata: {
         ...formState.metadata,
-        fleet: formState.metadata.fleet || undefined,
         driver: {
           name: formState.metadata.driver.name || undefined,
           contact: formState.metadata.driver.contact || undefined,

@@ -14,27 +14,58 @@ const ShowDropdownButton = styled.button`
   height: 90%;
   top: 2px;
   border: none;
+  font-weight: 600;
+  color: ${({ color }) => color || 'inherit'};
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
   background-color: #f1f3f5;
   :focus {
     outline: none;
   }
 `
 
-interface Props {
-  onChangeHandler: any
-  placeholder: string
-  value: string
-}
+const DropdownButtonWithAddButton = styled(Elements.Form.DropdownButton)`
+  display: flex;
+  justify-content: space-between;
+  button {
+    font-weight: 600;
+    color: ${({ color }) => color || 'inherit'};
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+    background-color: #f1f3f5;
+    :focus {
+      outline: none;
+    }
+  }
+`
 
 const Dropdown: React.FC<{
   items: string[]
+  searchValue?: string
   handleDropdownSelect: (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     value: string
   ) => void
-}> = ({ items, handleDropdownSelect }) => {
+}> = ({ items, handleDropdownSelect, searchValue }) => {
+  console.log(searchValue)
   return (
     <Elements.Form.DropdownWrapper>
+      {searchValue && (
+        <DropdownButtonWithAddButton
+          name={searchValue}
+          onMouseDown={(event) => handleDropdownSelect(event, searchValue)}
+        >
+          {searchValue}
+          <button
+            type="button"
+            onMouseDown={(event) => handleDropdownSelect(event, searchValue)}
+          >
+            +
+          </button>
+        </DropdownButtonWithAddButton>
+      )}
       {items.map((value: string, index: number) => (
         <Elements.Form.DropdownButton
           key={index}
@@ -46,6 +77,12 @@ const Dropdown: React.FC<{
       ))}
     </Elements.Form.DropdownWrapper>
   )
+}
+
+interface Props {
+  onChangeHandler: any
+  placeholder: string
+  value: string
 }
 
 const Component: React.FC<Props> = ({
@@ -81,6 +118,7 @@ const Component: React.FC<Props> = ({
 
   const onFleetInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.persist()
+    setShowDropdown(false)
     const filterFleets = fleets.filter((fleet) =>
       fleet.toLowerCase().includes(event.target.value.toLowerCase())
     )
@@ -118,6 +156,7 @@ const Component: React.FC<Props> = ({
 
       {showSearchDropdown && (
         <Dropdown
+          searchValue={value.length ? value : undefined}
           items={searchValue}
           handleDropdownSelect={handleDropdownSelect}
         />

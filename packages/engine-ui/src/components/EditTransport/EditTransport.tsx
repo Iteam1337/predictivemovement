@@ -20,6 +20,7 @@ export interface FormState {
   id: string
   latestEnd: Date | null
   metadata: {
+    fleet: string
     driver: {
       contact?: string
       name?: string

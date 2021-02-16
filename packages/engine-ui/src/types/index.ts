@@ -57,6 +57,7 @@ type Metadata = {
 }
 
 type TransportMetadata = {
+  fleet: string
   profile: string
   driver: {
     name?: string

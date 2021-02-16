@@ -22,6 +22,7 @@ const initialState: FormState = {
   startAddress: { lat: 61.8172594, lon: 16.0561472, name: '' },
   endAddress: null,
   metadata: {
+    fleet: '',
     profile: '',
     driver: {
       contact: '',
@@ -46,6 +47,7 @@ export interface FormState {
   id: string
   latestEnd: Date | null
   metadata: {
+    fleet: string
     profile: string
     driver: {
       contact?: string

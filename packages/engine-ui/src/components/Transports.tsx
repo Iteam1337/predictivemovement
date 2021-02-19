@@ -38,18 +38,44 @@ const Transports: React.FC<{
     [setMapLayers]
   )
 
+  const sortedFleets: string[] = []
+
+  transports.map((transport) => {
+    if (sortedFleets.includes(transport.metadata.fleet)) {
+      return null
+    }
+    sortedFleets.push(transport.metadata.fleet)
+
+    return null
+  })
+
+  const sortedTransports = transports.sort((a, b) =>
+    a.metadata.profile.localeCompare(b.metadata.profile)
+  )
+
   return (
     <Switch>
       <Route exact path={path}>
-        <h3>Aktuella transporter</h3>
-        <TransportsList transports={transports} />
-        <Elements.Layout.FlexRowInCenter>
-          <Link to={`${url}/add-transport`}>
-            <Elements.Buttons.SubmitButton color="#666666">
-              + Lägg till transport
-            </Elements.Buttons.SubmitButton>
-          </Link>
-        </Elements.Layout.FlexRowInCenter>
+        {sortedFleets &&
+          sortedFleets.map((fleet, i) => {
+            return (
+              <Elements.Layout.MarginBottomContainer key={i}>
+                <TransportsList
+                  transports={sortedTransports}
+                  fleet={fleet}
+                  sortedFleets={sortedFleets}
+                />
+
+                <Elements.Layout.FlexRowInCenter>
+                  <Link to={`${url}/add-transport`}>
+                    <Elements.Buttons.SubmitButton color="#666666">
+                      + Lägg till transport
+                    </Elements.Buttons.SubmitButton>
+                  </Link>
+                </Elements.Layout.FlexRowInCenter>
+              </Elements.Layout.MarginBottomContainer>
+            )
+          })}
       </Route>
       <Route exact path={`${path}/add-transport`}>
         <CreateTransport onSubmit={createTransport} />

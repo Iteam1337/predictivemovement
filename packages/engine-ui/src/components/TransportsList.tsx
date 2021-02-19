@@ -2,14 +2,16 @@ import React from 'react'
 import * as stores from '../utils/state/stores'
 import * as Elements from '../shared-elements/'
 import * as helpers from '../utils/helpers'
+import * as Icons from '../assets/Icons'
 import { Transport } from '../types'
-import { Link, useRouteMatch } from 'react-router-dom'
 
-const TransportsList: React.FC<{ transports: Transport[] }> = ({
-  transports,
-}) => {
+const TransportsList: React.FC<{
+  transports: Transport[]
+  fleet: string
+  sortedFleets: string[]
+}> = ({ transports, fleet, sortedFleets }) => {
   const setUIState = stores.ui((state) => state.dispatch)
-  const { url } = useRouteMatch()
+  const [isOpen, setIsOpen] = React.useState(false)
 
   if (!transports.length)
     return (
@@ -18,70 +20,53 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
       </Elements.Typography.NoInfoParagraph>
     )
 
-  const sortedFleets: string[] = []
-
-  transports.map((transport) => {
-    if (sortedFleets.includes(transport.metadata.fleet)) {
-      return null
-    }
-    sortedFleets.push(transport.metadata.fleet)
-
-    return null
-  })
-
-  const sortedTransports = transports.sort((a, b) =>
-    a.metadata.profile.localeCompare(b.metadata.profile)
+  const filteredTransports = transports.filter(
+    (t) => t.metadata.fleet === fleet
   )
 
   return (
     <Elements.Layout.TransportsList>
-      {sortedFleets &&
-        sortedFleets.map((fleet) => {
+      <Elements.Layout.FlexRowWrapper
+        onClick={() => setIsOpen((current) => !current)}
+      >
+        <Elements.Typography.CleanH4>
+          {fleet === '' && sortedFleets.length === 1
+            ? 'Aktuella Transporter'
+            : fleet === '' && sortedFleets.length > 1
+            ? 'Övriga Transporter'
+            : fleet}
+        </Elements.Typography.CleanH4>
+        <Icons.Arrow
+          style={{
+            marginLeft: '0.875rem',
+            transform: `rotate(${isOpen ? '180deg' : 0})`,
+          }}
+        />
+      </Elements.Layout.FlexRowWrapper>
+      {isOpen &&
+        filteredTransports.map((transport) => {
           return (
-            <div>
-              <h3>
-                {fleet === '' && sortedFleets.length === 1
-                  ? 'Aktuella Transporter'
-                  : fleet === '' && sortedFleets.length > 1
-                  ? 'Övriga Transporter'
-                  : fleet}
-              </h3>
-
-              {sortedTransports.map((transport) => {
-                if (transport.metadata.fleet === fleet) {
-                  return (
-                    <li key={transport.id}>
-                      <Elements.Links.RoundedLink
-                        color={transport.color}
-                        onMouseOver={() =>
-                          setUIState({
-                            type: 'highlightTransport',
-                            payload: transport.id,
-                          })
-                        }
-                        onMouseLeave={() =>
-                          setUIState({
-                            type: 'highlightTransport',
-                            payload: undefined,
-                          })
-                        }
-                        to={`/transports/${transport.id}`}
-                      >
-                        {transport.metadata?.profile?.toUpperCase() ||
-                          helpers.getLastFourChars(transport.id).toUpperCase()}
-                      </Elements.Links.RoundedLink>
-                    </li>
-                  )
-                } else return null
-              })}
-              <Elements.Layout.FlexRowInCenter>
-                <Link to={`${url}/add-transport`}>
-                  <Elements.Buttons.SubmitButton color="#666666">
-                    + Lägg till transport
-                  </Elements.Buttons.SubmitButton>
-                </Link>
-              </Elements.Layout.FlexRowInCenter>
-            </div>
+            <li key={transport.id}>
+              <Elements.Links.RoundedLink
+                color={transport.color}
+                onMouseOver={() =>
+                  setUIState({
+                    type: 'highlightTransport',
+                    payload: transport.id,
+                  })
+                }
+                onMouseLeave={() =>
+                  setUIState({
+                    type: 'highlightTransport',
+                    payload: undefined,
+                  })
+                }
+                to={`/transports/${transport.id}`}
+              >
+                {transport.metadata?.profile?.toUpperCase() ||
+                  helpers.getLastFourChars(transport.id).toUpperCase()}
+              </Elements.Links.RoundedLink>
+            </li>
           )
         })}
     </Elements.Layout.TransportsList>

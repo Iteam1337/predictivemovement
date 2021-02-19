@@ -75,7 +75,26 @@ const Transports: React.FC<{
               </Elements.Layout.MarginBottomContainer>
             )
           })}
+        {sortedFleets.length === 0 && (
+          <>
+            <Elements.Typography.CleanH4>
+              Aktuella transporter
+            </Elements.Typography.CleanH4>
+            <Elements.Layout.MarginBottomContainer />
+            <Elements.Typography.NoInfoParagraph>
+              Det finns inga aktuella transporter...
+            </Elements.Typography.NoInfoParagraph>
+            <Elements.Layout.FlexRowInCenter>
+              <Link to={`${url}/add-transport`}>
+                <Elements.Buttons.SubmitButton color="#666666">
+                  + Lägg till transport
+                </Elements.Buttons.SubmitButton>
+              </Link>
+            </Elements.Layout.FlexRowInCenter>
+          </>
+        )}
       </Route>
+
       <Route exact path={`${path}/add-transport`}>
         <CreateTransport onSubmit={createTransport} />
       </Route>
@@ -92,6 +111,7 @@ const Transports: React.FC<{
           deleteTransport={deleteTransport}
         />
       </Route>
+
       <Route component={NotFound} />
     </Switch>
   )

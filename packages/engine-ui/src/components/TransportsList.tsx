@@ -13,16 +13,16 @@ const TransportsList: React.FC<{
   const setUIState = stores.ui((state) => state.dispatch)
   const [isOpen, setIsOpen] = React.useState(false)
 
-  if (!transports.length)
+  const filteredTransports = transports.filter(
+    (t) => t.metadata.fleet === fleet
+  )
+
+  if (!filteredTransports.length)
     return (
       <Elements.Typography.NoInfoParagraph>
         Det finns inga aktuella transporter...
       </Elements.Typography.NoInfoParagraph>
     )
-
-  const filteredTransports = transports.filter(
-    (t) => t.metadata.fleet === fleet
-  )
 
   return (
     <Elements.Layout.TransportsList>

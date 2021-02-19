@@ -65,13 +65,13 @@ const Transports: React.FC<{
                   fleet={fleet}
                   sortedFleets={sortedFleets}
                 />
-                <Elements.Layout.FlexRowInCenter>
+                <Elements.Layout.FlexRowInCenterMarginS>
                   <Link to={`${url}/add-transport/${fleet}`}>
                     <Elements.Buttons.SubmitButton color="#666666">
                       + Lägg till transport
                     </Elements.Buttons.SubmitButton>
                   </Link>
-                </Elements.Layout.FlexRowInCenter>
+                </Elements.Layout.FlexRowInCenterMarginS>
               </Elements.Layout.MarginBottomContainer>
             )
           })}
@@ -84,13 +84,13 @@ const Transports: React.FC<{
             <Elements.Typography.NoInfoParagraph>
               Det finns inga aktuella transporter...
             </Elements.Typography.NoInfoParagraph>
-            <Elements.Layout.FlexRowInCenter>
+            <Elements.Layout.FlexRowInCenterMarginS>
               <Link to={`${url}/add-transport`}>
                 <Elements.Buttons.SubmitButton color="#666666">
                   + Lägg till transport
                 </Elements.Buttons.SubmitButton>
               </Link>
-            </Elements.Layout.FlexRowInCenter>
+            </Elements.Layout.FlexRowInCenterMarginS>
           </>
         )}
       </Route>

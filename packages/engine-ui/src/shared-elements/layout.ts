@@ -18,11 +18,18 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
-const FlexRowInCenter = styled.div`
+const FlexRowInCenterMarginS = styled.div`
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+`
+
+const FlexRowInCenterMarginL = styled.div`
   margin-top: 5rem;
   display: flex;
   justify-content: center;
 `
+
 const BookingList = styled.ul`
   overflow: auto;
   height: 100%;
@@ -144,6 +151,7 @@ export {
   SectionWithMargin,
   MarginTopContainerSm,
   TransportsList,
-  FlexRowInCenter,
+  FlexRowInCenterMarginL,
+  FlexRowInCenterMarginS,
   FlexContainer,
 }

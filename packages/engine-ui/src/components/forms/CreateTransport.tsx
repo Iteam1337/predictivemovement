@@ -1,5 +1,5 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import nameIcon from '../../assets/contact-name.svg'
 import phoneIcon from '../../assets/contact-phone.svg'
 import * as Elements from '../../shared-elements'
@@ -105,6 +105,9 @@ const Component = ({
       weight: '',
       volume: '',
     })
+
+  const location = useLocation()
+  const selectedFleet = location.pathname.split('/').pop()
 
   return (
     <form onSubmit={onSubmitHandler} autoComplete="off">
@@ -310,7 +313,7 @@ const Component = ({
           <Elements.Form.Label>Flotta</Elements.Form.Label>
           <FormInputs.FleetInput
             placeholder="Lägg till eller välj en flotta"
-            value={formState.metadata.fleet || ''}
+            value={formState.metadata.fleet || selectedFleet || ''}
             onChangeHandler={eventHandlers.handleFleetInput(
               'fleet',
               onChangeHandler

@@ -66,7 +66,7 @@ const Transports: React.FC<{
                   sortedFleets={sortedFleets}
                 />
                 <Elements.Layout.FlexRowInCenter>
-                  <Link to={`${url}/add-transport`}>
+                  <Link to={`${url}/add-transport/${fleet}`}>
                     <Elements.Buttons.SubmitButton color="#666666">
                       + Lägg till transport
                     </Elements.Buttons.SubmitButton>
@@ -95,7 +95,7 @@ const Transports: React.FC<{
         )}
       </Route>
 
-      <Route exact path={`${path}/add-transport`}>
+      <Route path={`${path}/add-transport`}>
         <CreateTransport onSubmit={createTransport} />
       </Route>
       <Route exact path={`${path}/edit-transport/:transportId`}>

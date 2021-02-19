@@ -16,25 +16,54 @@ const TransportsList: React.FC<{ transports: Transport[] }> = ({
       </Elements.Typography.NoInfoParagraph>
     )
 
+  const sortedFleets: string[] = []
+
+  transports.map((transport) => {
+    if (sortedFleets.includes(transport.metadata.fleet)) {
+      return null
+    }
+    sortedFleets.push(transport.metadata.fleet)
+
+    return null
+  })
+
   return (
     <Elements.Layout.TransportsList>
-      {transports.map((transport) => (
-        <li key={transport.id}>
-          <Elements.Links.RoundedLink
-            color={transport.color}
-            onMouseOver={() =>
-              setUIState({ type: 'highlightTransport', payload: transport.id })
-            }
-            onMouseLeave={() =>
-              setUIState({ type: 'highlightTransport', payload: undefined })
-            }
-            to={`/transports/${transport.id}`}
-          >
-            {transport.metadata?.profile?.toUpperCase() ||
-              helpers.getLastFourChars(transport.id).toUpperCase()}
-          </Elements.Links.RoundedLink>
-        </li>
-      ))}
+      {sortedFleets.map((fleet) => {
+        return (
+          <div>
+            <h3>{fleet}</h3>
+
+            {transports.map((transport) => {
+              if (transport.metadata.fleet === fleet) {
+                return (
+                  <li key={transport.id}>
+                    <Elements.Links.RoundedLink
+                      color={transport.color}
+                      onMouseOver={() =>
+                        setUIState({
+                          type: 'highlightTransport',
+                          payload: transport.id,
+                        })
+                      }
+                      onMouseLeave={() =>
+                        setUIState({
+                          type: 'highlightTransport',
+                          payload: undefined,
+                        })
+                      }
+                      to={`/transports/${transport.id}`}
+                    >
+                      {transport.metadata?.profile?.toUpperCase() ||
+                        helpers.getLastFourChars(transport.id).toUpperCase()}
+                    </Elements.Links.RoundedLink>
+                  </li>
+                )
+              } else return null
+            })}
+          </div>
+        )
+      })}
     </Elements.Layout.TransportsList>
   )
 }

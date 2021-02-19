@@ -11,7 +11,7 @@ const TransportsList: React.FC<{
   sortedFleets: string[]
 }> = ({ transports, fleet, sortedFleets }) => {
   const setUIState = stores.ui((state) => state.dispatch)
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(true)
 
   const filteredTransports = transports.filter(
     (t) => t.metadata.fleet === fleet

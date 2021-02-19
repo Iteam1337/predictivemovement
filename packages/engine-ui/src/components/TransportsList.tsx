@@ -36,6 +36,8 @@ const TransportsList: React.FC<{
             ? 'Övriga Transporter'
             : fleet}
         </Elements.Typography.CleanH4>
+        <Elements.Layout.MarginBottomContainer />
+
         <Icons.Arrow
           style={{
             marginLeft: '0.875rem',

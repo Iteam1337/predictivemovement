@@ -65,7 +65,6 @@ const Transports: React.FC<{
                   fleet={fleet}
                   sortedFleets={sortedFleets}
                 />
-
                 <Elements.Layout.FlexRowInCenter>
                   <Link to={`${url}/add-transport`}>
                     <Elements.Buttons.SubmitButton color="#666666">

@@ -54,7 +54,9 @@ export const sendSummary = (
   telegramId: number,
   instructionGroups: Instruction[][]
 ): Promise<Message> => {
-  const summaryList = convertInstructionGroupsToSummaryList(instructionGroups)
+  const summaryList = helpers.convertInstructionGroupsToSummaryList(
+    instructionGroups
+  )
   const summary =
     summaryList +
     `\n[Se rutt på karta](${getDirectionsFromInstructionGroups(
@@ -70,33 +72,6 @@ export const sendSummary = (
 export const onNoInstructionsForVehicle = (
   ctx: TelegrafContext
 ): Promise<Message> => ctx.reply('Vi kunde inte hitta några instruktioner...')
-
-export const convertInstructionGroupsToSummaryList = (
-  instructionGroups: Instruction[][]
-): string =>
-  instructionGroups
-    .map((instructionGroup: Instruction[]) => {
-      const [
-        {
-          type,
-          address: { name },
-        },
-      ] = instructionGroup
-      return {
-        name,
-        type: type === 'pickupShipment' ? 'Hämta' : 'Lämna',
-        ids: instructionGroup
-          .map(({ id }) => id)
-          .map(helpers.formatId)
-          .join('__, __'),
-      }
-    })
-    .reduce(
-      (summary: string, { ids, name, type }, index) =>
-        `${summary}
-${index + 1}\. ${type} __${ids}__ vid ${name}`,
-      '🎁  Här är dina körningar:'
-    )
 
 export const sendDriverFinishedMessage = (
   telegramId: number

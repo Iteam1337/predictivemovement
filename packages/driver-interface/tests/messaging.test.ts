@@ -1,4 +1,4 @@
-import { convertInstructionGroupsToSummaryList } from '../src/services/messaging'
+import { convertInstructionGroupsToSummaryList } from '../src/helpers'
 
 function addIndexNull(instructions: any[]) {
   return instructions.map((instruction: any) => ({
@@ -35,7 +35,7 @@ test('2 instruction groups with 1 entity in each ', () => {
 2\. Lämna __ODMW__ vid Storgatan 50, Stockholm, Sweden`)
 })
 
-test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', () => {
+test.only('2 instruction groups with 1 entity, 1 instruction group with 2 entities', () => {
   const instructions = [
     [
       {

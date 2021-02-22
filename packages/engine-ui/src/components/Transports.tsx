@@ -51,7 +51,7 @@ const Transports: React.FC<{
 
   sortedFleets.sort((a, b) => (a === '' ? 1 : b === '' ? -1 : 0))
 
-  const sortedTransports = transports.sort((a, b) =>
+  transports.sort((a, b) =>
     a.metadata.profile.localeCompare(b.metadata.profile)
   )
 
@@ -63,7 +63,7 @@ const Transports: React.FC<{
             return (
               <Elements.Layout.MarginBottomContainer key={i}>
                 <TransportsList
-                  transports={sortedTransports}
+                  transports={transports}
                   fleet={fleet}
                   sortedFleets={sortedFleets}
                 />

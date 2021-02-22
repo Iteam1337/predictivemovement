@@ -65,13 +65,16 @@ const Transports: React.FC<{
                   fleet={fleet}
                   sortedFleets={sortedFleets}
                 />
-                <Elements.Layout.FlexRowInCenterMarginS>
-                  <Link to={`${url}/add-transport/${fleet}`}>
-                    <Elements.Buttons.SubmitButton color="#666666">
-                      + Lägg till transport
-                    </Elements.Buttons.SubmitButton>
-                  </Link>
-                </Elements.Layout.FlexRowInCenterMarginS>
+
+                {fleet ? (
+                  <Elements.Layout.FlexRowInCenterMarginS>
+                    <Link to={`${url}/add-transport/${fleet}`}>
+                      <Elements.Buttons.SubmitButton color="#666666">
+                        + Lägg till transport
+                      </Elements.Buttons.SubmitButton>
+                    </Link>
+                  </Elements.Layout.FlexRowInCenterMarginS>
+                ) : null}
               </Elements.Layout.MarginBottomContainer>
             )
           })}
@@ -93,6 +96,16 @@ const Transports: React.FC<{
             </Elements.Layout.FlexRowInCenterMarginS>
           </>
         )}
+
+        {transports.length > 0 ? (
+          <Elements.Layout.FlexRowInCenterMarginL>
+            <Link to={`${url}/add-transport/`}>
+              <Elements.Buttons.SubmitButton color="#666666">
+                + Skapa Transport
+              </Elements.Buttons.SubmitButton>
+            </Link>
+          </Elements.Layout.FlexRowInCenterMarginL>
+        ) : null}
       </Route>
 
       <Route exact path={`${path}/add-transport/:fleet?`}>

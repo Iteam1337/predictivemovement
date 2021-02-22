@@ -172,6 +172,33 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
   }
 }
 
+export const onManualReceiptConfirmed = async (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> => {
+  const [bookingId] = await cache
+    .getInstructionGroup(instructionGroupId)
+    .then((instructionGroup: Instruction[]) =>
+      instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
+    )
+
+  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
+
+  return amqp
+    .publishReceiptByManual({
+      type: 'manual',
+      bookingId: bookingId,
+      createdAt: new Date(),
+      transportId,
+      signedBy: transportId,
+    })
+    .then((e) => {
+      console.log('manual signature successfully received and sent to server')
+      return e
+    })
+    .then(() => messaging.notifyManualSignatureConfirmed(telegramId))
+}
+
 export const onPhotoReceived = async (
   telegramId: number,
   photoSizes: PhotoSize[]
@@ -189,26 +216,18 @@ export const onPhotoReceived = async (
     )
   const transportId = await cache.getVehicleIdByTelegramId(telegramId)
 
-  return cache
-    .getDeliveryReceiptPhotos(bookingIds)
-    .then((photoIds: string[]) =>
-      cache.saveDeliveryReceiptPhoto(
-        bookingIds,
-        photoIds.concat([highestResPhotoId])
-      )
-    )
-    .then(() =>
-      amqp.publishReceiptByPhoto({
-        type: 'photo',
-        bookingId: bookingIds[0],
-        createdAt: new Date(),
-        transportId,
-        receipt: {
-          photoId: highestResPhotoId,
-        },
-        signedBy: transportId,
-      })
-    )
+  return amqp
+    .publishReceiptByPhoto({
+      type: 'photo',
+      bookingId: bookingIds[0],
+      createdAt: new Date(),
+      transportId,
+      receipt: {
+        photoId: highestResPhotoId,
+      },
+      signedBy: transportId,
+    })
+
     .then(() => messaging.sendPhotoReceived(telegramId))
     .then((e) => {
       console.log('photo successfully received and sent to server')

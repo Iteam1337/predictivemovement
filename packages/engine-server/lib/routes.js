@@ -119,13 +119,14 @@ module.exports = (io) => {
 
     socket.on(
       'signed-delivery',
-      ({ createdAt, signedBy, bookingId, transportId, signature }) => {
+      ({ createdAt, signedBy, bookingId, transportId, receipt, type }) => {
         receiptsCache.set(bookingId, {
+          type,
           createdAt,
           signedBy,
           bookingId,
           transportId,
-          signature,
+          receipt,
         })
         return confirmDeliveryReceipt(bookingId, transportId)
       }

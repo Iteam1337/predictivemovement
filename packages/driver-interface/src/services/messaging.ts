@@ -286,6 +286,11 @@ export const sendDeliveryInformation = (
   )
 }
 
+export const notifyManualSignatureConfirmed = (
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(telegramId, `Tack! Ditt val har registrerats.`)
+
 export const acceptManualSignature = (
   instructionGroupId: string,
   telegramId: number
@@ -301,7 +306,7 @@ export const acceptManualSignature = (
         Markup.callbackButton(
           'OK',
           JSON.stringify({
-            e: 'delivered',
+            e: 'delivery_acknowledgement:manual_confirm',
             id: instructionGroupId,
           })
         ),

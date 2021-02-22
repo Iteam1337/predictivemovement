@@ -49,6 +49,7 @@ const ButtonContainer = styled.div`
     margin-right: 1rem;
   }
 `
+
 const LoadingContainer = styled.div`
   display: flex;
   align-items: center;
@@ -73,6 +74,7 @@ const BookingNotFound = () => {
 
 const Component: React.FC<{
   onSubmit: (
+    type: string,
     bookingId: string,
     transportId: string,
     base64Signature: string,
@@ -112,6 +114,7 @@ const Component: React.FC<{
       signedBy
     ) {
       onSubmit(
+        'signature',
         params.bookingId,
         params.transportId,
         signatureAsBase64,

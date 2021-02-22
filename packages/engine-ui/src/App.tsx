@@ -29,6 +29,7 @@ const App = () => {
   const isMobile = window.innerWidth <= 645
 
   const createDeliverySignature = (
+    type: string,
     bookingId: string,
     transportId: string,
     signature: string,
@@ -36,6 +37,7 @@ const App = () => {
     createdAt: Date
   ) => {
     socket.emit('signed-delivery', {
+      type,
       bookingId,
       transportId,
       receipt: { base64Signature: signature },

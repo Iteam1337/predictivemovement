@@ -49,6 +49,8 @@ const Transports: React.FC<{
     return null
   })
 
+  sortedFleets.sort((a, b) => (a === '' ? 1 : b === '' ? -1 : 0))
+
   const sortedTransports = transports.sort((a, b) =>
     a.metadata.profile.localeCompare(b.metadata.profile)
   )

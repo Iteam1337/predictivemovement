@@ -83,6 +83,14 @@ services:
       - ./packages/booking-dispatcher/data:/app/data
     networks:
       - predictivemovement
+  storage:
+    image: minio
+    ports:
+      - 127.0.0.1:9000:9000
+    volumes:
+      - ./data:/data
+    networks:
+      - predictivemovement
 networks:
   predictivemovement:
     driver: bridge

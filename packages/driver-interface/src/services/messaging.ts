@@ -317,7 +317,9 @@ export const acceptManualSignature = (
 ): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
-    `Nu tar du som förare ansvar för att kvittens samlas in utanför plattformen. Tryck på "OK" för att godkänna och komma vidare till nästa steg.`,
+    `Nu tar du som förare ansvar för att kvittens samlas in utanför plattformen.`.concat(
+      `\nTryck på "OK" för att godkänna och komma vidare till nästa steg.`
+    ),
     {
       parse_mode: 'Markdown',
       reply_markup: Markup.inlineKeyboard([

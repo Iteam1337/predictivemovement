@@ -163,7 +163,7 @@ module.exports = (io) => {
         persistent: true,
       })
       .then(() =>
-        console.log(` [x] Confirm receipt for booking: '${bookingId}'`)
+        console.log(` [x] Confirmed receipt for booking: '${bookingId}'`)
       )
   }
 

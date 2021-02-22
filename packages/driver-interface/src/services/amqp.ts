@@ -69,15 +69,6 @@ export const publishTransportEvent = (
     )
     .catch(console.warn)
 
-type SignatureReceipt = {
-  type: 'signature'
-  receipt: { base64String: string }
-  createdAt: Date
-  bookingId: string
-  transportId: string
-  signedBy: string
-}
-
 type PhotoReceipt = {
   type: 'photo'
   receipt: { photoId: string }
@@ -86,15 +77,6 @@ type PhotoReceipt = {
   transportId: string
   signedBy: string
 }
-
-type ManualReceipt = {
-  type: 'manual'
-  createdAt: Date
-  bookingId: string
-  transportId: string
-}
-
-// type DeliveryReceipt = ManualReceipt | PhotoReceipt | SignatureReceipt
 
 export const publishReceiptByPhoto = (
   receipt: PhotoReceipt

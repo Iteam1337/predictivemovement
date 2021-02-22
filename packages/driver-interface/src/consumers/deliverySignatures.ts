@@ -28,7 +28,7 @@ const deliverySignatures = (): Promise<Replies.Consume> =>
         .then(() =>
           ch.consume(DELIVERY_RECEIPT_CONFIRMED, (msg) => {
             const message = JSON.parse(msg.content.toString())
-
+            console.log('this is incoming message: ', message)
             botServices.handleIncomingSignatureConfirmation(message.transportId)
 
             return ch.ack(msg)

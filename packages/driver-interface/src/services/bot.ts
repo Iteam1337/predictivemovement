@@ -232,15 +232,13 @@ export const beginDeliveryAcknowledgement = async (
 export const handleIncomingSignatureConfirmation = async (
   transportId: string
 ): Promise<Message> => {
-  const telegramId = await cache.getTelegramIdByVehicleId(transportId)
+  const telegramId = Number(await cache.getTelegramIdByVehicleId(transportId))
 
   const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
-    Number(telegramId)
+    telegramId
   )
-  return messaging.sendSignatureConfirmation(
-    Number(telegramId),
-    instructionGroupId
-  )
+
+  return messaging.sendSignatureConfirmation(telegramId, instructionGroupId)
 }
 
 export const handleDeliveryAcknowledgementBySignature = (

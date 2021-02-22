@@ -35,7 +35,7 @@ test('2 instruction groups with 1 entity in each ', () => {
 2\. Lämna __ODMW__ vid Storgatan 50, Stockholm, Sweden`)
 })
 
-test.only('2 instruction groups with 1 entity, 1 instruction group with 2 entities', () => {
+test('2 instruction groups with 1 entity, 1 instruction group with 2 entities', () => {
   const instructions = [
     [
       {

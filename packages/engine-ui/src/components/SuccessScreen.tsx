@@ -22,9 +22,10 @@ const ImageContainer = styled.div<{ active: boolean }>`
 
 const Component: React.FC<{
   infoText: string
-  onClose: () => void
+  onClose?: () => void
   onContinue?: () => void
-}> = ({ onClose, onContinue, infoText }) => {
+  closeButtonText?: string
+}> = ({ onClose, onContinue, infoText, closeButtonText = 'Stäng' }) => {
   const [state, set] = React.useState(false)
 
   React.useEffect(() => {
@@ -43,18 +44,21 @@ const Component: React.FC<{
       </Elements.Layout.MarginTopContainerSm>
       <Elements.Layout.MarginTopContainer>
         <Elements.Layout.ButtonWrapper>
-          <Elements.Buttons.CancelButton onClick={onClose}>
-            Stäng
-          </Elements.Buttons.CancelButton>
-          {onContinue && 
-          <Elements.Buttons.SubmitButton
-            onClick={onContinue}
-            type="button"
-            padding="0.75rem 1.25rem"
-          >
-            Lägg till ny
-          </Elements.Buttons.SubmitButton>
-          }
+          {onClose && (
+            <Elements.Buttons.CancelButton onClick={onClose}>
+              {closeButtonText}
+            </Elements.Buttons.CancelButton>
+          )}
+
+          {onContinue && (
+            <Elements.Buttons.SubmitButton
+              onClick={onContinue}
+              type="button"
+              padding="0.75rem 1.25rem"
+            >
+              Lägg till ny
+            </Elements.Buttons.SubmitButton>
+          )}
         </Elements.Layout.ButtonWrapper>
       </Elements.Layout.MarginTopContainer>
     </Container>

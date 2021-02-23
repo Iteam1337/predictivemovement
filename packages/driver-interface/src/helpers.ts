@@ -1,5 +1,32 @@
 import { Instruction } from './types'
 
+export const convertInstructionGroupsToSummaryList = (
+  instructionGroups: Instruction[][]
+): string =>
+  instructionGroups
+    .map((instructionGroup: Instruction[]) => {
+      const [
+        {
+          type,
+          address: { name },
+        },
+      ] = instructionGroup
+      return {
+        name,
+        type: type === 'pickupShipment' ? 'Hämta' : 'Lämna',
+        ids: instructionGroup
+          .map(({ id }) => id)
+          .map(formatId)
+          .join('__, __'),
+      }
+    })
+    .reduce(
+      (summary: string, { ids, name, type }, index) =>
+        `${summary}
+${index + 1}\. ${type} __${ids}__ vid ${name}`,
+      '🎁  Här är dina körningar:'
+    )
+
 const getLastFourChars = (str: string): string =>
   str.slice(str.length - 4, str.length)
 

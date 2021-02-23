@@ -1,4 +1,4 @@
-import { convertInstructionGroupsToSummaryList } from '../src/services/messaging'
+import { convertInstructionGroupsToSummaryList } from '../src/helpers'
 
 function addIndexNull(instructions: any[]) {
   return instructions.map((instruction: any) => ({

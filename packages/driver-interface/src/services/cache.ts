@@ -10,6 +10,7 @@ const keys = {
   VEHICLE_ID_BY_PHONE_NUMBER: 'vehicle-id-by-phone-nr',
   CURRENTLY_DELIVERING: 'currently_delivering',
   RECEIPT_PHOTOS: 'receipt_photos',
+  TELEGRAM_ID_BY_VEHICLE_ID: 'telegram_id_by_vehicle_id',
 }
 
 export default {
@@ -93,4 +94,11 @@ export default {
       .get(`${keys.RECEIPT_PHOTOS}:${bookingIds.join('-')}`)
       .then((res) => JSON.parse(res))
       .then((list) => list || []),
+  getTelegramIdByVehicleId: (vehicleId: string): Promise<string> =>
+    redis.get(`${keys.TELEGRAM_ID_BY_VEHICLE_ID}:${vehicleId}`),
+  setTelegramIdByVehicleId: (
+    vehicleId: string,
+    telegramId: number
+  ): Promise<string> =>
+    redis.set(`${keys.TELEGRAM_ID_BY_VEHICLE_ID}:${vehicleId}`, telegramId),
 }

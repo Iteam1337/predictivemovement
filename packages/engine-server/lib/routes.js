@@ -1,7 +1,12 @@
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const _ = require('highland')
 const helpers = require('./helpers')
-const { bookingsCache, transportsCache, planCache } = require('./cache')
+const {
+  bookingsCache,
+  transportsCache,
+  planCache,
+  receiptsCache,
+} = require('./cache')
 const parcel = require('./parcel')
 const {
   toIncomingBooking,
@@ -29,7 +34,11 @@ module.exports = (io) => {
     bookingNotifications,
     updateBooking,
     publishUpdateTransport,
+    confirmDeliveryReceipt,
+    receipts,
   } = require('./engineConnector')(io)
+
+  require('./receipts')(receipts, confirmDeliveryReceipt)
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
@@ -108,6 +117,21 @@ module.exports = (io) => {
       createBooking(toOutgoingBooking(booking))
     )
 
+    socket.on(
+      'signed-delivery',
+      ({ createdAt, signedBy, bookingId, transportId, receipt, type }) => {
+        receiptsCache.set(bookingId, {
+          type,
+          createdAt,
+          signedBy,
+          bookingId,
+          transportId,
+          receipt,
+        })
+        return confirmDeliveryReceipt(bookingId, transportId)
+      }
+    )
+
     socket.on('dispatch-offers', () => {
       console.log('received message to dispatch offers, from UI')
       dispatchOffers()
@@ -124,7 +148,6 @@ module.exports = (io) => {
     })
 
     socket.on('delete-booking', (id) => {
-      console.log('about to delete booking: ', id)
       bookingsCache.delete(id)
       publishDeleteBooking(id)
       socket.emit('delete-booking', id)

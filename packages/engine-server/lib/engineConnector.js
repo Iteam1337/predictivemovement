@@ -18,6 +18,7 @@ const routingKeys = {
   DELETED: 'deleted',
   BOOKING_MOVED: 'booking_moved',
   UPDATED: 'updated',
+  RECEIPT_CONFIRMED: 'receipt_confirmed',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
@@ -92,6 +93,16 @@ module.exports = (io) => {
     .map((msg) => msg.json())
     .map(toIncomingPlan)
 
+  const receipts = amqp
+    .exchange('delivery_receipts', 'topic', {
+      durable: true,
+    })
+    .queue('delivery_receipts', {
+      durable: true,
+    })
+    .subscribe({ noAck: true }, 'new')
+    .map((msg) => msg.json())
+
   amqp
     .exchange('outgoing_booking_updates', 'topic', {
       durable: true,
@@ -106,7 +117,6 @@ module.exports = (io) => {
   function deleteBooking(id) {
     bookingsCache.delete(id)
     io.emit('delete-booking', id)
-    console.log('deleted')
   }
 
   const deleteTransport = (id) => {
@@ -143,6 +153,19 @@ module.exports = (io) => {
     .each(deleteTransport)
 
   ///////// Publishers
+
+  const confirmDeliveryReceipt = (bookingId, transportId) => {
+    return amqp
+      .exchange('delivery_receipts', 'topic', {
+        durable: true,
+      })
+      .publish({ transportId, bookingId }, routingKeys.RECEIPT_CONFIRMED, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(` [x] Confirmed receipt for booking: '${bookingId}'`)
+      )
+  }
 
   const createBooking = (booking) => {
     return amqp
@@ -336,5 +359,7 @@ module.exports = (io) => {
     updateBooking,
     publishUpdateTransport,
     transportUpdates,
+    confirmDeliveryReceipt,
+    receipts,
   }
 }

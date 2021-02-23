@@ -5,6 +5,7 @@ import { Route, Redirect } from 'react-router-dom'
 import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
+import Notifications from './Notifications'
 
 const Container = styled.div`
   position: absolute;
@@ -36,34 +37,37 @@ interface Props {
 
 const Sidebar = (state: Props) => {
   return (
-    <Container>
-      <Navigation />
-      <Content isMobile={state.isMobile}>
-        <Route exact path="/">
-          <Redirect from="/" to="/bookings" />
-        </Route>
-        <Route path="/bookings">
-          <Bookings
-            createBooking={state.createBooking}
-            deleteBooking={state.deleteBooking}
-            updateBooking={state.updateBooking}
-          />
-        </Route>
-        <Route path="/transports">
-          <Transports
-            createTransport={state.createTransport}
-            deleteTransport={state.deleteTransport}
-            updateTransport={state.updateTransport}
-          />
-        </Route>
-        <Route path="/plans">
-          <Plan
-            dispatchOffers={state.dispatchOffers}
-            moveBooking={state.moveBooking}
-          />
-        </Route>
-      </Content>
-    </Container>
+    <>
+      <Notifications />
+      <Container>
+        <Navigation />
+        <Content isMobile={state.isMobile}>
+          <Route exact path="/">
+            <Redirect from="/" to="/bookings" />
+          </Route>
+          <Route path="/bookings">
+            <Bookings
+              createBooking={state.createBooking}
+              deleteBooking={state.deleteBooking}
+              updateBooking={state.updateBooking}
+            />
+          </Route>
+          <Route path="/transports">
+            <Transports
+              createTransport={state.createTransport}
+              deleteTransport={state.deleteTransport}
+              updateTransport={state.updateTransport}
+            />
+          </Route>
+          <Route path="/plans">
+            <Plan
+              dispatchOffers={state.dispatchOffers}
+              moveBooking={state.moveBooking}
+            />
+          </Route>
+        </Content>
+      </Container>
+    </>
   )
 }
 

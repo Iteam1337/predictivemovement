@@ -27,6 +27,10 @@ const SubmitButton = styled.button<{
   :focus {
     outline-color: #ccffcc;
   }
+
+  :disabled {
+    background: lightgray;
+  }
 `
 
 const CancelButton = styled.button<{

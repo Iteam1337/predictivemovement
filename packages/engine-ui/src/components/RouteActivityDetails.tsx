@@ -32,7 +32,7 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
 
   const [booking] = bookings.filter((d) => d.id === activityId)
 
-  const handleDeleteClick = (_activityId: string) => {
+  const handleDeleteClick = () => {
     if (
       window.confirm(
         'Är du säker på att du vill ta bort bokningen från den föreslagna planen?'
@@ -186,9 +186,7 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
           alignItems="center"
           marginTop={'4rem'}
         >
-          <Elements.Buttons.CancelButton
-            onClick={() => handleDeleteClick(activityId)}
-          >
+          <Elements.Buttons.CancelButton onClick={() => handleDeleteClick()}>
             Ta bort från rutt
           </Elements.Buttons.CancelButton>
         </Elements.Layout.MarginTopContainer>

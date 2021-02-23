@@ -189,13 +189,13 @@ const Bookings: React.FC<{
             }
           />
         </Elements.Layout.MarginTopContainer>
-        <Elements.Layout.FlexRowInCenter>
+        <Elements.Layout.FlexRowInCenterMarginL>
           <Link to={`${url}/add-booking`}>
             <Elements.Buttons.SubmitButton color="#666666">
               + Lägg till bokning
             </Elements.Buttons.SubmitButton>
           </Link>
-        </Elements.Layout.FlexRowInCenter>
+        </Elements.Layout.FlexRowInCenterMarginL>
       </Route>
 
       <Route exact path={`${'/bookings'}/add-booking`}>

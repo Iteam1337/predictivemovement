@@ -38,18 +38,11 @@ const Transports: React.FC<{
     [setMapLayers]
   )
 
-  const sortedFleets: string[] = []
+  const fleets = Array.from(
+    new Set(transports.map((transport) => transport.metadata.fleet))
+  )
 
-  transports.forEach((transport) => {
-    if (sortedFleets.includes(transport.metadata.fleet)) {
-      return null
-    }
-    sortedFleets.push(transport.metadata.fleet)
-
-    return null
-  })
-
-  sortedFleets.sort((a, b) => (a === '' ? 1 : b === '' ? -1 : 0))
+  fleets.sort((a, b) => (a === '' ? 1 : b === '' ? -1 : 0))
 
   transports.sort((a, b) =>
     a.metadata.profile.localeCompare(b.metadata.profile)
@@ -58,14 +51,14 @@ const Transports: React.FC<{
   return (
     <Switch>
       <Route exact path={path}>
-        {sortedFleets &&
-          sortedFleets.map((fleet, i) => {
+        {fleets &&
+          fleets.map((fleet, i) => {
             return (
               <Elements.Layout.MarginBottomContainer key={i}>
                 <TransportsList
                   transports={transports}
                   fleet={fleet}
-                  sortedFleets={sortedFleets}
+                  sortedFleets={fleets}
                 />
 
                 {fleet ? (
@@ -80,7 +73,7 @@ const Transports: React.FC<{
               </Elements.Layout.MarginBottomContainer>
             )
           })}
-        {sortedFleets.length === 0 && (
+        {fleets.length === 0 && (
           <>
             <Elements.Typography.CleanH4>
               Aktuella transporter

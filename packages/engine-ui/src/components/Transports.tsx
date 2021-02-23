@@ -40,7 +40,7 @@ const Transports: React.FC<{
 
   const sortedFleets: string[] = []
 
-  transports.map((transport) => {
+  transports.forEach((transport) => {
     if (sortedFleets.includes(transport.metadata.fleet)) {
       return null
     }

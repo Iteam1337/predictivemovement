@@ -1,17 +1,15 @@
 const bot = require('../adapters/bot')
 const moment = require('moment')
+const Markup = require('telegraf/markup')
 
 const onBotStart = (ctx) => {
-  const {
-    first_name,
-
-    last_name,
-
-    id,
-  } = ctx.update.message.from
-
   ctx.reply(
-    `Välkommen ${first_name} ${last_name}! Skriv "/boka" För att skapa en bokning. Ditt id är ${id}`
+    `Välkommen till Predictive Movement.\nHär kan du lägga upp bokningar i systemet med hjälp av kameran i din telefon.\nKlicka på "Logga in" för att logga in.`,
+    {
+      reply_markup: Markup.inlineKeyboard([
+        Markup.callbackButton('Logga in', 'login'),
+      ]),
+    }
   )
 }
 

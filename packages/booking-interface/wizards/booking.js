@@ -2,7 +2,7 @@ const Composer = require('telegraf/composer')
 const Markup = require('telegraf/markup')
 const WizardScene = require('telegraf/scenes/wizard')
 const { v4: uuidv4 } = require('uuid') // https://www.npmjs.com/package/id62
-const { createBooking } = require('./services/amqp')
+const { createBooking } = require('../services/amqp')
 
 const stepHandler = new Composer()
 
@@ -40,7 +40,7 @@ stepHandler.action('cancel', (ctx) => {
 })
 
 const bookingWizard = new WizardScene(
-  'booking-wizard',
+  'booking',
   (ctx) => {
     ctx.reply(
       'Hej! Var ska paketet hämtas? (Klicka på "gemet" nere till vänster om textfältet och välj "location", för att välja position)'
@@ -89,4 +89,4 @@ const bookingWizard = new WizardScene(
   (ctx) => ctx.scene.leave()
 )
 
-module.exports = { bookingWizard }
+module.exports = bookingWizard

@@ -16,6 +16,7 @@ const {
 } = require('./mappings')
 
 const { serviceStatus, getStatus } = require('./serviceStatus')
+const { saveSignature } = require('./adapters/minio')
 
 module.exports = (io) => {
   const {
@@ -120,6 +121,14 @@ module.exports = (io) => {
     socket.on(
       'signed-delivery',
       ({ createdAt, signedBy, bookingId, transportId, receipt, type }) => {
+        saveSignature({
+          createdAt,
+          signedBy,
+          bookingId,
+          transportId,
+          receipt,
+          type,
+        })
         receiptsCache.set(bookingId, {
           type,
           createdAt,

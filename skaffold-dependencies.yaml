@@ -1,0 +1,15 @@
+apiVersion: skaffold/v2alpha4
+kind: Config
+metadata:
+  name: pm-mapbox-test
+build: {}
+deploy:
+  kustomize:
+    paths:
+      - k8s/base/dependencies
+profiles:
+  - name: prod
+    deploy:
+      kustomize:
+        paths:
+          - k8s/overlays/dependencies-prod

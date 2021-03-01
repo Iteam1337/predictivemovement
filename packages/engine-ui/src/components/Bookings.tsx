@@ -7,7 +7,6 @@ import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import * as types from '../types'
 import NotFound from './NotFound'
-
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import EditBooking from './EditBooking'
@@ -190,13 +189,13 @@ const Bookings: React.FC<{
             }
           />
         </Elements.Layout.MarginTopContainer>
-        <Elements.Layout.FlexRowInCenter>
+        <Elements.Layout.FlexRowInCenterMarginL>
           <Link to={`${url}/add-booking`}>
             <Elements.Buttons.SubmitButton color="#666666">
               + Lägg till bokning
             </Elements.Buttons.SubmitButton>
           </Link>
-        </Elements.Layout.FlexRowInCenter>
+        </Elements.Layout.FlexRowInCenterMarginL>
       </Route>
 
       <Route exact path={`${'/bookings'}/add-booking`}>

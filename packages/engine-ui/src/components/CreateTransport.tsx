@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import * as Elements from '../shared-elements'
 import Form from './forms/CreateTransport'
 import MainRouteLayout from './layout/MainRouteLayout'
@@ -80,6 +80,17 @@ const CreateTransport = ({
   const setUIState = stores.ui((state) => state.dispatch)
 
   hooks.useFormStateWithMapClickControl('startAddress', 'endAddress', setState)
+
+  const { fleet } = useParams<{ fleet: string | undefined }>()
+
+  React.useEffect(() => {
+    if (fleet) {
+      setState((current) => ({
+        ...current,
+        metadata: { ...current.metadata, fleet },
+      }))
+    }
+  }, [fleet])
 
   React.useEffect(() => {
     setActive(true)

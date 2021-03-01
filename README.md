@@ -24,6 +24,10 @@ The source code for the project is contained in this mono-repo. Within the [pack
 - [Auto Accept Offer](packages/auto-accept-offer) Auto accepts offers for vehicles created in the Engine UI
 - [Booking-dispatcher](packages/booking-dispatcher) Auto accepts offers for vehicles created in the Engine UI
 
+To deploy the dependencies of the stack (usually done once and it's DBs) to your Kubernetes cluster, use Skaffold:
+
+    skaffold -f skaffold-dependencies.yaml run
+
 To deploy the relevant packages to your Kubernetes cluster, use Skaffold:
 
     skaffold run --tail
@@ -112,6 +116,10 @@ You will need:
 - login with your Docker account
 - access to Iteam Kubernetes cluster
 - mapbox access token from `Predictivemovement` LastPass folder
+
+To deploy the dependencies of the stack (usually done once and it's DBs) to your Kubernetes cluster, use Skaffold:
+
+    skaffold -f skaffold-dependencies.yaml run --profile prod
 
 Set environment variables that are used by Docker at build time (for the UI) and run the skaffold command with a profile:
 

@@ -24,7 +24,14 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: POSTNORD_KEY
-                  name: postnord-api-key 
+                  name: postnord-api-key
+            - name: MINIO_USER
+              value: admin
+            - name: MINIO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MINIO_ROOT_PASSWORD
+                  name: minio-password
           envFrom:
             - configMapRef:
                 name: common-properties

@@ -4,9 +4,8 @@ metadata:
   name: pm-mapbox-test
 build:
   artifacts:
-    # - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
-    #   context: packages/booking-interface
-
+    - image: iteam1337/pm-booking-interface # Disabled until needed again since we use the admin-ui for creating bookings
+      context: packages/booking-interface
     - image: iteam1337/pm-driver-interface
       context: packages/driver-interface
     - image: iteam1337/pm-engine
@@ -34,11 +33,11 @@ build:
 deploy:
   kustomize:
     paths:
-      - k8s/base
+      - k8s/base/stack
   statusCheckDeadlineSeconds: 600
 profiles:
   - name: prod
     deploy:
       kustomize:
         paths:
-          - k8s/overlays/prod
+          - k8s/overlays/stack-prod

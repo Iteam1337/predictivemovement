@@ -9,6 +9,8 @@ import {
 } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Instruction } from '../types'
+import bot from '../adapters/bot'
+import axios from 'axios'
 
 export const driverIsLoggedIn = async (
   telegramId: number
@@ -215,6 +217,11 @@ export const onPhotoReceived = async (
       instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
     )
   const transportId = await cache.getVehicleIdByTelegramId(telegramId)
+  const fileLink = await bot.telegram.getFileLink(highestResPhotoId)
+  const response = await axios.get(fileLink, {
+    responseType: 'arraybuffer',
+  })
+  const photo = Buffer.from(response.data, 'binary').toString('base64')
 
   return amqp
     .publishReceiptByPhoto({
@@ -223,6 +230,7 @@ export const onPhotoReceived = async (
       createdAt: new Date(),
       transportId,
       receipt: {
+        photo,
         photoId: highestResPhotoId,
       },
       signedBy: transportId,

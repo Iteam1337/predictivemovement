@@ -71,7 +71,7 @@ export const publishTransportEvent = (
 
 type PhotoReceipt = {
   type: 'photo'
-  receipt: { photoId: string }
+  receipt: { photoId: string; photo?: string }
   createdAt: Date
   bookingId: string
   transportId: string

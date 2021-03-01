@@ -29,8 +29,6 @@ const Map: React.FC = () => {
           longitude: position.coords.longitude,
           zoom: 10,
         })
-        console.log('Latitude is :', position.coords.latitude)
-        console.log('Longitude is :', position.coords.longitude)
       },
       (error) => {
         if (error.message.indexOf('Only secure origins are allowed') === 0) {

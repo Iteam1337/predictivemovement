@@ -30,12 +30,7 @@ const Map: React.FC = () => {
           zoom: 10,
         })
       },
-      (error) => {
-        if (error.message.indexOf('Only secure origins are allowed') === 0) {
-          console.log(error)
-          alert('Only secure origins are allowed by your browser.')
-        }
-      }
+      (error) => console.warn(error.message)
     )
   }, [setViewState])
 

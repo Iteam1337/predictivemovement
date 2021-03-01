@@ -1,17 +1,10 @@
 const bot = require('../adapters/bot')
 const moment = require('moment')
-const Markup = require('telegraf/markup')
 
-const onBotStart = (ctx) => {
+const onBotStart = (ctx) =>
   ctx.reply(
-    `Välkommen till Predictive Movement.\nHär kan du lägga upp bokningar i systemet med hjälp av kameran i din telefon.\nKlicka på "Logga in" för att logga in.`,
-    {
-      reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton('Logga in', 'login'),
-      ]),
-    }
+    `Välkommen till Predictive Movement.\nHär kan du lägga upp bokningar i systemet med hjälp av kameran i din telefon.`
   )
-}
 
 const onBookingConfirmed = (senderId, carId, events) => {
   bot.telegram.sendMessage(

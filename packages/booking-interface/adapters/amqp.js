@@ -5,6 +5,7 @@ const open = require('amqplib').connect(
 const exchanges = {
   INCOMING_BOOKING_UPDATES: 'incoming_booking_updates',
   OUTGOING_BOOKING_UPDATES: 'outgoing_booking_updates',
+  FREIGHTSLIPS: 'freightslips',
 }
 
 const queues = {

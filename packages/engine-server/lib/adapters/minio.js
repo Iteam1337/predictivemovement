@@ -1,4 +1,4 @@
-const endPoint = process.env.MINIO_URL || 'localhost'
+const endPoint = process.env.MINIO_HOST || 'localhost'
 const port = parseInt(process.env.MINIO_PORT, 10) || 9000
 const accessKey = process.env.MINIO_USER || 'minioadmin'
 const secretKey = process.env.MINIO_PASSWORD || 'minioadmin'

@@ -21,6 +21,30 @@ const Map: React.FC = () => {
     path: ['/plans/routes/:routeId'],
   })
 
+  const shareLocation = React.useCallback(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setViewState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          zoom: 10,
+        })
+        console.log('Latitude is :', position.coords.latitude)
+        console.log('Longitude is :', position.coords.longitude)
+      },
+      (error) => {
+        if (error.message.indexOf('Only secure origins are allowed') === 0) {
+          console.log(error)
+          alert('Only secure origins are allowed by your browser.')
+        }
+      }
+    )
+  }, [setViewState])
+
+  React.useEffect(() => {
+    shareLocation()
+  }, [shareLocation])
+
   const hideTooltip = React.useCallback(
     () => UIState.showMapTooltip && setUIState({ type: 'hideTooltip' }),
     [UIState.showMapTooltip, setUIState]

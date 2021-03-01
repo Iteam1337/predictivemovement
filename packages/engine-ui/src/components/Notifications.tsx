@@ -2,12 +2,14 @@ import React from 'react'
 import styled from 'styled-components'
 import * as Elements from '../shared-elements'
 import * as helpers from '../utils/helpers'
+import * as stores from '../utils/state/stores'
+import shallow from 'zustand/shallow'
 import {
   Notification,
   EntityType,
   BookingStatus,
   TransportStatus,
-} from '../notificationTypes'
+} from '../types/notification'
 import NotificationComponent from './Notification'
 
 const Container = styled.div`
@@ -54,17 +56,20 @@ const messageElementFromNotification = (notification: Notification) => {
   }
 }
 
-const Notifications: React.FC<{
-  notifications: Notification[]
-  updateNotifications: React.Dispatch<React.SetStateAction<Notification[]>>
-}> = ({ notifications, updateNotifications }) => {
+const Notifications: React.FC = () => {
+  const [notifications, removeOneById] = stores.notifications(
+    React.useCallback(
+      (state) => [state.notifications, state.deleteOneById],
+      []
+    ),
+    shallow
+  )
+
   const handleOnClose = React.useCallback(
     (id: string) => {
-      updateNotifications((notifications) =>
-        notifications.filter((notification) => notification.event.id !== id)
-      )
+      removeOneById(id)
     },
-    [updateNotifications]
+    [removeOneById]
   )
 
   React.useEffect(() => {
@@ -73,7 +78,7 @@ const Notifications: React.FC<{
         handleOnClose(notifications[0].event.id)
       }, 20000)
     }
-  }, [notifications, updateNotifications, handleOnClose])
+  }, [notifications, handleOnClose])
 
   const withLinkElement = (
     id: string,

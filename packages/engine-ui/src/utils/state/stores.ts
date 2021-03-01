@@ -56,4 +56,20 @@ const mapLayerState = create<types.MapLayerStateWithSet>(
   })
 )
 
-export { ui, map, dataState, mapLayerState }
+const notifications = create<types.NotificationsWithSet>(
+  (set): types.NotificationsWithSet => ({
+    notifications: [],
+    addOne: (notification) =>
+      set((state) => ({
+        notifications: state.notifications.concat(notification),
+      })),
+    deleteOneById: (id) =>
+      set((state) => ({
+        notifications: state.notifications.filter(
+          (notification) => notification.event.id !== id
+        ),
+      })),
+  })
+)
+
+export { ui, map, dataState, mapLayerState, notifications }

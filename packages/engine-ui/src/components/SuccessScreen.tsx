@@ -23,9 +23,10 @@ const ImageContainer = styled.div<{ active: boolean }>`
 
 const Component: React.FC<{
   infoText: string
-  onClose: () => void
+  onClose?: () => void
   onContinue?: () => void
-}> = ({ onClose, onContinue, infoText }) => {
+  closeButtonText?: string
+}> = ({ onClose, onContinue, infoText, closeButtonText = 'Stäng' }) => {
   const [state, set] = React.useState(false)
 
   React.useEffect(() => {
@@ -44,9 +45,12 @@ const Component: React.FC<{
       </Elements.Layout.MarginTopContainerSm>
       <Elements.Layout.MarginTopContainer>
         <Elements.Layout.ButtonWrapper>
-          <Elements.Buttons.CancelButton onClick={onClose}>
-            Stäng
-          </Elements.Buttons.CancelButton>
+          {onClose && (
+            <Elements.Buttons.CancelButton onClick={onClose}>
+              {closeButtonText}
+            </Elements.Buttons.CancelButton>
+          )}
+
           {onContinue && (
             <Elements.Buttons.SubmitButton
               onClick={onContinue}

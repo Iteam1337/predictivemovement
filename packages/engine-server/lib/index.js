@@ -1,6 +1,6 @@
 const server = require('http').createServer()
 const io = require('socket.io')(server)
-require('events').defaultMaxListeners = 20
+require('events').defaultMaxListeners = 25
 require('./cache')
 
 const port = 4000

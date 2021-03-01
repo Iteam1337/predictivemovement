@@ -8,13 +8,7 @@ export enum BookingStatus {
   PICKED_UP = 'picked_up',
 }
 
-export enum TransportTypes {
-  TRUCK = 'truck',
-}
-
-export type Truck = {
-  capacity: { weight: number; volume: number }
-}
+export type Capacity = { weight: number; volume: number }
 
 interface BookingRoute {
   distance: number
@@ -62,6 +56,15 @@ type Metadata = {
   recipient: { name?: string; contact: string }
 }
 
+type TransportMetadata = {
+  fleet: string
+  profile: string
+  driver: {
+    name?: string
+    contact?: string
+  }
+}
+
 type TimeWindow = {
   earliest: string | Date
   latest: string | Date
@@ -73,15 +76,14 @@ export type Transport = {
   activities: Activity[] | null
   bookingIds: string[] | null
   busy: any
-  capacity?: { weight?: number; volume?: number }
+  capacity?: Capacity
   color: InAppColor
   currentRoute: any
   earliestStart: Date
   endAddress: Address
   id: string
   latestEnd: Date
-  metadata?: { profile?: string }
-  name?: string
+  metadata: TransportMetadata
   startAddress: Address
 }
 

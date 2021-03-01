@@ -8,24 +8,26 @@ import moment from 'moment'
 import * as stores from '../utils/state/stores'
 import React from 'react'
 
-const transportPresets = {
-  truck: {
-    small: { weight: '1234', volume: '18' },
-    medium: { weight: '2234', volume: '24' },
-    big: { weight: '4234', volume: '36' },
-  },
+export const transportPresets = {
+  small: { weight: '1234', volume: '18' },
+  medium: { weight: '2234', volume: '24' },
+  big: { weight: '4234', volume: '36' },
 }
 
 const initialState: FormState = {
   id: '',
-  capacity: transportPresets.truck.small,
-  driver: { name: '', contact: '' },
+  capacity: transportPresets.small,
   earliestStart: null,
   latestEnd: null,
-  startPosition: { lat: 61.8172594, lon: 16.0561472, name: '' },
-  endPosition: null,
+  startAddress: { lat: 61.8172594, lon: 16.0561472, name: '' },
+  endAddress: null,
   metadata: {
+    fleet: '',
     profile: '',
+    driver: {
+      contact: '',
+      name: '',
+    },
   },
 }
 
@@ -35,22 +37,24 @@ export interface FormState {
     volume: string
     weight: string
   }
-  driver: {
-    contact?: string
-    name?: string
-  }
-  earliestStart: string | null
-  endPosition: {
+
+  earliestStart: Date | null
+  endAddress: {
     lat?: number
     lon?: number
     name?: string
   } | null
   id: string
-  latestEnd: string | null
+  latestEnd: Date | null
   metadata: {
+    fleet: string
     profile: string
+    driver: {
+      contact?: string
+      name?: string
+    }
   }
-  startPosition: {
+  startAddress: {
     lat: number
     lon: number
     name?: string
@@ -75,11 +79,7 @@ const CreateTransport = ({
   const [formState, setState] = React.useState(initialState)
   const setUIState = stores.ui((state) => state.dispatch)
 
-  hooks.useFormStateWithMapClickControl(
-    'startPosition',
-    'endPosition',
-    setState
-  )
+  hooks.useFormStateWithMapClickControl('startAddress', 'endAddress', setState)
 
   React.useEffect(() => {
     setActive(true)
@@ -90,7 +90,7 @@ const CreateTransport = ({
   const onSubmitHandler = (event: any) => {
     event.preventDefault()
 
-    const endPosition = formState.endPosition || formState.startPosition
+    const endAddress = formState.endAddress || formState.startAddress
     onSubmit({
       ...formState,
       earliestStart: formState.earliestStart
@@ -103,19 +103,19 @@ const CreateTransport = ({
       latestEnd: formState.latestEnd
         ? moment(formState.latestEnd).format('HH:mm')
         : formState.latestEnd,
-      startPosition: {
-        ...formState.startPosition,
-        name: formState.startPosition.name || undefined,
+      startAddress: {
+        ...formState.startAddress,
+        name: formState.startAddress.name || undefined,
       },
-      endPosition: {
-        ...endPosition,
-        name: endPosition.name || undefined,
+      endAddress: {
+        ...endAddress,
+        name: endAddress.name || undefined,
       },
       metadata: {
         ...formState.metadata,
         driver: {
-          name: formState.driver.name || undefined,
-          contact: formState.driver.contact || undefined,
+          name: formState.metadata.driver.name || undefined,
+          contact: formState.metadata.driver.contact || undefined,
         },
       },
     })
@@ -149,6 +149,7 @@ const CreateTransport = ({
           formState={formState}
           dispatch={setUIState}
           transportPresets={transportPresets}
+          type="NEW"
         />
       </Elements.Layout.Container>
     </MainRouteLayout>

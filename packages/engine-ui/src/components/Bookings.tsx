@@ -7,7 +7,6 @@ import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import * as types from '../types'
 import NotFound from './NotFound'
-
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import EditBooking from './EditBooking'

@@ -1,28 +1,9 @@
 import React from 'react'
 import * as Elements from '../../../shared-elements'
 import locationIcon from '../../../assets/location.svg'
-import styled from 'styled-components'
 import * as hooks from '../../../hooks'
 import debounce from 'lodash.debounce'
 import warningIcon from '../../../assets/warning.svg'
-
-const DropdownWrapper = styled.div`
-  width: 100%;
-  z-index: 1;
-  position: absolute;
-`
-
-const DropdownButton = styled.button`
-  width: inherit;
-  text-align: left;
-  padding: 0.5rem;
-  border: 1px solid grey;
-  :focus {
-    outline-color: #13c57b;
-  }
-  background-color: #f1f3f5;
-  margin: 0;
-`
 
 const Component = ({
   onChangeHandler,
@@ -136,17 +117,17 @@ const Component = ({
       />
 
       {showDropdown && (
-        <DropdownWrapper>
+        <Elements.Form.DropdownWrapper>
           {suggestedAddresses.map((address, index) => (
-            <DropdownButton
+            <Elements.Form.DropdownButton
               key={index}
               name={address.name}
               onMouseDown={(event) => handleDropdownSelect(event, address)}
             >
               {address.displayName}
-            </DropdownButton>
+            </Elements.Form.DropdownButton>
           ))}
-        </DropdownWrapper>
+        </Elements.Form.DropdownWrapper>
       )}
 
       {showSaveFavorite && (

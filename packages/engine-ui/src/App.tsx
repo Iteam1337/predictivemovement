@@ -1,28 +1,50 @@
 import React from 'react'
 import { useSocket } from 'use-socketio'
-import Sidebar from './components/Sidebar'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import Map from './components/Map'
 import Logotype from './components/Logotype'
-import Notifications from './components/Notifications'
-import * as notificationTypes from './notificationTypes'
 import * as stores from './utils/state/stores'
 import * as types from './types'
 import NotFound from './components/NotFound'
+import Sidebar from './components/Sidebar'
+import SignParcel from './SignParcel'
+import * as notificationTypes from './types/notification'
+import ServerStatusBar from './components/ServerStatusBar'
 
 const App = () => {
   const { socket } = useSocket()
-
-  const [notifications, updateNotifications] = React.useState<
-    notificationTypes.Notification[]
-  >([])
+  const setNotifications = stores.notifications(
+    React.useCallback((state) => state.addOne, [])
+  )
 
   const setDataState = stores.dataState(
     React.useCallback((state) => state.set, [])
   )
 
+  const [serverStatus, setServerStatus] = React.useState({
+    status: 'ok',
+  })
+
   const isMobile = window.innerWidth <= 645
+
+  const createDeliverySignature = (
+    type: string,
+    bookingId: string,
+    transportId: string,
+    signature: string,
+    signedBy: string,
+    createdAt: Date
+  ) => {
+    socket.emit('signed-delivery', {
+      type,
+      bookingId,
+      transportId,
+      receipt: { base64Signature: signature },
+      signedBy,
+      createdAt,
+    })
+  }
 
   const createTransport = (params: any) => {
     socket.emit('create-transport', params)
@@ -52,8 +74,16 @@ const App = () => {
     socket.emit('update-booking', booking)
   }
 
+  const updateTransport = (transport: any) => {
+    socket.emit('update-transport', transport)
+  }
+
+  useSocket('service-disruption', (data: any) => {
+    setServerStatus(data.status)
+  })
+
   useSocket('notification', (data: notificationTypes.Notification) => {
-    updateNotifications((notifications) => notifications.concat(data))
+    setNotifications(data)
   })
 
   useSocket('bookings', (bookings: types.Booking[]) => {
@@ -86,29 +116,37 @@ const App = () => {
     })
   })
 
+  React.useEffect(() => {
+    if (!socket.connected) setServerStatus({ status: 'massive-disruption' })
+  }, [socket, setServerStatus])
+
   return (
     <>
-      {!isMobile && <Logotype />}
-      <Notifications
-        notifications={notifications}
-        updateNotifications={updateNotifications}
-      />
-      <Sidebar
-        isMobile={isMobile}
-        createBooking={createBooking}
-        dispatchOffers={dispatchOffers}
-        createTransport={createTransport}
-        deleteBooking={deleteBooking}
-        deleteTransport={deleteTransport}
-        moveBooking={moveBooking}
-        updateBooking={updateBooking}
-      />
-      {!isMobile && (
-        <Route path="/">
-          <Map />
+      <ServerStatusBar serverStatus={serverStatus} />
+
+      <Switch>
+        <Route exact path="/sign-delivery/:transportId/:bookingId">
+          <SignParcel onSubmit={createDeliverySignature} />
         </Route>
-      )}
-      <Route component={NotFound} />
+
+        <Route path={['/bookings', '/']}>
+          <Sidebar
+            isMobile={isMobile}
+            createBooking={createBooking}
+            dispatchOffers={dispatchOffers}
+            createTransport={createTransport}
+            deleteBooking={deleteBooking}
+            deleteTransport={deleteTransport}
+            moveBooking={moveBooking}
+            updateBooking={updateBooking}
+            updateTransport={updateTransport}
+          />
+          {!isMobile && <Map />}
+          {!isMobile && <Logotype />}
+        </Route>
+
+        <Route component={NotFound} />
+      </Switch>
     </>
   )
 }

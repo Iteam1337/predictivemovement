@@ -1,13 +1,21 @@
+const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const _ = require('highland')
 const helpers = require('./helpers')
-const id62 = require('id62').default // https://www.npmjs.com/package/id62
-const { bookingsCache, transportsCache, planCache } = require('./cache')
+const {
+  bookingsCache,
+  transportsCache,
+  planCache,
+  receiptsCache,
+} = require('./cache')
 const parcel = require('./parcel')
 const {
   toIncomingBooking,
   toIncomingTransport,
   toOutgoingBooking,
+  toOutgoingTransport,
 } = require('./mappings')
+
+const { serviceStatus, getStatus } = require('./serviceStatus')
 
 module.exports = (io) => {
   const {
@@ -25,8 +33,12 @@ module.exports = (io) => {
     transportNotifications,
     bookingNotifications,
     updateBooking,
-    updateVehicle,
+    publishUpdateTransport,
+    confirmDeliveryReceipt,
+    receipts,
   } = require('./engineConnector')(io)
+
+  require('./receipts')(receipts, confirmDeliveryReceipt)
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
@@ -105,42 +117,37 @@ module.exports = (io) => {
       createBooking(toOutgoingBooking(booking))
     )
 
+    socket.on(
+      'signed-delivery',
+      ({ createdAt, signedBy, bookingId, transportId, receipt, type }) => {
+        receiptsCache.set(bookingId, {
+          type,
+          createdAt,
+          signedBy,
+          bookingId,
+          transportId,
+          receipt,
+        })
+        return confirmDeliveryReceipt(bookingId, transportId)
+      }
+    )
+
     socket.on('dispatch-offers', () => {
       console.log('received message to dispatch offers, from UI')
       dispatchOffers()
     })
 
-    socket.on('create-transport', (params) => {
-      const transport = {
-        id: params.id || id62(),
-        capacity: params.capacity,
-        earliest_start: params.earliestStart,
-        latest_end: params.latestEnd,
-        start_address: params.startPosition,
-        end_address:
-          params.endPosition.hasOwnProperty('lon') &&
-          params.endPosition.hasOwnProperty('lat')
-            ? params.endPosition
-            : params.startPosition,
-
-        metadata: {
-          driver: {
-            name: params.driver.name,
-            contact: helpers.changeFormatOnPhoneNumber(params.driver.contact),
-          },
-          profile: params.metadata.profile,
-        },
-      }
-
-      createTransport(transport)
-    })
+    socket.on('create-transport', (transport) =>
+      createTransport(
+        toOutgoingTransport({ ...transport, id: transport.id || id62() })
+      )
+    )
 
     socket.on('move-booking', ({ bookingId, transportId }) => {
       publishMoveBooking(bookingId, transportId)
     })
 
     socket.on('delete-booking', (id) => {
-      console.log('about to delete booking: ', id)
       bookingsCache.delete(id)
       publishDeleteBooking(id)
       socket.emit('delete-booking', id)
@@ -155,7 +162,10 @@ module.exports = (io) => {
     socket.on('update-booking', (updatedBooking) =>
       updateBooking(toOutgoingBooking(updatedBooking))
     )
-    socket.on('update-vehicle', updateVehicle)
+
+    socket.on('update-transport', (updatedTransport) =>
+      publishUpdateTransport(toOutgoingTransport(updatedTransport))
+    )
 
     socket.on('search-parcel', async (id) => {
       const response = await parcel.search(id)
@@ -163,6 +173,14 @@ module.exports = (io) => {
       const measurements = parcel.getMeasurements(response)
 
       socket.emit('parcel-info', { weight, measurements })
+    })
+
+    socket.emit('service-disruption', { status: getStatus() })
+  })
+
+  serviceStatus.fork().each((status) => {
+    io.sockets.emit('service-disruption', {
+      status,
     })
   })
 }

@@ -1,4 +1,6 @@
 import React from 'react'
+import styled from 'styled-components'
+
 import { useParams } from 'react-router-dom'
 import * as types from '../../types'
 import MainRouteLayout from '../layout/MainRouteLayout'
@@ -11,6 +13,11 @@ interface Props {
   bookings: types.Booking[]
   updateBooking: (params: any) => void
 }
+const LoadingWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 const EditBookingRoute = ({ bookings, updateBooking }: Props) => {
   const history = useHistory()
@@ -63,7 +70,9 @@ const EditBookingRoute = ({ bookings, updateBooking }: Props) => {
           Kunde inte hitta bokning med id: <b>{bookingId}</b>
         </p>
       ) : loading ? (
-        <p>Laddar</p>
+        <LoadingWrapper>
+          <p>Laddar...</p>
+        </LoadingWrapper>
       ) : (
         <EditBooking
           booking={{

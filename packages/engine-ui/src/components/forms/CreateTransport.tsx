@@ -7,36 +7,52 @@ import * as FormInputs from './inputs'
 import * as eventHandlers from './eventHandlers'
 import { FormState } from '../CreateTransport'
 
+const getCapacityPreset = (
+  { volume, weight }: FormState['capacity'],
+  transportPresets: { [s: string]: { weight: string; volume: string } }
+) =>
+  Object.keys(transportPresets).find(
+    (p) =>
+      volume === transportPresets[p].volume &&
+      weight === transportPresets[p].weight
+  )
+
 const Component = ({
   onChangeHandler,
   onSubmitHandler,
   formState,
   dispatch,
   transportPresets,
+  type,
 }: {
   onChangeHandler: any
   onSubmitHandler: any
   formState: FormState
   dispatch: any
   transportPresets: {
-    truck: {
-      [s: string]: {
-        weight: string
-        volume: string
-      }
+    [s: string]: {
+      weight: string
+      volume: string
     }
   }
+  type: 'NEW' | 'EDIT'
 }) => {
+  const capacityPreset =
+    getCapacityPreset(formState.capacity, transportPresets) || 'custom'
   const history = useHistory()
-  const [useCustomCapacity, setUseCustomCapacity] = React.useState(false)
-  const [showEndPositionInput, setShowEndPositionInput] = React.useState(false)
+  const [useCustomCapacity, setUseCustomCapacity] = React.useState(
+    capacityPreset === 'custom'
+  )
+  const [showEndAddressInput, setShowEndAddressInput] = React.useState(
+    !!formState.endAddress
+  )
   const isMobile = window.innerWidth <= 645
-  const toggleShowEndPositionInput = () => {
-    setShowEndPositionInput((showEndPosition) => !showEndPosition)
+  const toggleShowEndAddressInput = () => {
+    setShowEndAddressInput((showEndAddress) => !showEndAddress)
 
     onChangeHandler((currentState: FormState) => ({
       ...currentState,
-      endPosition: { lat: undefined, lon: undefined, name: '' },
+      endAddress: { lat: undefined, lon: undefined, name: '' },
     }))
   }
 
@@ -61,7 +77,7 @@ const Component = ({
     }
     return onChangeHandler((currentState: any) => ({
       ...currentState,
-      capacity: transportPresets.truck[e.target.value],
+      capacity: transportPresets[e.target.value],
     }))
   }
 
@@ -76,7 +92,7 @@ const Component = ({
     }
   }
 
-  const transportSelectOptions = Object.entries(transportPresets.truck)
+  const transportSelectOptions = Object.entries(transportPresets)
     .map(([name, { weight, volume }]) => ({
       value: name,
       label: transportPresetNameToHumanReadable(name),
@@ -115,9 +131,9 @@ const Component = ({
             formError={false}
             required
             placeholder="Adress (sök eller klicka på karta)"
-            value={formState.startPosition.name}
+            value={formState.startAddress.name}
             onChangeHandler={eventHandlers.handleAddressInput(
-              'startPosition',
+              'startAddress',
               onChangeHandler
             )}
             onFocusHandler={() =>
@@ -132,17 +148,18 @@ const Component = ({
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <FormInputs.Checkbox
+            defaultChecked={showEndAddressInput}
             label="Slutposition (om inte samma som startposition)"
-            onChangeHandler={() => toggleShowEndPositionInput()}
+            onChangeHandler={() => toggleShowEndAddressInput()}
           />
 
-          {showEndPositionInput && formState.endPosition && (
+          {showEndAddressInput && formState.endAddress && (
             <FormInputs.AddressSearchInput
               formError={false}
-              value={formState.endPosition.name}
+              value={formState.endAddress.name}
               placeholder="Adress (sök eller klicka på karta)"
               onChangeHandler={eventHandlers.handleAddressInput(
-                'endPosition',
+                'endAddress',
                 onChangeHandler
               )}
               onFocusHandler={() =>
@@ -184,6 +201,7 @@ const Component = ({
             <FormInputs.TransportCapacity
               onChange={handleTransportPresetSelectChange}
               options={transportSelectOptions}
+              defaultValue={capacityPreset}
             />
           )}
 
@@ -250,8 +268,8 @@ const Component = ({
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               iconInset
               name="driver"
-              value={formState.driver.name}
-              onChangeHandler={eventHandlers.handleNestedInputChange(
+              value={formState.metadata.driver.name || ''}
+              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'driver',
                 'name',
                 onChangeHandler
@@ -273,8 +291,8 @@ const Component = ({
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               iconInset
               name="contact"
-              value={formState.driver.contact}
-              onChangeHandler={eventHandlers.handleNestedInputChange(
+              value={formState.metadata.driver.contact || ''}
+              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
                 'driver',
                 'contact',
                 onChangeHandler
@@ -285,6 +303,19 @@ const Component = ({
               placeholder="Telefonnummer"
             />
           </Elements.Layout.InputInnerContainer>
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label>Flotta</Elements.Form.Label>
+          <FormInputs.FleetInput
+            placeholder="Lägg till eller välj en flotta"
+            value={formState.metadata.fleet || ''}
+            onChangeHandler={eventHandlers.handleFleetInput(
+              'fleet',
+              onChangeHandler
+            )}
+          />
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.ButtonWrapper isMobile={isMobile}>
@@ -301,7 +332,7 @@ const Component = ({
           padding="0.75rem 0"
           type="submit"
         >
-          Lägg till
+          {type === 'NEW' ? 'Lägg till' : 'Uppdatera'}
         </Elements.Buttons.SubmitButton>
       </Elements.Layout.ButtonWrapper>
     </form>

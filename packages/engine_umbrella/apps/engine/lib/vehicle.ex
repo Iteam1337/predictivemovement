@@ -17,7 +17,6 @@ defmodule Vehicle do
     :end_address,
     :earliest_start,
     :latest_end,
-    :profile,
     :capacity
   ]
 
@@ -110,8 +109,9 @@ defmodule Vehicle do
   end
 
   def update(%{id: "pmv-" <> _ = id} = vehicle_update) do
-    updated_vehicle = get(id)
-    |> Map.merge(vehicle_update)
+    updated_vehicle =
+      get(id)
+      |> Map.merge(vehicle_update)
 
     with true <- Vex.valid?(updated_vehicle),
          _ <- ES.add_event(%VehicleUpdated{vehicle: vehicle_update}),

@@ -38,20 +38,72 @@ const Transports: React.FC<{
     [setMapLayers]
   )
 
+  const fleets = Array.from(
+    new Set(transports.map((transport) => transport.metadata.fleet))
+  )
+
+  fleets.sort((a, b) => (a === '' ? 1 : b === '' ? -1 : 0))
+
+  transports.sort((a, b) =>
+    a.metadata.profile.localeCompare(b.metadata.profile)
+  )
+
   return (
     <Switch>
       <Route exact path={path}>
-        <h3>Aktuella transporter</h3>
-        <TransportsList transports={transports} />
-        <Elements.Layout.FlexRowInCenter>
-          <Link to={`${url}/add-transport`}>
-            <Elements.Buttons.SubmitButton color="#666666">
-              + Lägg till transport
-            </Elements.Buttons.SubmitButton>
-          </Link>
-        </Elements.Layout.FlexRowInCenter>
+        {fleets &&
+          fleets.map((fleet, i) => {
+            return (
+              <Elements.Layout.MarginBottomContainer key={i}>
+                <TransportsList
+                  transports={transports}
+                  fleet={fleet}
+                  sortedFleets={fleets}
+                />
+
+                {fleet ? (
+                  <Elements.Layout.FlexRowInCenterMarginS>
+                    <Link to={`${url}/add-transport/${fleet}`}>
+                      <Elements.Buttons.SubmitButton color="#666666">
+                        + Lägg till transport
+                      </Elements.Buttons.SubmitButton>
+                    </Link>
+                  </Elements.Layout.FlexRowInCenterMarginS>
+                ) : null}
+              </Elements.Layout.MarginBottomContainer>
+            )
+          })}
+        {fleets.length === 0 && (
+          <>
+            <Elements.Typography.CleanH4>
+              Aktuella transporter
+            </Elements.Typography.CleanH4>
+            <Elements.Layout.MarginBottomContainer />
+            <Elements.Typography.NoInfoParagraph>
+              Det finns inga aktuella transporter...
+            </Elements.Typography.NoInfoParagraph>
+            <Elements.Layout.FlexRowInCenterMarginS>
+              <Link to={`${url}/add-transport/`}>
+                <Elements.Buttons.SubmitButton color="#666666">
+                  + Lägg till transport
+                </Elements.Buttons.SubmitButton>
+              </Link>
+            </Elements.Layout.FlexRowInCenterMarginS>
+          </>
+        )}
+
+        {transports.length > 0 ? (
+          <Elements.Layout.FlexRowInCenterMarginL>
+            <Link to={`${url}/add-transport/`}>
+              <Elements.Buttons.SubmitButton color="#666666">
+                + Skapa Transport
+              </Elements.Buttons.SubmitButton>
+            </Link>
+          </Elements.Layout.FlexRowInCenterMarginL>
+        ) : null}
       </Route>
-      <Route exact path={`${path}/add-transport`}>
+
+      <Route exact path={`${path}/add-transport/:fleet?`}>
         <CreateTransport onSubmit={createTransport} />
       </Route>
       <Route exact path={`${path}/edit-transport/:transportId`}>
@@ -67,6 +119,7 @@ const Transports: React.FC<{
           deleteTransport={deleteTransport}
         />
       </Route>
+
       <Route component={NotFound} />
     </Switch>
   )

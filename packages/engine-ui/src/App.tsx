@@ -78,6 +78,10 @@ const App = () => {
     socket.emit('update-transport', transport)
   }
 
+  useSocket('signatures', (data: any) => {
+    console.log('faa')
+    console.log(data)
+  })
   useSocket('service-disruption', (data: any) => {
     setServerStatus(data.status)
   })

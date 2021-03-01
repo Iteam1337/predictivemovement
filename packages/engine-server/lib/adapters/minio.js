@@ -5,6 +5,7 @@ const secretKey = process.env.MINIO_PASSWORD || 'minioadmin'
 const useSSL = port === 443
 const Minio = require('minio')
 const moment = require('moment')
+const _ = require('highland')
 
 const minioClient = new Minio.Client({
   endPoint,
@@ -49,6 +50,22 @@ async function saveSignature({
   )
 }
 
+const getSignature = async () => {
+  let data = ''
+  let test = ''
+  const dataStream = await minioClient.getObject(
+    'signatures',
+    '2021-03/pmb-owfhyzm3'
+  )
+
+  return _(dataStream)
+    .each((data) => JSON.parse(data).receipt)
+    .errors(console.error)
+
+  // return dataStream.then((data) => JSON.parse(data).receipt)
+}
+
 module.exports = {
   saveSignature,
+  getSignature,
 }

@@ -16,7 +16,7 @@ const {
 } = require('./mappings')
 
 const { serviceStatus, getStatus } = require('./serviceStatus')
-const { saveSignature } = require('./adapters/minio')
+const { saveSignature, getSignature } = require('./adapters/minio')
 
 module.exports = (io) => {
   const {
@@ -113,6 +113,11 @@ module.exports = (io) => {
     _(transportNotifications.fork()).each((transport) => {
       socket.emit('notification', helpers.transportToNotification(transport))
     })
+
+    socket.emit(
+      'signatures',
+      getSignature().then((result) => console.log(result))
+    )
 
     socket.on('new-booking', (booking) =>
       createBooking(toOutgoingBooking(booking))

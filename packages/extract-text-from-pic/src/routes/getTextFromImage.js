@@ -5,13 +5,13 @@ const {
 
 async function getText({ query: { url } }, res, next) {
   const data = await extractTextFromImageUrl(url)
-  res.send({ text: data })
+  res.json({ text: data })
 }
 
 async function getTextPost(req, res, next) {
   const img = req.body.image
   const data = await extractTextFromImage(img)
-  res.send({ text: data })
+  res.json({ text: data })
 }
 
 module.exports = {

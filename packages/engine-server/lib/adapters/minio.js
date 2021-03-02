@@ -50,28 +50,26 @@ async function saveSignature({
   )
 }
 
-const getSignatures = async () => {
+function getObject(bucket, name) {
   return new Promise(async (resolve, reject) => {
-    let data = ''
-    const dataStream = await minioClient.getObject(
-      'signatures',
-      '2021-03/pmb-zwy5otdi'
-    )
-    dataStream.on('data', function (chunk) {
-      data += chunk
+    const stream = await minioClient.getObject(bucket, name)
+    let chunks = ''
+    stream.on('data', (data) => {
+      chunks += data.toString()
     })
-    dataStream.on('error', function (err) {
-      console.log(err)
+    stream.on('end', () => {
+      resolve(JSON.parse(chunks))
     })
-    dataStream.on('end', function () {
-      try {
-        data = JSON.parse(data)
-      } catch (error) {
-        reject(error)
-      }
-      resolve(data)
-    })
+    stream.on('error', reject)
   })
+}
+async function getSignatures() {
+  const bucket = 'signatures'
+  const listStream = minioClient.listObjects(bucket, '', true)
+  return _(listStream)
+    .flatMap(({ name }) => _(getObject(bucket, name)))
+    .collect()
+    .toPromise(Promise)
 }
 
 module.exports = {

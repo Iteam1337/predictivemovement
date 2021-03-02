@@ -16,7 +16,7 @@ const {
 } = require('./mappings')
 
 const { serviceStatus, getStatus } = require('./serviceStatus')
-const { saveSignature, getSignature } = require('./adapters/minio')
+const { saveSignature, getSignatures } = require('./adapters/minio')
 
 module.exports = (io) => {
   const {
@@ -41,7 +41,7 @@ module.exports = (io) => {
 
   require('./receipts')(receipts, confirmDeliveryReceipt)
 
-  io.on('connection', function (socket) {
+  io.on('connection', async function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .map((newBooking) => {
         const oldBooking = bookingsCache.get(newBooking.id)
@@ -114,11 +114,6 @@ module.exports = (io) => {
       socket.emit('notification', helpers.transportToNotification(transport))
     })
 
-    socket.emit(
-      'signatures',
-      getSignature().then((result) => console.log(result))
-    )
-
     socket.on('new-booking', (booking) =>
       createBooking(toOutgoingBooking(booking))
     )
@@ -189,7 +184,11 @@ module.exports = (io) => {
       socket.emit('parcel-info', { weight, measurements })
     })
 
-    socket.emit('service-disruption', { status: getStatus() })
+    socket.emit('service-disruption', {
+      status: getStatus(),
+    })
+
+    socket.emit('signatures', { signature: await getSignatures() })
   })
 
   serviceStatus.fork().each((status) => {

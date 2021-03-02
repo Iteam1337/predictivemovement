@@ -79,8 +79,7 @@ const App = () => {
   }
 
   useSocket('signatures', (data: any) => {
-    console.log('faa')
-    console.log(data)
+    console.log('data: ', data)
   })
   useSocket('service-disruption', (data: any) => {
     setServerStatus(data.status)

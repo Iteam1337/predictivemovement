@@ -50,22 +50,31 @@ async function saveSignature({
   )
 }
 
-const getSignature = async () => {
-  let data = ''
-  let test = ''
-  const dataStream = await minioClient.getObject(
-    'signatures',
-    '2021-03/pmb-owfhyzm3'
-  )
-
-  return _(dataStream)
-    .each((data) => JSON.parse(data).receipt)
-    .errors(console.error)
-
-  // return dataStream.then((data) => JSON.parse(data).receipt)
+const getSignatures = async () => {
+  return new Promise(async (resolve, reject) => {
+    let data = ''
+    const dataStream = await minioClient.getObject(
+      'signatures',
+      '2021-03/pmb-zwy5otdi'
+    )
+    dataStream.on('data', function (chunk) {
+      data += chunk
+    })
+    dataStream.on('error', function (err) {
+      console.log(err)
+    })
+    dataStream.on('end', function () {
+      try {
+        data = JSON.parse(data)
+      } catch (error) {
+        reject(error)
+      }
+      resolve(data)
+    })
+  })
 }
 
 module.exports = {
   saveSignature,
-  getSignature,
+  getSignatures,
 }

@@ -9,4 +9,4 @@ resources:
   - osrm.yaml
 
 # namespace to deploy all Resources to
-namespace: predictivemovement-test
+namespace: predictivemovement

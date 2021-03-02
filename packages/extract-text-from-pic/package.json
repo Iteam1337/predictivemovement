@@ -1,0 +1,20 @@
+{
+  "name": "extract-text-from-pic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1",
+    "got": "^11.8.1",
+    "jest": "^26.6.3",
+    "node-tesseract-ocr": "^2.0.0",
+    "textract": "^2.5.0"
+  }
+}

@@ -3,6 +3,7 @@ import * as Elements from '../shared-elements'
 import styled from 'styled-components'
 import * as stores from '../utils/state/stores'
 import { getDistance, getDuration } from '../utils/helpers'
+import Signature from './Signature'
 
 const Wrapper = styled.div`
   width: 290px;
@@ -16,6 +17,9 @@ const DeliveryDetails: React.FC<{
   bookingId: string
 }> = ({ distance, duration, bookingId }) => {
   const transports = stores.dataState((state) => state.transports)
+  const signatures = stores.dataState((state) => state.signatures)
+
+  const signature = signatures.find((a) => a.bookingId === 'pmb-ote1zwey')
 
   const transport = transports.find((transport) =>
     transport.bookingIds
@@ -75,11 +79,7 @@ const DeliveryDetails: React.FC<{
           </Elements.Typography.InfoMd>
         </Elements.Layout.FlexRowWrapper>
       </Elements.Layout.SectionWithMargin>
-      <Elements.Layout.SectionWithMargin>
-        <Elements.Typography.StrongParagraph>
-          Kvittens
-        </Elements.Typography.StrongParagraph>
-      </Elements.Layout.SectionWithMargin>
+      {signature && <Signature signature={signature} />}
     </Wrapper>
   )
 }

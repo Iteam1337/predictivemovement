@@ -78,9 +78,10 @@ const App = () => {
     socket.emit('update-transport', transport)
   }
 
-  useSocket('signatures', (data: any) => {
-    console.log('data: ', data)
+  useSocket('signatures', (signatures: types.Signature[]) => {
+    setDataState({ type: 'setSignatures', payload: signatures })
   })
+
   useSocket('service-disruption', (data: any) => {
     setServerStatus(data.status)
   })

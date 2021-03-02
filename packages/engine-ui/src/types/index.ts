@@ -132,4 +132,16 @@ export interface Activity {
   duration: number
 }
 
+export interface Signature {
+  bookingId: string
+  createdAt: string
+  receipt: {
+    base64Signature?: string
+    photo?: string
+  }
+  __proto__: Object
+  signedBy: string
+  transportId: string
+}
+
 export { state }

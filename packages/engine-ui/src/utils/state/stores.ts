@@ -37,6 +37,7 @@ const initialDataState: types.DataState = {
   transports: [],
   assignedBookings: [],
   plan: { excludedBookings: [], routes: [] },
+  signatures: [],
 }
 
 const dataState = create<types.DataStateWithSet>(

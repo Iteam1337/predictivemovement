@@ -188,7 +188,7 @@ module.exports = (io) => {
       status: getStatus(),
     })
 
-    socket.emit('signatures', { signature: await getSignatures() })
+    socket.emit('signatures', { signatures: await getSignatures() })
   })
 
   serviceStatus.fork().each((status) => {

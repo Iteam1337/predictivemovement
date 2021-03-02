@@ -388,6 +388,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
               <DeliveryDetails
                 distance={booking.route.distance}
                 duration={booking.route.duration}
+                bookingId={bookingId}
               />
             )}
           </div>

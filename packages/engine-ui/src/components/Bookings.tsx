@@ -10,7 +10,6 @@ import NotFound from './NotFound'
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import EditBooking from './EditBooking'
-import Signature from './Signature'
 
 const sortBookingsByStatus = (bookings: types.Booking[]) =>
   bookings.reduce<{
@@ -103,9 +102,6 @@ const Bookings: React.FC<{
   const bookings = stores.dataState((state) => state.bookings)
   const { url } = useRouteMatch()
   const bookingsRootView = useRouteMatch({ path: '/bookings', strict: true })
-  const signatures = stores.dataState((state) => state.signatures)
-
-  const signature = signatures.find((a) => a.bookingId === 'pmb-ote1zwey')
 
   const sortedBookings = React.useMemo(() => sortBookingsByStatus(bookings), [
     bookings,
@@ -192,7 +188,6 @@ const Bookings: React.FC<{
               setUIState({ type: 'highlightBooking', payload: undefined })
             }
           />
-          {signature && <Signature signature={signature} />}
         </Elements.Layout.MarginTopContainer>
         <Elements.Layout.FlexRowInCenterMarginL>
           <Link to={`${url}/add-booking`}>

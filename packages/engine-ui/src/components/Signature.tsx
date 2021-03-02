@@ -25,7 +25,7 @@ const Signature = ({ signature }: Props) => {
           Kvittens
         </Elements.Typography.StrongParagraph>
         <Image
-          src={signature.receipt.base64Signature}
+          src={signature.receipt.base64Signature ?? signature.receipt.photo}
           alt={signature.signedBy}
         />
         <Elements.Typography.InfoMd>

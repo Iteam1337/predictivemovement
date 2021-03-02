@@ -19,7 +19,7 @@ const DeliveryDetails: React.FC<{
   const transports = stores.dataState((state) => state.transports)
   const signatures = stores.dataState((state) => state.signatures)
 
-  const signature = signatures.find((a) => a.bookingId === 'pmb-ote1zwey')
+  const signature = signatures.find((a) => a.bookingId === bookingId)
 
   const transport = transports.find((transport) =>
     transport.bookingIds

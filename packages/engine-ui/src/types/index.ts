@@ -138,6 +138,7 @@ export interface Signature {
   receipt: {
     base64Signature?: string
     photo?: string
+    photoId?: string
   }
   __proto__: Object
   signedBy: string

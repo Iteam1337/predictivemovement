@@ -4,7 +4,6 @@ import moment from 'moment'
 import styled from 'styled-components'
 
 import * as types from '../types'
-import { sign } from 'crypto'
 
 const Image = styled.img`
   width: 272px;
@@ -33,16 +32,26 @@ const Signature = ({ signature }: Props) => {
         )}
         {signature.receipt.photo && (
           <>
-            <a href={`${signature.receipt.photo}.png`} download>
-              Ladda ner
-            </a>
-            <Elements.Buttons.SubmitButton
-              onClick={() => console.log('click')}
-              type="button"
-              padding="0.75rem 1.25rem"
-            >
-              Ladda ner foto
-            </Elements.Buttons.SubmitButton>
+            <Elements.Layout.MarginBottomContainer>
+              <Elements.Typography.InfoMd>
+                Signerat med foto
+              </Elements.Typography.InfoMd>
+            </Elements.Layout.MarginBottomContainer>
+            <Elements.Layout.MarginBottomContainer>
+              <a
+                style={{ color: 'inherit' }}
+                href={`${signature.receipt.photo}`}
+                download={signature.signedBy}
+              >
+                <Elements.Buttons.SubmitButton
+                  onClick={() => console.log('click')}
+                  type="button"
+                  padding="0.75rem 1.25rem"
+                >
+                  Ladda ner signatur
+                </Elements.Buttons.SubmitButton>
+              </a>
+            </Elements.Layout.MarginBottomContainer>
           </>
         )}
         <Elements.Typography.InfoMd>

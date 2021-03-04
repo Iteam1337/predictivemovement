@@ -208,7 +208,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <Elements.Layout.FlexContainer>
-          <div>
+          <div style={{ width: '300px' }}>
             <Elements.Layout.FlexRowWrapper>
               <h3>Bokning</h3>
               <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">

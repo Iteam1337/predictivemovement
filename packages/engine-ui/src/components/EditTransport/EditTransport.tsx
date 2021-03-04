@@ -118,7 +118,7 @@ const EditTransport = ({
   }
 
   return (
-    <Elements.Layout.Container>
+    <Elements.Layout.ContainerWidth>
       <h3>Uppdatera transport</h3>
       <Form
         type="EDIT"
@@ -128,7 +128,7 @@ const EditTransport = ({
         dispatch={setUIState}
         transportPresets={transportPresets}
       />
-    </Elements.Layout.Container>
+    </Elements.Layout.ContainerWidth>
   )
 }
 

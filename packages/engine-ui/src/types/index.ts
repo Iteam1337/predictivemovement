@@ -143,6 +143,7 @@ export interface Signature {
   __proto__: Object
   signedBy: string
   transportId: string
+  type: string
 }
 
 export { state }

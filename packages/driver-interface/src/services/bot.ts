@@ -221,7 +221,10 @@ export const onPhotoReceived = async (
   const response = await axios.get(fileLink, {
     responseType: 'arraybuffer',
   })
-  const photo = Buffer.from(response.data, 'binary').toString('base64')
+  let photo = Buffer.from(response.data, 'binary').toString('base64')
+  if (!photo.match(/^data:image\/png;base64,/)) {
+    photo = `data:image/png;base64,${photo}`
+  }
 
   return amqp
     .publishReceiptByPhoto({

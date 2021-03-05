@@ -28,6 +28,10 @@ export interface Vehicle {
   id: string
 }
 
+export interface BookingEvent {
+  timestamp: string
+  type: string
+}
 export interface Booking {
   pickup: Address
   delivery: Address
@@ -49,4 +53,5 @@ export interface Booking {
     }
     fragile?: boolean
   }
+  events: BookingEvent[]
 }

@@ -203,7 +203,6 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
         return !bookingEvents.includes(event)
       })
     )
-
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
@@ -389,6 +388,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                 distance={booking.route.distance}
                 duration={booking.route.duration}
                 bookingId={bookingId}
+                assignedTo={booking.assignedTo.id}
               />
             )}
           </div>

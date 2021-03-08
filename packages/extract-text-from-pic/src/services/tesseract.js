@@ -1,9 +1,11 @@
 const textract = require('textract')
 
 const config = {
-  lang: 'swe',
-  oem: 1,
-  psm: 3,
+  tesseract: {
+    lang: 'swe',
+    oem: 1,
+    psm: 3,
+  },
 }
 
 function extractTextFromImageUrl(url) {

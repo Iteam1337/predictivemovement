@@ -37,9 +37,11 @@ module.exports = (io) => {
     publishUpdateTransport,
     confirmDeliveryReceipt,
     receipts,
+    freightslips,
   } = require('./engineConnector')(io)
 
   require('./receipts')(receipts, confirmDeliveryReceipt)
+  require('./freightslips')(freightslips)
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])

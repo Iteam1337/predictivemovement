@@ -1,4 +1,5 @@
 const { Markup } = require('telegraf')
+const Composer = require('telegraf/composer')
 const WizardScene = require('telegraf/scenes/wizard')
 const bot = require('../adapters/bot')
 const axios = require('axios')
@@ -23,31 +24,46 @@ const intro = (ctx) =>
     )
     .then(() => ctx.wizard.next())
 
-const handleImage = async (ctx) => {
-  if (!ctx.message.photo) {
-    ctx.reply(
-      'Jag förstår inte ditt meddelande. Till mig kan du bara skicka bilder! :)'
+const handleImage = new Composer()
+
+  .on('photo', async (ctx) => {
+    const photos = ctx.update.message.photo
+    const [{ file_id }] = Array.from(photos).reverse()
+
+    const fileLink = await bot.telegram.getFileLink(file_id)
+    const response = await axios.get(fileLink, {
+      responseType: 'arraybuffer',
+    })
+
+    const photo = Buffer.from(response.data, 'binary').toString('base64')
+
+    const { data } = await axios.get(
+      `http://localhost:4000/gettext?url=${fileLink}`
     )
-  }
+    const clean = data.text.replace(/[^\w\s.åäö:]/gim, ' ')
+    console.log('this is clean: ', clean)
 
-  const photos = ctx.update.message.photo
-  const [{ file_id }] = Array.from(photos).reverse()
+    // .post('http://localhost:4000/gettext', { image: photo })
+    const result = await axios.get(
+      `http://localhost:3000/getAddressFromText?text=${encodeURIComponent(
+        clean
+      )}`
+    )
 
-  const fileLink = await bot.telegram.getFileLink(file_id)
-  const response = await axios.get(fileLink, {
-    responseType: 'arraybuffer',
+    console.log('this is res: ', result)
+
+    return services.amqp
+      .publishFreightslipPhoto(photo)
+      .then(() =>
+        ctx.reply('Tack! Bilden har tagits emot och skickats till plattformen.')
+      )
   })
-
-  const photo = Buffer.from(response.data, 'binary').toString('base64')
-
-  return services.amqp
-    .publishFreightslipPhoto(photo)
-    .then(() =>
-      ctx.reply('Tack! Bilden har tagits emot och skickats till plattformen.')
-    )
-  // ctx.wizard.state = { photo }
-  // return forceNext(ctx)
-}
+  .on('file', (ctx) => console.log('this is file: ', ctx))
+// .on('message', (ctx) =>
+//   ctx.reply(
+//     'Jag förstår inte ditt meddelande. Till mig kan du bara skicka bilder! :)'
+//   )
+// )
 
 // const askLocationRequest = (ctx) =>
 //   ctx
@@ -62,15 +78,6 @@ const handleImage = async (ctx) => {
 //     })
 //     .then(() => ctx.wizard.next())
 
-const freightslip = new WizardScene(
-  'freightslip',
-  intro,
-  handleImage
-  // askLocationRequest
-)
-
-freightslip.action(messages.LOCATION_REQUEST_DENIED, () =>
-  console.log('denied')
-)
+const freightslip = new WizardScene('freightslip', intro, handleImage)
 
 module.exports = freightslip

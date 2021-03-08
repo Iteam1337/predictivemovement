@@ -152,6 +152,16 @@ module.exports = (io) => {
     .map((transportData) => transportData.json())
     .each(deleteTransport)
 
+  const freightslips = amqp
+    .exchange('freightslips', 'topic', {
+      durable: true,
+    })
+    .queue('freightslip_from_telegram', {
+      durable: true,
+    })
+    .subscribe({ noAck: true }, 'new')
+    .map((msg) => msg.content.toString())
+
   ///////// Publishers
 
   const confirmDeliveryReceipt = (bookingId, transportId) => {
@@ -361,5 +371,7 @@ module.exports = (io) => {
     transportUpdates,
     confirmDeliveryReceipt,
     receipts,
+
+    freightslips,
   }
 }

@@ -5,6 +5,9 @@ const secretKey = process.env.MINIO_PASSWORD || 'minioadmin'
 const useSSL = port === 443
 const Minio = require('minio')
 const moment = require('moment')
+const id62 = require('id62').default
+
+const buckets = { FREIGHTSLIPS: 'freightslips' }
 
 const minioClient = new Minio.Client({
   endPoint,
@@ -49,6 +52,26 @@ async function saveSignature({
   )
 }
 
+async function saveFreightslip(freightslip) {
+  const bucketName = buckets.FREIGHTSLIPS
+  const folder = moment().format('YYYY-MM')
+  if (!(await minioClient.bucketExists(bucketName))) {
+    await minioClient.makeBucket(bucketName)
+  }
+
+  await minioClient.putObject(bucketName, `${folder}/${id62()}`, freightslip)
+}
+
+async function getFreightSlips() {
+  const bucketName = buckets.FREIGHTSLIPS
+  const stream = await minioClient.listObjects(bucketName, '', true)
+
+  return stream
+  // stream.on('data', (obj) => console.log('retrietev data: ', obj))
+  // stream.on('error', (err) => console.log('well it b0rked :(', err))
+}
+
 module.exports = {
   saveSignature,
+  saveFreightslip,
 }

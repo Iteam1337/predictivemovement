@@ -26,18 +26,28 @@ const Signature = ({ signature }: Props) => {
         </Elements.Typography.StrongParagraph>
 
         {signature.type === 'manual' && (
-          <Elements.Layout.MarginBottomContainer>
+          <>
+            <Elements.Layout.MarginBottomContainer>
+              <Elements.Typography.InfoMd>
+                Signerat med manuell kvittens. Föraren har ansvaret för att
+                signaturen har samlats in.
+              </Elements.Typography.InfoMd>
+            </Elements.Layout.MarginBottomContainer>
             <Elements.Typography.InfoMd>
-              Signerat med manuell kvittens. Föraren har ansvaret för att
-              signaturen har samlats in.
+              Bokningen levererades
             </Elements.Typography.InfoMd>
-          </Elements.Layout.MarginBottomContainer>
+          </>
         )}
         {signature.type === 'signature' && (
-          <Image
-            src={signature.receipt.base64Signature}
-            alt={signature.signedBy}
-          />
+          <>
+            <Image
+              src={signature.receipt.base64Signature}
+              alt={signature.signedBy}
+            />
+            <Elements.Typography.InfoMd>
+              {signature.signedBy}
+            </Elements.Typography.InfoMd>
+          </>
         )}
         {signature.type === 'photo' && (
           <>
@@ -60,11 +70,12 @@ const Signature = ({ signature }: Props) => {
                 </Elements.Buttons.SubmitButton>
               </a>
             </Elements.Layout.MarginBottomContainer>
+            <Elements.Typography.InfoMd>
+              Bokningen levererades
+            </Elements.Typography.InfoMd>
           </>
         )}
-        <Elements.Typography.InfoMd>
-          {signature.signedBy}
-        </Elements.Typography.InfoMd>
+
         <Elements.Typography.InfoMd>
           {formatDate(signature.createdAt)}
         </Elements.Typography.InfoMd>

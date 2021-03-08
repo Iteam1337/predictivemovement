@@ -15,17 +15,14 @@ const DeliveryDetails: React.FC<{
   distance: string
   duration: string
   bookingId: string
-}> = ({ distance, duration, bookingId }) => {
+  assignedTo: string
+}> = ({ distance, duration, bookingId, assignedTo }) => {
   const transports = stores.dataState((state) => state.transports)
   const signatures = stores.dataState((state) => state.signatures)
 
   const signature = signatures.find((a) => a.bookingId === bookingId)
 
-  const transport = transports.find((transport) =>
-    transport.bookingIds
-      ? transport.bookingIds.map((id) => id === bookingId)
-      : null
-  )
+  const transport = transports.find((transport) => transport.id === assignedTo)
 
   const totalDistance = transport?.activities?.reduce(
     (acc, activity) => acc + activity.distance,

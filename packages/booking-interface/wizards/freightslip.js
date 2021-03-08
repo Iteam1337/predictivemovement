@@ -2,20 +2,45 @@ const { Markup } = require('telegraf')
 const Composer = require('telegraf/composer')
 const WizardScene = require('telegraf/scenes/wizard')
 const bot = require('../adapters/bot')
-const axios = require('axios')
 const services = require('../services')
+const utils = require('../utils')
+const wizardHelpers = require('./helpers')
 
-const messages = {
-  LOCATION_REQUEST_DENIED: 'location_request_denied',
-  LOCATION_REQUEST_GRANTED: 'location_request_granted',
-}
+const awaitFreightSlipAnswer = new Composer()
+  .action('freightslip:confirm', (ctx) =>
+    wizardHelpers.jumpToStep(ctx, 'askForUpload')
+  )
+  .action('freightslip:decline', (ctx) => {
+    console.log('hasFreightSlipDecline')
+    // wizardHelpers.jumpToStep(ctx, 'askForRecipientInput')
+  })
 
-const forceNext = (ctx) => {
-  ctx.wizard.next()
-  ctx.wizard.steps[ctx.wizard.cursor](ctx)
-}
+const awaitSenderOrRecipientConfirmation = new Composer()
+  .action('freightslip:is_sender', (ctx) => {})
+  .action('freightslip:is_recipient', (ctx) => {
+    ctx.reply('Tack!')
+    return wizardHelpers.jumpToStep(ctx, 'askForLocation')
+  })
+
+const askForLocation = (ctx) => {}
+
+// const askForRecipientInput = (ctx) => {
+//   ctx.reply('Skriv in mottagaradressen')
+//   .then()
+// }
 
 const intro = (ctx) =>
+  ctx
+    .replyWithMarkdown(
+      `Har din försändelse en fraktsedel?`,
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Ja', 'freightslip:confirm'),
+        Markup.callbackButton('Nej', 'freightslip:decline'),
+      ]).extra()
+    )
+    .then(() => ctx.wizard.next())
+
+const askForUpload = (ctx) =>
   ctx
     .reply(
       'Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!'.concat(
@@ -24,46 +49,55 @@ const intro = (ctx) =>
     )
     .then(() => ctx.wizard.next())
 
-const handleImage = new Composer()
+const handleImage = new Composer().on('photo', async (ctx) => {
+  const photos = ctx.update.message.photo
+  const [{ file_id }] = Array.from(photos).reverse()
 
-  .on('photo', async (ctx) => {
-    const photos = ctx.update.message.photo
-    const [{ file_id }] = Array.from(photos).reverse()
+  const fileLink = await services.bot.getFileLink(bot, file_id)
 
-    const fileLink = await bot.telegram.getFileLink(file_id)
-    const response = await axios.get(fileLink, {
-      responseType: 'arraybuffer',
-    })
+  // const photo = Buffer.from(response.data, 'binary').toString('base64')
 
-    const photo = Buffer.from(response.data, 'binary').toString('base64')
+  try {
+    const text = await services.text.getTextFromPhoto(fileLink)
 
-    const { data } = await axios.get(
-      `http://localhost:4000/gettext?url=${fileLink}`
-    )
-    const clean = data.text.replace(/[^\w\s.åäö:]/gim, ' ')
-    console.log('this is clean: ', clean)
+    if (text) {
+      // const clean = text.replace(/[^\w\s.åäö:]/gim, ' ')
+      // const matches = clean.match(
+      //   /(?<address>(?<street>[A-Za-zåäöÅÄÖéÈ]+)\s+(?<nr>\d+\w*))?,?\s+?(?<countrycode>\w\w)?\s-?\s*(?<zipcode>\d+\s*\d+),?\s+(?<city>[A-Za-zåäöÅÄÖ]+),?\s?(?<country>[A-Za-zåäöÅÄÖ]+)?/gim
+      // )
 
-    // .post('http://localhost:4000/gettext', { image: photo })
-    const result = await axios.get(
-      `http://localhost:3000/getAddressFromText?text=${encodeURIComponent(
-        clean
-      )}`
-    )
-
-    console.log('this is res: ', result)
-
-    return services.amqp
-      .publishFreightslipPhoto(photo)
-      .then(() =>
-        ctx.reply('Tack! Bilden har tagits emot och skickats till plattformen.')
+      ctx.wizard.state = { matches: await utils.scanAddress(text) }
+      return wizardHelpers.jumpToStep(
+        ctx,
+        'askForSenderOrRecipientConfirmation'
       )
-  })
-  .on('file', (ctx) => console.log('this is file: ', ctx))
-// .on('message', (ctx) =>
-//   ctx.reply(
-//     'Jag förstår inte ditt meddelande. Till mig kan du bara skicka bilder! :)'
-//   )
-// )
+    }
+  } catch (error) {
+    console.warn('something went wrong: ', error)
+  }
+})
+
+const askForSenderOrRecipientConfirmation = (ctx) => {
+  const [match] = ctx.wizard.state.matches
+
+  if (!match) return // enter manually or something
+  console.log(match)
+
+  return ctx
+    .replyWithMarkdown(
+      `${match.name}`
+        .concat(`\n${match.address}`)
+        .concat(`\n${match.postCode}`)
+        .concat(`\n${match.city}`),
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Mottagare', 'freightslip:is_sender'),
+        Markup.callbackButton('Avsändare', 'freightslip:is_recipient'),
+      ]).extra()
+    )
+    .then(() => ctx.wizard.next())
+}
+
+//
 
 // const askLocationRequest = (ctx) =>
 //   ctx
@@ -78,6 +112,15 @@ const handleImage = new Composer()
 //     })
 //     .then(() => ctx.wizard.next())
 
-const freightslip = new WizardScene('freightslip', intro, handleImage)
+const freightslip = new WizardScene(
+  'freightslip',
+  intro,
+  awaitFreightSlipAnswer,
+  askForUpload,
+  handleImage,
+  askForSenderOrRecipientConfirmation,
+  awaitSenderOrRecipientConfirmation,
+  askForLocation
+)
 
 module.exports = freightslip

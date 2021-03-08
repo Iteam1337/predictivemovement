@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": " DEBUG=telgraf:test jest --watch",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
@@ -20,11 +20,14 @@
     "express": "^4.17.1",
     "moment": "^2.26.0",
     "telegraf": "^3.37.0",
+    "telegraf-test": "^1.2.1",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
     "@iteam/eslint-config-node": "^0.3.0",
+    "@types/jest": "^26.0.20",
     "eslint": "^6.8.0",
+    "jest": "^26.6.3",
     "nodemon": "^2.0.3"
   }
 }

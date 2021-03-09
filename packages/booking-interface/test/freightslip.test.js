@@ -30,65 +30,124 @@ describe('freightslip upload', () => {
     bot.stop()
   })
 
-  test('asks if parcel has freightslip', (done) => {
-    telegrafTest.sendMessageWithText('/start').then((res) => {
-      expect(res.data.text).toMatch(/(Har din försändelse en fraktsedel?)/i)
-      done()
+  describe('no image', () => {})
+
+  describe('has image', () => {
+    test('asks if parcel has freightslip', (done) => {
+      telegrafTest.sendMessageWithText('/start').then((res) => {
+        expect(res.data.text).toMatch(/(Har din försändelse en fraktsedel?)/i)
+        done()
+      })
     })
-  })
 
-  test('tells user to upload photo', (done) => {
-    telegrafTest
-      .sendCallbackQueryWithData('freightslip:confirm')
-      .then((res) => {
-        expect(res.data.text).toMatch(
-          /(Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!)/i
-        )
+    test('asks user to upload photo', (done) => {
+      telegrafTest
+        .sendCallbackQueryWithData('freightslip:confirm')
+        .then((res) => {
+          expect(res.data.text).toMatch(
+            /(Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!)/i
+          )
+          done()
+        })
+    })
+
+    test('receives photo and asks if first of two entries is sender or recipient', (done) => {
+      botService.getFileLink = jest.fn().mockResolvedValue('test')
+      textService.getTextFromPhoto = jest.fn().mockResolvedValue('test')
+
+      utils.scanAddress = jest.fn().mockResolvedValue([
+        {
+          name: 'Lars Larsson',
+          address: 'Testvägen 25',
+          postCode: '123 45',
+          city: 'Göteborg',
+        },
+        {
+          name: 'Maria Mariasson',
+          address: 'Testvägen 13',
+          postCode: '123 42',
+          city: 'Stockholm',
+        },
+      ])
+
+      telegrafTest
+        .sendMessage({
+          text: '/',
+          photo: [{}],
+        })
+        .then((res) => {
+          expect(res.data.text).toMatch(/(Lars Larsson)/i)
+          done()
+        })
+    })
+
+    test('user selects recipient and is prompted for location', (done) => {
+      telegrafTest
+        .sendCallbackQueryWithData('freightslip:is_recipient')
+        .then((res) => {
+          expect(res.data.text).toMatch(/(Tack!)/i)
+          expect(res.data).toHaveProperty('reply_markup')
+          expect(res.data.reply_markup.inline_keyboard).toEqual(
+            expect.arrayContaining([
+              expect.arrayContaining([
+                expect.objectContaining({
+                  text: 'Ja',
+                }),
+                expect.objectContaining({
+                  text: 'Nej, hämta från fraktsedeln',
+                }),
+                expect.objectContaining({
+                  text: 'Nej, skriv in manuellt',
+                }),
+              ]),
+            ])
+          )
+
+          done()
+        })
+    })
+
+    test('user selects share location and receives a location share confirm button', (done) => {
+      telegrafTest
+        .sendCallbackQueryWithData('location:from_location')
+        .then((res) => {
+          expect(res.data.text.keyboard[0][0]).toMatchObject({
+            text: /Dela position/,
+          })
+
+          done()
+        })
+    })
+
+    test('user confirms send location and is then asked if wants to add extra info or continue', (done) => {
+      telegrafTest
+        .sendMessage({ location: { longitude: 123, latitude: 123 } })
+        .then((res) => {
+          expect(res.data.text).toMatch(/(Då har du fått bokningsnummer:)/i)
+          expect(res.data).toHaveProperty('reply_markup')
+          expect(res.data.reply_markup.inline_keyboard).toEqual(
+            expect.arrayContaining([
+              expect.arrayContaining([
+                expect.objectContaining({
+                  text: 'Fyll i fler detaljer',
+                }),
+                expect.objectContaining({
+                  text: 'Påbörja nästa bokning',
+                }),
+              ]),
+            ])
+          )
+
+          done()
+        })
+    })
+
+    test('user chooses continue and is sent back to first step', (done) => {
+      telegrafTest.sendCallbackQueryWithData('booking:confirm').then((res) => {
+        expect(res.data.text).toMatch(/Har din försändelse en fraktsedel?/)
+
         done()
       })
-  })
-
-  test('receives photo and asks if first of two entries is sender or recipient', (done) => {
-    botService.getFileLink = jest.fn().mockResolvedValue('hej')
-    textService.getTextFromPhoto = jest
-      .fn()
-      .mockResolvedValue(
-        'OQ Skicka Hem Betalsätt: NTEANETBETALD Från Köpt: 1-01-15 fatima kebbeh sockerbiten3 231 63 TRELLEBORG Sverige fl? fatima kebbeh el: HH " lzabella Larsson Storhöjdsgatan 9 4186 71 GOTEBORG Sverige PortKod: Tel: 07678650086 " MINAMAAEL ANA TU NI AJ0866916548E PostNord Software V3 Vikt: 0.5 kg '
-      )
-
-    utils.scanAddress = jest.fn().mockResolvedValue([
-      {
-        name: 'Lars Larsson',
-        address: 'Testvägen 25',
-        postCode: '123 45',
-        city: 'Göteborg',
-      },
-      {
-        name: 'Maria Mariasson',
-        address: 'Testvägen 13',
-        postCode: '123 42',
-        city: 'Stockholm',
-      },
-    ])
-
-    telegrafTest
-      .sendMessage({
-        text: '/',
-        photo: [{}],
-      })
-      .then((res) => {
-        expect(res.data.text).toMatch(/(Lars Larsson)/i)
-
-        done()
-      })
-  })
-
-  test('user selects recipient', (done) => {
-    telegrafTest
-      .sendCallbackQueryWithData('freightslip:is_recipient')
-      .then((res) => {
-        expect(res.data.text).toMatch(/(Tack!)/i)
-        done()
-      })
+    })
   })
 })

@@ -41,9 +41,10 @@ public class TryRouteOptimization {
         JSONObject routeRequest = new JSONObject(msg);
 
         // when
-        RouteOptimization routeOptimization = new RouteOptimization();
-        vrpSolution = routeOptimization.calculate(routeRequest);
-        StatusResponse statusResponse = new StatusResponse(vrpSolution);
+        RouteProcessing routeProcessing = new RouteProcessingWithMetrics();
+        routeProcessing.calculate(routeRequest);
+        vrpSolution = routeProcessing.getVRPSolution();
+        StatusResponse statusResponse = routeProcessing.getStatusResponse();
         response = statusResponse.status;
 
         // then

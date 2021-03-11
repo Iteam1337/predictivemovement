@@ -24,7 +24,10 @@ const routingKeys = {
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
 module.exports = (io) => {
-  amqp.connect().then((amqpConnection) => amqpConnection.createChannel())
+  amqp.connect().then((amqpConnection) => {
+    amqpConnection.setMaxListeners(30)
+    return amqpConnection.createChannel()
+  })
 
   /////// Listeners
 

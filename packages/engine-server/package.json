@@ -31,7 +31,7 @@
     "fluent-amqp": "^0.4.1",
     "highland": "^2.13.5",
     "id62": "^1.0.0",
-    "minio": "git+https://github.com/minio/minio-js.git",
+    "minio": "^7.0.18",
     "moment": "^2.24.0",
     "node-fetch": "^2.6.1",
     "socket.io": "^2.3.0"

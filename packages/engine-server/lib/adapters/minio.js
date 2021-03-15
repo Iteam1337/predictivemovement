@@ -15,6 +15,15 @@ const minioClient = new Minio.Client({
   secretKey,
 })
 
+async function init() {
+  const bucketName = 'signatures'
+  if (!(await minioClient.bucketExists(bucketName))) {
+    await minioClient.makeBucket(bucketName)
+  }
+}
+
+init()
+
 async function saveSignature({
   createdAt,
   signedBy,
@@ -25,9 +34,6 @@ async function saveSignature({
 }) {
   const bucketName = 'signatures'
   const folder = moment().format('YYYY-MM')
-  if (!(await minioClient.bucketExists(bucketName))) {
-    await minioClient.makeBucket(bucketName)
-  }
 
   const signature = JSON.stringify(
     {
@@ -63,6 +69,7 @@ function getObject(bucket, name) {
     stream.on('error', reject)
   })
 }
+
 function getSignatures() {
   const bucket = 'signatures'
   const listStream = minioClient.listObjects(bucket, '', true)

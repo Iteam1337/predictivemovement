@@ -20,6 +20,26 @@ async function init() {
   if (!(await minioClient.bucketExists(bucketName))) {
     await minioClient.makeBucket(bucketName)
   }
+
+  /* 
+    Right now we have problem with minio if 
+    the bucket has less than 2 objects. 
+    As a quick fix we populate the bucket with two placeholders to avoid the error. 
+    The error has been acknowledged by minio and we are just waiting 
+    for the new release, then we can take away this.
+    https://github.com/minio/minio-js/issues/886 
+  */
+
+  minioClient.putObject(
+    bucketName,
+    `${moment().format('YYYY-MM')}/placeholder`,
+    'placeholder'
+  )
+  minioClient.putObject(
+    bucketName,
+    `${moment().format('YYYY-MM')}/placeholderTwo`,
+    'placeholderTwo'
+  )
 }
 
 init()
@@ -73,7 +93,11 @@ function getObject(bucket, name) {
 function getSignatures() {
   const bucket = 'signatures'
   const listStream = minioClient.listObjects(bucket, '', true)
-  return _(listStream).flatMap(({ name }) => _(getObject(bucket, name)))
+  return _(listStream).flatMap(({ name }) => {
+    // a fix until Minio releases the new fixes
+    if (name.includes('placeholder')) return []
+    return _(getObject(bucket, name))
+  })
 }
 
 module.exports = {

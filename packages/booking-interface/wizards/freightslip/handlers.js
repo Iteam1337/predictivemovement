@@ -3,14 +3,22 @@ const Composer = require('telegraf/composer')
 const bot = require('../../adapters/bot')
 const services = require('../../services')
 const utils = require('../../utils')
+
 const wizardHelpers = require('../helpers')
 
 const awaitAdditionalInformationOrConfirm = new Composer()
   .action('booking:confirm', (ctx) => {
-    return ctx.scene.enter('freightslip')
+    return wizardHelpers.jumpToStep(ctx, 'intro')
   })
   .action('booking:add_extra', (ctx) => {
     console.log('booking wants extra')
+  })
+
+const awaitRetryUploadOrManual = new Composer()
+  .action('retry_upload', (ctx) => console.log('OKOOK'))
+  .action('enter_manual', (ctx) => {
+    console.log('Ok')
+    return ctx.reply('ASADF')
   })
 
 const awaitFreightSlipAnswer = new Composer()
@@ -104,9 +112,13 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
   const fileLink = await services.bot.getFileLink(bot, file_id)
 
   // const photo = Buffer.from(response.data, 'binary').toString('base64')
-
   try {
     const text = await services.text.getTextFromPhoto(fileLink)
+
+    if (!text) {
+      console.log('ok')
+      return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')
+    }
 
     if (text) {
       const { state } = ctx.scene.session
@@ -125,9 +137,22 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
   }
 })
 
-const askForSenderOrRecipientConfirmation = (ctx) => {
-  const [match] = ctx.scene.session.state.matches
+const noParseTextFromImageResult = (ctx) => {
+  return ctx.replyWithMarkdown(
+    `Vi kunde inte tolka bilden. Vill du försöka igen?`,
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Ja', 'retry_upload'),
+      Markup.callbackButton('Nej', 'enter_manual'),
+    ]).extra()
+  )
+  // .then(() => {
+  //   ctx.wizard.steps[ctx.wizard.steps.length - 1].handler(ctx)
+  // })
+}
 
+const askForSenderOrRecipientConfirmation = (ctx) => {
+  const [match] = ctx.scene.session.state.matches || [{}]
+  console.log('here')
   if (!match) return // enter manually or something
 
   return ctx
@@ -167,4 +192,6 @@ module.exports = [
   awaitSenderLocationConfirm,
   askAddAdditionalInformation,
   awaitAdditionalInformationOrConfirm,
+  noParseTextFromImageResult,
+  awaitRetryUploadOrManual,
 ]

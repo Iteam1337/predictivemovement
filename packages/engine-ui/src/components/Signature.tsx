@@ -5,11 +5,19 @@ import styled from 'styled-components'
 
 import * as types from '../types'
 
-const Image = styled.img`
+const ImageWrapper = styled.div`
   width: 272px;
   height: 109px;
   border: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+`
+
+const Image = styled.img`
   padding: 1rem;
+  max-width: 272px;
+  max-height: 109px;
 `
 interface Props {
   signature: types.Signature
@@ -40,10 +48,12 @@ const Signature = ({ signature }: Props) => {
         )}
         {signature.type === 'signature' && (
           <>
-            <Image
-              src={signature.receipt.base64Signature}
-              alt={signature.signedBy}
-            />
+            <ImageWrapper>
+              <Image
+                src={signature.receipt.base64Signature}
+                alt={signature.signedBy}
+              />
+            </ImageWrapper>
             <Elements.Typography.InfoMd>
               {signature.signedBy}
             </Elements.Typography.InfoMd>

@@ -63,13 +63,10 @@ function getObject(bucket, name) {
     stream.on('error', reject)
   })
 }
-async function getSignatures() {
+function getSignatures() {
   const bucket = 'signatures'
   const listStream = minioClient.listObjects(bucket, '', true)
-  return _(listStream)
-    .flatMap(({ name }) => _(getObject(bucket, name)))
-    .collect()
-    .toPromise(Promise)
+  return _(listStream).flatMap(({ name }) => _(getObject(bucket, name)))
 }
 
 module.exports = {

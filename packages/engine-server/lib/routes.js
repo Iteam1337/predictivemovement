@@ -41,7 +41,7 @@ module.exports = (io) => {
 
   require('./receipts')(receipts, confirmDeliveryReceipt)
 
-  io.on('connection', async function (socket) {
+  io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
       .map((newBooking) => {
         const oldBooking = bookingsCache.get(newBooking.id)
@@ -188,7 +188,9 @@ module.exports = (io) => {
       status: getStatus(),
     })
 
-    socket.emit('signatures', await getSignatures())
+    getSignatures()
+      .fork()
+      .each((signatures) => socket.emit('signatures', signatures))
   })
 
   serviceStatus.fork().each((status) => {

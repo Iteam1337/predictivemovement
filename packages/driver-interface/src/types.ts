@@ -33,6 +33,9 @@ export interface BookingEvent {
   type: string
 }
 export interface Booking {
+  assignedTo: {
+    id: string
+  }
   pickup: Address
   delivery: Address
   external_id: string

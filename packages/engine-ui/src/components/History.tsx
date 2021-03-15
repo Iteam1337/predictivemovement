@@ -30,7 +30,7 @@ const GridItemColumn = styled.div<{ place: number }>`
   padding: 0.6rem 1rem;
 `
 
-const History: React.FC<{}> = () => {
+const History = () => {
   const transports = stores.dataState((state) => state.transports)
   const bookings = stores.dataState((state) => state.bookings)
   const [selectedFleet, setSelectedFleet] = React.useState('Alla')
@@ -68,6 +68,8 @@ const History: React.FC<{}> = () => {
       t.bookingIds?.find((id) => id === booking.id)
     )
 
+    console.log(transport?.bookingIds?.length)
+
     return {
       bookingId: booking.id,
       fleet: (transport && transport.metadata.fleet) || 'Saknas',
@@ -82,7 +84,8 @@ const History: React.FC<{}> = () => {
       weight: booking.size.weight,
       dimensions: 'dimentioner',
       distance: booking.route.distance,
-      routePercentage: '100%',
+      routePercentage:
+        transport?.bookingIds?.length && 100 / transport?.bookingIds?.length,
     }
   })
 
@@ -92,7 +95,7 @@ const History: React.FC<{}> = () => {
   )
 
   const sortedBookings = deliveredBookingsWithTransport.filter((booking) =>
-    booking.day <= toDate && booking.day >= fromDate
+    formatDate(booking.day) <= toDate && formatDate(booking.day) >= fromDate
       ? selectedFleet === 'Alla'
         ? booking.fleet
         : booking.fleet === selectedFleet
@@ -113,7 +116,7 @@ const History: React.FC<{}> = () => {
       />
       <div>
         {sortedBookings.length === 0 && (
-          <p>Inga levererade bokningar mellan dessa datum.</p>
+          <p>Inga levererade bokningar mellan de valda datumen.</p>
         )}
         {sortedBookings.length > 0 && (
           <GridContainer>
@@ -157,7 +160,7 @@ const History: React.FC<{}> = () => {
                     {getDistance(booking.distance)} km
                   </GridItemColumn>
                   <GridItemColumn place={i + 2}>
-                    {booking.routePercentage}
+                    {booking.routePercentage} %
                   </GridItemColumn>
                 </>
               )

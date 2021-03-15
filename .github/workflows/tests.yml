@@ -40,7 +40,7 @@ jobs:
           RABBITMQ_PORT: "5672"
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1.0.0
+      - uses: erlef/setup-elixir@v1.6.0
         with:
           otp-version: "23.1"
           elixir-version: "1.11.1"

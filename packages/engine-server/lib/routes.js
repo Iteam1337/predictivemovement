@@ -190,7 +190,7 @@ module.exports = (io) => {
 
     getSignatures()
       .fork()
-      .toArray((signatures) => socket.emit('signatures', signatures))
+      .each((signatures) => socket.emit('signatures', [signatures]))
   })
 
   serviceStatus.fork().each((status) => {

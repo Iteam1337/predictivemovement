@@ -101,13 +101,14 @@ const Bookings: React.FC<{
   const setUIState = stores.ui((state) => state.dispatch)
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const bookings = stores.dataState((state) => state.bookings)
+  const signatures = stores.dataState((state) => state.signatures)
   const { url } = useRouteMatch()
   const bookingsRootView = useRouteMatch({ path: '/bookings', strict: true })
 
   const sortedBookings = React.useMemo(() => sortBookingsByStatus(bookings), [
     bookings,
   ])
-
+  console.log('Signatures inside bookings: ', signatures)
   React.useEffect(() => {
     if (bookingsRootView?.isExact) {
       setMapLayers({ type: 'bookingIcons' })

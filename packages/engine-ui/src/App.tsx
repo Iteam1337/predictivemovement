@@ -79,6 +79,7 @@ const App = () => {
   }
 
   useSocket('signatures', (signatures: types.Signature[]) => {
+    console.log('signatures: ', signatures)
     setDataState({ type: 'setSignatures', payload: signatures })
   })
 

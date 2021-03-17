@@ -41,6 +41,7 @@ services:
     environment:
       - AMQP_URL=amqp://rabbitmq
       - POSTNORD_KEY=${POSTNORD_KEY}
+      - MINIO_HOST=storage
     ports:
       - 127.0.0.1:4000:4000
     networks:

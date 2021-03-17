@@ -77,6 +77,22 @@ const hexToRGBA = (hex: string, opacity: number = 255) => {
   return [r, g, b, opacity]
 }
 
+const getDistance = (distance: number) => {
+  const dist = Math.round(distance / 1000)
+
+  return `${dist} km`
+}
+
+const getDuration = (duration: number) => {
+  const num = Math.round(duration / 60)
+  const hours = Math.floor(num / 60)
+  const minutes = num % 60
+  if (hours === 0) {
+    return `${minutes}min`
+  }
+  return `${hours}h ${minutes}min`
+}
+
 const focusMapOnClick = (
   latitude: number,
   longitude: number,
@@ -102,4 +118,6 @@ export {
   hexToRGBA,
   formatIdForEndUser,
   focusMapOnClick,
+  getDistance,
+  getDuration,
 }

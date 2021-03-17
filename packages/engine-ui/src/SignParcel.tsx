@@ -100,7 +100,7 @@ const Component: React.FC<{
   const onTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSignedBy(event.target.value)
 
-  const onDrawEnd = () => setHasDrawn((current) => !current)
+  const onDrawEnd = () => setHasDrawn(true)
 
   const clear = () => nodeRef?.current?.clear()
   const confirm = () => {

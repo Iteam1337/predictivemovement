@@ -53,6 +53,12 @@ const Container = styled.div`
   margin-left: 1rem;
 `
 
+const ContainerWidth = styled.div`
+  margin-bottom: 2rem;
+  margin-left: 1rem;
+  width: 300px;
+`
+
 const FlexRowBaselineContainer = styled.div`
   display: flex;
   align-items: baseline;
@@ -154,4 +160,5 @@ export {
   FlexRowInCenterMarginL,
   FlexRowInCenterMarginS,
   FlexContainer,
+  ContainerWidth,
 }

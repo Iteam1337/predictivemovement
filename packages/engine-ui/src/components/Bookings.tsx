@@ -82,6 +82,7 @@ const BookingToggleList: React.FC<{
                         setMap
                       )
                     }
+                    hoverbackground={'#CCFFCC'}
                   >
                     {helpers.getLastFourChars(booking.id).toUpperCase()}
                   </Elements.Links.RoundedLink>

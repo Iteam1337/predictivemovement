@@ -1,5 +1,5 @@
 import moment from 'moment'
-
+import { MapState } from '../types/state'
 interface Feature {
   properties: {
     label: string
@@ -8,12 +8,13 @@ interface Feature {
   }
 }
 
-const findAddress = (query: string) => {
+const findAddress = (query: string, focusPoint: MapState) => {
   if (!query) {
     return Promise.resolve({ features: [] })
   }
+
   return fetch(
-    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`,
+    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}&focus.point.lat=${focusPoint.latitude}&focus.point.lon=${focusPoint.longitude}`,
     {
       headers: {
         'Accept-Language': 'sv-SE',

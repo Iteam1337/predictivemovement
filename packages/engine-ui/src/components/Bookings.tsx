@@ -1,5 +1,4 @@
 import React from 'react'
-import { FlyToInterpolator } from 'react-map-gl'
 import * as Elements from '../shared-elements/'
 import * as Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
@@ -35,7 +34,6 @@ const sortBookingsByStatus = (bookings: types.Booking[]) =>
 const BookingToggleList: React.FC<{
   bookings: types.Booking[]
   text: string
-  onClickHandler: (lat: number, lon: number) => void
   onMouseEnterHandler: (id: string) => void
   onMouseLeaveHandler: () => void
   isOpen: boolean
@@ -43,12 +41,13 @@ const BookingToggleList: React.FC<{
 }> = ({
   bookings,
   text,
-  onClickHandler,
+
   onMouseEnterHandler,
   onMouseLeaveHandler,
   isOpen,
   setOpen,
 }) => {
+  const setMap = stores.map((state) => state.set)
   return (
     <Elements.Layout.MarginBottomContainer>
       <Elements.Layout.FlexRowWrapper onClick={setOpen}>
@@ -77,7 +76,11 @@ const BookingToggleList: React.FC<{
                     onMouseLeave={() => onMouseLeaveHandler()}
                     to={`/bookings/${booking.id}`}
                     onClick={() =>
-                      onClickHandler(booking.pickup.lat, booking.pickup.lon)
+                      helpers.focusMapOnClick(
+                        booking.pickup.lat,
+                        booking.pickup.lon,
+                        setMap
+                      )
                     }
                   >
                     {helpers.getLastFourChars(booking.id).toUpperCase()}
@@ -96,7 +99,6 @@ const Bookings: React.FC<{
   deleteBooking: (params: any) => void
   updateBooking: (params: any) => void
 }> = (props) => {
-  const setMap = stores.map((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const bookings = stores.dataState((state) => state.bookings)
@@ -118,16 +120,6 @@ const Bookings: React.FC<{
     assigned: false,
     delivered: false,
   })
-
-  const onClickHandler = (latitude: number, longitude: number) =>
-    setMap({
-      latitude,
-      longitude,
-      zoom: 10,
-      transitionDuration: 2000,
-      transitionInterpolator: new FlyToInterpolator(),
-      transitionEasing: (t: number) => t * (2 - t),
-    })
 
   const handleExpand = (type: 'new' | 'assigned' | 'delivered') =>
     setExpandedSection((currentState) => ({
@@ -153,7 +145,6 @@ const Bookings: React.FC<{
             isOpen={expandedSection.new}
             setOpen={() => handleExpand('new')}
             bookings={sortedBookings.new}
-            onClickHandler={onClickHandler}
             text="Öppna bokningar"
             onMouseEnterHandler={(id: string) =>
               setUIState({ type: 'highlightBooking', payload: id })
@@ -166,7 +157,6 @@ const Bookings: React.FC<{
             isOpen={expandedSection.assigned}
             setOpen={() => handleExpand('assigned')}
             bookings={[...sortedBookings.assigned, ...sortedBookings.picked_up]}
-            onClickHandler={onClickHandler}
             text="Bekräftade bokningar"
             onMouseEnterHandler={(id: string) =>
               setUIState({ type: 'highlightBooking', payload: id })
@@ -179,7 +169,6 @@ const Bookings: React.FC<{
             isOpen={expandedSection.delivered}
             setOpen={() => handleExpand('delivered')}
             bookings={sortedBookings.delivered}
-            onClickHandler={onClickHandler}
             text="Levererade bokningar"
             onMouseEnterHandler={(id: string) =>
               setUIState({ type: 'highlightBooking', payload: id })

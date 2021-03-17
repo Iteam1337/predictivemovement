@@ -17,6 +17,7 @@ const RoundedLink = styled(Link)<{
   color: black;
   font-family: 'Roboto Mono', monospace;
   letter-spacing: 0.1rem;
+  margin: ${({ margin }) => margin && margin};
   :visited {
     color: black;
   }
@@ -24,7 +25,6 @@ const RoundedLink = styled(Link)<{
     opacity: 0.9;
     background: ${({ hoverbackground }) => hoverbackground};
   }
-  margin: ${({ margin }) => margin && margin};
 `
 
 export { RoundedLink }

@@ -65,6 +65,12 @@ const reducer = (
         plan: action.payload,
       }
 
+    case 'setSignatures':
+      return {
+        ...state,
+        signatures: action.payload,
+      }
+
     case 'clearState':
       return initState
 

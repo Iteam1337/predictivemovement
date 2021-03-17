@@ -16,7 +16,7 @@ const {
 } = require('./mappings')
 
 const { serviceStatus, getStatus } = require('./serviceStatus')
-const { saveSignature } = require('./adapters/minio')
+const { saveSignature, getSignatures } = require('./adapters/minio')
 
 module.exports = (io) => {
   const {
@@ -184,7 +184,13 @@ module.exports = (io) => {
       socket.emit('parcel-info', { weight, measurements })
     })
 
-    socket.emit('service-disruption', { status: getStatus() })
+    socket.emit('service-disruption', {
+      status: getStatus(),
+    })
+
+    getSignatures()
+      .fork()
+      .toArray((signatures) => socket.emit('signatures', signatures))
   })
 
   serviceStatus.fork().each((status) => {

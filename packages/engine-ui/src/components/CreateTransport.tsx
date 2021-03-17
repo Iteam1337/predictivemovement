@@ -152,7 +152,7 @@ const CreateTransport = ({
 
   return (
     <MainRouteLayout redirect="/transports">
-      <Elements.Layout.Container>
+      <Elements.Layout.ContainerWidth>
         <h3>Lägg till transport</h3>
         <Form
           onChangeHandler={setState}
@@ -162,7 +162,7 @@ const CreateTransport = ({
           transportPresets={transportPresets}
           type="NEW"
         />
-      </Elements.Layout.Container>
+      </Elements.Layout.ContainerWidth>
     </MainRouteLayout>
   )
 }

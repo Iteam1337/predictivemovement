@@ -135,7 +135,11 @@ const Component = ({
     .concat({ value: 'custom' })
 
   return (
-    <form onSubmit={onSubmitHandler} autoComplete="off">
+    <form
+      onSubmit={onSubmitHandler}
+      autoComplete="off"
+      style={{ width: '309px' }}
+    >
       <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>

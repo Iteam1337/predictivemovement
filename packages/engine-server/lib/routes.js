@@ -16,7 +16,7 @@ const {
 } = require('./mappings')
 
 const { serviceStatus, getStatus } = require('./serviceStatus')
-const { saveSignature, getSignatures } = require('./adapters/minio')
+const { saveSignature, getSignature } = require('./adapters/minio')
 
 module.exports = (io) => {
   const {
@@ -38,8 +38,6 @@ module.exports = (io) => {
     confirmDeliveryReceipt,
     receipts,
   } = require('./engineConnector')(io)
-
-  require('./receipts')(receipts, confirmDeliveryReceipt)
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
@@ -188,9 +186,13 @@ module.exports = (io) => {
       status: getStatus(),
     })
 
-    getSignatures()
-      .fork()
-      .each((signatures) => socket.emit('signatures', [signatures]))
+    _(receipts.fork()).each((signature) => {
+      setTimeout(() => {
+        getSignature(signature.bookingId)
+          .fork()
+          .each((signatures) => socket.emit('signatures', [signatures]))
+      }, 2000)
+    })
   })
 
   serviceStatus.fork().each((status) => {

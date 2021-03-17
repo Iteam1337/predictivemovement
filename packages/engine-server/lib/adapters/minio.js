@@ -90,17 +90,18 @@ function getObject(bucket, name) {
   })
 }
 
-function getSignatures() {
+function getSignature(bookingId) {
   const bucket = 'signatures'
   const listStream = minioClient.listObjects(bucket, '', true)
   return _(listStream).flatMap(({ name }) => {
     // a fix until Minio releases the new fixes
     if (name.includes('placeholder')) return []
+    if (!name.includes(bookingId)) return []
     return _(getObject(bucket, name))
   })
 }
 
 module.exports = {
   saveSignature,
-  getSignatures,
+  getSignature,
 }

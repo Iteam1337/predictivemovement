@@ -110,7 +110,7 @@ const TransportDetails: React.FC<{
 
   return (
     <MainRouteLayout redirect={'/transports'}>
-      <Elements.Layout.Container>
+      <Elements.Layout.ContainerWidth>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
           <Elements.Typography.RoundedLabelDisplay
@@ -270,7 +270,7 @@ const TransportDetails: React.FC<{
             </Elements.Buttons.CancelButton>
           </Elements.Layout.ButtonWrapper>
         </Elements.Layout.MarginTopContainer>
-      </Elements.Layout.Container>
+      </Elements.Layout.ContainerWidth>
     </MainRouteLayout>
   )
 }

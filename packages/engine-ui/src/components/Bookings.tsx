@@ -79,6 +79,7 @@ const BookingToggleList: React.FC<{
                     onClick={() =>
                       onClickHandler(booking.pickup.lat, booking.pickup.lon)
                     }
+                    hoverbackground={'#CCFFCC'}
                   >
                     {helpers.getLastFourChars(booking.id).toUpperCase()}
                   </Elements.Links.RoundedLink>

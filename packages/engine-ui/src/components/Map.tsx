@@ -5,11 +5,13 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
 import * as hooks from '../hooks'
 import * as stores from '../utils/state/stores'
+import * as helpers from '../utils/helpers'
 
 const Map: React.FC = () => {
   const history = useHistory()
   const [isHovering, setHover] = React.useState(false)
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
+  const [setCurrentLocation] = stores.currentLocation((state) => [state.set])
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
   const dataState = stores.dataState(React.useCallback((state) => state, []))
@@ -29,6 +31,20 @@ const Map: React.FC = () => {
           longitude: position.coords.longitude,
           zoom: 10,
         })
+
+        helpers
+          .getAddressFromCoordinate({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          })
+          .then((data) =>
+            setCurrentLocation({
+              lat: position.coords.latitude,
+              lon: position.coords.longitude,
+              name: data.name,
+              county: data.county,
+            })
+          )
       },
       (error) => console.warn(error.message)
     )

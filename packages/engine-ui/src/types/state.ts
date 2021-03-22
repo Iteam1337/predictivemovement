@@ -46,6 +46,13 @@ export type MapState = {
   transitionEasing: (t: number) => number
 } & { set: (args: Partial<MapState>) => void }
 
+export type CurrentLocation = {
+  lat: number | undefined
+  lon: number | undefined
+  name: string
+  county: string
+} & { set: (args: Partial<CurrentLocation>) => void }
+
 export type MapLayerStateReducerAction =
   | {
       type: 'bookingIcons'

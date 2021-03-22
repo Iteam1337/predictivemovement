@@ -11,6 +11,58 @@ const port = 3000
 const secretPath = 'test'
 
 describe('freightslip upload', () => {
+  const askIfSenderOrRecipient = () => {
+    test('receives photo and asks if first of two entries is sender or recipient', (done) => {
+      botService.getFileLink = jest.fn().mockResolvedValue('test')
+      textService.getTextFromPhoto = jest.fn().mockResolvedValue('test')
+
+      utils.scanAddress = jest.fn().mockResolvedValue([
+        {
+          name: 'Lars Larsson',
+          address: 'Testvägen 25',
+          postCode: '123 45',
+          city: 'Göteborg',
+        },
+        {
+          name: 'Maria Mariasson',
+          address: 'Testvägen 13',
+          postCode: '123 42',
+          city: 'Stockholm',
+        },
+      ])
+
+      telegrafTest
+        .sendMessage({
+          text: '/',
+          photo: [{}],
+        })
+        .then((res) => {
+          expect(res.data.text).toMatch(/(Lars Larsson)/i)
+          done()
+        })
+    })
+  }
+
+  const uploadImage = () => {
+    test('asks if parcel has freightslip', (done) => {
+      telegrafTest.sendMessageWithText('/start').then((res) => {
+        expect(res.data.text).toMatch(/(Har din försändelse en fraktsedel?)/i)
+        done()
+      })
+    })
+
+    test('user says yes, asks user to upload photo', (done) => {
+      telegrafTest
+        .sendCallbackQueryWithData('freightslip:confirm')
+        .then((res) => {
+          expect(res.data.text).toMatch(
+            /(Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!)/i
+          )
+          done()
+        })
+    })
+  }
+
   const bot = new Telegraf('ABCD:1234567890')
   const telegrafTest = new TelegrafTest({
     url: `http://127.0.0.1:${port}/${secretPath}`,
@@ -34,53 +86,8 @@ describe('freightslip upload', () => {
 
   describe('has image', () => {
     describe('text extraction successful', () => {
-      test('asks if parcel has freightslip', (done) => {
-        telegrafTest.sendMessageWithText('/start').then((res) => {
-          expect(res.data.text).toMatch(/(Har din försändelse en fraktsedel?)/i)
-          done()
-        })
-      })
-
-      test('user says yes, asks user to upload photo', (done) => {
-        telegrafTest
-          .sendCallbackQueryWithData('freightslip:confirm')
-          .then((res) => {
-            expect(res.data.text).toMatch(
-              /(Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!)/i
-            )
-            done()
-          })
-      })
-
-      test('receives photo and asks if first of two entries is sender or recipient', (done) => {
-        botService.getFileLink = jest.fn().mockResolvedValue('test')
-        textService.getTextFromPhoto = jest.fn().mockResolvedValue('test')
-
-        utils.scanAddress = jest.fn().mockResolvedValue([
-          {
-            name: 'Lars Larsson',
-            address: 'Testvägen 25',
-            postCode: '123 45',
-            city: 'Göteborg',
-          },
-          {
-            name: 'Maria Mariasson',
-            address: 'Testvägen 13',
-            postCode: '123 42',
-            city: 'Stockholm',
-          },
-        ])
-
-        telegrafTest
-          .sendMessage({
-            text: '/',
-            photo: [{}],
-          })
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Lars Larsson)/i)
-            done()
-          })
-      })
+      uploadImage()
+      askIfSenderOrRecipient()
 
       test('user selects recipient and is prompted for location', (done) => {
         telegrafTest
@@ -155,45 +162,59 @@ describe('freightslip upload', () => {
     })
 
     describe('text extraction unsuccessful', () => {
-      test('asks if parcel has freightslip', (done) => {
-        telegrafTest.sendMessageWithText('/start').then((res) => {
-          expect(res.data.text).toMatch(/(Har din försändelse en fraktsedel?)/i)
-          done()
-        })
-      })
+      describe('retries upload with success', () => {
+        uploadImage()
 
-      test('user says yes, asks user to upload photo', (done) => {
-        telegrafTest
-          .sendCallbackQueryWithData('freightslip:confirm')
-          .then((res) => {
+        test('receives photo and gets unsuccessful text extract result', (done) => {
+          botService.getFileLink = jest.fn().mockResolvedValue(null)
+          textService.getTextFromPhoto = jest.fn().mockResolvedValue(null)
+
+          telegrafTest
+            .sendMessage({
+              text: '/',
+              photo: [{}],
+            })
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Vi kunde inte tolka bilden.)/i)
+              done()
+            })
+        })
+
+        test('user selects try again and is sent to upload step', (done) => {
+          telegrafTest.sendCallbackQueryWithData('retry_upload').then((res) => {
             expect(res.data.text).toMatch(
               /(Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!)/i
             )
             done()
           })
+        })
+
+        askIfSenderOrRecipient()
       })
 
-      test('receives photo and gets unsuccessful text extract result', (done) => {
-        botService.getFileLink = jest.fn().mockResolvedValue(null)
-        textService.getTextFromPhoto = jest.fn().mockResolvedValue(null)
+      describe('enters recipient manually', () => {
+        uploadImage()
 
-        telegrafTest
-          .sendMessage({
-            text: '/',
-            photo: [{}],
-          })
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Vi kunde inte tolka bilden.)/i)
+        test('receives photo and gets unsuccessful text extract result', (done) => {
+          botService.getFileLink = jest.fn().mockResolvedValue(null)
+          textService.getTextFromPhoto = jest.fn().mockResolvedValue(null)
+
+          telegrafTest
+            .sendMessage({
+              text: '/',
+              photo: [{}],
+            })
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Vi kunde inte tolka bilden.)/i)
+              done()
+            })
+        })
+
+        test('user selects enter manual and is sent to enter manual step', (done) => {
+          telegrafTest.sendCallbackQueryWithData('enter_manual').then((res) => {
+            expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
             done()
           })
-      })
-
-      test('user selects try again and is sent to upload step', (done) => {
-        telegrafTest.sendCallbackQueryWithData('retry_upload').then((res) => {
-          expect(res.data.text).toMatch(
-            /(Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!)/i
-          )
-          done()
         })
       })
     })

@@ -1,7 +1,8 @@
-const jumpToStep = (ctx, name, runNext = true) => {
-  if (runNext) {
-    ctx.wizard.next()
-  }
+const jumpToStep = (ctx, name) => {
+  ctx.wizard.cursor =
+    ctx.wizard.steps.findIndex((handler) => handler.name === name) - 1
+
+  ctx.wizard.next()
 
   ctx.wizard.steps
     .filter((x) => Boolean(x.name))

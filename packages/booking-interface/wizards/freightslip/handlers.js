@@ -21,7 +21,7 @@ const awaitRetryUploadOrManual = new Composer()
     wizardHelpers.jumpToStep(ctx, 'askForUpload')
   )
   .action('enter_manual', (ctx) => {
-    console.log('Ok')
+    wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
     return ctx.reply('ASADF')
   })
 
@@ -63,6 +63,10 @@ const awaitSenderLocationConfirm = new Composer().on('location', (ctx) => {
   return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
 })
 
+const askForManualRecipient = (ctx) => {
+  return ctx.reply('Skriv in mottagaradressen')
+}
+
 const askAddAdditionalInformation = (ctx) => {
   return ctx
     .replyWithMarkdown(
@@ -102,14 +106,15 @@ const intro = (ctx) =>
     )
     .then(() => ctx.wizard.next())
 
-const askForUpload = (ctx) =>
-  ctx
+const askForUpload = (ctx) => {
+  return ctx
     .reply(
       'Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!'.concat(
         `\nFörsök ta bilden så nära det går och i så bra ljus som möjligt.`
       )
     )
     .then(() => ctx.wizard.next())
+}
 
 const awaitImageUpload = new Composer().on('photo', async (ctx) => {
   const photos = ctx.update.message.photo
@@ -207,4 +212,5 @@ module.exports = [
   awaitAdditionalInformationOrConfirm,
   noParseTextFromImageResult,
   awaitRetryUploadOrManual,
+  askForManualRecipient,
 ]

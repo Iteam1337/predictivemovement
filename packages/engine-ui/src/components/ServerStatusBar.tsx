@@ -5,9 +5,9 @@ const ServerStatusBar = styled.div<{ status: string }>`
   display: ${({ status }) => (status !== 'ok' ? 'flex' : 'none')};
   z-index: 99;
   width: 100vw;
-  background: #ff9999;
+  background: #ffcdcd;
   justify-content: center;
-  color: black;
+  color: #666666;
   padding: 4px;
   font-weight: bold;
   font-size: 11pt;

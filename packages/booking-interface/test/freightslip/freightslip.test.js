@@ -190,8 +190,9 @@ describe('freightslip upload', () => {
 
       test('user selects try again and is sent to upload step', (done) => {
         telegrafTest.sendCallbackQueryWithData('retry_upload').then((res) => {
-          console.log('res: ', res.data)
-          // expect(res.data.text).toMatch(/(Vi kunde inte tolka bilden.)/i)
+          expect(res.data.text).toMatch(
+            /(Ta en bild på fraktsedeln eller addresslappen och skicka den till mig!)/i
+          )
           done()
         })
       })

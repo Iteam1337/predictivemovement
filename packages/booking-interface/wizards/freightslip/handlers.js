@@ -14,12 +14,18 @@ const awaitAdditionalInformationOrConfirm = new Composer()
     console.log('booking wants extra')
   })
 
+awaitAdditionalInformationOrConfirm.name = 'awaitAdditionalInformationOrConfirm'
+
 const awaitRetryUploadOrManual = new Composer()
-  .action('retry_upload', (ctx) => console.log('OKOOK'))
+  .action('retry_upload', (ctx) =>
+    wizardHelpers.jumpToStep(ctx, 'askForUpload')
+  )
   .action('enter_manual', (ctx) => {
     console.log('Ok')
     return ctx.reply('ASADF')
   })
+
+awaitRetryUploadOrManual.name = 'awaitRetryUploadOrManual'
 
 const awaitFreightSlipAnswer = new Composer()
   .action('freightslip:confirm', (ctx) =>
@@ -116,7 +122,6 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
     const text = await services.text.getTextFromPhoto(fileLink)
 
     if (!text) {
-      console.log('ok')
       return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')
     }
 
@@ -138,21 +143,29 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
 })
 
 const noParseTextFromImageResult = (ctx) => {
-  return ctx.replyWithMarkdown(
-    `Vi kunde inte tolka bilden. Vill du försöka igen?`,
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Ja', 'retry_upload'),
-      Markup.callbackButton('Nej', 'enter_manual'),
-    ]).extra()
-  )
-  // .then(() => {
-  //   ctx.wizard.steps[ctx.wizard.steps.length - 1].handler(ctx)
-  // })
+  return ctx
+    .replyWithMarkdown(
+      `Vi kunde inte tolka bilden. Vill du försöka igen?`,
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Ja', 'retry_upload'),
+        Markup.callbackButton('Nej', 'enter_manual'),
+      ]).extra()
+    )
+    .then(() => {
+      ctx.wizard.cursor =
+        ctx.wizard.steps.findIndex(
+          (x) => x.name === 'awaitRetryUploadOrManual'
+        ) - 1
+
+      return ctx.wizard.next()
+
+      // ctx.wizard.steps[ctx.wizard.steps.length - 1].handler(ctx)
+    })
 }
 
 const askForSenderOrRecipientConfirmation = (ctx) => {
   const [match] = ctx.scene.session.state.matches || [{}]
-  console.log('here')
+
   if (!match) return // enter manually or something
 
   return ctx

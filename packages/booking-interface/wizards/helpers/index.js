@@ -1,5 +1,7 @@
-const jumpToStep = (ctx, name) => {
-  ctx.wizard.next()
+const jumpToStep = (ctx, name, runNext = true) => {
+  if (runNext) {
+    ctx.wizard.next()
+  }
 
   ctx.wizard.steps
     .filter((x) => Boolean(x.name))

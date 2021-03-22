@@ -5,6 +5,8 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import * as eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
+import { shareCurrentLocation } from '../../utils/helpers'
+import * as stores from '../../utils/state/stores'
 
 const getSizePreset = ({ size: { weight, measurements } }, presets) => {
   if (!weight || !measurements) {
@@ -42,6 +44,11 @@ const Component = ({
     pickup: !!state.pickup.timeWindows?.length || false,
     delivery: !!state.delivery.timeWindows?.length || false,
   })
+
+  const [
+    currentLocation,
+    setCurrentLocation,
+  ] = stores.currentLocation((state) => [state, state.set])
 
   const isMobile = window.innerWidth <= 645
 
@@ -272,6 +279,17 @@ const Component = ({
           <Elements.Typography.ErrorMessage>
             Kunde inte hitta adressen, försök igen
           </Elements.Typography.ErrorMessage>
+        )}
+
+        {!currentLocation.lon && (
+          <Elements.Buttons.NeutralButton
+            onClick={(e) => {
+              e.preventDefault()
+              shareCurrentLocation(setCurrentLocation)
+            }}
+          >
+            Dela din nuvarade position
+          </Elements.Buttons.NeutralButton>
         )}
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>

@@ -1,5 +1,7 @@
 import moment from 'moment'
 import { MapState } from '../types/state'
+import { FlyToInterpolator } from 'react-map-gl'
+
 interface Feature {
   properties: {
     label: string
@@ -91,6 +93,21 @@ const getDuration = (duration: number) => {
   return `${hours}h ${minutes}min`
 }
 
+const focusMapOnClick = (
+  latitude: number,
+  longitude: number,
+  setMap: (args: Partial<MapState>) => void
+) => {
+  return setMap({
+    latitude,
+    longitude,
+    zoom: 10,
+    transitionDuration: 2000,
+    transitionInterpolator: new FlyToInterpolator(),
+    transitionEasing: (t: number) => t * (2 - t),
+  })
+}
+
 export {
   findAddress,
   calculateMinTime,
@@ -100,6 +117,7 @@ export {
   formatCoordinateToFixedDecimalLength,
   hexToRGBA,
   formatIdForEndUser,
+  focusMapOnClick,
   getDistance,
   getDuration,
 }

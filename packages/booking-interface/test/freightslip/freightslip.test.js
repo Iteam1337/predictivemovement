@@ -3,8 +3,12 @@ const TelegrafTest = require('telegraf-test')
 const wizards = require('../../wizards')
 const session = require('telegraf/session')
 const Stage = require('telegraf/stage')
-const botService = require('../../services/bot')
-const textService = require('../../services/text')
+const {
+  bot: botService,
+  text: textService,
+  geolocation: geolocationService,
+} = require('../../services')
+const mocks = require('./mocks')
 const utils = require('../../utils')
 
 const port = 3000
@@ -16,20 +20,7 @@ describe('freightslip upload', () => {
       botService.getFileLink = jest.fn().mockResolvedValue('test')
       textService.getTextFromPhoto = jest.fn().mockResolvedValue('test')
 
-      utils.scanAddress = jest.fn().mockResolvedValue([
-        {
-          name: 'Lars Larsson',
-          address: 'Testvägen 25',
-          postCode: '123 45',
-          city: 'Göteborg',
-        },
-        {
-          name: 'Maria Mariasson',
-          address: 'Testvägen 13',
-          postCode: '123 42',
-          city: 'Stockholm',
-        },
-      ])
+      utils.scanAddress = jest.fn().mockResolvedValue(mocks.scanResult)
 
       telegrafTest
         .sendMessage({
@@ -73,10 +64,7 @@ describe('freightslip upload', () => {
   bot.hears(/start/i, (ctx) => ctx.scene.enter('freightslip'))
   bot.startWebhook(`/${secretPath}`, null, port)
 
-  telegrafTest.setUser({
-    id: 1337,
-    username: '@testUser1337',
-  })
+  telegrafTest.setUser(mocks.testUser)
 
   afterAll(() => {
     bot.stop()
@@ -210,11 +198,36 @@ describe('freightslip upload', () => {
             })
         })
 
-        test('user selects enter manual and is sent to enter manual step', (done) => {
+        test('user selects enter manual and is asked to enter recipient manually', (done) => {
           telegrafTest.sendCallbackQueryWithData('enter_manual').then((res) => {
             expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
             done()
           })
+        })
+
+        test('user manually enters recipient with successful lookup', (done) => {
+          geolocationService.get = jest
+            .fn()
+            .mockResolvedValueOnce(mocks.recipient)
+
+          telegrafTest
+            .sendMessageWithText(mocks.manualRecipientInput)
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Är detta rätt?)/)
+              done()
+            })
+        })
+
+        test('user confirms lookup result and is sent to sender location step', (done) => {
+          telegrafTest
+            .sendCallbackQueryWithData('recipient:geolookup:confirm')
+            .then((res) => {
+              expect(res.data.text).toMatch(
+                /(Tack! Vill du skicka din nuvarande position)/i
+              )
+
+              done()
+            })
         })
       })
     })

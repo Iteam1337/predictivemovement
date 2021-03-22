@@ -3,8 +3,39 @@ const Composer = require('telegraf/composer')
 const bot = require('../../adapters/bot')
 const services = require('../../services')
 const utils = require('../../utils')
-
 const wizardHelpers = require('../helpers')
+
+const awaitManualRecipientInput = new Composer().on('text', (ctx) =>
+  services.geolocation.get(ctx.update.message.text).then((res) => {
+    if (!res) return
+
+    const { state } = ctx.scene.session
+    Object.assign(state, {
+      recipient: res,
+    })
+
+    return ctx
+      .replyWithMarkdown(
+        `Är detta rätt?`
+          .concat(`\n${res.name}`)
+          .concat(`\n${res.address}`)
+          .concat(`\n${res.city}`),
+        Markup.inlineKeyboard([
+          Markup.callbackButton('Ja', 'recipient:geolookup:confirm'),
+          Markup.callbackButton('Avsändare', 'recipient:geolookup:decline'),
+        ]).extra()
+      )
+      .then(() => ctx.wizard.next())
+  })
+)
+
+const awaitManualRecipientConfirmation = new Composer()
+  .action('recipient:geolookup:confirm', (ctx) =>
+    wizardHelpers.jumpToStep(ctx, 'askForLocation')
+  )
+  .action('recipient:geolookup:decline', (ctx) => {
+    console.log('***declines recipient lookup suggestion***')
+  })
 
 const awaitAdditionalInformationOrConfirm = new Composer()
   .action('booking:confirm', (ctx) => {
@@ -22,7 +53,6 @@ const awaitRetryUploadOrManual = new Composer()
   )
   .action('enter_manual', (ctx) => {
     wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
-    return ctx.reply('ASADF')
   })
 
 awaitRetryUploadOrManual.name = 'awaitRetryUploadOrManual'
@@ -64,7 +94,9 @@ const awaitSenderLocationConfirm = new Composer().on('location', (ctx) => {
 })
 
 const askForManualRecipient = (ctx) => {
-  return ctx.reply('Skriv in mottagaradressen')
+  ctx.reply('Skriv in mottagaradressen').then(() => {
+    return ctx.wizard.next()
+  })
 }
 
 const askAddAdditionalInformation = (ctx) => {
@@ -169,7 +201,7 @@ const noParseTextFromImageResult = (ctx) => {
 }
 
 const askForSenderOrRecipientConfirmation = (ctx) => {
-  const [match] = ctx.scene.session.state.matches || [{}]
+  const [match] = ctx.scene.session.state.matches || []
 
   if (!match) return // enter manually or something
 
@@ -213,4 +245,6 @@ module.exports = [
   noParseTextFromImageResult,
   awaitRetryUploadOrManual,
   askForManualRecipient,
+  awaitManualRecipientInput,
+  awaitManualRecipientConfirmation,
 ]

@@ -3,4 +3,5 @@ module.exports = {
   amqp: require('./amqp'),
   bot: require('./bot'),
   text: require('./text'),
+  geolocation: require('./geolocation'),
 }

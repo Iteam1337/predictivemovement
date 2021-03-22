@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose --watch",
+    "test": "jest --verbose --watch --detectOpenHandles",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },

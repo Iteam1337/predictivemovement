@@ -23,36 +23,9 @@ const Map: React.FC = () => {
     path: ['/plans/routes/:routeId'],
   })
 
-  const shareLocation = React.useCallback(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setViewState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          zoom: 10,
-        })
-
-        helpers
-          .getAddressFromCoordinate({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-          })
-          .then((data) =>
-            setCurrentLocation({
-              lat: position.coords.latitude,
-              lon: position.coords.longitude,
-              name: data.name,
-              county: data.county,
-            })
-          )
-      },
-      (error) => console.warn(error.message)
-    )
-  }, [setViewState])
-
   React.useEffect(() => {
-    shareLocation()
-  }, [shareLocation])
+    helpers.shareCurrentLocation(setCurrentLocation, setViewState)
+  }, [setViewState])
 
   const hideTooltip = React.useCallback(
     () => UIState.showMapTooltip && setUIState({ type: 'hideTooltip' }),

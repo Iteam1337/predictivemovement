@@ -8,6 +8,7 @@ resources:
   - rabbitmq.yaml
   - redis.yaml
   - minio.yaml
+  - postgres-backup.yaml
 
 # namespace to deploy all Resources to
 namespace: predictivemovement-dev

@@ -105,6 +105,8 @@ or in the case of the add_transport; a keyword list can also be used containing 
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 
+---
+
 ## Release
 
 You will need:
@@ -128,6 +130,22 @@ export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
 export REACT_APP_ENGINE_SERVER=https://engine-server.iteamdev.io
 skaffold run --profile prod
 ```
+
+---
+
+## Data backups
+
+We use [postgres-backup](https://github.com/alexanderczigler/docker/tree/master/postgres-backup)
+
+To restore a backup exec into the `postgres-backup` pod
+
+```bash
+kubectl exec -it postgres-backup /bin/bash
+
+/restore.sh /backup/latest.psql.gz # or choose a different backup you want
+```
+
+---
 
 ## Vocabulary
 

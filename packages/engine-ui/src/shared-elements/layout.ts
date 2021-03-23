@@ -112,6 +112,7 @@ const InputBlock = styled.div`
 
 const InputContainer = styled.div`
   margin-bottom: 0.5rem;
+  width: inherit;
 `
 
 const TextInputPairContainer = styled.div`

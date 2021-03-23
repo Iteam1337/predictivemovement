@@ -5,7 +5,7 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import * as eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
-import OpacityAnim from '../animations/opacityAnim'
+import OpacityFadeInAnim from '../animations/opacityFadeInAnim'
 
 const getSizePreset = ({ size: { weight, measurements } }, presets) => {
   if (!weight || !measurements) {
@@ -195,7 +195,7 @@ const Component = ({
 
           <FormInputs.Checkbox
             defaultChecked={!!state.pickup.timeWindows?.length}
-            label="Tidspassning"
+            label="Bokningen behöver hämtas en viss tid"
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
           />
@@ -260,180 +260,198 @@ const Component = ({
 
         <Elements.Layout.MarginBottomContainer />
         {!animateFirstBlock && (
-          <button onClick={doAnimateFirstBlock} type="button">
+          <Elements.Buttons.CancelButton
+            type="button"
+            width={`${isMobile && '100%'}`}
+            marginTop={`${isMobile && '0.7rem'}`}
+            onClick={doAnimateFirstBlock}
+            type="button"
+          >
             Nästa
-          </button>
+          </Elements.Buttons.CancelButton>
         )}
       </div>
-      <div>
-        <OpacityAnim animate={animateFirstBlock}>
-          <Elements.Layout.InputContainer>
-            <Elements.Form.Label required htmlFor="delivery">
-              Avlämning
-            </Elements.Form.Label>
-            <FormInputs.AddressSearchInput
-              placeholder="Adress (sök eller klicka på karta)"
-              value={state.delivery.name}
-              formErrors={formErrors.delivery}
-              onFocusHandler={() =>
-                dispatch({
-                  type: 'focusInput',
-                  payload: 'end',
-                })
-              }
-              onChangeHandler={eventHandlers.handleAddressInputForBooking(
-                'delivery',
-                onChangeHandler,
-                setFormErrors
-              )}
-            />
-            {formErrors.delivery && (
-              <Elements.Typography.ErrorMessage>
-                Kunde inte hitta adressen, försök igen
-              </Elements.Typography.ErrorMessage>
-            )}
-          </Elements.Layout.InputContainer>
-          <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-            <FormInputs.TextInput
-              onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              name="recipient-info"
-              value={state.metadata.recipient.info || ''}
-              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                'recipient',
-                'info',
-                onChangeHandler
-              )}
-              placeholder="Ytterligare information, t.ex. portkod"
-            />
-            <FormInputs.Checkbox
-              label="Tidspassning"
-              onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              onChangeHandler={() =>
-                handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
-              }
-            />
-            <Elements.Layout.TimeRestrictionWrapper>
-              {showBookingTimeRestriction.delivery &&
-                state.delivery.timeWindows?.length && (
-                  <FormInputs.TimeRestriction.BookingTimeRestrictionPair
-                    typeProperty="delivery"
-                    timeWindow={state.delivery.timeWindows[0]}
-                    onChangeHandler={handleBookingTimeRestrictionChange}
-                  />
-                )}
-            </Elements.Layout.TimeRestrictionWrapper>
-          </Elements.Layout.InputContainer>
-          <Elements.Layout.InputBlock>
-            <Elements.Layout.InputContainer>
-              <Elements.Form.Label htmlFor="recipient-name">
-                Mottagare
-              </Elements.Form.Label>
-              <Elements.Layout.InputInnerContainer>
-                <Elements.Icons.FormInputIcon
-                  alt="Contact name icon"
-                  src={`${nameIcon}`}
-                />
-                <FormInputs.TextInput
-                  iconInset
-                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                  name="recipient-name"
-                  value={state.metadata.recipient.name || ''}
-                  onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                    'recipient',
-                    'name',
-                    onChangeHandler
-                  )}
-                  placeholder="Namn"
-                />
-              </Elements.Layout.InputInnerContainer>
-            </Elements.Layout.InputContainer>
 
-            <Elements.Layout.InputContainer>
-              <Elements.Form.Label htmlFor="recipient-contact">
-                Kontakt
-              </Elements.Form.Label>
-              <Elements.Layout.InputInnerContainer>
-                <Elements.Icons.FormInputIcon
-                  alt="Contact phone icon"
-                  src={`${nameIcon}`}
+      <OpacityFadeInAnim animate={animateFirstBlock}>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label required htmlFor="delivery">
+            Avlämning
+          </Elements.Form.Label>
+          <FormInputs.AddressSearchInput
+            placeholder="Adress (sök eller klicka på karta)"
+            value={state.delivery.name}
+            formErrors={formErrors.delivery}
+            onFocusHandler={() =>
+              dispatch({
+                type: 'focusInput',
+                payload: 'end',
+              })
+            }
+            onChangeHandler={eventHandlers.handleAddressInputForBooking(
+              'delivery',
+              onChangeHandler,
+              setFormErrors
+            )}
+          />
+          {formErrors.delivery && (
+            <Elements.Typography.ErrorMessage>
+              Kunde inte hitta adressen, försök igen
+            </Elements.Typography.ErrorMessage>
+          )}
+        </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
+          <FormInputs.TextInput
+            onFocus={() => dispatch({ type: 'resetInputClickState' })}
+            name="recipient-info"
+            value={state.metadata.recipient.info || ''}
+            onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
+              'recipient',
+              'info',
+              onChangeHandler
+            )}
+            placeholder="Ytterligare information, t.ex. portkod"
+          />
+          <FormInputs.Checkbox
+            label="Bokningen behöver lämnas en viss tid"
+            onFocus={() => dispatch({ type: 'resetInputClickState' })}
+            onChangeHandler={() =>
+              handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
+            }
+          />
+          <Elements.Layout.TimeRestrictionWrapper>
+            {showBookingTimeRestriction.delivery &&
+              state.delivery.timeWindows?.length && (
+                <FormInputs.TimeRestriction.BookingTimeRestrictionPair
+                  typeProperty="delivery"
+                  timeWindow={state.delivery.timeWindows[0]}
+                  onChangeHandler={handleBookingTimeRestrictionChange}
                 />
-                <FormInputs.TextInput
-                  iconInset
-                  name="recipient-contact"
-                  pattern="^[0-9]*$|^-$"
-                  value={state.metadata.recipient.contact}
-                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                  onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                    'recipient',
-                    'contact',
+              )}
+          </Elements.Layout.TimeRestrictionWrapper>
+        </Elements.Layout.InputContainer>
+        <Elements.Layout.InputBlock>
+          <Elements.Layout.InputContainer>
+            <Elements.Form.Label htmlFor="recipient-name">
+              Mottagare
+            </Elements.Form.Label>
+            <Elements.Layout.InputInnerContainer>
+              <Elements.Icons.FormInputIcon
+                alt="Contact name icon"
+                src={`${nameIcon}`}
+              />
+              <FormInputs.TextInput
+                iconInset
+                onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                name="recipient-name"
+                value={state.metadata.recipient.name || ''}
+                onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
+                  'recipient',
+                  'name',
+                  onChangeHandler
+                )}
+                placeholder="Namn"
+              />
+            </Elements.Layout.InputInnerContainer>
+          </Elements.Layout.InputContainer>
+
+          <Elements.Layout.InputContainer>
+            <Elements.Form.Label htmlFor="recipient-contact">
+              Kontakt
+            </Elements.Form.Label>
+            <Elements.Layout.InputInnerContainer>
+              <Elements.Icons.FormInputIcon
+                alt="Contact phone icon"
+                src={`${nameIcon}`}
+              />
+              <FormInputs.TextInput
+                iconInset
+                name="recipient-contact"
+                pattern="^[0-9]*$|^-$"
+                value={state.metadata.recipient.contact}
+                onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
+                  'recipient',
+                  'contact',
+                  onChangeHandler
+                )}
+                placeholder="Telefonnummer"
+              />
+            </Elements.Layout.InputInnerContainer>
+          </Elements.Layout.InputContainer>
+        </Elements.Layout.InputBlock>
+        <Elements.Layout.MarginBottomContainer />
+
+        {animateFirstBlock && !animateSecondBlock && (
+          <>
+            <Elements.Buttons.CancelButton
+              type="button"
+              width={`${isMobile && '100%'}`}
+              marginTop={`${isMobile && '0.7rem'}`}
+              onClick={doAnimateSecondBlock}
+            >
+              Ange extra information?
+            </Elements.Buttons.CancelButton>
+            <Elements.Layout.MarginBottomContainer />
+          </>
+        )}
+
+        {animateSecondBlock && (
+          <OpacityFadeInAnim animate={animateSecondBlock}>
+            <Elements.Layout.MarginBottomContainer />
+            <Elements.Layout.InputBlock>
+              <Elements.Layout.InputContainer>
+                <Elements.Form.Label htmlFor="parceldetails">
+                  Paketspecifikationer
+                </Elements.Form.Label>
+                <FormInputs.ExternalIdSearchInput
+                  placeholder="Referensnummer från avsändare"
+                  value={state.externalId || ''}
+                  onFocus={() =>
+                    dispatch({
+                      type: 'focusInput',
+                      payload: 'start',
+                    })
+                  }
+                  onChangeHandler={eventHandlers.handleTextInputChange(
+                    'externalId',
                     onChangeHandler
                   )}
-                  placeholder="Telefonnummer"
+                  onSearchResult={handleParcelSearchResults}
                 />
-              </Elements.Layout.InputInnerContainer>
-            </Elements.Layout.InputContainer>
-          </Elements.Layout.InputBlock>
-          <Elements.Layout.MarginBottomContainer />
-        </OpacityAnim>
-        {animateFirstBlock && !animateSecondBlock && (
-          <button onClick={doAnimateSecondBlock} type="button">
-            Nästa
-          </button>
+              </Elements.Layout.InputContainer>
+              <Elements.Layout.InputContainer>
+                <FormInputs.TextInput
+                  name="cargo"
+                  value={state.metadata.cargo || ''}
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'metadata',
+                    'cargo',
+                    onChangeHandler
+                  )}
+                  placeholder="Innehåll"
+                />
+              </Elements.Layout.InputContainer>
+              <Elements.Layout.InputContainer>
+                <FormInputs.TextInput
+                  name="customer"
+                  value={state.metadata.customer || ''}
+                  onChangeHandler={eventHandlers.handleNestedInputChange(
+                    'metadata',
+                    'customer',
+                    onChangeHandler
+                  )}
+                  placeholder="Kund"
+                />
+              </Elements.Layout.InputContainer>
+            </Elements.Layout.InputBlock>
+          </OpacityFadeInAnim>
         )}
-      </div>
-      <div>
-        <OpacityAnim animate={animateSecondBlock}>
-          <Elements.Layout.MarginBottomContainer />
-          <Elements.Layout.InputBlock>
-            <Elements.Layout.InputContainer>
-              <Elements.Form.Label htmlFor="parceldetails">
-                Paketspecifikationer
-              </Elements.Form.Label>
-              <FormInputs.ExternalIdSearchInput
-                placeholder="Referensnummer från avsändare"
-                value={state.externalId || ''}
-                onFocus={() =>
-                  dispatch({
-                    type: 'focusInput',
-                    payload: 'start',
-                  })
-                }
-                onChangeHandler={eventHandlers.handleTextInputChange(
-                  'externalId',
-                  onChangeHandler
-                )}
-                onSearchResult={handleParcelSearchResults}
-              />
-            </Elements.Layout.InputContainer>
-            <Elements.Layout.InputContainer>
-              <FormInputs.TextInput
-                name="cargo"
-                value={state.metadata.cargo || ''}
-                onChangeHandler={eventHandlers.handleNestedInputChange(
-                  'metadata',
-                  'cargo',
-                  onChangeHandler
-                )}
-                placeholder="Innehåll"
-              />
-            </Elements.Layout.InputContainer>
-            <Elements.Layout.InputContainer>
-              <FormInputs.TextInput
-                name="customer"
-                value={state.metadata.customer || ''}
-                onChangeHandler={eventHandlers.handleNestedInputChange(
-                  'metadata',
-                  'customer',
-                  onChangeHandler
-                )}
-                placeholder="Kund"
-              />
-            </Elements.Layout.InputContainer>
-          </Elements.Layout.InputBlock>
+
+        {animateFirstBlock && (
           <Elements.Layout.InputBlock>
             <Elements.Layout.InputContainer>
               <Elements.Form.Label htmlFor="size" required>
-                Välj storlek
+                Hur stor är försändelsen?
               </Elements.Form.Label>
               {!useCustomSize && (
                 <FormInputs.ParcelSize
@@ -489,7 +507,7 @@ const Component = ({
               )}
             </Elements.Layout.InputContainer>
           </Elements.Layout.InputBlock>
-        </OpacityAnim>
+        )}
         <Elements.Layout.ButtonWrapper isMobile={isMobile}>
           <Elements.Buttons.CancelButton
             type="button"
@@ -507,7 +525,7 @@ const Component = ({
             {type !== 'edit' ? 'Lägg till' : 'Uppdatera'}
           </Elements.Buttons.SubmitButton>
         </Elements.Layout.ButtonWrapper>
-      </div>
+      </OpacityFadeInAnim>
     </form>
   )
 }

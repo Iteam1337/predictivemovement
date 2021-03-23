@@ -7,7 +7,9 @@ const wizardHelpers = require('../helpers')
 
 const awaitManualRecipientInput = new Composer().on('text', (ctx) =>
   services.geolocation.get(ctx.update.message.text).then((res) => {
-    if (!res) return
+    if (!res) {
+      return wizardHelpers.jumpToStep(ctx, 'notifyNoGeolocationResult')
+    }
 
     const { state } = ctx.scene.session
     Object.assign(state, {
@@ -61,10 +63,9 @@ const awaitFreightSlipAnswer = new Composer()
   .action('freightslip:confirm', (ctx) =>
     wizardHelpers.jumpToStep(ctx, 'askForUpload')
   )
-  .action('freightslip:decline', (ctx) => {
-    console.log('hasFreightSlipDecline')
-    // wizardHelpers.jumpToStep(ctx, 'askForRecipientInput')
-  })
+  .action('freightslip:decline', (ctx) =>
+    wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
+  )
 
 const awaitSenderOrRecipientConfirmation = new Composer()
   .action('freightslip:is_sender', (ctx) => {})
@@ -93,11 +94,13 @@ const awaitSenderLocationConfirm = new Composer().on('location', (ctx) => {
   return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
 })
 
-const askForManualRecipient = (ctx) => {
-  ctx.reply('Skriv in mottagaradressen').then(() => {
-    return ctx.wizard.next()
-  })
-}
+const notifyNoGeolocationResult = (ctx) =>
+  ctx
+    .reply(`Vi fick ingen träff på denna adress och detta namn...`)
+    .then(() => wizardHelpers.jumpToStep(ctx, 'intro'))
+
+const askForManualRecipient = (ctx) =>
+  ctx.reply('Skriv in mottagaradressen').then(() => ctx.wizard.next())
 
 const askAddAdditionalInformation = (ctx) => {
   return ctx
@@ -247,4 +250,5 @@ module.exports = [
   askForManualRecipient,
   awaitManualRecipientInput,
   awaitManualRecipientConfirmation,
+  notifyNoGeolocationResult,
 ]

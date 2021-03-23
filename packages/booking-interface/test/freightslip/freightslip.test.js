@@ -61,16 +61,14 @@ describe('freightslip upload', () => {
 
   bot.use(session())
   bot.use(new Stage(wizards).middleware())
-  bot.hears(/start/i, (ctx) => ctx.scene.enter('freightslip'))
-  bot.startWebhook(`/${secretPath}`, null, port)
 
+  bot.hears(/start/i, (ctx) => ctx.scene.enter('freightslip'))
   telegrafTest.setUser(mocks.testUser)
+  bot.startWebhook(`/${secretPath}`, null, port)
 
   afterAll(() => {
     bot.stop()
   })
-
-  describe('no image', () => {})
 
   describe('has image', () => {
     describe('text extraction successful', () => {
@@ -229,6 +227,82 @@ describe('freightslip upload', () => {
               done()
             })
         })
+      })
+    })
+  })
+
+  describe('no image', () => {
+    describe('unsuccessful recipient geolocation lookup', () => {
+      test('asks if parcel has freightslip', (done) => {
+        telegrafTest.sendMessageWithText('/start').then((res) => {
+          expect(res.data.text).toMatch(/(Har din försändelse en fraktsedel?)/i)
+          done()
+        })
+      })
+
+      test('user says no, asks user to input manually', (done) => {
+        telegrafTest
+          .sendCallbackQueryWithData('freightslip:decline')
+          .then((res) => {
+            expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
+            done()
+          })
+      })
+
+      test('user manually enters recipient with unsuccessful lookup', (done) => {
+        geolocationService.get = jest.fn().mockResolvedValueOnce(null)
+
+        telegrafTest
+          .sendMessageWithText(mocks.manualRecipientInput)
+          .then((res) => {
+            expect(res.data.text).toMatch(
+              /(Vi fick ingen träff på denna adress och detta namn...)/
+            )
+            done()
+          })
+      })
+    })
+
+    describe('successful recipient geolocation lookup', () => {
+      test('asks if parcel has freightslip', (done) => {
+        telegrafTest.sendMessageWithText('/start').then((res) => {
+          expect(res.data.text).toMatch(/(Har din försändelse en fraktsedel?)/i)
+          done()
+        })
+      })
+
+      test('user says no, asks user to input manually', (done) => {
+        telegrafTest
+          .sendCallbackQueryWithData('freightslip:decline')
+          .then((res) => {
+            expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
+            done()
+          })
+      })
+
+      test('user manually enters recipient with successful lookup', (done) => {
+        geolocationService.get = jest
+          .fn()
+          .mockResolvedValueOnce(mocks.recipient)
+
+        telegrafTest
+          .sendMessageWithText(mocks.manualRecipientInput)
+          .then((res) => {
+            expect(res.data.text).toMatch(/(Är detta rätt?)/)
+            done()
+          })
+      })
+
+      test('user confirms lookup result and is sent to sender location step', (done) => {
+        telegrafTest
+          .sendCallbackQueryWithData('recipient:geolookup:confirm')
+          .then((res) => {
+            expect(res.data.text).toMatch(
+              /(Tack! Vill du skicka din nuvarande position)/i
+            )
+
+            done()
+          })
       })
     })
   })

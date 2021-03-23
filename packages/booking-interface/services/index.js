@@ -4,4 +4,5 @@ module.exports = {
   bot: require('./bot'),
   text: require('./text'),
   geolocation: require('./geolocation'),
+  booking: require('./booking'),
 }

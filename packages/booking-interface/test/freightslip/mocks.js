@@ -3,9 +3,10 @@ const testUser = {
   username: '@testUser1337',
 }
 
-const manualRecipientInput = 'Anders Testsson, Testgatan 12, Göteborg'
+const manualRecipientInput = 'Anders Mottagaresson, Testgatan 12, Göteborg'
+const manualSenderInput = 'Anders AvsändareSson, Testgatan 12, Göteborg'
 
-const recipient = {
+const person = {
   name: 'Test Testsson',
   address: 'Testgatan 12',
   postCode: '123 45',
@@ -27,4 +28,10 @@ const scanResult = [
   },
 ]
 
-module.exports = { recipient, scanResult, testUser, manualRecipientInput }
+module.exports = {
+  person,
+  scanResult,
+  testUser,
+  manualRecipientInput,
+  manualSenderInput,
+}

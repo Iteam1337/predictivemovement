@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/name: postgres-backup
+  name: postgres-backup
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres-backup
+  serviceName: postgres
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres-backup
+    spec:
+      containers:
+        - image: aczigler/postgres-backup:buster
+          name: postgres-backup
+          env:
+            - name: PG_DB
+              value: eventstore
+            - name: PG_HOST
+              value: postgres
+            - name: PG_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: POSTGRES_PASSWORD
+                  name: postgres-password
+            - name: PG_PORT
+              value: "5432"
+            - name: PG_USER
+              value: postgres
+          ports: []
+          volumeMounts:
+            - name: postgres-backup
+              mountPath: "/backup"
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-backup
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: "5Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-backup
+  labels:
+    app.kubernetes.io/name: postgres-backup
+spec:
+  ports:
+    - name: "80"
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app.kubernetes.io/name: postgres-backup

@@ -389,7 +389,7 @@ const Component = ({
               marginTop={`${isMobile && '0.7rem'}`}
               onClick={doAnimateSecondBlock}
             >
-              Ange extra information?
+              Ange extra information
             </Elements.Buttons.CancelButton>
             <Elements.Layout.MarginBottomContainer />
           </>

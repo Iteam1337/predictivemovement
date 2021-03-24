@@ -4,6 +4,7 @@ import * as stores from '../../../utils/state/stores'
 import styled from 'styled-components'
 import arrowIcon from '../../../assets/input-arrowdown.svg'
 import addIcon from '../../../assets/plus-sign.svg'
+import { useField, useFormikContext } from 'formik'
 
 const ShowDropdownIcon = styled.img`
   width: 10px;
@@ -60,22 +61,18 @@ const Dropdown: React.FC<{
 )
 
 interface Props {
-  onChangeHandler: any
   placeholder: string
-  value: string
+  name: string
 }
 
-const Component: React.FC<Props> = ({
-  onChangeHandler,
-  placeholder,
-  value,
-  ...rest
-}) => {
+const Component: React.FC<Props> = ({ placeholder, name, ...rest }) => {
   const transports = stores.dataState((state) => state.transports)
   const [fleets, setFleets] = React.useState<string[]>([])
   const [showDropdown, setShowDropdown] = React.useState(false)
   const [showSearchDropdown, setShowSearchDropdown] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState<string[]>([])
+  const { setFieldValue } = useFormikContext()
+  const [field] = useField(name)
 
   React.useEffect(() => {
     const getFleets = transports.flatMap(({ metadata }) => metadata.fleet)
@@ -88,12 +85,12 @@ const Component: React.FC<Props> = ({
 
   const handleDropdownSelect = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    name: string
+    fleetName: string
   ) => {
     event.persist()
     setShowDropdown(false)
 
-    return onChangeHandler({ name })
+    return setFieldValue(name, fleetName)
   }
 
   const onFleetInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +103,7 @@ const Component: React.FC<Props> = ({
     setSearchValue(filterFleets)
     if (searchValue) setShowSearchDropdown(true)
 
-    return onChangeHandler({ name: event.target.value })
+    return setFieldValue(name, { name: event.target.value })
   }
 
   return (
@@ -123,9 +120,8 @@ const Component: React.FC<Props> = ({
       )}
       <Elements.Form.TextInput
         {...rest}
-        name="fleet"
+        name={name}
         type="text"
-        value={value}
         placeholder={placeholder}
         onChange={onFleetInputHandler}
         onBlur={() => {
@@ -136,7 +132,7 @@ const Component: React.FC<Props> = ({
 
       {showSearchDropdown && (
         <Dropdown
-          searchValue={value.length ? value : undefined}
+          searchValue={field.value.length ? field.value : undefined}
           items={searchValue}
           handleDropdownSelect={handleDropdownSelect}
         />

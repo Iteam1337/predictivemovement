@@ -1,39 +1,38 @@
 import { useField, useFormikContext } from 'formik'
 import React from 'react'
 import * as Elements from '../../../shared-elements'
-import * as FormInputs from '../inputs'
+import * as FormInputs from '.'
 
-const ParcelSize: React.FC<{
-  useCustomSize: any
+const TransportCapacity: React.FC<{
+  useCustomCapacity: any
   name: string
-  setUseCustomSize: (value: boolean) => void
-  parcelSizePresets: {
+  setUseCustomCapacity: (value: boolean) => void
+  transportPresets: {
     [s: string]: {
-      weight: number
-      measurements: string
+      weight: string
+      volume: string
     }
   }
-}> = ({ parcelSizePresets, useCustomSize, setUseCustomSize, name }) => {
+}> = ({ name, useCustomCapacity, transportPresets, setUseCustomCapacity }) => {
   const { setFieldValue } = useFormikContext()
   const [field] = useField(name)
 
-  const handleParcelSizeSelectChange = (
+  const handleTransportPresetSelectChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     if (e.target.value === 'custom') {
-      setUseCustomSize(!useCustomSize)
+      setUseCustomCapacity(!useCustomCapacity)
       return setFieldValue(field.name, {
         weight: '',
-        measurements: '',
+        volume: '',
       })
     }
-
     return setFieldValue(field.name, {
-      weight: parcelSizePresets[e.target.value].weight,
-      measurements: parcelSizePresets[e.target.value].measurements,
+      weight: transportPresets[e.target.value].weight,
+      volume: transportPresets[e.target.value].volume,
     })
   }
-  const parcelSizeToHumanReadable = (name: string) => {
+  const transportPresetNameToHumanReadable = (name: string) => {
     switch (name) {
       case 'small':
         return 'Liten'
@@ -41,27 +40,29 @@ const ParcelSize: React.FC<{
         return 'Medium'
       case 'big':
         return 'Stor'
-      default:
-        return 'Storlek saknas'
     }
   }
-
-  const parcelSizeSelectOptions = Object.entries(parcelSizePresets)
-    .map(([name, { weight, measurements }]) => ({
+  const transportSelectOptions = Object.entries(transportPresets)
+    .map(([name, { weight, volume }]) => ({
       value: name,
-      label: parcelSizeToHumanReadable(name),
+      label: transportPresetNameToHumanReadable(name),
       weight,
-      measurements,
+      volume,
     }))
-    .concat({ value: 'custom', label: '', weight: 0, measurements: '' })
+    .concat({
+      value: 'custom',
+      label: '',
+      weight: '',
+      volume: '',
+    })
 
-  return !useCustomSize ? (
+  return !useCustomCapacity ? (
     <Elements.Form.SelectInput
       as="select"
       name={name}
-      onChange={handleParcelSizeSelectChange}
+      onChange={handleTransportPresetSelectChange}
     >
-      {parcelSizeSelectOptions.map(({ label, value, weight, measurements }) => {
+      {transportSelectOptions.map(({ label, value, weight, volume }) => {
         if (value === 'custom') {
           return (
             <option key={value} value="custom">
@@ -72,7 +73,7 @@ const ParcelSize: React.FC<{
 
         return (
           <option key={value} value={value}>
-            {label} ({measurements} cm, {weight} kg)
+            {label} (max {volume} m3, {weight} kg)
           </option>
         )
       })}
@@ -81,21 +82,22 @@ const ParcelSize: React.FC<{
     <>
       <Elements.Layout.InputContainer>
         <FormInputs.TextInput
+          step={0.1}
+          min="0"
           required
-          name="size.measurements"
-          placeholder="Mått (BxHxDcm)"
-          pattern="(\d+)x(\d+)x(\d+)"
-          title="BxHxD cm"
+          name="capacity.volume"
+          placeholder="Lastvolym (m3)"
+          type="number"
         />
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputContainer>
         <FormInputs.TextInput
           step={1}
-          name="size.weight"
-          placeholder="Vikt (kg)"
+          min="0"
           type="number"
           required
-          isRequiredInline
+          name="capacity.weight"
+          placeholder="Maxvikt (kg)"
         />
 
         <Elements.Buttons.CancelButton
@@ -103,7 +105,7 @@ const ParcelSize: React.FC<{
           style={{
             marginTop: '0.5rem',
           }}
-          onClick={() => setUseCustomSize(!useCustomSize)}
+          onClick={() => setUseCustomCapacity(!useCustomCapacity)}
         >
           Återgå till förval
         </Elements.Buttons.CancelButton>
@@ -112,4 +114,4 @@ const ParcelSize: React.FC<{
   )
 }
 
-export default ParcelSize
+export default TransportCapacity

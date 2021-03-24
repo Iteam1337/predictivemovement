@@ -1,10 +1,10 @@
 import React from 'react'
-import * as hooks from '../../hooks'
 import * as stores from '../../utils/state/stores'
 import * as Elements from '../../shared-elements'
 import Form from '../forms/CreateTransport'
 import moment from 'moment'
 import { transportPresets } from '../CreateTransport'
+import { Formik } from 'formik'
 
 export interface FormState {
   capacity: {
@@ -56,8 +56,6 @@ const EditTransport = ({
   const [isActive, setActive] = React.useState(false)
   const [formState, setState] = React.useState(transport)
   const setUIState = stores.ui((state) => state.dispatch)
-
-  hooks.useFormStateWithMapClickControl('startAddress', 'endAddress', setState)
 
   React.useEffect(() => {
     setActive(true)
@@ -120,14 +118,14 @@ const EditTransport = ({
   return (
     <Elements.Layout.ContainerWidth>
       <h3>Uppdatera transport</h3>
-      <Form
-        type="EDIT"
-        onChangeHandler={setState}
-        onSubmitHandler={onSubmitHandler}
-        formState={formState}
-        dispatch={setUIState}
-        transportPresets={transportPresets}
-      />
+      <Formik initialValues={transport} onSubmit={onSubmitHandler}>
+        <Form
+          type="EDIT"
+          formState={formState}
+          dispatch={setUIState}
+          transportPresets={transportPresets}
+        />
+      </Formik>
     </Elements.Layout.ContainerWidth>
   )
 }

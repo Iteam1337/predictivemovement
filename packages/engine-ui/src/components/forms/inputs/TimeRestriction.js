@@ -65,20 +65,18 @@ const BookingTimeRestriction = ({
   )
 }
 
-const TransportTimeRestriction = ({
-  selected,
-  onChangeHandler,
-  placeholderText,
-  inputElement,
-}) => {
+const TransportTimeRestriction = ({ placeholderText, inputElement, name }) => {
+  const { setFieldValue } = useFormikContext()
+  const [field] = useField(name)
   return (
     <Wrapper>
       <DatePicker
-        id="startTime"
-        selected={selected}
-        onChange={onChangeHandler}
+        {...field}
+        onChange={(val) => setFieldValue(field.name, val)}
+        selected={(field.value && new Date(field.value)) || null}
         showTimeSelect
         showTimeSelectOnly
+        id="startTime"
         timeIntervals={15}
         timeCaption="time"
         dateFormat="H:mm"
@@ -120,18 +118,14 @@ export const BookingTimeRestrictionPair = ({ name }) => {
   )
 }
 
-export const TransportTimeRestrictionPair = ({
-  onChangeHandler,
-  timeWindow: { earliestStart, latestEnd },
-  handleFocus,
-}) => {
+export const TransportTimeRestrictionPair = ({ handleFocus }) => {
   const timeRestrictionInputRef = React.useRef()
+  const { values } = useFormikContext()
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
         <TransportTimeRestriction
-          selected={earliestStart}
-          onChangeHandler={(date) => onChangeHandler(date, 'earliestStart')}
+          name="earliestStart"
           placeholderText="Starttid"
           inputElement={
             <DateInput
@@ -144,9 +138,10 @@ export const TransportTimeRestrictionPair = ({
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
         <TransportTimeRestriction
-          selected={latestEnd}
-          minDate={earliestStart ? new Date(earliestStart) : new Date()}
-          onChangeHandler={(date) => onChangeHandler(date, 'latestEnd')}
+          name="latestEnd"
+          minDate={
+            values.earliestStart ? new Date(values.earliestStart) : new Date()
+          }
           placeholderText="Sluttid"
           inputElement={
             <DateInput

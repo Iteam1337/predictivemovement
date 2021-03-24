@@ -18,3 +18,12 @@ export const validateAddress = (value: any) => {
 
   return error
 }
+
+export const validateNotEmpty = (value: string) => {
+  let error
+  if (value == '') {
+    error = 'Fyll i ett namn på transporten'
+  }
+
+  return error
+}

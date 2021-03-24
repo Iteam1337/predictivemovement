@@ -6,7 +6,9 @@ import * as Elements from '../../shared-elements'
 import * as FormInputs from './inputs'
 import * as eventHandlers from './eventHandlers'
 import { FormState } from '../CreateTransport'
-import { validateAddress } from './validation'
+import { Form, FormikProps, useFormikContext } from 'formik'
+import { validateNotEmpty, validatePhoneNumber } from './validation'
+import * as hooks from '../../hooks'
 
 const getCapacityPreset = (
   { volume, weight }: FormState['capacity'],
@@ -19,15 +21,11 @@ const getCapacityPreset = (
   )
 
 const Component = ({
-  onChangeHandler,
-  onSubmitHandler,
   formState,
   dispatch,
   transportPresets,
   type,
 }: {
-  onChangeHandler: any
-  onSubmitHandler: any
   formState: FormState
   dispatch: any
   transportPresets: {
@@ -44,71 +42,29 @@ const Component = ({
   const [useCustomCapacity, setUseCustomCapacity] = React.useState(
     capacityPreset === 'custom'
   )
+  const {
+    values,
+    setFieldValue,
+    errors,
+    touched,
+  }: FormikProps<FormState> = useFormikContext()
   const [showEndAddressInput, setShowEndAddressInput] = React.useState(
     !!formState.endAddress
+  )
+
+  hooks.useFormStateWithMapClickControl(
+    'startAddress',
+    'endAddress',
+    setFieldValue
   )
   const isMobile = window.innerWidth <= 645
   const toggleShowEndAddressInput = () => {
     setShowEndAddressInput((showEndAddress) => !showEndAddress)
-
-    onChangeHandler((currentState: FormState) => ({
-      ...currentState,
-      endAddress: { lat: undefined, lon: undefined, name: '' },
-    }))
+    setFieldValue('endAddress', { lat: undefined, lon: undefined, name: '' })
   }
-
-  const handleDriverTimeRestrictionChange = (date: string, property: string) =>
-    onChangeHandler((currentState: FormState) => ({
-      ...currentState,
-      [property]: date,
-    }))
-
-  const handleTransportPresetSelectChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    if (e.target.value === 'custom') {
-      setUseCustomCapacity(!useCustomCapacity)
-      return onChangeHandler((currentState: any) => ({
-        ...currentState,
-        capacity: {
-          weight: '',
-          volume: '',
-        },
-      }))
-    }
-    return onChangeHandler((currentState: any) => ({
-      ...currentState,
-      capacity: transportPresets[e.target.value],
-    }))
-  }
-
-  const transportPresetNameToHumanReadable = (name: string) => {
-    switch (name) {
-      case 'small':
-        return 'Liten'
-      case 'medium':
-        return 'Medium'
-      case 'big':
-        return 'Stor'
-    }
-  }
-
-  const transportSelectOptions = Object.entries(transportPresets)
-    .map(([name, { weight, volume }]) => ({
-      value: name,
-      label: transportPresetNameToHumanReadable(name),
-      weight,
-      volume,
-    }))
-    .concat({
-      value: 'custom',
-      label: '',
-      weight: '',
-      volume: '',
-    })
 
   return (
-    <form onSubmit={onSubmitHandler} autoComplete="off">
+    <Form autoComplete="off">
       <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
@@ -116,11 +72,6 @@ const Component = ({
           <Elements.Layout.TimeRestrictionWrapper>
             <FormInputs.TimeRestriction.TransportTimeRestrictionPair
               handleFocus={() => dispatch({ type: 'resetInputClickState' })}
-              timeWindow={{
-                earliestStart: formState.earliestStart,
-                latestEnd: formState.latestEnd,
-              }}
-              onChangeHandler={handleDriverTimeRestrictionChange}
             />
           </Elements.Layout.TimeRestrictionWrapper>
         </Elements.Layout.InputContainer>
@@ -129,14 +80,8 @@ const Component = ({
         <Elements.Layout.InputContainer>
           <Elements.Form.Label required>Startposition</Elements.Form.Label>
           <FormInputs.AddressSearchInput
-            formError={false}
-            required
+            name="startAddress"
             placeholder="Adress (sök eller klicka på karta)"
-            value={formState.startAddress.name}
-            onChangeHandler={eventHandlers.handleAddressInput(
-              'startAddress',
-              onChangeHandler
-            )}
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -144,6 +89,11 @@ const Component = ({
               })
             }
           />
+          {errors.startAddress && touched.startAddress && (
+            <Elements.Typography.ErrorMessage>
+              {errors.startAddress}
+            </Elements.Typography.ErrorMessage>
+          )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
@@ -154,22 +104,24 @@ const Component = ({
             onChangeHandler={() => toggleShowEndAddressInput()}
           />
 
-          {showEndAddressInput && formState.endAddress && (
-            <FormInputs.AddressSearchInput
-              formError={false}
-              value={formState.endAddress.name}
-              placeholder="Adress (sök eller klicka på karta)"
-              onChangeHandler={eventHandlers.handleAddressInput(
-                'endAddress',
-                onChangeHandler
+          {showEndAddressInput && values.endAddress && (
+            <>
+              <FormInputs.AddressSearchInput
+                name="endAddress"
+                placeholder="Adress (sök eller klicka på karta)"
+                onFocusHandler={() =>
+                  dispatch({
+                    type: 'focusInput',
+                    payload: 'end',
+                  })
+                }
+              />
+              {errors.endAddress && touched.endAddress && (
+                <Elements.Typography.ErrorMessage>
+                  {errors.endAddress}
+                </Elements.Typography.ErrorMessage>
               )}
-              onFocusHandler={() =>
-                dispatch({
-                  type: 'focusInput',
-                  payload: 'end',
-                })
-              }
-            />
+            </>
           )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
@@ -181,16 +133,15 @@ const Component = ({
           </Elements.Form.Label>
           <FormInputs.TextInput
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
-            required
-            name="profile"
-            value={formState.metadata.profile}
+            validate={validateNotEmpty}
+            name="metadata.profile"
             placeholder="Paketbil"
-            onChangeHandler={eventHandlers.handleNestedInputChange(
-              'metadata',
-              'profile',
-              onChangeHandler
-            )}
           />
+          {errors.metadata?.profile && touched.metadata?.profile && (
+            <Elements.Typography.ErrorMessage>
+              {errors.metadata.profile}
+            </Elements.Typography.ErrorMessage>
+          )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
@@ -198,62 +149,13 @@ const Component = ({
           <Elements.Form.Label htmlFor="capacity" required>
             Välj kapacitet
           </Elements.Form.Label>
-          {!useCustomCapacity && (
-            <FormInputs.TransportCapacity
-              onChange={handleTransportPresetSelectChange}
-              options={transportSelectOptions}
-              defaultValue={capacityPreset}
-            />
-          )}
 
-          {useCustomCapacity && (
-            <>
-              <Elements.Layout.InputContainer>
-                <FormInputs.TextInput
-                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                  step={0.1}
-                  min="0"
-                  required
-                  name="volume"
-                  value={formState.capacity.volume}
-                  placeholder="Lastvolym (m3)"
-                  type="number"
-                  onChangeHandler={eventHandlers.handleNestedInputChange(
-                    'capacity',
-                    'volume',
-                    onChangeHandler
-                  )}
-                />
-              </Elements.Layout.InputContainer>
-              <Elements.Layout.InputContainer>
-                <FormInputs.TextInput
-                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                  step={1}
-                  min="0"
-                  type="number"
-                  required
-                  name="weight"
-                  value={formState.capacity.weight}
-                  onChangeHandler={eventHandlers.handleNestedInputChange(
-                    'capacity',
-                    'weight',
-                    onChangeHandler
-                  )}
-                  placeholder="Maxvikt (kg)"
-                />
-
-                <Elements.Buttons.CancelButton
-                  padding="0.5rem"
-                  style={{
-                    marginTop: '0.5rem',
-                  }}
-                  onClick={() => setUseCustomCapacity(!useCustomCapacity)}
-                >
-                  Återgå till förval
-                </Elements.Buttons.CancelButton>
-              </Elements.Layout.InputContainer>
-            </>
-          )}
+          <FormInputs.TransportCapacity
+            transportPresets={transportPresets}
+            name="capacity"
+            useCustomCapacity={useCustomCapacity}
+            setUseCustomCapacity={setUseCustomCapacity}
+          />
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
 
@@ -268,13 +170,7 @@ const Component = ({
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               iconInset
-              name="driver"
-              value={formState.metadata.driver.name || ''}
-              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                'driver',
-                'name',
-                onChangeHandler
-              )}
+              name="metadata.driver.name"
               placeholder="Namn"
             />
           </Elements.Layout.InputInnerContainer>
@@ -289,20 +185,19 @@ const Component = ({
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
-              onFocus={() => dispatch({ type: 'resetInputClickState' })}
               iconInset
-              name="contact"
-              value={formState.metadata.driver.contact || ''}
-              onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                'driver',
-                'contact',
-                onChangeHandler
-              )}
-              pattern="^(?:0|[+]46)\s*(7[0236])\s*(\d{4})\s*(\d{3})$"
-              required
-              title="07... or +46"
+              name="metadata.driver.contact"
+              type="tel"
+              onFocus={() => dispatch({ type: 'resetInputClickState' })}
               placeholder="Telefonnummer"
+              validate={validatePhoneNumber}
             />
+            {errors.metadata?.driver?.contact &&
+              touched.metadata?.driver?.contact && (
+                <Elements.Typography.ErrorMessage>
+                  {errors.metadata.driver.contact}
+                </Elements.Typography.ErrorMessage>
+              )}
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
@@ -311,11 +206,7 @@ const Component = ({
           <Elements.Form.Label>Flotta</Elements.Form.Label>
           <FormInputs.FleetInput
             placeholder="Lägg till eller välj en flotta"
-            value={formState.metadata.fleet || ''}
-            onChangeHandler={eventHandlers.handleFleetInput(
-              'fleet',
-              onChangeHandler
-            )}
+            name="metadata.fleet"
           />
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
@@ -336,7 +227,7 @@ const Component = ({
           {type === 'NEW' ? 'Lägg till' : 'Uppdatera'}
         </Elements.Buttons.SubmitButton>
       </Elements.Layout.ButtonWrapper>
-    </form>
+    </Form>
   )
 }
 

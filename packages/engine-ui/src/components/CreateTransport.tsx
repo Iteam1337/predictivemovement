@@ -3,10 +3,10 @@ import * as Elements from '../shared-elements'
 import Form from './forms/CreateTransport'
 import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './SuccessScreen'
-import * as hooks from '../hooks'
 import moment from 'moment'
 import * as stores from '../utils/state/stores'
 import React from 'react'
+import { Formik, FormikHelpers } from 'formik'
 
 export const transportPresets = {
   small: { weight: '1234', volume: '18' },
@@ -20,7 +20,7 @@ const initialState: FormState = {
   earliestStart: null,
   latestEnd: null,
   startAddress: { lat: 61.8172594, lon: 16.0561472, name: '' },
-  endAddress: null,
+  endAddress: { lat: 61.8172594, lon: 16.0561472, name: '' },
   metadata: {
     fleet: '',
     profile: '',
@@ -79,8 +79,6 @@ const CreateTransport = ({
   const [formState, setState] = React.useState(initialState)
   const setUIState = stores.ui((state) => state.dispatch)
 
-  hooks.useFormStateWithMapClickControl('startAddress', 'endAddress', setState)
-
   const { fleet } = useParams<{ fleet: string | undefined }>()
 
   React.useEffect(() => {
@@ -98,44 +96,47 @@ const CreateTransport = ({
     return () => setActive(false)
   }, [isActive])
 
-  const onSubmitHandler = (event: any) => {
-    event.preventDefault()
+  const onSubmitHandler = (
+    values: FormState,
+    actions: FormikHelpers<FormState>
+  ) => {
+    console.log({ values, actions })
+    actions.setSubmitting(false)
 
-    const endAddress = formState.endAddress || formState.startAddress
-    onSubmit({
-      ...formState,
-      earliestStart: formState.earliestStart
-        ? moment(formState.earliestStart).format('HH:mm')
-        : formState.earliestStart,
-      capacity: {
-        weight: parseInt(formState.capacity.weight),
-        volume: parseFloat(formState.capacity.volume),
-      },
-      latestEnd: formState.latestEnd
-        ? moment(formState.latestEnd).format('HH:mm')
-        : formState.latestEnd,
-      startAddress: {
-        ...formState.startAddress,
-        name: formState.startAddress.name || undefined,
-      },
-      endAddress: {
-        ...endAddress,
-        name: endAddress.name || undefined,
-      },
-      metadata: {
-        ...formState.metadata,
-        driver: {
-          name: formState.metadata.driver.name || undefined,
-          contact: formState.metadata.driver.contact || undefined,
-        },
-      },
-    })
+    // const endAddress = formState.endAddress || formState.startAddress
+    // onSubmit({
+    //   ...formState,
+    //   earliestStart: formState.earliestStart
+    //     ? moment(formState.earliestStart).format('HH:mm')
+    //     : formState.earliestStart,
+    //   capacity: {
+    //     weight: parseInt(formState.capacity.weight),
+    //     volume: parseFloat(formState.capacity.volume),
+    //   },
+    //   latestEnd: formState.latestEnd
+    //     ? moment(formState.latestEnd).format('HH:mm')
+    //     : formState.latestEnd,
+    //   startAddress: {
+    //     ...formState.startAddress,
+    //     name: formState.startAddress.name || undefined,
+    //   },
+    //   endAddress: {
+    //     ...endAddress,
+    //     name: endAddress.name || undefined,
+    //   },
+    //   metadata: {
+    //     ...formState.metadata,
+    //     driver: {
+    //       name: formState.metadata.driver.name || undefined,
+    //       contact: formState.metadata.driver.contact || undefined,
+    //     },
+    //   },
+    // })
 
-    return setIsFinished(true)
+    // return setIsFinished(true)
   }
 
   const handleOnContinue = () => {
-    setState(initialState)
     setIsFinished(false)
   }
 
@@ -154,14 +155,14 @@ const CreateTransport = ({
     <MainRouteLayout redirect="/transports">
       <Elements.Layout.ContainerWidth>
         <h3>Lägg till transport</h3>
-        <Form
-          onChangeHandler={setState}
-          onSubmitHandler={onSubmitHandler}
-          formState={formState}
-          dispatch={setUIState}
-          transportPresets={transportPresets}
-          type="NEW"
-        />
+        <Formik initialValues={initialState} onSubmit={onSubmitHandler}>
+          <Form
+            formState={formState}
+            dispatch={setUIState}
+            transportPresets={transportPresets}
+            type="NEW"
+          />
+        </Formik>
       </Elements.Layout.ContainerWidth>
     </MainRouteLayout>
   )

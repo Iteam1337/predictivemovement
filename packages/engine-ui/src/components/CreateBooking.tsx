@@ -82,8 +82,6 @@ export const initialState = {
 const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
   const history = useHistory()
   const [isFinished, setIsFinished] = React.useState(false)
-
-  const [formState, setState] = React.useState(initialState)
   const initialValues: BookingFormState = initialState
   const setUIState = stores.ui((state) => state.dispatch)
 
@@ -107,7 +105,6 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
   }
 
   const handleOnContinue = () => {
-    setState(initialState)
     setIsFinished(false)
   }
 
@@ -127,17 +124,7 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
         <Formik initialValues={initialValues} onSubmit={onSubmitHandler}>
-          {({ errors, touched }) => (
-            <Form
-              onChangeHandler={setState}
-              onSubmitHandler={onSubmitHandler}
-              formState={formState}
-              dispatch={setUIState}
-              parcelSizePresets={parcelSizePresets}
-              errors={errors}
-              touched={touched}
-            />
-          )}
+          <Form dispatch={setUIState} parcelSizePresets={parcelSizePresets} />
         </Formik>
       </Elements.Layout.Container>
     </MainRouteLayout>

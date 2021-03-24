@@ -4,13 +4,14 @@ import * as FormInputs from './inputs'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import { useHistory } from 'react-router-dom'
-import { Form, FormikErrors, FormikTouched, useFormikContext } from 'formik'
+import { Form, FormikProps, useFormikContext } from 'formik'
 import { validatePhoneNumber } from './validation'
 import * as hooks from '../../hooks'
 import { BookingFormState } from '../CreateBooking'
+import { FormBooking } from '../EditBooking/EditBooking'
 
 const getSizePreset = (
-  { size: { weight, measurements } }: BookingFormState,
+  { size: { weight, measurements } }: BookingFormState | FormBooking,
   presets: any
 ) => {
   if (!weight || !measurements) {
@@ -27,17 +28,10 @@ const getSizePreset = (
 }
 
 const Component = ({
-  onChangeHandler,
-  formState,
   dispatch,
   parcelSizePresets,
   type,
-  errors,
-  touched,
 }: {
-  onChangeHandler: any
-  onSubmitHandler: any
-  formState: BookingFormState
   dispatch: any
   parcelSizePresets: {
     [s: string]: {
@@ -45,25 +39,28 @@ const Component = ({
       measurements: string
     }
   }
-  touched: FormikTouched<BookingFormState>
-  errors: FormikErrors<BookingFormState>
   type?: 'NEW' | 'EDIT'
 }) => {
+  const {
+    setFieldValue,
+    errors,
+    touched,
+    values,
+  }: FormikProps<BookingFormState> = useFormikContext()
   const history = useHistory()
-  const sizePreset = getSizePreset(formState, parcelSizePresets) || 'custom'
+  const sizePreset = getSizePreset(values, parcelSizePresets) || 'custom'
   const [useCustomSize, setUseCustomSize] = React.useState(
     sizePreset === 'custom'
   )
-  const { setFieldValue } = useFormikContext()
-
-  hooks.useFormStateWithMapClickControl('pickup', 'delivery', setFieldValue)
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState<{ pickup: boolean; delivery: boolean }>({
-    pickup: !!formState.pickup.timeWindows?.length || false,
-    delivery: !!formState.delivery.timeWindows?.length || false,
+    pickup: !!values.pickup.timeWindows?.length || false,
+    delivery: !!values.delivery.timeWindows?.length || false,
   })
+
+  hooks.useFormStateWithMapClickControl('pickup', 'delivery', setFieldValue)
 
   const isMobile = window.innerWidth <= 645
 
@@ -80,13 +77,7 @@ const Component = ({
   }
 
   const addTimeRestrictionWindow = (type: string) =>
-    onChangeHandler((currentState: any) => ({
-      ...currentState,
-      [type]: {
-        ...currentState[type],
-        timeWindows: [{ earliest: null, latest: null }],
-      },
-    }))
+    setFieldValue(`${type}.timeWindows`, [{ earliest: null, latest: null }])
 
   const handleToggleTimeRestrictionsChange = (propertyName: string) => {
     setShowBookingTimeRestriction((currentState: any) => ({
@@ -94,11 +85,8 @@ const Component = ({
       [propertyName]: !currentState[propertyName],
     }))
 
-    return (formState as any)[propertyName].timeWindows
-      ? onChangeHandler((currentState: any) => ({
-          ...currentState,
-          [propertyName]: { ...currentState[propertyName], timeWindows: null },
-        }))
+    return (values as any)[propertyName].timeWindows
+      ? setFieldValue(`${propertyName}.timeWindows`, null)
       : addTimeRestrictionWindow(propertyName)
   }
 
@@ -173,7 +161,7 @@ const Component = ({
         />
 
         <FormInputs.Checkbox
-          defaultChecked={!!formState.pickup.timeWindows?.length}
+          defaultChecked={!!values.pickup.timeWindows?.length}
           label="Tidspassning"
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
@@ -257,6 +245,7 @@ const Component = ({
         />
         <FormInputs.Checkbox
           label="Tidspassning"
+          defaultChecked={!!values.pickup.timeWindows?.length}
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('delivery')}
         />

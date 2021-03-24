@@ -51,7 +51,7 @@ const parcelSizePresets = {
   big: { weight: 50, measurements: '36x36x36' },
 }
 
-export const initialState = {
+export const initialState: BookingFormState = {
   externalId: '',
   pickup: {
     name: '',
@@ -82,7 +82,6 @@ export const initialState = {
 const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
   const history = useHistory()
   const [isFinished, setIsFinished] = React.useState(false)
-  const initialValues: BookingFormState = initialState
   const setUIState = stores.ui((state) => state.dispatch)
 
   const onSubmitHandler = (
@@ -123,7 +122,7 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
-        <Formik initialValues={initialValues} onSubmit={onSubmitHandler}>
+        <Formik initialValues={initialState} onSubmit={onSubmitHandler}>
           <Form dispatch={setUIState} parcelSizePresets={parcelSizePresets} />
         </Formik>
       </Elements.Layout.Container>

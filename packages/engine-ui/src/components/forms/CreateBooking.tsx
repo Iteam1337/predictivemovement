@@ -5,7 +5,7 @@ import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
 import { useHistory } from 'react-router-dom'
 import { Form, FormikErrors, FormikTouched, useFormikContext } from 'formik'
-import { validateAddress, validatePhoneNumber } from './validation'
+import { validatePhoneNumber } from './validation'
 import * as hooks from '../../hooks'
 import { BookingFormState } from '../CreateBooking'
 
@@ -152,7 +152,6 @@ const Component = ({
         <FormInputs.AddressSearchInput
           name="pickup"
           placeholder="Adress (sök eller klicka på karta)"
-          validate={validateAddress}
           onFocusHandler={() =>
             dispatch({
               type: 'focusInput',
@@ -236,7 +235,6 @@ const Component = ({
         </Elements.Form.Label>
         <FormInputs.AddressSearchInput
           name="delivery"
-          validate={validateAddress}
           placeholder="Adress (sök eller klicka på karta)"
           onFocusHandler={() =>
             dispatch({

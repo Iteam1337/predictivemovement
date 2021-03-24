@@ -137,7 +137,6 @@ const Component = ({
               'startAddress',
               onChangeHandler
             )}
-            validate={validateAddress}
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -159,7 +158,6 @@ const Component = ({
             <FormInputs.AddressSearchInput
               formError={false}
               value={formState.endAddress.name}
-              validate={validateAddress}
               placeholder="Adress (sök eller klicka på karta)"
               onChangeHandler={eventHandlers.handleAddressInput(
                 'endAddress',

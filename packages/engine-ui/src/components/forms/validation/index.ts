@@ -10,13 +10,11 @@ export const validatePhoneNumber = (value: string) => {
   return error
 }
 
-export const validateAddress = (value: string) => {
+export const validateAddress = (value: any) => {
   let error
-  console.log(value)
-  // if (!value.lat && !value.lon) {
-  //   console.log('jag borde vara här nu')
-  //   error = 'Adressen kunde inte hittas'
-  // }
+  if (!value.lon || !value.lat) {
+    error = 'Adressen kunde inte hittas'
+  }
 
   return error
 }

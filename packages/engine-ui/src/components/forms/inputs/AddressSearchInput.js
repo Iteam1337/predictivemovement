@@ -4,14 +4,9 @@ import locationIcon from '../../../assets/location.svg'
 import * as hooks from '../../../hooks'
 import debounce from 'lodash.debounce'
 import { useField, useFormikContext } from 'formik'
+import { validateAddress } from '../validation'
 
-const Component = ({
-  onFocusHandler,
-  placeholder,
-  name = '',
-  validate,
-  ...rest
-}) => {
+const Component = ({ onFocusHandler, placeholder, name = '', ...rest }) => {
   const getFavoriteAddresses = () => {
     let favoriteAddresses
 
@@ -36,7 +31,7 @@ const Component = ({
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses(
     getFavoriteAddresses()
   )
-  const { setFieldValue } = useFormikContext()
+  const { setFieldValue, handleBlur } = useFormikContext()
   const [field] = useField(name)
 
   const [selectedAddress, setSelectedAddress] = React.useState({})
@@ -103,12 +98,13 @@ const Component = ({
         value={field.value.name}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
-        validate={validate}
+        validate={(val) => validateAddress(val)}
         onFocus={() => {
           setShowDropdown(getFavoriteAddresses().length > 0)
           return onFocusHandler()
         }}
-        onBlur={() => {
+        onBlur={(e) => {
+          handleBlur(e)
           setShowDropdown(false)
         }}
         iconInset

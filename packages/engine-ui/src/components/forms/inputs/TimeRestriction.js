@@ -5,6 +5,7 @@ import * as Elements from '../../../shared-elements'
 import DateInput from './DateInput'
 import * as helpers from '../../../utils/helpers'
 import styled from 'styled-components'
+import { useField, useFormikContext } from 'formik'
 
 const Wrapper = styled.div`
   width: '100%';
@@ -30,16 +31,22 @@ const Wrapper = styled.div`
 
 const BookingTimeRestriction = ({
   selected,
-  onChangeHandler,
   placeholderText,
   inputElement,
-  minDate = new Date(),
+  minDate,
+  name,
 }) => {
+  const { setFieldValue } = useFormikContext()
+  const [field] = useField(name)
+
   return (
     <Wrapper>
       <DatePicker
-        selected={selected}
-        onChange={onChangeHandler}
+        {...field}
+        onChange={(val) => {
+          setFieldValue(field.name, val)
+        }}
+        selected={(field.value && new Date(field.value)) || null}
         showTimeSelect
         excludeOutOfBoundsTimes
         minTime={helpers.calculateMinTime(selected)}
@@ -84,32 +91,26 @@ const TransportTimeRestriction = ({
   )
 }
 
-export const BookingTimeRestrictionPair = ({
-  onChangeHandler,
-  timeWindow,
-  typeProperty,
-}) => {
+export const BookingTimeRestrictionPair = ({ name }) => {
   const timeRestrictionInputRef = React.useRef()
+  const [field] = useField(name)
+
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
         <BookingTimeRestriction
-          selected={timeWindow.earliest}
-          onChangeHandler={(date) =>
-            onChangeHandler(date, typeProperty, 'earliest')
-          }
+          name={`${name}.earliest`}
           placeholderText="Tidigast"
           inputElement={<DateInput ref={timeRestrictionInputRef} withIcon />}
         />
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
         <BookingTimeRestriction
-          selected={timeWindow.latest}
+          name={`${name}.latest`}
           minDate={
-            timeWindow.earliest ? new Date(timeWindow.earliest) : new Date()
-          }
-          onChangeHandler={(date) =>
-            onChangeHandler(date, typeProperty, 'latest')
+            field.value && field.value.earliest
+              ? new Date(field.value.earliest)
+              : new Date()
           }
           placeholderText="Senast"
           inputElement={<DateInput withIcon ref={timeRestrictionInputRef} />}

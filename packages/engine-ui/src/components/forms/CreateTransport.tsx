@@ -6,6 +6,7 @@ import * as Elements from '../../shared-elements'
 import * as FormInputs from './inputs'
 import * as eventHandlers from './eventHandlers'
 import { FormState } from '../CreateTransport'
+import { validateAddress } from './validation'
 
 const getCapacityPreset = (
   { volume, weight }: FormState['capacity'],
@@ -136,6 +137,7 @@ const Component = ({
               'startAddress',
               onChangeHandler
             )}
+            validate={validateAddress}
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -157,6 +159,7 @@ const Component = ({
             <FormInputs.AddressSearchInput
               formError={false}
               value={formState.endAddress.name}
+              validate={validateAddress}
               placeholder="Adress (sök eller klicka på karta)"
               onChangeHandler={eventHandlers.handleAddressInput(
                 'endAddress',

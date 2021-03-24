@@ -1,3 +1,4 @@
+import { Field } from 'formik'
 import styled from 'styled-components'
 
 const DateInput = styled.input<{ iconInset: boolean }>`
@@ -29,7 +30,7 @@ const Label = styled.label<{ required?: boolean }>`
   }`}
 `
 
-const TextInput = styled.input<{ iconInset?: boolean; error?: boolean }>`
+const TextInput = styled(Field)<{ iconInset?: boolean; error?: boolean }>`
   border: ${({ error }) => (error ? '1px solid red' : 'none')};
   background-color: #f1f3f5;
   border-radius: 0.25rem;
@@ -43,7 +44,7 @@ const TextInput = styled.input<{ iconInset?: boolean; error?: boolean }>`
   }
 `
 
-const SelectInput = styled.select`
+const SelectInput = styled(Field)`
   background-color: #f1f3f5;
   border-radius: 0.25rem;
   width: 100%;

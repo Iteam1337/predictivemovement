@@ -21,12 +21,10 @@ const getCapacityPreset = (
   )
 
 const Component = ({
-  formState,
   dispatch,
   transportPresets,
   type,
 }: {
-  formState: FormState
   dispatch: any
   transportPresets: {
     [s: string]: {
@@ -62,8 +60,6 @@ const Component = ({
     setShowEndAddressInput((showEndAddress) => !showEndAddress)
     setFieldValue('endAddress', { lat: undefined, lon: undefined, name: '' })
   }
-
-  console.log(values)
 
   return (
     <Form autoComplete="off">

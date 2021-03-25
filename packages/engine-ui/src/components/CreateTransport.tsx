@@ -6,7 +6,7 @@ import Success from './SuccessScreen'
 import moment from 'moment'
 import * as stores from '../utils/state/stores'
 import React from 'react'
-import { Formik, FormikHelpers } from 'formik'
+import { Formik, FormikHelpers, useFormikContext } from 'formik'
 
 export const transportPresets = {
   small: { weight: '1234', volume: '18' },
@@ -76,17 +76,14 @@ const CreateTransport = ({
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
   const [isFinished, setIsFinished] = React.useState(false)
-  const [formState, setState] = React.useState(initialState)
   const setUIState = stores.ui((state) => state.dispatch)
+  const { setFieldValue } = useFormikContext()
 
   const { fleet } = useParams<{ fleet: string | undefined }>()
 
   React.useEffect(() => {
     if (fleet) {
-      setState((current) => ({
-        ...current,
-        metadata: { ...current.metadata, fleet },
-      }))
+      setFieldValue('metadata.fleet', fleet)
     }
   }, [fleet])
 
@@ -100,40 +97,38 @@ const CreateTransport = ({
     values: FormState,
     actions: FormikHelpers<FormState>
   ) => {
-    console.log({ values, actions })
+    const endAddress = values.endAddress || values.startAddress
+
+    onSubmit({
+      ...values,
+      earliestStart: values.earliestStart
+        ? moment(values.earliestStart).format('HH:mm')
+        : values.earliestStart,
+      capacity: {
+        weight: parseInt(values.capacity.weight),
+        volume: parseFloat(values.capacity.volume),
+      },
+      latestEnd: values.latestEnd
+        ? moment(values.latestEnd).format('HH:mm')
+        : values.latestEnd,
+      startAddress: {
+        ...values.startAddress,
+        name: values.startAddress.name || undefined,
+      },
+      endAddress: {
+        ...endAddress,
+        name: endAddress.name || undefined,
+      },
+      metadata: {
+        ...values.metadata,
+        driver: {
+          name: values.metadata.driver.name || undefined,
+          contact: values.metadata.driver.contact || undefined,
+        },
+      },
+    })
     actions.setSubmitting(false)
-
-    // const endAddress = formState.endAddress || formState.startAddress
-    // onSubmit({
-    //   ...formState,
-    //   earliestStart: formState.earliestStart
-    //     ? moment(formState.earliestStart).format('HH:mm')
-    //     : formState.earliestStart,
-    //   capacity: {
-    //     weight: parseInt(formState.capacity.weight),
-    //     volume: parseFloat(formState.capacity.volume),
-    //   },
-    //   latestEnd: formState.latestEnd
-    //     ? moment(formState.latestEnd).format('HH:mm')
-    //     : formState.latestEnd,
-    //   startAddress: {
-    //     ...formState.startAddress,
-    //     name: formState.startAddress.name || undefined,
-    //   },
-    //   endAddress: {
-    //     ...endAddress,
-    //     name: endAddress.name || undefined,
-    //   },
-    //   metadata: {
-    //     ...formState.metadata,
-    //     driver: {
-    //       name: formState.metadata.driver.name || undefined,
-    //       contact: formState.metadata.driver.contact || undefined,
-    //     },
-    //   },
-    // })
-
-    // return setIsFinished(true)
+    return setIsFinished(true)
   }
 
   const handleOnContinue = () => {
@@ -157,7 +152,6 @@ const CreateTransport = ({
         <h3>Lägg till transport</h3>
         <Formik initialValues={initialState} onSubmit={onSubmitHandler}>
           <Form
-            formState={formState}
             dispatch={setUIState}
             transportPresets={transportPresets}
             type="NEW"

@@ -103,7 +103,7 @@ const Component: React.FC<Props> = ({ placeholder, name, ...rest }) => {
     setSearchValue(filterFleets)
     if (searchValue) setShowSearchDropdown(true)
 
-    return setFieldValue(name, { name: event.target.value })
+    return setFieldValue(name, event.target.value)
   }
 
   return (

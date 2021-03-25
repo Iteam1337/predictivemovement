@@ -125,15 +125,9 @@ const Component = ({ onFocusHandler, placeholder, name = '', ...rest }) => {
       )}
 
       {showSaveFavorite && (
-        <Elements.Buttons.CancelButton
-          padding="0.5rem"
-          style={{
-            marginTop: '0.5rem',
-          }}
-          onClick={saveAsFavorite}
-        >
+        <Elements.Buttons.NeutralButton onClick={saveAsFavorite}>
           Spara som favoritposition
-        </Elements.Buttons.CancelButton>
+        </Elements.Buttons.NeutralButton>
       )}
     </Elements.Layout.InputInnerContainer>
   )

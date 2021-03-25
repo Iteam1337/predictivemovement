@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { MapState } from '../types/state'
 import { FlyToInterpolator } from 'react-map-gl'
+import * as types from '../types/state'
 
 interface Feature {
   properties: {
@@ -108,6 +109,35 @@ const focusMapOnClick = (
   })
 }
 
+const shareCurrentLocation = (
+  setCurrentLocation: (args: Partial<types.CurrentLocation>) => void,
+  setViewState?: (args: Partial<MapState>) => void
+) => {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setViewState &&
+        setViewState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          zoom: 10,
+        })
+
+      getAddressFromCoordinate({
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+      }).then((data) =>
+        setCurrentLocation({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+          name: data.name,
+          county: data.county,
+        })
+      )
+    },
+    (error) => console.warn(error.message)
+  )
+}
+
 export {
   findAddress,
   calculateMinTime,
@@ -120,4 +150,5 @@ export {
   focusMapOnClick,
   getDistance,
   getDuration,
+  shareCurrentLocation,
 }

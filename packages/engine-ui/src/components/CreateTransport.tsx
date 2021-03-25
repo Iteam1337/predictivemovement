@@ -1,4 +1,4 @@
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import * as Elements from '../shared-elements'
 import Form from './forms/CreateTransport'
 import MainRouteLayout from './layout/MainRouteLayout'
@@ -6,7 +6,7 @@ import Success from './SuccessScreen'
 import moment from 'moment'
 import * as stores from '../utils/state/stores'
 import React from 'react'
-import { Formik, FormikHelpers, useFormikContext } from 'formik'
+import { Formik, FormikHelpers } from 'formik'
 
 export const transportPresets = {
   small: { weight: '1234', volume: '18' },
@@ -77,15 +77,6 @@ const CreateTransport = ({
   const [isActive, setActive] = React.useState(false)
   const [isFinished, setIsFinished] = React.useState(false)
   const setUIState = stores.ui((state) => state.dispatch)
-  const { setFieldValue } = useFormikContext()
-
-  const { fleet } = useParams<{ fleet: string | undefined }>()
-
-  React.useEffect(() => {
-    if (fleet) {
-      setFieldValue('metadata.fleet', fleet)
-    }
-  }, [fleet])
 
   React.useEffect(() => {
     setActive(true)

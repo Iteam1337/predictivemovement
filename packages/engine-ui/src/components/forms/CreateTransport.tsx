@@ -1,10 +1,9 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import nameIcon from '../../assets/contact-name.svg'
 import phoneIcon from '../../assets/contact-phone.svg'
 import * as Elements from '../../shared-elements'
 import * as FormInputs from './inputs'
-import * as eventHandlers from './eventHandlers'
 import { FormState } from '../CreateTransport'
 import { Form, FormikProps, useFormikContext } from 'formik'
 import { validateNotEmpty, validatePhoneNumber } from './validation'
@@ -60,6 +59,14 @@ const Component = ({
     setShowEndAddressInput((showEndAddress) => !showEndAddress)
     setFieldValue('endAddress', { lat: undefined, lon: undefined, name: '' })
   }
+
+  const { fleet } = useParams<{ fleet: string | undefined }>()
+
+  React.useEffect(() => {
+    if (fleet) {
+      setFieldValue('metadata.fleet', fleet)
+    }
+  }, [fleet])
 
   return (
     <Form autoComplete="off">

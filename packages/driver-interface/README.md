@@ -5,8 +5,10 @@ Create a Telegram bot by clicking https://t.me/botfather and opening it in Teleg
 
 Create .env file in root with following content:
 
-```
+```bash
 BOT_TOKEN=<your telegram bot token>
+GOOGLE_API_TOKEN=[GOOGLE_API_TOKEN]
+ENGINE_UI_URL=[ENGINE_UI_URL]
 
 # OPTIONAL
 

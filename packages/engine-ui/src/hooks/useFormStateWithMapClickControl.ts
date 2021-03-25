@@ -1,11 +1,7 @@
 import React from 'react'
-import { FormState as CreateTransportState } from '../components/CreateTransport'
-import { FormBooking } from '../components/EditBooking/EditBooking'
 import * as stores from '../utils/state/stores'
 
-const useFormStateWithMapClickControl = <
-  T extends CreateTransportState | FormBooking
->(
+const useFormStateWithMapClickControl = (
   start: string,
   end: string,
   set: (field: string, value: any) => void

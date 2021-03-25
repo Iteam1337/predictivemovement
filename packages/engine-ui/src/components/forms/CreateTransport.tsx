@@ -36,20 +36,20 @@ const Component = ({
   }
   type: 'NEW' | 'EDIT'
 }) => {
-  const capacityPreset =
-    getCapacityPreset(formState.capacity, transportPresets) || 'custom'
-  const history = useHistory()
-  const [useCustomCapacity, setUseCustomCapacity] = React.useState(
-    capacityPreset === 'custom'
-  )
   const {
     values,
     setFieldValue,
     errors,
     touched,
   }: FormikProps<FormState> = useFormikContext()
+  const capacityPreset =
+    getCapacityPreset(values.capacity, transportPresets) || 'custom'
+  const history = useHistory()
+  const [useCustomCapacity, setUseCustomCapacity] = React.useState(
+    capacityPreset === 'custom'
+  )
   const [showEndAddressInput, setShowEndAddressInput] = React.useState(
-    !!formState.endAddress
+    !!values.endAddress
   )
 
   hooks.useFormStateWithMapClickControl(
@@ -62,6 +62,8 @@ const Component = ({
     setShowEndAddressInput((showEndAddress) => !showEndAddress)
     setFieldValue('endAddress', { lat: undefined, lon: undefined, name: '' })
   }
+
+  console.log(values)
 
   return (
     <Form autoComplete="off">

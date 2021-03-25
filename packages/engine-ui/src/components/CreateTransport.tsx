@@ -20,7 +20,7 @@ const initialState: FormState = {
   earliestStart: null,
   latestEnd: null,
   startAddress: { lat: 61.8172594, lon: 16.0561472, name: '' },
-  endAddress: { lat: 61.8172594, lon: 16.0561472, name: '' },
+  endAddress: null,
   metadata: {
     fleet: '',
     profile: '',

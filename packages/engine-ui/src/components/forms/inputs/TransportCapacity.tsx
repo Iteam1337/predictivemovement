@@ -1,7 +1,9 @@
-import { useField, useFormikContext } from 'formik'
+import { FormikProps, useField, useFormikContext } from 'formik'
 import React from 'react'
 import * as Elements from '../../../shared-elements'
 import * as FormInputs from '.'
+import { validateNotEmpty } from '../validation'
+import { FormState } from '../../CreateTransport'
 
 const TransportCapacity: React.FC<{
   useCustomCapacity: any
@@ -14,7 +16,11 @@ const TransportCapacity: React.FC<{
     }
   }
 }> = ({ name, useCustomCapacity, transportPresets, setUseCustomCapacity }) => {
-  const { setFieldValue } = useFormikContext()
+  const {
+    setFieldValue,
+    errors,
+    touched,
+  }: FormikProps<FormState> = useFormikContext()
   const [field] = useField(name)
 
   const handleTransportPresetSelectChange = (
@@ -27,6 +33,7 @@ const TransportCapacity: React.FC<{
         volume: '',
       })
     }
+
     return setFieldValue(field.name, {
       weight: transportPresets[e.target.value].weight,
       volume: transportPresets[e.target.value].volume,
@@ -84,28 +91,45 @@ const TransportCapacity: React.FC<{
         <FormInputs.TextInput
           step={0.1}
           min="0"
-          required
           name="capacity.volume"
+          validate={validateNotEmpty}
           placeholder="Lastvolym (m3)"
           type="number"
         />
       </Elements.Layout.InputContainer>
+      {errors.capacity?.volume && touched.capacity?.volume && (
+        <Elements.Typography.ErrorMessage>
+          {errors.capacity.volume}
+        </Elements.Typography.ErrorMessage>
+      )}
+
       <Elements.Layout.InputContainer>
         <FormInputs.TextInput
           step={1}
           min="0"
           type="number"
-          required
+          validate={validateNotEmpty}
           name="capacity.weight"
           placeholder="Maxvikt (kg)"
         />
+        {errors.capacity?.weight && touched.capacity?.weight && (
+          <Elements.Typography.ErrorMessage>
+            {errors.capacity.weight}
+          </Elements.Typography.ErrorMessage>
+        )}
 
         <Elements.Buttons.CancelButton
           padding="0.5rem"
           style={{
             marginTop: '0.5rem',
           }}
-          onClick={() => setUseCustomCapacity(!useCustomCapacity)}
+          onClick={() => {
+            setUseCustomCapacity(!useCustomCapacity)
+            setFieldValue(field.name, {
+              weight: transportPresets.small.weight,
+              volume: transportPresets.small.volume,
+            })
+          }}
         >
           Återgå till förval
         </Elements.Buttons.CancelButton>

@@ -16,13 +16,17 @@ export const validateAddress = (value: any) => {
     error = 'Adressen kunde inte hittas'
   }
 
+  if (value.name === '') {
+    error = validateNotEmpty(value.name)
+  }
+
   return error
 }
 
 export const validateNotEmpty = (value: string) => {
   let error
   if (value == '') {
-    error = 'Fyll i ett namn på transporten'
+    error = 'Dettta fält är obligatoriskt'
   }
 
   return error

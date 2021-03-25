@@ -107,7 +107,7 @@ const Component = ({ onFocusHandler, placeholder, name = '', ...rest }) => {
           handleBlur(e)
           setShowDropdown(false)
         }}
-        iconInset
+        iconinset="true"
       />
 
       {showDropdown && (

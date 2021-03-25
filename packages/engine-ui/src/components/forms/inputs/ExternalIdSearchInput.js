@@ -49,7 +49,7 @@ const Component = ({ onSearchResult, placeholder, name, ...rest }) => {
         type="text"
         placeholder={placeholder}
         onChange={onSearchInputHandler}
-        iconInset
+        iconinset="true"
       />
     </Elements.Layout.InputInnerContainer>
   )

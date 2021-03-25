@@ -167,7 +167,7 @@ const Component: React.FC<{
                   value={signedBy}
                   onChangeHandler={onTextInputChange}
                   placeholder="Namn"
-                  iconInset
+                  iconinset="true"
                 />
               </Elements.Layout.InputInnerContainer>
             </Elements.Layout.MarginTopContainerSm>

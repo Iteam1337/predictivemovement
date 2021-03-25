@@ -186,7 +186,7 @@ const Component = ({
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="metadata.sender.name"
               placeholder="Namn"
-              iconInset
+              iconinset="true"
             />
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
@@ -201,7 +201,7 @@ const Component = ({
             />
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              iconInset
+              iconinset="true"
               name="metadata.sender.contact"
               type="tel"
               placeholder="Telefonnummer"
@@ -266,7 +266,7 @@ const Component = ({
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
-              iconInset
+              iconinset="true"
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               name="metadata.recipient.name"
               placeholder="Namn"
@@ -284,7 +284,7 @@ const Component = ({
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
-              iconInset
+              iconinset="true"
               name="metadata.recipient.contact"
               type="tel"
               onFocus={() => dispatch({ type: 'resetInputClickState' })}

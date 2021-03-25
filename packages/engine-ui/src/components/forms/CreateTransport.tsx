@@ -174,7 +174,7 @@ const Component = ({
             />
             <FormInputs.TextInput
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
-              iconInset
+              iconinset="true"
               name="metadata.driver.name"
               placeholder="Namn"
             />
@@ -190,7 +190,7 @@ const Component = ({
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
-              iconInset
+              iconinset="true"
               name="metadata.driver.contact"
               type="tel"
               onFocus={() => dispatch({ type: 'resetInputClickState' })}

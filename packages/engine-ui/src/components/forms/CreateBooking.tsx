@@ -9,6 +9,8 @@ import { validatePhoneNumber } from './validation'
 import * as hooks from '../../hooks'
 import { BookingFormState } from '../CreateBooking'
 import { FormBooking } from '../EditBooking/EditBooking'
+import { shareCurrentLocation } from '../../utils/helpers'
+import * as stores from '../../utils/state/stores'
 
 const getSizePreset = (
   { size: { weight, measurements } }: BookingFormState | FormBooking,
@@ -53,6 +55,11 @@ const Component = ({
     sizePreset === 'custom'
   )
   const [
+    currentLocation,
+    setCurrentLocation,
+  ] = stores.currentLocation((state) => [state, state.set])
+
+  const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
   ] = React.useState<{ pickup: boolean; delivery: boolean }>({
@@ -89,6 +96,16 @@ const Component = ({
       ? setFieldValue(`${propertyName}.timeWindows`, null)
       : addTimeRestrictionWindow(propertyName)
   }
+
+  React.useEffect(() => {
+    if (currentLocation.lat || currentLocation.lon) {
+      setFieldValue('pickup', {
+        ...currentLocation,
+        name: `${currentLocation.name}, ${currentLocation.county}`,
+        street: currentLocation.name,
+      })
+    }
+  }, [currentLocation])
 
   return (
     <Form autoComplete="off" style={{ width: '309px' }}>
@@ -151,6 +168,16 @@ const Component = ({
           <Elements.Typography.ErrorMessage>
             {errors.pickup}
           </Elements.Typography.ErrorMessage>
+        )}
+        {!currentLocation.lon && (
+          <Elements.Buttons.NeutralButton
+            onClick={(e) => {
+              e.preventDefault()
+              shareCurrentLocation(setCurrentLocation)
+            }}
+          >
+            Dela din nuvarade position
+          </Elements.Buttons.NeutralButton>
         )}
       </Elements.Layout.InputContainer>
       <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>

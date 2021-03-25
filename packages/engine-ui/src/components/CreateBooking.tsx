@@ -83,7 +83,6 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
   const history = useHistory()
   const [isFinished, setIsFinished] = React.useState(false)
   const setUIState = stores.ui((state) => state.dispatch)
-  const currentLocation = stores.currentLocation((state) => state)
 
   const onSubmitHandler = (
     values: BookingFormState,
@@ -107,19 +106,6 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
   const handleOnContinue = () => {
     setIsFinished(false)
   }
-
-  React.useEffect(() => {
-    if (currentLocation.lat || currentLocation.lon) {
-      setState({
-        ...formState,
-        pickup: {
-          ...currentLocation,
-          name: `${currentLocation.name}, ${currentLocation.county}`,
-          street: currentLocation.name,
-        },
-      })
-    }
-  }, [currentLocation])
 
   const handleOnClose = () => history.push('/bookings')
 

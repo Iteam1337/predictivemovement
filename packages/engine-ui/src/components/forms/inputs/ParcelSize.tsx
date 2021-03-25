@@ -1,7 +1,9 @@
-import { useField, useFormikContext } from 'formik'
+import { FormikProps, useField, useFormikContext } from 'formik'
 import React from 'react'
 import * as Elements from '../../../shared-elements'
+import { BookingFormState } from '../../CreateBooking'
 import * as FormInputs from '../inputs'
+import { validateMeasurementsFormat, validateNotEmpty } from '../validation'
 
 const ParcelSize: React.FC<{
   useCustomSize: any
@@ -14,7 +16,11 @@ const ParcelSize: React.FC<{
     }
   }
 }> = ({ parcelSizePresets, useCustomSize, setUseCustomSize, name }) => {
-  const { setFieldValue } = useFormikContext()
+  const {
+    setFieldValue,
+    errors,
+    touched,
+  }: FormikProps<BookingFormState> = useFormikContext()
   const [field] = useField(name)
 
   const handleParcelSizeSelectChange = (
@@ -81,29 +87,42 @@ const ParcelSize: React.FC<{
     <>
       <Elements.Layout.InputContainer>
         <FormInputs.TextInput
-          required
           name="size.measurements"
           placeholder="Mått (BxHxDcm)"
-          pattern="(\d+)x(\d+)x(\d+)"
-          title="BxHxD cm"
+          validate={validateMeasurementsFormat}
         />
       </Elements.Layout.InputContainer>
+      {errors.size?.measurements && touched.size?.measurements && (
+        <Elements.Typography.ErrorMessage>
+          {errors.size.measurements}
+        </Elements.Typography.ErrorMessage>
+      )}
       <Elements.Layout.InputContainer>
         <FormInputs.TextInput
           step={1}
           name="size.weight"
           placeholder="Vikt (kg)"
           type="number"
-          required
-          isRequiredInline
+          validate={validateNotEmpty}
         />
+        {errors.size?.weight && touched.size?.weight && (
+          <Elements.Typography.ErrorMessage>
+            {errors.size.weight}
+          </Elements.Typography.ErrorMessage>
+        )}
 
         <Elements.Buttons.CancelButton
           padding="0.5rem"
           style={{
             marginTop: '0.5rem',
           }}
-          onClick={() => setUseCustomSize(!useCustomSize)}
+          onClick={() => {
+            setUseCustomSize(!useCustomSize)
+            setFieldValue(field.name, {
+              weight: parcelSizePresets.small.weight,
+              measurements: parcelSizePresets.small.measurements,
+            })
+          }}
         >
           Återgå till förval
         </Elements.Buttons.CancelButton>

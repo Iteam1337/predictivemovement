@@ -26,6 +26,16 @@ export const validateAddress = (value: any) => {
   return error
 }
 
+export const validateMeasurementsFormat = (value: string) => {
+  let error
+  if (value === '') {
+    error = validateNotEmpty(value)
+  } else if (!/^\d+x\d+x\d+$/.test(value)) {
+    error = 'Fyll i rätt format BxHxD cm'
+  }
+  return error
+}
+
 export const validateNotEmpty = (value: string) => {
   let error
   if (value == '') {

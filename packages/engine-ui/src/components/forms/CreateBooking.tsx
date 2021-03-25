@@ -110,44 +110,6 @@ const Component = ({
   return (
     <Form autoComplete="off" style={{ width: '309px' }}>
       <Elements.Layout.MarginBottomContainer />
-      <Elements.Layout.InputBlock>
-        <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="parceldetails">
-            Paketspecifikationer
-          </Elements.Form.Label>
-          <FormInputs.ExternalIdSearchInput
-            placeholder="Referensnummer från avsändare"
-            name="externalId"
-            onFocus={() =>
-              dispatch({
-                type: 'focusInput',
-                payload: 'start',
-              })
-            }
-            onSearchResult={handleParcelSearchResults}
-          />
-        </Elements.Layout.InputContainer>
-        <Elements.Layout.InputContainer>
-          <FormInputs.TextInput name="metadata.cargo" placeholder="Innehåll" />
-        </Elements.Layout.InputContainer>
-        <Elements.Layout.InputContainer>
-          <FormInputs.TextInput name="metadata.customer" placeholder="Kund" />
-        </Elements.Layout.InputContainer>
-      </Elements.Layout.InputBlock>
-      <Elements.Layout.InputBlock>
-        <Elements.Layout.InputContainer>
-          <Elements.Form.Label htmlFor="size" required>
-            Välj storlek
-          </Elements.Form.Label>
-
-          <FormInputs.ParcelSize
-            parcelSizePresets={parcelSizePresets}
-            useCustomSize={useCustomSize}
-            setUseCustomSize={setUseCustomSize}
-            name="size"
-          />
-        </Elements.Layout.InputContainer>
-      </Elements.Layout.InputBlock>
 
       <Elements.Layout.InputContainer>
         <Elements.Form.Label required htmlFor="pickup">
@@ -243,6 +205,7 @@ const Component = ({
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+
       <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputContainer>
         <Elements.Form.Label required htmlFor="delivery">
@@ -327,6 +290,47 @@ const Component = ({
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+
+      <Elements.Layout.MarginBottomContainer />
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label htmlFor="parceldetails">
+            Paketspecifikationer
+          </Elements.Form.Label>
+          <FormInputs.ExternalIdSearchInput
+            placeholder="Referensnummer från avsändare"
+            name="externalId"
+            onFocus={() =>
+              dispatch({
+                type: 'focusInput',
+                payload: 'start',
+              })
+            }
+            onSearchResult={handleParcelSearchResults}
+          />
+        </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer>
+          <FormInputs.TextInput name="metadata.cargo" placeholder="Innehåll" />
+        </Elements.Layout.InputContainer>
+        <Elements.Layout.InputContainer>
+          <FormInputs.TextInput name="metadata.customer" placeholder="Kund" />
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+      <Elements.Layout.InputBlock>
+        <Elements.Layout.InputContainer>
+          <Elements.Form.Label htmlFor="size" required>
+            Välj storlek
+          </Elements.Form.Label>
+
+          <FormInputs.ParcelSize
+            parcelSizePresets={parcelSizePresets}
+            useCustomSize={useCustomSize}
+            setUseCustomSize={setUseCustomSize}
+            name="size"
+          />
+        </Elements.Layout.InputContainer>
+      </Elements.Layout.InputBlock>
+
       <Elements.Layout.ButtonWrapper isMobile={isMobile}>
         <Elements.Buttons.CancelButton
           type="button"

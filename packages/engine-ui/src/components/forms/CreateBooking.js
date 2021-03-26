@@ -6,6 +6,8 @@ import nameIcon from '../../assets/contact-name.svg'
 import * as eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
 import OpacityFadeInAnim from '../animations/opacityFadeInAnim'
+import { shareCurrentLocation } from '../../utils/helpers'
+import * as stores from '../../utils/state/stores'
 
 const getSizePreset = ({ size: { weight, measurements } }, presets) => {
   if (!weight || !measurements) {
@@ -43,6 +45,11 @@ const Component = ({
     pickup: !!state.pickup.timeWindows?.length || false,
     delivery: !!state.delivery.timeWindows?.length || false,
   })
+
+  const [
+    currentLocation,
+    setCurrentLocation,
+  ] = stores.currentLocation((state) => [state, state.set])
 
   const isMobile = window.innerWidth <= 645
 
@@ -179,6 +186,17 @@ const Component = ({
               Kunde inte hitta adressen, försök igen
             </Elements.Typography.ErrorMessage>
           )}
+
+          {!currentLocation.lon && (
+            <Elements.Buttons.NeutralButton
+              onClick={(e) => {
+                e.preventDefault()
+                shareCurrentLocation(setCurrentLocation)
+              }}
+            >
+              Dela din nuvarade position
+            </Elements.Buttons.NeutralButton>
+          )}
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
           <FormInputs.TextInput
@@ -260,15 +278,13 @@ const Component = ({
 
         <Elements.Layout.MarginBottomContainer />
         {!animateFirstBlock && (
-          <Elements.Buttons.CancelButton
-            type="button"
-            width={`${isMobile && '100%'}`}
-            marginTop={`${isMobile && '0.7rem'}`}
+          <Elements.Buttons.NeutralButton
+            padding="0.7rem 1.8rem"
             onClick={doAnimateFirstBlock}
-            type="button"
+            marginTop="0rem"
           >
             Nästa
-          </Elements.Buttons.CancelButton>
+          </Elements.Buttons.NeutralButton>
         )}
       </div>
 
@@ -383,14 +399,13 @@ const Component = ({
 
         {animateFirstBlock && !animateSecondBlock && (
           <>
-            <Elements.Buttons.CancelButton
-              type="button"
-              width={`${isMobile && '100%'}`}
-              marginTop={`${isMobile && '0.7rem'}`}
+            <Elements.Buttons.NeutralButton
+              marginTop="0rem"
+              padding="0.7rem 2rem"
               onClick={doAnimateSecondBlock}
             >
               Ange extra information
-            </Elements.Buttons.CancelButton>
+            </Elements.Buttons.NeutralButton>
             <Elements.Layout.MarginBottomContainer />
           </>
         )}
@@ -459,6 +474,7 @@ const Component = ({
                   defaultValue={sizePreset}
                 />
               )}
+
               {useCustomSize && (
                 <>
                   <Elements.Layout.InputContainer>

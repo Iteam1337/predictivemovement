@@ -397,7 +397,6 @@ const Component = ({
 
         {animateSecondBlock && (
           <OpacityFadeInAnim animate={animateSecondBlock}>
-            <Elements.Layout.MarginBottomContainer />
             <Elements.Layout.InputBlock>
               <Elements.Layout.InputContainer>
                 <Elements.Form.Label htmlFor="parceldetails">

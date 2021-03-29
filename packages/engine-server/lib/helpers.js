@@ -30,7 +30,7 @@ const transportToNotification = (transport, event) => ({
     id: transport.id,
     status: event || transport.status,
   },
-  transportName: transport.metadata?.profile,
+  transportName: JSON.parse(transport.metadata).profile,
 })
 
 const normalizePhoneNumber = (phoneNumber) => {

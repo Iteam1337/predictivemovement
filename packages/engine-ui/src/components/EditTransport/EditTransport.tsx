@@ -1,10 +1,10 @@
 import React from 'react'
-import * as hooks from '../../hooks'
 import * as stores from '../../utils/state/stores'
 import * as Elements from '../../shared-elements'
 import Form from '../forms/CreateTransport'
 import moment from 'moment'
 import { transportPresets } from '../CreateTransport'
+import { Formik, FormikHelpers } from 'formik'
 
 export interface FormState {
   capacity: {
@@ -54,10 +54,7 @@ const EditTransport = ({
   updateTransport: (form: any) => void
 }) => {
   const [isActive, setActive] = React.useState(false)
-  const [formState, setState] = React.useState(transport)
   const setUIState = stores.ui((state) => state.dispatch)
-
-  hooks.useFormStateWithMapClickControl('startAddress', 'endAddress', setState)
 
   React.useEffect(() => {
     setActive(true)
@@ -65,36 +62,37 @@ const EditTransport = ({
     return () => setActive(false)
   }, [isActive])
 
-  const onSubmitHandler = (event: any) => {
-    event.preventDefault()
-
-    const endAddress = formState.endAddress || formState.startAddress
+  const onSubmitHandler = (
+    values: FormState,
+    actions: FormikHelpers<FormState>
+  ) => {
+    const endAddress = values.endAddress || values.startAddress
 
     const updatedTransport = {
-      ...formState,
-      earliestStart: formState.earliestStart
-        ? moment(formState.earliestStart).format('HH:mm')
-        : formState.earliestStart,
+      ...values,
+      earliestStart: values.earliestStart
+        ? moment(values.earliestStart).format('HH:mm')
+        : values.earliestStart,
       capacity: {
-        weight: parseInt(formState.capacity.weight),
-        volume: parseFloat(formState.capacity.volume),
+        weight: parseInt(values.capacity.weight),
+        volume: parseFloat(values.capacity.volume),
       },
-      latestEnd: formState.latestEnd
-        ? moment(formState.latestEnd).format('HH:mm')
-        : formState.latestEnd,
+      latestEnd: values.latestEnd
+        ? moment(values.latestEnd).format('HH:mm')
+        : values.latestEnd,
       startAddress: {
-        ...formState.startAddress,
-        name: formState.startAddress.name || undefined,
+        ...values.startAddress,
+        name: values.startAddress.name || undefined,
       },
       endAddress: {
         ...endAddress,
         name: endAddress.name || undefined,
       },
       metadata: {
-        ...formState.metadata,
+        ...values.metadata,
         driver: {
-          name: formState.metadata.driver.name || undefined,
-          contact: formState.metadata.driver.contact || undefined,
+          name: values.metadata.driver.name || undefined,
+          contact: values.metadata.driver.contact || undefined,
         },
       },
     }
@@ -103,7 +101,7 @@ const EditTransport = ({
       editableFields
         .filter(
           (key) =>
-            JSON.stringify(transport[key]) !== JSON.stringify(formState[key])
+            JSON.stringify(transport[key]) !== JSON.stringify(values[key])
         )
         .reduce(
           (acc, curr) => ({
@@ -114,20 +112,20 @@ const EditTransport = ({
         )
     )
 
+    actions.setSubmitting(false)
     return setIsFinished(true)
   }
 
   return (
     <Elements.Layout.ContainerWidth>
       <h3>Uppdatera transport</h3>
-      <Form
-        type="EDIT"
-        onChangeHandler={setState}
-        onSubmitHandler={onSubmitHandler}
-        formState={formState}
-        dispatch={setUIState}
-        transportPresets={transportPresets}
-      />
+      <Formik initialValues={transport} onSubmit={onSubmitHandler}>
+        <Form
+          type="EDIT"
+          dispatch={setUIState}
+          transportPresets={transportPresets}
+        />
+      </Formik>
     </Elements.Layout.ContainerWidth>
   )
 }

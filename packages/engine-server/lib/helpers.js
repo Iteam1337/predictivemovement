@@ -1,5 +1,5 @@
-const PhoneNumber = require('awesome-phonenumber')
 const { bookingsCache } = require('../lib/cache')
+const phone = require('phone')
 const severityByEventStatus = (status) => {
   const map = {
     new: 'success',
@@ -33,16 +33,14 @@ const transportToNotification = (transport, event) => ({
   transportName: JSON.parse(transport.metadata).profile,
 })
 
-const changeFormatOnPhoneNumber = (phoneNumber) => {
-  let phoneNumberData
+const normalizePhoneNumber = (phoneNumber) => {
+  if (phoneNumber === '') return phoneNumber
 
-  if (phoneNumber.startsWith('+')) {
-    phoneNumberData = new PhoneNumber(phoneNumber)
-  } else if (phoneNumber.startsWith('07')) {
-    phoneNumberData = new PhoneNumber(phoneNumber, 'SE')
-  }
-  return phoneNumberData.getNumber('e164').replace('+', '')
+  return phone(phoneNumber, 'SWE')[0]
 }
+
+const changeFormatOnPhoneNumber = (phoneNumber) =>
+  phone(phoneNumber, 'SWE')[0].replace('+', '')
 
 const addActivityAddressInfo = (plan) => ({
   ...plan,
@@ -78,4 +76,5 @@ module.exports = {
   transportToNotification,
   changeFormatOnPhoneNumber,
   addActivityAddressInfo,
+  normalizePhoneNumber,
 }

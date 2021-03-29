@@ -61,6 +61,7 @@ const NeutralButton = styled.button<{
   padding?: string
   width?: string
   marginTop?: string
+  disabled?: boolean
 }>`
   padding: ${({ padding }) => padding || '0.5rem'};
   background: #fff;
@@ -71,7 +72,7 @@ const NeutralButton = styled.button<{
   cursor: pointer;
   width: ${({ width }) => (width ? width : 'fit-content')};
   margin-top: ${({ marginTop }) => marginTop || '0.5rem'};
-
+  opacity: ${({ disabled }) => disabled && '0.3'};
   :hover {
     background: #efefef;
   }

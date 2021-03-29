@@ -118,7 +118,7 @@ const Component = ({
   const doAnimateSecondBlock = React.useCallback(() => {
     setAnimateSecondBlock(true)
   }, [])
-  console.log('test', (!errors.pickup && touched.pickup) ?? true)
+
   return (
     <Form autoComplete="off" style={{ width: '309px' }}>
       <Elements.Layout.MarginBottomContainer />

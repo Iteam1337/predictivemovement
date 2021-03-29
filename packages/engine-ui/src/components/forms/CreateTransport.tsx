@@ -6,7 +6,7 @@ import * as Elements from '../../shared-elements'
 import * as FormInputs from './inputs'
 import { FormState } from '../CreateTransport'
 import { Form, FormikProps, useFormikContext } from 'formik'
-import { validateNotEmpty, validatePhoneNumber } from './validation'
+import { validateDriverContact, validateNotEmpty } from './validation'
 import * as hooks from '../../hooks'
 
 const getCapacityPreset = (
@@ -195,7 +195,7 @@ const Component = ({
               type="tel"
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               placeholder="Telefonnummer"
-              validate={validatePhoneNumber}
+              validate={validateDriverContact}
             />
             {errors.metadata?.driver?.contact &&
               touched.metadata?.driver?.contact && (

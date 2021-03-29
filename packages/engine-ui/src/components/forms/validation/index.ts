@@ -10,6 +10,20 @@ export const validatePhoneNumber = (value: string) => {
   return error
 }
 
+export const validateDriverContact = (value: string) => {
+  let error
+  const normalizedPhoneNumber = phone(value, 'SWE')
+  if (normalizedPhoneNumber.length <= 0) {
+    error = 'Fyll i ett korrekt telefonnummer'
+  }
+
+  if (value === '') {
+    error = validateNotEmpty(value)
+  }
+
+  return error
+}
+
 export const validateAddress = (value: any) => {
   let error
   if (!value.lon || !value.lat) {

@@ -119,6 +119,13 @@ const Component = ({
     setAnimateSecondBlock(true)
   }, [])
 
+  React.useEffect(() => {
+    if (type === 'EDIT') {
+      setAnimateFirstBlock(true)
+      setAnimateSecondBlock(true)
+    }
+  }, [type])
+
   return (
     <Form autoComplete="off" style={{ width: '309px' }}>
       <Elements.Layout.MarginBottomContainer />

@@ -8,7 +8,7 @@ Create .env file in root with following content:
 ```bash
 BOT_TOKEN=<your telegram bot token>
 GOOGLE_API_TOKEN=[GOOGLE_API_TOKEN]
-ENGINE_UI_URL=[ENGINE_UI_URL]
+SIGNING_URL=<url of the signing service>
 
 # OPTIONAL
 

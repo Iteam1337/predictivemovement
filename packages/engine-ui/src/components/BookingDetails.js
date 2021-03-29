@@ -269,13 +269,16 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                     <CapitalizeParagraph>{sender.name}</CapitalizeParagraph>
                   </Elements.Layout.FlexRowBaselineContainer>
                 )}
-                <Elements.Layout.FlexRowBaselineContainer>
-                  <Elements.Icons.MarginRightIcon
-                    src={ContactPhone}
-                    alt="Contact Phone"
-                  />
-                  <Paragraph>{sender.contact}</Paragraph>
-                </Elements.Layout.FlexRowBaselineContainer>
+                {sender.contact && (
+                  <Elements.Layout.FlexRowBaselineContainer>
+                    <Elements.Icons.MarginRightIcon
+                      src={ContactPhone}
+                      alt="Contact Phone"
+                    />
+
+                    <Paragraph>{sender.contact}</Paragraph>
+                  </Elements.Layout.FlexRowBaselineContainer>
+                )}
               </Elements.Layout.SectionWithMargin>
               <Elements.Layout.SectionWithMargin>
                 <Elements.Layout.MarginBottomContainer>
@@ -295,13 +298,15 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                     <CapitalizeParagraph>{recipient.name}</CapitalizeParagraph>
                   </Elements.Layout.FlexRowBaselineContainer>
                 )}
-                <Elements.Layout.FlexRowBaselineContainer>
-                  <Elements.Icons.MarginRightIcon
-                    src={ContactPhone}
-                    alt="Contact Phone"
-                  />
-                  <Paragraph>{recipient.contact}</Paragraph>
-                </Elements.Layout.FlexRowBaselineContainer>
+                {recipient.contact && (
+                  <Elements.Layout.FlexRowBaselineContainer>
+                    <Elements.Icons.MarginRightIcon
+                      src={ContactPhone}
+                      alt="Contact Phone"
+                    />
+                    <Paragraph>{recipient.contact}</Paragraph>
+                  </Elements.Layout.FlexRowBaselineContainer>
+                )}
               </Elements.Layout.SectionWithMargin>
               <Elements.Layout.MarginTopContainer>
                 {booking.assigned_to && (

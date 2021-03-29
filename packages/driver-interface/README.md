@@ -1,6 +1,7 @@
 # `driver-interface`
 
 ## Usage
+Create a Telegram bot by clicking https://t.me/botfather and opening it in Telegram. It will guide you through the creation.
 
 Create .env file in root with following content:
 
@@ -13,7 +14,7 @@ REDIS_URL=<your redis url>
 REDIS_KEY_NAMESPACE=<redis key prefix>
 ```
 
-Open `t.me/predictive_movement_bot` from telegram app on you phone. This will add the telegram bot `pm_driver_bot` to your telegram.
+Open `t.me/your_bot_name` from telegram app on you phone. This will add your bot to Telegram.
 
 ### Driver
 

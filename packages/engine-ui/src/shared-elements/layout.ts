@@ -53,6 +53,12 @@ const Container = styled.div`
   margin-left: 1rem;
 `
 
+const ContainerWidth = styled.div`
+  margin-bottom: 2rem;
+  margin-left: 1rem;
+  width: 300px;
+`
+
 const FlexRowBaselineContainer = styled.div`
   display: flex;
   align-items: baseline;
@@ -106,6 +112,7 @@ const InputBlock = styled.div`
 
 const InputContainer = styled.div`
   margin-bottom: 0.5rem;
+  width: inherit;
 `
 
 const TextInputPairContainer = styled.div`
@@ -154,4 +161,5 @@ export {
   FlexRowInCenterMarginL,
   FlexRowInCenterMarginS,
   FlexContainer,
+  ContainerWidth,
 }

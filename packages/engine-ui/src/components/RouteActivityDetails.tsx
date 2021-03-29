@@ -130,13 +130,16 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
               </CapitalizeParagraph>
             </Elements.Layout.FlexRowBaselineContainer>
           )}
-          <Elements.Layout.FlexRowBaselineContainer>
-            <Elements.Icons.MarginRightIcon
-              src={ContactPhone}
-              alt="Contact Phone"
-            />
-            <Paragraph>{booking.metadata.sender.contact}</Paragraph>
-          </Elements.Layout.FlexRowBaselineContainer>
+          {booking.metadata.sender.contact && (
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactPhone}
+                alt="Contact Phone"
+              />
+
+              <Paragraph>{booking.metadata.sender.contact}</Paragraph>
+            </Elements.Layout.FlexRowBaselineContainer>
+          )}
         </Elements.Layout.SectionWithMargin>
         <Elements.Layout.SectionWithMargin>
           <Elements.Layout.MarginBottomContainer>
@@ -164,13 +167,16 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
               </CapitalizeParagraph>
             </Elements.Layout.FlexRowBaselineContainer>
           )}
-          <Elements.Layout.FlexRowBaselineContainer>
-            <Elements.Icons.MarginRightIcon
-              src={ContactPhone}
-              alt="Contact Phone"
-            />
-            <Paragraph>{booking.metadata.recipient.contact}</Paragraph>
-          </Elements.Layout.FlexRowBaselineContainer>
+          {booking.metadata.recipient.contact && (
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactPhone}
+                alt="Contact Phone"
+              />
+
+              <Paragraph>{booking.metadata.recipient.contact}</Paragraph>
+            </Elements.Layout.FlexRowBaselineContainer>
+          )}
         </Elements.Layout.SectionWithMargin>
         <Elements.Layout.MarginTopContainer>
           <Elements.Typography.StrongParagraph>

@@ -1,5 +1,5 @@
 import { FlyToInterpolator } from 'react-map-gl'
-import { Booking, Transport, Plan } from './'
+import { Booking, Transport, Plan, Signature } from './'
 import * as notificationTypes from '../types/notification'
 
 export enum lastFocusedInput {
@@ -46,6 +46,13 @@ export type MapState = {
   transitionEasing: (t: number) => number
 } & { set: (args: Partial<MapState>) => void }
 
+export type CurrentLocation = {
+  lat: number | undefined
+  lon: number | undefined
+  name: string
+  county: string
+} & { set: (args: Partial<CurrentLocation>) => void }
+
 export type MapLayerStateReducerAction =
   | {
       type: 'bookingIcons'
@@ -85,6 +92,7 @@ export type DataStateReducerAction =
       type: 'setPlan'
       payload: Plan
     }
+  | { type: 'setSignatures'; payload: Signature[] }
   | { type: 'clearState' }
 
 export type DataState = {
@@ -92,6 +100,7 @@ export type DataState = {
   transports: Transport[]
   assignedBookings: Booking[]
   plan: Plan
+  signatures: Signature[]
 }
 
 export type MapLayerState = {

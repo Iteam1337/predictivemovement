@@ -5,9 +5,7 @@ const secretKey = process.env.MINIO_PASSWORD || 'minioadmin'
 const useSSL = port === 443
 const Minio = require('minio')
 const moment = require('moment')
-const id62 = require('id62').default
-
-const buckets = { FREIGHTSLIPS: 'freightslips' }
+const _ = require('highland')
 
 const minioClient = new Minio.Client({
   endPoint,
@@ -16,6 +14,35 @@ const minioClient = new Minio.Client({
   accessKey,
   secretKey,
 })
+
+async function init() {
+  const bucketName = 'signatures'
+  if (!(await minioClient.bucketExists(bucketName))) {
+    await minioClient.makeBucket(bucketName)
+  }
+
+  /* 
+    Right now we have problem with minio if 
+    the bucket has less than 2 objects. 
+    As a quick fix we populate the bucket with two placeholders to avoid the error. 
+    The error has been acknowledged by minio and we are just waiting 
+    for the new release, then we can take away this.
+    https://github.com/minio/minio-js/issues/886 
+  */
+
+  minioClient.putObject(
+    bucketName,
+    `${moment().format('YYYY-MM')}/placeholder`,
+    'placeholder'
+  )
+  minioClient.putObject(
+    bucketName,
+    `${moment().format('YYYY-MM')}/placeholderTwo`,
+    'placeholderTwo'
+  )
+}
+
+init()
 
 async function saveSignature({
   createdAt,
@@ -27,9 +54,6 @@ async function saveSignature({
 }) {
   const bucketName = 'signatures'
   const folder = moment().format('YYYY-MM')
-  if (!(await minioClient.bucketExists(bucketName))) {
-    await minioClient.makeBucket(bucketName)
-  }
 
   const signature = JSON.stringify(
     {
@@ -52,26 +76,31 @@ async function saveSignature({
   )
 }
 
-async function saveFreightslip(freightslip) {
-  const bucketName = buckets.FREIGHTSLIPS
-  const folder = moment().format('YYYY-MM')
-  if (!(await minioClient.bucketExists(bucketName))) {
-    await minioClient.makeBucket(bucketName)
-  }
-
-  await minioClient.putObject(bucketName, `${folder}/${id62()}`, freightslip)
+function getObject(bucket, name) {
+  return new Promise(async (resolve, reject) => {
+    const stream = await minioClient.getObject(bucket, name)
+    let chunks = ''
+    stream.on('data', (data) => {
+      chunks += data.toString()
+    })
+    stream.on('end', () => {
+      resolve(JSON.parse(chunks))
+    })
+    stream.on('error', reject)
+  })
 }
 
-async function getFreightSlips() {
-  const bucketName = buckets.FREIGHTSLIPS
-  const stream = await minioClient.listObjects(bucketName, '', true)
-
-  return stream
-  // stream.on('data', (obj) => console.log('retrietev data: ', obj))
-  // stream.on('error', (err) => console.log('well it b0rked :(', err))
+function getSignatures() {
+  const bucket = 'signatures'
+  const listStream = minioClient.listObjects(bucket, '', true)
+  return _(listStream).flatMap(({ name }) => {
+    // a fix until Minio releases the new fixes
+    if (name.includes('placeholder')) return []
+    return _(getObject(bucket, name))
+  })
 }
 
 module.exports = {
   saveSignature,
-  saveFreightslip,
+  getSignatures,
 }

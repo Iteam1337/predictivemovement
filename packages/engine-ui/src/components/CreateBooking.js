@@ -54,6 +54,7 @@ const CreateBooking = ({ onSubmit }) => {
     delivery: false,
   })
   const setUIState = stores.ui((state) => state.dispatch)
+  const currentLocation = stores.currentLocation((state) => state)
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
@@ -93,6 +94,19 @@ const CreateBooking = ({ onSubmit }) => {
     setState(initialState)
     setIsFinished(false)
   }
+
+  React.useEffect(() => {
+    if (currentLocation.lat || currentLocation.lon) {
+      setState({
+        ...formState,
+        pickup: {
+          ...currentLocation,
+          name: `${currentLocation.name}, ${currentLocation.county}`,
+          street: currentLocation.name,
+        },
+      })
+    }
+  }, [currentLocation])
 
   const handleOnClose = () => history.push('/bookings')
 

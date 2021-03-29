@@ -46,7 +46,7 @@ export const sendWelcomeMsg = (telegramId: number): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
     'Välkommen! När du har blivit tilldelad bokningar så kommer du få instruktioner för hur du ska hämta upp dessa.'.concat(
-      '\nKlicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :)'
+      '\nKlicka på "gemet" nere vid textfältet och välj "location", sedan "live location" för att dela din position. :)'
     )
   )
 
@@ -107,7 +107,8 @@ ${instructionGroup
   .join('\n')}\nvid [${pickup}](${getDirectionsUrl(pickup)})`
   )
     .concat(
-      `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
+      firstBooking.metadata.sender.contact &&
+        `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
     )
     .concat(
       '\nTryck på "[Framme]" när du har kommit till upphämtningsadressen.'
@@ -151,7 +152,8 @@ export const sendDeliveryInstruction = async (
   )
     .concat(`till [${delivery}](${getDirectionsUrl(delivery)})!\n`)
     .concat(
-      `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
+      firstBooking.metadata.recipient.contact &&
+        `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
     )
     .concat('\nTryck "[Framme]" när du har anlänt till upphämtningsplatsen.')
   return bot.telegram.sendMessage(telegramId, message, {
@@ -244,9 +246,13 @@ export const sendDeliveryInformation = (
   bookings: Booking[]
 ): Promise<Message> => {
   const [firstBooking] = bookings
+
+  const addedPhoneNumber = firstBooking.metadata.recipient.contact
+    ? `Du kan nu nå mottagaren på ${firstBooking.metadata.recipient.contact}`
+    : ''
   return bot.telegram.sendMessage(
     telegramId,
-    `Du kan nu nå mottagaren på ${firstBooking.metadata.recipient.contact}`
+    addedPhoneNumber
       .concat(
         firstBooking.metadata.recipient?.info
           ? `\nExtra information vid avlämning: ${firstBooking.metadata.recipient.info}`

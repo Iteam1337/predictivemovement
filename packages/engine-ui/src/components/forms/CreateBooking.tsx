@@ -3,13 +3,20 @@ import * as Elements from '../../shared-elements'
 import * as FormInputs from './inputs'
 import phoneIcon from '../../assets/contact-phone.svg'
 import nameIcon from '../../assets/contact-name.svg'
-import * as eventHandlers from './eventHandlers'
 import { useHistory } from 'react-router-dom'
+import { Form, FormikProps, useFormikContext } from 'formik'
+import { validatePhoneNumber } from './validation'
+import * as hooks from '../../hooks'
 import OpacityFadeInAnim from '../animations/opacityFadeInAnim'
+import { BookingFormState } from '../CreateBooking'
+import { FormBooking } from '../EditBooking/EditBooking'
 import { shareCurrentLocation } from '../../utils/helpers'
 import * as stores from '../../utils/state/stores'
 
-const getSizePreset = ({ size: { weight, measurements } }, presets) => {
+const getSizePreset = (
+  { size: { weight, measurements } }: BookingFormState | FormBooking,
+  presets: any
+) => {
   if (!weight || !measurements) {
     return {
       weight: '',
@@ -24,123 +31,82 @@ const getSizePreset = ({ size: { weight, measurements } }, presets) => {
 }
 
 const Component = ({
-  onChangeHandler,
-  onSubmitHandler,
-  state,
   dispatch,
-  formErrors,
-  setFormErrors,
   parcelSizePresets,
   type,
+}: {
+  dispatch: any
+  parcelSizePresets: {
+    [s: string]: {
+      weight: number
+      measurements: string
+    }
+  }
+  type?: 'NEW' | 'EDIT'
 }) => {
+  const {
+    setFieldValue,
+    errors,
+    touched,
+    values,
+  }: FormikProps<BookingFormState> = useFormikContext()
   const history = useHistory()
-  const sizePreset = getSizePreset(state, parcelSizePresets) || 'custom'
+  const sizePreset = getSizePreset(values, parcelSizePresets) || 'custom'
   const [useCustomSize, setUseCustomSize] = React.useState(
     sizePreset === 'custom'
   )
-  const [
-    showBookingTimeRestriction,
-    setShowBookingTimeRestriction,
-  ] = React.useState({
-    pickup: !!state.pickup.timeWindows?.length || false,
-    delivery: !!state.delivery.timeWindows?.length || false,
-  })
-
   const [
     currentLocation,
     setCurrentLocation,
   ] = stores.currentLocation((state) => [state, state.set])
 
+  const [
+    showBookingTimeRestriction,
+    setShowBookingTimeRestriction,
+  ] = React.useState<{ pickup: boolean; delivery: boolean }>({
+    pickup: !!values.pickup.timeWindows?.length || false,
+    delivery: !!values.delivery.timeWindows?.length || false,
+  })
+
+  hooks.useFormStateWithMapClickControl('pickup', 'delivery', setFieldValue)
+
   const isMobile = window.innerWidth <= 645
 
-  const handleParcelSearchResults = ({ weight, measurements }) => {
+  const handleParcelSearchResults = ({
+    weight,
+    measurements,
+  }: {
+    weight: number
+    measurements: string
+  }) => {
     if (!weight || !measurements) return null
 
-    onChangeHandler((currentState) => ({
-      ...currentState,
-      size: {
-        weight,
-        measurements: measurements.length ? measurements.join('x') : null,
-      },
-    }))
     setUseCustomSize(true)
   }
 
-  const handleBookingTimeRestrictionChange = (date, type, property) =>
-    onChangeHandler((currentState) => {
-      return {
-        ...currentState,
-        [type]: {
-          ...currentState[type],
-          timeWindows: [
-            { ...currentState[type].timeWindows[0], [property]: date },
-          ],
-        },
-      }
-    })
+  const addTimeRestrictionWindow = (type: string) =>
+    setFieldValue(`${type}.timeWindows`, [{ earliest: null, latest: null }])
 
-  const addTimeRestrictionWindow = (type) =>
-    onChangeHandler((currentState) => ({
-      ...currentState,
-      [type]: {
-        ...currentState[type],
-        timeWindows: [{ earliest: null, latest: null }],
-      },
-    }))
-
-  const handleToggleTimeRestrictionsChange = (propertyName) => {
-    setShowBookingTimeRestriction((currentState) => ({
+  const handleToggleTimeRestrictionsChange = (propertyName: string) => {
+    setShowBookingTimeRestriction((currentState: any) => ({
       ...currentState,
       [propertyName]: !currentState[propertyName],
     }))
 
-    return state[propertyName].timeWindows
-      ? onChangeHandler((currentState) => ({
-          ...currentState,
-          [propertyName]: { ...currentState[propertyName], timeWindows: null },
-        }))
+    return (values as any)[propertyName].timeWindows
+      ? setFieldValue(`${propertyName}.timeWindows`, null)
       : addTimeRestrictionWindow(propertyName)
   }
 
-  const handleParcelSizeSelectChange = (e) => {
-    if (e.target.value === 'custom') {
-      setUseCustomSize(!useCustomSize)
-      return onChangeHandler((currentState) => ({
-        ...currentState,
-        size: {
-          weight: '',
-          measurements: '',
-        },
-      }))
+  React.useEffect(() => {
+    if (currentLocation.lat || currentLocation.lon) {
+      setFieldValue('pickup', {
+        ...currentLocation,
+        name: `${currentLocation.name}, ${currentLocation.county}`,
+        street: currentLocation.name,
+      })
     }
-
-    return onChangeHandler((currentState) => ({
-      ...currentState,
-      size: parcelSizePresets[e.target.value],
-    }))
-  }
-
-  const parcelSizeToHumanReadable = (name) => {
-    switch (name) {
-      case 'small':
-        return 'Liten'
-      case 'medium':
-        return 'Medium'
-      case 'big':
-        return 'Stor'
-      default:
-        return 'Storlek saknas'
-    }
-  }
-
-  const parcelSizeSelectOptions = Object.entries(parcelSizePresets)
-    .map(([name, { weight, measurements }]) => ({
-      value: name,
-      label: parcelSizeToHumanReadable(name),
-      weight,
-      measurements,
-    }))
-    .concat({ value: 'custom' })
+  }, [currentLocation])
 
   const [animateFirstBlock, setAnimateFirstBlock] = React.useState(false)
   const [animateSecondBlock, setAnimateSecondBlock] = React.useState(false)
@@ -152,41 +118,38 @@ const Component = ({
   const doAnimateSecondBlock = React.useCallback(() => {
     setAnimateSecondBlock(true)
   }, [])
+
+  React.useEffect(() => {
+    if (type === 'EDIT') {
+      setAnimateFirstBlock(true)
+      setAnimateSecondBlock(true)
+    }
+  }, [type])
+
   return (
-    <form
-      onSubmit={onSubmitHandler}
-      autoComplete="off"
-      style={{ width: '309px' }}
-    >
+    <Form autoComplete="off" style={{ width: '309px' }}>
       <Elements.Layout.MarginBottomContainer />
       <div>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label required htmlFor="pickup">
             Upphämtning
           </Elements.Form.Label>
+
           <FormInputs.AddressSearchInput
-            required
-            formErrors={formErrors.pickup}
+            name="pickup"
             placeholder="Adress (sök eller klicka på karta)"
-            value={state.pickup.name}
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
                 payload: 'start',
               })
             }
-            onChangeHandler={eventHandlers.handleAddressInputForBooking(
-              'pickup',
-              onChangeHandler,
-              setFormErrors
-            )}
           />
-          {formErrors.pickup && (
+          {errors.pickup && touched.pickup && (
             <Elements.Typography.ErrorMessage>
-              Kunde inte hitta adressen, försök igen
+              {errors.pickup}
             </Elements.Typography.ErrorMessage>
           )}
-
           {!currentLocation.lon && (
             <Elements.Buttons.NeutralButton
               onClick={(e) => {
@@ -201,31 +164,20 @@ const Component = ({
         <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
           <FormInputs.TextInput
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
-            name="sender-info"
-            value={state.metadata.sender.info || ''}
-            onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-              'sender',
-              'info',
-              onChangeHandler
-            )}
+            name="metadata.sender.info"
             placeholder="Ytterligare information, t.ex. portkod"
           />
 
           <FormInputs.Checkbox
-            defaultChecked={!!state.pickup.timeWindows?.length}
-            label="Bokningen behöver hämtas en viss tid"
+            defaultChecked={!!values.pickup.timeWindows?.length}
+            label="Bokningen behöver lämnas en viss tid"
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
           />
           <Elements.Layout.TimeRestrictionWrapper>
-            {showBookingTimeRestriction.pickup &&
-              state.pickup.timeWindows?.length && (
-                <FormInputs.TimeRestriction.BookingTimeRestrictionPair
-                  typeProperty="pickup"
-                  timeWindow={state.pickup.timeWindows[0]}
-                  onChangeHandler={handleBookingTimeRestrictionChange}
-                />
-              )}
+            {showBookingTimeRestriction.pickup && (
+              <FormInputs.TimeRestriction.BookingTimeRestrictionPair name="pickup.timeWindows[0]" />
+            )}
           </Elements.Layout.TimeRestrictionWrapper>
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputBlock>
@@ -240,15 +192,9 @@ const Component = ({
               />
               <FormInputs.TextInput
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                name="sendername"
-                value={state.metadata.sender.name || ''}
-                onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                  'sender',
-                  'name',
-                  onChangeHandler
-                )}
+                name="metadata.sender.name"
                 placeholder="Namn"
-                iconInset
+                iconinset="true"
               />
             </Elements.Layout.InputInnerContainer>
           </Elements.Layout.InputContainer>
@@ -261,27 +207,28 @@ const Component = ({
               />
               <FormInputs.TextInput
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                pattern="^[0-9]*$|^-$"
-                iconInset
-                name="sender"
-                value={state.metadata.sender.contact}
-                onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                  'sender',
-                  'contact',
-                  onChangeHandler
-                )}
+                iconinset="true"
+                name="metadata.sender.contact"
+                type="tel"
                 placeholder="Telefonnummer"
+                validate={validatePhoneNumber}
               />
+              {errors.metadata?.sender?.contact &&
+                touched.metadata?.sender?.contact && (
+                  <Elements.Typography.ErrorMessage>
+                    {errors.metadata.sender.contact}
+                  </Elements.Typography.ErrorMessage>
+                )}
             </Elements.Layout.InputInnerContainer>
           </Elements.Layout.InputContainer>
         </Elements.Layout.InputBlock>
-
         <Elements.Layout.MarginBottomContainer />
         {!animateFirstBlock && (
           <Elements.Buttons.NeutralButton
             padding="0.7rem 1.8rem"
             onClick={doAnimateFirstBlock}
             marginTop="0rem"
+            disabled={!errors.pickup && touched.pickup ? false : true}
           >
             Nästa
           </Elements.Buttons.NeutralButton>
@@ -294,55 +241,39 @@ const Component = ({
             Avlämning
           </Elements.Form.Label>
           <FormInputs.AddressSearchInput
+            name="delivery"
             placeholder="Adress (sök eller klicka på karta)"
-            value={state.delivery.name}
-            formErrors={formErrors.delivery}
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
                 payload: 'end',
               })
             }
-            onChangeHandler={eventHandlers.handleAddressInputForBooking(
-              'delivery',
-              onChangeHandler,
-              setFormErrors
-            )}
           />
-          {formErrors.delivery && (
+          {errors.delivery && touched.delivery && (
             <Elements.Typography.ErrorMessage>
-              Kunde inte hitta adressen, försök igen
+              {errors.delivery}
             </Elements.Typography.ErrorMessage>
           )}
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
           <FormInputs.TextInput
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
-            name="recipient-info"
-            value={state.metadata.recipient.info || ''}
-            onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-              'recipient',
-              'info',
-              onChangeHandler
-            )}
+            name="metadata.recipient.info"
             placeholder="Ytterligare information, t.ex. portkod"
           />
           <FormInputs.Checkbox
             label="Bokningen behöver lämnas en viss tid"
+            defaultChecked={!!values.pickup.timeWindows?.length}
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() =>
-              handleToggleTimeRestrictionsChange('delivery', onChangeHandler)
+              handleToggleTimeRestrictionsChange('delivery')
             }
           />
           <Elements.Layout.TimeRestrictionWrapper>
-            {showBookingTimeRestriction.delivery &&
-              state.delivery.timeWindows?.length && (
-                <FormInputs.TimeRestriction.BookingTimeRestrictionPair
-                  typeProperty="delivery"
-                  timeWindow={state.delivery.timeWindows[0]}
-                  onChangeHandler={handleBookingTimeRestrictionChange}
-                />
-              )}
+            {showBookingTimeRestriction.delivery && (
+              <FormInputs.TimeRestriction.BookingTimeRestrictionPair name="delivery.timeWindows[0]" />
+            )}
           </Elements.Layout.TimeRestrictionWrapper>
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputBlock>
@@ -356,15 +287,9 @@ const Component = ({
                 src={`${nameIcon}`}
               />
               <FormInputs.TextInput
-                iconInset
+                iconinset="true"
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                name="recipient-name"
-                value={state.metadata.recipient.name || ''}
-                onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                  'recipient',
-                  'name',
-                  onChangeHandler
-                )}
+                name="metadata.recipient.name"
                 placeholder="Namn"
               />
             </Elements.Layout.InputInnerContainer>
@@ -380,23 +305,23 @@ const Component = ({
                 src={`${nameIcon}`}
               />
               <FormInputs.TextInput
-                iconInset
-                name="recipient-contact"
-                pattern="^[0-9]*$|^-$"
-                value={state.metadata.recipient.contact}
+                iconinset="true"
+                name="metadata.recipient.contact"
+                type="tel"
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                onChangeHandler={eventHandlers.handleMetadataNestedInputChange(
-                  'recipient',
-                  'contact',
-                  onChangeHandler
-                )}
                 placeholder="Telefonnummer"
+                validate={validatePhoneNumber}
               />
+              {errors.metadata?.recipient?.contact &&
+                touched.metadata?.recipient?.contact && (
+                  <Elements.Typography.ErrorMessage>
+                    {errors.metadata.recipient.contact}
+                  </Elements.Typography.ErrorMessage>
+                )}
             </Elements.Layout.InputInnerContainer>
           </Elements.Layout.InputContainer>
         </Elements.Layout.InputBlock>
         <Elements.Layout.MarginBottomContainer />
-
         {animateFirstBlock && !animateSecondBlock && (
           <>
             <Elements.Buttons.NeutralButton
@@ -409,7 +334,6 @@ const Component = ({
             <Elements.Layout.MarginBottomContainer />
           </>
         )}
-
         {animateSecondBlock && (
           <OpacityFadeInAnim animate={animateSecondBlock}>
             <Elements.Layout.InputBlock>
@@ -419,41 +343,25 @@ const Component = ({
                 </Elements.Form.Label>
                 <FormInputs.ExternalIdSearchInput
                   placeholder="Referensnummer från avsändare"
-                  value={state.externalId || ''}
+                  name="externalId"
                   onFocus={() =>
                     dispatch({
                       type: 'focusInput',
                       payload: 'start',
                     })
                   }
-                  onChangeHandler={eventHandlers.handleTextInputChange(
-                    'externalId',
-                    onChangeHandler
-                  )}
                   onSearchResult={handleParcelSearchResults}
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>
                 <FormInputs.TextInput
-                  name="cargo"
-                  value={state.metadata.cargo || ''}
-                  onChangeHandler={eventHandlers.handleNestedInputChange(
-                    'metadata',
-                    'cargo',
-                    onChangeHandler
-                  )}
+                  name="metadata.cargo"
                   placeholder="Innehåll"
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>
                 <FormInputs.TextInput
-                  name="customer"
-                  value={state.metadata.customer || ''}
-                  onChangeHandler={eventHandlers.handleNestedInputChange(
-                    'metadata',
-                    'customer',
-                    onChangeHandler
-                  )}
+                  name="metadata.customer"
                   placeholder="Kund"
                 />
               </Elements.Layout.InputContainer>
@@ -467,59 +375,13 @@ const Component = ({
               <Elements.Form.Label htmlFor="size" required>
                 Hur stor är försändelsen?
               </Elements.Form.Label>
-              {!useCustomSize && (
-                <FormInputs.ParcelSize
-                  onChange={handleParcelSizeSelectChange}
-                  options={parcelSizeSelectOptions}
-                  defaultValue={sizePreset}
-                />
-              )}
 
-              {useCustomSize && (
-                <>
-                  <Elements.Layout.InputContainer>
-                    <FormInputs.TextInput
-                      required
-                      name="measurements"
-                      value={state.size.measurements}
-                      placeholder="Mått (BxHxDcm)"
-                      pattern="(\d+)x(\d+)x(\d+)"
-                      title="BxHxD cm"
-                      onChangeHandler={eventHandlers.handleNestedInputChange(
-                        'size',
-                        'measurements',
-                        onChangeHandler
-                      )}
-                    />
-                  </Elements.Layout.InputContainer>
-                  <Elements.Layout.InputContainer>
-                    <FormInputs.TextInput
-                      step={1}
-                      name="weight"
-                      value={state.size.weight}
-                      placeholder="Vikt (kg)"
-                      type="number"
-                      required
-                      isRequiredInline
-                      onChangeHandler={eventHandlers.handleNestedInputChange(
-                        'size',
-                        'weight',
-                        onChangeHandler
-                      )}
-                    />
-
-                    <Elements.Buttons.CancelButton
-                      padding="0.5rem"
-                      style={{
-                        marginTop: '0.5rem',
-                      }}
-                      onClick={() => setUseCustomSize(!useCustomSize)}
-                    >
-                      Återgå till förval
-                    </Elements.Buttons.CancelButton>
-                  </Elements.Layout.InputContainer>
-                </>
-              )}
+              <FormInputs.ParcelSize
+                parcelSizePresets={parcelSizePresets}
+                useCustomSize={useCustomSize}
+                setUseCustomSize={setUseCustomSize}
+                name="size"
+              />
             </Elements.Layout.InputContainer>
           </Elements.Layout.InputBlock>
         )}
@@ -537,11 +399,11 @@ const Component = ({
             padding="0.75rem 0"
             type="submit"
           >
-            {type !== 'edit' ? 'Lägg till' : 'Uppdatera'}
+            {type !== 'EDIT' ? 'Lägg till' : 'Uppdatera'}
           </Elements.Buttons.SubmitButton>
         </Elements.Layout.ButtonWrapper>
       </OpacityFadeInAnim>
-    </form>
+    </Form>
   )
 }
 

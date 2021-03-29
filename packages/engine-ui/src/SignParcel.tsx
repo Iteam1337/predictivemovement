@@ -88,7 +88,7 @@ const Component: React.FC<{
   const nodeRef = React.useRef<SignatureCanvas>(null)
   const params = useParams<{ bookingId?: string; transportId?: string }>()
   const bookings = stores.dataState((state) => state.bookings)
-
+  const [showWarningText, setShowWarningText] = React.useState(false)
   const booking = bookings.find((b) => b.id === params.bookingId)
 
   React.useEffect(() => {
@@ -102,10 +102,13 @@ const Component: React.FC<{
 
   const onDrawEnd = () => setHasDrawn(true)
 
-  const clear = () => nodeRef?.current?.clear()
+  const clear = () => {
+    nodeRef?.current?.clear()
+    setSignedBy('')
+  }
   const confirm = () => {
     const signatureAsBase64 = nodeRef?.current?.getTrimmedCanvas().toDataURL()
-
+    setShowWarningText(true)
     if (
       !nodeRef.current?.isEmpty() &&
       signatureAsBase64 &&
@@ -121,6 +124,7 @@ const Component: React.FC<{
         signedBy,
         new Date()
       )
+
       setIsFinished(true)
     }
   }
@@ -172,6 +176,11 @@ const Component: React.FC<{
               </Elements.Layout.InputInnerContainer>
             </Elements.Layout.MarginTopContainerSm>
           </div>
+          {showWarningText && (
+            <Elements.Typography.ErrorMessage>
+              Var god och fyll i namn och signatur
+            </Elements.Typography.ErrorMessage>
+          )}
           <Elements.Layout.MarginTopContainer></Elements.Layout.MarginTopContainer>
           <ButtonContainer>
             <Elements.Buttons.CancelButton

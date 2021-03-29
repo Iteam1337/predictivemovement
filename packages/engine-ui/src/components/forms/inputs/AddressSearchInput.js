@@ -91,7 +91,7 @@ const Component = ({ onFocusHandler, placeholder, name = '', ...rest }) => {
         src={`${locationIcon}`}
       />
 
-      <Elements.Form.TextInput
+      <Elements.Form.TextField
         {...rest}
         name={name}
         type="text"

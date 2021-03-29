@@ -118,7 +118,7 @@ const Component: React.FC<Props> = ({ placeholder, name, ...rest }) => {
           <ShowDropdownIcon src={arrowIcon} />
         </ShowDropdownButton>
       )}
-      <Elements.Form.TextInput
+      <Elements.Form.TextField
         {...rest}
         name={name}
         type="text"

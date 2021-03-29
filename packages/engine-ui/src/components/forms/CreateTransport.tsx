@@ -136,7 +136,7 @@ const Component = ({
           <Elements.Form.Label htmlFor="profile" required>
             Namn på transport
           </Elements.Form.Label>
-          <FormInputs.TextInput
+          <FormInputs.TextField
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             validate={validateNotEmpty}
             name="metadata.profile"
@@ -172,7 +172,7 @@ const Component = ({
               alt="Contact name icon"
               src={`${nameIcon}`}
             />
-            <FormInputs.TextInput
+            <FormInputs.TextField
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               iconinset="true"
               name="metadata.driver.name"
@@ -189,7 +189,7 @@ const Component = ({
               alt="Contact number icon"
               src={`${phoneIcon}`}
             />
-            <FormInputs.TextInput
+            <FormInputs.TextField
               iconinset="true"
               name="metadata.driver.contact"
               type="tel"

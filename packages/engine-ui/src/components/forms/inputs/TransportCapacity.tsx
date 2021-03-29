@@ -88,7 +88,7 @@ const TransportCapacity: React.FC<{
   ) : (
     <>
       <Elements.Layout.InputContainer>
-        <FormInputs.TextInput
+        <FormInputs.TextField
           step={0.1}
           min="0"
           name="capacity.volume"
@@ -104,7 +104,7 @@ const TransportCapacity: React.FC<{
       )}
 
       <Elements.Layout.InputContainer>
-        <FormInputs.TextInput
+        <FormInputs.TextField
           step={1}
           min="0"
           type="number"

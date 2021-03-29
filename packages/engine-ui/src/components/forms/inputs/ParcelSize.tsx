@@ -86,7 +86,7 @@ const ParcelSize: React.FC<{
   ) : (
     <>
       <Elements.Layout.InputContainer>
-        <FormInputs.TextInput
+        <FormInputs.TextField
           name="size.measurements"
           placeholder="Mått (BxHxDcm)"
           validate={validateMeasurementsFormat}
@@ -98,7 +98,7 @@ const ParcelSize: React.FC<{
         </Elements.Typography.ErrorMessage>
       )}
       <Elements.Layout.InputContainer>
-        <FormInputs.TextInput
+        <FormInputs.TextField
           step={1}
           name="size.weight"
           placeholder="Vikt (kg)"

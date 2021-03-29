@@ -43,7 +43,7 @@ const Component = ({ onSearchResult, placeholder, name, ...rest }) => {
           src={`${searchParcelIcon}`}
         />
       )}
-      <Elements.Form.TextInput
+      <Elements.Form.TextField
         {...rest}
         name="externalId"
         type="text"

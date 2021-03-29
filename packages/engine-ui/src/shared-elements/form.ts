@@ -30,7 +30,21 @@ const Label = styled.label<{ required?: boolean }>`
   }`}
 `
 
-const TextInput = styled(Field)<{ iconinset?: boolean; error?: boolean }>`
+const TextInput = styled.input<{ iconinset?: boolean; error?: boolean }>`
+  border: ${({ error }) => (error ? '1px solid red' : 'none')};
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.875rem;
+  padding: ${({ iconinset }) =>
+    iconinset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+
+  :focus {
+    outline-color: #13c57b;
+  }
+`
+
+const TextField = styled(Field)<{ iconinset?: boolean; error?: boolean }>`
   border: ${({ error }) => (error ? '1px solid red' : 'none')};
   background-color: #f1f3f5;
   border-radius: 0.25rem;
@@ -76,8 +90,9 @@ const DropdownButton = styled.button`
 export {
   DateInput,
   Label,
-  TextInput,
+  TextField,
   SelectInput,
   DropdownWrapper,
   DropdownButton,
+  TextInput,
 }

@@ -162,7 +162,7 @@ const Component = ({
           )}
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-          <FormInputs.TextInput
+          <FormInputs.TextField
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             name="metadata.sender.info"
             placeholder="Ytterligare information, t.ex. portkod"
@@ -190,7 +190,7 @@ const Component = ({
                 alt="Contact name icon"
                 src={`${nameIcon}`}
               />
-              <FormInputs.TextInput
+              <FormInputs.TextField
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
                 name="metadata.sender.name"
                 placeholder="Namn"
@@ -205,7 +205,7 @@ const Component = ({
                 alt="Contact phone icon"
                 src={`${phoneIcon}`}
               />
-              <FormInputs.TextInput
+              <FormInputs.TextField
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
                 iconinset="true"
                 name="metadata.sender.contact"
@@ -257,7 +257,7 @@ const Component = ({
           )}
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer style={{ marginBottom: '0.75rem' }}>
-          <FormInputs.TextInput
+          <FormInputs.TextField
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             name="metadata.recipient.info"
             placeholder="Ytterligare information, t.ex. portkod"
@@ -286,7 +286,7 @@ const Component = ({
                 alt="Contact name icon"
                 src={`${nameIcon}`}
               />
-              <FormInputs.TextInput
+              <FormInputs.TextField
                 iconinset="true"
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
                 name="metadata.recipient.name"
@@ -304,7 +304,7 @@ const Component = ({
                 alt="Contact phone icon"
                 src={`${nameIcon}`}
               />
-              <FormInputs.TextInput
+              <FormInputs.TextField
                 iconinset="true"
                 name="metadata.recipient.contact"
                 type="tel"
@@ -354,13 +354,13 @@ const Component = ({
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>
-                <FormInputs.TextInput
+                <FormInputs.TextField
                   name="metadata.cargo"
                   placeholder="Innehåll"
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>
-                <FormInputs.TextInput
+                <FormInputs.TextField
                   name="metadata.customer"
                   placeholder="Kund"
                 />

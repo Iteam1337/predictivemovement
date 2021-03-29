@@ -180,9 +180,7 @@ const Component = ({
           </Elements.Layout.InputInnerContainer>
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label required htmlFor="sender">
-            Kontakt
-          </Elements.Form.Label>
+          <Elements.Form.Label htmlFor="sender">Kontakt</Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>
             <Elements.Icons.FormInputIcon
               alt="Contact phone icon"
@@ -265,7 +263,7 @@ const Component = ({
         </Elements.Layout.InputContainer>
 
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label required htmlFor="recipient-contact">
+          <Elements.Form.Label htmlFor="recipient-contact">
             Kontakt
           </Elements.Form.Label>
           <Elements.Layout.InputInnerContainer>

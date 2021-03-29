@@ -34,7 +34,7 @@ const transportToNotification = (transport, event) => ({
 })
 
 const normalizePhoneNumber = (phoneNumber) => {
-  if (phoneNumber === '-') return phoneNumber
+  if (phoneNumber === '') return phoneNumber
 
   return phone(phoneNumber, 'SWE')[0]
 }

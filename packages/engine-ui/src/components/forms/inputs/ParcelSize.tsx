@@ -111,11 +111,7 @@ const ParcelSize: React.FC<{
           </Elements.Typography.ErrorMessage>
         )}
 
-        <Elements.Buttons.CancelButton
-          padding="0.5rem"
-          style={{
-            marginTop: '0.5rem',
-          }}
+        <Elements.Buttons.NeutralButton
           onClick={() => {
             setUseCustomSize(!useCustomSize)
             setFieldValue(field.name, {
@@ -125,7 +121,7 @@ const ParcelSize: React.FC<{
           }}
         >
           Återgå till förval
-        </Elements.Buttons.CancelButton>
+        </Elements.Buttons.NeutralButton>
       </Elements.Layout.InputContainer>
     </>
   )

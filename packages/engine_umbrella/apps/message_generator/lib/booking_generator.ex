@@ -5,7 +5,7 @@ defmodule MessageGenerator.BookingGenerator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
-  @default_metadata %{
+    @default_metadata %{
     sender: %{contact: "0701234567", name: "Anna Mottagaresson"},
     recipient: %{contact: "0707654321", name: "Mats Avsändaresson"}
   }

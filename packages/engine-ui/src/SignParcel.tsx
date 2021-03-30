@@ -7,8 +7,8 @@ import * as stores from './utils/state/stores'
 import SuccessScreen from './components/SuccessScreen'
 import nameIcon from './assets/contact-name.svg'
 
-const TextInput = styled.input<{ iconinset?: boolean; error?: boolean }>`
-  border: ${({ error }) => (error ? '1px solid red' : 'none')};
+const TextInput = styled.input<{ iconinset?: boolean }>`
+  border: none;
   background-color: #f1f3f5;
   border-radius: 0.25rem;
   width: 100%;
@@ -20,7 +20,6 @@ const TextInput = styled.input<{ iconinset?: boolean; error?: boolean }>`
     outline-color: #13c57b;
   }
 `
-
 const Container = styled.div`
   padding: 1rem;
   width: 100%;

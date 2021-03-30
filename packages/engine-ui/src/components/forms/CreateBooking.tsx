@@ -228,7 +228,9 @@ const Component = ({
             padding="0.7rem 1.8rem"
             onClick={doAnimateFirstBlock}
             marginTop="0rem"
-            disabled={!errors.pickup && touched.pickup ? false : true}
+            disabled={
+              errors.pickup || errors.metadata?.sender?.contact ? true : false
+            }
           >
             Nästa
           </Elements.Buttons.NeutralButton>

@@ -6,8 +6,20 @@ import * as Elements from './shared-elements/'
 import * as stores from './utils/state/stores'
 import SuccessScreen from './components/SuccessScreen'
 import nameIcon from './assets/contact-name.svg'
-import * as FormInputs from './components/forms/inputs'
 
+const TextInput = styled.input<{ iconinset?: boolean }>`
+  border: none;
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.875rem;
+  padding: ${({ iconinset }) =>
+    iconinset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+
+  :focus {
+    outline-color: #13c57b;
+  }
+`
 const Container = styled.div`
   padding: 1rem;
   width: 100%;
@@ -161,13 +173,13 @@ const Component: React.FC<{
                   alt="Contact name icon"
                   src={`${nameIcon}`}
                 />
-                <FormInputs.TextInput
+                <TextInput
                   onFocus={() => {}}
                   name="signedByName"
                   value={signedBy}
-                  onChangeHandler={onTextInputChange}
+                  onChange={onTextInputChange}
                   placeholder="Namn"
-                  iconinset="true"
+                  iconinset={true}
                 />
               </Elements.Layout.InputInnerContainer>
             </Elements.Layout.MarginTopContainerSm>

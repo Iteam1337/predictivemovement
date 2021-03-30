@@ -14,6 +14,8 @@ const Map: React.FC = () => {
   const [setCurrentLocation] = stores.currentLocation((state) => [state.set])
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
+  console.log('this isviewState: ', viewState)
+
   const dataState = stores.dataState(React.useCallback((state) => state, []))
   const mapLayersState = stores.mapLayerState(
     React.useCallback((state) => state, [])

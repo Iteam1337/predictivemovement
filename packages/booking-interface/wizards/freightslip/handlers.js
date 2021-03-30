@@ -32,6 +32,39 @@ const awaitManualSenderInput = new Composer().on('text', (ctx) =>
   })
 )
 
+const awaitManualRecipientInputAfterSender = new Composer().on('text', (ctx) =>
+  services.geolocation.get(ctx.update.message.text).then((res) => {
+    if (!res) {
+      return wizardHelpers.jumpToStep(ctx, 'notifyNoGeolocationResult')
+    }
+
+    const { state } = ctx.scene.session
+
+    Object.assign(state, {
+      recipient: res,
+    })
+
+    return ctx
+      .replyWithMarkdown(
+        `Är detta rätt?`
+          .concat(`\n${res.name}`)
+          .concat(`\n${res.address}`)
+          .concat(`\n${res.city}`),
+        Markup.inlineKeyboard([
+          Markup.callbackButton(
+            'Ja',
+            'recipient:geolookup:confirm_after_sender'
+          ),
+          Markup.callbackButton(
+            'Nej',
+            'recipient:geolookup:decline_after_sender'
+          ),
+        ]).extra()
+      )
+      .then(() => ctx.wizard.next())
+  })
+)
+
 const awaitManualRecipientInput = new Composer().on('text', (ctx) =>
   services.geolocation.get(ctx.update.message.text).then((res) => {
     if (!res) {
@@ -107,7 +140,11 @@ const awaitFreightSlipAnswer = new Composer()
   )
 
 const awaitSenderOrRecipientConfirmation = new Composer()
-  .action('freightslip:is_sender', (ctx) => {})
+  .action('freightslip:is_sender', (ctx) => {
+    const { state } = ctx.scene.session
+    state.booking = { from: state.matches[0] }
+    return wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
+  })
   .action('freightslip:is_recipient', (ctx) => {
     const { state } = ctx.scene.session
     state.booking = { to: state.matches[0] }
@@ -123,18 +160,21 @@ const awaitLocationAlternativeSelect = new Composer()
   )
   .action('location:from_freightslip', (ctx) => {})
 
-const awaitSenderLocationConfirm = new Composer().on('location', (ctx) => {
-  const { state } = ctx.scene.session
+const awaitSenderLocationConfirm = new Composer()
+  .on('location', (ctx) => {
+    const { state } = ctx.scene.session
 
-  state.booking = Object.assign({}, state.booking, {
-    id: services.booking.makeId(),
-    from: Object.assign({}, state.booking.from, {
-      location: ctx.message.location,
-    }),
+    state.booking = Object.assign({}, state.booking, {
+      from: Object.assign({}, state.booking.from, {
+        location: ctx.message.location,
+      }),
+    })
+
+    return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
   })
-
-  return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
-})
+  .action('location:cancel', (ctx) =>
+    wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
+  )
 
 const notifyNoGeolocationResult = (ctx) =>
   ctx
@@ -142,6 +182,9 @@ const notifyNoGeolocationResult = (ctx) =>
     .then(() => wizardHelpers.jumpToStep(ctx, 'intro'))
 
 const askForManualRecipient = (ctx) =>
+  ctx.reply('Skriv in mottagaradressen').then(() => ctx.wizard.next())
+
+const askForManualRecipientAfterSender = (ctx) =>
   ctx.reply('Skriv in mottagaradressen').then(() => ctx.wizard.next())
 
 const askForManualSender = (ctx) =>
@@ -161,7 +204,7 @@ const askAddAdditionalInformation = (ctx) =>
 const askForLocation = (ctx) => {
   return ctx
     .replyWithMarkdown(
-      `Tack! Vill du skicka din nuvarande position\n som avsändaradress?`,
+      `Tack! Vill du skicka din nuvarande position som avsändaradress?`,
       Markup.inlineKeyboard([
         Markup.callbackButton('Ja', 'location:from_location'),
         Markup.callbackButton(
@@ -201,7 +244,6 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
 
   const fileLink = await services.bot.getFileLink(bot, file_id)
 
-  // const photo = Buffer.from(response.data, 'binary').toString('base64')
   try {
     const text = await services.text.getTextFromPhoto(fileLink)
 
@@ -209,10 +251,27 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
       return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')
     }
 
-    const { state } = ctx.scene.session
+    console.log('this is text: ', text)
+    const regexResult = Array.from(text.matchAll(utils.adress))
+      .map((res) => res.groups)
+      .filter((group) => group.street && group.nr && group.zipcode)
+      .map((x) =>
+        // do something better here
+        Object.assign({}, x, { zipcode: x.zipcode.replace('SE-', '') })
+      )
 
-    Object.assign(state, {
-      matches: await utils.scanAddress(text),
+    const elasticRes = await Promise.all(regexResult.map(services.elastic.get))
+    console.log('elasticRes: ', elasticRes)
+    const searchResults = elasticRes
+      .map((res) => res.body.hits)
+      .map(services.formatQueryResult)
+
+    if (!searchResults.length) {
+      return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')
+    }
+
+    ctx.scene.session.state = Object.assign(ctx.scene.session.state, {
+      matches: searchResults,
     })
 
     return wizardHelpers.jumpToStep(ctx, 'askForSenderOrRecipientConfirmation')
@@ -240,25 +299,32 @@ const askForSenderOrRecipientConfirmation = (ctx) => {
 
   return ctx
     .replyWithMarkdown(
-      `${match.name}`
-        .concat(`\n${match.address}`)
-        .concat(`\n${match.postCode}`)
-        .concat(`\n${match.city}`),
-      Markup.inlineKeyboard([
-        Markup.callbackButton('Mottagare', 'freightslip:is_sender'),
-        Markup.callbackButton('Avsändare', 'freightslip:is_recipient'),
-      ]).extra()
+      `Så här tolkade vi bilden:`
+        .concat(`\n\n${match.address.street} ${match.address.number}`)
+        .concat(`\n${match.address.zip}`)
+        .concat(`\n${match.locality}`)
+        .concat(`\n\nÄr detta avsändare eller mottagare?`),
+      Markup.inlineKeyboard(
+        [
+          Markup.callbackButton('Mottagare', 'freightslip:is_recipient'),
+          Markup.callbackButton('Avsändare', 'freightslip:is_sender'),
+          Markup.callbackButton('Ingetdera', 'freightslip:is_neither'),
+        ],
+        { resize_keyboard: true }
+      ).extra()
     )
     .then(() => ctx.wizard.next())
 }
 
 const askForSenderLocationConfirm = (ctx) => {
   return ctx
-    .replyWithMarkdown(
-      Markup.keyboard([
+    .reply('Klicka på knappen för att dela position.', {
+      reply_markup: Markup.keyboard([
         Markup.locationRequestButton('📍 Dela position'),
-      ]).oneTime()
-    )
+        Markup.callbackButton('Avbryt', 'location:cancel'),
+      ]).oneTime(),
+    })
+
     .then(() => ctx.wizard.next())
 }
 
@@ -284,4 +350,6 @@ module.exports = [
   askForManualSender,
   awaitManualSenderInput,
   awaitManualSenderConfirmation,
+  askForManualRecipientAfterSender,
+  awaitManualRecipientInputAfterSender,
 ]

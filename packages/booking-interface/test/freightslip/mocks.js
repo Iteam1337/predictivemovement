@@ -15,18 +15,17 @@ const person = {
 
 const scanResult = [
   {
-    name: 'Lars Larsson',
-    address: 'Testvägen 25',
-    postCode: '123 45',
+    address: 'JÄRNTORGSG 12-14',
+    street: 'JÄRNTORGSG',
+    nr: '12-14',
+    zipcode: '413 01',
     city: 'Göteborg',
-  },
-  {
-    name: 'Maria Mariasson',
-    address: 'Testvägen 13',
-    postCode: '123 42',
-    city: 'Stockholm',
+    country: 'Phone',
   },
 ]
+
+const parsedText =
+  'MA I From: Anders Norrback Bornholm HäR age va lorrängsv SE-141-44 HUDDINGE Postnorc Phone: Contact: Anders Norrback Bornholm = Date: 2020-11-10 Sr frers Norrback Bornholm Date: 2020-11-10 Iteam Solutions Johanna MÅNSSON gRAHN JÄRNTORGSG 12-14 SE-413 01 GÖTEBORG Phone: Contact: Iteam Solutions Entry Code: Service Postpaket inrikes " 21 Issuer/Customer No: 12 I 117 100 020 9 Additional 8ervice(s) Shipment-ID: — 48916318778E'
 
 module.exports = {
   person,
@@ -34,4 +33,5 @@ module.exports = {
   testUser,
   manualRecipientInput,
   manualSenderInput,
+  parsedText,
 }

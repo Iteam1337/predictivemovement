@@ -7,4 +7,10 @@ const scanAddress = (_text) => [
   },
 ]
 
-module.exports = { scanAddress }
+const adress = new RegExp(
+  /(?<address>(?<street>[A-Za-zåäöÅÄÖéÈ]+)\s+(?<nr>(\d|\d-\d)+))?,?\s+(?<zipcode>([a-zA-Z$]{2}-)?(\d)+\s*\d+),?\s+(?<city>[A-Za-zåäöÅÄÖ]+),?\s?(?<country>[A-Za-zåäöÅÄÖ]+)?/gm
+)
+
+const extractAdresses = (str) => adress.exec(str)
+
+module.exports = { scanAddress, extractAdresses, adress }

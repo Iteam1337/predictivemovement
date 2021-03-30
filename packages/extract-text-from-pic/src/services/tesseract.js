@@ -10,7 +10,11 @@ const config = {
 
 function extractTextFromImageUrl(url) {
   return new Promise((resolve) => {
-    textract.fromUrl(url, config, (error, text) => resolve(text))
+    textract.fromUrl(
+      url,
+      config,
+      (error, text) => console.log(error) || resolve(text)
+    )
   })
 }
 

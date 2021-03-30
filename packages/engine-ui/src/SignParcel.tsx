@@ -26,21 +26,8 @@ const Container = styled.div`
   height: 100%;
   margin: 0 auto;
   max-width: 500px;
-  margin-top: 10rem;
   input {
     max-width: 300px;
-  }
-
-  @media (max-width: 768px) {
-    margin-top: 0;
-  }
-
-  @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
-    margin: 0;
-  }
-
-  @media only screen and (device-width: 812px) and (device-height: 375px) and (-webkit-device-pixel-ratio: 3) {
-    margin: 0;
   }
 `
 
@@ -51,6 +38,13 @@ const CanvasContainer = styled.div`
   border-radius: 10px;
   width: 99.9%;
   display: flex;
+
+  @media only screen and (max-device-height: 380px) {
+    height: 150px;
+  }
+  @media only screen and (max-device-height: 320px) {
+    height: 100px;
+  }
 `
 
 const ButtonContainer = styled.div`

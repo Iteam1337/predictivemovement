@@ -1,4 +1,4 @@
-export interface SignParcel {
+export interface SignParcelValues {
   type: string
   bookingId: string
   transportId: string

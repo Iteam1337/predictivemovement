@@ -56,13 +56,22 @@ const Signature = ({
   )
 }
 
-const SignForm: React.FC<{}> = () => {
+const SignForm: React.FC<{ recipientName: string | undefined }> = ({
+  recipientName,
+}) => {
   const nodeRef = React.useRef<SignatureCanvas>(null)
   const {
     resetForm,
     errors,
     touched,
+    setFieldValue,
   }: FormikProps<SignFormState> = useFormikContext()
+
+  React.useEffect(() => {
+    if (recipientName) {
+      setFieldValue('signedBy', recipientName)
+    }
+  }, [recipientName])
 
   const clear = () => {
     nodeRef?.current?.clear()

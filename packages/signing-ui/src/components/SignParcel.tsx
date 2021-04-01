@@ -1,6 +1,5 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import SignatureCanvas from 'react-signature-canvas'
 import styled from 'styled-components'
 import SuccessScreen from './SuccessScreen'
 import { Formik } from 'formik'
@@ -21,7 +20,9 @@ const Container = styled.div`
 
 export interface SignFormState {
   signedBy: string
-  signature: string
+  receipt: {
+    base64Signature: string
+  }
 }
 
 const LoadingContainer = styled.div`
@@ -46,26 +47,24 @@ const BookingNotFound = () => {
   )
 }
 
-const Component: React.FC<{
-  onSubmit: (args: SignParcelValues) => void
+const SignParcel = ({
+  onSubmit,
+  bookings,
+}: {
+  onSubmit: ({}: SignParcelValues) => void
   bookings: Booking[] | undefined
-}> = ({ onSubmit, bookings }) => {
+}) => {
   const [isFinished, setIsFinished] = React.useState<boolean>(false)
-  const nodeRef = React.useRef<SignatureCanvas>(null)
   const params = useParams<{ bookingId?: string; transportId?: string }>()
   const booking = bookings?.find((b) => b.id === params.bookingId)
 
   const handleOnSubmit = (values: any, actions: any) => {
-    const signatureAsBase64 = nodeRef?.current?.getTrimmedCanvas().toDataURL()
-    console.log({ values, actions })
-
     if (params.transportId && params.bookingId) {
       onSubmit({
+        ...values,
         type: 'signature',
         bookingId: params.bookingId,
         transportId: params.transportId,
-        signature: values.signature,
-        signedBy: values.signedBy,
         createdAt: new Date(),
       })
       setIsFinished(true)
@@ -90,7 +89,12 @@ const Component: React.FC<{
         <>
           <Formik
             onSubmit={handleOnSubmit}
-            initialValues={{ signedBy: '', signature: '' }}
+            initialValues={{
+              signedBy: '',
+              receipt: {
+                base64Signature: '',
+              },
+            }}
           >
             <SignForm recipientName={booking?.metadata?.recipient?.name} />
           </Formik>
@@ -100,4 +104,4 @@ const Component: React.FC<{
   )
 }
 
-export default Component
+export default SignParcel

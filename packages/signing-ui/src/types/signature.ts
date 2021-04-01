@@ -2,7 +2,9 @@ export interface SignParcelValues {
   type: string
   bookingId: string
   transportId: string
-  signature: string
+  receipt: {
+    base64Signature: string
+  }
   signedBy: string
   createdAt: Date
 }

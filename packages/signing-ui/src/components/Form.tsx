@@ -3,7 +3,7 @@ import SignatureCanvas from 'react-signature-canvas'
 import styled from 'styled-components'
 import * as Elements from '../styles/'
 import nameIcon from '../assets/contact-name.svg'
-import { Form, FormikProps, useFormikContext } from 'formik'
+import { Form, FormikFormProps, FormikProps, useFormikContext } from 'formik'
 import { SignFormState } from './SignParcel'
 
 const CanvasContainer = styled.div`
@@ -31,22 +31,21 @@ const ButtonContainer = styled.div`
   }
 `
 
-const Signature = ({
-  nodeRef,
-}: {
-  nodeRef: React.LegacyRef<SignatureCanvas> | undefined
-}) => {
+const Signature = React.forwardRef((props: any, ref: any) => {
   const { setFieldValue } = useFormikContext()
-  const onDrawEnd = (e: any) => {
-    setFieldValue('signature', e.target.toDataURL())
-  }
+  const onDrawEnd = () =>
+    setFieldValue(
+      'receipt.base64Signature',
+      ref?.current?.getTrimmedCanvas().toDataURL()
+    )
 
   return (
     <CanvasContainer>
       <SignatureCanvas
-        clearOnResize={false}
+        {...props}
         onEnd={onDrawEnd}
-        ref={nodeRef}
+        clearOnResize={false}
+        ref={ref}
         penColor="black"
         canvasProps={{
           className: 'signature_canvas',
@@ -54,12 +53,12 @@ const Signature = ({
       />
     </CanvasContainer>
   )
-}
+})
 
 const SignForm: React.FC<{ recipientName: string | undefined }> = ({
   recipientName,
 }) => {
-  const nodeRef = React.useRef<SignatureCanvas>(null)
+  const nodeRef = React.useRef<any>(null)
   const {
     resetForm,
     errors,
@@ -94,13 +93,17 @@ const SignForm: React.FC<{ recipientName: string | undefined }> = ({
           Rita din signatur i rutan.
         </Elements.BoldParagraph>
         <Elements.TextInput
-          name="signature"
+          name="receipt.base64Signature"
           validate={validateNotEmpty}
-          render={() => <Signature nodeRef={nodeRef} />}
-        />
-        {errors.signature && touched.signature && (
-          <Elements.ErrorMessage>{errors.signature}</Elements.ErrorMessage>
-        )}
+        >
+          {(props: FormikFormProps) => <Signature {...props} ref={nodeRef} />}
+        </Elements.TextInput>
+        {errors.receipt?.base64Signature &&
+          touched.receipt?.base64Signature && (
+            <Elements.ErrorMessage>
+              {errors.receipt.base64Signature}
+            </Elements.ErrorMessage>
+          )}
         <Elements.MarginTopContainerSm>
           <Elements.InputInnerContainer>
             <Elements.FormInputIcon

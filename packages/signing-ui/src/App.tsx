@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSocket } from 'use-socketio'
 import SignParcel from './components/SignParcel'
-import { Route, Router, Switch } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import { Booking } from './types/booking'
 import { SignParcelValues } from './types/signature'
 
@@ -13,17 +13,8 @@ function App() {
     setBookings(data)
   })
 
-  const createDeliverySignature = (values: SignParcelValues) => {
-    console.log(values)
-    // socket.emit('signed-delivery', {
-    //   type: values.type,
-    //   bookingId,
-    //   transportId,
-    //   receipt: { base64Signature: signature },
-    //   signedBy,
-    //   createdAt,
-    // })
-  }
+  const createDeliverySignature = (params: SignParcelValues) =>
+    socket.emit('signed-delivery', params)
 
   return (
     <div>

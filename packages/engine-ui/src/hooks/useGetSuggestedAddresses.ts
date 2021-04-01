@@ -1,11 +1,14 @@
 import React from 'react'
 import * as helpers from '../utils/helpers'
+import * as stores from '../utils/state/stores'
 
 const useGetSuggestedAddresses = (initialState = []) => {
   const [suggested, set] = React.useState(initialState)
+  const viewState = stores.map((state) => state)
+
   const find = (query: string, callback: () => void) =>
     helpers
-      .findAddress(query)
+      .findAddress(query, viewState)
       .then(({ features }) => {
         const parsedFeatures = features.map(
           ({

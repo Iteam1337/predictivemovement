@@ -32,11 +32,23 @@ const map = create<types.MapState>(
   })
 )
 
+const currentLocation = create<types.CurrentLocation>(
+  (set, get): types.CurrentLocation => ({
+    lat: undefined,
+    lon: undefined,
+    name: '',
+    county: '',
+
+    set: (data) => set({ ...get(), ...data }),
+  })
+)
+
 const initialDataState: types.DataState = {
   bookings: [],
   transports: [],
   assignedBookings: [],
   plan: { excludedBookings: [], routes: [] },
+  signatures: [],
 }
 
 const dataState = create<types.DataStateWithSet>(
@@ -72,4 +84,4 @@ const notifications = create<types.NotificationsWithSet>(
   })
 )
 
-export { ui, map, dataState, mapLayerState, notifications }
+export { ui, map, dataState, mapLayerState, notifications, currentLocation }

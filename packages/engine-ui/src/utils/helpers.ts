@@ -1,4 +1,7 @@
 import moment from 'moment'
+import { MapState } from '../types/state'
+import { FlyToInterpolator } from 'react-map-gl'
+import * as types from '../types/state'
 
 interface Feature {
   properties: {
@@ -8,12 +11,13 @@ interface Feature {
   }
 }
 
-const findAddress = (query: string) => {
+const findAddress = (query: string, focusPoint: MapState) => {
   if (!query) {
     return Promise.resolve({ features: [] })
   }
+
   return fetch(
-    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}`,
+    `https://pelias.iteamdev.io/v1/autocomplete?layers=address&boundary.country=se&text=${query}&focus.point.lat=${focusPoint.latitude}&focus.point.lon=${focusPoint.longitude}`,
     {
       headers: {
         'Accept-Language': 'sv-SE',
@@ -74,6 +78,66 @@ const hexToRGBA = (hex: string, opacity: number = 255) => {
   return [r, g, b, opacity]
 }
 
+const getDistance = (distance: number) => {
+  const dist = Math.round(distance / 1000)
+
+  return `${dist} km`
+}
+
+const getDuration = (duration: number) => {
+  const num = Math.round(duration / 60)
+  const hours = Math.floor(num / 60)
+  const minutes = num % 60
+  if (hours === 0) {
+    return `${minutes}min`
+  }
+  return `${hours}h ${minutes}min`
+}
+
+const focusMapOnClick = (
+  latitude: number,
+  longitude: number,
+  setMap: (args: Partial<MapState>) => void
+) => {
+  return setMap({
+    latitude,
+    longitude,
+    zoom: 10,
+    transitionDuration: 2000,
+    transitionInterpolator: new FlyToInterpolator(),
+    transitionEasing: (t: number) => t * (2 - t),
+  })
+}
+
+const shareCurrentLocation = (
+  setCurrentLocation: (args: Partial<types.CurrentLocation>) => void,
+  setViewState?: (args: Partial<MapState>) => void
+) => {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setViewState &&
+        setViewState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          zoom: 10,
+        })
+
+      getAddressFromCoordinate({
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+      }).then((data) =>
+        setCurrentLocation({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+          name: data.name,
+          county: data.county,
+        })
+      )
+    },
+    (error) => console.warn(error.message)
+  )
+}
+
 export {
   findAddress,
   calculateMinTime,
@@ -83,4 +147,8 @@ export {
   formatCoordinateToFixedDecimalLength,
   hexToRGBA,
   formatIdForEndUser,
+  focusMapOnClick,
+  getDistance,
+  getDuration,
+  shareCurrentLocation,
 }

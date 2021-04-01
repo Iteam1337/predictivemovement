@@ -5,11 +5,13 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
 import * as hooks from '../hooks'
 import * as stores from '../utils/state/stores'
+import * as helpers from '../utils/helpers'
 
 const Map: React.FC = () => {
   const history = useHistory()
   const [isHovering, setHover] = React.useState(false)
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
+  const [setCurrentLocation] = stores.currentLocation((state) => [state.set])
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
   const dataState = stores.dataState(React.useCallback((state) => state, []))
@@ -21,22 +23,9 @@ const Map: React.FC = () => {
     path: ['/plans/routes/:routeId'],
   })
 
-  const shareLocation = React.useCallback(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setViewState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          zoom: 10,
-        })
-      },
-      (error) => console.warn(error.message)
-    )
-  }, [setViewState])
-
   React.useEffect(() => {
-    shareLocation()
-  }, [shareLocation])
+    helpers.shareCurrentLocation(setCurrentLocation, setViewState)
+  }, [setViewState])
 
   const hideTooltip = React.useCallback(
     () => UIState.showMapTooltip && setUIState({ type: 'hideTooltip' }),

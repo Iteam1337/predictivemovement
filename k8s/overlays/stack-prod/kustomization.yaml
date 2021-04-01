@@ -17,3 +17,7 @@ configMapGenerator:
     behavior: merge
     envs:
       - engine.properties
+  - name: common-properties
+    behavior: merge
+    envs:
+      - common.properties

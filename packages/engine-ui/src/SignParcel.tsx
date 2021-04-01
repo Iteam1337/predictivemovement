@@ -6,29 +6,28 @@ import * as Elements from './shared-elements/'
 import * as stores from './utils/state/stores'
 import SuccessScreen from './components/SuccessScreen'
 import nameIcon from './assets/contact-name.svg'
-import * as FormInputs from './components/forms/inputs'
 
+const TextInput = styled.input<{ iconinset?: boolean }>`
+  border: none;
+  background-color: #f1f3f5;
+  border-radius: 0.25rem;
+  width: 100%;
+  font-size: 0.875rem;
+  padding: ${({ iconinset }) =>
+    iconinset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
+
+  :focus {
+    outline-color: #13c57b;
+  }
+`
 const Container = styled.div`
   padding: 1rem;
   width: 100%;
   height: 100%;
   margin: 0 auto;
   max-width: 500px;
-  margin-top: 10rem;
   input {
     max-width: 300px;
-  }
-
-  @media (max-width: 768px) {
-    margin-top: 0;
-  }
-
-  @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
-    margin: 0;
-  }
-
-  @media only screen and (device-width: 812px) and (device-height: 375px) and (-webkit-device-pixel-ratio: 3) {
-    margin: 0;
   }
 `
 
@@ -39,6 +38,13 @@ const CanvasContainer = styled.div`
   border-radius: 10px;
   width: 99.9%;
   display: flex;
+
+  @media only screen and (max-device-height: 380px) {
+    height: 150px;
+  }
+  @media only screen and (max-device-height: 320px) {
+    height: 100px;
+  }
 `
 
 const ButtonContainer = styled.div`
@@ -88,7 +94,7 @@ const Component: React.FC<{
   const nodeRef = React.useRef<SignatureCanvas>(null)
   const params = useParams<{ bookingId?: string; transportId?: string }>()
   const bookings = stores.dataState((state) => state.bookings)
-
+  const [showWarningText, setShowWarningText] = React.useState(false)
   const booking = bookings.find((b) => b.id === params.bookingId)
 
   React.useEffect(() => {
@@ -100,12 +106,15 @@ const Component: React.FC<{
   const onTextInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSignedBy(event.target.value)
 
-  const onDrawEnd = () => setHasDrawn((current) => !current)
+  const onDrawEnd = () => setHasDrawn(true)
 
-  const clear = () => nodeRef?.current?.clear()
+  const clear = () => {
+    nodeRef?.current?.clear()
+    setSignedBy('')
+  }
   const confirm = () => {
     const signatureAsBase64 = nodeRef?.current?.getTrimmedCanvas().toDataURL()
-
+    setShowWarningText(true)
     if (
       !nodeRef.current?.isEmpty() &&
       signatureAsBase64 &&
@@ -121,6 +130,7 @@ const Component: React.FC<{
         signedBy,
         new Date()
       )
+
       setIsFinished(true)
     }
   }
@@ -161,17 +171,22 @@ const Component: React.FC<{
                   alt="Contact name icon"
                   src={`${nameIcon}`}
                 />
-                <FormInputs.TextInput
+                <TextInput
                   onFocus={() => {}}
                   name="signedByName"
                   value={signedBy}
-                  onChangeHandler={onTextInputChange}
+                  onChange={onTextInputChange}
                   placeholder="Namn"
-                  iconInset
+                  iconinset={true}
                 />
               </Elements.Layout.InputInnerContainer>
             </Elements.Layout.MarginTopContainerSm>
           </div>
+          {showWarningText && (
+            <Elements.Typography.ErrorMessage>
+              Var god och fyll i namn och signatur
+            </Elements.Typography.ErrorMessage>
+          )}
           <Elements.Layout.MarginTopContainer></Elements.Layout.MarginTopContainer>
           <ButtonContainer>
             <Elements.Buttons.CancelButton

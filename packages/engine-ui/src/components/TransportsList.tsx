@@ -11,6 +11,7 @@ const TransportsList: React.FC<{
   sortedFleets: string[]
 }> = ({ transports, fleet, sortedFleets }) => {
   const setUIState = stores.ui((state) => state.dispatch)
+  const setMap = stores.map((state) => state.set)
   const [isOpen, setIsOpen] = React.useState(true)
 
   const filteredTransports = transports.filter(
@@ -62,6 +63,13 @@ const TransportsList: React.FC<{
                     type: 'highlightTransport',
                     payload: undefined,
                   })
+                }
+                onClick={() =>
+                  helpers.focusMapOnClick(
+                    transport.startAddress.lat,
+                    transport.startAddress.lon,
+                    setMap
+                  )
                 }
                 to={`/transports/${transport.id}`}
               >

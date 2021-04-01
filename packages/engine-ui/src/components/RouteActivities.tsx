@@ -132,13 +132,6 @@ const RouteActivities = ({ route }: Props) => {
       : `/bookings/${activityId}`
   }
 
-  const getDistance = (distance: number) => {
-    return Math.round(distance / 1000)
-  }
-  const getDuration = (duration: number) => {
-    return Math.round(duration / 60)
-  }
-
   return (
     <Wrapper>
       <Elements.Typography.BoldParagraph>
@@ -150,10 +143,10 @@ const RouteActivities = ({ route }: Props) => {
             <TimelineItem>
               <TimeContainer>
                 <SmallParagraph>
-                  {getDuration(activity.duration)} min{' '}
+                  {helpers.getDuration(activity.duration)}
                 </SmallParagraph>
                 <SmallParagraph>
-                  ({getDistance(activity.distance)} km)
+                  ({helpers.getDistance(activity.distance)})
                 </SmallParagraph>
               </TimeContainer>
 

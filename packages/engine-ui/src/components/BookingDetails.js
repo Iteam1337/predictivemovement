@@ -8,12 +8,18 @@ import moment from 'moment'
 import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
 import * as stores from '../utils/state/stores'
+import DeliveryDetails from './DeliveryDetails'
+
+const BorderContainer = styled.div`
+  padding-right: ${(props) => (props.visible ? '0.5rem' : null)};
+  border-right: ${(props) => (props.visible ? '1px solid #e5e5e5' : null)};
+  width: ${(props) => (props.visible ? '300px' : '100%')}; ;
+`
 
 const Paragraph = styled.p`
   margin-bottom: 0.25rem;
   margin-top: 0;
 `
-
 const CapitalizeParagraph = styled(Paragraph)`
   text-transform: capitalize;
 `
@@ -189,6 +195,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
   const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
 
   const bookingEvents = events.map((event) => event.type)
+
   const eventsList = events
     .sort((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1))
     .concat(
@@ -196,176 +203,201 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
         return !bookingEvents.includes(event)
       })
     )
-
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
-        <Elements.Layout.FlexRowWrapper>
-          <h3>Bokning</h3>
-          <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
-            {helpers.getLastFourChars(booking.id).toUpperCase()}
-          </Elements.Typography.RoundedLabelDisplay>
-        </Elements.Layout.FlexRowWrapper>
-        <Elements.Layout.SectionWithMargin>
-          {cargo && (
-            <CapitalizeParagraph>
-              <Elements.Typography.SpanBold>
-                Innehåll:{' '}
-              </Elements.Typography.SpanBold>
-              {cargo}
-            </CapitalizeParagraph>
-          )}
-          <Paragraph>
-            <Elements.Typography.SpanBold>
-              Ömtåligt:{' '}
-            </Elements.Typography.SpanBold>
-            {fragile ? 'Ja' : 'Nej'}
-          </Paragraph>
-          {measurements && (
-            <Paragraph>
-              <Elements.Typography.SpanBold>
-                Mått:{' '}
-              </Elements.Typography.SpanBold>
-              {measurements.map((item, index) =>
-                measurements.length === index + 1 ? `${item} cm ` : `${item}x`
-              )}
-            </Paragraph>
-          )}
-          {weight && (
-            <Paragraph>
-              <Elements.Typography.SpanBold>
-                Vikt:{' '}
-              </Elements.Typography.SpanBold>
-              {`${weight} kg`}
-            </Paragraph>
-          )}
-        </Elements.Layout.SectionWithMargin>
-        <Elements.Layout.SectionWithMargin>
-          <Elements.Layout.MarginBottomContainer>
-            <Elements.Typography.StrongParagraph>
-              Upphämtning
-            </Elements.Typography.StrongParagraph>
-            <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
-            {pickup.timeWindows && pickup.timeWindows.map(timeWindowToElement)}
-          </Elements.Layout.MarginBottomContainer>
-          {sender.name && (
-            <Elements.Layout.FlexRowBaselineContainer>
-              <Elements.Icons.MarginRightIcon
-                src={ContactName}
-                alt="Contact Avatar"
-              />
-              <CapitalizeParagraph>{sender.name}</CapitalizeParagraph>
-            </Elements.Layout.FlexRowBaselineContainer>
-          )}
-          <Elements.Layout.FlexRowBaselineContainer>
-            <Elements.Icons.MarginRightIcon
-              src={ContactPhone}
-              alt="Contact Phone"
-            />
-            <Paragraph>{sender.contact}</Paragraph>
-          </Elements.Layout.FlexRowBaselineContainer>
-        </Elements.Layout.SectionWithMargin>
-        <Elements.Layout.SectionWithMargin>
-          <Elements.Layout.MarginBottomContainer>
-            <Elements.Typography.StrongParagraph>
-              Avlämning
-            </Elements.Typography.StrongParagraph>
-            <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
-            {delivery.timeWindows &&
-              delivery.timeWindows.map(timeWindowToElement)}
-          </Elements.Layout.MarginBottomContainer>
-          {sender.name && (
-            <Elements.Layout.FlexRowBaselineContainer>
-              <Elements.Icons.MarginRightIcon
-                src={ContactName}
-                alt="Contact Avatar"
-              />
-              <CapitalizeParagraph>{recipient.name}</CapitalizeParagraph>
-            </Elements.Layout.FlexRowBaselineContainer>
-          )}
-          <Elements.Layout.FlexRowBaselineContainer>
-            <Elements.Icons.MarginRightIcon
-              src={ContactPhone}
-              alt="Contact Phone"
-            />
-            <Paragraph>{recipient.contact}</Paragraph>
-          </Elements.Layout.FlexRowBaselineContainer>
-        </Elements.Layout.SectionWithMargin>
-        <Elements.Layout.MarginTopContainer>
-          {booking.assigned_to && (
-            <>
-              <Elements.Typography.StrongParagraph>
-                Bokad transport
-              </Elements.Typography.StrongParagraph>
-
-              <Elements.Links.RoundedLink
-                to={`/transports/${booking.assigned_to.id}`}
-              >
-                {helpers.getLastFourChars(booking.assigned_to.id).toUpperCase()}
-              </Elements.Links.RoundedLink>
-            </>
-          )}
-        </Elements.Layout.MarginTopContainer>
-        <Timeline>
-          <Elements.Typography.StrongParagraph>
-            Status
-          </Elements.Typography.StrongParagraph>
-          {booking.events.length ? (
-            <ol>
-              {eventsList.map((event, index) => {
-                return (
-                  <TimelineListItem
-                    key={index}
-                    status={event.type ? true : false}
-                    error={event.type === 'delivery_failed'}
-                  >
-                    <Line status={event.type ? true : false} />
-                    {event.type ? (
-                      <>
-                        <Elements.Typography.NoMarginParagraph>
-                          {moment(event.timestamp).format('HH:mm')}
-                        </Elements.Typography.NoMarginParagraph>
-                        <Elements.Layout.MarginLeftContainerSm>
-                          <Elements.Typography.NoMarginParagraph>
-                            {parseEventTypeToHumanReadable(event.type)}
-                          </Elements.Typography.NoMarginParagraph>
-                        </Elements.Layout.MarginLeftContainerSm>
-                      </>
-                    ) : (
-                      <ExpectedEventWrapper>
-                        <ExpectedEventParagraph>
-                          {parseEventTypeToHumanReadable(event)}
-                        </ExpectedEventParagraph>
-                      </ExpectedEventWrapper>
+        <Elements.Layout.FlexContainer>
+          <div style={{ width: '300px' }}>
+            <Elements.Layout.FlexRowWrapper>
+              <h3>Bokning</h3>
+              <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
+                {helpers.getLastFourChars(booking.id).toUpperCase()}
+              </Elements.Typography.RoundedLabelDisplay>
+            </Elements.Layout.FlexRowWrapper>
+            <BorderContainer visible={booking.status === 'delivered'}>
+              <Elements.Layout.SectionWithMargin>
+                {cargo && (
+                  <CapitalizeParagraph>
+                    <Elements.Typography.SpanBold>
+                      Innehåll:{' '}
+                    </Elements.Typography.SpanBold>
+                    {cargo}
+                  </CapitalizeParagraph>
+                )}
+                <Paragraph>
+                  <Elements.Typography.SpanBold>
+                    Ömtåligt:{' '}
+                  </Elements.Typography.SpanBold>
+                  {fragile ? 'Ja' : 'Nej'}
+                </Paragraph>
+                {measurements && (
+                  <Paragraph>
+                    <Elements.Typography.SpanBold>
+                      Mått:{' '}
+                    </Elements.Typography.SpanBold>
+                    {measurements.map((item, index) =>
+                      measurements.length === index + 1
+                        ? `${item} cm `
+                        : `${item}x`
                     )}
-                  </TimelineListItem>
-                )
-              })}
-            </ol>
-          ) : (
-            <CapitalizeParagraph>{booking.status} </CapitalizeParagraph>
-          )}
-        </Timeline>
+                  </Paragraph>
+                )}
+                {weight && (
+                  <Paragraph>
+                    <Elements.Typography.SpanBold>
+                      Vikt:{' '}
+                    </Elements.Typography.SpanBold>
+                    {`${weight} kg`}
+                  </Paragraph>
+                )}
+              </Elements.Layout.SectionWithMargin>
+              <Elements.Layout.SectionWithMargin>
+                <Elements.Layout.MarginBottomContainer>
+                  <Elements.Typography.StrongParagraph>
+                    Upphämtning
+                  </Elements.Typography.StrongParagraph>
+                  <CapitalizeParagraph>{address.pickup}</CapitalizeParagraph>
+                  {pickup.timeWindows &&
+                    pickup.timeWindows.map(timeWindowToElement)}
+                </Elements.Layout.MarginBottomContainer>
+                {sender.name && (
+                  <Elements.Layout.FlexRowBaselineContainer>
+                    <Elements.Icons.MarginRightIcon
+                      src={ContactName}
+                      alt="Contact Avatar"
+                    />
+                    <CapitalizeParagraph>{sender.name}</CapitalizeParagraph>
+                  </Elements.Layout.FlexRowBaselineContainer>
+                )}
+                {sender.contact && (
+                  <Elements.Layout.FlexRowBaselineContainer>
+                    <Elements.Icons.MarginRightIcon
+                      src={ContactPhone}
+                      alt="Contact Phone"
+                    />
 
-        {booking.status === 'new' && (
-          <Elements.Layout.MarginTopContainer alignItems="center">
-            <Elements.Layout.ButtonWrapper>
-              <Elements.Buttons.SubmitButton
-                type="button"
-                onClick={() => handleChangeClick(id)}
-              >
-                Ändra bokning
-              </Elements.Buttons.SubmitButton>
-            </Elements.Layout.ButtonWrapper>
-            <Elements.Layout.ButtonWrapper>
-              <Elements.Buttons.CancelButton
-                onClick={() => handleDeleteClick(id)}
-              >
-                Radera bokning
-              </Elements.Buttons.CancelButton>
-            </Elements.Layout.ButtonWrapper>
-          </Elements.Layout.MarginTopContainer>
-        )}
+                    <Paragraph>{sender.contact}</Paragraph>
+                  </Elements.Layout.FlexRowBaselineContainer>
+                )}
+              </Elements.Layout.SectionWithMargin>
+              <Elements.Layout.SectionWithMargin>
+                <Elements.Layout.MarginBottomContainer>
+                  <Elements.Typography.StrongParagraph>
+                    Avlämning
+                  </Elements.Typography.StrongParagraph>
+                  <CapitalizeParagraph>{address.delivery}</CapitalizeParagraph>
+                  {delivery.timeWindows &&
+                    delivery.timeWindows.map(timeWindowToElement)}
+                </Elements.Layout.MarginBottomContainer>
+                {sender.name && (
+                  <Elements.Layout.FlexRowBaselineContainer>
+                    <Elements.Icons.MarginRightIcon
+                      src={ContactName}
+                      alt="Contact Avatar"
+                    />
+                    <CapitalizeParagraph>{recipient.name}</CapitalizeParagraph>
+                  </Elements.Layout.FlexRowBaselineContainer>
+                )}
+                {recipient.contact && (
+                  <Elements.Layout.FlexRowBaselineContainer>
+                    <Elements.Icons.MarginRightIcon
+                      src={ContactPhone}
+                      alt="Contact Phone"
+                    />
+                    <Paragraph>{recipient.contact}</Paragraph>
+                  </Elements.Layout.FlexRowBaselineContainer>
+                )}
+              </Elements.Layout.SectionWithMargin>
+              <Elements.Layout.MarginTopContainer>
+                {booking.assigned_to && (
+                  <>
+                    <Elements.Typography.StrongParagraph>
+                      Bokad transport
+                    </Elements.Typography.StrongParagraph>
+
+                    <Elements.Links.RoundedLink
+                      to={`/transports/${booking.assigned_to.id}`}
+                    >
+                      {helpers
+                        .getLastFourChars(booking.assigned_to.id)
+                        .toUpperCase()}
+                    </Elements.Links.RoundedLink>
+                  </>
+                )}
+              </Elements.Layout.MarginTopContainer>
+              <Timeline>
+                <Elements.Typography.StrongParagraph>
+                  Status
+                </Elements.Typography.StrongParagraph>
+                {booking.events.length ? (
+                  <ol>
+                    {eventsList.map((event, index) => {
+                      return (
+                        <TimelineListItem
+                          key={index}
+                          status={event.type ? true : false}
+                          error={event.type === 'delivery_failed'}
+                        >
+                          <Line status={event.type ? true : false} />
+                          {event.type ? (
+                            <>
+                              <Elements.Typography.NoMarginParagraph>
+                                {moment(event.timestamp).format('HH:mm')}
+                              </Elements.Typography.NoMarginParagraph>
+                              <Elements.Layout.MarginLeftContainerSm>
+                                <Elements.Typography.NoMarginParagraph>
+                                  {parseEventTypeToHumanReadable(event.type)}
+                                </Elements.Typography.NoMarginParagraph>
+                              </Elements.Layout.MarginLeftContainerSm>
+                            </>
+                          ) : (
+                            <ExpectedEventWrapper>
+                              <ExpectedEventParagraph>
+                                {parseEventTypeToHumanReadable(event)}
+                              </ExpectedEventParagraph>
+                            </ExpectedEventWrapper>
+                          )}
+                        </TimelineListItem>
+                      )
+                    })}
+                  </ol>
+                ) : (
+                  <CapitalizeParagraph>{booking.status} </CapitalizeParagraph>
+                )}
+              </Timeline>
+
+              {booking.status === 'new' && (
+                <Elements.Layout.MarginTopContainer alignItems="center">
+                  <Elements.Layout.ButtonWrapper>
+                    <Elements.Buttons.SubmitButton
+                      type="button"
+                      onClick={() => handleChangeClick(id)}
+                    >
+                      Ändra bokning
+                    </Elements.Buttons.SubmitButton>
+                  </Elements.Layout.ButtonWrapper>
+                  <Elements.Layout.ButtonWrapper>
+                    <Elements.Buttons.CancelButton
+                      onClick={() => handleDeleteClick(id)}
+                    >
+                      Radera bokning
+                    </Elements.Buttons.CancelButton>
+                  </Elements.Layout.ButtonWrapper>
+                </Elements.Layout.MarginTopContainer>
+              )}
+            </BorderContainer>
+          </div>
+          <div>
+            {booking.status === 'delivered' && (
+              <DeliveryDetails
+                distance={booking.route.distance}
+                duration={booking.route.duration}
+                bookingId={bookingId}
+                assignedTo={booking.assignedTo.id}
+              />
+            )}
+          </div>
+        </Elements.Layout.FlexContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

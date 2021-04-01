@@ -1,12 +1,12 @@
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import * as Elements from '../shared-elements'
 import Form from './forms/CreateTransport'
 import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './SuccessScreen'
-import * as hooks from '../hooks'
 import moment from 'moment'
 import * as stores from '../utils/state/stores'
 import React from 'react'
+import { Formik, FormikHelpers } from 'formik'
 
 export const transportPresets = {
   small: { weight: '1234', volume: '18' },
@@ -76,21 +76,7 @@ const CreateTransport = ({
   const history = useHistory()
   const [isActive, setActive] = React.useState(false)
   const [isFinished, setIsFinished] = React.useState(false)
-  const [formState, setState] = React.useState(initialState)
   const setUIState = stores.ui((state) => state.dispatch)
-
-  hooks.useFormStateWithMapClickControl('startAddress', 'endAddress', setState)
-
-  const { fleet } = useParams<{ fleet: string | undefined }>()
-
-  React.useEffect(() => {
-    if (fleet) {
-      setState((current) => ({
-        ...current,
-        metadata: { ...current.metadata, fleet },
-      }))
-    }
-  }, [fleet])
 
   React.useEffect(() => {
     setActive(true)
@@ -98,44 +84,45 @@ const CreateTransport = ({
     return () => setActive(false)
   }, [isActive])
 
-  const onSubmitHandler = (event: any) => {
-    event.preventDefault()
+  const onSubmitHandler = (
+    values: FormState,
+    actions: FormikHelpers<FormState>
+  ) => {
+    const endAddress = values.endAddress || values.startAddress
 
-    const endAddress = formState.endAddress || formState.startAddress
     onSubmit({
-      ...formState,
-      earliestStart: formState.earliestStart
-        ? moment(formState.earliestStart).format('HH:mm')
-        : formState.earliestStart,
+      ...values,
+      earliestStart: values.earliestStart
+        ? moment(values.earliestStart).format('HH:mm')
+        : values.earliestStart,
       capacity: {
-        weight: parseInt(formState.capacity.weight),
-        volume: parseFloat(formState.capacity.volume),
+        weight: parseInt(values.capacity.weight),
+        volume: parseFloat(values.capacity.volume),
       },
-      latestEnd: formState.latestEnd
-        ? moment(formState.latestEnd).format('HH:mm')
-        : formState.latestEnd,
+      latestEnd: values.latestEnd
+        ? moment(values.latestEnd).format('HH:mm')
+        : values.latestEnd,
       startAddress: {
-        ...formState.startAddress,
-        name: formState.startAddress.name || undefined,
+        ...values.startAddress,
+        name: values.startAddress.name || undefined,
       },
       endAddress: {
         ...endAddress,
         name: endAddress.name || undefined,
       },
       metadata: {
-        ...formState.metadata,
+        ...values.metadata,
         driver: {
-          name: formState.metadata.driver.name || undefined,
-          contact: formState.metadata.driver.contact || undefined,
+          name: values.metadata.driver.name || undefined,
+          contact: values.metadata.driver.contact || undefined,
         },
       },
     })
-
+    actions.setSubmitting(false)
     return setIsFinished(true)
   }
 
   const handleOnContinue = () => {
-    setState(initialState)
     setIsFinished(false)
   }
 
@@ -152,17 +139,16 @@ const CreateTransport = ({
 
   return (
     <MainRouteLayout redirect="/transports">
-      <Elements.Layout.Container>
+      <Elements.Layout.ContainerWidth>
         <h3>Lägg till transport</h3>
-        <Form
-          onChangeHandler={setState}
-          onSubmitHandler={onSubmitHandler}
-          formState={formState}
-          dispatch={setUIState}
-          transportPresets={transportPresets}
-          type="NEW"
-        />
-      </Elements.Layout.Container>
+        <Formik initialValues={initialState} onSubmit={onSubmitHandler}>
+          <Form
+            dispatch={setUIState}
+            transportPresets={transportPresets}
+            type="NEW"
+          />
+        </Formik>
+      </Elements.Layout.ContainerWidth>
     </MainRouteLayout>
   )
 }

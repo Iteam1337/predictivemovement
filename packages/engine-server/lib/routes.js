@@ -16,7 +16,7 @@ const {
 } = require('./mappings')
 
 const { serviceStatus, getStatus } = require('./serviceStatus')
-const { saveSignature } = require('./adapters/minio')
+const { saveSignature, getSignatures } = require('./adapters/minio')
 
 module.exports = (io) => {
   const {
@@ -39,7 +39,10 @@ module.exports = (io) => {
     receipts,
   } = require('./engineConnector')(io)
 
-  require('./receipts')(receipts, confirmDeliveryReceipt)
+  require('./receipts')(receipts, (signature) => {
+    confirmDeliveryReceipt(signature.bookingId, signature.transportId)
+    io.sockets.emit('signatures', [signature])
+  })
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
@@ -118,28 +121,11 @@ module.exports = (io) => {
       createBooking(toOutgoingBooking(booking))
     )
 
-    socket.on(
-      'signed-delivery',
-      ({ createdAt, signedBy, bookingId, transportId, receipt, type }) => {
-        saveSignature({
-          createdAt,
-          signedBy,
-          bookingId,
-          transportId,
-          receipt,
-          type,
-        })
-        receiptsCache.set(bookingId, {
-          type,
-          createdAt,
-          signedBy,
-          bookingId,
-          transportId,
-          receipt,
-        })
-        return confirmDeliveryReceipt(bookingId, transportId)
-      }
-    )
+    socket.on('signed-delivery', (receipt) => {
+      io.sockets.emit('signatures', [receipt])
+      saveSignature(receipt)
+      return confirmDeliveryReceipt(receipt.bookingId, receipt.transportId)
+    })
 
     socket.on('dispatch-offers', () => {
       console.log('received message to dispatch offers, from UI')
@@ -184,7 +170,13 @@ module.exports = (io) => {
       socket.emit('parcel-info', { weight, measurements })
     })
 
-    socket.emit('service-disruption', { status: getStatus() })
+    socket.emit('service-disruption', {
+      status: getStatus(),
+    })
+
+    getSignatures()
+      .fork()
+      .toArray((signatures) => socket.emit('signatures', signatures))
   })
 
   serviceStatus.fork().each((status) => {

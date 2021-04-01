@@ -1,14 +1,10 @@
-import React, { SetStateAction } from 'react'
-import { FormState as CreateTransportState } from '../components/CreateTransport'
-import { FormBooking } from '../components/EditBooking/EditBooking'
+import React from 'react'
 import * as stores from '../utils/state/stores'
 
-const useFormStateWithMapClickControl = <
-  T extends CreateTransportState | FormBooking
->(
+const useFormStateWithMapClickControl = (
   start: string,
   end: string,
-  set: (callback: SetStateAction<T>) => void
+  set: (field: string, value: any) => void
 ) => {
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
@@ -26,31 +22,23 @@ const useFormStateWithMapClickControl = <
 
       switch (UIState.lastFocusedInput) {
         case 'start':
-          set((current) => ({
-            ...current,
-            [start]: {
-              ...current[start],
-              name: formattedAddress,
-              street: address.name,
-              city: address.county,
-              lat,
-              lon,
-            },
-          }))
+          set(start, {
+            name: formattedAddress,
+            street: address.name,
+            city: address.county,
+            lat,
+            lon,
+          })
           break
 
         case 'end':
-          set((current) => ({
-            ...current,
-            [end]: {
-              ...current[end],
-              name: formattedAddress,
-              street: address.name,
-              city: address.county,
-              lat,
-              lon,
-            },
-          }))
+          set(end, {
+            name: formattedAddress,
+            street: address.name,
+            city: address.county,
+            lat,
+            lon,
+          })
           break
 
         default:

@@ -6,29 +6,65 @@ import Form from './forms/CreateBooking'
 import 'react-datepicker/dist/react-datepicker.css'
 import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './SuccessScreen'
-import * as hooks from '../hooks'
 import * as stores from '../utils/state/stores'
-
+import { Formik, FormikHelpers } from 'formik'
+export interface BookingFormState {
+  externalId: string
+  pickup: {
+    name: string
+    lat: string
+    lon: string
+    timeWindows:
+      | {
+          earliest: Date
+          latest: Date
+        }[]
+      | null
+    street: string
+    city: string
+  }
+  delivery: {
+    name: string
+    lat: string
+    lon: string
+    timeWindows:
+      | {
+          earliest: Date
+          latest: Date
+        }[]
+      | null
+    street: string
+    city: string
+  }
+  metadata: {
+    customer: string
+    cargo: string
+    fragile: boolean
+    recipient: { name: string; contact: string; info: string }
+    sender: { name: string; contact: string; info: string }
+  }
+  size: { weight: number; measurements: string }
+}
 const parcelSizePresets = {
   small: { weight: 1, measurements: '18x18x18' },
   medium: { weight: 10, measurements: '24x24x24' },
   big: { weight: 50, measurements: '36x36x36' },
 }
 
-export const initialState = {
+export const initialState: BookingFormState = {
   externalId: '',
   pickup: {
     name: '',
-    lat: undefined,
-    lon: undefined,
+    lat: '',
+    lon: '',
     timeWindows: null,
     street: '',
     city: '',
   },
   delivery: {
     name: '',
-    lat: undefined,
-    lon: undefined,
+    lat: '',
+    lon: '',
     street: '',
     city: '',
     timeWindows: null,
@@ -43,54 +79,31 @@ export const initialState = {
   size: parcelSizePresets.small,
 }
 
-const isValidAddress = ({ lat, lon }) => !!(lat && lon)
-
-const CreateBooking = ({ onSubmit }) => {
+const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
   const history = useHistory()
   const [isFinished, setIsFinished] = React.useState(false)
-  const [formState, setState] = React.useState(initialState)
-  const [formErrors, setFormErrors] = React.useState({
-    pickup: false,
-    delivery: false,
-  })
   const setUIState = stores.ui((state) => state.dispatch)
 
-  hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
-
-  const onSubmitHandler = (event) => {
-    event.preventDefault()
-
-    const validationResult = {
-      pickup: isValidAddress(formState.pickup),
-      delivery: isValidAddress(formState.delivery),
-    }
-
-    if (!validationResult.pickup || !validationResult.delivery) {
-      setFormErrors((formErrors) => ({
-        ...formErrors,
-        pickup: !validationResult.pickup,
-        delivery: !validationResult.delivery,
-      }))
-
-      return false
-    }
-
+  const onSubmitHandler = (
+    values: BookingFormState,
+    actions: FormikHelpers<BookingFormState>
+  ) => {
     onSubmit({
-      ...formState,
+      ...values,
       size: {
-        ...formState.size,
-        measurements: formState.size.measurements
-          ? formState.size.measurements.split('x').map(parseFloat)
+        ...values.size,
+        measurements: values.size.measurements
+          ? values.size.measurements.split('x').map(parseFloat)
           : null,
-        weight: parseInt(formState.size.weight) || 0,
+        weight: values.size.weight || 0,
       },
     })
 
+    actions.setSubmitting(false)
     return setIsFinished(true)
   }
 
   const handleOnContinue = () => {
-    setState(initialState)
     setIsFinished(false)
   }
 
@@ -109,15 +122,9 @@ const CreateBooking = ({ onSubmit }) => {
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
-        <Form
-          setFormErrors={setFormErrors}
-          formErrors={formErrors}
-          onChangeHandler={setState}
-          onSubmitHandler={onSubmitHandler}
-          state={formState}
-          dispatch={setUIState}
-          parcelSizePresets={parcelSizePresets}
-        />
+        <Formik initialValues={initialState} onSubmit={onSubmitHandler}>
+          <Form dispatch={setUIState} parcelSizePresets={parcelSizePresets} />
+        </Formik>
       </Elements.Layout.Container>
     </MainRouteLayout>
   )

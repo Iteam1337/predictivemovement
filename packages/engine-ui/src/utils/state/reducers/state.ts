@@ -65,6 +65,17 @@ const reducer = (
         plan: action.payload,
       }
 
+    case 'setSignatures':
+      return {
+        ...state,
+        signatures: [
+          ...state.signatures.filter(
+            (s) => !action.payload.find((p: any) => p.bookingId === s.bookingId)
+          ),
+          ...action.payload,
+        ],
+      }
+
     case 'clearState':
       return initState
 

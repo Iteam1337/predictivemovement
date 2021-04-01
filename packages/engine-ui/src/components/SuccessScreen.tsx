@@ -4,11 +4,12 @@ import * as Icons from '../assets/Icons'
 import * as Elements from '../shared-elements'
 
 const Container = styled.div`
-  width: 100%;
+  width: 304px;
   display: flex;
   align-items: center;
   flex-flow: column nowrap;
   margin-top: 20vh;
+  text-align: center;
 
   div {
     gap: 10px;

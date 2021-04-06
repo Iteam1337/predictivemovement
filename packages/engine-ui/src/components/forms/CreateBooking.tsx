@@ -136,6 +136,7 @@ const Component = ({
           </Elements.Form.Label>
 
           <FormInputs.AddressSearchInput
+            id="pickup"
             name="pickup"
             placeholder="Adress (sök eller klicka på karta)"
             onFocusHandler={() =>
@@ -192,6 +193,7 @@ const Component = ({
                   src={`${phoneIcon}`}
                 />
                 <FormInputs.TextInput
+                  id="sender-name"
                   onFocus={() => dispatch({ type: 'resetInputClickState' })}
                   iconinset="true"
                   name="metadata.sender.contact"
@@ -242,6 +244,7 @@ const Component = ({
             Avlämning
           </Elements.Form.Label>
           <FormInputs.AddressSearchInput
+            id="delivery"
             name="delivery"
             placeholder="Adress (sök eller klicka på karta)"
             onFocusHandler={() =>
@@ -289,6 +292,7 @@ const Component = ({
                   src={`${nameIcon}`}
                 />
                 <FormInputs.TextInput
+                  id="recipient-name"
                   iconinset="true"
                   name="metadata.recipient.contact"
                   type="tel"
@@ -339,6 +343,7 @@ const Component = ({
                   Paketspecifikationer
                 </Elements.Form.Label>
                 <FormInputs.ExternalIdSearchInput
+                  id="parceldetails"
                   placeholder="Referensnummer från avsändare"
                   name="externalId"
                   onFocus={() =>

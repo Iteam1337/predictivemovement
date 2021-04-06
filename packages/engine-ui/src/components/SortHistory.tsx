@@ -34,7 +34,7 @@ const Wrapper = styled.div`
   width: 8rem;
 `
 
-const SortWrapper = styled.div`
+const SortWrapper = styled.form`
   display: flex;
   width: 50%;
   justify-content: space-between;

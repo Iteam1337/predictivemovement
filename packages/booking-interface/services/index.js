@@ -67,7 +67,7 @@ const buildQuery = (parts, index = 'pelias') => ({
 const get = (parts) => client.search(buildQuery(parts))
 
 const formatQueryResult = (res) => {
-  const [topHit] = res.hits
+  const [topHit] = res.hits.hits
 
   return {
     address: topHit._source.address_parts,

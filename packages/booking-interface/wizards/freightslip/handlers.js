@@ -7,22 +7,20 @@ const wizardHelpers = require('../helpers')
 
 const awaitManualSenderInput = new Composer().on('text', (ctx) =>
   services.geolocation.get(ctx.update.message.text).then((res) => {
-    if (!res) {
+    if (!res || !res.length) {
       return wizardHelpers.jumpToStep(ctx, 'notifyNoGeolocationResult')
     }
 
     const { state } = ctx.scene.session
+    const [suggestion] = res
 
     Object.assign(state, {
-      sender: res,
+      suggestedSender: suggestion,
     })
 
     return ctx
       .replyWithMarkdown(
-        `Är detta rätt?`
-          .concat(`\n${res.name}`)
-          .concat(`\n${res.address}`)
-          .concat(`\n${res.city}`),
+        `Är detta rätt?`.concat(`\n\n${suggestion.properties.label}`),
         Markup.inlineKeyboard([
           Markup.callbackButton('Ja', 'sender:geolookup:confirm'),
           Markup.callbackButton('Nej', 'sender:geolookup:decline'),
@@ -32,57 +30,22 @@ const awaitManualSenderInput = new Composer().on('text', (ctx) =>
   })
 )
 
-const awaitManualRecipientInputAfterSender = new Composer().on('text', (ctx) =>
-  services.geolocation.get(ctx.update.message.text).then((res) => {
-    if (!res) {
-      return wizardHelpers.jumpToStep(ctx, 'notifyNoGeolocationResult')
-    }
-
-    const { state } = ctx.scene.session
-
-    Object.assign(state, {
-      recipient: res,
-    })
-
-    return ctx
-      .replyWithMarkdown(
-        `Är detta rätt?`
-          .concat(`\n${res.name}`)
-          .concat(`\n${res.address}`)
-          .concat(`\n${res.city}`),
-        Markup.inlineKeyboard([
-          Markup.callbackButton(
-            'Ja',
-            'recipient:geolookup:confirm_after_sender'
-          ),
-          Markup.callbackButton(
-            'Nej',
-            'recipient:geolookup:decline_after_sender'
-          ),
-        ]).extra()
-      )
-      .then(() => ctx.wizard.next())
-  })
-)
-
 const awaitManualRecipientInput = new Composer().on('text', (ctx) =>
   services.geolocation.get(ctx.update.message.text).then((res) => {
-    if (!res) {
+    if (!res || !res.length) {
       return wizardHelpers.jumpToStep(ctx, 'notifyNoGeolocationResult')
     }
 
     const { state } = ctx.scene.session
+    const [suggestion] = res
 
     Object.assign(state, {
-      recipient: res,
+      suggestedRecipient: suggestion,
     })
 
     return ctx
       .replyWithMarkdown(
-        `Är detta rätt?`
-          .concat(`\n${res.name}`)
-          .concat(`\n${res.address}`)
-          .concat(`\n${res.city}`),
+        `Är detta rätt?`.concat(`\n\n${suggestion.properties.label}`),
         Markup.inlineKeyboard([
           Markup.callbackButton('Ja', 'recipient:geolookup:confirm'),
           Markup.callbackButton('Nej', 'recipient:geolookup:decline'),
@@ -92,24 +55,36 @@ const awaitManualRecipientInput = new Composer().on('text', (ctx) =>
   })
 )
 
-const awaitManualRecipientConfirmation = new Composer()
-  .action('recipient:geolookup:confirm', (ctx) =>
-    wizardHelpers.jumpToStep(ctx, 'askForLocation')
-  )
-  .action('recipient:geolookup:decline', (ctx) => {
-    console.log('***declines recipient lookup suggestion***')
-  })
-
-const awaitManualSenderConfirmation = new Composer()
+const awaitManualContactConfirmation = new Composer()
   .action('sender:geolookup:confirm', (ctx) => {
     const { state } = ctx.scene.session
 
     state.booking = Object.assign({}, state.booking, {
       id: services.booking.makeId(),
-      from: Object.assign({}, state.booking.from, {
-        location: ctx.message.location,
-      }),
+      from: Object.assign({}, state.booking.from, state.suggestedSender),
     })
+
+    return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
+  })
+  .action('recipient:geolookup:confirm', (ctx) => {
+    const { state } = ctx.scene.session
+
+    if (state.booking && state.booking.from) {
+      // sender has already been entered
+      // and we shouldn't do that again.
+
+      state.booking = Object.assign({}, state.booking, {
+        id: services.booking.makeId(),
+        to: Object.assign({}, state.booking.to, state.suggestedRecipient),
+      })
+
+      return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
+    }
+
+    return wizardHelpers.jumpToStep(ctx, 'askForLocation')
+  })
+  .action('recipient:geolookup:decline', (ctx) => {
+    console.log('***declines recipient lookup suggestion***')
   })
   .action('sender:geolookup:decline', (ctx) => {
     console.log('***declines recipient lookup suggestion***')
@@ -131,7 +106,7 @@ const awaitRetryUploadOrManual = new Composer()
     wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
   })
 
-const awaitFreightSlipAnswer = new Composer()
+const awaitHasFreightslip = new Composer()
   .action('freightslip:confirm', (ctx) =>
     wizardHelpers.jumpToStep(ctx, 'askForUpload')
   )
@@ -251,7 +226,6 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
       return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')
     }
 
-    console.log('this is text: ', text)
     const regexResult = Array.from(text.matchAll(utils.adress))
       .map((res) => res.groups)
       .filter((group) => group.street && group.nr && group.zipcode)
@@ -261,9 +235,9 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
       )
 
     const elasticRes = await Promise.all(regexResult.map(services.elastic.get))
-    console.log('elasticRes: ', elasticRes)
+
     const searchResults = elasticRes
-      .map((res) => res.body.hits)
+      .map((res) => res.body)
       .map(services.formatQueryResult)
 
     if (!searchResults.length) {
@@ -330,7 +304,7 @@ const askForSenderLocationConfirm = (ctx) => {
 
 module.exports = [
   intro,
-  awaitFreightSlipAnswer,
+  awaitHasFreightslip,
   askForUpload,
   awaitImageUpload,
   askForSenderOrRecipientConfirmation,
@@ -345,11 +319,11 @@ module.exports = [
   awaitRetryUploadOrManual,
   askForManualRecipient,
   awaitManualRecipientInput,
-  awaitManualRecipientConfirmation,
+  awaitManualContactConfirmation,
   notifyNoGeolocationResult,
   askForManualSender,
   awaitManualSenderInput,
-  awaitManualSenderConfirmation,
+  awaitManualContactConfirmation,
   askForManualRecipientAfterSender,
-  awaitManualRecipientInputAfterSender,
+  awaitManualContactConfirmation,
 ]

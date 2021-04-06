@@ -80,117 +80,95 @@ describe('freightslip upload', () => {
   })
 
   describe('has image', () => {
-    describe('#recipient text extraction successful,  location share from device', () => {
-      uploadImage(telegrafTest)
-      askIfSenderOrRecipient(telegrafTest)
+    describe('text extraction successful, location share from device', () => {
+      describe('recipient', () => {
+        uploadImage(telegrafTest)
+        askIfSenderOrRecipient(telegrafTest)
 
-      test('user selects recipient and is prompted for recipient name', (done) => {
-        telegrafTest
-          .sendCallbackQueryWithData('freightslip:is_recipient')
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Tack!)/i)
-            expect(res.data).toHaveProperty('reply_markup')
+        test('user selects recipient and is prompted to add sender address', (done) => {
+          telegrafTest
+            .sendCallbackQueryWithData('freightslip:is_recipient')
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Tack!)/i)
+              expect(res.data).toHaveProperty('reply_markup')
 
-            expect(res.data.reply_markup.inline_keyboard).toEqual(
-              expect.arrayContaining([
-                expect.arrayContaining([
-                  expect.objectContaining({
-                    text: 'Ja',
-                  }),
-                  expect.objectContaining({
-                    text: 'Nej, hämta från fraktsedeln',
-                  }),
-                  expect.objectContaining({
-                    text: 'Nej, skriv in manuellt',
-                  }),
-                ]),
-              ])
-            )
+              done()
+            })
+        })
 
-            done()
-          })
+        test('user selects share location from device location and receives a location share confirm button', (done) => {
+          telegrafTest
+            .sendCallbackQueryWithData('location:from_location')
+            .then((res) => {
+              expect(res.data.text).toMatch(
+                /Klicka på knappen för att dela position./
+              )
+
+              done()
+            })
+        })
+
+        test('user confirms send location and is then asked if wants to add extra info or continue', (done) => {
+          bookingService.makeId = jest.fn().mockReturnValue('ASDF')
+
+          telegrafTest
+            .sendMessage({ location: { longitude: 123, latitude: 123 } })
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Då har du fått bokningsnummer:)/i)
+              expect(res.data).toHaveProperty('reply_markup')
+
+              done()
+            })
+        })
+
+        test('user chooses continue and is sent back to first step', (done) => {
+          telegrafTest
+            .sendCallbackQueryWithData('booking:confirm')
+            .then((res) => {
+              expect(res.data.text).toMatch(
+                /Har din försändelse en fraktsedel?/
+              )
+
+              done()
+            })
+        })
       })
 
-      test('user selects share location from device location and receives a location share confirm button', (done) => {
-        telegrafTest
-          .sendCallbackQueryWithData('location:from_location')
-          .then((res) => {
-            expect(res.data.text).toMatch(
-              /Klicka på knappen för att dela position./
-            )
+      describe('sender', () => {
+        uploadImage(telegrafTest)
+        askIfSenderOrRecipient(telegrafTest)
 
-            done()
-          })
-      })
+        test('user selects sender and is prompted for recipient address', (done) => {
+          telegrafTest
+            .sendCallbackQueryWithData('freightslip:is_sender')
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
 
-      test('user confirms send location and is then asked if wants to add extra info or continue', (done) => {
-        bookingService.makeId = jest.fn().mockReturnValue('ASDF')
+              done()
+            })
+        })
 
-        telegrafTest
-          .sendMessage({ location: { longitude: 123, latitude: 123 } })
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Då har du fått bokningsnummer:)/i)
-            expect(res.data).toHaveProperty('reply_markup')
-            expect(res.data.reply_markup.inline_keyboard).toEqual(
-              expect.arrayContaining([
-                expect.arrayContaining([
-                  expect.objectContaining({
-                    text: 'Fyll i fler detaljer',
-                  }),
-                  expect.objectContaining({
-                    text: 'Påbörja nästa bokning',
-                  }),
-                ]),
-              ])
-            )
+        test('user enters recipient address with successful geo lookup', (done) => {
+          geolocationService.get = jest
+            .fn()
+            .mockResolvedValueOnce(mocks.geoLookupResponse)
 
-            done()
-          })
-      })
+          telegrafTest
+            .sendMessageWithText(mocks.manualRecipientInput)
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Är detta rätt?)/)
+              done()
+            })
+        })
 
-      test('user chooses continue and is sent back to first step', (done) => {
-        telegrafTest
-          .sendCallbackQueryWithData('booking:confirm')
-          .then((res) => {
-            expect(res.data.text).toMatch(/Har din försändelse en fraktsedel?/)
-
-            done()
-          })
-      })
-    })
-
-    describe.only('#sender text extraction successful,  location share from device', () => {
-      uploadImage(telegrafTest)
-      askIfSenderOrRecipient(telegrafTest)
-
-      test('user selects sender and is prompted for recipient address', (done) => {
-        telegrafTest
-          .sendCallbackQueryWithData('freightslip:is_sender')
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
-
-            done()
-          })
-      })
-
-      test('user enters recipient address', (done) => {
-        geolocationService.get = jest.fn().mockResolvedValueOnce(mocks.person)
-
-        telegrafTest
-          .sendMessageWithText(mocks.manualRecipientInput)
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Är detta rätt?)/)
-            done()
-          })
-      })
-
-      test('user confirms lookup result and is sent to confirm or add additional info ', (done) => {
-        telegrafTest
-          .sendCallbackQueryWithData('recipient:geolookup:confirm')
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Då har du fått bokningsnummer:)/i)
-            done()
-          })
+        test('user confirms lookup result and is sent to confirm or add additional info ', (done) => {
+          telegrafTest
+            .sendCallbackQueryWithData('recipient:geolookup:confirm')
+            .then((res) => {
+              expect(res.data.text).toMatch(/(Då har du fått bokningsnummer:)/i)
+              done()
+            })
+        })
       })
     })
 
@@ -251,7 +229,9 @@ describe('freightslip upload', () => {
         })
 
         test('user manually enters recipient with successful lookup', (done) => {
-          geolocationService.get = jest.fn().mockResolvedValueOnce(mocks.person)
+          geolocationService.get = jest
+            .fn()
+            .mockResolvedValueOnce(mocks.geoLookupResponse)
 
           telegrafTest
             .sendMessageWithText(mocks.manualRecipientInput)
@@ -295,7 +275,9 @@ describe('freightslip upload', () => {
       })
 
       test('user manually enters recipient with successful lookup', (done) => {
-        geolocationService.get = jest.fn().mockResolvedValueOnce(mocks.person)
+        geolocationService.get = jest
+          .fn()
+          .mockResolvedValueOnce(mocks.geoLookupResponse)
 
         telegrafTest
           .sendMessageWithText(mocks.manualRecipientInput)
@@ -360,21 +342,6 @@ describe('freightslip upload', () => {
         .then((res) => {
           expect(res.data.text).toMatch(/(Tack!)/i)
           expect(res.data).toHaveProperty('reply_markup')
-          expect(res.data.reply_markup.inline_keyboard).toEqual(
-            expect.arrayContaining([
-              expect.arrayContaining([
-                expect.objectContaining({
-                  text: 'Ja',
-                }),
-                expect.objectContaining({
-                  text: 'Nej, hämta från fraktsedeln',
-                }),
-                expect.objectContaining({
-                  text: 'Nej, skriv in manuellt',
-                }),
-              ]),
-            ])
-          )
 
           done()
         })
@@ -390,7 +357,9 @@ describe('freightslip upload', () => {
     })
 
     test('user enters sender input which has successful lookup', (done) => {
-      geolocationService.get = jest.fn().mockResolvedValueOnce(mocks.person)
+      geolocationService.get = jest
+        .fn()
+        .mockResolvedValueOnce(mocks.geoLookupResponse)
 
       telegrafTest.sendMessageWithText(mocks.manualSenderInput).then((res) => {
         expect(res.data.text).toMatch(/(Är detta rätt?)/)

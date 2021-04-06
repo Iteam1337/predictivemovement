@@ -170,7 +170,7 @@ const Component = ({
 
           <FormInputs.Checkbox
             defaultChecked={!!values.pickup.timeWindows?.length}
-            label="Bokningen behöver lämnas en viss tid"
+            label="Bokningen behöver hämtas en viss tid"
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
           />
@@ -185,6 +185,28 @@ const Component = ({
             <Elements.Form.Label htmlFor="sender-name">
               Avsändare
             </Elements.Form.Label>
+            <Elements.Layout.InputContainer>
+              <Elements.Layout.InputInnerContainer>
+                <Elements.Icons.FormInputIcon
+                  alt="Contact phone icon"
+                  src={`${phoneIcon}`}
+                />
+                <FormInputs.TextInput
+                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                  iconinset="true"
+                  name="metadata.sender.contact"
+                  type="tel"
+                  placeholder="Telefonnummer"
+                  validate={validatePhoneNumber}
+                />
+                {errors.metadata?.sender?.contact &&
+                  touched.metadata?.sender?.contact && (
+                    <Elements.Typography.ErrorMessage>
+                      {errors.metadata.sender.contact}
+                    </Elements.Typography.ErrorMessage>
+                  )}
+              </Elements.Layout.InputInnerContainer>
+            </Elements.Layout.InputContainer>
             <Elements.Layout.InputInnerContainer>
               <Elements.Icons.FormInputIcon
                 alt="Contact name icon"
@@ -198,29 +220,6 @@ const Component = ({
               />
             </Elements.Layout.InputInnerContainer>
           </Elements.Layout.InputContainer>
-          <Elements.Layout.InputContainer>
-            <Elements.Form.Label htmlFor="sender">Kontakt</Elements.Form.Label>
-            <Elements.Layout.InputInnerContainer>
-              <Elements.Icons.FormInputIcon
-                alt="Contact phone icon"
-                src={`${phoneIcon}`}
-              />
-              <FormInputs.TextInput
-                onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                iconinset="true"
-                name="metadata.sender.contact"
-                type="tel"
-                placeholder="Telefonnummer"
-                validate={validatePhoneNumber}
-              />
-              {errors.metadata?.sender?.contact &&
-                touched.metadata?.sender?.contact && (
-                  <Elements.Typography.ErrorMessage>
-                    {errors.metadata.sender.contact}
-                  </Elements.Typography.ErrorMessage>
-                )}
-            </Elements.Layout.InputInnerContainer>
-          </Elements.Layout.InputContainer>
         </Elements.Layout.InputBlock>
         <Elements.Layout.MarginBottomContainer />
         {!animateFirstBlock && (
@@ -232,7 +231,7 @@ const Component = ({
               errors.pickup || errors.metadata?.sender?.contact ? true : false
             }
           >
-            Nästa
+            Lägg till mottagare
           </Elements.Buttons.NeutralButton>
         )}
       </div>
@@ -283,6 +282,28 @@ const Component = ({
             <Elements.Form.Label htmlFor="recipient-name">
               Mottagare
             </Elements.Form.Label>
+            <Elements.Layout.InputContainer>
+              <Elements.Layout.InputInnerContainer>
+                <Elements.Icons.FormInputIcon
+                  alt="Contact phone icon"
+                  src={`${nameIcon}`}
+                />
+                <FormInputs.TextInput
+                  iconinset="true"
+                  name="metadata.recipient.contact"
+                  type="tel"
+                  onFocus={() => dispatch({ type: 'resetInputClickState' })}
+                  placeholder="Telefonnummer"
+                  validate={validatePhoneNumber}
+                />
+                {errors.metadata?.recipient?.contact &&
+                  touched.metadata?.recipient?.contact && (
+                    <Elements.Typography.ErrorMessage>
+                      {errors.metadata.recipient.contact}
+                    </Elements.Typography.ErrorMessage>
+                  )}
+              </Elements.Layout.InputInnerContainer>
+            </Elements.Layout.InputContainer>
             <Elements.Layout.InputInnerContainer>
               <Elements.Icons.FormInputIcon
                 alt="Contact name icon"
@@ -294,32 +315,6 @@ const Component = ({
                 name="metadata.recipient.name"
                 placeholder="Namn"
               />
-            </Elements.Layout.InputInnerContainer>
-          </Elements.Layout.InputContainer>
-
-          <Elements.Layout.InputContainer>
-            <Elements.Form.Label htmlFor="recipient-contact">
-              Kontakt
-            </Elements.Form.Label>
-            <Elements.Layout.InputInnerContainer>
-              <Elements.Icons.FormInputIcon
-                alt="Contact phone icon"
-                src={`${nameIcon}`}
-              />
-              <FormInputs.TextInput
-                iconinset="true"
-                name="metadata.recipient.contact"
-                type="tel"
-                onFocus={() => dispatch({ type: 'resetInputClickState' })}
-                placeholder="Telefonnummer"
-                validate={validatePhoneNumber}
-              />
-              {errors.metadata?.recipient?.contact &&
-                touched.metadata?.recipient?.contact && (
-                  <Elements.Typography.ErrorMessage>
-                    {errors.metadata.recipient.contact}
-                  </Elements.Typography.ErrorMessage>
-                )}
             </Elements.Layout.InputInnerContainer>
           </Elements.Layout.InputContainer>
         </Elements.Layout.InputBlock>

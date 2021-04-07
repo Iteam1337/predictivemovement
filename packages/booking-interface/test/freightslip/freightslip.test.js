@@ -14,7 +14,7 @@ const {
 const mocks = require('./mocks')
 const elasticMocks = require('../elastic/mocks')
 
-const port = 3000
+const port = 1337
 const secretPath = 'test'
 
 describe('freightslip upload', () => {

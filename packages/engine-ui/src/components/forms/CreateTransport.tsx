@@ -73,7 +73,9 @@ const Component = ({
       <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label>Körschema</Elements.Form.Label>
+          <Elements.Form.Label htmlFor="drivingSchedule">
+            Körschema
+          </Elements.Form.Label>
           <Elements.Layout.TimeRestrictionWrapper>
             <FormInputs.TimeRestriction.TransportTimeRestrictionPair
               handleFocus={() => dispatch({ type: 'resetInputClickState' })}
@@ -83,8 +85,11 @@ const Component = ({
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label required>Startposition</Elements.Form.Label>
+          <Elements.Form.Label required htmlFor="startAddress">
+            Startposition
+          </Elements.Form.Label>
           <FormInputs.AddressSearchInput
+            id="startAddress"
             name="startAddress"
             placeholder="Adress (sök eller klicka på karta)"
             onFocusHandler={() =>
@@ -137,6 +142,7 @@ const Component = ({
             Namn på transport
           </Elements.Form.Label>
           <FormInputs.TextInput
+            id="profile"
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             validate={validateNotEmpty}
             name="metadata.profile"
@@ -173,6 +179,7 @@ const Component = ({
               src={`${nameIcon}`}
             />
             <FormInputs.TextInput
+              id="driver"
               onFocus={() => dispatch({ type: 'resetInputClickState' })}
               iconinset="true"
               name="metadata.driver.name"
@@ -190,6 +197,7 @@ const Component = ({
               src={`${phoneIcon}`}
             />
             <FormInputs.TextInput
+              id="contact"
               iconinset="true"
               name="metadata.driver.contact"
               type="tel"
@@ -208,7 +216,7 @@ const Component = ({
       </Elements.Layout.InputBlock>
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
-          <Elements.Form.Label>Flotta</Elements.Form.Label>
+          <Elements.Form.Label htmlFor="fleet">Flotta</Elements.Form.Label>
           <FormInputs.FleetInput
             placeholder="Lägg till eller välj en flotta"
             name="metadata.fleet"

@@ -43,6 +43,7 @@ const TimeRestrictionDateInput = React.forwardRef<
             <TimeRestrictionFormInputIcon onClick={onClick} src={arrowIcon} />
           )}
           <Elements.Form.DateInput
+            id="drivingSchedule"
             onFocus={() => handleFocus?.()}
             onChange={onChange}
             onClick={onClick}

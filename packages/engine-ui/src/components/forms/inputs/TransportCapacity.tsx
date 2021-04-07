@@ -65,6 +65,7 @@ const TransportCapacity: React.FC<{
 
   return !useCustomCapacity ? (
     <Elements.Form.SelectInput
+      id="capacity"
       as="select"
       name={name}
       onChange={handleTransportPresetSelectChange}

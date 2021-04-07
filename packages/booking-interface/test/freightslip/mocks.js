@@ -6,7 +6,7 @@ const testUser = {
 const recipientGeoLookupResponse = [
   {
     type: 'Feature',
-    geometry: { type: 'Point', coordinates: [Array] },
+    geometry: { type: 'Point', coordinates: [123, 234] },
     properties: {
       layer: 'address',
       source: 'lantmateriet',
@@ -39,6 +39,8 @@ const recipientGeoLookupResponse = [
 
 const senderGeoLookupResponse = [
   {
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [123, 234] },
     properties: {
       layer: 'address',
       source: 'lantmateriet',

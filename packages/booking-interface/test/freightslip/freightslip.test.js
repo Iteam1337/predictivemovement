@@ -89,7 +89,9 @@ describe('freightslip upload', () => {
           telegrafTest
             .sendCallbackQueryWithData('freightslip:is_recipient')
             .then((res) => {
-              expect(res.data.text).toMatch(/(Tack!)/i)
+              expect(res.data.text).toMatch(
+                /(Hur vill du ange avsändaradressen?)/i
+              )
               expect(res.data).toHaveProperty('reply_markup')
 
               done()
@@ -108,7 +110,7 @@ describe('freightslip upload', () => {
             })
         })
 
-        test('user confirms send location and is then asked if wants to add extra info or continue', (done) => {
+        test('user confirms send location and is asked if first suggestion is correct', (done) => {
           bookingService.makeId = jest.fn().mockReturnValue('ASDF')
           geolocationService.getReverse = jest
             .fn()
@@ -117,8 +119,18 @@ describe('freightslip upload', () => {
           telegrafTest
             .sendMessage({ location: { longitude: 123, latitude: 123 } })
             .then((res) => {
-              expect(res.data.text).toMatch(/(Då har du fått bokningsnummer:)/i)
+              expect(res.data.text).toMatch(/(Är detta rätt?)/i)
               expect(res.data).toHaveProperty('reply_markup')
+
+              done()
+            })
+        })
+
+        test('user chooses continue and is sent back to first step', (done) => {
+          telegrafTest
+            .sendCallbackQueryWithData('sender:geolookup:confirm')
+            .then((res) => {
+              expect(res.data.text).toMatch(/Då har du fått bokningsnummer:/)
 
               done()
             })
@@ -145,7 +157,7 @@ describe('freightslip upload', () => {
           telegrafTest
             .sendCallbackQueryWithData('freightslip:is_sender')
             .then((res) => {
-              expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
+              expect(res.data.text).toMatch(/(Ange mottagaradressen)/i)
 
               done()
             })
@@ -154,7 +166,7 @@ describe('freightslip upload', () => {
         test('user enters recipient address with successful geo lookup', (done) => {
           geolocationService.get = jest
             .fn()
-            .mockResolvedValueOnce(mocks.recipientGeoLookupResponse)
+            .mockResolvedValue(mocks.recipientGeoLookupResponse)
 
           telegrafTest.sendMessageWithText('text').then((res) => {
             expect(res.data.text).toMatch(/(Är detta rätt?)/)
@@ -224,7 +236,7 @@ describe('freightslip upload', () => {
 
         test('user selects enter manual and is asked to enter recipient manually', (done) => {
           telegrafTest.sendCallbackQueryWithData('enter_manual').then((res) => {
-            expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
+            expect(res.data.text).toMatch(/(Ange mottagaradressen)/i)
             done()
           })
         })
@@ -245,7 +257,7 @@ describe('freightslip upload', () => {
             .sendCallbackQueryWithData('recipient:geolookup:confirm')
             .then((res) => {
               expect(res.data.text).toMatch(
-                /(Tack! Vill du skicka din nuvarande position)/i
+                /(Hur vill du ange avsändaradressen?)/i
               )
 
               done()
@@ -268,7 +280,7 @@ describe('freightslip upload', () => {
         telegrafTest
           .sendCallbackQueryWithData('freightslip:decline')
           .then((res) => {
-            expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
+            expect(res.data.text).toMatch(/(Ange mottagaradressen)/i)
             done()
           })
       })
@@ -289,7 +301,7 @@ describe('freightslip upload', () => {
           .sendCallbackQueryWithData('recipient:geolookup:confirm')
           .then((res) => {
             expect(res.data.text).toMatch(
-              /(Tack! Vill du skicka din nuvarande position)/i
+              /(Hur vill du ange avsändaradressen?)/i
             )
 
             done()
@@ -309,7 +321,7 @@ describe('freightslip upload', () => {
         telegrafTest
           .sendCallbackQueryWithData('freightslip:decline')
           .then((res) => {
-            expect(res.data.text).toMatch(/(Skriv in mottagaradressen)/i)
+            expect(res.data.text).toMatch(/(Ange mottagaradressen)/i)
             done()
           })
       })
@@ -335,7 +347,7 @@ describe('freightslip upload', () => {
       telegrafTest
         .sendCallbackQueryWithData('freightslip:is_recipient')
         .then((res) => {
-          expect(res.data.text).toMatch(/(Tack!)/i)
+          expect(res.data.text).toMatch(/(Hur vill du ange avsändaradressen?)/i)
           expect(res.data).toHaveProperty('reply_markup')
 
           done()
@@ -346,7 +358,7 @@ describe('freightslip upload', () => {
       telegrafTest
         .sendCallbackQueryWithData('location:from_manual')
         .then((res) => {
-          expect(res.data.text).toMatch(/(Skriv in avsändaradressen)/i)
+          expect(res.data.text).toMatch(/(Ange avsändaradressen)/i)
           done()
         })
     })

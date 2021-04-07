@@ -12,27 +12,20 @@ const awaitManualSenderInput = new Composer().on('text', (ctx) =>
     }
 
     const { state } = ctx.scene.session
-    const [{ properties: suggestion }] = res
 
-    Object.assign(state, {
-      suggestedSender: {
-        name: suggestion.name,
-        street: suggestion.street,
-        housenumber: suggestion.housenumber,
-        postalcode: suggestion.postalcode,
-        locality: suggestion.locality,
+    state.suggestedSenders = res.map((r) => ({
+      name: r.properties.name,
+      street: r.properties.street,
+      housenumber: r.properties.housenumber,
+      postalcode: r.properties.postalcode,
+      locality: r.properties.locality,
+      coordinates: {
+        lon: r.geometry.coordinates[0],
+        lat: r.geometry.coordinates[1],
       },
-    })
+    }))
 
-    return ctx
-      .replyWithMarkdown(
-        `Är detta rätt? avsändare`.concat(`\n\n${suggestion.label}`),
-        Markup.inlineKeyboard([
-          Markup.callbackButton('Ja', 'sender:geolookup:confirm'),
-          Markup.callbackButton('Nej', 'sender:geolookup:decline'),
-        ]).extra()
-      )
-      .then(() => ctx.wizard.next())
+    return wizardHelpers.jumpToStep(ctx, 'askIfCorrectSuggestedSender')
   })
 )
 
@@ -43,27 +36,20 @@ const awaitManualRecipientInput = new Composer().on('text', (ctx) =>
     }
 
     const { state } = ctx.scene.session
-    const [{ properties: suggestion }] = res
 
-    Object.assign(state, {
-      suggestedRecipient: {
-        name: suggestion.name,
-        street: suggestion.street || '',
-        housenumber: suggestion.housenumber || '',
-        postalcode: suggestion.postalcode || '',
-        locality: suggestion.locality || '',
+    state.suggestedRecipients = res.map((r) => ({
+      name: r.properties.name,
+      street: r.properties.street,
+      housenumber: r.properties.housenumber,
+      postalcode: r.properties.postalcode,
+      locality: r.properties.locality,
+      coordinates: {
+        lon: r.geometry.coordinates[0],
+        lat: r.geometry.coordinates[1],
       },
-    })
+    }))
 
-    return ctx
-      .replyWithMarkdown(
-        `Är detta rätt? mottagare`.concat(`\n\n${suggestion.label}`),
-        Markup.inlineKeyboard([
-          Markup.callbackButton('Ja', 'recipient:geolookup:confirm'),
-          Markup.callbackButton('Nej', 'recipient:geolookup:decline'),
-        ]).extra()
-      )
-      .then(() => ctx.wizard.next())
+    return wizardHelpers.jumpToStep(ctx, 'askIfCorrectSuggestedRecipient')
   })
 )
 
@@ -73,27 +59,48 @@ const awaitManualContactConfirmation = new Composer()
 
     state.booking = Object.assign({}, state.booking, {
       id: services.booking.makeId(),
-      from: Object.assign({}, state.booking.from, state.suggestedSender),
+      from: Object.assign({}, state.booking.to, state.suggestedSenders[0]),
     })
 
+    if (!state.booking.to) {
+      return wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
+    }
+
     return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
+  })
+  .action('sender:geolookup:decline', (ctx) => {
+    const { state } = ctx.scene.session
+    state.suggestedSenders = Array.from(state.suggestedSenders).slice(1)
+
+    if (!state.suggestedSenders.length) {
+      return wizardHelpers.jumpToStep(ctx, 'informNoSuggestedSenders')
+    }
+
+    return wizardHelpers.jumpToStep(ctx, 'askIfCorrectSuggestedSender')
   })
   .action('recipient:geolookup:confirm', (ctx) => {
     const { state } = ctx.scene.session
 
-    if (state.booking && state.booking.from) {
-      // sender has already been entered
-      // and we shouldn't do that again.
+    state.booking = Object.assign({}, state.booking, {
+      id: services.booking.makeId(),
+      to: state.suggestedRecipients[0],
+    })
 
-      state.booking = Object.assign({}, state.booking, {
-        id: services.booking.makeId(),
-        to: Object.assign({}, state.booking.to, state.suggestedRecipient),
-      })
-
-      return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
+    if (!state.booking.from) {
+      return wizardHelpers.jumpToStep(ctx, 'askForSenderLocation')
     }
 
-    return wizardHelpers.jumpToStep(ctx, 'askForLocation')
+    return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
+  })
+  .action('recipient:geolookup:decline', (ctx) => {
+    const { state } = ctx.scene.session
+    state.suggestedRecipients = Array.from(state.suggestedRecipients).slice(1)
+
+    if (!state.suggestedRecipients.length) {
+      return wizardHelpers.jumpToStep(ctx, 'informNoSuggestedRecipients')
+    }
+
+    return wizardHelpers.jumpToStep(ctx, 'askIfCorrectSuggestedSender')
   })
   .action('recipient:geolookup:decline', (ctx) => {
     console.log('***declines recipient lookup suggestion***')
@@ -104,6 +111,8 @@ const awaitManualContactConfirmation = new Composer()
 
 const awaitAdditionalInformationOrConfirm = new Composer()
   .action('booking:confirm', (ctx) => {
+    ctx.scene.session.state = {}
+
     return wizardHelpers.jumpToStep(ctx, 'intro')
   })
   .action('booking:add_extra', (ctx) => {
@@ -155,7 +164,7 @@ const awaitSenderOrRecipientConfirmation = new Composer()
       },
     }
 
-    return wizardHelpers.jumpToStep(ctx, 'askForLocation')
+    return wizardHelpers.jumpToStep(ctx, 'askForSenderLocation')
   })
 
 const awaitLocationAlternativeSelect = new Composer()
@@ -165,33 +174,96 @@ const awaitLocationAlternativeSelect = new Composer()
   .action('location:from_manual', (ctx) =>
     wizardHelpers.jumpToStep(ctx, 'askForManualSender')
   )
-  .action('location:from_freightslip', (ctx) => {})
 
 const awaitSenderLocationConfirm = new Composer()
-  .on('location', (ctx) => {
-    const { state } = ctx.scene.session
-
+  .on('location', (ctx) =>
     services.geolocation.getReverse(ctx.message.location).then((res) => {
       if (!res || !res.length)
         return wizardHelpers.jumpToStep(ctx, 'notifyNoGeolocationResult')
 
-      const [{ properties: suggestion }] = res
+      const { state } = ctx.scene.session
 
-      state.booking = Object.assign({}, state.booking, {
-        from: {
-          name: suggestion.name,
-          street: suggestion.street,
-          housenumber: suggestion.housenumber,
-          postalcode: suggestion.postalcode,
-          locality: suggestion.locality,
+      state.suggestedSenders = res.map((r) => ({
+        name: r.properties.name,
+        street: r.properties.street,
+        housenumber: r.properties.housenumber,
+        postalcode: r.properties.postalcode,
+        locality: r.properties.locality,
+        coordinates: {
+          lon: r.geometry.coordinates[0],
+          lat: r.geometry.coordinates[1],
         },
-      })
-      return wizardHelpers.jumpToStep(ctx, 'askAddAdditionalInformation')
+      }))
+
+      return wizardHelpers.jumpToStep(ctx, 'askIfCorrectSuggestedSender')
     })
-  })
+  )
   .action('location:cancel', (ctx) =>
     wizardHelpers.jumpToStep(ctx, 'askForManualRecipient')
   )
+
+const informNoSuggestedSenders = (ctx) => {
+  ctx
+    .reply('Det finns inga förslagna adresser.')
+    .then(() => wizardHelpers.jumpToStep(ctx, 'askForSenderLocation'))
+}
+const informNoSuggestedRecipients = (ctx) => {
+  ctx
+    .reply('Det finns inga förslagna adresser.')
+    .then(() => wizardHelpers.jumpToStep(ctx, 'askForManualRecipient'))
+}
+
+const askIfCorrectSuggestedSender = (ctx) => {
+  const { state } = ctx.scene.session
+
+  if (!state.suggestedSenders)
+    return ctx.reply('Vi kunde inte hitta några föreslagna adresser :(')
+
+  const [suggestion] = state.suggestedSenders
+
+  return ctx
+    .replyWithMarkdown(
+      `Är detta rätt?\n\n`
+        .concat(
+          suggestion.street && suggestion.housenumber
+            ? `${suggestion.street} ${suggestion.housenumber}`
+            : suggestion.name
+        )
+        .concat(suggestion.postalcode ? `\n${suggestion.postalcode}` : '')
+        .concat(suggestion.locality ? `\n${suggestion.locality}` : ''),
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Ja', 'sender:geolookup:confirm'),
+        Markup.callbackButton('Nej', 'sender:geolookup:decline'),
+      ]).extra()
+    )
+    .then(() => ctx.wizard.next())
+}
+
+const askIfCorrectSuggestedRecipient = (ctx) => {
+  const { state } = ctx.scene.session
+
+  if (!state.suggestedRecipients)
+    return ctx.reply('Vi kunde inte hitta några föreslagna adresser :(')
+
+  const [suggestion] = state.suggestedRecipients
+
+  return ctx
+    .replyWithMarkdown(
+      `Är detta rätt?\n\n`
+        .concat(
+          suggestion.street && suggestion.housenumber
+            ? `${suggestion.street} ${suggestion.housenumber}`
+            : suggestion.name
+        )
+        .concat(suggestion.postalcode ? `\n${suggestion.postalcode}` : '')
+        .concat(suggestion.locality ? `\n${suggestion.locality}` : ''),
+      Markup.inlineKeyboard([
+        Markup.callbackButton('Ja', 'recipient:geolookup:confirm'),
+        Markup.callbackButton('Nej', 'recipient:geolookup:decline'),
+      ]).extra()
+    )
+    .then(() => ctx.wizard.next())
+}
 
 const notifyNoGeolocationResult = (ctx) =>
   ctx
@@ -199,21 +271,17 @@ const notifyNoGeolocationResult = (ctx) =>
     .then(() => wizardHelpers.jumpToStep(ctx, 'intro'))
 
 const askForManualRecipient = (ctx) =>
-  ctx.reply('Skriv in mottagaradressen').then(() => ctx.wizard.next())
-
-const askForManualRecipientAfterSender = (ctx) =>
-  ctx.reply('Skriv in mottagaradressen').then(() => ctx.wizard.next())
+  ctx.reply('Ange mottagaradressen').then(() => ctx.wizard.next())
 
 const askForManualSender = (ctx) =>
-  ctx.reply('Skriv in avsändaradressen').then(() => ctx.wizard.next())
+  ctx.reply('Ange avsändaradressen').then(() => ctx.wizard.next())
 
 const askAddAdditionalInformation = (ctx) => {
   const booking = ctx.scene.session.state.booking
-  console.log('booking: ', booking)
 
   return ctx
     .replyWithMarkdown(
-      `Tack. Då har du fått bokningsnummer: ${ctx.scene.session.state.booking.id}. Anteckna detta på försändelsen.`
+      `Då har du fått bokningsnummer:\n\n${ctx.scene.session.state.booking.id}\n\nAnteckna detta på försändelsen.`
         .concat(`\nSå här ser din bokning ut:`)
         .concat(`\n\nFrån:\n`)
         .concat(
@@ -221,34 +289,32 @@ const askAddAdditionalInformation = (ctx) => {
             ? `${booking.from.street} ${booking.from.housenumber}`
             : booking.from.name
         )
+
         .concat(booking.from.postalcode ? `\n${booking.from.postalcode}` : '')
+        .concat(booking.from.locality ? `\n${booking.from.locality}` : '')
         .concat(`\n\nTill:\n`)
         .concat(
           booking.to.street && booking.to.housenumber
             ? `${booking.to.street} ${booking.to.housenumber}`
             : booking.to.name
         )
-        .concat(booking.to.postalcode ? `\n${booking.to.postalcode}` : ''),
-
+        .concat(booking.to.postalcode ? `\n${booking.to.postalcode}` : '')
+        .concat(booking.to.locality ? `\n${booking.to.locality}` : ''),
       Markup.inlineKeyboard([
         Markup.callbackButton('Fyll i fler detaljer', 'booking:add_extra'),
-        Markup.callbackButton('Påbörja nästa bokning', 'booking:confirm'),
+        Markup.callbackButton('Påbörja nästa', 'booking:confirm'),
       ]).extra()
     )
     .then(() => ctx.wizard.next())
 }
 
-const askForLocation = (ctx) => {
+const askForSenderLocation = (ctx) => {
   return ctx
     .replyWithMarkdown(
-      `Tack! Vill du skicka din nuvarande position som avsändaradress?`,
+      `Hur vill du ange avsändaradressen?`,
       Markup.inlineKeyboard([
-        Markup.callbackButton('Ja', 'location:from_location'),
-        Markup.callbackButton(
-          'Nej, hämta från fraktsedeln',
-          'location:from_freightslip'
-        ),
-        Markup.callbackButton('Nej, skriv in manuellt', 'location:from_manual'),
+        Markup.callbackButton('Dela position', 'location:from_location'),
+        Markup.callbackButton('Manuellt', 'location:from_manual'),
       ]).extra()
     )
     .then(() => ctx.wizard.next())
@@ -360,7 +426,6 @@ const askForSenderLocationConfirm = (ctx) => {
         Markup.callbackButton('Avbryt', 'location:cancel'),
       ]).oneTime(),
     })
-
     .then(() => ctx.wizard.next())
 }
 
@@ -371,7 +436,7 @@ module.exports = [
   awaitImageUpload,
   askForSenderOrRecipientConfirmation,
   awaitSenderOrRecipientConfirmation,
-  askForLocation,
+  askForSenderLocation,
   awaitLocationAlternativeSelect,
   askForSenderLocationConfirm,
   awaitSenderLocationConfirm,
@@ -386,6 +451,10 @@ module.exports = [
   askForManualSender,
   awaitManualSenderInput,
   awaitManualContactConfirmation,
-  askForManualRecipientAfterSender,
+  awaitManualContactConfirmation,
+  askIfCorrectSuggestedSender,
+  awaitManualContactConfirmation,
+  informNoSuggestedSenders,
+  askIfCorrectSuggestedRecipient,
   awaitManualContactConfirmation,
 ]

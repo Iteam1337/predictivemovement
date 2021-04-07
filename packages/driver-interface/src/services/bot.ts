@@ -272,15 +272,6 @@ export const handleIncomingSignatureConfirmation = async (
   return messaging.sendSignatureConfirmation(telegramId, instructionGroupId)
 }
 
-export const handleDeliveryAcknowledgementBySignature = (
-  telegramId: number,
-  instructionGroupId: string
-): Promise<Message> =>
-  messaging.sendDeliveryAcknowledgementBySignature(
-    telegramId,
-    instructionGroupId
-  )
-
 export const handleDeliveryAcknowledgementByPhoto = (
   telegramId: number
 ): Promise<Message> => messaging.sendDeliveryAcknowledgementByPhoto(telegramId)

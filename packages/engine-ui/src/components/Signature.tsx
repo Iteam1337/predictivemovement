@@ -70,7 +70,7 @@ const Signature = ({ signature }: Props) => {
               <a
                 style={{ color: 'inherit' }}
                 href={`${signature.receipt.photo}`}
-                download={signature.signedBy}
+                download={signature.bookingId}
               >
                 <Elements.Buttons.SubmitButton
                   type="button"

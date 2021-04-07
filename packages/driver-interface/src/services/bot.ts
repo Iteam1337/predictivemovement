@@ -222,8 +222,9 @@ export const onPhotoReceived = async (
     responseType: 'arraybuffer',
   })
   let photo = Buffer.from(response.data, 'binary').toString('base64')
-  if (!photo.match(/^data:image\/png;base64,/)) {
-    photo = `data:image/png;base64,${photo}`
+
+  if (!photo.match(/^data:image\/jpg;base64,/)) {
+    photo = `data:image/jpg;base64,${photo}`
   }
 
   return amqp

@@ -110,6 +110,9 @@ describe('freightslip upload', () => {
 
         test('user confirms send location and is then asked if wants to add extra info or continue', (done) => {
           bookingService.makeId = jest.fn().mockReturnValue('ASDF')
+          geolocationService.getReverse = jest
+            .fn()
+            .mockResolvedValue(mocks.senderGeoLookupResponse)
 
           telegrafTest
             .sendMessage({ location: { longitude: 123, latitude: 123 } })
@@ -151,14 +154,12 @@ describe('freightslip upload', () => {
         test('user enters recipient address with successful geo lookup', (done) => {
           geolocationService.get = jest
             .fn()
-            .mockResolvedValueOnce(mocks.geoLookupResponse)
+            .mockResolvedValueOnce(mocks.recipientGeoLookupResponse)
 
-          telegrafTest
-            .sendMessageWithText(mocks.manualRecipientInput)
-            .then((res) => {
-              expect(res.data.text).toMatch(/(Är detta rätt?)/)
-              done()
-            })
+          telegrafTest.sendMessageWithText('text').then((res) => {
+            expect(res.data.text).toMatch(/(Är detta rätt?)/)
+            done()
+          })
         })
 
         test('user confirms lookup result and is sent to confirm or add additional info ', (done) => {
@@ -231,14 +232,12 @@ describe('freightslip upload', () => {
         test('user manually enters recipient with successful lookup', (done) => {
           geolocationService.get = jest
             .fn()
-            .mockResolvedValueOnce(mocks.geoLookupResponse)
+            .mockResolvedValueOnce(mocks.recipientGeoLookupResponse)
 
-          telegrafTest
-            .sendMessageWithText(mocks.manualRecipientInput)
-            .then((res) => {
-              expect(res.data.text).toMatch(/(Är detta rätt?)/)
-              done()
-            })
+          telegrafTest.sendMessageWithText('text').then((res) => {
+            expect(res.data.text).toMatch(/(Är detta rätt?)/)
+            done()
+          })
         })
 
         test('user confirms lookup result and is sent to sender location step', (done) => {
@@ -277,14 +276,12 @@ describe('freightslip upload', () => {
       test('user manually enters recipient with successful lookup', (done) => {
         geolocationService.get = jest
           .fn()
-          .mockResolvedValueOnce(mocks.geoLookupResponse)
+          .mockResolvedValueOnce(mocks.recipientGeoLookupResponse)
 
-        telegrafTest
-          .sendMessageWithText(mocks.manualRecipientInput)
-          .then((res) => {
-            expect(res.data.text).toMatch(/(Är detta rätt?)/)
-            done()
-          })
+        telegrafTest.sendMessageWithText('text').then((res) => {
+          expect(res.data.text).toMatch(/(Är detta rätt?)/)
+          done()
+        })
       })
 
       test('user confirms lookup result and is sent to sender location step', (done) => {
@@ -320,14 +317,12 @@ describe('freightslip upload', () => {
       test('user manually enters recipient with unsuccessful lookup', (done) => {
         geolocationService.get = jest.fn().mockResolvedValueOnce(null)
 
-        telegrafTest
-          .sendMessageWithText(mocks.manualRecipientInput)
-          .then((res) => {
-            expect(res.data.text).toMatch(
-              /(Vi fick ingen träff på denna adress och detta namn...)/
-            )
-            done()
-          })
+        telegrafTest.sendMessageWithText('text').then((res) => {
+          expect(res.data.text).toMatch(
+            /(Vi fick ingen träff på denna adress och detta namn...)/
+          )
+          done()
+        })
       })
     })
   })
@@ -359,9 +354,9 @@ describe('freightslip upload', () => {
     test('user enters sender input which has successful lookup', (done) => {
       geolocationService.get = jest
         .fn()
-        .mockResolvedValueOnce(mocks.geoLookupResponse)
+        .mockResolvedValueOnce(mocks.senderGeoLookupResponse)
 
-      telegrafTest.sendMessageWithText(mocks.manualSenderInput).then((res) => {
+      telegrafTest.sendMessageWithText('text').then((res) => {
         expect(res.data.text).toMatch(/(Är detta rätt?)/)
         done()
       })

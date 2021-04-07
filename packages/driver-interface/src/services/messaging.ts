@@ -7,6 +7,7 @@ import { Booking, Instruction } from '../types'
 import { getDirectionsUrl, getDirectionsFromInstructionGroups } from './google'
 import { getAddressFromCoordinate } from './pelias'
 import cache from './cache'
+import * as botServices from './bot'
 
 const PHONE_GROUPCHAT_ERROR =
   'Bad Request: phone number can be requested in private chats only'
@@ -420,20 +421,15 @@ export const sendSignatureConfirmation = (
   telegramId: number,
   instructionGroupId: string
 ): Promise<Message> => {
+  botServices.handleFinishBookingInstructionGroup(
+    instructionGroupId,
+    'delivered',
+    telegramId
+  )
+
   return bot.telegram.sendMessage(
     telegramId,
-    `Leveransen är nu bekräftad och signerad. Klicka på "Klar" för att gå vidare.`,
-    {
-      reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(
-          'Klar',
-          JSON.stringify({
-            e: 'signature_confirmed',
-            id: instructionGroupId,
-          })
-        ),
-      ]),
-    }
+    `Leveransen är nu bekräftad och signerad.`
   )
 }
 

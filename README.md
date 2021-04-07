@@ -23,8 +23,9 @@ The source code for the project is contained in this mono-repo. Within the [pack
 - [Vehicle Offer](packages/vehicle-offer) Re-routes vehicle offers to the queue
 - [Auto Accept Offer](packages/auto-accept-offer) Auto accepts offers for vehicles created in the Engine UI
 - [Booking-dispatcher](packages/booking-dispatcher) Auto accepts offers for vehicles created in the Engine UI
+- [Signing UI](packages/signing-ui) UI for signing a package on delivery
 
-## Running the project 
+## Running the project
 
 ### Using kubernetes
 

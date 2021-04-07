@@ -97,12 +97,6 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
           'delivery_failed',
           telegramId
         )
-      case 'signature_confirmed':
-        return botServices.handleFinishBookingInstructionGroup(
-          instructionGroupId,
-          'delivered',
-          telegramId
-        )
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

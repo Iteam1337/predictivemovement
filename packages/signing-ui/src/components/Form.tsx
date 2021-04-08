@@ -22,13 +22,20 @@ const CanvasContainer = styled.div`
   }
 `
 
-const ButtonContainer = styled.div`
-  max-width: 300px;
-  width: 100%;
+const TitleWrapper = styled.div`
   display: flex;
-  button:first-of-type {
-    margin-right: 1rem;
-  }
+  width: inherit;
+  justify-content: space-between;
+
+  align-items: center;
+`
+
+const ClearButton = styled.button`
+  background-color: white;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
 `
 
 const Signature = React.forwardRef((props: any, ref: any) => {
@@ -60,7 +67,6 @@ const SignForm: React.FC<{ recipientName: string | undefined }> = ({
 }) => {
   const nodeRef = React.useRef<any>(null)
   const {
-    resetForm,
     errors,
     touched,
     setFieldValue,
@@ -74,7 +80,6 @@ const SignForm: React.FC<{ recipientName: string | undefined }> = ({
 
   const clear = () => {
     nodeRef?.current?.clear()
-    resetForm()
   }
 
   const validateNotEmpty = (value: string) => {
@@ -89,9 +94,14 @@ const SignForm: React.FC<{ recipientName: string | undefined }> = ({
   return (
     <Form>
       <div>
-        <Elements.BoldParagraph>
-          Rita din signatur i rutan.
-        </Elements.BoldParagraph>
+        <TitleWrapper>
+          <Elements.BoldParagraph>
+            Rita din signatur i rutan.
+          </Elements.BoldParagraph>
+          <ClearButton type="button" onClick={clear}>
+            Rensa
+          </ClearButton>
+        </TitleWrapper>
         <Elements.TextInput
           name="receipt.base64Signature"
           validate={validateNotEmpty}
@@ -122,13 +132,8 @@ const SignForm: React.FC<{ recipientName: string | undefined }> = ({
           </Elements.InputInnerContainer>
         </Elements.MarginTopContainerSm>
       </div>
-      <Elements.MarginTopContainer></Elements.MarginTopContainer>
-      <ButtonContainer>
-        <Elements.CancelButton type="reset" onClick={clear}>
-          Rensa
-        </Elements.CancelButton>
-        <Elements.SubmitButton type="submit">Bekräfta</Elements.SubmitButton>
-      </ButtonContainer>
+      <Elements.MarginTopContainer />
+      <Elements.SubmitButton type="submit">Bekräfta</Elements.SubmitButton>
     </Form>
   )
 }

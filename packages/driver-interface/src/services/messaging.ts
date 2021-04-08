@@ -343,7 +343,7 @@ export const sendBeginDeliveryAcknowledgement = async (
   const [instruction] = await cache.getInstructionGroup(instructionGroupId)
 
   const url = `${
-    process.env.SIGNING_URL || 'http://127.0.0.1:3000'
+    process.env.SIGNING_URL || 'http://127.0.0.1:3001'
   }/sign-delivery/${transportId}/${instruction.id}`
 
   return bot.telegram.sendMessage(

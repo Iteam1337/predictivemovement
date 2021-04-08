@@ -8,7 +8,6 @@ import * as stores from './utils/state/stores'
 import * as types from './types'
 import NotFound from './components/NotFound'
 import Sidebar from './components/Sidebar'
-import SignParcel from './SignParcel'
 import * as notificationTypes from './types/notification'
 import ServerStatusBar from './components/ServerStatusBar'
 
@@ -27,24 +26,6 @@ const App = () => {
   })
 
   const isMobile = window.innerWidth <= 645
-
-  const createDeliverySignature = (
-    type: string,
-    bookingId: string,
-    transportId: string,
-    signature: string,
-    signedBy: string,
-    createdAt: Date
-  ) => {
-    socket.emit('signed-delivery', {
-      type,
-      bookingId,
-      transportId,
-      receipt: { base64Signature: signature },
-      signedBy,
-      createdAt,
-    })
-  }
 
   const createTransport = (params: any) => {
     socket.emit('create-transport', params)
@@ -129,10 +110,6 @@ const App = () => {
       <ServerStatusBar serverStatus={serverStatus} />
 
       <Switch>
-        <Route exact path="/sign-delivery/:transportId/:bookingId">
-          <SignParcel onSubmit={createDeliverySignature} />
-        </Route>
-
         <Route path={['/bookings', '/']}>
           <Sidebar
             isMobile={isMobile}

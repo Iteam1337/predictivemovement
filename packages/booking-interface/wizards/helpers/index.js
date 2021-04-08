@@ -9,12 +9,11 @@ const jumpToStep = (ctx, name) => {
     .find((handler) => handler.name === name)(ctx)
 }
 
-const jumpToComposerStep = (ctx, name) => {
-  return ctx.wizard.steps
+const jumpToComposerStep = (ctx, name) =>
+  ctx.wizard.steps
     .filter((x) => Boolean(x.name))
     .find((handler) => handler.name === name)
     .handler(ctx)
-}
 
 const forceNext = (ctx) => {
   ctx.wizard.next()

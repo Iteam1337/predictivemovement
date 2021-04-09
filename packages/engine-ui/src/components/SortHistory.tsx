@@ -9,16 +9,17 @@ const FleetInput = styled.div`
   border-radius: 0.25rem;
   width: 150px;
   font-size: 0.875rem;
+  margin-top: 1rem;
   :focus {
     outline-color: #13c57b;
   }
   @media (max-width: 768px) {
-    width: 80vw;
+    width: 8rem;
   }
 `
 
 const FleetText = styled.p`
-  padding: 0.55rem;
+  padding: 0.75rem;
   margin: 0;
   display: flex;
   justify-content: space-between;
@@ -155,26 +156,24 @@ const SortHistory: React.FC<{
 
       <Wrapper>
         <Label htmlFor="startDate">Fr.o.m. datum</Label>
-        <FleetInput>
-          <Elements.Form.TextInput
-            id="startDate"
-            type="date"
-            value={fromDate}
-            onChange={updateFromDate}
-          />
-        </FleetInput>
+        <Elements.Form.TextInput
+          marginTop
+          id="startDate"
+          type="date"
+          value={fromDate}
+          onChange={updateFromDate}
+        />
       </Wrapper>
 
       <Wrapper>
         <Label htmlFor="endDate">T.o.m. datum</Label>
-        <FleetInput>
-          <Elements.Form.TextInput
-            id="endDate"
-            type="date"
-            value={toDate}
-            onChange={updateToDate}
-          />
-        </FleetInput>
+        <Elements.Form.TextInput
+          marginTop
+          id="endDate"
+          type="date"
+          value={toDate}
+          onChange={updateToDate}
+        />
       </Wrapper>
     </SortWrapper>
   )

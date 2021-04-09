@@ -107,47 +107,6 @@ const History = () => {
       : null
   )
 
-  console.log(sortedBookings)
-
-  const fakeBookings = [
-    {
-      bookingId: 'pmb-ngzmzmfk',
-      customer: 'kund',
-      day: '2021-04-06T08:32:25.211836Z',
-      dimensions: 'dimentioner',
-      distance: 16939.8,
-      fleet: 'SNX',
-      routePercentage: 16.666666666666668,
-      time: '2021-04-06T08:32:25.211836Z',
-      transport: 'pmv-nzeyywjl',
-      weight: 1,
-    },
-    {
-      bookingId: 'pmb-ngzmzmfk',
-      customer: 'kund',
-      day: '2021-04-06T08:32:25.211836Z',
-      dimensions: 'dimentioner',
-      distance: 16939.8,
-      fleet: 'Bussgods',
-      routePercentage: 16.666666666666668,
-      time: '2021-04-06T08:32:25.211836Z',
-      transport: 'pmv-nzeyywjl',
-      weight: 1,
-    },
-    {
-      bookingId: 'pmb-ngzmzmfk',
-      customer: 'kund',
-      day: '2021-04-06T08:32:25.211836Z',
-      dimensions: 'dimentioner',
-      distance: 16939.8,
-      fleet: 'SNX',
-      routePercentage: 16.666666666666668,
-      time: '2021-04-06T08:32:25.211836Z',
-      transport: 'pmv-nzeyywjl',
-      weight: 1,
-    },
-  ]
-
   return (
     <div style={{ width: '100vw' }}>
       <p>Levererade bokningar</p>
@@ -173,7 +132,7 @@ const History = () => {
                 {titel.title}
               </GridItemColumnTitle>
             ))}
-            {fakeBookings.map((booking, i) => {
+            {sortedBookings.map((booking, i) => {
               return (
                 <>
                   <GridItemColumn place={i + 2}>

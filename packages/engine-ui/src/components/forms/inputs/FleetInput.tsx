@@ -121,6 +121,7 @@ const Component: React.FC<Props> = ({ placeholder, name, ...rest }) => {
       <Elements.Form.TextInput
         {...rest}
         name={name}
+        id="fleet"
         type="text"
         placeholder={placeholder}
         onChange={onFleetInputHandler}

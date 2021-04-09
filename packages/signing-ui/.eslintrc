@@ -1,0 +1,44 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "modules": true
+    },
+    "ecmaVersion": 8,
+    "sourceType": "module"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx"],
+      "rules": {
+        "react/display-name": "off",
+        "no-undef": "error",
+        "no-unused-vars": "warn",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "vars": "all",
+            "args": "after-used",
+            "ignoreRestSiblings": true,
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.jsx", "**/*.js"],
+      "rules": {
+        "react/jsx-uses-react": "error",
+        "react/react-in-jsx-scope": "error",
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "warn"
+      }
+    }
+  ]
+}

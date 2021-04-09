@@ -7,6 +7,7 @@ import { Booking, Instruction } from '../types'
 import { getDirectionsUrl, getDirectionsFromInstructionGroups } from './google'
 import { getAddressFromCoordinate } from './pelias'
 import cache from './cache'
+import * as botServices from './bot'
 
 const PHONE_GROUPCHAT_ERROR =
   'Bad Request: phone number can be requested in private chats only'
@@ -334,27 +335,28 @@ export const sendDeliveryAcknowledgementByPhoto = (
     'Fotografera nu mottagaren tillsammans med paketet och skicka bilden här.'
   )
 
-export const sendBeginDeliveryAcknowledgement = (
+export const sendBeginDeliveryAcknowledgement = async (
   telegramId: number,
   instructionGroupId: string
-): Promise<Message> =>
-  bot.telegram.sendMessage(
+): Promise<Message> => {
+  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
+  const [instruction] = await cache.getInstructionGroup(instructionGroupId)
+
+  const url = `${
+    process.env.SIGNING_URL || 'http://127.0.0.1:3001'
+  }/sign-delivery/${transportId}/${instruction.id}`
+
+  return bot.telegram.sendMessage(
     telegramId,
     `Ska leveransen bekräftas med en signatur, med en bild eller manuellt?`.concat(
-      `\nOm mottagaren är tillgänglig så väljer du "Signera"`,
+      `\nOm mottagaren är tillgänglig så väljer du "Signera" och då öppnas ett nytt fönster där mottagaren ska signera leveransen.`,
       `\nOm mottagaren inte är tillgänglig så väljer du "Ta bild"`,
       `\nLeverera med manuell kvittens, välj då "Manuell kvittens"`,
       `\nOm du vill avbryta leveransen, välj då "Avbryt"`
     ),
     {
       reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(
-          'Signera',
-          JSON.stringify({
-            e: 'delivery_acknowledgement:signature',
-            id: instructionGroupId,
-          })
-        ),
+        Markup.urlButton('Signera', url),
         Markup.callbackButton(
           'Ta bild',
           JSON.stringify({
@@ -379,28 +381,6 @@ export const sendBeginDeliveryAcknowledgement = (
       ]),
     }
   )
-
-export const sendDeliveryAcknowledgementBySignature = async (
-  telegramId: number,
-  instructionGroupId: string
-): Promise<Message> => {
-  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
-  const [instruction] = await cache.getInstructionGroup(instructionGroupId)
-
-  const url = `${
-    process.env.SIGNING_URL || 'http://127.0.0.1:3000'
-  }/sign-delivery/${transportId}/${instruction.id}`
-
-  return bot.telegram.sendMessage(
-    telegramId,
-    `Följ länken nedan för att signera leveransen.`.concat(
-      `\nOm signeringen ska ske på en annan enhet så kan du kopiera länken till sidan`,
-      `\ndär signeringen sker genom att hålla inne "Signera"-knappen och välja "Copy link".`
-    ),
-    {
-      reply_markup: Markup.inlineKeyboard([Markup.urlButton('Signera', url)]),
-    }
-  )
 }
 
 export const sendCouldNotSavePhoto = async (
@@ -420,20 +400,15 @@ export const sendSignatureConfirmation = (
   telegramId: number,
   instructionGroupId: string
 ): Promise<Message> => {
+  botServices.handleFinishBookingInstructionGroup(
+    instructionGroupId,
+    'delivered',
+    telegramId
+  )
+
   return bot.telegram.sendMessage(
     telegramId,
-    `Leveransen är nu bekräftad och signerad. Klicka på "Klar" för att gå vidare.`,
-    {
-      reply_markup: Markup.inlineKeyboard([
-        Markup.callbackButton(
-          'Klar',
-          JSON.stringify({
-            e: 'signature_confirmed',
-            id: instructionGroupId,
-          })
-        ),
-      ]),
-    }
+    `Leveransen är nu bekräftad och signerad.`
   )
 }
 

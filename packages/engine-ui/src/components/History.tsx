@@ -12,7 +12,6 @@ const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(10, fit-content(150px));
   @media (max-width: 768px) {
-    background-color: coral;
   }
 `
 
@@ -31,9 +30,17 @@ const GridItemColumn = styled.div<{ place: number }>`
   padding: 0.6rem 1rem;
 `
 
-const initialState: FormState = {}
+const initialState: FormState = {
+  fleet: '',
+  startDate: '',
+  endDate: '',
+}
 
-export interface FormState {}
+export interface FormState {
+  fleet: string
+  startDate: string
+  endDate: string
+}
 
 const History = () => {
   const transports = stores.dataState((state) => state.transports)
@@ -73,8 +80,6 @@ const History = () => {
       t.bookingIds?.find((id) => id === booking.id)
     )
 
-    console.log(transport?.bookingIds?.length)
-
     return {
       bookingId: booking.id,
       fleet: (transport && transport.metadata.fleet) || 'Saknas',
@@ -95,6 +100,7 @@ const History = () => {
   })
 
   const fleets = deliveredBookingsWithTransport.map((booking) => booking.fleet)
+
   const uniqueFleets = fleets.filter(
     (item, index) => fleets.indexOf(item) === index
   )
@@ -134,7 +140,7 @@ const History = () => {
             ))}
             {sortedBookings.map((booking, i) => {
               return (
-                <>
+                <React.Fragment key={i}>
                   <GridItemColumn place={i + 2}>
                     <Elements.Layout.InlineContainer>
                       <Elements.Links.RoundedLink
@@ -169,7 +175,7 @@ const History = () => {
                   <GridItemColumn place={i + 2}>
                     {booking.routePercentage} %
                   </GridItemColumn>
-                </>
+                </React.Fragment>
               )
             })}
           </GridContainer>

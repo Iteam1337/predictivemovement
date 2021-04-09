@@ -32,12 +32,12 @@ const Icon = styled.img`
 
 const Wrapper = styled.div`
   width: 8rem;
+  margin-right: 3rem;
 `
 
 const SortWrapper = styled.form`
   display: flex;
-  width: 50%;
-  justify-content: space-between;
+  width: 100%;
   margin-bottom: 4rem;
 
   @media (max-width: 768px) {
@@ -55,6 +55,10 @@ const DropdownButton = styled.button`
     outline-color: #13c57b;
   }
   background-color: #f1f3f5;
+`
+
+const Label = styled.label`
+  font-size: 14px;
 `
 
 const DropDown: React.FC<{
@@ -131,7 +135,7 @@ const SortHistory: React.FC<{
   return (
     <SortWrapper>
       <Wrapper>
-        <p>Flotta </p>
+        <Label htmlFor="fleet">Flotta </Label>
         <FleetInput
           onClick={() => setShowDropdown((current) => !current)}
           ref={dropdownFleets}
@@ -150,9 +154,10 @@ const SortHistory: React.FC<{
       </Wrapper>
 
       <Wrapper>
-        <p>Fr.o.m. datum</p>
+        <Label htmlFor="startDate">Fr.o.m. datum</Label>
         <FleetInput>
           <Elements.Form.TextInput
+            id="startDate"
             type="date"
             value={fromDate}
             onChange={updateFromDate}
@@ -161,9 +166,10 @@ const SortHistory: React.FC<{
       </Wrapper>
 
       <Wrapper>
-        <p>T.o.m. datum</p>
+        <Label htmlFor="endDate">T.o.m. datum</Label>
         <FleetInput>
           <Elements.Form.TextInput
+            id="endDate"
             type="date"
             value={toDate}
             onChange={updateToDate}

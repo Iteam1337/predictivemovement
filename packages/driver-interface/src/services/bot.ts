@@ -222,8 +222,9 @@ export const onPhotoReceived = async (
     responseType: 'arraybuffer',
   })
   let photo = Buffer.from(response.data, 'binary').toString('base64')
-  if (!photo.match(/^data:image\/png;base64,/)) {
-    photo = `data:image/png;base64,${photo}`
+
+  if (!photo.match(/^data:image\/jpg;base64,/)) {
+    photo = `data:image/jpg;base64,${photo}`
   }
 
   return amqp
@@ -270,15 +271,6 @@ export const handleIncomingSignatureConfirmation = async (
 
   return messaging.sendSignatureConfirmation(telegramId, instructionGroupId)
 }
-
-export const handleDeliveryAcknowledgementBySignature = (
-  telegramId: number,
-  instructionGroupId: string
-): Promise<Message> =>
-  messaging.sendDeliveryAcknowledgementBySignature(
-    telegramId,
-    instructionGroupId
-  )
 
 export const handleDeliveryAcknowledgementByPhoto = (
   telegramId: number

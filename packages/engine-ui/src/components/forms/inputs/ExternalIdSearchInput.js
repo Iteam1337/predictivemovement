@@ -5,17 +5,13 @@ import checkIcon from '../../../assets/check-icon.svg'
 import * as hooks from '../../../hooks'
 import debounce from 'lodash.debounce'
 import { useSocket } from 'use-socketio'
+import { useField, useFormikContext } from 'formik'
 
-const Component = ({
-  onChangeHandler,
-  onSearchResult,
-  placeholder,
-  value,
-  formError,
-  ...rest
-}) => {
+const Component = ({ onSearchResult, placeholder, name, ...rest }) => {
   const [search] = hooks.useGetParcelInfo([])
   const [resultsIsFound, setResultsIsFound] = useState(false)
+  const { setFieldValue } = useFormikContext()
+  const [field] = useField(name)
 
   useSocket('parcel-info', ({ weight, measurements }) => {
     if (weight || measurements) {
@@ -32,7 +28,7 @@ const Component = ({
   const onSearchInputHandler = (event) => {
     event.persist()
     searchWithDebounce(event.currentTarget.value)
-    return onChangeHandler(event)
+    return setFieldValue(field.name, event.target.value)
   }
   return (
     <Elements.Layout.InputInnerContainer>
@@ -49,13 +45,11 @@ const Component = ({
       )}
       <Elements.Form.TextInput
         {...rest}
-        error={formError}
         name="externalId"
         type="text"
-        value={value}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
-        iconInset
+        iconinset="true"
       />
     </Elements.Layout.InputInnerContainer>
   )

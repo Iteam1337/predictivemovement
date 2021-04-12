@@ -1,6 +1,14 @@
-# `driver-interface`
+# `booking-interface`
 
-## Usage
+A telegram bot to add bookings.
+
+Start by exporting port 9200
+
+```
+kubectl port-forward elasticsearch-0 9200:9200 --namespace pelias
+```
+
+## Run locally
 
 Create .env file in root with following content:
 
@@ -8,12 +16,13 @@ Create .env file in root with following content:
 BOT_TOKEN=<your telegram bot token>
 ```
 
-Open https://t.me/predictive_movement_booking_bot from telegram app on you phone. This will add the telegram bot `pm_booking_bot` to your telegram.
+And then run
+
+```
+npm install
+npm run dev
+```
 
 ### Booking
 
-Start the booking wizard by typing the command `/boka`. This will take you through the booking, step by step.
-
-```
-npm run dev
-```
+Start the booking wizard by typing the command `/start`. This will take you through the booking, step by step.

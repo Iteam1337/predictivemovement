@@ -10,7 +10,7 @@ Predictive Movement aims to create a digital platform that will act as a collabo
 
 Predictive Movement is a project financed by, among others, Sweden’s Innovation Agency (Vinnova) and the Swedish Transport Administration. The project includes one Swedish region, four municipalities, a university, authorities as well as key actors within digitization and traffic/logistics. An important driving force behind the project is to combat climate change and to reduce emissions caused by road transports.
 
-## Get Started
+## Navigating the code
 
 The source code for the project is contained in this mono-repo. Within the [packages](packages) folder you will find all included packages. Here is a summary of the components:
 
@@ -23,6 +23,23 @@ The source code for the project is contained in this mono-repo. Within the [pack
 - [Vehicle Offer](packages/vehicle-offer) Re-routes vehicle offers to the queue
 - [Auto Accept Offer](packages/auto-accept-offer) Auto accepts offers for vehicles created in the Engine UI
 - [Booking-dispatcher](packages/booking-dispatcher) Auto accepts offers for vehicles created in the Engine UI
+- [Signing UI](packages/signing-ui) UI for signing a package on delivery
+
+## Running the project
+
+### Using kubernetes
+
+#### Secrets
+
+The following kubernetes secrets are used:
+
+    DRIVER_TOKEN - Driver Telegram bot token. Used by driver-interace
+    GOOGLE_TOKEN - Used by driver-interace
+    POSTNORD_KEY - Used by engine-server to get information from Postnord API
+    MINIO_ROOT_PASSWORD - Used by minio and engine-server
+    POSTGRES_PASSWORD - Used by postgres, engine and postgres-backup
+
+#### Deployment
 
 To deploy the dependencies of the stack (usually done once and it's DBs) to your Kubernetes cluster, use Skaffold:
 

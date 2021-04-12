@@ -3,16 +3,10 @@ import * as Elements from '../../../shared-elements'
 import locationIcon from '../../../assets/location.svg'
 import * as hooks from '../../../hooks'
 import debounce from 'lodash.debounce'
-import warningIcon from '../../../assets/warning.svg'
+import { useField, useFormikContext } from 'formik'
+import { validateAddress } from '../validation'
 
-const Component = ({
-  onChangeHandler,
-  onFocusHandler,
-  placeholder,
-  value,
-  formError,
-  ...rest
-}) => {
+const Component = ({ onFocusHandler, placeholder, name = '', ...rest }) => {
   const getFavoriteAddresses = () => {
     let favoriteAddresses
 
@@ -37,6 +31,8 @@ const Component = ({
   const [search, suggestedAddresses] = hooks.useGetSuggestedAddresses(
     getFavoriteAddresses()
   )
+  const { setFieldValue, handleBlur } = useFormikContext()
+  const [field] = useField(name)
 
   const [selectedAddress, setSelectedAddress] = React.useState({})
 
@@ -50,7 +46,7 @@ const Component = ({
     setShowSaveFavorite(false)
     searchWithDebounce(event.target.value)
 
-    return onChangeHandler({ name: event.target.value })
+    return setFieldValue(field.name, { name: event.target.value })
   }
 
   const handleDropdownSelect = (event, address) => {
@@ -58,12 +54,15 @@ const Component = ({
     setShowDropdown(false)
     setShowSaveFavorite(!isFavorite(address.name, address.county))
     const selected = {
-      ...address,
+      street: address.name,
+      city: address.county,
       name: `${address.name}, ${address.county}`,
       street: address.name,
+      lon: address.lon,
+      lat: address.lat,
     }
     setSelectedAddress(address)
-    return onChangeHandler(selected)
+    return setFieldValue(field.name, selected)
   }
 
   const saveAsFavorite = () => {
@@ -87,33 +86,28 @@ const Component = ({
 
   return (
     <Elements.Layout.InputInnerContainer>
-      {formError ? (
-        <Elements.Icons.FormInputIcon
-          alt="Warning icon"
-          src={`${warningIcon}`}
-        />
-      ) : (
-        <Elements.Icons.FormInputIcon
-          alt="Location pickup icon"
-          src={`${locationIcon}`}
-        />
-      )}
+      <Elements.Icons.FormInputIcon
+        alt="Location pickup icon"
+        src={`${locationIcon}`}
+      />
+
       <Elements.Form.TextInput
         {...rest}
-        error={formError}
-        name="pickup"
+        name={name}
         type="text"
-        value={value}
+        value={field.value.name}
         placeholder={placeholder}
         onChange={onSearchInputHandler}
+        validate={(val) => validateAddress(val)}
         onFocus={() => {
           setShowDropdown(getFavoriteAddresses().length > 0)
           return onFocusHandler()
         }}
-        onBlur={() => {
+        onBlur={(e) => {
+          handleBlur(e)
           setShowDropdown(false)
         }}
-        iconInset
+        iconinset="true"
       />
 
       {showDropdown && (

@@ -30,6 +30,11 @@ build:
       context: packages/auto-accept-offer
     - image: iteam1337/pm-booking-dispatcher
       context: packages/booking-dispatcher
+    - image: iteam1337/pm-signing-ui
+      context: packages/signing-ui
+      docker:
+        buildArgs:
+          REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
 deploy:
   kustomize:
     paths:

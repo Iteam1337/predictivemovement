@@ -46,6 +46,25 @@ const toOutgoingBooking = (booking) =>
       case 'pickup':
       case 'delivery':
         return { ...prev, [curr]: toOutgoingDestination(booking[curr]) }
+      case 'metadata':
+        return {
+          ...prev,
+          [curr]: {
+            ...booking[curr],
+            sender: {
+              ...booking[curr].sender,
+              contact: helpers.normalizePhoneNumber(
+                booking[curr].sender.contact
+              ),
+            },
+            recipient: {
+              ...booking[curr].recipient,
+              contact: helpers.normalizePhoneNumber(
+                booking[curr].recipient.contact
+              ),
+            },
+          },
+        }
       default:
         return { ...prev, [curr]: booking[curr] }
     }

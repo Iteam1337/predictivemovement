@@ -27,13 +27,13 @@
   },
   "dependencies": {
     "amqplib": "^0.5.5",
-    "awesome-phonenumber": "^2.40.0",
     "fluent-amqp": "^0.4.1",
     "highland": "^2.13.5",
     "id62": "^1.0.0",
     "minio": "^7.0.18",
     "moment": "^2.24.0",
     "node-fetch": "^2.6.1",
+    "phone": "^2.4.21",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {

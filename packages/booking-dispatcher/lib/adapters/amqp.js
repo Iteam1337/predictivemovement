@@ -1,6 +1,36 @@
-const amqp = require('amqplib').connect(
-  process.env.AMQP_URL || 'amqp://localhost'
-)
+const { connect } = require('amqplib')
+const amqpTimeout = parseInt(process.env.AMQP_RECONNECT_TIMEOUT, 10) || 5000
+
+function connectRabbit() {
+  const connection = connect(process.env.AMQP_URL || 'amqp://localhost')
+
+  connection
+    .then((connection) => {
+      connection.on('error', (err) => {
+        console.error(err)
+        setTimeout(() => {
+          amqp = connectRabbit()
+        }, amqpTimeout)
+      })
+
+      connection.on('close', (err) => {
+        console.error(err)
+        setTimeout(() => {
+          amqp = connectRabbit()
+        }, amqpTimeout)
+      })
+    })
+    .catch((err) => {
+      console.error(err)
+      setTimeout(() => {
+        amqp = connectRabbit()
+      }, amqpTimeout)
+    })
+
+  return connection
+}
+
+let amqp = connectRabbit()
 
 const exchanges = {
   bookings: {

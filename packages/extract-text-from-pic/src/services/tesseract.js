@@ -18,11 +18,17 @@ function extractTextFromImageUrl(url) {
   })
 }
 
-function extractTextFromImage(img) {
+function extractTextFromImage(mimeType, img) {
   return new Promise((resolve) => {
-    textract.fromBufferWithMime(img, config, (error, text) => {
-      resolve(text)
-    })
+    textract.fromBufferWithMime(
+      mimeType,
+      Buffer.from(img, 'base64'),
+      config,
+      (error, text) => {
+        console.log('text from picture', text)
+        resolve(text)
+      }
+    )
   })
 }
 

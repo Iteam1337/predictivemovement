@@ -224,7 +224,7 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
   const fileLink = await services.bot.getFileLink(bot, file_id)
 
   try {
-    const text = await services.text.getTextFromPhoto(fileLink)
+    const text = await services.text.getTextFromImage(fileLink)
 
     if (!text) {
       return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')

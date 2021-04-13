@@ -35,6 +35,8 @@ build:
       docker:
         buildArgs:
           REACT_APP_ENGINE_SERVER: "{{.REACT_APP_ENGINE_SERVER}}"
+    - image: iteam1337/pm-extract-text-from-pic
+      context: packages/extract-text-from-pic
 deploy:
   kustomize:
     paths:

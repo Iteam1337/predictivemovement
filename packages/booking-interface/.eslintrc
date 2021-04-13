@@ -1,4 +1,7 @@
 {
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "extends": ["@iteam/eslint-config-node"],
   "overrides": [
     {

@@ -39,6 +39,7 @@ export const exchanges = {
   INCOMING_VEHICLE_UPDATES: 'incoming_vehicle_updates',
   OUTGOING_VEHICLE_UPDATES: 'outgoing_vehicle_updates',
   DELIVERY_RECEIPTS: 'delivery_receipts',
+  FREIGHTSLIPS: 'freightslips',
 }
 
 export const queues = {

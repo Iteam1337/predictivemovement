@@ -37,6 +37,7 @@ module.exports = (io) => {
     publishUpdateTransport,
     confirmDeliveryReceipt,
     receipts,
+    freightslips,
   } = require('./engineConnector')(io)
 
   require('./receipts')(receipts, (signature) => {

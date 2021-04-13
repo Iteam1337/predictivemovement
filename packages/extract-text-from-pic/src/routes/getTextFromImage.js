@@ -10,7 +10,8 @@ async function getText({ query: { url } }, res, next) {
 
 async function getTextPost(req, res, next) {
   const img = req.body.image
-  const data = await extractTextFromImage(img)
+  const mimeType = req.body.mimeType
+  const data = await extractTextFromImage(mimeType, img)
   res.json({ text: data })
 }
 

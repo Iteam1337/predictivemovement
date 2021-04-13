@@ -65,6 +65,16 @@ services:
       - REDIS_URL=redis://redis:6379
     networks:
       - predictivemovement
+  booking-interface:
+    build: ./packages/booking-interface
+    environment:
+      - BOT_TOKEN=${TELEGRAM_BOOKING_TOKEN}
+      - EXTRACT_TEXT_FROM_PIC_URL=http://extract-text-from-pic:4000
+      - AMQP_HOST=rabbitmq
+      - AMQP_URL=amqp://rabbitmq
+      - ELASTICSEARCH_URL=${PELIAS_ELASTICSEARCH_URL:-http://host.docker.internal:9200}
+    networks:
+      - predictivemovement
   predictivemovement-route-optimization-jsprit:
     build: ./packages/route-optimization-jsprit
     container_name: "predictivemovement_route-optimization-jsprit"
@@ -102,6 +112,13 @@ services:
       - ./data:/data
     networks:
       - predictivemovement
+  extract-text-from-pic:
+    build: ./packages/extract-text-from-pic
+    ports:
+      - 127.0.0.1:4001:4000
+    networks:
+      - predictivemovement
+
 networks:
   predictivemovement:
     driver: bridge

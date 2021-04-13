@@ -13,6 +13,8 @@ resources:
   - auto-accept-offer.yaml
   - booking-dispatcher.yaml
   - signing-ui.yaml
+  - extract-text-from-pic.yaml
+  - booking-interface.yaml
 
 # namespace to deploy all Resources to
 namespace: predictivemovement-dev

@@ -22,4 +22,20 @@ const createBooking = (booking) => {
     .catch(console.warn)
 }
 
-module.exports = { createBooking }
+const publishFreightslipPhoto = (freightslip) =>
+  open
+    .then((conn) => conn.createChannel())
+    .then((ch) =>
+      ch
+        .assertExchange(exchanges.FREIGHTSLIPS, 'topic', {
+          durable: true,
+        })
+        .then(() =>
+          ch.publish(exchanges.freightslips, 'new', Buffer.from(freightslip), {
+            persistent: true,
+          })
+        )
+    )
+    .catch(console.warn)
+
+module.exports = { createBooking, publishFreightslipPhoto }

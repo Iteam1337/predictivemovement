@@ -1,19 +1,10 @@
 const bot = require('../adapters/bot')
 const moment = require('moment')
 
-const onBotStart = (ctx) => {
-  const {
-    first_name,
-
-    last_name,
-
-    id,
-  } = ctx.update.message.from
-
+const onBotStart = (ctx) =>
   ctx.reply(
-    `Välkommen ${first_name} ${last_name}! Skriv "/boka" För att skapa en bokning. Ditt id är ${id}`
+    `Välkommen till Predictive Movement.\nHär kan du lägga upp bokningar i systemet med hjälp av kameran i din telefon.`
   )
-}
 
 const onBookingConfirmed = (senderId, carId, events) => {
   bot.telegram.sendMessage(

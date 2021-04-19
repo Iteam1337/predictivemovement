@@ -60,31 +60,7 @@ const askAddAdditionalInformation = (ctx, booking) => {
   }
 
   createBooking(bookingToCreate)
-  return ctx.replyWithMarkdown(
-    `Då har du fått bokningsnummer:\n\n${ctx.scene.session.state.booking.id}\n\nAnteckna detta på försändelsen.`
-      .concat(`\nSå här ser din bokning ut:`)
-      .concat(`\n\nFrån:\n`)
-      .concat(
-        booking.from.street && booking.from.housenumber
-          ? `${booking.from.street} ${booking.from.housenumber}`
-          : booking.from.name
-      )
-
-      .concat(booking.from.postalcode ? `\n${booking.from.postalcode}` : '')
-      .concat(booking.from.locality ? `\n${booking.from.locality}` : '')
-      .concat(`\n\nTill:\n`)
-      .concat(
-        booking.to.street && booking.to.housenumber
-          ? `${booking.to.street} ${booking.to.housenumber}`
-          : booking.to.name
-      )
-      .concat(booking.to.postalcode ? `\n${booking.to.postalcode}` : '')
-      .concat(booking.to.locality ? `\n${booking.to.locality}` : ''),
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Fyll i fler detaljer', 'booking:add_extra'),
-      Markup.callbackButton('Påbörja nästa', 'booking:confirm'),
-    ]).extra()
-  )
+  return ctx.replyWithMarkdown('Din bokning skapas..')
 }
 
 const informNoSuggestedSenders = (ctx) => {

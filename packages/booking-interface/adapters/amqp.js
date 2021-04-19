@@ -42,11 +42,13 @@ const queues = {
   SET_BOOKING_ASSIGNED: 'set_booking_assigned_in_booker_interface',
   NOTIFY_PICKUP: 'notify_booker_of_pickup',
   NOTIFY_DELIVERY: 'notify_booker_of_delivery',
+  UPDATE_BOOKING: 'update_booking_in_booker_interface',
 }
 
 const routingKeys = {
   DELIVERED: 'delivered',
   PICKED_UP: 'picked_up',
+  NEW: 'new',
 }
 
 module.exports = {

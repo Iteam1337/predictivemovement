@@ -1,5 +1,6 @@
 const bot = require('../adapters/bot')
 const moment = require('moment')
+const { Markup } = require('telegraf')
 
 const onBotStart = (ctx) =>
   ctx.reply(
@@ -25,9 +26,46 @@ const onDeliveryConfirmed = (senderId) => {
   bot.telegram.sendMessage(senderId, `Din bokning har kommit fram!`)
 }
 
+const onBookingCreated = (senderId, booking) => {
+  const url = `http://127.0.0.1:3000/bookings/edit-booking/${booking.id}`
+  return bot.telegram.sendMessage(
+    senderId,
+    `Då har du fått bokningsnummer:\n\n${booking.id}\n\nAnteckna detta på försändelsen.`
+      .concat(`\nSå här ser din bokning ut:`)
+      .concat(`\n\nFrån:\n`)
+      .concat(
+        booking.pickup.street && booking.pickup.housenumber
+          ? `${booking.pickup.street} ${booking.pickup.housenumber}`
+          : booking.pickup.name
+      )
+
+      .concat(booking.pickup.postalcode ? `\n${booking.pickup.postalcode}` : '')
+      .concat(booking.pickup.locality ? `\n${booking.pickup.locality}` : '')
+      .concat(`\n\nTill:\n`)
+      .concat(
+        booking.delivery.street
+          ? `${booking.delivery.street}`
+          : booking.delivery.name
+      )
+      .concat(
+        booking.delivery.postalcode ? `\n${booking.delivery.postalcode}` : ''
+      )
+      .concat(
+        booking.delivery.locality ? `\n${booking.delivery.locality}` : ''
+      ),
+
+    Markup.inlineKeyboard([
+      Markup.callbackButton('Fyll i fler detaljer', 'booking:add_extra'),
+      Markup.callbackButton('Påbörja nästa', 'booking:confirm'),
+      Markup.urlButton('Edit', url),
+    ]).extra()
+  )
+}
+
 module.exports = {
   onBotStart,
   onBookingConfirmed,
   onPickupConfirmed,
   onDeliveryConfirmed,
+  onBookingCreated,
 }

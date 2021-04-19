@@ -68,10 +68,13 @@ const get = (parts) => client.search(buildQuery(parts))
 
 const formatQueryResult = (res) => {
   const [topHit] = res.hits.hits
-
   return {
     address: topHit._source.address_parts,
     locality: topHit._source.parent.locality[0],
+    coordinates: {
+      lon: topHit._source.center_point.lon,
+      lat: topHit._source.center_point.lat,
+    },
   }
 }
 

@@ -1,4 +1,6 @@
 const { Markup } = require('telegraf')
+const { createBooking } = require('../../services/amqp')
+const { v4: uuidv4 } = require('uuid') // https://www.npmjs.com/package/id62
 
 const greet = (ctx) =>
   ctx.replyWithMarkdown(
@@ -26,6 +28,39 @@ const askForSenderLocation = (ctx) =>
   )
 
 const askAddAdditionalInformation = (ctx, booking) => {
+  const senderId = ctx.update.callback_query.from.id
+
+  const bookingToCreate = {
+    external_id: uuidv4(),
+    pickup: {
+      name: booking.from.name,
+      lon: booking.from.coordinates.lon,
+      lat: booking.from.coordinates.lat,
+      street: booking.from.street,
+      city: booking.from.locality,
+    },
+    delivery: {
+      name: booking.to.name,
+      lat: booking.to.coordinates.lat,
+      lon: booking.to.coordinates.lon,
+      street: booking.to.street,
+      city: booking.to.locality,
+    },
+    metadata: {
+      telegram: {
+        senderId,
+      },
+      customer: '',
+      cargo: '',
+      fragile: false,
+      recipient: { name: '', contact: '', info: '' },
+      sender: { name: '', contact: '', info: '' },
+    },
+    size: { weight: 1, measurements: [18, 18, 18] },
+  }
+
+  createBooking(bookingToCreate)
+  // const url = `http://localhost:3000/bookings/edit-booking/booking`
   return ctx.replyWithMarkdown(
     `Då har du fått bokningsnummer:\n\n${ctx.scene.session.state.booking.id}\n\nAnteckna detta på försändelsen.`
       .concat(`\nSå här ser din bokning ut:`)
@@ -49,6 +84,7 @@ const askAddAdditionalInformation = (ctx, booking) => {
     Markup.inlineKeyboard([
       Markup.callbackButton('Fyll i fler detaljer', 'booking:add_extra'),
       Markup.callbackButton('Påbörja nästa', 'booking:confirm'),
+      // Markup.urlButton('Uppdatera bokning', url),
     ]).extra()
   )
 }

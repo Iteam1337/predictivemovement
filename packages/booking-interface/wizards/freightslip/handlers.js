@@ -117,13 +117,13 @@ const awaitSenderOrRecipientConfirmation = new Composer()
   .action('freightslip:is_sender', (ctx) => {
     const { state } = ctx.scene.session
     const [match] = state.matches
-
     state.booking = {
       from: {
         street: match.address?.street,
         housenumber: match.address.number,
         postalcode: match.address.zip,
         locality: match.locality,
+        coordinates: { lon: match.coordinates.lon, lat: match.coordinates.lat },
       },
     }
 
@@ -132,13 +132,13 @@ const awaitSenderOrRecipientConfirmation = new Composer()
   .action('freightslip:is_recipient', (ctx) => {
     const { state } = ctx.scene.session
     const [match] = state.matches
-
     state.booking = {
       to: {
         street: match.address.street,
         housenumber: match.address.number,
         postalcode: match.address.zip,
         locality: match.locality,
+        coordinates: { lon: match.coordinates.lon, lat: match.coordinates.lat },
       },
     }
 
@@ -235,9 +235,10 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
     )
 
     const elasticRes = await Promise.all(regexResult.map(services.elastic.get))
-    const searchResults = elasticRes.map((res) =>
-      services.formatQueryResult(res.body)
-    )
+    const searchResults = elasticRes.map((res) => {
+      console.log('ress: ', res.body.hits.hits[0]._source)
+      return services.formatQueryResult(res.body)
+    })
 
     if (!searchResults.length) {
       return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')

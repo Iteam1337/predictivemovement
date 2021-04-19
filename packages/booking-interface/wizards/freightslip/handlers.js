@@ -236,7 +236,6 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
 
     const elasticRes = await Promise.all(regexResult.map(services.elastic.get))
     const searchResults = elasticRes.map((res) => {
-      console.log('ress: ', res.body.hits.hits[0]._source)
       return services.formatQueryResult(res.body)
     })
 

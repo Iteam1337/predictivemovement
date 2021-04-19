@@ -60,7 +60,6 @@ const askAddAdditionalInformation = (ctx, booking) => {
   }
 
   createBooking(bookingToCreate)
-  // const url = `http://localhost:3000/bookings/edit-booking/booking`
   return ctx.replyWithMarkdown(
     `Då har du fått bokningsnummer:\n\n${ctx.scene.session.state.booking.id}\n\nAnteckna detta på försändelsen.`
       .concat(`\nSå här ser din bokning ut:`)
@@ -84,7 +83,6 @@ const askAddAdditionalInformation = (ctx, booking) => {
     Markup.inlineKeyboard([
       Markup.callbackButton('Fyll i fler detaljer', 'booking:add_extra'),
       Markup.callbackButton('Påbörja nästa', 'booking:confirm'),
-      // Markup.urlButton('Uppdatera bokning', url),
     ]).extra()
   )
 }

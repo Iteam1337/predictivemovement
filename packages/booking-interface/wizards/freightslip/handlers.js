@@ -95,9 +95,6 @@ const awaitAdditionalInformationOrConfirm = new Composer().action(
     return wizardHelpers.jumpToStep(ctx, 'greet')
   }
 )
-// .action('booking:add_extra', (ctx) => {
-//   console.log('booking wants extra')
-// })
 
 const awaitRetryUploadOrManual = new Composer()
   .action('retry_upload', (ctx) =>
@@ -237,9 +234,9 @@ const awaitImageUpload = new Composer().on('photo', async (ctx) => {
     )
 
     const elasticRes = await Promise.all(regexResult.map(services.elastic.get))
-    const searchResults = elasticRes.map((res) => {
-      return services.formatQueryResult(res.body)
-    })
+    const searchResults = elasticRes.map((res) =>
+      services.formatQueryResult(res.body)
+    )
 
     if (!searchResults.length) {
       return wizardHelpers.jumpToStep(ctx, 'noParseTextFromImageResult')

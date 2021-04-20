@@ -55,9 +55,8 @@ const onBookingCreated = (senderId, booking) => {
       ),
 
     Markup.inlineKeyboard([
-      Markup.callbackButton('Fyll i fler detaljer', 'booking:add_extra'),
+      Markup.urlButton('Fyll i fler detaljer', url),
       Markup.callbackButton('Påbörja nästa', 'booking:confirm'),
-      Markup.urlButton('Edit', url),
     ]).extra()
   )
 }

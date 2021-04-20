@@ -87,15 +87,17 @@ const awaitManualContactConfirmation = new Composer()
     console.log('***declines recipient lookup suggestion***')
   })
 
-const awaitAdditionalInformationOrConfirm = new Composer()
-  .action('booking:confirm', (ctx) => {
+const awaitAdditionalInformationOrConfirm = new Composer().action(
+  'booking:confirm',
+  (ctx) => {
     ctx.scene.session.state = {}
 
     return wizardHelpers.jumpToStep(ctx, 'greet')
-  })
-  .action('booking:add_extra', (ctx) => {
-    console.log('booking wants extra')
-  })
+  }
+)
+// .action('booking:add_extra', (ctx) => {
+//   console.log('booking wants extra')
+// })
 
 const awaitRetryUploadOrManual = new Composer()
   .action('retry_upload', (ctx) =>

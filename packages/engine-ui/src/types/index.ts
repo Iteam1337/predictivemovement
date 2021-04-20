@@ -24,7 +24,13 @@ interface BookingRoute {
   }
 }
 
+interface Event {
+  timestamp: string
+  type: string
+}
+
 export interface Booking {
+  events: Event[]
   id: string
   externalId?: string
   pickup: ParcelAddress

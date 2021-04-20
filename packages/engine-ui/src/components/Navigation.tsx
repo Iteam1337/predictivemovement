@@ -5,6 +5,7 @@ import DispatchIcon from '../assets/dispatch.svg'
 import * as Icons from '../assets/Icons'
 import ParcelIcon from '../assets/parcel.svg'
 import ShippingIcon from '../assets/shippingIcon.svg'
+import HistoryIcon from '../assets/historyIcon.svg'
 
 const NavigationBar = styled.nav`
   padding: 3rem 0;
@@ -55,6 +56,13 @@ const navItems = [
     icon: {
       src: DispatchIcon,
       alt: 'dispatch icon',
+    },
+  },
+  {
+    path: 'history',
+    icon: {
+      src: HistoryIcon,
+      alt: 'history icon',
     },
   },
 ]

@@ -30,7 +30,11 @@ const Label = styled.label<{ required?: boolean }>`
   }`}
 `
 
-const TextInput = styled(Field)<{ iconinset?: boolean; error?: boolean }>`
+const TextInput = styled(Field)<{
+  iconinset?: boolean
+  error?: boolean
+  marginTop?: boolean
+}>`
   border: ${({ error }) => (error ? '1px solid red' : 'none')};
   background-color: #f1f3f5;
   border-radius: 0.25rem;
@@ -38,7 +42,7 @@ const TextInput = styled(Field)<{ iconinset?: boolean; error?: boolean }>`
   font-size: 0.875rem;
   padding: ${({ iconinset }) =>
     iconinset ? '0.75rem 0 0.75rem 2.5rem' : '0.75rem'};
-
+  margin-top: ${({ marginTop }) => (marginTop ? '1rem' : null)};
   :focus {
     outline-color: #13c57b;
   }

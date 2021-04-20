@@ -6,6 +6,7 @@ import Plan from './Plan'
 import Navigation from './Navigation'
 import Transports from './Transports'
 import Notifications from './Notifications'
+import History from './History'
 
 const Container = styled.div`
   position: absolute;
@@ -64,6 +65,9 @@ const Sidebar = (state: Props) => {
               dispatchOffers={state.dispatchOffers}
               moveBooking={state.moveBooking}
             />
+          </Route>
+          <Route path="/history">
+            <History />
           </Route>
         </Content>
       </Container>

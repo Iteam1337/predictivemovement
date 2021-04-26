@@ -14,23 +14,26 @@ const MainRouteLayout: React.FC<{
   redirect?: string
 }> = ({ children, redirect = '/' }) => {
   const history = useHistory()
+  const isMobile = window.innerWidth <= 645
 
   return (
     <NestedMenuWrapper>
-      <Elements.Layout.FlexRowWrapper style={{ margin: '1.25em 0' }}>
-        <AddFormFieldButton
-          marginTop="0"
-          onClickHandler={() => {
-            if (history.length > 2) {
-              return history.goBack()
-            }
+      {!isMobile && (
+        <Elements.Layout.FlexRowWrapper style={{ margin: '1.25em 0' }}>
+          <AddFormFieldButton
+            marginTop="0"
+            onClickHandler={() => {
+              if (history.length > 2) {
+                return history.goBack()
+              }
 
-            return history.push(redirect)
-          }}
-        >
-          <Icons.Arrow style={{ transform: 'rotate(90deg)' }} />
-        </AddFormFieldButton>
-      </Elements.Layout.FlexRowWrapper>
+              return history.push(redirect)
+            }}
+          >
+            <Icons.Arrow style={{ transform: 'rotate(90deg)' }} />
+          </AddFormFieldButton>
+        </Elements.Layout.FlexRowWrapper>
+      )}
       {children}
     </NestedMenuWrapper>
   )

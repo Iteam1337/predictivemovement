@@ -18,10 +18,9 @@ const Container = styled.div`
 `
 
 const Content = styled.div<{ isMobile: Boolean }>`
-  padding: ${({ isMobile }) => (isMobile ? '6.5rem 1rem' : '2rem')};
+  padding: ${({ isMobile }) => (isMobile ? '6.5rem 2rem' : '2rem')};
   min-width: ${({ isMobile }) => (isMobile ? '100vw' : '400px')};
   overflow: auto;
-  ${({ isMobile }) => isMobile && 'padding-right: 3.4rem'};
 `
 
 interface Props {

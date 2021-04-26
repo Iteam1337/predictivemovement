@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "spec:watch": "npx redoc-cli serve pmoa.yaml --watch",
-    "spec:build": "npx redoc-cli build pmoa.yaml -o pm-redoc.html",
-    "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
+    "spec:watch": "npx redoc-cli serve spec/predictivemovement-1.0.0.yaml --watch",
+    "spec:build": "npx redoc-cli bundle spec/predictivemovement-1.0.0.yaml -o pm-redoc.html",
+    "dev": "npx nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
     "generate-ts": "npx openapi-typescript spec/predictivemovement-1.0.0.yaml --output ./src/__generated__/schema.ts"
   },
   "keywords": [],

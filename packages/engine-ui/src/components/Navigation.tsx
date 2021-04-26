@@ -6,6 +6,7 @@ import * as Icons from '../assets/Icons'
 import ParcelIcon from '../assets/parcel.svg'
 import ShippingIcon from '../assets/shippingIcon.svg'
 import Hamburger from '../assets/hamburger.svg'
+import Cross from '../assets/cross.svg'
 
 const NavigationBar = styled.nav`
   padding: 3rem 0;
@@ -69,9 +70,6 @@ const LinkText = styled(Link)`
   }
 `
 const HamburgerWrapper = styled.div`
-  background-color: #13c57b;
-  padding: 1.5rem;
-  border-radius: 50%;
   z-index: 20;
   position: absolute;
   right: 0;
@@ -115,7 +113,11 @@ const HamburgerMenu = () => {
     <>
       <HamburgerWrapper>
         <button onClick={() => setOpen(!open)}>
-          <img src={Hamburger} alt="menu" />
+          {open ? (
+            <img src={Cross} alt="close menu" />
+          ) : (
+            <img src={Hamburger} alt="menu" />
+          )}
         </button>
       </HamburgerWrapper>
       {open && (

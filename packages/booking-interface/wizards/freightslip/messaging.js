@@ -1,4 +1,6 @@
 const { Markup } = require('telegraf')
+const { createBooking } = require('../../services/amqp')
+const { v4: uuidv4 } = require('uuid') // https://www.npmjs.com/package/id62
 
 const greet = (ctx) =>
   ctx.replyWithMarkdown(
@@ -26,31 +28,39 @@ const askForSenderLocation = (ctx) =>
   )
 
 const askAddAdditionalInformation = (ctx, booking) => {
-  return ctx.replyWithMarkdown(
-    `Då har du fått bokningsnummer:\n\n${ctx.scene.session.state.booking.id}\n\nAnteckna detta på försändelsen.`
-      .concat(`\nSå här ser din bokning ut:`)
-      .concat(`\n\nFrån:\n`)
-      .concat(
-        booking.from.street && booking.from.housenumber
-          ? `${booking.from.street} ${booking.from.housenumber}`
-          : booking.from.name
-      )
+  const senderId = ctx.update.callback_query.from.id
 
-      .concat(booking.from.postalcode ? `\n${booking.from.postalcode}` : '')
-      .concat(booking.from.locality ? `\n${booking.from.locality}` : '')
-      .concat(`\n\nTill:\n`)
-      .concat(
-        booking.to.street && booking.to.housenumber
-          ? `${booking.to.street} ${booking.to.housenumber}`
-          : booking.to.name
-      )
-      .concat(booking.to.postalcode ? `\n${booking.to.postalcode}` : '')
-      .concat(booking.to.locality ? `\n${booking.to.locality}` : ''),
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Fyll i fler detaljer', 'booking:add_extra'),
-      Markup.callbackButton('Påbörja nästa', 'booking:confirm'),
-    ]).extra()
-  )
+  const bookingToCreate = {
+    external_id: uuidv4(),
+    pickup: {
+      name: booking.from.name,
+      lon: booking.from.coordinates.lon,
+      lat: booking.from.coordinates.lat,
+      street: booking.from.street,
+      city: booking.from.locality,
+    },
+    delivery: {
+      name: booking.to.name,
+      lat: booking.to.coordinates.lat,
+      lon: booking.to.coordinates.lon,
+      street: booking.to.street,
+      city: booking.to.locality,
+    },
+    metadata: {
+      telegram: {
+        senderId,
+      },
+      customer: '',
+      cargo: '',
+      fragile: false,
+      recipient: { name: '', contact: '', info: '' },
+      sender: { name: '', contact: '', info: '' },
+    },
+    size: { weight: 1, measurements: [18, 18, 18] },
+  }
+
+  createBooking(bookingToCreate)
+  return ctx.replyWithMarkdown('Din bokning skapas..')
 }
 
 const informNoSuggestedSenders = (ctx) => {

@@ -53,7 +53,6 @@ const Submit: React.FC<{
   }
   return (
     <>
-      <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label htmlFor="size" required>

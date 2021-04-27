@@ -387,17 +387,16 @@ const Component = ({
             </Elements.Layout.InputContainer>
           </Elements.Layout.InputBlock>
         )}
-        <Elements.Layout.ButtonWrapper isMobile={isMobile}>
+        <Elements.Layout.ButtonWrapper>
           <Elements.Buttons.CancelButton
             type="button"
-            width={`${isMobile && '100%'}`}
-            marginTop={`${isMobile && '0.7rem'}`}
+            width={`${isMobile && '48.5%'}`}
             onClick={() => history.push('/bookings')}
           >
             Avbryt
           </Elements.Buttons.CancelButton>
           <Elements.Buttons.SubmitButton
-            width={`${isMobile ? '100%' : '48.5%'}`}
+            width={'48.5%'}
             padding="0.75rem 0"
             type="submit"
           >

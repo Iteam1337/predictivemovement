@@ -51,12 +51,20 @@ const TransportsList = styled(BookingList)`
 const Container = styled.div`
   margin-bottom: 2rem;
   margin-left: 1rem;
+
+  @media (max-width: 645px) {
+    margin-left: 0rem;
+  }
 `
 
 const ContainerWidth = styled.div`
   margin-bottom: 2rem;
   margin-left: 1rem;
   width: 300px;
+
+  @media (max-width: 645px) {
+    margin-left: 0rem;
+  }
 `
 
 const FlexRowBaselineContainer = styled.div`
@@ -124,9 +132,9 @@ const TextInputPairItem = styled.div`
   width: 48.5%;
 `
 
-const ButtonWrapper = styled.div<{ isMobile?: boolean; marginTop?: string }>`
+const ButtonWrapper = styled.div<{ marginTop?: string }>`
   display: flex;
-  flex-direction: ${({ isMobile }) => (isMobile ? 'column-reverse' : 'row')};
+  flex-direction: row;
   justify-content: space-between;
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '2rem')};
 `

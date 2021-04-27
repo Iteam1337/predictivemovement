@@ -55,6 +55,7 @@ const Component = ({
     setFieldValue
   )
   const isMobile = window.innerWidth <= 645
+
   const toggleShowEndAddressInput = () => {
     setShowEndAddressInput((showEndAddress) => !showEndAddress)
     setFieldValue('endAddress', { lat: undefined, lon: undefined, name: '' })
@@ -90,7 +91,9 @@ const Component = ({
           <FormInputs.AddressSearchInput
             id="startAddress"
             name="startAddress"
-            placeholder="Adress (sök eller klicka på karta)"
+            placeholder={`Adress ${
+              isMobile ? '' : '(sök eller klicka på karta)'
+            }`}
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -117,7 +120,9 @@ const Component = ({
             <>
               <FormInputs.AddressSearchInput
                 name="endAddress"
-                placeholder="Adress (sök eller klicka på karta)"
+                placeholder={`Adress ${
+                  isMobile ? '' : '(sök eller klicka på karta)'
+                }`}
                 onFocusHandler={() =>
                   dispatch({
                     type: 'focusInput',

@@ -5,9 +5,9 @@ import * as Icons from '../../assets/Icons'
 import styled from 'styled-components'
 import AddFormFieldButton from '../forms/inputs/AddFormFieldButton'
 
-const NestedMenuWrapper = styled.div`
+const NestedMenuWrapper = styled.div<{ isMobile: boolean }>`
   display: grid;
-  grid-template-columns: auto 1fr;
+  ${({ isMobile }) => !isMobile && 'grid-template-columns: auto 1fr'};
 `
 
 const MainRouteLayout: React.FC<{
@@ -17,7 +17,7 @@ const MainRouteLayout: React.FC<{
   const isMobile = window.innerWidth <= 645
 
   return (
-    <NestedMenuWrapper>
+    <NestedMenuWrapper isMobile={isMobile}>
       {!isMobile && (
         <Elements.Layout.FlexRowWrapper style={{ margin: '1.25em 0' }}>
           <AddFormFieldButton

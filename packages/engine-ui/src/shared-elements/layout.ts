@@ -124,11 +124,11 @@ const TextInputPairItem = styled.div`
   width: 48.5%;
 `
 
-const ButtonWrapper = styled.div<{ isMobile?: boolean }>`
+const ButtonWrapper = styled.div<{ isMobile?: boolean; marginTop?: string }>`
   display: flex;
   flex-direction: ${({ isMobile }) => (isMobile ? 'column-reverse' : 'row')};
   justify-content: space-between;
-  margin-top: 2rem;
+  margin-top: ${({ marginTop }) => (marginTop ? marginTop : '2rem')};
 `
 
 const TimeRestrictionWrapper = styled.div`

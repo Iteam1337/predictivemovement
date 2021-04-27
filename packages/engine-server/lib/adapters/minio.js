@@ -44,6 +44,18 @@ async function init() {
 
 init()
 
+async function fileExists(bucketName, fileName) {
+  try {
+    await minioClient.statObject(bucketName, fileName)
+    return true
+  } catch (e) {
+    if (e.name === 'S3Error' && e.message === 'Not Found') {
+      return false
+    }
+    throw e
+  }
+}
+
 async function saveSignature({
   createdAt,
   signedBy,
@@ -54,6 +66,13 @@ async function saveSignature({
 }) {
   const bucketName = 'signatures'
   const folder = moment().format('YYYY-MM')
+  const fileName = `${folder}/${bookingId}`
+
+  // quick fix to not overwrite in storage
+  // we still send an event for the receipt though
+  if (await fileExists(bucketName, fileName)) {
+    return {}
+  }
 
   const signature = JSON.stringify(
     {

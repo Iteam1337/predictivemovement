@@ -126,16 +126,12 @@ const Pickup: React.FC<{ dispatch: any }> = ({ dispatch }) => {
                   )}
               </Elements.Layout.InputInnerContainer>
             </Elements.Layout.InputContainer>
-            <Elements.Form.Label htmlFor="sender-name">
-              Kontakt
-            </Elements.Form.Label>
             <Elements.Layout.InputInnerContainer>
               <Elements.Icons.FormInputIcon
                 alt="Contact name icon"
                 src={`${nameIcon}`}
               />
               <FormInputs.TextInput
-                id="sender-name"
                 name="metadata.sender.name"
                 placeholder="Namn"
                 iconinset="true"

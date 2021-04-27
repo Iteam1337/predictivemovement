@@ -109,16 +109,12 @@ const Delivery: React.FC<{ dispatch: any }> = ({ dispatch }) => {
                   )}
               </Elements.Layout.InputInnerContainer>
             </Elements.Layout.InputContainer>
-            <Elements.Form.Label htmlFor="recipient-name">
-              Kontakt
-            </Elements.Form.Label>
             <Elements.Layout.InputInnerContainer>
               <Elements.Icons.FormInputIcon
                 alt="Contact name icon"
                 src={`${nameIcon}`}
               />
               <FormInputs.TextInput
-                id="recipient-name"
                 iconinset="true"
                 onFocus={() => dispatch({ type: 'resetInputClickState' })}
                 name="metadata.recipient.name"

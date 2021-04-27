@@ -14,6 +14,9 @@ const Container = styled.div`
   div {
     gap: 10px;
   }
+  @media (max-width: 645px) {
+    width: 100%;
+  }
 `
 
 const ImageContainer = styled.div<{ active: boolean }>`
@@ -46,16 +49,20 @@ const Component: React.FC<{
       <Elements.Layout.MarginTopContainer>
         <Elements.Layout.ButtonWrapper>
           {onClose && (
-            <Elements.Buttons.CancelButton onClick={onClose}>
+            <Elements.Buttons.NeutralButton
+              padding="0.7rem 1.8rem"
+              marginTop="0rem"
+              onClick={onClose}
+            >
               {closeButtonText}
-            </Elements.Buttons.CancelButton>
+            </Elements.Buttons.NeutralButton>
           )}
 
           {onContinue && (
             <Elements.Buttons.SubmitButton
               onClick={onContinue}
               type="button"
-              padding="0.75rem 1.25rem"
+              padding="0.7rem 1.8rem"
             >
               Lägg till ny
             </Elements.Buttons.SubmitButton>

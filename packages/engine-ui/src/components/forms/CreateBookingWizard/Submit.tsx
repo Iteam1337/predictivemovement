@@ -93,6 +93,7 @@ const Submit: React.FC<{
           <FormInputs.TextInput name="metadata.customer" placeholder="Kund" />
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
+      <Elements.Layout.MarginBottomContainer />
       <Elements.Buttons.NeutralButton
         type="button"
         padding="0.7rem 1.8rem"

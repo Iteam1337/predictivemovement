@@ -87,15 +87,14 @@ const awaitManualContactConfirmation = new Composer()
     console.log('***declines recipient lookup suggestion***')
   })
 
-const awaitAdditionalInformationOrConfirm = new Composer()
-  .action('booking:confirm', (ctx) => {
+const awaitAdditionalInformationOrConfirm = new Composer().action(
+  'booking:confirm',
+  (ctx) => {
     ctx.scene.session.state = {}
 
     return wizardHelpers.jumpToStep(ctx, 'greet')
-  })
-  .action('booking:add_extra', (ctx) => {
-    console.log('booking wants extra')
-  })
+  }
+)
 
 const awaitRetryUploadOrManual = new Composer()
   .action('retry_upload', (ctx) =>
@@ -117,13 +116,13 @@ const awaitSenderOrRecipientConfirmation = new Composer()
   .action('freightslip:is_sender', (ctx) => {
     const { state } = ctx.scene.session
     const [match] = state.matches
-
     state.booking = {
       from: {
         street: match.address?.street,
         housenumber: match.address.number,
         postalcode: match.address.zip,
         locality: match.locality,
+        coordinates: { lon: match.coordinates.lon, lat: match.coordinates.lat },
       },
     }
 
@@ -132,13 +131,13 @@ const awaitSenderOrRecipientConfirmation = new Composer()
   .action('freightslip:is_recipient', (ctx) => {
     const { state } = ctx.scene.session
     const [match] = state.matches
-
     state.booking = {
       to: {
         street: match.address.street,
         housenumber: match.address.number,
         postalcode: match.address.zip,
         locality: match.locality,
+        coordinates: { lon: match.coordinates.lon, lat: match.coordinates.lat },
       },
     }
 

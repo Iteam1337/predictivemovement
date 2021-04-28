@@ -2,7 +2,6 @@ import React from 'react'
 import * as stores from '../utils/state/stores'
 import * as Elements from '../shared-elements/'
 import * as helpers from '../utils/helpers'
-import * as Icons from '../assets/Icons'
 import { Transport } from '../types'
 
 const TransportsList: React.FC<{

@@ -1,6 +1,5 @@
 import React from 'react'
 import * as Elements from '../shared-elements/'
-import * as Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'

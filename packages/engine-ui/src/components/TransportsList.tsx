@@ -30,21 +30,21 @@ const TransportsList: React.FC<{
       <Elements.Layout.FlexRowWrapper
         onClick={() => setIsOpen((current) => !current)}
       >
-        <Elements.Typography.CleanH4>
+        <Elements.Icons.Chevron
+          active={isOpen}
+          style={{
+            width: isOpen ? '16px' : '13px',
+            marginRight: isOpen ? '0.7rem' : '0.875rem',
+          }}
+        />
+        <Elements.Typography.CleanH3>
           {fleet === '' && sortedFleets.length === 1
             ? 'Aktuella Transporter'
             : fleet === '' && sortedFleets.length > 1
             ? 'Övriga Transporter'
             : fleet}
-        </Elements.Typography.CleanH4>
+        </Elements.Typography.CleanH3>
         <Elements.Layout.MarginBottomContainer />
-
-        <Icons.Arrow
-          style={{
-            marginLeft: '0.875rem',
-            transform: `rotate(${isOpen ? '180deg' : 0})`,
-          }}
-        />
       </Elements.Layout.FlexRowWrapper>
       {isOpen &&
         filteredTransports.map((transport) => {

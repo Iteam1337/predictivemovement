@@ -51,56 +51,58 @@ const Transports: React.FC<{
   return (
     <Switch>
       <Route exact path={path}>
-        {fleets &&
-          fleets.map((fleet, i) => {
-            return (
-              <Elements.Layout.MarginBottomContainer key={i}>
-                <TransportsList
-                  transports={transports}
-                  fleet={fleet}
-                  sortedFleets={fleets}
-                />
+        <Elements.Layout.MarginTopContainer>
+          {fleets &&
+            fleets.map((fleet, i) => {
+              return (
+                <Elements.Layout.MarginBottomContainer key={i}>
+                  <TransportsList
+                    transports={transports}
+                    fleet={fleet}
+                    sortedFleets={fleets}
+                  />
 
-                {fleet ? (
-                  <Elements.Layout.FlexRowInCenterMarginS>
-                    <Link to={`${url}/add-transport/${fleet}`}>
-                      <Elements.Buttons.SubmitButton color="#666666">
-                        + Lägg till transport
-                      </Elements.Buttons.SubmitButton>
-                    </Link>
-                  </Elements.Layout.FlexRowInCenterMarginS>
-                ) : null}
-              </Elements.Layout.MarginBottomContainer>
-            )
-          })}
-        {fleets.length === 0 && (
-          <>
-            <Elements.Typography.CleanH4>
-              Aktuella transporter
-            </Elements.Typography.CleanH4>
-            <Elements.Layout.MarginBottomContainer />
-            <Elements.Typography.NoInfoParagraph>
-              Det finns inga aktuella transporter...
-            </Elements.Typography.NoInfoParagraph>
-            <Elements.Layout.FlexRowInCenterMarginS>
+                  {fleet ? (
+                    <Elements.Layout.FlexRowInCenterMarginS>
+                      <Link to={`${url}/add-transport/${fleet}`}>
+                        <Elements.Buttons.SubmitButton color="#666666">
+                          + Lägg till transport
+                        </Elements.Buttons.SubmitButton>
+                      </Link>
+                    </Elements.Layout.FlexRowInCenterMarginS>
+                  ) : null}
+                </Elements.Layout.MarginBottomContainer>
+              )
+            })}
+          {fleets.length === 0 && (
+            <>
+              <Elements.Typography.CleanH4>
+                Aktuella transporter
+              </Elements.Typography.CleanH4>
+              <Elements.Layout.MarginBottomContainer />
+              <Elements.Typography.NoInfoParagraph>
+                Det finns inga aktuella transporter...
+              </Elements.Typography.NoInfoParagraph>
+              <Elements.Layout.FlexRowInCenterMarginS>
+                <Link to={`${url}/add-transport/`}>
+                  <Elements.Buttons.SubmitButton color="#666666">
+                    + Lägg till transport
+                  </Elements.Buttons.SubmitButton>
+                </Link>
+              </Elements.Layout.FlexRowInCenterMarginS>
+            </>
+          )}
+
+          {transports.length > 0 ? (
+            <Elements.Layout.FlexRowInCenterMarginL>
               <Link to={`${url}/add-transport/`}>
                 <Elements.Buttons.SubmitButton color="#666666">
-                  + Lägg till transport
+                  + Skapa Transport
                 </Elements.Buttons.SubmitButton>
               </Link>
-            </Elements.Layout.FlexRowInCenterMarginS>
-          </>
-        )}
-
-        {transports.length > 0 ? (
-          <Elements.Layout.FlexRowInCenterMarginL>
-            <Link to={`${url}/add-transport/`}>
-              <Elements.Buttons.SubmitButton color="#666666">
-                + Skapa Transport
-              </Elements.Buttons.SubmitButton>
-            </Link>
-          </Elements.Layout.FlexRowInCenterMarginL>
-        ) : null}
+            </Elements.Layout.FlexRowInCenterMarginL>
+          ) : null}
+        </Elements.Layout.MarginTopContainer>
       </Route>
 
       <Route exact path={`${path}/add-transport/:fleet?`}>

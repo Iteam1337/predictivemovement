@@ -51,13 +51,14 @@ const BookingToggleList: React.FC<{
   return (
     <Elements.Layout.MarginBottomContainer>
       <Elements.Layout.FlexRowWrapper onClick={setOpen}>
-        <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
-        <Icons.Arrow
+        <Elements.Icons.Chevron
+          active={isOpen}
           style={{
-            marginLeft: '0.875rem',
-            transform: `rotate(${isOpen ? '180deg' : 0})`,
+            width: isOpen ? '16px' : '13px',
+            marginRight: isOpen ? '0.7rem' : '0.875rem',
           }}
         />
+        <Elements.Typography.CleanH3>{text}</Elements.Typography.CleanH3>
       </Elements.Layout.FlexRowWrapper>
 
       {isOpen && (

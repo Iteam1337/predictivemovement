@@ -5,7 +5,6 @@ const TimeRestrictionDateInputWrapper = styled.div``
 const FlexRowWrapper = styled.div`
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
 `
 const SectionWithMargin = styled.section`
   margin: 1.2rem 0;
@@ -45,6 +44,7 @@ const BookingList = styled.ul`
 `
 
 const TransportsList = styled(BookingList)`
+  padding-top: 0;
   height: auto;
 `
 

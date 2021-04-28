@@ -370,23 +370,6 @@ const Component = ({
             </Elements.Layout.InputBlock>
           </OpacityFadeInAnim>
         )}
-
-        {animateFirstBlock && (
-          <Elements.Layout.InputBlock>
-            <Elements.Layout.InputContainer>
-              <Elements.Form.Label htmlFor="size" required>
-                Hur stor är försändelsen?
-              </Elements.Form.Label>
-
-              <FormInputs.ParcelSize
-                parcelSizePresets={parcelSizePresets}
-                useCustomSize={useCustomSize}
-                setUseCustomSize={setUseCustomSize}
-                name="size"
-              />
-            </Elements.Layout.InputContainer>
-          </Elements.Layout.InputBlock>
-        )}
         <Elements.Layout.ButtonWrapper>
           <Elements.Buttons.CancelButton
             type="button"

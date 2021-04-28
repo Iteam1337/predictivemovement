@@ -27,7 +27,7 @@ const WisardForm: React.FC<{
           <Pickup dispatch={dispatch} />
         </Route>
         <Route path="/bookings/add-booking/delivery">
-          <Delivery dispatch={dispatch} />
+          <Delivery dispatch={dispatch} type={type} />
         </Route>
         <Route path="/bookings/add-booking/submit">
           <Submit

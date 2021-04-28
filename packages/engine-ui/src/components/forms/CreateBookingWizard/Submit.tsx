@@ -40,6 +40,9 @@ const Submit: React.FC<{
     sizePreset === 'custom'
   )
 
+  if (!values.pickup.name || !values.delivery.name)
+    history.push('/bookings/add-booking/pickup')
+
   const handleParcelSearchResults = ({
     weight,
     measurements,

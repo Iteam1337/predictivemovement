@@ -8,7 +8,10 @@ import phoneIcon from '../../../assets/contact-phone.svg'
 import nameIcon from '../../../assets/contact-name.svg'
 import { useHistory } from 'react-router-dom'
 
-const Delivery: React.FC<{ dispatch: any }> = ({ dispatch }) => {
+const Delivery: React.FC<{ dispatch: any; type?: 'NEW' | 'EDIT' }> = ({
+  dispatch,
+  type,
+}) => {
   const {
     setFieldValue,
     errors,
@@ -36,6 +39,9 @@ const Delivery: React.FC<{ dispatch: any }> = ({ dispatch }) => {
       ? setFieldValue(`${propertyName}.timeWindows`, null)
       : addTimeRestrictionWindow(propertyName)
   }
+
+  if (!values.pickup.name) history.push('/bookings/add-booking/pickup')
+
   return (
     <>
       <Elements.Layout.InputContainer>
@@ -135,6 +141,7 @@ const Delivery: React.FC<{ dispatch: any }> = ({ dispatch }) => {
         padding="0.7rem 1.8rem"
         marginTop="1rem"
         width={'100%'}
+        onClick={() => history.push('/bookings/add-booking/submit')}
         disabled={
           !touched.delivery ||
           errors.delivery ||
@@ -142,10 +149,34 @@ const Delivery: React.FC<{ dispatch: any }> = ({ dispatch }) => {
             ? true
             : false
         }
-        onClick={() => history.push('/bookings/add-booking/submit')}
       >
-        Nästa
+        Ange extra information
       </Elements.Buttons.NeutralButton>
+      <Elements.Layout.ButtonWrapper marginTop="1rem">
+        <Elements.Buttons.CancelButton
+          marginTop="0rem"
+          type="button"
+          onClick={() => history.push('/bookings')}
+          padding="0.75rem 1.25rem"
+          width="48.5%"
+        >
+          Avbryt
+        </Elements.Buttons.CancelButton>
+        <Elements.Buttons.SubmitButton
+          padding="0.75rem 1.25rem"
+          width="48.5%"
+          type="submit"
+          disabled={
+            !touched.delivery ||
+            errors.delivery ||
+            errors.metadata?.recipient?.contact
+              ? true
+              : false
+          }
+        >
+          {type !== 'EDIT' ? 'Lägg till' : 'Uppdatera'}
+        </Elements.Buttons.SubmitButton>
+      </Elements.Layout.ButtonWrapper>
     </>
   )
 }

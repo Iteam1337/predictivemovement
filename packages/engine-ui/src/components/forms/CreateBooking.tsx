@@ -174,6 +174,7 @@ const Component = ({
             label="Bokningen behöver hämtas en viss tid"
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
+            name="pickup.timewindow"
           />
           <Elements.Layout.TimeRestrictionWrapper>
             {showBookingTimeRestriction.pickup && (
@@ -268,6 +269,7 @@ const Component = ({
           />
           <FormInputs.Checkbox
             label="Bokningen behöver lämnas en viss tid"
+            name="delivery.timewindow"
             defaultChecked={!!values.pickup.timeWindows?.length}
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() =>

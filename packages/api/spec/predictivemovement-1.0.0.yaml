@@ -1,36 +1,34 @@
 openapi: 3.0.0
+servers:
+  - url: http://localhost:9000
 info:
   description: |
     This is the OpenAPI for Predictive Movement.
   version: 1.0.0-oas3
   title: Predictive Movement API
   contact:
-    email: ram@iteam.se
+    email: predictivemovement@iteam.se
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 paths:
   /transports:
     get:
-      operationId: 'getTransports'
+      operationId: "getTransports"
       description: Get all the transports to which you have access
-      security:
-        - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Transport'
+                  $ref: "#/components/schemas/Transport"
   /itinerary:
     get:
-      operationId: 'getItinerary'
-      description: Get an itinerary
-      security:
-        - bearerAuth: []
+      operationId: "getItinerary"
+      summary: Get an itinerary by transport ID
       parameters:
         - name: transportId
           in: query
@@ -39,103 +37,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Itinerary'
-  '/activity/{activity_id}/complete':
-    post:
-      description: Create an event for an activity of type complete
-      security:
-        - bearerAuth: []
-      responses:
-        '204':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-  '/activity/{activity_id}/failure':
-    post:
-      description: Create an event for an activity of type failure
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                reason:
-                  type: string
-      security:
-        - bearerAuth: []
-      responses:
-        '204':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-  /bookings/{booking_id}:
-    get:
-      description: Get info about a specific booking
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booking'
-  /me:
-    get:
-      description: Get your own user profile
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-  /users:
-    post:
-      security:
-        - bearerAuth: []
-      requestBody:
-        $ref: '#/components/requestBodies/User'
-      description: Create a new user
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-servers:
-  - url: 'https://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0'
-  - url: 'http://virtserver.swaggerhub.com/iteam1337/Predictivemovement/1.0.0'
+                $ref: "#/components/schemas/Itinerary"
 components:
-  requestBodies:
-    User:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
   schemas:
-    Auth:
-      type: object
-      properties:
-        token:
-          type: string
     Activity:
       type: object
       properties:
@@ -155,7 +64,7 @@ components:
           type: object
           properties:
             schema:
-              $ref: '#/components/schemas/Position'
+              $ref: "#/components/schemas/Position"
     Transport:
       type: object
       properties:
@@ -190,7 +99,7 @@ components:
             position:
               properties:
                 schema:
-                  $ref: '#/components/schemas/Position'
+                  $ref: "#/components/schemas/Position"
         endAddress:
           type: object
           properties:
@@ -223,7 +132,7 @@ components:
             street:
               type: string
             position:
-              $ref: '#/components/schemas/Position'
+              $ref: "#/components/schemas/Position"
         pickup:
           type: object
           properties:
@@ -234,11 +143,11 @@ components:
             street:
               type: string
             position:
-              $ref: '#/components/schemas/Position'
+              $ref: "#/components/schemas/Position"
         details:
           properties:
             schema:
-              $ref: '#/components/schemas/BookingDetails'
+              $ref: "#/components/schemas/BookingDetails"
         shipDate:
           type: string
           format: date-time
@@ -308,33 +217,6 @@ components:
         quantity:
           type: integer
           format: int32
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        username:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        phone:
-          type: string
-      xml:
-        name: User
-      required:
-        - id
-        - username
-        - firstName
-        - lastName
-        - email
-        - phone
     Place:
       type: object
       required:
@@ -342,7 +224,7 @@ components:
         - dropoff
       properties:
         position:
-          $ref: '#/components/schemas/Position'
+          $ref: "#/components/schemas/Position"
         address:
           type: string
     Position:
@@ -369,7 +251,7 @@ components:
         activities:
           type: array
           items:
-            $ref: '#/components/schemas/Activity'
+            $ref: "#/components/schemas/Activity"
       xml:
         name: Trips
       required:

@@ -8,7 +8,8 @@
     "spec:watch": "npx redoc-cli serve spec/predictivemovement-1.0.0.yaml --watch",
     "spec:build": "npx redoc-cli bundle spec/predictivemovement-1.0.0.yaml -o pm-redoc.html",
     "dev": "npx nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
-    "generate-ts": "npx openapi-typescript spec/predictivemovement-1.0.0.yaml --output ./src/__generated__/schema.ts"
+    "generate-ts": "npx openapi-typescript spec/predictivemovement-1.0.0.yaml --output ./src/__generated__/schema.ts",
+    "spec:test": "humlix -r spec/predictivemovement-1.0.0.yaml -g"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
     "eslint": "^7.18.0",
+    "humlix": "^1.0.4",
     "prettier": "^2.2.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"

@@ -51,7 +51,7 @@ const BookingToggleList: React.FC<{
     <Elements.Layout.MarginBottomContainer>
       <Elements.Layout.FlexRowWrapper onClick={setOpen}>
         <Elements.Icons.Chevron
-          active={isOpen}
+          active={isOpen.toString()}
           style={{
             width: isOpen ? '16px' : '13px',
             marginRight: isOpen ? '0.7rem' : '0.875rem',

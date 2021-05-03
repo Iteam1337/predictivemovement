@@ -109,9 +109,7 @@ const PlanRouteDetails = ({
           toggle(route.id)
         }}
       >
-        <Elements.Icons.Chevron
-          active={routeId === route.id ? true : undefined}
-        />
+        <Elements.Icons.Chevron active={routeId === route.id ? 'true' : ''} />
         <Elements.Typography.StrongParagraph dotColor={color}>
           Rutt {routeNumber}
         </Elements.Typography.StrongParagraph>

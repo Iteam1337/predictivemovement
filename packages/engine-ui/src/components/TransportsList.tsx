@@ -30,7 +30,7 @@ const TransportsList: React.FC<{
         onClick={() => setIsOpen((current) => !current)}
       >
         <Elements.Icons.Chevron
-          active={isOpen}
+          active={isOpen.toString()}
           style={{
             width: isOpen ? '16px' : '13px',
             marginRight: isOpen ? '0.7rem' : '0.875rem',

@@ -4,6 +4,11 @@
 
 ### Docs are available [here](./pm-redoc.html), just open this file in your browser.
 
-```
-// TODO: DEMONSTRATE API
-```
+Have documentation generate while you code
+`npm run spec: watch`
+
+Generate documentation static file
+`npm run spec: build`
+
+Run tests for validating description
+`npm run spec:test`

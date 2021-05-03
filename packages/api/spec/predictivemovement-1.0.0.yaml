@@ -20,7 +20,7 @@ paths:
         "200":
           description: OK
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 type: array
                 items:
@@ -35,12 +35,14 @@ paths:
           description: ID of the transport to which the itinerary is assigned
           required: true
           schema:
-            type: string
+            # type: string
+            $ref: "#/components/schemas/Transport/properties/transport_id"
+          example: "pmv-2314"
       responses:
         "200":
           description: OK
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/Itinerary"
 components:

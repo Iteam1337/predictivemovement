@@ -35,8 +35,7 @@ paths:
           description: ID of the transport to which the itinerary is assigned
           required: true
           schema:
-            # type: string
-            $ref: "#/components/schemas/Transport/properties/transport_id"
+            type: string
           example: "pmv-2314"
       responses:
         "200":

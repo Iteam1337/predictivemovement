@@ -21,6 +21,12 @@ A REST interface to interact with the [engine](../packages/engine_umbrella/apps/
   npm i
   ```
 
+- Generate Typescript types from openapi specification
+
+  ```bash
+  npm run generate-ts
+  ```
+
 - Have documentation generated while you code available at http://localhost:8080
 
   ```bash

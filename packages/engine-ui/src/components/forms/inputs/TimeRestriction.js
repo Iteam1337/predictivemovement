@@ -20,12 +20,23 @@ const Wrapper = styled.div`
     outline-color: #13c57b;
   }
 
+  .react-datepicker-popper {
+    z-index: 100;
+  }
+
   .react-datepicker__time-container
     .react-datepicker__time
     .react-datepicker__time-box
     ul.react-datepicker__time-list
     li.react-datepicker__time-list-item--selected {
     background-color: #13c57b;
+  }
+
+  @media (max-width: 645px) {
+    .react-datepicker__time-container,
+    .react-datepicker__time-box {
+      width: 70px;
+    }
   }
 `
 
@@ -60,6 +71,11 @@ const BookingTimeRestriction = ({
         required
         placeholderText={placeholderText}
         customInput={inputElement}
+        popperModifiers={{
+          preventOverflow: {
+            enabled: true,
+          },
+        }}
       />
     </Wrapper>
   )

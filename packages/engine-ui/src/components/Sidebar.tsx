@@ -17,10 +17,15 @@ const Container = styled.div`
   display: flex;
 `
 
-const Content = styled.div<{ isMobile: Boolean }>`
-  padding: ${({ isMobile }) => (isMobile ? '6.5rem 2rem' : '2rem')};
-  min-width: ${({ isMobile }) => (isMobile ? '100vw' : '400px')};
+const Content = styled.div`
+  padding: 2rem;
+  min-width: 400px;
   overflow: auto;
+
+  @media (max-width: 645px) {
+    padding: 6.5rem 2rem 1rem 2rem;
+    min-width: 100vw;
+  }
 `
 
 interface Props {
@@ -38,10 +43,10 @@ interface Props {
 const Sidebar = (state: Props) => {
   return (
     <>
-      <Notifications />
+      {!state.isMobile && <Notifications />}
       <Container>
         <Navigation />
-        <Content isMobile={state.isMobile}>
+        <Content>
           <Route exact path="/">
             <Redirect from="/" to="/bookings" />
           </Route>

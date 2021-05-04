@@ -191,6 +191,9 @@ const Bookings: React.FC<{
       <Route exact path={`${'/bookings'}/add-booking`}>
         <CreateBooking onSubmit={props.createBooking} />
       </Route>
+      <Route path={`${'/bookings'}/add-booking/`}>
+        <CreateBooking onSubmit={props.createBooking} />
+      </Route>
 
       <Route exact path={`${'/bookings'}/edit-booking/:bookingId`}>
         <EditBooking bookings={bookings} updateBooking={props.updateBooking} />

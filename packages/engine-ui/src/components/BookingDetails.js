@@ -69,7 +69,6 @@ const TimelineListItem = styled.li`
 `
 
 const Timeline = styled.div`
-  margin-top: 1.5rem;
   ol {
     list-style-type: none;
     padding: 0;
@@ -204,11 +203,19 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
         return !bookingEvents.includes(event)
       })
     )
+  const getLatestEvent = () => {
+    const latestEvent = eventsList
+      .filter((a) => typeof a !== 'string')
+      .slice(-1)[0]
+    return `${moment(latestEvent.timestamp).format(
+      'HH:mm'
+    )} ${parseEventTypeToHumanReadable(latestEvent.type)}`
+  }
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <Elements.Layout.FlexContainer>
-          <div style={{ width: '300px' }}>
+          <div style={{ width: isMobile ? '100%' : '300px' }}>
             <Elements.Layout.FlexRowWrapper>
               <h3>Bokning</h3>
               <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
@@ -330,46 +337,50 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                 <Elements.Typography.StrongParagraph>
                   Status
                 </Elements.Typography.StrongParagraph>
-                {booking.events.length ? (
-                  <ol>
-                    {eventsList.map((event, index) => {
-                      return (
-                        <TimelineListItem
-                          key={index}
-                          status={event.type ? true : false}
-                          error={event.type === 'delivery_failed'}
-                        >
-                          <Line status={event.type ? true : false} />
-                          {event.type ? (
-                            <>
-                              <Elements.Typography.NoMarginParagraph>
-                                {moment(event.timestamp).format('HH:mm')}
-                              </Elements.Typography.NoMarginParagraph>
-                              <Elements.Layout.MarginLeftContainerSm>
+                {!isMobile ? (
+                  booking.events.length ? (
+                    <ol>
+                      {eventsList.map((event, index) => {
+                        return (
+                          <TimelineListItem
+                            key={index}
+                            status={event.type ? true : false}
+                            error={event.type === 'delivery_failed'}
+                          >
+                            <Line status={event.type ? true : false} />
+                            {event.type ? (
+                              <>
                                 <Elements.Typography.NoMarginParagraph>
-                                  {parseEventTypeToHumanReadable(event.type)}
+                                  {moment(event.timestamp).format('HH:mm')}
                                 </Elements.Typography.NoMarginParagraph>
-                              </Elements.Layout.MarginLeftContainerSm>
-                            </>
-                          ) : (
-                            <ExpectedEventWrapper>
-                              <ExpectedEventParagraph>
-                                {parseEventTypeToHumanReadable(event)}
-                              </ExpectedEventParagraph>
-                            </ExpectedEventWrapper>
-                          )}
-                        </TimelineListItem>
-                      )
-                    })}
-                  </ol>
+                                <Elements.Layout.MarginLeftContainerSm>
+                                  <Elements.Typography.NoMarginParagraph>
+                                    {parseEventTypeToHumanReadable(event.type)}
+                                  </Elements.Typography.NoMarginParagraph>
+                                </Elements.Layout.MarginLeftContainerSm>
+                              </>
+                            ) : (
+                              <ExpectedEventWrapper>
+                                <ExpectedEventParagraph>
+                                  {parseEventTypeToHumanReadable(event)}
+                                </ExpectedEventParagraph>
+                              </ExpectedEventWrapper>
+                            )}
+                          </TimelineListItem>
+                        )
+                      })}
+                    </ol>
+                  ) : (
+                    <CapitalizeParagraph>{booking.status}</CapitalizeParagraph>
+                  )
                 ) : (
-                  <CapitalizeParagraph>{booking.status} </CapitalizeParagraph>
+                  <CapitalizeParagraph>{getLatestEvent()}</CapitalizeParagraph>
                 )}
               </Timeline>
 
               {booking.status === 'new' && (
                 <Elements.Layout.MarginTopContainer alignItems="center">
-                  <Elements.Layout.ButtonWrapper>
+                  <Elements.Layout.ButtonWrapper marginTop="0.5rem">
                     <Elements.Buttons.CancelButton
                       onClick={() => handleDeleteClick(id)}
                     >
@@ -392,6 +403,18 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                       Stäng
                     </Elements.Buttons.NeutralButton>
                   )}
+                </Elements.Layout.MarginTopContainer>
+              )}
+              {booking.status === 'assigned' && isMobile && (
+                <Elements.Layout.MarginTopContainer alignItems="center">
+                  <Elements.Buttons.NeutralButton
+                    onClick={() => history.push('/bookings')}
+                    marginTop="1.5rem"
+                    padding="0.75rem 1.25rem"
+                    width="100%"
+                  >
+                    Stäng
+                  </Elements.Buttons.NeutralButton>
                 </Elements.Layout.MarginTopContainer>
               )}
             </BorderContainer>

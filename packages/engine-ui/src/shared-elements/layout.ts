@@ -132,10 +132,14 @@ const TextInputPairItem = styled.div`
   width: 48.5%;
 `
 
-const ButtonWrapper = styled.div<{ marginTop?: string }>`
+const ButtonWrapper = styled.div<{
+  marginTop?: string
+  justifyContent?: string
+}>`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: ${({ justifyContent }) =>
+    justifyContent ? justifyContent : 'space-between'};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '2rem')};
   width: 100%;
 

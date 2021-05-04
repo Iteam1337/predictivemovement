@@ -46,7 +46,9 @@ const Component: React.FC<{
       <Elements.Layout.MarginTopContainerSm>
         <h3>{infoText}</h3>
       </Elements.Layout.MarginTopContainerSm>
-      <Elements.Layout.ButtonWrapper>
+      <Elements.Layout.ButtonWrapper
+        justifyContent={!onContinue ? 'center' : ''}
+      >
         {onClose && (
           <Elements.Buttons.NeutralButton
             padding="0.7rem 1.8rem"

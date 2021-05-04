@@ -6,9 +6,13 @@ const app = express()
 app.use(express.json())
 
 const api = new OpenAPIBackend({
-  definition: './spec/predictivemovement-1.0.0.yaml',
+  definition: './spec/predictivemovement.yaml',
   strict: true,
   validate: true,
+})
+
+app.get('/docs', (_, res) => {
+  res.sendFile('./spec/pm-redoc.html', { root: '.' })
 })
 
 api.register({

@@ -137,6 +137,11 @@ const ButtonWrapper = styled.div<{ marginTop?: string }>`
   flex-direction: row;
   justify-content: space-between;
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '2rem')};
+  width: 100%;
+
+  button {
+    width: 48.5%;
+  }
 `
 
 const TimeRestrictionWrapper = styled.div`

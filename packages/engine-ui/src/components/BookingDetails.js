@@ -104,6 +104,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
   const [address, setAddress] = React.useState()
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const statebookings = stores.dataState((state) => state.bookings)
+  const isMobile = window.innerWidth <= 645
 
   React.useEffect(() => {
     onMount()
@@ -369,20 +370,28 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
               {booking.status === 'new' && (
                 <Elements.Layout.MarginTopContainer alignItems="center">
                   <Elements.Layout.ButtonWrapper>
+                    <Elements.Buttons.CancelButton
+                      onClick={() => handleDeleteClick(id)}
+                    >
+                      Radera
+                    </Elements.Buttons.CancelButton>
                     <Elements.Buttons.SubmitButton
                       type="button"
                       onClick={() => handleChangeClick(id)}
                     >
-                      Ändra bokning
+                      Ändra
                     </Elements.Buttons.SubmitButton>
                   </Elements.Layout.ButtonWrapper>
-                  <Elements.Layout.ButtonWrapper>
-                    <Elements.Buttons.CancelButton
-                      onClick={() => handleDeleteClick(id)}
+                  {isMobile && (
+                    <Elements.Buttons.NeutralButton
+                      onClick={() => history.push('/bookings')}
+                      marginTop="1.5rem"
+                      padding="0.75rem 1.25rem"
+                      width="100%"
                     >
-                      Radera bokning
-                    </Elements.Buttons.CancelButton>
-                  </Elements.Layout.ButtonWrapper>
+                      Stäng
+                    </Elements.Buttons.NeutralButton>
+                  )}
                 </Elements.Layout.MarginTopContainer>
               )}
             </BorderContainer>

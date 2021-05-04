@@ -370,34 +370,16 @@ const Component = ({
             </Elements.Layout.InputBlock>
           </OpacityFadeInAnim>
         )}
-
-        {animateFirstBlock && (
-          <Elements.Layout.InputBlock>
-            <Elements.Layout.InputContainer>
-              <Elements.Form.Label htmlFor="size" required>
-                Hur stor är försändelsen?
-              </Elements.Form.Label>
-
-              <FormInputs.ParcelSize
-                parcelSizePresets={parcelSizePresets}
-                useCustomSize={useCustomSize}
-                setUseCustomSize={setUseCustomSize}
-                name="size"
-              />
-            </Elements.Layout.InputContainer>
-          </Elements.Layout.InputBlock>
-        )}
-        <Elements.Layout.ButtonWrapper isMobile={isMobile}>
+        <Elements.Layout.ButtonWrapper>
           <Elements.Buttons.CancelButton
             type="button"
-            width={`${isMobile && '100%'}`}
-            marginTop={`${isMobile && '0.7rem'}`}
+            width={`${isMobile && '48.5%'}`}
             onClick={() => history.push('/bookings')}
           >
             Avbryt
           </Elements.Buttons.CancelButton>
           <Elements.Buttons.SubmitButton
-            width={`${isMobile ? '100%' : '48.5%'}`}
+            width={'48.5%'}
             padding="0.75rem 0"
             type="submit"
           >

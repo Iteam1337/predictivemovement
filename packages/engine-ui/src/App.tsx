@@ -32,7 +32,6 @@ const App = () => {
   }
 
   const createBooking = (params: any) => {
-    console.log(params)
     socket.emit('new-booking', params)
   }
 

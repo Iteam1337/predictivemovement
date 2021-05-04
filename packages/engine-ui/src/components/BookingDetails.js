@@ -222,7 +222,9 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                 {helpers.getLastFourChars(booking.id).toUpperCase()}
               </Elements.Typography.RoundedLabelDisplay>
             </Elements.Layout.FlexRowWrapper>
-            <BorderContainer visible={booking.status === 'delivered'}>
+            <BorderContainer
+              visible={booking.status === 'delivered' && !isMobile}
+            >
               <Elements.Layout.SectionWithMargin>
                 {cargo && (
                   <CapitalizeParagraph>
@@ -377,7 +379,6 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                   <CapitalizeParagraph>{getLatestEvent()}</CapitalizeParagraph>
                 )}
               </Timeline>
-
               {booking.status === 'new' && (
                 <Elements.Layout.MarginTopContainer alignItems="center">
                   <Elements.Layout.ButtonWrapper marginTop="0.5rem">
@@ -405,6 +406,24 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                   )}
                 </Elements.Layout.MarginTopContainer>
               )}
+              {isMobile && booking.status === 'delivered' && (
+                <>
+                  <DeliveryDetails
+                    distance={booking.route.distance}
+                    duration={booking.route.duration}
+                    bookingId={bookingId}
+                    assignedTo={booking.assignedTo.id}
+                  />
+                  <Elements.Buttons.NeutralButton
+                    onClick={() => history.push('/bookings')}
+                    marginTop="1.5rem"
+                    padding="0.75rem 1.25rem"
+                    width="100%"
+                  >
+                    Stäng
+                  </Elements.Buttons.NeutralButton>
+                </>
+              )}
               {booking.status === 'assigned' && isMobile && (
                 <Elements.Layout.MarginTopContainer alignItems="center">
                   <Elements.Buttons.NeutralButton
@@ -419,16 +438,18 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
               )}
             </BorderContainer>
           </div>
-          <div>
-            {booking.status === 'delivered' && (
-              <DeliveryDetails
-                distance={booking.route.distance}
-                duration={booking.route.duration}
-                bookingId={bookingId}
-                assignedTo={booking.assignedTo.id}
-              />
-            )}
-          </div>
+          {!isMobile && (
+            <div>
+              {booking.status === 'delivered' && (
+                <DeliveryDetails
+                  distance={booking.route.distance}
+                  duration={booking.route.duration}
+                  bookingId={bookingId}
+                  assignedTo={booking.assignedTo.id}
+                />
+              )}
+            </div>
+          )}
         </Elements.Layout.FlexContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

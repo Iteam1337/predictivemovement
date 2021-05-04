@@ -31,7 +31,7 @@ A simpler REST interface towards the [engine](../packages/engine_umbrella/apps/e
   npm run spec:test
   ```
 
-- Run it
+- Run it (available at http://localhost:9000)
 
   ```bash
   npm run dev

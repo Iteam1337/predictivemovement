@@ -27,13 +27,17 @@ services:
     networks:
       - predictivemovement
   admin-ui:
-    build:
-      context: ./packages/engine-ui
-      args:
-        - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
-        - REACT_APP_ENGINE_SERVER=http://localhost:4000
+    image: node:14.9-slim
+    volumes:
+      - type: bind
+        source: ./packages/engine-ui
+        target: /app
+    command: sh -c 'cd /app && npm ci && npm start'
+    environment:
+      - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
+      - REACT_APP_ENGINE_SERVER=http://localhost:4000
     ports:
-      - 127.0.0.1:3000:80
+      - 127.0.0.1:3000:3000
     networks:
       - predictivemovement
   admin-server:

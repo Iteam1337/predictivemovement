@@ -64,6 +64,7 @@ const ContainerWidth = styled.div`
 
   @media (max-width: 645px) {
     margin-left: 0rem;
+    width: 100%;
   }
 `
 

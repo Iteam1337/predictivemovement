@@ -103,6 +103,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
   const [address, setAddress] = React.useState()
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const statebookings = stores.dataState((state) => state.bookings)
+  const transports = stores.dataState((state) => state.transports)
   const isMobile = window.innerWidth <= 645
 
   React.useEffect(() => {
@@ -299,7 +300,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                   {delivery.timeWindows &&
                     delivery.timeWindows.map(timeWindowToElement)}
                 </Elements.Layout.MarginBottomContainer>
-                {sender.name && (
+                {recipient.name && (
                   <Elements.Layout.FlexRowBaselineContainer>
                     <Elements.Icons.MarginRightIcon
                       src={ContactName}
@@ -318,23 +319,25 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                   </Elements.Layout.FlexRowBaselineContainer>
                 )}
               </Elements.Layout.SectionWithMargin>
-              <Elements.Layout.MarginTopContainer>
-                {booking.assigned_to && (
-                  <>
-                    <Elements.Typography.StrongParagraph>
-                      Bokad transport
-                    </Elements.Typography.StrongParagraph>
+              {booking.assignedTo && (
+                <Elements.Layout.MarginTopContainer
+                  style={{ marginBottom: '1rem' }}
+                >
+                  <Elements.Typography.StrongParagraph>
+                    Transport
+                  </Elements.Typography.StrongParagraph>
 
-                    <Elements.Links.RoundedLink
-                      to={`/transports/${booking.assigned_to.id}`}
-                    >
-                      {helpers
-                        .getLastFourChars(booking.assigned_to.id)
-                        .toUpperCase()}
-                    </Elements.Links.RoundedLink>
-                  </>
-                )}
-              </Elements.Layout.MarginTopContainer>
+                  <Elements.Links.RoundedLink
+                    to={`/transports/${booking.assignedTo.id}`}
+                  >
+                    {transports
+                      .find(
+                        (transport) => transport.id === booking.assignedTo.id
+                      )
+                      .metadata.profile.toUpperCase()}
+                  </Elements.Links.RoundedLink>
+                </Elements.Layout.MarginTopContainer>
+              )}
               <Timeline>
                 <Elements.Typography.StrongParagraph>
                   Status

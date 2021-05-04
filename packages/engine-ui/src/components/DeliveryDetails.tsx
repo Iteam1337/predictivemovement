@@ -31,7 +31,6 @@ const DeliveryDetails: React.FC<{
 }> = ({ distance, duration, bookingId, assignedTo }) => {
   const transports = stores.dataState((state) => state.transports)
   const signatures = stores.dataState((state) => state.signatures)
-  const isMobile = window.innerWidth <= 645
 
   const signature = signatures.find((a) => a.bookingId === bookingId)
 

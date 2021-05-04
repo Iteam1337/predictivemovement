@@ -15,6 +15,7 @@ resources:
   - signing-ui.yaml
   - extract-text-from-pic.yaml
   - booking-interface.yaml
+  - api.yaml
 
 # namespace to deploy all Resources to
 namespace: predictivemovement-dev

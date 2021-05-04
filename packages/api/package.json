@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "spec:watch": "npx redoc-cli serve pmoa.yaml --watch",
-    "spec:build": "npx redoc-cli build pmoa.yaml -o pm-redoc.html",
+    "spec:watch": "redoc-cli serve spec/predictivemovement-1.0.0.yaml --watch",
+    "spec:build": "redoc-cli bundle spec/predictivemovement-1.0.0.yaml -o ./spec/pm-redoc.html",
     "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
-    "generate-ts": "npx openapi-typescript spec/predictivemovement-1.0.0.yaml --output ./src/__generated__/schema.ts"
+    "generate-ts": "npx openapi-typescript spec/predictivemovement-1.0.0.yaml --output ./src/__generated__/schema.ts",
+    "spec:test": "dredd spec/predictivemovement-1.0.0.yaml http://localhost:9000"
   },
   "keywords": [],
   "author": "",
@@ -24,8 +25,11 @@
     "@types/node": "^14.14.21",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
+    "dredd": "^14.0.0",
     "eslint": "^7.18.0",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1",
+    "redoc-cli": "^0.11.4",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   }

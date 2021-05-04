@@ -1,14 +1,38 @@
 # `api`
 
-### OpenAPI spec can be found [here]('./spec/predictivemovement-1.0.0.yaml')
+## Description
 
-### Docs are available [here](./pm-redoc.html), just open this file in your browser.
+A simpler REST interface towards the [engine](../packages/engine_umbrella/apps/engine).
 
-Have documentation generate while you code
-`npm run spec: watch`
+## Development
 
-Generate documentation static file
-`npm run spec: build`
+- Install dependencies
 
-Run tests for validating description
-`npm run spec:test`
+  ```bash
+  nvm use
+  npm i
+  ```
+
+- Have documentation generated while you code available at http://localhost:8080
+
+  ```bash
+  npm run spec: watch
+  ```
+
+- Generate documentation static files
+
+  ```bash
+  npm run spec: build
+  ```
+
+- Run tests for validating openapi specification
+
+  ```bash
+  npm run spec:test
+  ```
+
+- Run it
+
+  ```bash
+  npm run dev
+  ```

@@ -41,7 +41,12 @@ services:
     networks:
       - predictivemovement
   admin-server:
-    build: ./packages/engine-server
+    image: node:14.9-slim
+    volumes:
+      - type: bind
+        source: ./packages/engine-server
+        target: /app
+    command: sh -c 'cd /app && npm ci && npm run dev'
     environment:
       - AMQP_URL=amqp://rabbitmq
       - POSTNORD_KEY=${POSTNORD_KEY}

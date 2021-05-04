@@ -2,9 +2,17 @@
 
 ## Description
 
-A simpler REST interface towards the [engine](../packages/engine_umbrella/apps/engine).
+A REST interface to interact with the [engine](../packages/engine_umbrella/apps/engine).
 
 ## Development
+
+### Technical details
+
+- We use [OpenAPI](https://swagger.io/specification/) to describe the API
+- We use [ReDoc](https://github.com/Redocly/redoc/blob/master/cli/README.md) to generate the documentation from the OpenAPI description
+- We use [Dredd](https://dredd.org/en/latest/index.html) to test our OpenAPI description
+
+### Run it
 
 - Install dependencies
 
@@ -16,13 +24,13 @@ A simpler REST interface towards the [engine](../packages/engine_umbrella/apps/e
 - Have documentation generated while you code available at http://localhost:8080
 
   ```bash
-  npm run spec: watch
+  npm run spec:watch
   ```
 
 - Generate documentation static files
 
   ```bash
-  npm run spec: build
+  npm run spec:build
   ```
 
 - Run tests for validating openapi specification

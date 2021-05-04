@@ -43,7 +43,7 @@ interface Props {
 const Sidebar = (state: Props) => {
   return (
     <>
-      <Notifications />
+      {!state.isMobile && <Notifications />}
       <Container>
         <Navigation />
         <Content>

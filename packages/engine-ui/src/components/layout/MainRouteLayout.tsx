@@ -8,6 +8,10 @@ import AddFormFieldButton from '../forms/inputs/AddFormFieldButton'
 const NestedMenuWrapper = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
+
+  @media (max-width: 645px) {
+    grid-template-columns: auto;
+  }
 `
 
 const MainRouteLayout: React.FC<{

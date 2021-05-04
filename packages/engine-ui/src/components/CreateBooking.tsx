@@ -8,6 +8,7 @@ import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './SuccessScreen'
 import * as stores from '../utils/state/stores'
 import { Formik, FormikHelpers } from 'formik'
+import WizardForm from './forms/CreateBookingWizard/WizardForm'
 export interface BookingFormState {
   externalId: string
   pickup: {
@@ -84,6 +85,8 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
   const [isFinished, setIsFinished] = React.useState(false)
   const setUIState = stores.ui((state) => state.dispatch)
 
+  const isMobile = window.innerWidth <= 645
+
   const onSubmitHandler = (
     values: BookingFormState,
     actions: FormikHelpers<BookingFormState>
@@ -105,6 +108,7 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
 
   const handleOnContinue = () => {
     setIsFinished(false)
+    if (isMobile) history.push('/bookings/add-booking')
   }
 
   const handleOnClose = () => history.push('/bookings')
@@ -123,7 +127,14 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
       <Elements.Layout.Container>
         <h3>Lägg till bokning</h3>
         <Formik initialValues={initialState} onSubmit={onSubmitHandler}>
-          <Form dispatch={setUIState} parcelSizePresets={parcelSizePresets} />
+          {isMobile ? (
+            <WizardForm
+              dispatch={setUIState}
+              parcelSizePresets={parcelSizePresets}
+            />
+          ) : (
+            <Form dispatch={setUIState} parcelSizePresets={parcelSizePresets} />
+          )}
         </Formik>
       </Elements.Layout.Container>
     </MainRouteLayout>

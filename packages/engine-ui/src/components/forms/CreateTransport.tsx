@@ -55,6 +55,7 @@ const Component = ({
     setFieldValue
   )
   const isMobile = window.innerWidth <= 645
+
   const toggleShowEndAddressInput = () => {
     setShowEndAddressInput((showEndAddress) => !showEndAddress)
     setFieldValue('endAddress', { lat: undefined, lon: undefined, name: '' })
@@ -70,7 +71,6 @@ const Component = ({
 
   return (
     <Form autoComplete="off">
-      <Elements.Layout.MarginBottomContainer />
       <Elements.Layout.InputBlock>
         <Elements.Layout.InputContainer>
           <Elements.Form.Label htmlFor="drivingSchedule">
@@ -91,7 +91,9 @@ const Component = ({
           <FormInputs.AddressSearchInput
             id="startAddress"
             name="startAddress"
-            placeholder="Adress (sök eller klicka på karta)"
+            placeholder={`Adress ${
+              isMobile ? '' : '(sök eller klicka på karta)'
+            }`}
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -118,7 +120,9 @@ const Component = ({
             <>
               <FormInputs.AddressSearchInput
                 name="endAddress"
-                placeholder="Adress (sök eller klicka på karta)"
+                placeholder={`Adress ${
+                  isMobile ? '' : '(sök eller klicka på karta)'
+                }`}
                 onFocusHandler={() =>
                   dispatch({
                     type: 'focusInput',
@@ -223,17 +227,16 @@ const Component = ({
           />
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>
-      <Elements.Layout.ButtonWrapper isMobile={isMobile}>
+      <Elements.Layout.ButtonWrapper>
         <Elements.Buttons.CancelButton
           type="button"
-          width={`${isMobile && '100%'}`}
-          marginTop={`${isMobile && '0.7rem'}`}
+          width="48.5%"
           onClick={() => history.push('/transports')}
         >
           Avbryt
         </Elements.Buttons.CancelButton>
         <Elements.Buttons.SubmitButton
-          width={`${isMobile ? '100%' : '48.5%'}`}
+          width={'48.5%'}
           padding="0.75rem 0"
           type="submit"
         >

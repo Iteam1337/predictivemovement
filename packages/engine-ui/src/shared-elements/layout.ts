@@ -5,7 +5,6 @@ const TimeRestrictionDateInputWrapper = styled.div``
 const FlexRowWrapper = styled.div`
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
 `
 const SectionWithMargin = styled.section`
   margin: 1.2rem 0;
@@ -45,6 +44,7 @@ const BookingList = styled.ul`
 `
 
 const TransportsList = styled(BookingList)`
+  padding-top: 0;
   height: auto;
 `
 
@@ -64,6 +64,7 @@ const ContainerWidth = styled.div`
 
   @media (max-width: 645px) {
     margin-left: 0rem;
+    width: 100%;
   }
 `
 
@@ -132,11 +133,20 @@ const TextInputPairItem = styled.div`
   width: 48.5%;
 `
 
-const ButtonWrapper = styled.div<{ marginTop?: string }>`
+const ButtonWrapper = styled.div<{
+  marginTop?: string
+  justifyContent?: string
+}>`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: ${({ justifyContent }) =>
+    justifyContent ? justifyContent : 'space-between'};
   margin-top: ${({ marginTop }) => (marginTop ? marginTop : '2rem')};
+  width: 100%;
+
+  button {
+    width: 48.5%;
+  }
 `
 
 const TimeRestrictionWrapper = styled.div`

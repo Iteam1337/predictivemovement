@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { FlyToInterpolator } from 'react-map-gl'
 import RouteActivities from './RouteActivities'
-import * as Icons from '../assets/Icons'
 import { useHistory, useParams, useRouteMatch } from 'react-router-dom'
 import * as Elements from '../shared-elements'
 import * as helpers from '../utils/helpers'
@@ -20,17 +19,10 @@ interface Props {
 }
 
 const RouteTitleWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 50% 1fr;
-  align-items: baseline;
+  display: flex;
+  align-items: flex-start;
   justify-items: flex-start;
   width: 100%;
-`
-
-const Chevron = styled(Icons.Arrow)`
-  transform: ${({ active }) => active && `rotate(180deg)`};
-  transition: transform 0.2s;
-  justify-self: flex-end;
 `
 
 const BookingsList = styled.ul`
@@ -117,10 +109,10 @@ const PlanRouteDetails = ({
           toggle(route.id)
         }}
       >
+        <Elements.Icons.Chevron active={routeId === route.id ? 'true' : ''} />
         <Elements.Typography.StrongParagraph dotColor={color}>
           Rutt {routeNumber}
         </Elements.Typography.StrongParagraph>
-        <Chevron active={routeId === route.id ? true : undefined} />
       </RouteTitleWrapper>
       {routeId === route.id && (
         <>

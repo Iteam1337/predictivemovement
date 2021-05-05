@@ -46,29 +46,29 @@ const Component: React.FC<{
       <Elements.Layout.MarginTopContainerSm>
         <h3>{infoText}</h3>
       </Elements.Layout.MarginTopContainerSm>
-      <Elements.Layout.MarginTopContainer>
-        <Elements.Layout.ButtonWrapper>
-          {onClose && (
-            <Elements.Buttons.NeutralButton
-              padding="0.7rem 1.8rem"
-              marginTop="0rem"
-              onClick={onClose}
-            >
-              {closeButtonText}
-            </Elements.Buttons.NeutralButton>
-          )}
+      <Elements.Layout.ButtonWrapper
+        justifyContent={!onContinue ? 'center' : ''}
+      >
+        {onClose && (
+          <Elements.Buttons.NeutralButton
+            padding="0.7rem 1.8rem"
+            marginTop="0rem"
+            onClick={onClose}
+          >
+            {closeButtonText}
+          </Elements.Buttons.NeutralButton>
+        )}
 
-          {onContinue && (
-            <Elements.Buttons.SubmitButton
-              onClick={onContinue}
-              type="button"
-              padding="0.7rem 1.8rem"
-            >
-              Lägg till ny
-            </Elements.Buttons.SubmitButton>
-          )}
-        </Elements.Layout.ButtonWrapper>
-      </Elements.Layout.MarginTopContainer>
+        {onContinue && (
+          <Elements.Buttons.SubmitButton
+            onClick={onContinue}
+            type="button"
+            padding="0.7rem 1.8rem"
+          >
+            Lägg till ny
+          </Elements.Buttons.SubmitButton>
+        )}
+      </Elements.Layout.ButtonWrapper>
     </Container>
   )
 }

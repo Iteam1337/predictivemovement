@@ -255,19 +255,17 @@ const TransportDetails: React.FC<{
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">
           <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.CancelButton
+              onClick={() => handleDeleteClick(transport.id)}
+            >
+              Radera
+            </Elements.Buttons.CancelButton>
             <Elements.Buttons.SubmitButton
               type="button"
               onClick={() => handleChangeClick(transport.id)}
             >
-              Ändra transport
+              Ändra
             </Elements.Buttons.SubmitButton>
-          </Elements.Layout.ButtonWrapper>
-          <Elements.Layout.ButtonWrapper>
-            <Elements.Buttons.CancelButton
-              onClick={() => handleDeleteClick(transport.id)}
-            >
-              Radera transport
-            </Elements.Buttons.CancelButton>
           </Elements.Layout.ButtonWrapper>
         </Elements.Layout.MarginTopContainer>
       </Elements.Layout.ContainerWidth>

@@ -9,7 +9,7 @@ import * as types from './types'
 import NotFound from './components/NotFound'
 import Sidebar from './components/Sidebar'
 import * as notificationTypes from './types/notification'
-import ServerStatusBar from './components/ServerStatusBar'
+import ServerStatus from './components/ServerStatusBar'
 
 const App = () => {
   const { socket } = useSocket()
@@ -107,7 +107,7 @@ const App = () => {
 
   return (
     <>
-      <ServerStatusBar serverStatus={serverStatus} />
+      <ServerStatus serverStatus={serverStatus} />
 
       <Switch>
         <Route path={['/bookings', '/']}>

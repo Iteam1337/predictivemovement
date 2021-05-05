@@ -17,6 +17,24 @@ export const Arrow = ({ active = false, ...rest }) => {
   )
 }
 
+export const ListArrow = ({ ...rest }) => {
+  return (
+    <svg
+      width={13}
+      height={16}
+      viewBox="0 0 13 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...rest}
+    >
+      <path
+        d="M.69 14.922V1.078C.69.12 2.26-.36 3.18.318l9.383 6.921c.57.42.57 1.102 0 1.522L3.18 15.683c-.919.677-2.49.197-2.49-.761z"
+        fill="#666"
+      />
+    </svg>
+  )
+}
+
 export const ThumbsUp = () => (
   <svg
     width="88"

@@ -76,6 +76,11 @@ const CleanH4 = styled.h4`
   cursor: default;
 `
 
+const CleanH3 = styled.h3`
+  margin: 0;
+  cursor: default;
+`
+
 const RoundedLabelDisplay = styled.span<{
   margin: string
   backgroundColor?: string
@@ -101,6 +106,7 @@ export {
   StrongParagraph,
   RoundedLabelDisplay,
   CleanH4,
+  CleanH3,
   SmallInfoBold,
   BoldParagraph,
   SpanBold,

@@ -9,7 +9,8 @@ const TransportsList: React.FC<{
   transports: Transport[]
   fleet: string
   sortedFleets: string[]
-}> = ({ transports, fleet, sortedFleets }) => {
+  url: string
+}> = ({ transports, fleet, sortedFleets, url }) => {
   const setUIState = stores.ui((state) => state.dispatch)
   const setMap = stores.map((state) => state.set)
   const [isOpen, setIsOpen] = React.useState(true)
@@ -46,12 +47,12 @@ const TransportsList: React.FC<{
           }}
         />
       </Elements.Layout.FlexRowWrapper>
-      {isOpen &&
-        filteredTransports.map((transport) => {
-          return (
+      {isOpen && (
+        <>
+          {filteredTransports.map((transport) => (
             <li key={transport.id}>
-              <Elements.Links.RoundedLink
-                color={transport.color}
+              <Elements.Links.LinkWithDot
+                dotColor={transport.color.toString()}
                 onMouseOver={() =>
                   setUIState({
                     type: 'highlightTransport',
@@ -75,10 +76,19 @@ const TransportsList: React.FC<{
               >
                 {transport.metadata?.profile?.toUpperCase() ||
                   helpers.getLastFourChars(transport.id).toUpperCase()}
-              </Elements.Links.RoundedLink>
+              </Elements.Links.LinkWithDot>
             </li>
-          )
-        })}
+          ))}
+
+          {fleet && (
+            <Elements.Layout.FlexRowWrapper>
+              <Elements.Links.PlaneLink to={`${url}/add-transport/${fleet}`}>
+                + Lägg till transport
+              </Elements.Links.PlaneLink>
+            </Elements.Layout.FlexRowWrapper>
+          )}
+        </>
+      )}
     </Elements.Layout.TransportsList>
   )
 }

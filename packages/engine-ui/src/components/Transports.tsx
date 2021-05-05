@@ -59,17 +59,8 @@ const Transports: React.FC<{
                   transports={transports}
                   fleet={fleet}
                   sortedFleets={fleets}
+                  url={url}
                 />
-
-                {fleet ? (
-                  <Elements.Layout.FlexRowInCenterMarginS>
-                    <Link to={`${url}/add-transport/${fleet}`}>
-                      <Elements.Buttons.SubmitButton color="#666666">
-                        + Lägg till transport
-                      </Elements.Buttons.SubmitButton>
-                    </Link>
-                  </Elements.Layout.FlexRowInCenterMarginS>
-                ) : null}
               </Elements.Layout.MarginBottomContainer>
             )
           })}

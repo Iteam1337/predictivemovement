@@ -9,39 +9,14 @@ import { validatePhoneNumber } from './validation'
 import * as hooks from '../../hooks'
 import OpacityFadeInAnim from '../animations/opacityFadeInAnim'
 import { BookingFormState } from '../CreateBooking'
-import { FormBooking } from '../EditBooking/EditBooking'
 import { shareCurrentLocation } from '../../utils/helpers'
 import * as stores from '../../utils/state/stores'
 
-const getSizePreset = (
-  { size: { weight, measurements } }: BookingFormState | FormBooking,
-  presets: any
-) => {
-  if (!weight || !measurements) {
-    return {
-      weight: '',
-      measurements: '',
-    }
-  }
-
-  return Object.keys(presets).find(
-    (p) =>
-      measurements === presets[p].measurements && weight === presets[p].weight
-  )
-}
-
 const Component = ({
   dispatch,
-  parcelSizePresets,
   type,
 }: {
   dispatch: any
-  parcelSizePresets: {
-    [s: string]: {
-      weight: number
-      measurements: string
-    }
-  }
   type?: 'NEW' | 'EDIT'
 }) => {
   const {
@@ -51,10 +26,7 @@ const Component = ({
     values,
   }: FormikProps<BookingFormState> = useFormikContext()
   const history = useHistory()
-  const sizePreset = getSizePreset(values, parcelSizePresets) || 'custom'
-  const [useCustomSize, setUseCustomSize] = React.useState(
-    sizePreset === 'custom'
-  )
+
   const [
     currentLocation,
     setCurrentLocation,
@@ -71,18 +43,6 @@ const Component = ({
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setFieldValue)
 
   const isMobile = window.innerWidth <= 645
-
-  const handleParcelSearchResults = ({
-    weight,
-    measurements,
-  }: {
-    weight: number
-    measurements: string
-  }) => {
-    if (!weight || !measurements) return null
-
-    setUseCustomSize(true)
-  }
 
   const addTimeRestrictionWindow = (type: string) =>
     setFieldValue(`${type}.timeWindows`, [{ earliest: null, latest: null }])
@@ -354,7 +314,6 @@ const Component = ({
                       payload: 'start',
                     })
                   }
-                  onSearchResult={handleParcelSearchResults}
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>

@@ -113,14 +113,6 @@ services:
       - AMQP_URL=amqp://rabbitmq
     networks:
       - predictivemovement
-  booking-dispatcher:
-    build: ./packages/booking-dispatcher
-    environment:
-      - AMQP_URL=amqp://rabbitmq
-    volumes:
-      - ./packages/booking-dispatcher/data:/app/data
-    networks:
-      - predictivemovement
   storage:
     image: minio/minio
     ports:

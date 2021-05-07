@@ -32,7 +32,7 @@ services:
       - type: bind
         source: ./packages/engine-ui
         target: /app
-    command: sh -c 'cd /app && npm ci && npm start'
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
       - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
       - REACT_APP_ENGINE_SERVER=http://localhost:4000
@@ -46,7 +46,7 @@ services:
       - type: bind
         source: ./packages/engine-server
         target: /app
-    command: sh -c 'cd /app && npm ci && npm run dev'
+    command: sh -c 'cd /app && npm ci --quiet && npm run dev'
     environment:
       - AMQP_URL=amqp://rabbitmq
       - POSTNORD_KEY=${POSTNORD_KEY}
@@ -61,7 +61,7 @@ services:
       - type: bind
         source: ./packages/signing-ui
         target: /app
-    command: sh -c 'cd /app && npm ci && npm start'
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
       - REACT_APP_ENGINE_SERVER=http://localhost:4000
     ports:
@@ -74,7 +74,7 @@ services:
       - type: bind
         source: ./packages/driver-interface
         target: /app
-    command: sh -c 'cd /app && npm ci && npm start'
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
       - BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - GOOGLE_API_TOKEN=${GOOGLE_API_TOKEN}
@@ -97,7 +97,7 @@ services:
       - type: bind
         source: ./packages/vehicle-offer
         target: /app
-    command: sh -c 'cd /app && npm ci && npm start'
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
       - AMQP_URL=amqp://rabbitmq
     networks:
@@ -108,7 +108,7 @@ services:
       - type: bind
         source: ./packages/auto-accept-offer
         target: /app
-    command: sh -c 'cd /app && npm ci && npm start'
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
       - AMQP_URL=amqp://rabbitmq
     networks:

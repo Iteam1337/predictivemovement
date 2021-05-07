@@ -34,7 +34,6 @@ services:
         target: /app
     command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
-      - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
       - REACT_APP_ENGINE_SERVER=http://localhost:4000
     ports:
       - 127.0.0.1:3000:3000
@@ -49,7 +48,6 @@ services:
     command: sh -c 'cd /app && npm ci --quiet && npm run dev'
     environment:
       - AMQP_URL=amqp://rabbitmq
-      - POSTNORD_KEY=${POSTNORD_KEY}
       - MINIO_HOST=storage
     ports:
       - 127.0.0.1:4000:4000
@@ -74,10 +72,8 @@ services:
       - type: bind
         source: ./packages/driver-interface
         target: /app
-    command: sh -c 'cd /app && npm ci --quiet && npm start'
+    command: sh -c 'cd /app && npm ci --quiet && npm run dev'
     environment:
-      - BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - GOOGLE_API_TOKEN=${GOOGLE_API_TOKEN}
       - AMQP_HOST=rabbitmq
       - AMQP_URL=amqp://rabbitmq
       - REDIS_URL=redis://redis:6379

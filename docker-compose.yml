@@ -122,13 +122,6 @@ services:
       - ./data:/data
     networks:
       - predictivemovement
-  extract-text-from-pic:
-    build: ./packages/extract-text-from-pic
-    ports:
-      - 127.0.0.1:4001:4000
-    networks:
-      - predictivemovement
-
 networks:
   predictivemovement:
     driver: bridge

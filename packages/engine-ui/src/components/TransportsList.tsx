@@ -51,7 +51,7 @@ const TransportsList: React.FC<{
           {filteredTransports.map((transport) => (
             <li key={transport.id}>
               <Elements.Links.LinkWithDot
-                dotColor={transport.color.toString()}
+                dotcolor={transport.color.toString()}
                 onMouseOver={() =>
                   setUIState({
                     type: 'highlightTransport',

@@ -1,13 +1,13 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
-const LinkWithDot = styled(Link)<{ dotColor: string }>`
-  ${({ dotColor }) =>
-    dotColor &&
+const LinkWithDot = styled(Link)<{ dotcolor: string }>`
+  ${({ dotcolor }) =>
+    dotcolor &&
     `
   &::before {
     border-radius: 50%;
-    background-color: ${dotColor};
+    background-color: ${dotcolor};
     width: 12px;
     height: 12px;
     display: inline-block;

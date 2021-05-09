@@ -12,7 +12,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   margin: 0 auto;
-  max-width: 500px;
+  max-width: 400px;
   input {
     max-width: 300px;
   }

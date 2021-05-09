@@ -73,15 +73,22 @@ module.exports = (io) => {
     .queue('update_vehicle_in_admin_ui', {
       durable: true,
     })
-    .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
+    .subscribe({ noAck: true }, [
+      routingKeys.NEW,
+      routingKeys.NEW_INSTRUCTIONS,
+      routingKeys.UPDATED,
+    ])
     .map((transportRes) => {
       const transport = transportRes.json()
 
       if (transport.current_route)
         transport.currentRoute = JSON.parse(transport.current_route)
+
+      if (typeof transport['metadata'] === 'string')
+        transport.metadata = JSON.parse(transport.metadata)
+
       return {
         ...transport,
-        metadata: JSON.parse(transport.metadata),
       }
     })
 

@@ -8,13 +8,7 @@ import Submit from './Submit'
 const WisardForm: React.FC<{
   dispatch: any
   type?: 'NEW' | 'EDIT'
-  parcelSizePresets: {
-    [s: string]: {
-      weight: number
-      measurements: string
-    }
-  }
-}> = ({ parcelSizePresets, dispatch, type }) => {
+}> = ({ dispatch, type }) => {
   return (
     <Form autoComplete="off">
       <Switch>
@@ -30,11 +24,7 @@ const WisardForm: React.FC<{
           <Delivery dispatch={dispatch} type={type} />
         </Route>
         <Route path="/bookings/add-booking/submit">
-          <Submit
-            type={type}
-            dispatch={dispatch}
-            parcelSizePresets={parcelSizePresets}
-          />
+          <Submit type={type} dispatch={dispatch} />
         </Route>
       </Switch>
     </Form>

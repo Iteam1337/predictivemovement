@@ -5,8 +5,6 @@ import styled from 'styled-components'
 const Animation = styled.div<{ state: string }>`
   transition: opacity 500ms, transform 500ms;
   opacity: ${({ state }) => (state === 'entered' ? 1 : 0)};
-  transform: ${({ state }) =>
-    state === 'entered' ? 'translateY(0)' : 'translateY(20%)'};
 `
 
 const OpacityFadeInAnim: React.FC<{ animate: boolean }> = ({

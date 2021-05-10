@@ -87,8 +87,9 @@ const Checkbox: React.FC<{
         type="checkbox"
         onChange={onChangeHandler}
         {...rest}
+        id={name}
       />
-      <CheckboxLabel>{label}</CheckboxLabel>
+      <CheckboxLabel htmlFor={name}>{label}</CheckboxLabel>
       <span className="custom-checkbox" />
     </CustomCheckboxContainer>
   )

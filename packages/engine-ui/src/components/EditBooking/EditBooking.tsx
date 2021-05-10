@@ -19,12 +19,6 @@ export interface FormBooking extends Omit<types.Booking, 'size'> {
   }
 }
 
-const parcelSizePresets = {
-  small: { weight: 1, measurements: '18x18x18' },
-  medium: { weight: 10, measurements: '24x24x24' },
-  big: { weight: 50, measurements: '36x36x36' },
-}
-
 const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
   const formBooking: FormBooking = {
     ...booking,
@@ -76,11 +70,7 @@ const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
     <Elements.Layout.Container>
       <h3>Uppdatera bokning</h3>
       <Formik initialValues={formBooking} onSubmit={onSubmitHandler}>
-        <Form
-          type="EDIT"
-          dispatch={setUIState}
-          parcelSizePresets={parcelSizePresets}
-        />
+        <Form type="EDIT" dispatch={setUIState} />
       </Formik>
     </Elements.Layout.Container>
   )

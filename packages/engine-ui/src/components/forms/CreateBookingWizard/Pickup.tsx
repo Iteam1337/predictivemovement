@@ -100,6 +100,7 @@ const Pickup: React.FC<{ dispatch: any }> = ({ dispatch }) => {
           label="Bokningen behöver hämtas en viss tid"
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
+          name="pickup.timewindow"
         />
         <Elements.Layout.TimeRestrictionWrapper>
           {showBookingTimeRestriction.pickup && (

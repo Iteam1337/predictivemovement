@@ -230,7 +230,7 @@ const Component = ({
           <FormInputs.Checkbox
             label="Bokningen behöver lämnas en viss tid"
             name="delivery.timewindow"
-            defaultChecked={!!values.pickup.timeWindows?.length}
+            defaultChecked={!!values.delivery.timeWindows?.length}
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() =>
               handleToggleTimeRestrictionsChange('delivery')

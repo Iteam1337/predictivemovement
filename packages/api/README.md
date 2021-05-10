@@ -45,7 +45,7 @@ A REST interface to interact with the [engine](../packages/engine_umbrella/apps/
   npm run spec:test
   ```
 
-- Run it (available at http://localhost:9000)
+- Run it (available at http://localhost:8000)
 
   ```bash
   npm run dev

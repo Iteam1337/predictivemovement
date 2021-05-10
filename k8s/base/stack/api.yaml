@@ -18,7 +18,7 @@ spec:
         - name: api
           image: iteam1337/pm-api
           ports:
-            - containerPort: 9000
+            - containerPort: 8000
           envFrom:
             - configMapRef:
                 name: common-properties
@@ -31,8 +31,8 @@ metadata:
     app: api
 spec:
   ports:
-    - port: 9000
-      targetPort: 9000
+    - port: 8000
+      targetPort: 8000
   selector:
     app: api
 ---
@@ -56,4 +56,4 @@ spec:
         paths:
           - backend:
               serviceName: api
-              servicePort: 9000
+              servicePort: 8000

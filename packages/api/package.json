@@ -9,7 +9,7 @@
     "spec:build": "redoc-cli bundle spec/predictivemovement.yaml -o ./spec/pm-redoc.html",
     "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
     "generate-ts": "openapi-typescript spec/predictivemovement.yaml --output ./src/__generated__/schema.ts",
-    "spec:test": "dredd spec/predictivemovement.yaml http://localhost:9000",
+    "spec:test": "dredd spec/predictivemovement.yaml http://localhost:8000",
     "build": "tsc"
   },
   "keywords": [],

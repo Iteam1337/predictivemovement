@@ -18,4 +18,4 @@ spec:
         paths:
           - backend:
               serviceName: api
-              servicePort: 9000
+              servicePort: 8000

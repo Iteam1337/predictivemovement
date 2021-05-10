@@ -38,6 +38,6 @@ app.use((req, res, next) =>
 )
 
 api.init()
-app.listen(process.env.PORT || 9000, () =>
-  console.info(`api listening at http://localhost:${process.env.PORT || 9000}`)
+app.listen(process.env.PORT || 8000, () =>
+  console.info(`api listening at http://localhost:${process.env.PORT || 8000}`)
 )

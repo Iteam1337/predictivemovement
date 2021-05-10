@@ -1,4 +1,4 @@
-FROM openjdk:14-jdk-alpine
+FROM openjdk:15
 WORKDIR /app
 
 COPY gradlew /app/gradlew

@@ -3,57 +3,18 @@ import * as Elements from '../../../shared-elements'
 import * as FormInputs from '../inputs'
 import { FormikProps, useFormikContext } from 'formik'
 import { BookingFormState } from '../../CreateBooking'
-import { FormBooking } from '../../EditBooking/EditBooking'
 import { useHistory } from 'react-router'
-
-const getSizePreset = (
-  { size: { weight, measurements } }: BookingFormState | FormBooking,
-  presets: any
-) => {
-  if (!weight || !measurements) {
-    return {
-      weight: '',
-      measurements: '',
-    }
-  }
-
-  return Object.keys(presets).find(
-    (p) =>
-      measurements === presets[p].measurements && weight === presets[p].weight
-  )
-}
 
 const Submit: React.FC<{
   dispatch: any
-  parcelSizePresets: {
-    [s: string]: {
-      weight: number
-      measurements: string
-    }
-  }
   type?: 'NEW' | 'EDIT'
-}> = ({ parcelSizePresets, dispatch, type }) => {
+}> = ({ dispatch, type }) => {
   const { values }: FormikProps<BookingFormState> = useFormikContext()
   const history = useHistory()
-  const sizePreset = getSizePreset(values, parcelSizePresets) || 'custom'
-  const [useCustomSize, setUseCustomSize] = React.useState(
-    sizePreset === 'custom'
-  )
 
   if (!values.pickup.name || !values.delivery.name)
     history.push('/bookings/add-booking/pickup')
 
-  const handleParcelSearchResults = ({
-    weight,
-    measurements,
-  }: {
-    weight: number
-    measurements: string
-  }) => {
-    if (!weight || !measurements) return null
-
-    setUseCustomSize(true)
-  }
   return (
     <>
       <Elements.Layout.InputBlock>
@@ -71,7 +32,6 @@ const Submit: React.FC<{
                 payload: 'start',
               })
             }
-            onSearchResult={handleParcelSearchResults}
           />
         </Elements.Layout.InputContainer>
         <Elements.Layout.InputContainer>

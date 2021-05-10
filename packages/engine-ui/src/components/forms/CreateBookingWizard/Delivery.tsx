@@ -76,6 +76,7 @@ const Delivery: React.FC<{ dispatch: any; type?: 'NEW' | 'EDIT' }> = ({
           defaultChecked={!!values.pickup.timeWindows?.length}
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('delivery')}
+          name="delivery.timewindow"
         />
         <Elements.Layout.TimeRestrictionWrapper>
           {showBookingTimeRestriction.delivery && (

@@ -24,7 +24,15 @@ interface BookingRoute {
   }
 }
 
+export type Events = {
+  timestamp?: string
+  type: string
+}
 export interface Booking {
+  events: Events[]
+  assignedTo: {
+    id: string
+  }
   id: string
   externalId?: string
   pickup: ParcelAddress
@@ -65,7 +73,7 @@ type TransportMetadata = {
   }
 }
 
-type TimeWindow = {
+export type TimeWindow = {
   earliest: string | Date
   latest: string | Date
 }

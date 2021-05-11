@@ -73,7 +73,7 @@ const Delivery: React.FC<{ dispatch: any; type?: 'NEW' | 'EDIT' }> = ({
         />
         <FormInputs.Checkbox
           label="Bokningen behöver lämnas en viss tid"
-          defaultChecked={!!values.pickup.timeWindows?.length}
+          defaultChecked={!!values.delivery.timeWindows?.length}
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('delivery')}
           name="delivery.timewindow"

@@ -60,11 +60,12 @@ const Component = ({
 
   React.useEffect(() => {
     if (currentLocation.lat || currentLocation.lon) {
-      setFieldValue('pickup', {
-        ...currentLocation,
-        name: `${currentLocation.name}, ${currentLocation.county}`,
-        street: currentLocation.name,
-      })
+      type === 'NEW' &&
+        setFieldValue('pickup', {
+          ...currentLocation,
+          name: `${currentLocation.name}, ${currentLocation.county}`,
+          street: currentLocation.name,
+        })
     }
   }, [currentLocation])
 

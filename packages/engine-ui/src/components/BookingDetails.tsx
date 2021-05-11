@@ -218,11 +218,7 @@ const BookingDetails = ({
     { type: 'delivered' },
   ]
 
-  interface Event {
-    type: string
-  }
-
-  const bookingEvents = events.map((event: Event) => event.type)
+  const bookingEvents = events.map((event: types.Events) => event.type)
 
   const eventsList = events
     .sort((a, b) =>

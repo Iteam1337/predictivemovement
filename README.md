@@ -53,7 +53,7 @@ To debug run:
 
     skaffold dev
 
-### Before you start running the project
+#### Before you start running the project
 
 Start by exporting port 9200
 
@@ -68,43 +68,23 @@ POSTNORD_KEY - for engine-server
 REACT_APP_MAPBOX_ACCESS_TOKEN - for engine-ui
 GOOGLE_API_TOKEN - for driver-interface
 TELEGRAM_BOT_TOKEN - for driver-interface
-TELEGRAM_BOOKING_TOKEN - for booking interface
 
-#### Via docker-compose:
-
-Set project build variables
-
-    export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
-
-Set project env variables
-
-    export GOOGLE_API_TOKEN=<FROM LASTPASS>
-    export TELEGRAM_BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
-    export TELEGRAM_BOOKING_TOKEN=<FROM LASTPASS> / create your own from telegram
-    export POSTNORD_KEY=<FROM LASTPASS>
-
-Start dependencies
-
-    docker-compose up -d
-
-#### Locally (outside of docker):
+#### Set environment variables
 
 create .env-file in packages/driver-interface/.env with
 
     GOOGLE_API_TOKEN=<FROM LASTPASS>
-    BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
+    BOT_TOKEN=<FROM LASTPASS> / or create your own bot in telegram
 
 create .env-file in packages/engine-ui/.env with
 
     REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
 
-create .env-file in packages/booking-interface/.env with
+#### Start the services
 
-    BOT_TOKEN=<FROM LASTPASS>
+    docker-compose up
 
-Go into every folder and run the start command for the service.
-
-#### run event_store migrations and start the engine
+#### Run migrations and start the engine
 
     cd packages/engine_umbrella/
     mix deps.get

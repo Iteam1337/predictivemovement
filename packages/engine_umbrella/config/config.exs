@@ -13,9 +13,9 @@ config :engine, event_stores: [Engine.ES]
 
 config :engine, Engine.ES,
   serializer: Engine.JsonSerializer,
-  username: "postgres",
-  password: "postgres",
-  database: "eventstore",
-  hostname: "localhost"
+  username: System.get_env("POSTGRES_USER") || "postgres",
+  password: System.get_env("POSTGRES_PASSWORD") || "postgres",
+  database: System.get_env("POSTGRES_DB") || "eventstore",
+  hostname: System.get_env("POSTGRES_HOST") || "localhost"
 
 if Mix.env() == :test, do: import_config("test.exs")

@@ -245,10 +245,6 @@ const BookingDetails = ({
     )} ${parseEventTypeToHumanReadable(latestEvent.type)}`
   }
 
-  if (!address) {
-    return null
-  }
-
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>

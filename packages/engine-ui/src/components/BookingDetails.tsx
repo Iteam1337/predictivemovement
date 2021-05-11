@@ -9,11 +9,19 @@ import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
 import * as stores from '../utils/state/stores'
 import DeliveryDetails from './DeliveryDetails'
+import * as types from '../types'
 
-const BorderContainer = styled.div`
-  padding-right: ${(props) => (props.visible ? '0.5rem' : null)};
-  border-right: ${(props) => (props.visible ? '1px solid #e5e5e5' : null)};
-  width: ${(props) => (props.visible ? '300px' : '100%')}; ;
+interface Props {
+  bookings: types.Booking[]
+  deleteBooking: (params: any) => void
+  onUnmount: () => void
+  onMount: () => void
+}
+
+const BorderContainer = styled.div<{ visible: boolean }>`
+  padding-right: ${({ visible }) => (visible ? '0.5rem' : null)};
+  border-right: ${({ visible }) => (visible ? '1px solid #e5e5e5' : null)};
+  width: ${({ visible }) => (visible ? '300px' : '100%')}; ;
 `
 
 const Paragraph = styled.p`
@@ -32,16 +40,16 @@ const ExpectedEventParagraph = styled.p`
   color: rgb(0, 0, 0, 0.3);
 `
 
-const Line = styled.div`
+const Line = styled.div<{ status: boolean }>`
   width: 1px;
-  border-left: 2px solid ${(props) => (props.status ? '#19de8b' : '#a8a8a8')};
+  border-left: 2px solid ${({ status }) => (status ? '#19de8b' : '#a8a8a8')};
   position: absolute;
   height: 90%;
   margin-left: -0.68rem;
   top: -1.5rem;
 `
 
-const TimelineListItem = styled.li`
+const TimelineListItem = styled.li<{ error: boolean; status: boolean }>`
   position: relative;
   margin: 0;
   padding-bottom: 1em;
@@ -51,8 +59,8 @@ const TimelineListItem = styled.li`
 
   :before {
     content: '';
-    background-color: ${(props) =>
-      props.error ? 'red' : props.status ? '#19de8b' : '#a8a8a8'};
+    background-color: ${({ error, status }) =>
+      error ? 'red' : status ? '#19de8b' : '#a8a8a8'};
     border-radius: 50%;
     position: absolute;
     left: 0;
@@ -81,14 +89,16 @@ const Timeline = styled.div`
     display: none;
   }
 `
-const timeWindowToElement = ({ earliest, latest }) => {
-  const formatDateLong = (date) => moment(date).format('YYYY-MM-DD, HH:mm')
-  const formatDateShort = (date) => moment(date).format('HH:mm')
+
+const timeWindowToElement = ({ earliest, latest }: types.TimeWindow) => {
+  const formatDateLong = (date: Date | string) =>
+    moment(date).format('YYYY-MM-DD, HH:mm')
+  const formatDateShort = (date: Date | string) => moment(date).format('HH:mm')
 
   const isSameDay = moment(earliest).isSame(latest, 'day')
 
   return (
-    <Elements.Typography.SmallInfoBold key={earliest}>
+    <Elements.Typography.SmallInfoBold>
       {`${formatDateLong(earliest)} - ${
         isSameDay ? formatDateShort(latest) : formatDateLong(latest)
       }`}
@@ -96,14 +106,22 @@ const timeWindowToElement = ({ earliest, latest }) => {
   )
 }
 
-const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
-  const { bookingId } = useParams()
+const BookingDetails = ({
+  bookings,
+  deleteBooking,
+  onUnmount,
+  onMount,
+}: Props) => {
+  const { bookingId }: { bookingId: string } = useParams()
   const history = useHistory()
   const booking = bookings.find((b) => b.id === bookingId)
-  const [address, setAddress] = React.useState()
+  const [address, setAddress] = React.useState({ pickup: '', delivery: '' })
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const statebookings = stores.dataState((state) => state.bookings)
   const transports = stores.dataState((state) => state.transports)
+  const transport = transports.find(
+    (transport: types.Transport) => transport.id === booking?.assignedTo.id
+  )
   const isMobile = window.innerWidth <= 645
 
   React.useEffect(() => {
@@ -122,8 +140,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
-      pickupCoordinates,
-      deliveryCoordinates
+      pickupCoordinates: types.Booking['pickup'],
+      deliveryCoordinates: types.Booking['delivery']
     ) => {
       const pickupAddress = await helpers.getAddressFromCoordinate(
         pickupCoordinates
@@ -143,18 +161,18 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])
 
-  const handleDeleteClick = (bookingId) => {
+  const handleDeleteClick = (bookingId: string) => {
     if (window.confirm('Är du säker på att du vill radera bokningen?')) {
       deleteBooking(bookingId)
       return history.push('/bookings')
     }
   }
 
-  const handleChangeClick = (bookingId) => {
+  const handleChangeClick = (bookingId: string) => {
     history.push(`/bookings/edit-booking/${bookingId}`)
   }
 
-  const parseEventTypeToHumanReadable = (type) => {
+  const parseEventTypeToHumanReadable = (type: string) => {
     switch (type) {
       case 'new':
         return 'Registrerad'
@@ -193,25 +211,44 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
     size: { measurements, weight },
   } = booking
 
-  const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
+  const expectedEvents: types.Events[] = [
+    { type: 'new' },
+    { type: 'assigned' },
+    { type: 'picked_up' },
+    { type: 'delivered' },
+  ]
 
-  const bookingEvents = events.map((event) => event.type)
+  interface Event {
+    type: string
+  }
+
+  const bookingEvents = events.map((event: Event) => event.type)
 
   const eventsList = events
-    .sort((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1))
+    .sort((a, b) =>
+      a.timestamp &&
+      b.timestamp &&
+      new Date(a.timestamp) > new Date(b.timestamp)
+        ? 1
+        : -1
+    )
     .concat(
-      expectedEvents.filter((event) => {
-        return !bookingEvents.includes(event)
+      expectedEvents.filter(({ type }) => {
+        return !bookingEvents.includes(type)
       })
     )
+
   const getLatestEvent = () => {
-    const latestEvent = eventsList
-      .filter((a) => typeof a !== 'string')
-      .slice(-1)[0]
+    const latestEvent = eventsList.filter((a) => a.timestamp).slice(-1)[0]
     return `${moment(latestEvent.timestamp).format(
       'HH:mm'
     )} ${parseEventTypeToHumanReadable(latestEvent.type)}`
   }
+
+  if (!address) {
+    return null
+  }
+
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
@@ -330,11 +367,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                   <Elements.Links.RoundedLink
                     to={`/transports/${booking.assignedTo.id}`}
                   >
-                    {transports
-                      .find(
-                        (transport) => transport.id === booking.assignedTo.id
-                      )
-                      .metadata.profile.toUpperCase()}
+                    {transport?.metadata?.profile &&
+                      transport.metadata.profile.toUpperCase()}
                   </Elements.Links.RoundedLink>
                 </Elements.Layout.MarginTopContainer>
               )}
@@ -345,14 +379,14 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                 {!isMobile ? (
                   booking.events.length ? (
                     <ol>
-                      {eventsList.map((event, index) => {
+                      {eventsList.map((event: types.Events, index: number) => {
                         return (
                           <TimelineListItem
                             key={index}
-                            status={event.type ? true : false}
+                            status={event.timestamp ? true : false}
                             error={event.type === 'delivery_failed'}
                           >
-                            <Line status={event.type ? true : false} />
+                            <Line status={event.timestamp ? true : false} />
                             {event.type ? (
                               <>
                                 <Elements.Typography.NoMarginParagraph>
@@ -367,7 +401,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                             ) : (
                               <ExpectedEventWrapper>
                                 <ExpectedEventParagraph>
-                                  {parseEventTypeToHumanReadable(event)}
+                                  {parseEventTypeToHumanReadable(event.type)}
                                 </ExpectedEventParagraph>
                               </ExpectedEventWrapper>
                             )}

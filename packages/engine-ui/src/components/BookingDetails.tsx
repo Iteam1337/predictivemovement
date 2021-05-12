@@ -120,7 +120,7 @@ const BookingDetails = ({
   const statebookings = stores.dataState((state) => state.bookings)
   const transports = stores.dataState((state) => state.transports)
   const transport = transports.find(
-    (transport: types.Transport) => transport.id === booking?.assignedTo.id
+    (transport: types.Transport) => transport.id === booking?.assignedTo?.id
   )
   const isMobile = window.innerWidth <= 645
 

@@ -26,19 +26,17 @@ const Component = ({
     values,
   }: FormikProps<BookingFormState> = useFormikContext()
   const history = useHistory()
+  const [loading, setLoading] = React.useState(false)
 
-  const [
-    currentLocation,
-    setCurrentLocation,
-  ] = stores.currentLocation((state) => [state, state.set])
+  const [currentLocation, setCurrentLocation] = stores.currentLocation(
+    (state) => [state, state.set]
+  )
 
-  const [
-    showBookingTimeRestriction,
-    setShowBookingTimeRestriction,
-  ] = React.useState<{ pickup: boolean; delivery: boolean }>({
-    pickup: !!values.pickup.timeWindows?.length || false,
-    delivery: !!values.delivery.timeWindows?.length || false,
-  })
+  const [showBookingTimeRestriction, setShowBookingTimeRestriction] =
+    React.useState<{ pickup: boolean; delivery: boolean }>({
+      pickup: !!values.pickup.timeWindows?.length || false,
+      delivery: !!values.delivery.timeWindows?.length || false,
+    })
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setFieldValue)
 
@@ -99,7 +97,11 @@ const Component = ({
           <FormInputs.AddressSearchInput
             id="pickup"
             name="pickup"
-            placeholder="Adress (sök eller klicka på karta)"
+            placeholder={
+              loading
+                ? 'Laddar din nuvarande adress..'
+                : 'Adress (sök eller klicka på karta)'
+            }
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -115,6 +117,7 @@ const Component = ({
           {!currentLocation.lon && (
             <Elements.Buttons.NeutralButton
               onClick={(e) => {
+                setLoading(true)
                 e.preventDefault()
                 shareCurrentLocation(setCurrentLocation)
               }}

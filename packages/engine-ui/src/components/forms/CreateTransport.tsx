@@ -35,6 +35,7 @@ const Component = ({
   }
   type: 'NEW' | 'EDIT'
 }) => {
+  const [loading, setLoading] = React.useState(false)
   const { values, setFieldValue, errors, touched }: FormikProps<FormState> =
     useFormikContext()
   const capacityPreset =
@@ -104,9 +105,11 @@ const Component = ({
           <FormInputs.AddressSearchInput
             id="startAddress"
             name="startAddress"
-            placeholder={`Adress ${
-              isMobile ? '' : '(sök eller klicka på karta)'
-            }`}
+            placeholder={
+              loading
+                ? 'Laddar din nuvarande adress..'
+                : `Adress ${isMobile ? '' : '(sök eller klicka på karta)'}`
+            }
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -122,6 +125,7 @@ const Component = ({
           {!currentLocation.lon && (
             <Elements.Buttons.NeutralButton
               onClick={(e) => {
+                setLoading(true)
                 e.preventDefault()
                 shareCurrentLocation(setCurrentLocation)
               }}

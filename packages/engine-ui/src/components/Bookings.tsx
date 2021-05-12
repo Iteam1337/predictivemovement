@@ -40,7 +40,6 @@ const BookingToggleList: React.FC<{
 }> = ({
   bookings,
   text,
-
   onMouseEnterHandler,
   onMouseLeaveHandler,
   isOpen,
@@ -106,9 +105,10 @@ const Bookings: React.FC<{
   const { url } = useRouteMatch()
   const bookingsRootView = useRouteMatch({ path: '/bookings', strict: true })
 
-  const sortedBookings = React.useMemo(() => sortBookingsByStatus(bookings), [
-    bookings,
-  ])
+  const sortedBookings = React.useMemo(
+    () => sortBookingsByStatus(bookings),
+    [bookings]
+  )
 
   React.useEffect(() => {
     if (bookingsRootView?.isExact) {
@@ -120,9 +120,12 @@ const Bookings: React.FC<{
     new: true,
     assigned: false,
     delivered: false,
+    delivery_failed: false,
   })
 
-  const handleExpand = (type: 'new' | 'assigned' | 'delivered') =>
+  const handleExpand = (
+    type: 'new' | 'assigned' | 'delivered' | 'delivery_failed'
+  ) =>
     setExpandedSection((currentState) => ({
       ...currentState,
       [type]: !currentState[type],
@@ -159,6 +162,18 @@ const Bookings: React.FC<{
             setOpen={() => handleExpand('assigned')}
             bookings={[...sortedBookings.assigned, ...sortedBookings.picked_up]}
             text="Bekräftade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              setUIState({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+          <BookingToggleList
+            isOpen={expandedSection.delivery_failed}
+            setOpen={() => handleExpand('delivery_failed')}
+            bookings={sortedBookings.delivery_failed}
+            text="Ej levererade bokningar"
             onMouseEnterHandler={(id: string) =>
               setUIState({ type: 'highlightBooking', payload: id })
             }

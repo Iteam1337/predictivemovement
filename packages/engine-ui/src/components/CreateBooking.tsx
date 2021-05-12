@@ -130,7 +130,7 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
           {isMobile ? (
             <WizardForm dispatch={setUIState} />
           ) : (
-            <Form dispatch={setUIState} />
+            <Form type="NEW" dispatch={setUIState} />
           )}
         </Formik>
       </Elements.Layout.Container>

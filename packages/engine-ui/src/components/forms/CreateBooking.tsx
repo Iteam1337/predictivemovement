@@ -60,11 +60,12 @@ const Component = ({
 
   React.useEffect(() => {
     if (currentLocation.lat || currentLocation.lon) {
-      setFieldValue('pickup', {
-        ...currentLocation,
-        name: `${currentLocation.name}, ${currentLocation.county}`,
-        street: currentLocation.name,
-      })
+      type === 'NEW' &&
+        setFieldValue('pickup', {
+          ...currentLocation,
+          name: `${currentLocation.name}, ${currentLocation.county}`,
+          street: currentLocation.name,
+        })
     }
   }, [currentLocation])
 
@@ -230,7 +231,7 @@ const Component = ({
           <FormInputs.Checkbox
             label="Bokningen behöver lämnas en viss tid"
             name="delivery.timewindow"
-            defaultChecked={!!values.pickup.timeWindows?.length}
+            defaultChecked={!!values.delivery.timeWindows?.length}
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() =>
               handleToggleTimeRestrictionsChange('delivery')

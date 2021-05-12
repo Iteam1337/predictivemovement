@@ -24,8 +24,8 @@ const FlexRowWrapper = styled.div`
 `
 
 const DeliveryDetails: React.FC<{
-  distance: string
-  duration: string
+  distance: number
+  duration: number
   bookingId: string
   assignedTo: string
 }> = ({ distance, duration, bookingId, assignedTo }) => {
@@ -67,7 +67,7 @@ const DeliveryDetails: React.FC<{
             Del av körsträcka
           </Elements.Typography.InfoMd>
           <Elements.Typography.InfoMd>
-            {getDistance(parseInt(distance))}
+            {getDistance(distance)}
           </Elements.Typography.InfoMd>
         </FlexRowWrapper>
         <Elements.Layout.SectionWithMargin />
@@ -84,7 +84,7 @@ const DeliveryDetails: React.FC<{
         <FlexRowWrapper>
           <Elements.Typography.InfoMd>Del av körtid</Elements.Typography.InfoMd>
           <Elements.Typography.InfoMd>
-            {getDuration(parseInt(duration))}
+            {getDuration(duration)}
           </Elements.Typography.InfoMd>
         </FlexRowWrapper>
       </Elements.Layout.SectionWithMargin>

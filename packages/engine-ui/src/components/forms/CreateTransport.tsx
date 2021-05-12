@@ -7,7 +7,9 @@ import * as FormInputs from './inputs'
 import { FormState } from '../CreateTransport'
 import { Form, FormikProps, useFormikContext } from 'formik'
 import { validateDriverContact, validateNotEmpty } from './validation'
+import { shareCurrentLocation } from '../../utils/helpers'
 import * as hooks from '../../hooks'
+import * as stores from '../../utils/state/stores'
 
 const getCapacityPreset = (
   { volume, weight }: FormState['capacity'],
@@ -33,12 +35,9 @@ const Component = ({
   }
   type: 'NEW' | 'EDIT'
 }) => {
-  const {
-    values,
-    setFieldValue,
-    errors,
-    touched,
-  }: FormikProps<FormState> = useFormikContext()
+  const [loading, setLoading] = React.useState(false)
+  const { values, setFieldValue, errors, touched }: FormikProps<FormState> =
+    useFormikContext()
   const capacityPreset =
     getCapacityPreset(values.capacity, transportPresets) || 'custom'
   const history = useHistory()
@@ -47,6 +46,10 @@ const Component = ({
   )
   const [showEndAddressInput, setShowEndAddressInput] = React.useState(
     !!values.endAddress
+  )
+
+  const [currentLocation, setCurrentLocation] = stores.currentLocation(
+    (state) => [state, state.set]
   )
 
   hooks.useFormStateWithMapClickControl(
@@ -68,6 +71,18 @@ const Component = ({
       setFieldValue('metadata.fleet', fleet)
     }
   }, [fleet])
+
+  React.useEffect(() => {
+    if (currentLocation.lat || currentLocation.lon) {
+      type === 'NEW' &&
+        setFieldValue('startAddress', {
+          ...currentLocation,
+          name: `${currentLocation.name}, ${currentLocation.county}`,
+          street: currentLocation.name,
+        })
+      setLoading(false)
+    }
+  }, [currentLocation])
 
   return (
     <Form autoComplete="off">
@@ -91,9 +106,11 @@ const Component = ({
           <FormInputs.AddressSearchInput
             id="startAddress"
             name="startAddress"
-            placeholder={`Adress ${
-              isMobile ? '' : '(sök eller klicka på karta)'
-            }`}
+            placeholder={
+              loading
+                ? 'Laddar din nuvarande adress..'
+                : `Adress ${isMobile ? '' : '(sök eller klicka på karta)'}`
+            }
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -105,6 +122,17 @@ const Component = ({
             <Elements.Typography.ErrorMessage>
               {errors.startAddress}
             </Elements.Typography.ErrorMessage>
+          )}
+          {!currentLocation.lon && (
+            <Elements.Buttons.NeutralButton
+              onClick={(e) => {
+                setLoading(true)
+                e.preventDefault()
+                shareCurrentLocation(setCurrentLocation)
+              }}
+            >
+              Dela din nuvarade position
+            </Elements.Buttons.NeutralButton>
           )}
         </Elements.Layout.InputContainer>
       </Elements.Layout.InputBlock>

@@ -12,10 +12,10 @@ import static com.predictivemovement.route.optimization.StatusResponse.Type.FAIL
  * Data object to carry a time range, start to end.
  */
 final class VehicleStartAndEndTimes {
-    public LocalDateTime earliestStartTime;
+    public ZonedDateTime earliestStartTime;
     public Double earliestStart;
 
-    public LocalDateTime latestEndTime;
+    public ZonedDateTime latestEndTime;
     public Double latestEnd;
 
     public boolean isSet() {
@@ -28,7 +28,6 @@ final class VehicleStartAndEndTimes {
  */
 public class VRPSettingTimeUtils {
 
-    LocalDateTime localNow;
     ZonedDateTime zonedNow;
 
     double defaultStart;
@@ -36,8 +35,7 @@ public class VRPSettingTimeUtils {
     double defaultEnd;
 
     public VRPSettingTimeUtils() {
-        localNow = LocalDateTime.now();
-        zonedNow = ZonedDateTime.now();
+        zonedNow = ZonedDateTime.now(ZoneId.of("UTC"));
         defaultStart = 0.0;
         defaultEnd = Double.MAX_VALUE;
     }
@@ -45,7 +43,16 @@ public class VRPSettingTimeUtils {
     private boolean hasKey(JSONObject json, String key) {
         return json.has(key) && !json.isNull(key);
     }
-    
+
+    /**
+     * Sets the vehicle "earliest_start" and "latest_end". It has to be set in
+     * hours:minutes, e.g. "earliest_start": "14:42", and defines a daily schedule.
+     * Times are interpreted as UTC!
+     * 
+     * @param json
+     * @return
+     * @throws RouteOptimizationException
+     */
     public VehicleStartAndEndTimes getVehicleStartAndEnd(JSONObject json) throws RouteOptimizationException {
         try {
             VehicleStartAndEndTimes startAndEndTimes = new VehicleStartAndEndTimes();
@@ -54,10 +61,10 @@ public class VRPSettingTimeUtils {
 
                 // parse to current date with hours
                 final String earliestStartString = json.getString("earliest_start");
-                LocalDateTime earliestStartTime = localNow.with(LocalTime.parse(earliestStartString));
+                ZonedDateTime earliestStartTime = zonedNow.with(LocalTime.parse(earliestStartString));
 
                 final String latestEndString = json.getString("latest_end");
-                LocalDateTime latestEndTime = localNow.with(LocalTime.parse(latestEndString));
+                ZonedDateTime latestEndTime = zonedNow.with(LocalTime.parse(latestEndString));
 
                 // time range is going over two days, e.g. 22:00 to 06:00 next day
                 if (earliestStartTime.isAfter(latestEndTime)) {
@@ -65,20 +72,21 @@ public class VRPSettingTimeUtils {
                 }
 
                 // if the end time is in the past, move the time range to the next day
-                if (latestEndTime.isBefore(localNow)) {
+                if (latestEndTime.isBefore(zonedNow)) {
                     earliestStartTime = earliestStartTime.plusDays(1);
                     latestEndTime = latestEndTime.plusDays(1);
                 }
 
                 // set to data object
                 startAndEndTimes.earliestStartTime = earliestStartTime;
-                startAndEndTimes.earliestStart = (double) Duration.between(localNow, earliestStartTime).toSeconds();
+                startAndEndTimes.earliestStart = (double) Duration.between(zonedNow, earliestStartTime).toSeconds();
                 if (startAndEndTimes.earliestStart < 0)
                     startAndEndTimes.earliestStart = 0.0;
 
                 startAndEndTimes.latestEndTime = latestEndTime;
-                startAndEndTimes.latestEnd = (double) Duration.between(localNow, latestEndTime).toSeconds();
+                startAndEndTimes.latestEnd = (double) Duration.between(zonedNow, latestEndTime).toSeconds();
             }
+
             return startAndEndTimes;
         } catch (Exception ex) {
             throw new RouteOptimizationException(ex, ERROR).setStatusMsg("Could not set Vehicle start and end time!")
@@ -89,7 +97,7 @@ public class VRPSettingTimeUtils {
 
     public double getTimeDifferenceFromNow(final JSONObject json, final String field, final double defaultSeconds)
             throws RouteOptimizationException {
-      
+
         if (!json.has(field))
             return defaultSeconds;
 

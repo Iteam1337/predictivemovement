@@ -3,10 +3,10 @@ import * as Elements from '../shared-elements'
 import Form from './forms/CreateTransport'
 import MainRouteLayout from './layout/MainRouteLayout'
 import Success from './SuccessScreen'
-import moment from 'moment'
 import * as stores from '../utils/state/stores'
 import React from 'react'
 import { Formik, FormikHelpers } from 'formik'
+import { formatLocalToUTC } from '../utils/helpers'
 
 export const transportPresets = {
   small: { weight: '1234', volume: '18' },
@@ -93,14 +93,14 @@ const CreateTransport = ({
     onSubmit({
       ...values,
       earliestStart: values.earliestStart
-        ? moment(values.earliestStart).format('HH:mm')
+        ? formatLocalToUTC(values.earliestStart).format('HH:mm')
         : values.earliestStart,
       capacity: {
         weight: parseInt(values.capacity.weight),
         volume: parseFloat(values.capacity.volume),
       },
       latestEnd: values.latestEnd
-        ? moment(values.latestEnd).format('HH:mm')
+        ? formatLocalToUTC(values.latestEnd).format('HH:mm')
         : values.latestEnd,
       startAddress: {
         ...values.startAddress,

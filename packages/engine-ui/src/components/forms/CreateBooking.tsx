@@ -64,6 +64,7 @@ const Component = ({
           name: `${currentLocation.name}, ${currentLocation.county}`,
           street: currentLocation.name,
         })
+      setLoading(false)
     }
   }, [currentLocation])
 

@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   rabbitmq:
@@ -81,7 +81,7 @@ services:
       - predictivemovement
   predictivemovement-route-optimization-jsprit:
     build: ./packages/route-optimization-jsprit
-    container_name: "predictivemovement_route-optimization-jsprit"
+    container_name: 'predictivemovement_route-optimization-jsprit'
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
@@ -118,6 +118,19 @@ services:
       - ./data:/data
     networks:
       - predictivemovement
+  extract-text-from-pic:
+    build: ./packages/extract-text-from-pic
+    ports:
+      - 127.0.0.1:4001:4000
+    networks:
+      - predictivemovement
+  api:
+    build: ./packages/api
+    ports:
+      - 127.0.0.1:8000:8000
+    networks:
+      - predictivemovement
+
 networks:
   predictivemovement:
     driver: bridge

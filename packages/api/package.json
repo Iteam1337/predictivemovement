@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "spec:watch": "redoc-cli serve spec/predictivemovement-1.0.0.yaml --watch",
-    "spec:build": "redoc-cli bundle spec/predictivemovement-1.0.0.yaml -o ./spec/pm-redoc.html",
+    "spec:watch": "redoc-cli serve spec/predictivemovement.yaml --watch",
+    "spec:build": "redoc-cli bundle spec/predictivemovement.yaml -o ./spec/pm-redoc.html",
     "dev": "nodemon --watch 'src/**' --ext 'ts,json' --ignore 'src/**/*.spec.ts' --exec 'ts-node src/index.ts'",
-    "generate-ts": "npx openapi-typescript spec/predictivemovement-1.0.0.yaml --output ./src/__generated__/schema.ts",
-    "spec:test": "dredd spec/predictivemovement-1.0.0.yaml http://localhost:9000"
+    "generate-ts": "openapi-typescript spec/predictivemovement.yaml --output ./src/__generated__/schema.ts",
+    "spec:test": "dredd spec/predictivemovement.yaml http://localhost:8000",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,7 @@
     "dredd": "^14.0.0",
     "eslint": "^7.18.0",
     "nodemon": "^2.0.7",
+    "openapi-typescript": "^3.2.3",
     "prettier": "^2.2.1",
     "redoc-cli": "^0.11.4",
     "ts-node": "^9.1.1",

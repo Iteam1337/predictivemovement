@@ -9,6 +9,7 @@ patchesStrategicMerge:
   - engine-server.yaml
   - engine-ui.yaml
   - signing-ui.yaml
+  - api.yaml
 
 # namespace to deploy all Resources to
 namespace: predictivemovement

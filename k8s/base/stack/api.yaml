@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: iteam1337/pm-api
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: common-properties
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  labels:
+    app: api
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: api
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: api
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  labels:
+    app: api
+spec:
+  tls:
+    - hosts:
+        - pm-api.iteamdev.io
+      secretName: api-prod-tls
+  rules:
+    - host: pm-api.iteamdev.io
+      http:
+        paths:
+          - backend:
+              serviceName: api
+              servicePort: 8000

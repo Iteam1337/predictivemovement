@@ -1,6 +1,6 @@
 openapi: 3.0.0
 servers:
-  - url: http://localhost:9000
+  - url: http://localhost:8000
 info:
   description: |
     This is the OpenAPI for Predictive Movement.
@@ -35,8 +35,7 @@ paths:
           description: ID of the transport to which the itinerary is assigned
           required: true
           schema:
-            # type: string
-            $ref: "#/components/schemas/Transport/properties/transport_id"
+            type: string
           example: "pmv-2314"
       responses:
         "200":

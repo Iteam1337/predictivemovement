@@ -1,6 +1,8 @@
 import { Handler } from 'openapi-backend'
 import { Request, Response } from 'express'
 
+import type {operations} from './__generated__/schema'
+
 export const getTransports: Handler = (c, req: Request, res: Response) => {
   res.status(200).json([
     {
@@ -32,7 +34,7 @@ export const getTransports: Handler = (c, req: Request, res: Response) => {
 
 export const getItinerary: Handler = (
   _,
-  req: Request<{}, any, any, { transportId: string }>,
+  req: Request<{}, any, any, operations['getItinerary']['parameters']['query']>,
   res: Response
 ) =>
   res.status(200).json({

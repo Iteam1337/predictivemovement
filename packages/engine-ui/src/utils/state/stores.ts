@@ -22,8 +22,8 @@ const ui = create<types.UIState>(
 
 const map = create<types.MapState>(
   (set, get): types.MapState => ({
-    latitude: 61.8294959,
-    longitude: 16.0740589,
+    latitude: 67.212782,
+    longitude: 23.367392,
     zoom: 10,
     transitionDuration: 3000,
     transitionInterpolator: new FlyToInterpolator(),

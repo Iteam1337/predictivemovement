@@ -1,7 +1,7 @@
 const { connect } = require('amqplib')
 const amqpTimeout = parseInt(process.env.AMQP_RECONNECT_TIMEOUT, 10) || 5000
 
-function connectRabbit() {
+function connectRabbit(callback) {
   const connection = connect(process.env.AMQP_URL || 'amqp://localhost')
 
   connection
@@ -9,28 +9,28 @@ function connectRabbit() {
       connection.on('error', (err) => {
         console.error(err)
         setTimeout(() => {
-          open = connectRabbit()
+          connectRabbit(callback)
         }, amqpTimeout)
       })
 
       connection.on('close', (err) => {
         console.error(err)
         setTimeout(() => {
-          open = connectRabbit()
+          connectRabbit(callback)
         }, amqpTimeout)
       })
+
+      console.info('=> Connected to RabbitMQ')
+
+      callback(connection)
     })
     .catch((err) => {
       console.error(err)
       setTimeout(() => {
-        open = connectRabbit()
+        connectRabbit(callback)
       }, amqpTimeout)
     })
-
-  return connection
 }
-
-let open = connectRabbit()
 
 const exchanges = {}
 
@@ -41,7 +41,7 @@ const queues = {
 }
 
 module.exports = {
-  open,
+  connect: connectRabbit,
   queues,
   exchanges,
 }

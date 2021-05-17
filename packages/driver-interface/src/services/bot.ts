@@ -94,7 +94,7 @@ export const handleNextDriverInstruction = async (
   try {
     const transportId = await cache.getVehicleIdByTelegramId(telegramId)
     const instructions = await cache.getInstructions(transportId)
-
+    await cache.setTelegramIdByVehicleId(transportId, telegramId)
     if (!instructions) {
       console.log('No instructions found for:', transportId)
       return

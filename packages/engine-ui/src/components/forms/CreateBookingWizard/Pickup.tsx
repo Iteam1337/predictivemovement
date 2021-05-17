@@ -22,6 +22,7 @@ const Pickup: React.FC<{ dispatch: any }> = ({ dispatch }) => {
     currentLocation,
     setCurrentLocation,
   ] = stores.currentLocation((state) => [state, state.set])
+
   const [
     showBookingTimeRestriction,
     setShowBookingTimeRestriction,
@@ -42,6 +43,16 @@ const Pickup: React.FC<{ dispatch: any }> = ({ dispatch }) => {
       ? setFieldValue(`${propertyName}.timeWindows`, null)
       : addTimeRestrictionWindow(propertyName)
   }
+
+  React.useEffect(() => {
+    if (currentLocation.lat || currentLocation.lon) {
+      setFieldValue('pickup', {
+        ...currentLocation,
+        name: `${currentLocation.name}, ${currentLocation.county}`,
+        street: currentLocation.name,
+      })
+    }
+  }, [currentLocation])
 
   return (
     <>
@@ -89,6 +100,7 @@ const Pickup: React.FC<{ dispatch: any }> = ({ dispatch }) => {
           label="Bokningen behöver hämtas en viss tid"
           onFocus={() => dispatch({ type: 'resetInputClickState' })}
           onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
+          name="pickup.timewindow"
         />
         <Elements.Layout.TimeRestrictionWrapper>
           {showBookingTimeRestriction.pickup && (
@@ -144,7 +156,9 @@ const Pickup: React.FC<{ dispatch: any }> = ({ dispatch }) => {
         width={'100%'}
         marginTop="0rem"
         disabled={
-          !touched.pickup || errors.pickup || errors.metadata?.sender?.contact
+          !values.pickup.name ||
+          errors.pickup ||
+          errors.metadata?.sender?.contact
             ? true
             : false
         }

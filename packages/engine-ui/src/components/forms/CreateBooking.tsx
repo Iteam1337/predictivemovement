@@ -9,39 +9,14 @@ import { validatePhoneNumber } from './validation'
 import * as hooks from '../../hooks'
 import OpacityFadeInAnim from '../animations/opacityFadeInAnim'
 import { BookingFormState } from '../CreateBooking'
-import { FormBooking } from '../EditBooking/EditBooking'
 import { shareCurrentLocation } from '../../utils/helpers'
 import * as stores from '../../utils/state/stores'
 
-const getSizePreset = (
-  { size: { weight, measurements } }: BookingFormState | FormBooking,
-  presets: any
-) => {
-  if (!weight || !measurements) {
-    return {
-      weight: '',
-      measurements: '',
-    }
-  }
-
-  return Object.keys(presets).find(
-    (p) =>
-      measurements === presets[p].measurements && weight === presets[p].weight
-  )
-}
-
 const Component = ({
   dispatch,
-  parcelSizePresets,
   type,
 }: {
   dispatch: any
-  parcelSizePresets: {
-    [s: string]: {
-      weight: number
-      measurements: string
-    }
-  }
   type?: 'NEW' | 'EDIT'
 }) => {
   const {
@@ -51,38 +26,21 @@ const Component = ({
     values,
   }: FormikProps<BookingFormState> = useFormikContext()
   const history = useHistory()
-  const sizePreset = getSizePreset(values, parcelSizePresets) || 'custom'
-  const [useCustomSize, setUseCustomSize] = React.useState(
-    sizePreset === 'custom'
-  )
-  const [
-    currentLocation,
-    setCurrentLocation,
-  ] = stores.currentLocation((state) => [state, state.set])
+  const [loading, setLoading] = React.useState(false)
 
-  const [
-    showBookingTimeRestriction,
-    setShowBookingTimeRestriction,
-  ] = React.useState<{ pickup: boolean; delivery: boolean }>({
-    pickup: !!values.pickup.timeWindows?.length || false,
-    delivery: !!values.delivery.timeWindows?.length || false,
-  })
+  const [currentLocation, setCurrentLocation] = stores.currentLocation(
+    (state) => [state, state.set]
+  )
+
+  const [showBookingTimeRestriction, setShowBookingTimeRestriction] =
+    React.useState<{ pickup: boolean; delivery: boolean }>({
+      pickup: !!values.pickup.timeWindows?.length || false,
+      delivery: !!values.delivery.timeWindows?.length || false,
+    })
 
   hooks.useFormStateWithMapClickControl('pickup', 'delivery', setFieldValue)
 
   const isMobile = window.innerWidth <= 645
-
-  const handleParcelSearchResults = ({
-    weight,
-    measurements,
-  }: {
-    weight: number
-    measurements: string
-  }) => {
-    if (!weight || !measurements) return null
-
-    setUseCustomSize(true)
-  }
 
   const addTimeRestrictionWindow = (type: string) =>
     setFieldValue(`${type}.timeWindows`, [{ earliest: null, latest: null }])
@@ -100,11 +58,13 @@ const Component = ({
 
   React.useEffect(() => {
     if (currentLocation.lat || currentLocation.lon) {
-      setFieldValue('pickup', {
-        ...currentLocation,
-        name: `${currentLocation.name}, ${currentLocation.county}`,
-        street: currentLocation.name,
-      })
+      type === 'NEW' &&
+        setFieldValue('pickup', {
+          ...currentLocation,
+          name: `${currentLocation.name}, ${currentLocation.county}`,
+          street: currentLocation.name,
+        })
+      setLoading(false)
     }
   }, [currentLocation])
 
@@ -138,7 +98,11 @@ const Component = ({
           <FormInputs.AddressSearchInput
             id="pickup"
             name="pickup"
-            placeholder="Adress (sök eller klicka på karta)"
+            placeholder={
+              loading
+                ? 'Laddar din nuvarande adress..'
+                : 'Adress (sök eller klicka på karta)'
+            }
             onFocusHandler={() =>
               dispatch({
                 type: 'focusInput',
@@ -154,6 +118,7 @@ const Component = ({
           {!currentLocation.lon && (
             <Elements.Buttons.NeutralButton
               onClick={(e) => {
+                setLoading(true)
                 e.preventDefault()
                 shareCurrentLocation(setCurrentLocation)
               }}
@@ -174,6 +139,7 @@ const Component = ({
             label="Bokningen behöver hämtas en viss tid"
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() => handleToggleTimeRestrictionsChange('pickup')}
+            name="pickup.timewindow"
           />
           <Elements.Layout.TimeRestrictionWrapper>
             {showBookingTimeRestriction.pickup && (
@@ -268,7 +234,8 @@ const Component = ({
           />
           <FormInputs.Checkbox
             label="Bokningen behöver lämnas en viss tid"
-            defaultChecked={!!values.pickup.timeWindows?.length}
+            name="delivery.timewindow"
+            defaultChecked={!!values.delivery.timeWindows?.length}
             onFocus={() => dispatch({ type: 'resetInputClickState' })}
             onChangeHandler={() =>
               handleToggleTimeRestrictionsChange('delivery')
@@ -352,7 +319,6 @@ const Component = ({
                       payload: 'start',
                     })
                   }
-                  onSearchResult={handleParcelSearchResults}
                 />
               </Elements.Layout.InputContainer>
               <Elements.Layout.InputContainer>

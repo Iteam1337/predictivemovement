@@ -60,9 +60,13 @@ module.exports = (io) => {
       })
 
     _.merge([_(transportsCache.values()), transports.fork()])
-      .filter((transport) => transport.id)
-      .doto((transport) => {
-        transportsCache.set(transport.id, transport)
+      .map((newTransport) => {
+        const oldTransport = transportsCache.get(newTransport.id)
+        transportsCache.set(newTransport.id, {
+          ...oldTransport,
+          ...newTransport,
+        })
+        return { ...newTransport, ...oldTransport }
       })
       .map(toIncomingTransport)
       .batchWithTimeOrCount(1000, 2000)

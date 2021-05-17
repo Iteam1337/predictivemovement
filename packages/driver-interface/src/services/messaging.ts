@@ -332,7 +332,7 @@ export const sendDeliveryAcknowledgementByPhoto = (
 ): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
-    'Fotografera nu mottagaren tillsammans med paketet och skicka bilden här.'
+    'Fotografera nu paketet vid den plats du lämnat det, tänk på att få med omgivningen som kan styrka att du har lämnat paketet på rätt plats, och ladda sedan bilden här. Tänk på att det bara är den första bilden som sparas som kvittering.'
   )
 
 export const sendBeginDeliveryAcknowledgement = async (

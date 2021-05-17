@@ -9,11 +9,19 @@ import ContactPhone from '../assets/contact-phone.svg'
 import ContactName from '../assets/contact-name.svg'
 import * as stores from '../utils/state/stores'
 import DeliveryDetails from './DeliveryDetails'
+import * as types from '../types'
 
-const BorderContainer = styled.div`
-  padding-right: ${(props) => (props.visible ? '0.5rem' : null)};
-  border-right: ${(props) => (props.visible ? '1px solid #e5e5e5' : null)};
-  width: ${(props) => (props.visible ? '300px' : '100%')}; ;
+interface Props {
+  bookings: types.Booking[]
+  deleteBooking: (params: any) => void
+  onUnmount: () => void
+  onMount: () => void
+}
+
+const BorderContainer = styled.div<{ visible: boolean }>`
+  padding-right: ${({ visible }) => (visible ? '0.5rem' : null)};
+  border-right: ${({ visible }) => (visible ? '1px solid #e5e5e5' : null)};
+  width: ${({ visible }) => (visible ? '300px' : '100%')}; ;
 `
 
 const Paragraph = styled.p`
@@ -32,16 +40,16 @@ const ExpectedEventParagraph = styled.p`
   color: rgb(0, 0, 0, 0.3);
 `
 
-const Line = styled.div`
+const Line = styled.div<{ status: boolean }>`
   width: 1px;
-  border-left: 2px solid ${(props) => (props.status ? '#19de8b' : '#a8a8a8')};
+  border-left: 2px solid ${({ status }) => (status ? '#19de8b' : '#a8a8a8')};
   position: absolute;
   height: 90%;
   margin-left: -0.68rem;
   top: -1.5rem;
 `
 
-const TimelineListItem = styled.li`
+const TimelineListItem = styled.li<{ error: boolean; status: boolean }>`
   position: relative;
   margin: 0;
   padding-bottom: 1em;
@@ -51,8 +59,8 @@ const TimelineListItem = styled.li`
 
   :before {
     content: '';
-    background-color: ${(props) =>
-      props.error ? 'red' : props.status ? '#19de8b' : '#a8a8a8'};
+    background-color: ${({ error, status }) =>
+      error ? 'red' : status ? '#19de8b' : '#a8a8a8'};
     border-radius: 50%;
     position: absolute;
     left: 0;
@@ -69,7 +77,6 @@ const TimelineListItem = styled.li`
 `
 
 const Timeline = styled.div`
-  margin-top: 1.5rem;
   ol {
     list-style-type: none;
     padding: 0;
@@ -82,14 +89,16 @@ const Timeline = styled.div`
     display: none;
   }
 `
-const timeWindowToElement = ({ earliest, latest }) => {
-  const formatDateLong = (date) => moment(date).format('YYYY-MM-DD, HH:mm')
-  const formatDateShort = (date) => moment(date).format('HH:mm')
+
+const timeWindowToElement = ({ earliest, latest }: types.TimeWindow) => {
+  const formatDateLong = (date: Date | string) =>
+    moment(date).format('YYYY-MM-DD, HH:mm')
+  const formatDateShort = (date: Date | string) => moment(date).format('HH:mm')
 
   const isSameDay = moment(earliest).isSame(latest, 'day')
 
   return (
-    <Elements.Typography.SmallInfoBold key={earliest}>
+    <Elements.Typography.SmallInfoBold>
       {`${formatDateLong(earliest)} - ${
         isSameDay ? formatDateShort(latest) : formatDateLong(latest)
       }`}
@@ -97,13 +106,23 @@ const timeWindowToElement = ({ earliest, latest }) => {
   )
 }
 
-const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
-  const { bookingId } = useParams()
+const BookingDetails = ({
+  bookings,
+  deleteBooking,
+  onUnmount,
+  onMount,
+}: Props) => {
+  const { bookingId }: { bookingId: string } = useParams()
   const history = useHistory()
   const booking = bookings.find((b) => b.id === bookingId)
-  const [address, setAddress] = React.useState()
+  const [address, setAddress] = React.useState({ pickup: '', delivery: '' })
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const statebookings = stores.dataState((state) => state.bookings)
+  const transports = stores.dataState((state) => state.transports)
+  const transport = transports.find(
+    (transport: types.Transport) => transport.id === booking?.assignedTo?.id
+  )
+  const isMobile = window.innerWidth <= 645
 
   React.useEffect(() => {
     onMount()
@@ -121,8 +140,8 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
 
   React.useEffect(() => {
     const setAddressFromCoordinates = async (
-      pickupCoordinates,
-      deliveryCoordinates
+      pickupCoordinates: types.Booking['pickup'],
+      deliveryCoordinates: types.Booking['delivery']
     ) => {
       const pickupAddress = await helpers.getAddressFromCoordinate(
         pickupCoordinates
@@ -142,18 +161,18 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
     setAddressFromCoordinates(booking.pickup, booking.delivery)
   }, [booking])
 
-  const handleDeleteClick = (bookingId) => {
+  const handleDeleteClick = (bookingId: string) => {
     if (window.confirm('Är du säker på att du vill radera bokningen?')) {
       deleteBooking(bookingId)
       return history.push('/bookings')
     }
   }
 
-  const handleChangeClick = (bookingId) => {
+  const handleChangeClick = (bookingId: string) => {
     history.push(`/bookings/edit-booking/${bookingId}`)
   }
 
-  const parseEventTypeToHumanReadable = (type) => {
+  const parseEventTypeToHumanReadable = (type: string) => {
     switch (type) {
       case 'new':
         return 'Registrerad'
@@ -192,29 +211,50 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
     size: { measurements, weight },
   } = booking
 
-  const expectedEvents = ['new', 'assigned', 'picked_up', 'delivered']
+  const expectedEvents: types.Events[] = [
+    { type: 'new' },
+    { type: 'assigned' },
+    { type: 'picked_up' },
+    { type: 'delivered' },
+  ]
 
-  const bookingEvents = events.map((event) => event.type)
+  const bookingEvents = events.map((event: types.Events) => event.type)
 
   const eventsList = events
-    .sort((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1))
+    .sort((a, b) =>
+      a.timestamp &&
+      b.timestamp &&
+      new Date(a.timestamp) > new Date(b.timestamp)
+        ? 1
+        : -1
+    )
     .concat(
-      expectedEvents.filter((event) => {
-        return !bookingEvents.includes(event)
+      expectedEvents.filter(({ type }) => {
+        return !bookingEvents.includes(type)
       })
     )
+
+  const getLatestEvent = () => {
+    const latestEvent = eventsList.filter((a) => a.timestamp).slice(-1)[0]
+    return `${moment(latestEvent.timestamp).format(
+      'HH:mm'
+    )} ${parseEventTypeToHumanReadable(latestEvent.type)}`
+  }
+
   return (
     <MainRouteLayout redirect="/bookings">
       <Elements.Layout.Container>
         <Elements.Layout.FlexContainer>
-          <div style={{ width: '300px' }}>
+          <div style={{ width: isMobile ? '100%' : '300px' }}>
             <Elements.Layout.FlexRowWrapper>
               <h3>Bokning</h3>
               <Elements.Typography.RoundedLabelDisplay margin="0 0.5rem">
                 {helpers.getLastFourChars(booking.id).toUpperCase()}
               </Elements.Typography.RoundedLabelDisplay>
             </Elements.Layout.FlexRowWrapper>
-            <BorderContainer visible={booking.status === 'delivered'}>
+            <BorderContainer
+              visible={booking.status === 'delivered' && !isMobile}
+            >
               <Elements.Layout.SectionWithMargin>
                 {cargo && (
                   <CapitalizeParagraph>
@@ -289,7 +329,7 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                   {delivery.timeWindows &&
                     delivery.timeWindows.map(timeWindowToElement)}
                 </Elements.Layout.MarginBottomContainer>
-                {sender.name && (
+                {recipient.name && (
                   <Elements.Layout.FlexRowBaselineContainer>
                     <Elements.Icons.MarginRightIcon
                       src={ContactName}
@@ -308,95 +348,137 @@ const BookingDetails = ({ bookings, deleteBooking, onUnmount, onMount }) => {
                   </Elements.Layout.FlexRowBaselineContainer>
                 )}
               </Elements.Layout.SectionWithMargin>
-              <Elements.Layout.MarginTopContainer>
-                {booking.assigned_to && (
-                  <>
-                    <Elements.Typography.StrongParagraph>
-                      Bokad transport
-                    </Elements.Typography.StrongParagraph>
+              {booking.assignedTo && (
+                <Elements.Layout.MarginTopContainer
+                  style={{ marginBottom: '1rem' }}
+                >
+                  <Elements.Typography.StrongParagraph>
+                    Transport
+                  </Elements.Typography.StrongParagraph>
 
-                    <Elements.Links.RoundedLink
-                      to={`/transports/${booking.assigned_to.id}`}
-                    >
-                      {helpers
-                        .getLastFourChars(booking.assigned_to.id)
-                        .toUpperCase()}
-                    </Elements.Links.RoundedLink>
-                  </>
-                )}
-              </Elements.Layout.MarginTopContainer>
+                  <Elements.Links.RoundedLink
+                    to={`/transports/${booking.assignedTo.id}`}
+                  >
+                    {transport?.metadata?.profile &&
+                      transport.metadata.profile.toUpperCase()}
+                  </Elements.Links.RoundedLink>
+                </Elements.Layout.MarginTopContainer>
+              )}
               <Timeline>
                 <Elements.Typography.StrongParagraph>
                   Status
                 </Elements.Typography.StrongParagraph>
-                {booking.events.length ? (
-                  <ol>
-                    {eventsList.map((event, index) => {
-                      return (
-                        <TimelineListItem
-                          key={index}
-                          status={event.type ? true : false}
-                          error={event.type === 'delivery_failed'}
-                        >
-                          <Line status={event.type ? true : false} />
-                          {event.type ? (
-                            <>
-                              <Elements.Typography.NoMarginParagraph>
-                                {moment(event.timestamp).format('HH:mm')}
-                              </Elements.Typography.NoMarginParagraph>
-                              <Elements.Layout.MarginLeftContainerSm>
+                {!isMobile ? (
+                  booking.events.length ? (
+                    <ol>
+                      {eventsList.map((event: types.Events, index: number) => {
+                        return (
+                          <TimelineListItem
+                            key={index}
+                            status={event.timestamp ? true : false}
+                            error={event.type === 'delivery_failed'}
+                          >
+                            <Line status={event.timestamp ? true : false} />
+                            {event.type ? (
+                              <>
                                 <Elements.Typography.NoMarginParagraph>
-                                  {parseEventTypeToHumanReadable(event.type)}
+                                  {moment(event.timestamp).format('HH:mm')}
                                 </Elements.Typography.NoMarginParagraph>
-                              </Elements.Layout.MarginLeftContainerSm>
-                            </>
-                          ) : (
-                            <ExpectedEventWrapper>
-                              <ExpectedEventParagraph>
-                                {parseEventTypeToHumanReadable(event)}
-                              </ExpectedEventParagraph>
-                            </ExpectedEventWrapper>
-                          )}
-                        </TimelineListItem>
-                      )
-                    })}
-                  </ol>
+                                <Elements.Layout.MarginLeftContainerSm>
+                                  <Elements.Typography.NoMarginParagraph>
+                                    {parseEventTypeToHumanReadable(event.type)}
+                                  </Elements.Typography.NoMarginParagraph>
+                                </Elements.Layout.MarginLeftContainerSm>
+                              </>
+                            ) : (
+                              <ExpectedEventWrapper>
+                                <ExpectedEventParagraph>
+                                  {parseEventTypeToHumanReadable(event.type)}
+                                </ExpectedEventParagraph>
+                              </ExpectedEventWrapper>
+                            )}
+                          </TimelineListItem>
+                        )
+                      })}
+                    </ol>
+                  ) : (
+                    <CapitalizeParagraph>{booking.status}</CapitalizeParagraph>
+                  )
                 ) : (
-                  <CapitalizeParagraph>{booking.status} </CapitalizeParagraph>
+                  <CapitalizeParagraph>{getLatestEvent()}</CapitalizeParagraph>
                 )}
               </Timeline>
-
               {booking.status === 'new' && (
                 <Elements.Layout.MarginTopContainer alignItems="center">
-                  <Elements.Layout.ButtonWrapper>
+                  <Elements.Layout.ButtonWrapper marginTop="0.5rem">
+                    <Elements.Buttons.CancelButton
+                      onClick={() => handleDeleteClick(id)}
+                    >
+                      Radera
+                    </Elements.Buttons.CancelButton>
                     <Elements.Buttons.SubmitButton
                       type="button"
                       onClick={() => handleChangeClick(id)}
                     >
-                      Ändra bokning
+                      Ändra
                     </Elements.Buttons.SubmitButton>
                   </Elements.Layout.ButtonWrapper>
-                  <Elements.Layout.ButtonWrapper>
-                    <Elements.Buttons.CancelButton
-                      onClick={() => handleDeleteClick(id)}
+                  {isMobile && (
+                    <Elements.Buttons.NeutralButton
+                      onClick={() => history.push('/bookings')}
+                      marginTop="1.5rem"
+                      padding="0.75rem 1.25rem"
+                      width="100%"
                     >
-                      Radera bokning
-                    </Elements.Buttons.CancelButton>
-                  </Elements.Layout.ButtonWrapper>
+                      Stäng
+                    </Elements.Buttons.NeutralButton>
+                  )}
+                </Elements.Layout.MarginTopContainer>
+              )}
+              {isMobile && booking.status === 'delivered' && (
+                <>
+                  <DeliveryDetails
+                    distance={booking.route.distance}
+                    duration={booking.route.duration}
+                    bookingId={bookingId}
+                    assignedTo={booking.assignedTo.id}
+                  />
+                  <Elements.Buttons.NeutralButton
+                    onClick={() => history.push('/bookings')}
+                    marginTop="1.5rem"
+                    padding="0.75rem 1.25rem"
+                    width="100%"
+                  >
+                    Stäng
+                  </Elements.Buttons.NeutralButton>
+                </>
+              )}
+              {booking.status === 'assigned' && isMobile && (
+                <Elements.Layout.MarginTopContainer alignItems="center">
+                  <Elements.Buttons.NeutralButton
+                    onClick={() => history.push('/bookings')}
+                    marginTop="1.5rem"
+                    padding="0.75rem 1.25rem"
+                    width="100%"
+                  >
+                    Stäng
+                  </Elements.Buttons.NeutralButton>
                 </Elements.Layout.MarginTopContainer>
               )}
             </BorderContainer>
           </div>
-          <div>
-            {booking.status === 'delivered' && (
-              <DeliveryDetails
-                distance={booking.route.distance}
-                duration={booking.route.duration}
-                bookingId={bookingId}
-                assignedTo={booking.assignedTo.id}
-              />
-            )}
-          </div>
+          {!isMobile && (
+            <div>
+              {booking.status === 'delivered' && (
+                <DeliveryDetails
+                  distance={booking.route.distance}
+                  duration={booking.route.duration}
+                  bookingId={bookingId}
+                  assignedTo={booking.assignedTo.id}
+                />
+              )}
+            </div>
+          )}
         </Elements.Layout.FlexContainer>
       </Elements.Layout.Container>
     </MainRouteLayout>

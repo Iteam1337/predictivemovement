@@ -128,12 +128,9 @@ const CreateBooking = ({ onSubmit }: { onSubmit: (params: any) => void }) => {
         <h3>Lägg till bokning</h3>
         <Formik initialValues={initialState} onSubmit={onSubmitHandler}>
           {isMobile ? (
-            <WizardForm
-              dispatch={setUIState}
-              parcelSizePresets={parcelSizePresets}
-            />
+            <WizardForm dispatch={setUIState} />
           ) : (
-            <Form dispatch={setUIState} parcelSizePresets={parcelSizePresets} />
+            <Form type="NEW" dispatch={setUIState} />
           )}
         </Formik>
       </Elements.Layout.Container>

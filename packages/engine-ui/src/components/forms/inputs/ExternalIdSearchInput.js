@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce'
 import { useSocket } from 'use-socketio'
 import { useField, useFormikContext } from 'formik'
 
-const Component = ({ onSearchResult, placeholder, name, ...rest }) => {
+const Component = ({ placeholder, name, ...rest }) => {
   const [search] = hooks.useGetParcelInfo([])
   const [resultsIsFound, setResultsIsFound] = useState(false)
   const { setFieldValue } = useFormikContext()
@@ -16,7 +16,6 @@ const Component = ({ onSearchResult, placeholder, name, ...rest }) => {
   useSocket('parcel-info', ({ weight, measurements }) => {
     if (weight || measurements) {
       setResultsIsFound(true)
-      onSearchResult({ weight, measurements })
     }
   })
 

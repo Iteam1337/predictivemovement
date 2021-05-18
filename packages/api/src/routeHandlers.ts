@@ -1,9 +1,6 @@
 import { Handler } from 'openapi-backend'
-import { Request, Response } from 'express'
 
-import {operations} from './__generated__/schema'
-
-export const getTransports: Handler = (c, req: Request, res: Response) => {
+export const get_transports: Handler = (c, req, res) => {
   res.status(200).json([
     {
       transport_id: '',
@@ -12,10 +9,10 @@ export const getTransports: Handler = (c, req: Request, res: Response) => {
         volume: 0,
         weight: 0,
       },
-      earliestStart: '',
-      latestEnd: '',
+      earliest_start: '',
+      latest_end: '',
       metadata: {},
-      startAddress: {
+      start_address: {
         city: '',
         street: '',
         name: '',
@@ -24,7 +21,7 @@ export const getTransports: Handler = (c, req: Request, res: Response) => {
           lon: 0
         }
       },
-      endAddress: {
+      end_address: {
         city: '',
         street: '',
         name: '',
@@ -37,13 +34,13 @@ export const getTransports: Handler = (c, req: Request, res: Response) => {
   ])
 }
 
-export const getItinerary: Handler = (
-  _,
-  req: Request<{}, any, any, operations['getItinerary']['parameters']['query']>,
-  res: Response
-) =>
+export const get_itinerary: Handler = (
+  c,
+  req,
+  res
+) => {
   res.status(200).json({
-    transport_id: req.query.transportId,
+    transport_id: c.request.params.transport_id,
     route: {},
     activities: [
       {
@@ -52,12 +49,11 @@ export const getItinerary: Handler = (
         distance: 0,
         duration: 0,
         type: 'start',
-        address: {
-          schema: {
-            lon: 0,
-            lat: 0,
-          },
+        position: {
+          lon: 0,
+          lat: 0,
         },
       },
     ],
   })
+}

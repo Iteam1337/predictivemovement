@@ -66,6 +66,28 @@ components:
           properties:
             schema:
               $ref: "#/components/schemas/Position"
+    Address:
+      type: object
+      properties:
+        city:
+          type: string
+        street:
+          type: string
+        name:
+          type: string
+        position:
+          $ref: "#/components/schemas/Position"
+      required:
+        - position
+    Dimensions:
+      type: object
+      properties:
+        width:
+          type: number
+        length:
+          type: number
+        height:
+          type: number
     Transport:
       type: object
       properties:
@@ -89,31 +111,9 @@ components:
         metadata:
           type: object
         startAddress:
-          type: object
-          properties:
-            city:
-              type: string
-            street:
-              type: string
-            name:
-              type: string
-            position:
-              properties:
-                schema:
-                  $ref: "#/components/schemas/Position"
+          $ref: "#/components/schemas/Address"
         endAddress:
-          type: object
-          properties:
-            city:
-              type: string
-            street:
-              type: string
-            name:
-              type: string
-            lon:
-              type: number
-            lat:
-              type: number
+          $ref: "#/components/schemas/Address"
     Booking:
       type: object
       properties:
@@ -124,27 +124,9 @@ components:
           type: integer
           format: int64
         delivery:
-          type: object
-          properties:
-            city:
-              type: string
-            name:
-              type: string
-            street:
-              type: string
-            position:
-              $ref: "#/components/schemas/Position"
+          $ref: "#/components/schemas/Address"
         pickup:
-          type: object
-          properties:
-            city:
-              type: string
-            name:
-              type: string
-            street:
-              type: string
-            position:
-              $ref: "#/components/schemas/Position"
+          $ref: "#/components/schemas/Address"
         details:
           properties:
             schema:
@@ -205,14 +187,7 @@ components:
         volume:
           type: number
         dimensions:
-          type: object
-          properties:
-            width:
-              type: number
-            height:
-              type: number
-            length:
-              type: number
+          $ref: "#/components/schemas/Dimensions"
         loadingMeters:
           type: number
         quantity:

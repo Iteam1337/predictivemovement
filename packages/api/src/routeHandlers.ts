@@ -1,7 +1,7 @@
 import { Handler } from 'openapi-backend'
 import { Request, Response } from 'express'
 
-import type {operations} from './__generated__/schema'
+import {operations} from './__generated__/schema'
 
 export const getTransports: Handler = (c, req: Request, res: Response) => {
   res.status(200).json([
@@ -19,14 +19,19 @@ export const getTransports: Handler = (c, req: Request, res: Response) => {
         city: '',
         street: '',
         name: '',
-        position: '',
+        position: {
+          lat: 0,
+          lon: 0
+        }
       },
       endAddress: {
         city: '',
         street: '',
         name: '',
-        lon: 0,
-        lat: 0,
+        position: {
+          lon: 0,
+          lat: 0,
+        }
       },
     },
   ])

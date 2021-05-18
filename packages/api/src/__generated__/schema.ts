@@ -25,6 +25,17 @@ export interface components {
         schema?: components["schemas"]["Position"];
       };
     };
+    Address: {
+      city?: string;
+      street?: string;
+      name?: string;
+      position: components["schemas"]["Position"];
+    };
+    Dimensions: {
+      width?: number;
+      length?: number;
+      height?: number;
+    };
     Transport: {
       transport_id?: string;
       busy?: boolean;
@@ -35,37 +46,14 @@ export interface components {
       earliestStart?: string;
       latestEnd?: string;
       metadata?: { [key: string]: any };
-      startAddress?: {
-        city?: string;
-        street?: string;
-        name?: string;
-        position?: {
-          schema?: components["schemas"]["Position"];
-        };
-      };
-      endAddress?: {
-        city?: string;
-        street?: string;
-        name?: string;
-        lon?: number;
-        lat?: number;
-      };
+      startAddress?: components["schemas"]["Address"];
+      endAddress?: components["schemas"]["Address"];
     };
     Booking: {
       id: string;
       tripId: number;
-      delivery?: {
-        city?: string;
-        name?: string;
-        street?: string;
-        position?: components["schemas"]["Position"];
-      };
-      pickup?: {
-        city?: string;
-        name?: string;
-        street?: string;
-        position?: components["schemas"]["Position"];
-      };
+      delivery?: components["schemas"]["Address"];
+      pickup?: components["schemas"]["Address"];
       details?: {
         schema?: components["schemas"]["BookingDetails"];
       };
@@ -91,11 +79,7 @@ export interface components {
       };
       weight?: number;
       volume?: number;
-      dimensions?: {
-        width?: number;
-        height?: number;
-        length?: number;
-      };
+      dimensions?: components["schemas"]["Dimensions"];
       loadingMeters?: number;
       quantity?: number;
     };

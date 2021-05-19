@@ -17,7 +17,6 @@ spec:
       labels:
         app.kubernetes.io/name: elasticsearch
     spec:
-      nodeName: k8s
       terminationGracePeriodSeconds: 300
       initContainers:
         # NOTE:

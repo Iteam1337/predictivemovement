@@ -9,6 +9,7 @@ import * as Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import * as stores from '../utils/state/stores'
 import * as helpers from '../utils/helpers'
+import { formatUTCtoLocal } from '../utils/helpers'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -135,7 +136,8 @@ const TransportDetails: React.FC<{
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {transport.earliestStart} - {transport.latestEnd}
+            {formatUTCtoLocal(transport.earliestStart).format('HH:mm')} -{' '}
+            {formatUTCtoLocal(transport.latestEnd).format('HH:mm')}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {transport.endAddress.name && (

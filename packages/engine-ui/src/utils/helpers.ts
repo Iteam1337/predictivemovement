@@ -138,6 +138,14 @@ const shareCurrentLocation = (
   )
 }
 
+const formatUTCtoLocal = (utcTime: Date) => {
+  return moment.utc(utcTime, 'HH:mm').local()
+}
+
+const formatLocalToUTC = (localTime: Date) => {
+  return moment(localTime).utc()
+}
+
 export {
   findAddress,
   calculateMinTime,
@@ -151,4 +159,6 @@ export {
   getDistance,
   getDuration,
   shareCurrentLocation,
+  formatUTCtoLocal,
+  formatLocalToUTC,
 }

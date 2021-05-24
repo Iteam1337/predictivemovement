@@ -128,7 +128,7 @@ export interface operations {
       /** OK */
       200: {
         content: {
-          "application/json; charset=utf-8": components["schemas"]["Transport"][];
+          "application/json": components["schemas"]["Transport"][];
         };
       };
     };
@@ -144,7 +144,7 @@ export interface operations {
       /** OK */
       200: {
         content: {
-          "application/json; charset=utf-8": components["schemas"]["Itinerary"];
+          "application/json": components["schemas"]["Itinerary"];
         };
       };
     };

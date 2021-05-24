@@ -5,25 +5,33 @@
 
 export interface paths {
   "/transports": {
-    /** Get all the transports to which you have access */
-    get: operations["getTransports"];
+    get: operations["get_transports"];
   };
-  "/itinerary": {
-    get: operations["getItinerary"];
+  "/itinerary/{transport_id}": {
+    get: operations["get_itinerary"];
   };
 }
 
 export interface components {
   schemas: {
     Activity: {
-      id?: string;
-      booking_id?: string;
-      distance?: number;
-      duration?: number;
-      type?: "start" | "end" | "pickup" | "delivery";
-      address?: {
-        schema?: components["schemas"]["Position"];
-      };
+      id: string;
+      booking_id: string;
+      distance: number;
+      duration: number;
+      type: "start" | "end" | "pickup" | "delivery";
+      position: components["schemas"]["Position"];
+    };
+    Address: {
+      city?: string;
+      street?: string;
+      name?: string;
+      position: components["schemas"]["Position"];
+    };
+    Dimensions: {
+      width?: number;
+      length?: number;
+      height?: number;
     };
     Transport: {
       transport_id?: string;
@@ -32,44 +40,21 @@ export interface components {
         volume?: number;
         weight?: number;
       };
-      earliestStart?: string;
-      latestEnd?: string;
+      earliest_start?: string;
+      latest_end?: string;
       metadata?: { [key: string]: any };
-      startAddress?: {
-        city?: string;
-        street?: string;
-        name?: string;
-        position?: {
-          schema?: components["schemas"]["Position"];
-        };
-      };
-      endAddress?: {
-        city?: string;
-        street?: string;
-        name?: string;
-        lon?: number;
-        lat?: number;
-      };
+      start_address?: components["schemas"]["Address"];
+      end_address?: components["schemas"]["Address"];
     };
     Booking: {
       id: string;
       tripId: number;
-      delivery?: {
-        city?: string;
-        name?: string;
-        street?: string;
-        position?: components["schemas"]["Position"];
-      };
-      pickup?: {
-        city?: string;
-        name?: string;
-        street?: string;
-        position?: components["schemas"]["Position"];
-      };
+      delivery?: components["schemas"]["Address"];
+      pickup?: components["schemas"]["Address"];
       details?: {
         schema?: components["schemas"]["BookingDetails"];
       };
-      shipDate: string;
+      ship_date?: string;
       /** Order Status */
       status: "placed" | "approved" | "delivered";
       complete: boolean;
@@ -91,17 +76,9 @@ export interface components {
       };
       weight?: number;
       volume?: number;
-      dimensions?: {
-        width?: number;
-        height?: number;
-        length?: number;
-      };
-      loadingMeters?: number;
+      dimensions?: components["schemas"]["Dimensions"];
+      loading_meters?: number;
       quantity?: number;
-    };
-    Place: {
-      position: components["schemas"]["Position"];
-      address?: string;
     };
     Position: {
       lon: number;
@@ -122,8 +99,7 @@ export interface components {
 }
 
 export interface operations {
-  /** Get all the transports to which you have access */
-  getTransports: {
+  get_transports: {
     responses: {
       /** OK */
       200: {
@@ -133,11 +109,11 @@ export interface operations {
       };
     };
   };
-  getItinerary: {
+  get_itinerary: {
     parameters: {
-      query: {
+      path: {
         /** ID of the transport to which the itinerary is assigned */
-        transportId: string;
+        transport_id: string;
       };
     };
     responses: {

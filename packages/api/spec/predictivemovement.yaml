@@ -14,8 +14,8 @@ info:
 paths:
   /transports:
     get:
-      operationId: "getTransports"
-      description: Get all the transports to which you have access
+      operationId: get_transports
+      summary: Get all the transports to which you have access
       responses:
         "200":
           description: OK
@@ -25,13 +25,13 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Transport"
-  /itinerary:
+  /itinerary/{transport_id}:
     get:
-      operationId: "getItinerary"
+      operationId: get_itinerary
       summary: Get an itinerary by transport ID
       parameters:
-        - name: transportId
-          in: query
+        - name: transport_id
+          in: path
           description: ID of the transport to which the itinerary is assigned
           required: true
           schema:
@@ -61,11 +61,37 @@ components:
         type:
           type: string
           enum: [start, end, pickup, delivery]
-        address:
-          type: object
-          properties:
-            schema:
-              $ref: "#/components/schemas/Position"
+        position:
+          $ref: "#/components/schemas/Position"
+      required:
+        - id
+        - booking_id
+        - distance
+        - duration
+        - type
+        - position
+    Address:
+      type: object
+      properties:
+        city:
+          type: string
+        street:
+          type: string
+        name:
+          type: string
+        position:
+          $ref: "#/components/schemas/Position"
+      required:
+        - position
+    Dimensions:
+      type: object
+      properties:
+        width:
+          type: number
+        length:
+          type: number
+        height:
+          type: number
     Transport:
       type: object
       properties:
@@ -80,40 +106,18 @@ components:
               type: number
             weight:
               type: number
-        earliestStart:
+        earliest_start:
           type: string
           format: date-time
-        latestEnd:
+        latest_end:
           type: string
           format: date-time
         metadata:
           type: object
-        startAddress:
-          type: object
-          properties:
-            city:
-              type: string
-            street:
-              type: string
-            name:
-              type: string
-            position:
-              properties:
-                schema:
-                  $ref: "#/components/schemas/Position"
-        endAddress:
-          type: object
-          properties:
-            city:
-              type: string
-            street:
-              type: string
-            name:
-              type: string
-            lon:
-              type: number
-            lat:
-              type: number
+        start_address:
+          $ref: "#/components/schemas/Address"
+        end_address:
+          $ref: "#/components/schemas/Address"
     Booking:
       type: object
       properties:
@@ -124,32 +128,14 @@ components:
           type: integer
           format: int64
         delivery:
-          type: object
-          properties:
-            city:
-              type: string
-            name:
-              type: string
-            street:
-              type: string
-            position:
-              $ref: "#/components/schemas/Position"
+          $ref: "#/components/schemas/Address"
         pickup:
-          type: object
-          properties:
-            city:
-              type: string
-            name:
-              type: string
-            street:
-              type: string
-            position:
-              $ref: "#/components/schemas/Position"
+          $ref: "#/components/schemas/Address"
         details:
           properties:
             schema:
               $ref: "#/components/schemas/BookingDetails"
-        shipDate:
+        ship_date:
           type: string
           format: date-time
         status:
@@ -205,29 +191,12 @@ components:
         volume:
           type: number
         dimensions:
-          type: object
-          properties:
-            width:
-              type: number
-            height:
-              type: number
-            length:
-              type: number
-        loadingMeters:
+          $ref: "#/components/schemas/Dimensions"
+        loading_meters:
           type: number
         quantity:
           type: integer
           format: int32
-    Place:
-      type: object
-      required:
-        - position
-        - dropoff
-      properties:
-        position:
-          $ref: "#/components/schemas/Position"
-        address:
-          type: string
     Position:
       type: object
       required:

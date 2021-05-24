@@ -29,9 +29,9 @@ defmodule MessageGenerator.MixProject do
     [
       {:jason, "~> 1.2"},
       {:poison, "~> 3.1"},
-      {:httpoison, "~> 1.6"},
+      {:httpoison, "~> 1.8"},
       {:amqp, "~> 1.4"},
-      {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true}
+      # {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true}
     ]
   end
 end

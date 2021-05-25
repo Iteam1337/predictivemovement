@@ -44,6 +44,17 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/Itinerary"
+  /get_plan:
+    get:
+      operationId: get_plan
+      responses:
+        200:
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+
 components:
   schemas:
     Activity:

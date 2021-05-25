@@ -1,9 +1,17 @@
 import OpenAPIBackend from 'openapi-backend'
 import express from 'express'
 import * as routeHandlers from './routeHandlers'
+import { v4 as uuidv4 } from 'uuid'
+import longpoller from './poll'
 
 const app = express()
 app.use(express.json())
+
+app.use((req, res, next) => {
+  req.id = uuidv4()
+  req.poller = longpoller()
+  next()
+})
 
 const api = new OpenAPIBackend({
   definition: './spec/predictivemovement.yaml',
@@ -21,6 +29,7 @@ api.register({
     res.status(400).json({ err: context.validation.errors }),
   ...routeHandlers,
 })
+
 
 app.use((req, res, next) =>
   api.handleRequest(

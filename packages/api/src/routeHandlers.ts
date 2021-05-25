@@ -1,6 +1,7 @@
+import { Request } from 'express'
 import { Handler } from 'openapi-backend'
 
-export const get_transports: Handler = (c, req, res) => {
+export const get_transports: Handler = (c, req: Request, res) => {
   res.status(200).json([
     {
       transport_id: '',
@@ -18,8 +19,8 @@ export const get_transports: Handler = (c, req, res) => {
         name: '',
         position: {
           lat: 0,
-          lon: 0
-        }
+          lon: 0,
+        },
       },
       end_address: {
         city: '',
@@ -28,17 +29,13 @@ export const get_transports: Handler = (c, req, res) => {
         position: {
           lon: 0,
           lat: 0,
-        }
+        },
       },
     },
   ])
 }
 
-export const get_itinerary: Handler = (
-  c,
-  req,
-  res
-) => {
+export const get_itinerary: Handler = (c, req: Request, res) => {
   res.status(200).json({
     transport_id: c.request.params.transport_id,
     route: {},
@@ -57,3 +54,17 @@ export const get_itinerary: Handler = (
     ],
   })
 }
+
+export const get_plan: Handler = async (ctx, req: Request, res) => {
+  const {poller} = req 
+  
+  setTimeout(
+    () => poller.publish('plan', {my_great: 'plan'}),
+    1500
+  )
+  const msg = await poller.for('plan')
+  res.status(200).json(msg)
+
+  console.log(req.id, poller)
+}
+

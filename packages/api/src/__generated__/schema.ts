@@ -10,6 +10,9 @@ export interface paths {
   "/itinerary/{transport_id}": {
     get: operations["get_itinerary"];
   };
+  "/bookings": {
+    post: operations["create_booking"];
+  };
 }
 
 export interface components {
@@ -47,17 +50,14 @@ export interface components {
       end_address?: components["schemas"]["Address"];
     };
     Booking: {
-      id: string;
-      tripId: number;
+      id?: string;
+      trip_id?: number;
       delivery?: components["schemas"]["Address"];
       pickup?: components["schemas"]["Address"];
-      details?: {
-        schema?: components["schemas"]["BookingDetails"];
-      };
       ship_date?: string;
       /** Order Status */
-      status: "placed" | "approved" | "delivered";
-      complete: boolean;
+      status?: "placed" | "approved" | "delivered";
+      details?: components["schemas"]["BookingDetails"];
     };
     BookingDetails: {
       metadata?: {
@@ -121,6 +121,31 @@ export interface operations {
       200: {
         content: {
           "application/json; charset=utf-8": components["schemas"]["Itinerary"];
+        };
+      };
+    };
+  };
+  create_booking: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Booking"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          trip_id: number;
+          pickup: components["schemas"]["Address"];
+          delivery: components["schemas"]["Address"];
+          metadata: { [key: string]: any };
+          size: {
+            /** Weight in kilograms */
+            weight: number;
+            dimensions: components["schemas"]["Dimensions"];
+          };
         };
       };
     };

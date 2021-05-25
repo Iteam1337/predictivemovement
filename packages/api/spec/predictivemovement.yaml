@@ -44,6 +44,77 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/Itinerary"
+  /bookings:
+    post:
+      operationId: "create_booking"
+      summary: Create a new booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                trip_id:
+                  type: integer
+                pickup:
+                  $ref: "#/components/schemas/Address"
+                delivery:
+                  $ref: "#/components/schemas/Address"
+                metadata:
+                  type: object
+                  properties: {}
+                size:
+                  type: object
+                  properties:
+                    weight:
+                      type: number
+                      description: Weight in kilograms
+                      example: 1
+                    dimensions:
+                      $ref: "#/components/schemas/Dimensions"
+                  required:
+                    - weight
+                    - dimensions
+              required:
+                - trip_id
+                - pickup
+                - delivery
+                - metadata
+                - size
+
+            example:
+              trip_id: 1
+              pickup:
+                city: "Stockholm"
+                street: "Visättra Backe 6"
+                name: "Visättra backe 6, Stockholm"
+                position:
+                  lon: 17.958416
+                  lat: 59.215666
+              delivery:
+                city: "Trelleborg"
+                name: "Götagatan 26, Trelleborg"
+                street: "Götagatan 26"
+                position:
+                  lon: 13.166109
+                  lat: 55.383959
+              metadata: {}
+              size: 
+                weight: 1
+                dimensions:
+                  width: 100
+                  height: 100
+                  length: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+
 components:
   schemas:
     Activity:
@@ -123,21 +194,15 @@ components:
       properties:
         id:
           type: string
-          format: int64
-        tripId:
+        trip_id:
           type: integer
-          format: int64
         delivery:
           $ref: "#/components/schemas/Address"
         pickup:
           $ref: "#/components/schemas/Address"
-        details:
-          properties:
-            schema:
-              $ref: "#/components/schemas/BookingDetails"
         ship_date:
           type: string
-          format: date-time
+          format: date
         status:
           type: string
           description: Order Status
@@ -145,18 +210,8 @@ components:
             - placed
             - approved
             - delivered
-        complete:
-          type: boolean
-          default: false
-      xml:
-        name: Order
-      required:
-        - id
-        - tripId
-        - quantity
-        - shipDate
-        - status
-        - complete
+        details:
+          $ref: "#/components/schemas/BookingDetails"
     BookingDetails:
       type: object
       properties:

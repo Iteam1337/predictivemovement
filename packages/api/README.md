@@ -20,6 +20,17 @@ A REST interface to interact with the [engine](../packages/engine_umbrella/apps/
   nvm use
   npm i
   ```
+- Run the api (available at http://localhost:8000)
+
+  ```bash
+  npm run dev
+  ```
+
+- Run tests for validating openapi specification
+
+  ```bash
+  npm run spec:test
+  ```
 
 - Generate Typescript types from openapi specification
 
@@ -37,16 +48,4 @@ A REST interface to interact with the [engine](../packages/engine_umbrella/apps/
 
   ```bash
   npm run spec:build
-  ```
-
-- Run tests for validating openapi specification
-
-  ```bash
-  npm run spec:test
-  ```
-
-- Run it (available at http://localhost:8000)
-
-  ```bash
-  npm run dev
   ```

@@ -44,8 +44,94 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: "#/components/schemas/Itinerary"
+  /bookings:
+    post:
+      operationId: "create_booking"
+      summary: Create a new booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pickup:
+                  type: object
+                  properties:
+                    address: 
+                      $ref: "#/components/schemas/Address"
+                    contact:
+                      $ref: "#/components/schemas/Contact"
+                  required:
+                    - address
+                    - contact
+                delivery:
+                  type: object
+                  properties:
+                    address: 
+                      $ref: "#/components/schemas/Address"
+                    contact: 
+                      $ref: "#/components/schemas/Contact"
+                  required:
+                    - address
+                    - contact
+                size:
+                  $ref: "#/components/schemas/Size"
+                metadata: 
+                  $ref: "#/components/schemas/AnyValue"
+                external_id:
+                  description: An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID
+                  type: string
+              required:
+                - pickup
+                - delivery
+                - size
+            examples:
+              standard_booking:
+                value:
+                  pickup:
+                    address:
+                      city: "Stockholm"
+                      street: "Visättra Backe 6"
+                      name: "Visättra backe 6, Stockholm"
+                      position:
+                        lon: 17.958416
+                        lat: 59.215666
+                    contact:
+                      name: Mr. Plow
+                      phone_number: "0173637204"
+                      info: ""
+                  delivery:
+                    address:
+                      city: "Trelleborg"
+                      name: "Götagatan 26, Trelleborg"
+                      street: "Götagatan 26"
+                      position:
+                        lon: 13.166109
+                        lat: 55.383959
+                    contact:
+                      name: That name again
+                      info: Is Mr. Plow
+                      phone_number: "0173637204"
+                  size:
+                    weight: 1000
+                    dimensions:
+                      width: 10
+                      height: 10
+                      length: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+
 components:
   schemas:
+    AnyValue: {}
+
     Activity:
       type: object
       properties:
@@ -118,26 +204,46 @@ components:
           $ref: "#/components/schemas/Address"
         end_address:
           $ref: "#/components/schemas/Address"
+    Contact: 
+      type: object
+      properties:
+        name:
+          type: string
+        phone_number:
+          type: string
+        info: 
+          description: Extra information regarding sender or recipient
+          type: string
+    Size:
+      type: object
+      properties:
+        weight:
+          type: number
+        dimensions:
+          $ref: "#/components/schemas/Dimensions"
+
     Booking:
       type: object
       properties:
         id:
           type: string
-          format: int64
-        tripId:
-          type: integer
-          format: int64
         delivery:
-          $ref: "#/components/schemas/Address"
-        pickup:
-          $ref: "#/components/schemas/Address"
-        details:
+          type: object
           properties:
-            schema:
-              $ref: "#/components/schemas/BookingDetails"
+            address:
+              $ref: "#/components/schemas/Address"
+            contact:
+              $ref: "#/components/schemas/Contact"
+        pickup:
+          type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/Address"
+            contact:
+              $ref: "#/components/schemas/Contact"
         ship_date:
           type: string
-          format: date-time
+          format: date
         status:
           type: string
           description: Order Status
@@ -145,58 +251,8 @@ components:
             - placed
             - approved
             - delivered
-        complete:
-          type: boolean
-          default: false
-      xml:
-        name: Order
-      required:
-        - id
-        - tripId
-        - quantity
-        - shipDate
-        - status
-        - complete
-    BookingDetails:
-      type: object
-      properties:
-        metadata:
-          type: object
-          properties:
-            cargo:
-              type: string
-            fragile:
-              type: boolean
-              default: false
-            recipient:
-              type: object
-              properties:
-                contact:
-                  type: string
-                name:
-                  type: string
-                info:
-                  type: string
-            sender:
-              type: object
-              properties:
-                contact:
-                  type: string
-                name:
-                  type: string
-                info:
-                  type: string
-        weight:
-          type: number
-        volume:
-          type: number
-        dimensions:
-          $ref: "#/components/schemas/Dimensions"
-        loading_meters:
-          type: number
-        quantity:
-          type: integer
-          format: int32
+        size:
+          $ref: "#/components/schemas/Size"
     Position:
       type: object
       required:

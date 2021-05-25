@@ -57,3 +57,20 @@ export const get_itinerary: Handler = (
     ],
   })
 }
+
+export const create_booking: Handler = (
+  ctx,
+  req,
+  res
+) => {
+console.log(JSON.stringify(ctx.request.requestBody, null, 2))
+  res.status(200).json({
+    id: "foo",
+    delivery: ctx.request.requestBody.delivery,
+    pickup: ctx.request.requestBody.pickup,
+    ship_date: '2017-01-01',
+    status: 'placed',
+    size: ctx.request.requestBody.size,
+    metadata: ctx.request.requestBody.metadata,
+  })
+}

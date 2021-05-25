@@ -63,34 +63,14 @@ export const create_booking: Handler = (
   req,
   res
 ) => {
+console.log(JSON.stringify(ctx.request.requestBody, null, 2))
   res.status(200).json({
     id: "foo",
-    trip_id: ctx.request.requestBody.trip_id,
     delivery: ctx.request.requestBody.delivery,
     pickup: ctx.request.requestBody.pickup,
     ship_date: '2017-01-01',
     status: 'placed',
-    details: {
-      metadata: {
-        cargo: "",
-        fragile: false,
-        recipient: {
-          contact: "",
-          name: "",
-          info: "",
-        },
-        sender: {
-          contact: "",
-          name: "",
-          info: "",
-        },
-      },
-      quantity: 1,
-      loading_meters: 1,
-      weight: ctx.request.requestBody.size.weight,
-      dimensions: ctx.request.requestBody.size.dimensions,
-      volume: Object.values(ctx.request.requestBody.size.dimensions as {[key: string]: number})
-                    .reduce((acc: number, next: number) => next * acc, 1),
-    }
+    size: ctx.request.requestBody.size,
+    metadata: ctx.request.requestBody.metadata,
   })
 }

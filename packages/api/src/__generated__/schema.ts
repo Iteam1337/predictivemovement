@@ -17,6 +17,7 @@ export interface paths {
 
 export interface components {
   schemas: {
+    AnyValue: { [key: string]: any };
     Activity: {
       id: string;
       booking_id: string;
@@ -49,36 +50,30 @@ export interface components {
       start_address?: components["schemas"]["Address"];
       end_address?: components["schemas"]["Address"];
     };
+    Contact: {
+      name?: string;
+      phone_number?: string;
+      /** Extra information regarding sender or recipient */
+      info?: string;
+    };
+    Size: {
+      weight?: number;
+      dimensions?: components["schemas"]["Dimensions"];
+    };
     Booking: {
       id?: string;
-      trip_id?: number;
-      delivery?: components["schemas"]["Address"];
-      pickup?: components["schemas"]["Address"];
+      delivery?: {
+        address?: components["schemas"]["Address"];
+        contact?: components["schemas"]["Contact"];
+      };
+      pickup?: {
+        address?: components["schemas"]["Address"];
+        contact?: components["schemas"]["Contact"];
+      };
       ship_date?: string;
       /** Order Status */
       status?: "placed" | "approved" | "delivered";
-      details?: components["schemas"]["BookingDetails"];
-    };
-    BookingDetails: {
-      metadata?: {
-        cargo?: string;
-        fragile?: boolean;
-        recipient?: {
-          contact?: string;
-          name?: string;
-          info?: string;
-        };
-        sender?: {
-          contact?: string;
-          name?: string;
-          info?: string;
-        };
-      };
-      weight?: number;
-      volume?: number;
-      dimensions?: components["schemas"]["Dimensions"];
-      loading_meters?: number;
-      quantity?: number;
+      size?: components["schemas"]["Size"];
     };
     Position: {
       lon: number;
@@ -137,15 +132,18 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": {
-          trip_id: number;
-          pickup: components["schemas"]["Address"];
-          delivery: components["schemas"]["Address"];
-          metadata: { [key: string]: any };
-          size: {
-            /** Weight in kilograms */
-            weight: number;
-            dimensions: components["schemas"]["Dimensions"];
+          pickup: {
+            address: components["schemas"]["Address"];
+            contact: components["schemas"]["Contact"];
           };
+          delivery: {
+            address: components["schemas"]["Address"];
+            contact: components["schemas"]["Contact"];
+          };
+          size: components["schemas"]["Size"];
+          metadata?: components["schemas"]["AnyValue"];
+          /** An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID */
+          external_id?: string;
         };
       };
     };

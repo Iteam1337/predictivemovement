@@ -1,9 +1,12 @@
 import OpenAPIBackend from 'openapi-backend'
 import express from 'express'
 import * as routeHandlers from './routeHandlers'
+import morgan from 'morgan'
 
 const app = express()
 app.use(express.json())
+// "Standard Apache combined format"
+app.use(morgan('combined'))
 
 const api = new OpenAPIBackend({
   definition: './spec/predictivemovement.yaml',

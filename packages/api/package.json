@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "express-longpoll": "0.0.6",
     "express-openapi-validator": "^4.10.8",
     "openapi-backend": "^3.7.0"
   },

@@ -1,9 +1,15 @@
 import OpenAPIBackend from 'openapi-backend'
 import express from 'express'
+import lp from 'express-longpoll'
 import * as routeHandlers from './routeHandlers'
 
 const app = express()
 app.use(express.json())
+
+const longpoll = lp(app, {DEBUG: true})
+longpoll.create("/poll")
+
+setInterval(() => longpoll.publish("/poll", {some_data: 1}), 5000)
 
 const api = new OpenAPIBackend({
   definition: './spec/predictivemovement.yaml',

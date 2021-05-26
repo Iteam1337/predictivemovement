@@ -4,8 +4,8 @@
 npm-debug.log
 packages/map/lib
 node_modules
-.env
-# data/
+.env*
+data
 .vscode/
 docker-compose.dev.yml
 *.xlsx

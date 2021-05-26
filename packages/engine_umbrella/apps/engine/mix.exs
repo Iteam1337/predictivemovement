@@ -30,18 +30,19 @@ defmodule Engine.MixProject do
       {:message_generator, in_umbrella: true, only: :test},
       {:amqp, "~> 1.5"},
       {:broadway, "~> 0.6.0"},
-      {:broadway_rabbitmq, "~> 0.6.0"},
-      {:httpoison, "~> 1.6"},
+      {:broadway_rabbitmq, "~> 0.6.5"},
+      {:httpoison, "~> 1.8"},
       {:polyline, "~> 1.2"},
       {:jason, "~> 1.2"},
       {:mix_test_watch, "~> 0.8", only: :dev, only: :test, runtime: false},
       {:math, "~> 0.4.0"},
-      {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
+      # {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true},
       {:elixir_uuid, "~> 1.2"},
       {:gproc, "~> 0.8.0"},
       {:eventstore, "~> 1.1"},
       {:vex, "~> 0.8.0"},
-      {:mox, "~> 1.0", only: :test}
+      {:mox, "~> 1.0", only: :test},
+      {:connection, "~> 1.0.2", override: true}
     ]
   end
 

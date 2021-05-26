@@ -5,11 +5,13 @@ import { useHistory, useRouteMatch } from 'react-router-dom'
 import Tooltip from './Tooltip'
 import * as hooks from '../hooks'
 import * as stores from '../utils/state/stores'
+import * as helpers from '../utils/helpers'
 
 const Map: React.FC = () => {
   const history = useHistory()
   const [isHovering, setHover] = React.useState(false)
   const [viewState, setViewState] = stores.map((state) => [state, state.set])
+  const [setCurrentLocation] = stores.currentLocation((state) => [state.set])
   const [UIState, setUIState] = stores.ui((state) => [state, state.dispatch])
 
   const dataState = stores.dataState(React.useCallback((state) => state, []))
@@ -20,6 +22,10 @@ const Map: React.FC = () => {
   const showTextLayer = useRouteMatch({
     path: ['/plans/routes/:routeId'],
   })
+
+  React.useEffect(() => {
+    helpers.shareCurrentLocation(setCurrentLocation, setViewState)
+  }, [setViewState])
 
   const hideTooltip = React.useCallback(
     () => UIState.showMapTooltip && setUIState({ type: 'hideTooltip' }),

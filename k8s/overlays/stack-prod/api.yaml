@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: api
+  annotations:
+    kubernetes.io/ingress.class: "public"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  labels:
+    app: api
+spec:
+  tls:
+    - hosts:
+        - api.predictivemovement.se
+      secretName: api-prod-tls
+  rules:
+    - host: api.predictivemovement.se
+      http:
+        paths:
+          - backend:
+              serviceName: api
+              servicePort: 8000

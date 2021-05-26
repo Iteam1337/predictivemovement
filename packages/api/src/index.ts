@@ -1,14 +1,21 @@
 import OpenAPIBackend from 'openapi-backend'
 import express from 'express'
 import * as routeHandlers from './routeHandlers'
+import morgan from 'morgan'
 
 const app = express()
 app.use(express.json())
+// "Standard Apache combined format"
+app.use(morgan('combined'))
 
 const api = new OpenAPIBackend({
-  definition: './spec/predictivemovement-1.0.0.yaml',
+  definition: './spec/predictivemovement.yaml',
   strict: true,
   validate: true,
+})
+
+app.get('/docs', (_, res) => {
+  res.sendFile('./spec/pm-redoc.html', { root: '.' })
 })
 
 api.register({
@@ -34,6 +41,6 @@ app.use((req, res, next) =>
 )
 
 api.init()
-app.listen(process.env.PORT || 9000, () =>
-  console.info(`api listening at http://localhost:${process.env.PORT || 9000}`)
+app.listen(process.env.PORT || 8000, () =>
+  console.info(`api listening at http://localhost:${process.env.PORT || 8000}`)
 )

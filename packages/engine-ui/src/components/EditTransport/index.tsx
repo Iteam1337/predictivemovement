@@ -5,8 +5,7 @@ import { Transport } from '../../types'
 import { useHistory, useParams } from 'react-router-dom'
 import EditTransport from './EditTransport'
 import Success from '../SuccessScreen'
-import { getAddressFromCoordinate } from '../../utils/helpers'
-import moment from 'moment'
+import { getAddressFromCoordinate, formatUTCtoLocal } from '../../utils/helpers'
 
 interface Props {
   transports: Transport[]
@@ -80,10 +79,10 @@ const EditTransportRoute = ({ transports, updateTransport }: Props) => {
             ...transport,
             earliestStart:
               transport.earliestStart &&
-              moment(transport.earliestStart, 'HH:mm').toDate(),
+              formatUTCtoLocal(transport.earliestStart).toDate(),
             latestEnd:
               transport.latestEnd &&
-              moment(transport.latestEnd, 'HH:mm').toDate(),
+              formatUTCtoLocal(transport.latestEnd).toDate(),
             capacity: {
               weight: transport.capacity?.weight?.toString() || '',
               volume: transport.capacity?.volume.toString() || '',

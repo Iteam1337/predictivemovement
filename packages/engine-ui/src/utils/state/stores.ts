@@ -22,12 +22,23 @@ const ui = create<types.UIState>(
 
 const map = create<types.MapState>(
   (set, get): types.MapState => ({
-    latitude: 61.8294959,
-    longitude: 16.0740589,
+    latitude: 67.212782,
+    longitude: 23.367392,
     zoom: 10,
     transitionDuration: 3000,
     transitionInterpolator: new FlyToInterpolator(),
     transitionEasing: (t: number) => t * (2 - t),
+    set: (data) => set({ ...get(), ...data }),
+  })
+)
+
+const currentLocation = create<types.CurrentLocation>(
+  (set, get): types.CurrentLocation => ({
+    lat: undefined,
+    lon: undefined,
+    name: '',
+    county: '',
+
     set: (data) => set({ ...get(), ...data }),
   })
 )
@@ -37,6 +48,7 @@ const initialDataState: types.DataState = {
   transports: [],
   assignedBookings: [],
   plan: { excludedBookings: [], routes: [] },
+  signatures: [],
 }
 
 const dataState = create<types.DataStateWithSet>(
@@ -56,4 +68,20 @@ const mapLayerState = create<types.MapLayerStateWithSet>(
   })
 )
 
-export { ui, map, dataState, mapLayerState }
+const notifications = create<types.NotificationsWithSet>(
+  (set): types.NotificationsWithSet => ({
+    notifications: [],
+    addOne: (notification) =>
+      set((state) => ({
+        notifications: state.notifications.concat(notification),
+      })),
+    deleteOneById: (id) =>
+      set((state) => ({
+        notifications: state.notifications.filter(
+          (notification) => notification.event.id !== id
+        ),
+      })),
+  })
+)
+
+export { ui, map, dataState, mapLayerState, notifications, currentLocation }

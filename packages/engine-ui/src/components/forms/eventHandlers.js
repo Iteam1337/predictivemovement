@@ -77,3 +77,12 @@ export const handleAddressInput = (propertyName, callback) => ({
       street,
     },
   }))
+
+export const handleFleetInput = (propertyName, callback) => ({ name }) =>
+  callback((currentState) => ({
+    ...currentState,
+    metadata: {
+      ...currentState.metadata,
+      [propertyName]: name,
+    },
+  }))

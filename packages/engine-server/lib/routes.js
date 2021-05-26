@@ -1,7 +1,12 @@
 const id62 = require('id62').default // https://www.npmjs.com/package/id62
 const _ = require('highland')
 const helpers = require('./helpers')
-const { bookingsCache, transportsCache, planCache } = require('./cache')
+const {
+  bookingsCache,
+  transportsCache,
+  planCache,
+  receiptsCache,
+} = require('./cache')
 const parcel = require('./parcel')
 const {
   toIncomingBooking,
@@ -9,6 +14,9 @@ const {
   toOutgoingBooking,
   toOutgoingTransport,
 } = require('./mappings')
+
+const { serviceStatus, getStatus } = require('./serviceStatus')
+const { saveSignature, getSignatures } = require('./adapters/minio')
 
 module.exports = (io) => {
   const {
@@ -27,7 +35,15 @@ module.exports = (io) => {
     bookingNotifications,
     updateBooking,
     publishUpdateTransport,
+    confirmDeliveryReceipt,
+    receipts,
+    freightslips,
   } = require('./engineConnector')(io)
+
+  require('./receipts')(receipts, (signature) => {
+    confirmDeliveryReceipt(signature.bookingId, signature.transportId)
+    io.sockets.emit('signatures', [signature])
+  })
 
   io.on('connection', function (socket) {
     _.merge([_(bookingsCache.values()), bookings.fork()])
@@ -44,9 +60,13 @@ module.exports = (io) => {
       })
 
     _.merge([_(transportsCache.values()), transports.fork()])
-      .filter((transport) => transport.id)
-      .doto((transport) => {
-        transportsCache.set(transport.id, transport)
+      .map((newTransport) => {
+        const oldTransport = transportsCache.get(newTransport.id)
+        transportsCache.set(newTransport.id, {
+          ...oldTransport,
+          ...newTransport,
+        })
+        return { ...newTransport, ...oldTransport }
       })
       .map(toIncomingTransport)
       .batchWithTimeOrCount(1000, 2000)
@@ -106,6 +126,12 @@ module.exports = (io) => {
       createBooking(toOutgoingBooking(booking))
     )
 
+    socket.on('signed-delivery', (receipt) => {
+      io.sockets.emit('signatures', [receipt])
+      saveSignature(receipt)
+      return confirmDeliveryReceipt(receipt.bookingId, receipt.transportId)
+    })
+
     socket.on('dispatch-offers', () => {
       console.log('received message to dispatch offers, from UI')
       dispatchOffers()
@@ -122,7 +148,6 @@ module.exports = (io) => {
     })
 
     socket.on('delete-booking', (id) => {
-      console.log('about to delete booking: ', id)
       bookingsCache.delete(id)
       publishDeleteBooking(id)
       socket.emit('delete-booking', id)
@@ -148,6 +173,20 @@ module.exports = (io) => {
       const measurements = parcel.getMeasurements(response)
 
       socket.emit('parcel-info', { weight, measurements })
+    })
+
+    socket.emit('service-disruption', {
+      status: getStatus(),
+    })
+
+    getSignatures()
+      .fork()
+      .toArray((signatures) => socket.emit('signatures', signatures))
+  })
+
+  serviceStatus.fork().each((status) => {
+    io.sockets.emit('service-disruption', {
+      status,
     })
   })
 }

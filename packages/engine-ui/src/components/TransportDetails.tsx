@@ -9,6 +9,7 @@ import * as Icons from '../assets/Icons'
 import { FlyToInterpolator } from 'react-map-gl'
 import * as stores from '../utils/state/stores'
 import * as helpers from '../utils/helpers'
+import { formatUTCtoLocal } from '../utils/helpers'
 
 const Line = styled.div`
   border-top: 1px solid #dedede;
@@ -110,7 +111,7 @@ const TransportDetails: React.FC<{
 
   return (
     <MainRouteLayout redirect={'/transports'}>
-      <Elements.Layout.Container>
+      <Elements.Layout.ContainerWidth>
         <Elements.Layout.FlexRowWrapper>
           <h3>Transport</h3>
           <Elements.Typography.RoundedLabelDisplay
@@ -135,7 +136,8 @@ const TransportDetails: React.FC<{
         </Elements.Typography.StrongParagraph>
         <Elements.Layout.FlexRowWrapper>
           <Paragraph>
-            {transport.earliestStart} - {transport.latestEnd}
+            {formatUTCtoLocal(transport.earliestStart).format('HH:mm')} -{' '}
+            {formatUTCtoLocal(transport.latestEnd).format('HH:mm')}
           </Paragraph>
         </Elements.Layout.FlexRowWrapper>
         {transport.endAddress.name && (
@@ -255,22 +257,20 @@ const TransportDetails: React.FC<{
         )}
         <Elements.Layout.MarginTopContainer alignItems="center">
           <Elements.Layout.ButtonWrapper>
+            <Elements.Buttons.CancelButton
+              onClick={() => handleDeleteClick(transport.id)}
+            >
+              Radera
+            </Elements.Buttons.CancelButton>
             <Elements.Buttons.SubmitButton
               type="button"
               onClick={() => handleChangeClick(transport.id)}
             >
-              Ändra transport
+              Ändra
             </Elements.Buttons.SubmitButton>
           </Elements.Layout.ButtonWrapper>
-          <Elements.Layout.ButtonWrapper>
-            <Elements.Buttons.CancelButton
-              onClick={() => handleDeleteClick(transport.id)}
-            >
-              Radera transport
-            </Elements.Buttons.CancelButton>
-          </Elements.Layout.ButtonWrapper>
         </Elements.Layout.MarginTopContainer>
-      </Elements.Layout.Container>
+      </Elements.Layout.ContainerWidth>
     </MainRouteLayout>
   )
 }

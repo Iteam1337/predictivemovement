@@ -68,3 +68,66 @@ export const publishTransportEvent = (
         )
     )
     .catch(console.warn)
+
+type PhotoReceipt = {
+  type: 'photo'
+  receipt: { photoId: string; photo?: string }
+  createdAt: Date
+  bookingId: string
+  transportId: string
+  signedBy: string
+}
+
+type ManualReceipt = {
+  type: 'manual'
+  createdAt: Date
+  bookingId: string
+  transportId: string
+  signedBy: string
+}
+
+export const publishReceiptByManual = (
+  receipt: ManualReceipt
+): Promise<boolean | void> =>
+  open
+    .then((conn) => conn.createChannel())
+    .then((openChannel) =>
+      openChannel
+        .assertExchange(exchanges.DELIVERY_RECEIPTS, 'topic', {
+          durable: true,
+        })
+        .then(() =>
+          openChannel.publish(
+            exchanges.DELIVERY_RECEIPTS,
+            'new',
+            Buffer.from(JSON.stringify({ receipt })),
+            {
+              persistent: true,
+            }
+          )
+        )
+    )
+    .catch(console.warn)
+
+export const publishReceiptByPhoto = (
+  receipt: PhotoReceipt
+): Promise<boolean | void> =>
+  open
+    .then((conn) => conn.createChannel())
+    .then((openChannel) =>
+      openChannel
+        .assertExchange(exchanges.DELIVERY_RECEIPTS, 'topic', {
+          durable: true,
+        })
+        .then(() =>
+          openChannel.publish(
+            exchanges.DELIVERY_RECEIPTS,
+            'new',
+            Buffer.from(JSON.stringify({ receipt })),
+            {
+              persistent: true,
+            }
+          )
+        )
+    )
+    .catch(console.warn)

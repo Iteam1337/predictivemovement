@@ -1,7 +1,6 @@
 import * as amqp from './amqp'
 import cache from './cache'
 import { v4 as uuid } from 'uuid'
-
 import * as messaging from './messaging'
 import {
   IncomingMessage,
@@ -10,6 +9,8 @@ import {
 } from 'telegraf/typings/telegram-types'
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Instruction } from '../types'
+import bot from '../adapters/bot'
+import axios from 'axios'
 
 export const driverIsLoggedIn = async (
   telegramId: number
@@ -42,9 +43,13 @@ const onDriverLoginSuccessful = async (
     .then((instructionGroups: Instruction[][]) => {
       if (!instructionGroups) return
 
-      return messaging
-        .sendSummary(telegramId, instructionGroups)
-        .then(() => handleNextDriverInstruction(telegramId))
+      cache
+        .setTelegramIdByVehicleId(transportId, telegramId)
+        .then(() =>
+          messaging
+            .sendSummary(telegramId, instructionGroups)
+            .then(() => handleNextDriverInstruction(telegramId))
+        )
     })
 }
 
@@ -89,7 +94,7 @@ export const handleNextDriverInstruction = async (
   try {
     const transportId = await cache.getVehicleIdByTelegramId(telegramId)
     const instructions = await cache.getInstructions(transportId)
-
+    await cache.setTelegramIdByVehicleId(transportId, telegramId)
     if (!instructions) {
       console.log('No instructions found for:', transportId)
       return
@@ -169,6 +174,33 @@ export const handleDriverArrivedToPickupOrDeliveryPosition = async (
   }
 }
 
+export const onManualReceiptConfirmed = async (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> => {
+  const [bookingId] = await cache
+    .getInstructionGroup(instructionGroupId)
+    .then((instructionGroup: Instruction[]) =>
+      instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
+    )
+
+  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
+
+  return amqp
+    .publishReceiptByManual({
+      type: 'manual',
+      bookingId: bookingId,
+      createdAt: new Date(),
+      transportId,
+      signedBy: transportId,
+    })
+    .then((e) => {
+      console.log('manual signature successfully received and sent to server')
+      return e
+    })
+    .then(() => messaging.notifyManualSignatureConfirmed(telegramId))
+}
+
 export const onPhotoReceived = async (
   telegramId: number,
   photoSizes: PhotoSize[]
@@ -184,18 +216,33 @@ export const onPhotoReceived = async (
     .then((instructionGroup: Instruction[]) =>
       instructionGroup.map(({ id: bookingId }: Instruction) => bookingId)
     )
-  console.log('saving photo for bookingIds', bookingIds)
-  return cache
-    .getDeliveryReceiptPhotos(bookingIds)
-    .then((photoIds: string[]) =>
-      cache.saveDeliveryReceiptPhoto(
-        bookingIds,
-        photoIds.concat([highestResPhotoId])
-      )
-    )
-    .then(() => messaging.sendPhotoReceived(instructionGroupId, telegramId))
+  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
+  const fileLink = await bot.telegram.getFileLink(highestResPhotoId)
+  const response = await axios.get(fileLink, {
+    responseType: 'arraybuffer',
+  })
+  let photo = Buffer.from(response.data, 'binary').toString('base64')
+
+  if (!photo.match(/^data:image\/jpg;base64,/)) {
+    photo = `data:image/jpg;base64,${photo}`
+  }
+
+  return amqp
+    .publishReceiptByPhoto({
+      type: 'photo',
+      bookingId: bookingIds[0],
+      createdAt: new Date(),
+      transportId,
+      receipt: {
+        photo,
+        photoId: highestResPhotoId,
+      },
+      signedBy: transportId,
+    })
+
+    .then(() => messaging.sendPhotoReceived(telegramId))
     .then((e) => {
-      console.log('photo successfully received')
+      console.log('photo successfully received and sent to server')
       return e
     })
 }
@@ -209,11 +256,57 @@ export const beginDeliveryAcknowledgement = async (
       telegramId,
       instructionGroupId
     )
-    .then(() => messaging.sendBeginDeliveryAcknowledgement(telegramId))
+    .then(() =>
+      messaging.sendBeginDeliveryAcknowledgement(telegramId, instructionGroupId)
+    )
 
-export async function onArrived(msg) {
+export const handleIncomingSignatureConfirmation = async (
+  transportId: string
+): Promise<Message> => {
+  const telegramId = Number(await cache.getTelegramIdByVehicleId(transportId))
+
+  const instructionGroupId = await cache.getCurrentlyDeliveringInstructionGroupId(
+    telegramId
+  )
+
+  return messaging.sendSignatureConfirmation(telegramId, instructionGroupId)
+}
+
+export const handleDeliveryAcknowledgementByPhoto = (
+  telegramId: number
+): Promise<Message> => messaging.sendDeliveryAcknowledgementByPhoto(telegramId)
+
+export const handleDeliveryAcknowledgementManual = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
+  messaging.acceptManualSignature(instructionGroupId, telegramId)
+
+export const handleCancelDeliveryAcknowledgement = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
+  messaging.handleCancelDeliveryAcknowledgement(instructionGroupId, telegramId)
+
+export async function onArrived(msg): Promise<Message | string> {
   const telegramId = msg.update.callback_query.from.id
   const vehicleId = await cache.getVehicleIdByTelegramId(telegramId)
 
   return handleDriverArrivedToPickupOrDeliveryPosition(vehicleId, telegramId)
 }
+
+export const handleFinishBookingInstructionGroup = (
+  instructionGroupId: string,
+  event: string,
+  telegramId: number
+): Promise<Message> =>
+  cache
+    .getAndDeleteInstructionGroup(instructionGroupId)
+    .then((instructionGroup: Instruction[]) =>
+      Promise.all(
+        instructionGroup.map(({ id: bookingId }: Instruction) =>
+          amqp.publishBookingEvent(bookingId, event)
+        )
+      )
+    )
+    .then(() => handleNextDriverInstruction(telegramId))

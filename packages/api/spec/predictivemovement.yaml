@@ -1,0 +1,296 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:8000
+info:
+  description: |
+    This is the OpenAPI for Predictive Movement.
+  version: 1.0.0-oas3
+  title: Predictive Movement API
+  contact:
+    email: predictivemovement@iteam.se
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+paths:
+  /transports:
+    get:
+      operationId: get_transports
+      summary: Get all the transports to which you have access
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transport"
+  /itinerary/{transport_id}:
+    get:
+      operationId: get_itinerary
+      summary: Get an itinerary by transport ID
+      parameters:
+        - name: transport_id
+          in: path
+          description: ID of the transport to which the itinerary is assigned
+          required: true
+          schema:
+            type: string
+          example: "pmv-2314"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/Itinerary"
+  /bookings:
+    post:
+      operationId: "create_booking"
+      summary: Create a new booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pickup:
+                  type: object
+                  properties:
+                    address: 
+                      $ref: "#/components/schemas/Address"
+                    contact:
+                      $ref: "#/components/schemas/Contact"
+                  required:
+                    - address
+                    - contact
+                delivery:
+                  type: object
+                  properties:
+                    address: 
+                      $ref: "#/components/schemas/Address"
+                    contact: 
+                      $ref: "#/components/schemas/Contact"
+                  required:
+                    - address
+                    - contact
+                size:
+                  $ref: "#/components/schemas/Size"
+                metadata: 
+                  $ref: "#/components/schemas/AnyValue"
+                external_id:
+                  description: An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID
+                  type: string
+              required:
+                - pickup
+                - delivery
+                - size
+            examples:
+              standard_booking:
+                value:
+                  pickup:
+                    address:
+                      city: "Stockholm"
+                      street: "Visättra Backe 6"
+                      name: "Visättra backe 6, Stockholm"
+                      position:
+                        lon: 17.958416
+                        lat: 59.215666
+                    contact:
+                      name: Mr. Plow
+                      phone_number: "0173637204"
+                      info: ""
+                  delivery:
+                    address:
+                      city: "Trelleborg"
+                      name: "Götagatan 26, Trelleborg"
+                      street: "Götagatan 26"
+                      position:
+                        lon: 13.166109
+                        lat: 55.383959
+                    contact:
+                      name: That name again
+                      info: Is Mr. Plow
+                      phone_number: "0173637204"
+                  size:
+                    weight: 1000
+                    dimensions:
+                      width: 10
+                      height: 10
+                      length: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+
+components:
+  schemas:
+    AnyValue: {}
+
+    Activity:
+      type: object
+      properties:
+        id:
+          nullable: false
+          type: string
+        booking_id:
+          type: string
+        distance:
+          type: number
+        duration:
+          type: number
+        type:
+          type: string
+          enum: [start, end, pickup, delivery]
+        position:
+          $ref: "#/components/schemas/Position"
+      required:
+        - id
+        - booking_id
+        - distance
+        - duration
+        - type
+        - position
+    Address:
+      type: object
+      properties:
+        city:
+          type: string
+        street:
+          type: string
+        name:
+          type: string
+        position:
+          $ref: "#/components/schemas/Position"
+      required:
+        - position
+    Dimensions:
+      type: object
+      properties:
+        width:
+          type: number
+        length:
+          type: number
+        height:
+          type: number
+    Transport:
+      type: object
+      properties:
+        transport_id:
+          type: string
+        busy:
+          type: boolean
+        capacity:
+          type: object
+          properties:
+            volume:
+              type: number
+            weight:
+              type: number
+        earliest_start:
+          type: string
+          format: date-time
+        latest_end:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+        start_address:
+          $ref: "#/components/schemas/Address"
+        end_address:
+          $ref: "#/components/schemas/Address"
+    Contact: 
+      type: object
+      properties:
+        name:
+          type: string
+        phone_number:
+          type: string
+        info: 
+          description: Extra information regarding sender or recipient
+          type: string
+    Size:
+      type: object
+      properties:
+        weight:
+          type: number
+        dimensions:
+          $ref: "#/components/schemas/Dimensions"
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+        delivery:
+          type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/Address"
+            contact:
+              $ref: "#/components/schemas/Contact"
+        pickup:
+          type: object
+          properties:
+            address:
+              $ref: "#/components/schemas/Address"
+            contact:
+              $ref: "#/components/schemas/Contact"
+        ship_date:
+          type: string
+          format: date
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+        size:
+          $ref: "#/components/schemas/Size"
+    Position:
+      type: object
+      required:
+        - lon
+        - lat
+      properties:
+        lon:
+          type: number
+          format: float
+        lat:
+          type: number
+          format: float
+    Plan:
+      type: object
+    Itinerary:
+      type: object
+      properties:
+        transport_id:
+          type: string
+        route:
+          type: object
+        activities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Activity"
+      xml:
+        name: Trips
+      required:
+        - transport_id
+        - route
+        - activities
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string

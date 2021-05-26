@@ -3,6 +3,7 @@ package com.predictivemovement.route.optimization;
 import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import org.json.JSONObject;
 import org.junit.Test;
@@ -16,9 +17,9 @@ public class VRPSettingTimeUtilsTest {
         times.put("earliest_start", "09:00");
         times.put("latest_end", "18:00");
 
-        final LocalDateTime testNow = LocalDateTime.now().withHour(6).withMinute(0).withSecond(0).withNano(0);
+        final ZonedDateTime testNow = ZonedDateTime.now().withHour(6).withMinute(0).withSecond(0).withNano(0);
         final VRPSettingTimeUtils timeUtils = new VRPSettingTimeUtils();
-        timeUtils.localNow = testNow;
+        timeUtils.zonedNow = testNow;
 
         // when
         final VehicleStartAndEndTimes startAndEndTimes = timeUtils.getVehicleStartAndEnd(times);
@@ -36,9 +37,9 @@ public class VRPSettingTimeUtilsTest {
         times.put("earliest_start", "09:00");
         times.put("latest_end", "18:00");
 
-        final LocalDateTime testNow = LocalDateTime.now().withHour(23).withMinute(0).withSecond(0).withNano(0);
+        final ZonedDateTime testNow = ZonedDateTime.now().withHour(23).withMinute(0).withSecond(0).withNano(0);
         final VRPSettingTimeUtils timeUtils = new VRPSettingTimeUtils();
-        timeUtils.localNow = testNow;
+        timeUtils.zonedNow = testNow;
 
         // when
         final VehicleStartAndEndTimes startAndEndTimes = timeUtils.getVehicleStartAndEnd(times);
@@ -56,9 +57,9 @@ public class VRPSettingTimeUtilsTest {
         times.put("earliest_start", "22:00");
         times.put("latest_end", "06:00");
 
-        final LocalDateTime testNow = LocalDateTime.now().withHour(20).withMinute(0).withSecond(0).withNano(0);
+        final ZonedDateTime testNow = ZonedDateTime.now().withHour(20).withMinute(0).withSecond(0).withNano(0);
         final VRPSettingTimeUtils timeUtils = new VRPSettingTimeUtils();
-        timeUtils.localNow = testNow;
+        timeUtils.zonedNow = testNow;
 
         // when
         final VehicleStartAndEndTimes startAndEndTimes = timeUtils.getVehicleStartAndEnd(times);
@@ -76,9 +77,9 @@ public class VRPSettingTimeUtilsTest {
         times.put("earliest_start", "22:00");
         times.put("latest_end", "06:00");
 
-        final LocalDateTime testNow = LocalDateTime.now().withHour(23).withMinute(0).withSecond(0).withNano(0);
+        final ZonedDateTime testNow = ZonedDateTime.now().withHour(23).withMinute(0).withSecond(0).withNano(0);
         final VRPSettingTimeUtils timeUtils = new VRPSettingTimeUtils();
-        timeUtils.localNow = testNow;
+        timeUtils.zonedNow = testNow;
 
         // when
         final VehicleStartAndEndTimes startAndEndTimes = timeUtils.getVehicleStartAndEnd(times);

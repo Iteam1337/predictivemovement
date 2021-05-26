@@ -1,11 +1,13 @@
 # `engine-server`
 
-> TODO: description
+Environment variables (in lastpass):
+
+```bash
+BOT_TOKEN=[TELEGRAM_BOT_TOKEN]
+```
 
 ## Usage
 
-```
-const engineServer = require('engine-server');
-
-// TODO: DEMONSTRATE API
+```bash
+npm run dev
 ```

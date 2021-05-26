@@ -24,7 +24,15 @@ interface BookingRoute {
   }
 }
 
+export type Events = {
+  timestamp?: string
+  type: string
+}
 export interface Booking {
+  events: Events[]
+  assignedTo: {
+    id: string
+  }
   id: string
   externalId?: string
   pickup: ParcelAddress
@@ -57,6 +65,7 @@ type Metadata = {
 }
 
 type TransportMetadata = {
+  fleet: string
   profile: string
   driver: {
     name?: string
@@ -64,7 +73,7 @@ type TransportMetadata = {
   }
 }
 
-type TimeWindow = {
+export type TimeWindow = {
   earliest: string | Date
   latest: string | Date
 }
@@ -129,6 +138,20 @@ export interface Activity {
   id: string
   distance: number
   duration: number
+}
+
+export interface Signature {
+  bookingId: string
+  createdAt: string
+  receipt: {
+    base64Signature?: string
+    photo?: string
+    photoId?: string
+  }
+  __proto__: Object
+  signedBy: string
+  transportId: string
+  type: string
 }
 
 export { state }

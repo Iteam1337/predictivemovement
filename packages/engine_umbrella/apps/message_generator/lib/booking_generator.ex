@@ -5,9 +5,9 @@ defmodule MessageGenerator.BookingGenerator do
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
-  @default_metadata %{
-    sender: %{contact: "0701234567"},
-    recipient: %{contact: "0701234567"}
+    @default_metadata %{
+    sender: %{contact: "0701234567", name: "Anna Mottagaresson"},
+    recipient: %{contact: "0707654321", name: "Mats Avsändaresson"}
   }
 
   def generate_booking_props(properties \\ %{}) do

@@ -8,10 +8,10 @@ defmodule Mix.Tasks.SetupTestDatabase do
 
     config = [
       serializer: Engine.JsonSerializer,
-      username: "postgres",
-      password: "postgres",
-      database: "eventstore",
-      hostname: "localhost",
+      username: System.get_env("POSTGRES_USER") || "postgres",
+      password: System.get_env("POSTGRES_PASSWORD") || "postgres",
+      database: System.get_env("POSTGRES_DB") || "eventstore",
+      hostname: System.get_env("POSTGRES_HOST") || "localhost",
       schema: "test"
     ]
 

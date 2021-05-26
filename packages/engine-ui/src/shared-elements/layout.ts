@@ -5,7 +5,6 @@ const TimeRestrictionDateInputWrapper = styled.div``
 const FlexRowWrapper = styled.div`
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
 `
 const SectionWithMargin = styled.section`
   margin: 1.2rem 0;
@@ -18,11 +17,18 @@ const LinkListContainer = styled.div`
   flex-direction: column;
 `
 
-const FlexRowInCenter = styled.div`
+const FlexRowInCenterMarginS = styled.div`
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+`
+
+const FlexRowInCenterMarginL = styled.div`
   margin-top: 5rem;
   display: flex;
   justify-content: center;
 `
+
 const BookingList = styled.ul`
   overflow: auto;
   height: 100%;
@@ -38,12 +44,28 @@ const BookingList = styled.ul`
 `
 
 const TransportsList = styled(BookingList)`
+  padding-top: 0;
   height: auto;
 `
 
 const Container = styled.div`
   margin-bottom: 2rem;
   margin-left: 1rem;
+
+  @media (max-width: 645px) {
+    margin-left: 0rem;
+  }
+`
+
+const ContainerWidth = styled.div`
+  margin-bottom: 2rem;
+  margin-left: 1rem;
+  width: 300px;
+
+  @media (max-width: 645px) {
+    margin-left: 0rem;
+    width: 100%;
+  }
 `
 
 const FlexRowBaselineContainer = styled.div`
@@ -99,6 +121,7 @@ const InputBlock = styled.div`
 
 const InputContainer = styled.div`
   margin-bottom: 0.5rem;
+  width: inherit;
 `
 
 const TextInputPairContainer = styled.div`
@@ -110,11 +133,20 @@ const TextInputPairItem = styled.div`
   width: 48.5%;
 `
 
-const ButtonWrapper = styled.div<{ isMobile?: boolean }>`
+const ButtonWrapper = styled.div<{
+  marginTop?: string
+  justifyContent?: string
+}>`
   display: flex;
-  flex-direction: ${({ isMobile }) => (isMobile ? 'column-reverse' : 'row')};
-  justify-content: space-between;
-  margin-top: 2rem;
+  flex-direction: row;
+  justify-content: ${({ justifyContent }) =>
+    justifyContent ? justifyContent : 'space-between'};
+  margin-top: ${({ marginTop }) => (marginTop ? marginTop : '2rem')};
+  width: 100%;
+
+  button {
+    width: 48.5%;
+  }
 `
 
 const TimeRestrictionWrapper = styled.div`
@@ -144,6 +176,8 @@ export {
   SectionWithMargin,
   MarginTopContainerSm,
   TransportsList,
-  FlexRowInCenter,
+  FlexRowInCenterMarginL,
+  FlexRowInCenterMarginS,
   FlexContainer,
+  ContainerWidth,
 }

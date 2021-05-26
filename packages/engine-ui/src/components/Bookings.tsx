@@ -1,13 +1,10 @@
 import React from 'react'
-import { FlyToInterpolator } from 'react-map-gl'
 import * as Elements from '../shared-elements/'
-import * as Icons from '../assets/Icons'
 import { useRouteMatch, Route, Link, Switch } from 'react-router-dom'
 import BookingDetails from './BookingDetails'
 import CreateBooking from './CreateBooking'
 import * as types from '../types'
 import NotFound from './NotFound'
-
 import * as helpers from '../utils/helpers'
 import * as stores from '../utils/state/stores'
 import EditBooking from './EditBooking'
@@ -36,7 +33,6 @@ const sortBookingsByStatus = (bookings: types.Booking[]) =>
 const BookingToggleList: React.FC<{
   bookings: types.Booking[]
   text: string
-  onClickHandler: (lat: number, lon: number) => void
   onMouseEnterHandler: (id: string) => void
   onMouseLeaveHandler: () => void
   isOpen: boolean
@@ -44,22 +40,23 @@ const BookingToggleList: React.FC<{
 }> = ({
   bookings,
   text,
-  onClickHandler,
   onMouseEnterHandler,
   onMouseLeaveHandler,
   isOpen,
   setOpen,
 }) => {
+  const setMap = stores.map((state) => state.set)
   return (
     <Elements.Layout.MarginBottomContainer>
       <Elements.Layout.FlexRowWrapper onClick={setOpen}>
-        <Elements.Typography.CleanH4>{text}</Elements.Typography.CleanH4>
-        <Icons.Arrow
+        <Elements.Icons.Chevron
+          active={isOpen.toString()}
           style={{
-            marginLeft: '0.875rem',
-            transform: `rotate(${isOpen ? '180deg' : 0})`,
+            width: isOpen ? '16px' : '13px',
+            marginRight: isOpen ? '0.7rem' : '0.875rem',
           }}
         />
+        <Elements.Typography.CleanH3>{text}</Elements.Typography.CleanH3>
       </Elements.Layout.FlexRowWrapper>
 
       {isOpen && (
@@ -78,8 +75,13 @@ const BookingToggleList: React.FC<{
                     onMouseLeave={() => onMouseLeaveHandler()}
                     to={`/bookings/${booking.id}`}
                     onClick={() =>
-                      onClickHandler(booking.pickup.lat, booking.pickup.lon)
+                      helpers.focusMapOnClick(
+                        booking.pickup.lat,
+                        booking.pickup.lon,
+                        setMap
+                      )
                     }
+                    hoverbackground={'#CCFFCC'}
                   >
                     {helpers.getLastFourChars(booking.id).toUpperCase()}
                   </Elements.Links.RoundedLink>
@@ -97,16 +99,16 @@ const Bookings: React.FC<{
   deleteBooking: (params: any) => void
   updateBooking: (params: any) => void
 }> = (props) => {
-  const setMap = stores.map((state) => state.set)
   const setUIState = stores.ui((state) => state.dispatch)
   const setMapLayers = stores.mapLayerState((state) => state.set)
   const bookings = stores.dataState((state) => state.bookings)
   const { url } = useRouteMatch()
   const bookingsRootView = useRouteMatch({ path: '/bookings', strict: true })
 
-  const sortedBookings = React.useMemo(() => sortBookingsByStatus(bookings), [
-    bookings,
-  ])
+  const sortedBookings = React.useMemo(
+    () => sortBookingsByStatus(bookings),
+    [bookings]
+  )
 
   React.useEffect(() => {
     if (bookingsRootView?.isExact) {
@@ -118,19 +120,12 @@ const Bookings: React.FC<{
     new: true,
     assigned: false,
     delivered: false,
+    delivery_failed: false,
   })
 
-  const onClickHandler = (latitude: number, longitude: number) =>
-    setMap({
-      latitude,
-      longitude,
-      zoom: 10,
-      transitionDuration: 2000,
-      transitionInterpolator: new FlyToInterpolator(),
-      transitionEasing: (t: number) => t * (2 - t),
-    })
-
-  const handleExpand = (type: 'new' | 'assigned' | 'delivered') =>
+  const handleExpand = (
+    type: 'new' | 'assigned' | 'delivered' | 'delivery_failed'
+  ) =>
     setExpandedSection((currentState) => ({
       ...currentState,
       [type]: !currentState[type],
@@ -154,7 +149,6 @@ const Bookings: React.FC<{
             isOpen={expandedSection.new}
             setOpen={() => handleExpand('new')}
             bookings={sortedBookings.new}
-            onClickHandler={onClickHandler}
             text="Öppna bokningar"
             onMouseEnterHandler={(id: string) =>
               setUIState({ type: 'highlightBooking', payload: id })
@@ -167,8 +161,19 @@ const Bookings: React.FC<{
             isOpen={expandedSection.assigned}
             setOpen={() => handleExpand('assigned')}
             bookings={[...sortedBookings.assigned, ...sortedBookings.picked_up]}
-            onClickHandler={onClickHandler}
             text="Bekräftade bokningar"
+            onMouseEnterHandler={(id: string) =>
+              setUIState({ type: 'highlightBooking', payload: id })
+            }
+            onMouseLeaveHandler={() =>
+              setUIState({ type: 'highlightBooking', payload: undefined })
+            }
+          />
+          <BookingToggleList
+            isOpen={expandedSection.delivery_failed}
+            setOpen={() => handleExpand('delivery_failed')}
+            bookings={sortedBookings.delivery_failed}
+            text="Ej levererade bokningar"
             onMouseEnterHandler={(id: string) =>
               setUIState({ type: 'highlightBooking', payload: id })
             }
@@ -180,7 +185,6 @@ const Bookings: React.FC<{
             isOpen={expandedSection.delivered}
             setOpen={() => handleExpand('delivered')}
             bookings={sortedBookings.delivered}
-            onClickHandler={onClickHandler}
             text="Levererade bokningar"
             onMouseEnterHandler={(id: string) =>
               setUIState({ type: 'highlightBooking', payload: id })
@@ -190,16 +194,19 @@ const Bookings: React.FC<{
             }
           />
         </Elements.Layout.MarginTopContainer>
-        <Elements.Layout.FlexRowInCenter>
+        <Elements.Layout.FlexRowInCenterMarginL>
           <Link to={`${url}/add-booking`}>
             <Elements.Buttons.SubmitButton color="#666666">
               + Lägg till bokning
             </Elements.Buttons.SubmitButton>
           </Link>
-        </Elements.Layout.FlexRowInCenter>
+        </Elements.Layout.FlexRowInCenterMarginL>
       </Route>
 
       <Route exact path={`${'/bookings'}/add-booking`}>
+        <CreateBooking onSubmit={props.createBooking} />
+      </Route>
+      <Route path={`${'/bookings'}/add-booking/`}>
         <CreateBooking onSubmit={props.createBooking} />
       </Route>
 

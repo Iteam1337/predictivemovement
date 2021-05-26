@@ -27,6 +27,10 @@ const SubmitButton = styled.button<{
   :focus {
     outline-color: #ccffcc;
   }
+
+  :disabled {
+    background: lightgray;
+  }
 `
 
 const CancelButton = styled.button<{
@@ -35,21 +39,46 @@ const CancelButton = styled.button<{
   marginTop?: string
 }>`
   padding: ${({ padding }) => padding || '0.75rem 2.3rem'};
-  background: #fff;
+  background: #ffcdcd;
   font-weight: 600;
   color: inherit;
   font-size: 0.875rem;
-  border: 1px solid #c4c4c4;
+  border: none;
   cursor: pointer;
   width: ${({ width }) => (width ? width : 'fit-content')};
   margin-top: ${({ marginTop }) => marginTop && marginTop};
 
   :hover {
-    color: #666666;
+    background: #ffb9b9;
   }
 
   :focus {
-    outline-color: #666666;
+    outline-color: #ffcdcd;
+  }
+`
+
+const NeutralButton = styled.button<{
+  padding?: string
+  width?: string
+  marginTop?: string
+  disabled?: boolean
+}>`
+  padding: ${({ padding }) => padding || '0.5rem'};
+  background: #fff;
+  font-weight: 600;
+  color: inherit;
+  font-size: 0.875rem;
+  border: 1px solid #b0b0b0;
+  cursor: pointer;
+  width: ${({ width }) => (width ? width : 'fit-content')};
+  margin-top: ${({ marginTop }) => marginTop || '0.5rem'};
+  opacity: ${({ disabled }) => disabled && '0.3'};
+  :hover {
+    background: #efefef;
+  }
+
+  :focus {
+    outline: none;
   }
 `
 
@@ -75,4 +104,5 @@ export {
   CancelButton,
   StyledAddFormFieldButton,
   DisplayTextButton,
+  NeutralButton,
 }

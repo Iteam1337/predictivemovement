@@ -32,7 +32,7 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
 
   const [booking] = bookings.filter((d) => d.id === activityId)
 
-  const handleDeleteClick = (_activityId: string) => {
+  const handleDeleteClick = () => {
     if (
       window.confirm(
         'Är du säker på att du vill ta bort bokningen från den föreslagna planen?'
@@ -130,13 +130,16 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
               </CapitalizeParagraph>
             </Elements.Layout.FlexRowBaselineContainer>
           )}
-          <Elements.Layout.FlexRowBaselineContainer>
-            <Elements.Icons.MarginRightIcon
-              src={ContactPhone}
-              alt="Contact Phone"
-            />
-            <Paragraph>{booking.metadata.sender.contact}</Paragraph>
-          </Elements.Layout.FlexRowBaselineContainer>
+          {booking.metadata.sender.contact && (
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactPhone}
+                alt="Contact Phone"
+              />
+
+              <Paragraph>{booking.metadata.sender.contact}</Paragraph>
+            </Elements.Layout.FlexRowBaselineContainer>
+          )}
         </Elements.Layout.SectionWithMargin>
         <Elements.Layout.SectionWithMargin>
           <Elements.Layout.MarginBottomContainer>
@@ -164,13 +167,16 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
               </CapitalizeParagraph>
             </Elements.Layout.FlexRowBaselineContainer>
           )}
-          <Elements.Layout.FlexRowBaselineContainer>
-            <Elements.Icons.MarginRightIcon
-              src={ContactPhone}
-              alt="Contact Phone"
-            />
-            <Paragraph>{booking.metadata.recipient.contact}</Paragraph>
-          </Elements.Layout.FlexRowBaselineContainer>
+          {booking.metadata.recipient.contact && (
+            <Elements.Layout.FlexRowBaselineContainer>
+              <Elements.Icons.MarginRightIcon
+                src={ContactPhone}
+                alt="Contact Phone"
+              />
+
+              <Paragraph>{booking.metadata.recipient.contact}</Paragraph>
+            </Elements.Layout.FlexRowBaselineContainer>
+          )}
         </Elements.Layout.SectionWithMargin>
         <Elements.Layout.MarginTopContainer>
           <Elements.Typography.StrongParagraph>
@@ -186,9 +192,7 @@ const RouteActivityDetails = ({ bookings, onUnmount }: Props) => {
           alignItems="center"
           marginTop={'4rem'}
         >
-          <Elements.Buttons.CancelButton
-            onClick={() => handleDeleteClick(activityId)}
-          >
+          <Elements.Buttons.CancelButton onClick={() => handleDeleteClick()}>
             Ta bort från rutt
           </Elements.Buttons.CancelButton>
         </Elements.Layout.MarginTopContainer>

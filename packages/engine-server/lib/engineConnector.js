@@ -18,12 +18,16 @@ const routingKeys = {
   DELETED: 'deleted',
   BOOKING_MOVED: 'booking_moved',
   UPDATED: 'updated',
+  RECEIPT_CONFIRMED: 'receipt_confirmed',
 }
 
 const JUST_DO_IT_MESSAGE = 'JUST DO IT.'
 
 module.exports = (io) => {
-  amqp.connect().then((amqpConnection) => amqpConnection.createChannel())
+  amqp.connect().then((amqpConnection) => {
+    amqpConnection.setMaxListeners(30)
+    return amqpConnection.createChannel()
+  })
 
   /////// Listeners
 
@@ -69,15 +73,22 @@ module.exports = (io) => {
     .queue('update_vehicle_in_admin_ui', {
       durable: true,
     })
-    .subscribe({ noAck: true }, [routingKeys.NEW, routingKeys.NEW_INSTRUCTIONS])
+    .subscribe({ noAck: true }, [
+      routingKeys.NEW,
+      routingKeys.NEW_INSTRUCTIONS,
+      routingKeys.UPDATED,
+    ])
     .map((transportRes) => {
       const transport = transportRes.json()
 
       if (transport.current_route)
         transport.currentRoute = JSON.parse(transport.current_route)
+
+      if (typeof transport['metadata'] === 'string')
+        transport.metadata = JSON.parse(transport.metadata)
+
       return {
         ...transport,
-        metadata: JSON.parse(transport.metadata),
       }
     })
 
@@ -91,6 +102,16 @@ module.exports = (io) => {
     .subscribe({ noAck: true })
     .map((msg) => msg.json())
     .map(toIncomingPlan)
+
+  const receipts = amqp
+    .exchange('delivery_receipts', 'topic', {
+      durable: true,
+    })
+    .queue('delivery_receipts', {
+      durable: true,
+    })
+    .subscribe({ noAck: true }, 'new')
+    .map((msg) => msg.json())
 
   amqp
     .exchange('outgoing_booking_updates', 'topic', {
@@ -106,7 +127,6 @@ module.exports = (io) => {
   function deleteBooking(id) {
     bookingsCache.delete(id)
     io.emit('delete-booking', id)
-    console.log('deleted')
   }
 
   const deleteTransport = (id) => {
@@ -142,7 +162,30 @@ module.exports = (io) => {
     .map((transportData) => transportData.json())
     .each(deleteTransport)
 
+  const freightslips = amqp
+    .exchange('freightslips', 'topic', {
+      durable: true,
+    })
+    .queue('freightslip_from_telegram', {
+      durable: true,
+    })
+    .subscribe({ noAck: true }, 'new')
+    .map((msg) => msg.content.toString())
+
   ///////// Publishers
+
+  const confirmDeliveryReceipt = (bookingId, transportId) => {
+    return amqp
+      .exchange('delivery_receipts', 'topic', {
+        durable: true,
+      })
+      .publish({ transportId, bookingId }, routingKeys.RECEIPT_CONFIRMED, {
+        persistent: true,
+      })
+      .then(() =>
+        console.log(` [x] Confirmed receipt for booking: '${bookingId}'`)
+      )
+  }
 
   const createBooking = (booking) => {
     return amqp
@@ -336,5 +379,9 @@ module.exports = (io) => {
     updateBooking,
     publishUpdateTransport,
     transportUpdates,
+    confirmDeliveryReceipt,
+    receipts,
+
+    freightslips,
   }
 }

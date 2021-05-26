@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   rabbitmq:
@@ -27,29 +27,53 @@ services:
     networks:
       - predictivemovement
   admin-ui:
-    build:
-      context: ./packages/engine-ui
-      args:
-        - REACT_APP_MAPBOX_ACCESS_TOKEN=${REACT_APP_MAPBOX_ACCESS_TOKEN}
-        - REACT_APP_ENGINE_SERVER=http://localhost:4000
+    image: node:14.9-slim
+    volumes:
+      - type: bind
+        source: ./packages/engine-ui
+        target: /app
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
+    environment:
+      - REACT_APP_ENGINE_SERVER=http://localhost:4000
     ports:
-      - 127.0.0.1:3000:80
+      - 127.0.0.1:3000:3000
     networks:
       - predictivemovement
   admin-server:
-    build: ./packages/engine-server
+    image: node:14.9-slim
+    volumes:
+      - type: bind
+        source: ./packages/engine-server
+        target: /app
+    command: sh -c 'cd /app && npm ci --quiet && npm run dev'
     environment:
       - AMQP_URL=amqp://rabbitmq
-      - POSTNORD_KEY=${POSTNORD_KEY}
+      - MINIO_HOST=storage
     ports:
       - 127.0.0.1:4000:4000
     networks:
       - predictivemovement
-  driver-interface:
-    build: ./packages/driver-interface
+  signing-ui:
+    image: node:14.9-slim
+    volumes:
+      - type: bind
+        source: ./packages/signing-ui
+        target: /app
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
-      - BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - GOOGLE_API_TOKEN=${GOOGLE_API_TOKEN}
+      - REACT_APP_ENGINE_SERVER=http://localhost:4000
+    ports:
+      - 127.0.0.1:3001:3001
+    networks:
+      - predictivemovement
+  driver-interface:
+    image: node:14.9-slim
+    volumes:
+      - type: bind
+        source: ./packages/driver-interface
+        target: /app
+    command: sh -c 'cd /app && npm ci --quiet && npm run dev'
+    environment:
       - AMQP_HOST=rabbitmq
       - AMQP_URL=amqp://rabbitmq
       - REDIS_URL=redis://redis:6379
@@ -57,32 +81,50 @@ services:
       - predictivemovement
   predictivemovement-route-optimization-jsprit:
     build: ./packages/route-optimization-jsprit
-    container_name: "predictivemovement_route-optimization-jsprit"
+    container_name: 'predictivemovement_route-optimization-jsprit'
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
     networks:
       - predictivemovement
   vehicle-offer-router:
-    build: ./packages/vehicle-offer
+    image: node:14.9-slim
+    volumes:
+      - type: bind
+        source: ./packages/vehicle-offer
+        target: /app
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
     environment:
       - AMQP_URL=amqp://rabbitmq
     networks:
       - predictivemovement
   auto-accept-offer:
-    build: ./packages/auto-accept-offer
-    environment:
-      - AMQP_URL=amqp://rabbitmq
-    networks:
-      - predictivemovement
-  booking-dispatcher:
-    build: ./packages/booking-dispatcher
-    environment:
-      - AMQP_URL=amqp://rabbitmq
+    image: node:14.9-slim
     volumes:
-      - ./packages/booking-dispatcher/data:/app/data
+      - type: bind
+        source: ./packages/auto-accept-offer
+        target: /app
+    command: sh -c 'cd /app && npm ci --quiet && npm start'
+    environment:
+      - AMQP_URL=amqp://rabbitmq
     networks:
       - predictivemovement
+  storage:
+    image: minio/minio
+    ports:
+      - 127.0.0.1:9000:9000
+    command: server /data
+    volumes:
+      - ./data:/data
+    networks:
+      - predictivemovement
+  api:
+    build: ./packages/api
+    ports:
+      - 127.0.0.1:8000:8000
+    networks:
+      - predictivemovement
+
 networks:
   predictivemovement:
     driver: bridge

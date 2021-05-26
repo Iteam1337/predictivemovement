@@ -1,10 +1,8 @@
 import * as botServices from './services/bot'
 import * as messaging from './services/messaging'
-import * as amqp from './services/amqp'
 import cache from './services/cache'
 import Telegraf from 'telegraf'
 import { TelegrafContext } from 'telegraf/typings/context'
-import { Instruction } from './types'
 
 export const init = (bot: Telegraf<TelegrafContext>): void => {
   bot.start(messaging.onBotStart)
@@ -58,19 +56,42 @@ export const init = (bot: Telegraf<TelegrafContext>): void => {
         )
       case 'delivered':
         await cache.setDriverDoneDelivering(telegramId)
+        return botServices.handleFinishBookingInstructionGroup(
+          instructionGroupId,
+          event,
+          telegramId
+        )
       case 'picked_up':
       case 'delivery_failed': {
-        return cache
-          .getAndDeleteInstructionGroup(instructionGroupId)
-          .then((instructionGroup: Instruction[]) =>
-            Promise.all(
-              instructionGroup.map(({ id: bookingId }: Instruction) =>
-                amqp.publishBookingEvent(bookingId, event)
-              )
-            )
-          )
-          .then(() => botServices.handleNextDriverInstruction(telegramId))
+        return botServices.handleFinishBookingInstructionGroup(
+          instructionGroupId,
+          event,
+          telegramId
+        )
       }
+      case 'delivery_acknowledgement:photo':
+        return botServices.handleDeliveryAcknowledgementByPhoto(telegramId)
+      case 'delivery_acknowledgement:manual':
+        return botServices.handleDeliveryAcknowledgementManual(
+          instructionGroupId,
+          telegramId
+        )
+      case 'delivery_acknowledgement:manual_confirm':
+        return botServices.onManualReceiptConfirmed(
+          instructionGroupId,
+          telegramId
+        )
+      case 'delivery_acknowledgement:cancel_request':
+        return botServices.handleCancelDeliveryAcknowledgement(
+          instructionGroupId,
+          telegramId
+        )
+      case 'delivery_acknowledgement:cancel_confirm':
+        return botServices.handleFinishBookingInstructionGroup(
+          instructionGroupId,
+          'delivery_failed',
+          telegramId
+        )
       default:
         throw new Error(`unhandled event ${callbackPayload.e}`)
     }

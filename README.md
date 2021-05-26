@@ -10,11 +10,11 @@ Predictive Movement aims to create a digital platform that will act as a collabo
 
 Predictive Movement is a project financed by, among others, Sweden’s Innovation Agency (Vinnova) and the Swedish Transport Administration. The project includes one Swedish region, four municipalities, a university, authorities as well as key actors within digitization and traffic/logistics. An important driving force behind the project is to combat climate change and to reduce emissions caused by road transports.
 
-## Get Started
+## Navigating the code
 
 The source code for the project is contained in this mono-repo. Within the [packages](packages) folder you will find all included packages. Here is a summary of the components:
 
-- [Engine](packages/elixir_umbrella/elixir_apps/engine) The main logic written in Elixir
+- [Engine](packages/engine_umbrella/apps/engine) The main logic written in Elixir
 - [Driver interface](packages/driver-interface) Bot in Telegram for communicating with drivers
 - [Booking interface](packages/booking-interface) Bot in Telegram for communicating with bookers of transport
 - [Engine UI](packages/engine-ui) Main UI for visualising current bookings and cars
@@ -23,6 +23,27 @@ The source code for the project is contained in this mono-repo. Within the [pack
 - [Vehicle Offer](packages/vehicle-offer) Re-routes vehicle offers to the queue
 - [Auto Accept Offer](packages/auto-accept-offer) Auto accepts offers for vehicles created in the Engine UI
 - [Booking-dispatcher](packages/booking-dispatcher) Auto accepts offers for vehicles created in the Engine UI
+- [Signing UI](packages/signing-ui) UI for signing a package on delivery
+
+## Running the project
+
+### Using kubernetes
+
+#### Secrets
+
+The following kubernetes secrets are used:
+
+    DRIVER_TOKEN - Driver Telegram bot token. Used by driver-interace
+    GOOGLE_TOKEN - Used by driver-interace
+    POSTNORD_KEY - Used by engine-server to get information from Postnord API
+    MINIO_ROOT_PASSWORD - Used by minio and engine-server
+    POSTGRES_PASSWORD - Used by postgres, engine and postgres-backup
+
+#### Deployment
+
+To deploy the dependencies of the stack (usually done once and it's DBs) to your Kubernetes cluster, use Skaffold:
+
+    skaffold -f skaffold-dependencies.yaml run
 
 To deploy the relevant packages to your Kubernetes cluster, use Skaffold:
 
@@ -32,6 +53,14 @@ To debug run:
 
     skaffold dev
 
+#### Before you start running the project
+
+Start by exporting port 9200
+
+```
+kubectl port-forward elasticsearch-0 9200:9200 --namespace pelias
+```
+
 ### Running Predictive Movement locally
 
 You will need the following API keys
@@ -40,36 +69,22 @@ REACT_APP_MAPBOX_ACCESS_TOKEN - for engine-ui
 GOOGLE_API_TOKEN - for driver-interface
 TELEGRAM_BOT_TOKEN - for driver-interface
 
-#### Via docker-compose:
-
-Set project build variables
-
-    export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
-
-Set project env variables
-
-    export GOOGLE_API_TOKEN=<FROM LASTPASS>
-    export TELEGRAM_BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
-    export POSTNORD_KEY=<FROM LASTPASS>
-
-Start dependencies
-
-    docker-compose up -d
-
-#### Locally (outside of docker):
+#### Set environment variables
 
 create .env-file in packages/driver-interface/.env with
 
     GOOGLE_API_TOKEN=<FROM LASTPASS>
-    BOT_TOKEN=<FROM LASTPASS> / create your own from telegram
+    BOT_TOKEN=<FROM LASTPASS> / or create your own bot in telegram
 
 create .env-file in packages/engine-ui/.env with
 
     REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
 
-Go into every folder and run the start command for the service.
+#### Start the services
 
-#### run event_store migrations and start the engine
+    docker-compose up
+
+#### Run migrations and start the engine
 
     cd packages/engine_umbrella/
     mix deps.get
@@ -101,6 +116,8 @@ or in the case of the add_transport; a keyword list can also be used containing 
 
 **Design mockup:** [Figma](https://www.figma.com/file/DdBjpoKd0T9OkWmhlpd48Nfa/Predictive-Movement)
 
+---
+
 ## Release
 
 You will need:
@@ -113,6 +130,10 @@ You will need:
 - access to Iteam Kubernetes cluster
 - mapbox access token from `Predictivemovement` LastPass folder
 
+To deploy the dependencies of the stack (usually done once and it's DBs) to your Kubernetes cluster, use Skaffold:
+
+    skaffold -f skaffold-dependencies.yaml run --profile prod
+
 Set environment variables that are used by Docker at build time (for the UI) and run the skaffold command with a profile:
 
 ```sh
@@ -120,6 +141,22 @@ export REACT_APP_MAPBOX_ACCESS_TOKEN=<FROM LASTPASS>
 export REACT_APP_ENGINE_SERVER=https://engine-server.iteamdev.io
 skaffold run --profile prod
 ```
+
+---
+
+## Data backups
+
+We use [postgres-backup](https://github.com/alexanderczigler/docker/tree/master/postgres-backup)
+
+To restore a backup exec into the `postgres-backup` pod
+
+```bash
+kubectl exec -it postgres-backup /bin/bash
+
+/restore.sh /backup/latest.psql.gz # or choose a different backup you want
+```
+
+---
 
 ## Vocabulary
 

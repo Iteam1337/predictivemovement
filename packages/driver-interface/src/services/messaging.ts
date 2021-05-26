@@ -1,10 +1,14 @@
 import { TelegrafContext } from 'telegraf/typings/context'
 import { Message } from 'telegraf/typings/telegram-types'
+import { Markup } from 'telegraf'
 import bot from '../adapters/bot'
 import * as helpers from '../helpers'
 import { Booking, Instruction } from '../types'
 import { getDirectionsUrl, getDirectionsFromInstructionGroups } from './google'
 import { getAddressFromCoordinate } from './pelias'
+import cache from './cache'
+import * as botServices from './bot'
+
 const PHONE_GROUPCHAT_ERROR =
   'Bad Request: phone number can be requested in private chats only'
 
@@ -43,7 +47,7 @@ export const sendWelcomeMsg = (telegramId: number): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
     'Välkommen! När du har blivit tilldelad bokningar så kommer du få instruktioner för hur du ska hämta upp dessa.'.concat(
-      '\nKlicka på "gemet" nere till vänster om textfältet och välj "location", sedan "live location" för att dela din position. :)'
+      '\nKlicka på "gemet" nere vid textfältet och välj "location", sedan "live location" för att dela din position. :)'
     )
   )
 
@@ -51,7 +55,9 @@ export const sendSummary = (
   telegramId: number,
   instructionGroups: Instruction[][]
 ): Promise<Message> => {
-  const summaryList = convertInstructionGroupsToSummaryList(instructionGroups)
+  const summaryList = helpers.convertInstructionGroupsToSummaryList(
+    instructionGroups
+  )
   const summary =
     summaryList +
     `\n[Se rutt på karta](${getDirectionsFromInstructionGroups(
@@ -67,33 +73,6 @@ export const sendSummary = (
 export const onNoInstructionsForVehicle = (
   ctx: TelegrafContext
 ): Promise<Message> => ctx.reply('Vi kunde inte hitta några instruktioner...')
-
-export const convertInstructionGroupsToSummaryList = (
-  instructionGroups: Instruction[][]
-): string =>
-  instructionGroups
-    .map((instructionGroup: Instruction[]) => {
-      const [
-        {
-          type,
-          address: { name },
-        },
-      ] = instructionGroup
-      return {
-        name,
-        type: type === 'pickupShipment' ? 'Hämta' : 'Lämna',
-        ids: instructionGroup
-          .map(({ id }) => id)
-          .map(helpers.formatId)
-          .join('__, __'),
-      }
-    })
-    .reduce(
-      (summary: string, { ids, name, type }, index) =>
-        `${summary}
-${index + 1}\. ${type} __${ids}__ vid ${name}`,
-      '🎁  Här är dina körningar:'
-    )
 
 export const sendDriverFinishedMessage = (
   telegramId: number
@@ -129,7 +108,8 @@ ${instructionGroup
   .join('\n')}\nvid [${pickup}](${getDirectionsUrl(pickup)})`
   )
     .concat(
-      `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
+      firstBooking.metadata.sender.contact &&
+        `\n\nDu kan nå avsändaren på telefon: ${firstBooking.metadata.sender.contact}`
     )
     .concat(
       '\nTryck på "[Framme]" när du har kommit till upphämtningsadressen.'
@@ -173,7 +153,8 @@ export const sendDeliveryInstruction = async (
   )
     .concat(`till [${delivery}](${getDirectionsUrl(delivery)})!\n`)
     .concat(
-      `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
+      firstBooking.metadata.recipient.contact &&
+        `\nDu kan nå mottagaren på telefon: ${firstBooking.metadata.recipient.contact}`
     )
     .concat('\nTryck "[Framme]" när du har anlänt till upphämtningsplatsen.')
   return bot.telegram.sendMessage(telegramId, message, {
@@ -266,9 +247,13 @@ export const sendDeliveryInformation = (
   bookings: Booking[]
 ): Promise<Message> => {
   const [firstBooking] = bookings
+
+  const addedPhoneNumber = firstBooking.metadata.recipient.contact
+    ? `Du kan nu nå mottagaren på ${firstBooking.metadata.recipient.contact}`
+    : ''
   return bot.telegram.sendMessage(
     telegramId,
-    `Du kan nu nå mottagaren på ${firstBooking.metadata.recipient.contact}`
+    addedPhoneNumber
       .concat(
         firstBooking.metadata.recipient?.info
           ? `\nExtra information vid avlämning: ${firstBooking.metadata.recipient.info}`
@@ -308,37 +293,95 @@ export const sendDeliveryInformation = (
   )
 }
 
-export const sendPhotoReceived = (
+export const notifyManualSignatureConfirmed = (
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(telegramId, `Tack! Ditt val har registrerats.`)
+
+export const acceptManualSignature = (
   instructionGroupId: string,
   telegramId: number
 ): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
-    `Tack, ditt foto har sparats!\nDu kan ta fler foton om du vill, tryck annars på _Klar_ om du är färdig med kvittensen.`,
+    `Nu tar du som förare ansvar för att kvittens samlas in utanför plattformen.`.concat(
+      `\nTryck på "OK" för att godkänna och komma vidare till nästa steg.`
+    ),
     {
       parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: 'Klar',
-              callback_data: JSON.stringify({
-                e: 'delivered',
-                id: instructionGroupId,
-              }),
-            },
-          ],
-        ],
-      },
+      reply_markup: Markup.inlineKeyboard([
+        Markup.callbackButton(
+          'OK',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:manual_confirm',
+            id: instructionGroupId,
+          })
+        ),
+      ]),
     }
   )
-export const sendBeginDeliveryAcknowledgement = (
+
+export const sendPhotoReceived = (telegramId: number): Promise<Message> =>
+  bot.telegram.sendMessage(
+    telegramId,
+    `Tack! Väntar nu på att kvittensen ska bekräftas...`
+  )
+
+export const sendDeliveryAcknowledgementByPhoto = (
   telegramId: number
 ): Promise<Message> =>
   bot.telegram.sendMessage(
     telegramId,
-    'Fotografera nu mottagaren tillsammans med paketet och skicka bilden här.'
+    'Fotografera nu paketet vid den plats du lämnat det, tänk på att få med omgivningen som kan styrka att du har lämnat paketet på rätt plats, och ladda sedan bilden här. Tänk på att det bara är den första bilden som sparas som kvittering.'
   )
+
+export const sendBeginDeliveryAcknowledgement = async (
+  telegramId: number,
+  instructionGroupId: string
+): Promise<Message> => {
+  const transportId = await cache.getVehicleIdByTelegramId(telegramId)
+  const [instruction] = await cache.getInstructionGroup(instructionGroupId)
+
+  const url = `${
+    process.env.SIGNING_URL || 'http://127.0.0.1:3001'
+  }/sign-delivery/${transportId}/${instruction.id}`
+
+  return bot.telegram.sendMessage(
+    telegramId,
+    `Ska leveransen bekräftas med en signatur, med en bild eller manuellt?`.concat(
+      `\nOm mottagaren är tillgänglig så väljer du "Signera" och då öppnas ett nytt fönster där mottagaren ska signera leveransen.`,
+      `\nOm mottagaren inte är tillgänglig så väljer du "Ta bild"`,
+      `\nLeverera med manuell kvittens, välj då "Manuell kvittens"`,
+      `\nOm du vill avbryta leveransen, välj då "Avbryt"`
+    ),
+    {
+      reply_markup: Markup.inlineKeyboard([
+        Markup.urlButton('Signera', url),
+        Markup.callbackButton(
+          'Ta bild',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:photo',
+            id: instructionGroupId,
+          })
+        ),
+        Markup.callbackButton(
+          'Manuell kvittens',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:manual',
+            id: instructionGroupId,
+          })
+        ),
+        Markup.callbackButton(
+          'Avbryt',
+          JSON.stringify({
+            e: 'delivery_acknowledgement:cancel_request',
+            id: instructionGroupId,
+          })
+        ),
+      ]),
+    }
+  )
+}
 
 export const sendCouldNotSavePhoto = async (
   telegramId: number
@@ -352,3 +395,42 @@ export const sendUnhandledError = async (
     telegramId,
     'Tyvärr gick något fel.. Försök gärna igen efter en stund. Rapportera gärna in felet om det fortfarande inte fungerar.'
   )
+
+export const sendSignatureConfirmation = (
+  telegramId: number,
+  instructionGroupId: string
+): Promise<Message> => {
+  botServices.handleFinishBookingInstructionGroup(
+    instructionGroupId,
+    'delivered',
+    telegramId
+  )
+
+  return bot.telegram.sendMessage(
+    telegramId,
+    `Leveransen är nu bekräftad och signerad.`
+  )
+}
+
+export const handleCancelDeliveryAcknowledgement = (
+  instructionGroupId: string,
+  telegramId: number
+): Promise<Message> =>
+  bot.telegram.sendMessage(telegramId, `Vill du avbryta denna leverans?`, {
+    reply_markup: Markup.inlineKeyboard([
+      Markup.callbackButton(
+        'Ja',
+        JSON.stringify({
+          e: 'delivery_acknowledgement:cancel_confirm',
+          id: instructionGroupId,
+        })
+      ),
+      Markup.callbackButton(
+        'Nej',
+        JSON.stringify({
+          e: 'begin_delivery_acknowledgement',
+          id: instructionGroupId,
+        })
+      ),
+    ]),
+  })

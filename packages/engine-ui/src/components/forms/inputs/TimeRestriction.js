@@ -5,6 +5,7 @@ import * as Elements from '../../../shared-elements'
 import DateInput from './DateInput'
 import * as helpers from '../../../utils/helpers'
 import styled from 'styled-components'
+import { useField, useFormikContext } from 'formik'
 
 const Wrapper = styled.div`
   width: '100%';
@@ -19,6 +20,10 @@ const Wrapper = styled.div`
     outline-color: #13c57b;
   }
 
+  .react-datepicker-popper {
+    z-index: 100;
+  }
+
   .react-datepicker__time-container
     .react-datepicker__time
     .react-datepicker__time-box
@@ -26,20 +31,33 @@ const Wrapper = styled.div`
     li.react-datepicker__time-list-item--selected {
     background-color: #13c57b;
   }
+
+  @media (max-width: 645px) {
+    .react-datepicker__time-container,
+    .react-datepicker__time-box {
+      width: 70px;
+    }
+  }
 `
 
 const BookingTimeRestriction = ({
   selected,
-  onChangeHandler,
   placeholderText,
   inputElement,
-  minDate = new Date(),
+  minDate,
+  name,
 }) => {
+  const { setFieldValue } = useFormikContext()
+  const [field] = useField(name)
+
   return (
     <Wrapper>
       <DatePicker
-        selected={selected}
-        onChange={onChangeHandler}
+        {...field}
+        onChange={(val) => {
+          setFieldValue(field.name, val)
+        }}
+        selected={(field.value && new Date(field.value)) || null}
         showTimeSelect
         excludeOutOfBoundsTimes
         minTime={helpers.calculateMinTime(selected)}
@@ -53,25 +71,28 @@ const BookingTimeRestriction = ({
         required
         placeholderText={placeholderText}
         customInput={inputElement}
+        popperModifiers={{
+          preventOverflow: {
+            enabled: true,
+          },
+        }}
       />
     </Wrapper>
   )
 }
 
-const TransportTimeRestriction = ({
-  selected,
-  onChangeHandler,
-  placeholderText,
-  inputElement,
-}) => {
+const TransportTimeRestriction = ({ placeholderText, inputElement, name }) => {
+  const { setFieldValue } = useFormikContext()
+  const [field] = useField(name)
   return (
     <Wrapper>
       <DatePicker
-        id="startTime"
-        selected={selected}
-        onChange={onChangeHandler}
+        {...field}
+        onChange={(val) => setFieldValue(field.name, val)}
+        selected={(field.value && new Date(field.value)) || null}
         showTimeSelect
         showTimeSelectOnly
+        id="startTime"
         timeIntervals={15}
         timeCaption="time"
         dateFormat="H:mm"
@@ -84,32 +105,26 @@ const TransportTimeRestriction = ({
   )
 }
 
-export const BookingTimeRestrictionPair = ({
-  onChangeHandler,
-  timeWindow,
-  typeProperty,
-}) => {
+export const BookingTimeRestrictionPair = ({ name }) => {
   const timeRestrictionInputRef = React.useRef()
+  const [field] = useField(name)
+
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
         <BookingTimeRestriction
-          selected={timeWindow.earliest}
-          onChangeHandler={(date) =>
-            onChangeHandler(date, typeProperty, 'earliest')
-          }
+          name={`${name}.earliest`}
           placeholderText="Tidigast"
           inputElement={<DateInput ref={timeRestrictionInputRef} withIcon />}
         />
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
         <BookingTimeRestriction
-          selected={timeWindow.latest}
+          name={`${name}.latest`}
           minDate={
-            timeWindow.earliest ? new Date(timeWindow.earliest) : new Date()
-          }
-          onChangeHandler={(date) =>
-            onChangeHandler(date, typeProperty, 'latest')
+            field.value && field.value.earliest
+              ? new Date(field.value.earliest)
+              : new Date()
           }
           placeholderText="Senast"
           inputElement={<DateInput withIcon ref={timeRestrictionInputRef} />}
@@ -119,18 +134,14 @@ export const BookingTimeRestrictionPair = ({
   )
 }
 
-export const TransportTimeRestrictionPair = ({
-  onChangeHandler,
-  timeWindow: { earliestStart, latestEnd },
-  handleFocus,
-}) => {
+export const TransportTimeRestrictionPair = ({ handleFocus }) => {
   const timeRestrictionInputRef = React.useRef()
+  const { values } = useFormikContext()
   return (
     <Elements.Layout.TextInputPairContainer>
       <Elements.Layout.TextInputPairItem>
         <TransportTimeRestriction
-          selected={earliestStart}
-          onChangeHandler={(date) => onChangeHandler(date, 'earliestStart')}
+          name="earliestStart"
           placeholderText="Starttid"
           inputElement={
             <DateInput
@@ -143,9 +154,10 @@ export const TransportTimeRestrictionPair = ({
       </Elements.Layout.TextInputPairItem>
       <Elements.Layout.TextInputPairItem>
         <TransportTimeRestriction
-          selected={latestEnd}
-          minDate={earliestStart ? new Date(earliestStart) : new Date()}
-          onChangeHandler={(date) => onChangeHandler(date, 'latestEnd')}
+          name="latestEnd"
+          minDate={
+            values.earliestStart ? new Date(values.earliestStart) : new Date()
+          }
           placeholderText="Sluttid"
           inputElement={
             <DateInput

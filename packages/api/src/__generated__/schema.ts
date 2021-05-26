@@ -4,168 +4,148 @@
  */
 
 export interface paths {
-  '/transports': {
-    get: operations['getTransports']
-  }
-  '/itinerary': {
-    get: operations['getItinerary']
-  }
-  '/activity/{activity_id}/complete': {
-    /** Create an event for an activity of type complete */
-    post: {
-      responses: {
-        /** OK */
-        204: {
-          'application/json': components['schemas']['ApiResponse']
-        }
-      }
-    }
-  }
-  '/activity/{activity_id}/failure': {
-    /** Create an event for an activity of type failure */
-    post: {
-      requestBody: {
-        'application/json': {
-          reason?: string
-        }
-      }
-      responses: {
-        /** OK */
-        204: {
-          'application/json': components['schemas']['ApiResponse']
-        }
-      }
-    }
-  }
-  '/me': {
-    /** Get your own user profile */
-    get: {
-      responses: {
-        /** OK */
-        200: {
-          'application/json': components['schemas']['User']
-        }
-      }
-    }
-  }
-  '/users': {
-    /** Create a new user */
-    post: {
-      requestBody: {}
-      responses: {
-        /** OK */
-        200: {
-          'application/json': components['schemas']['User']
-        }
-      }
-    }
-  }
-}
-
-export interface operations {
-  /** Get all the transports to which you have access */
-  getTransports: {
-    responses: {
-      /** OK */
-      200: {
-        'application/json': components['schemas']['Transport'][]
-      }
-    }
-  }
-  /** Get an itinerary */
-  getItinerary: {
-    parameters: {
-      query: {
-        /** ID of the transport to which the itinerary is assigned */
-        transportId: string
-      }
-    }
-    responses: {
-      /** OK */
-      200: {
-        'application/json': components['schemas']['Itinerary']
-      }
-    }
-  }
+  "/transports": {
+    get: operations["get_transports"];
+  };
+  "/itinerary/{transport_id}": {
+    get: operations["get_itinerary"];
+  };
+  "/bookings": {
+    post: operations["create_booking"];
+  };
 }
 
 export interface components {
   schemas: {
-    Auth: {
-      token?: string
-    }
+    AnyValue: { [key: string]: any };
     Activity: {
-      id?: string
-      booking_id?: string
-      distance?: number
-      duration?: number
-      type?: 'start' | 'end' | 'pickup' | 'delivery'
-      address?: {
-        schema?: components['schemas']['Position']
-      }
-    }
+      id: string;
+      booking_id: string;
+      distance: number;
+      duration: number;
+      type: "start" | "end" | "pickup" | "delivery";
+      position: components["schemas"]["Position"];
+    };
+    Address: {
+      city?: string;
+      street?: string;
+      name?: string;
+      position: components["schemas"]["Position"];
+    };
+    Dimensions: {
+      width?: number;
+      length?: number;
+      height?: number;
+    };
     Transport: {
-      transport_id?: string
-      busy?: boolean
+      transport_id?: string;
+      busy?: boolean;
       capacity?: {
-        volume?: number
-        weight?: number
-      }
-      earliestStart?: string
-      latestEnd?: string
-      metadata?: { [key: string]: any }
-      startAddress?: {
-        city?: string
-        street?: string
-        name?: string
-        position?: {
-          schema?: components['schemas']['Position']
-        }
-      }
-      endAddress?: {
-        city?: string
-        street?: string
-        name?: string
-        lon?: number
-        lat?: number
-      }
-    }
+        volume?: number;
+        weight?: number;
+      };
+      earliest_start?: string;
+      latest_end?: string;
+      metadata?: { [key: string]: any };
+      start_address?: components["schemas"]["Address"];
+      end_address?: components["schemas"]["Address"];
+    };
+    Contact: {
+      name?: string;
+      phone_number?: string;
+      /** Extra information regarding sender or recipient */
+      info?: string;
+    };
+    Size: {
+      weight?: number;
+      dimensions?: components["schemas"]["Dimensions"];
+    };
     Booking: {
-      id: string
-      tripId: number
-      quantity: number
-      shipDate: string
+      id?: string;
+      delivery?: {
+        address?: components["schemas"]["Address"];
+        contact?: components["schemas"]["Contact"];
+      };
+      pickup?: {
+        address?: components["schemas"]["Address"];
+        contact?: components["schemas"]["Contact"];
+      };
+      ship_date?: string;
       /** Order Status */
-      status: 'placed' | 'approved' | 'delivered'
-      complete: boolean
-    }
-    User: {
-      id: number
-      username: string
-      firstName: string
-      lastName: string
-      email: string
-      password?: string
-      phone: string
-    }
-    Place: {
-      position: components['schemas']['Position']
-      address?: string
-    }
+      status?: "placed" | "approved" | "delivered";
+      size?: components["schemas"]["Size"];
+    };
     Position: {
-      lon: number
-      lat: number
-    }
-    Plan: { [key: string]: any }
+      lon: number;
+      lat: number;
+    };
+    Plan: { [key: string]: any };
     Itinerary: {
-      transport_id: string
-      route: { [key: string]: any }
-      activities: components['schemas']['Activity'][]
-    }
+      transport_id: string;
+      route: { [key: string]: any };
+      activities: components["schemas"]["Activity"][];
+    };
     ApiResponse: {
-      code?: number
-      type?: string
-      message?: string
-    }
-  }
+      code?: number;
+      type?: string;
+      message?: string;
+    };
+  };
+}
+
+export interface operations {
+  get_transports: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Transport"][];
+        };
+      };
+    };
+  };
+  get_itinerary: {
+    parameters: {
+      path: {
+        /** ID of the transport to which the itinerary is assigned */
+        transport_id: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Itinerary"];
+        };
+      };
+    };
+  };
+  create_booking: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json; charset=utf-8": components["schemas"]["Booking"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          pickup: {
+            address: components["schemas"]["Address"];
+            contact: components["schemas"]["Contact"];
+          };
+          delivery: {
+            address: components["schemas"]["Address"];
+            contact: components["schemas"]["Contact"];
+          };
+          size: components["schemas"]["Size"];
+          metadata?: components["schemas"]["AnyValue"];
+          /** An ID, eg. from PostNord, that correlates this booking to a 3rd party system's ID */
+          external_id?: string;
+        };
+      };
+    };
+  };
 }

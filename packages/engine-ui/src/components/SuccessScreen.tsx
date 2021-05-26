@@ -4,14 +4,18 @@ import * as Icons from '../assets/Icons'
 import * as Elements from '../shared-elements'
 
 const Container = styled.div`
-  width: 100%;
+  width: 304px;
   display: flex;
   align-items: center;
   flex-flow: column nowrap;
   margin-top: 20vh;
+  text-align: center;
 
   div {
     gap: 10px;
+  }
+  @media (max-width: 645px) {
+    width: 100%;
   }
 `
 
@@ -22,9 +26,10 @@ const ImageContainer = styled.div<{ active: boolean }>`
 
 const Component: React.FC<{
   infoText: string
-  onClose: () => void
+  onClose?: () => void
   onContinue?: () => void
-}> = ({ onClose, onContinue, infoText }) => {
+  closeButtonText?: string
+}> = ({ onClose, onContinue, infoText, closeButtonText = 'Stäng' }) => {
   const [state, set] = React.useState(false)
 
   React.useEffect(() => {
@@ -41,22 +46,29 @@ const Component: React.FC<{
       <Elements.Layout.MarginTopContainerSm>
         <h3>{infoText}</h3>
       </Elements.Layout.MarginTopContainerSm>
-      <Elements.Layout.MarginTopContainer>
-        <Elements.Layout.ButtonWrapper>
-          <Elements.Buttons.CancelButton onClick={onClose}>
-            Stäng
-          </Elements.Buttons.CancelButton>
-          {onContinue && 
+      <Elements.Layout.ButtonWrapper
+        justifyContent={!onContinue ? 'center' : ''}
+      >
+        {onClose && (
+          <Elements.Buttons.NeutralButton
+            padding="0.7rem 1.8rem"
+            marginTop="0rem"
+            onClick={onClose}
+          >
+            {closeButtonText}
+          </Elements.Buttons.NeutralButton>
+        )}
+
+        {onContinue && (
           <Elements.Buttons.SubmitButton
             onClick={onContinue}
             type="button"
-            padding="0.75rem 1.25rem"
+            padding="0.7rem 1.8rem"
           >
             Lägg till ny
           </Elements.Buttons.SubmitButton>
-          }
-        </Elements.Layout.ButtonWrapper>
-      </Elements.Layout.MarginTopContainer>
+        )}
+      </Elements.Layout.ButtonWrapper>
     </Container>
   )
 }

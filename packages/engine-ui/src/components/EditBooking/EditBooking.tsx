@@ -3,7 +3,7 @@ import * as types from '../../types'
 import * as Elements from '../../shared-elements'
 import Form from '../forms/CreateBooking'
 import * as stores from '../../utils/state/stores'
-import * as hooks from '../../hooks'
+import { Formik, FormikHelpers } from 'formik'
 
 interface Props {
   booking: types.Booking
@@ -15,24 +15,15 @@ export interface FormBooking extends Omit<types.Booking, 'size'> {
   [key: string]: any
   size: {
     measurements: string
-    weight: string
+    weight: number
   }
 }
 
-const parcelSizePresets = {
-  small: { weight: '1', measurements: '18x18x18' },
-  medium: { weight: '10', measurements: '24x24x24' },
-  big: { weight: '50', measurements: '36x36x36' },
-}
-
-const isValidAddress = ({ lat, lon }: { lat: number; lon: number }) =>
-  !!(lat && lon)
-
 const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
-  const formBooking = {
+  const formBooking: FormBooking = {
     ...booking,
     size: {
-      weight: booking.size.weight ? booking.size.weight.toString() : '',
+      weight: booking.size.weight ? booking.size.weight : 0,
       measurements: booking.size.measurements
         ? booking.size.measurements.join('x')
         : '',
@@ -55,75 +46,32 @@ const EditBooking = ({ booking, updateBooking, setIsFinished }: Props) => {
     },
   }
 
-  const [state, setState] = React.useState(formBooking)
-
   const setUIState = stores.ui((state) => state.dispatch)
-  hooks.useFormStateWithMapClickControl('pickup', 'delivery', setState)
 
-  const [formErrors, setFormErrors] = React.useState({
-    pickup: false,
-    delivery: false,
-  })
-
-  const onSubmitHandler = (event: any) => {
-    event.preventDefault()
-
-    const validationResult = {
-      pickup: isValidAddress(state.pickup),
-      delivery: isValidAddress(state.delivery),
-    }
-
-    if (!validationResult.pickup || !validationResult.delivery) {
-      setFormErrors((formErrors) => ({
-        ...formErrors,
-        pickup: !validationResult.pickup,
-        delivery: !validationResult.delivery,
-      }))
-
-      return false
-    }
-
-    const updatedBooking = (Object.keys(formBooking) as Array<
-      keyof typeof formBooking
-    >)
-      .filter(
-        (key) => JSON.stringify(formBooking[key]) !== JSON.stringify(state[key])
-      )
-      .reduce(
-        (prev, curr) => ({
-          ...prev,
-          [curr]:
-            curr === 'size'
-              ? {
-                  ...state.size,
-                  measurements: state.size.measurements
-                    ? state.size.measurements.split('x').map(parseFloat)
-                    : null,
-                  weight: parseInt(state.size.weight) || 0,
-                }
-              : state[curr],
-        }),
-        { id: state.id }
-      )
-
-    updateBooking(updatedBooking)
-
+  const onSubmitHandler = (
+    values: FormBooking,
+    actions: FormikHelpers<FormBooking>
+  ) => {
+    updateBooking({
+      ...values,
+      size: {
+        ...values.size,
+        measurements: values.size.measurements
+          ? values.size.measurements.split('x').map(parseFloat)
+          : null,
+        weight: values.size.weight || 0,
+      },
+    })
+    actions.setSubmitting(false)
     return setIsFinished(true)
   }
 
   return (
     <Elements.Layout.Container>
       <h3>Uppdatera bokning</h3>
-      <Form
-        type="edit"
-        setFormErrors={setFormErrors}
-        formErrors={formErrors}
-        onChangeHandler={setState}
-        onSubmitHandler={onSubmitHandler}
-        state={state}
-        dispatch={setUIState}
-        parcelSizePresets={parcelSizePresets}
-      />
+      <Formik initialValues={formBooking} onSubmit={onSubmitHandler}>
+        <Form type="EDIT" dispatch={setUIState} />
+      </Formik>
     </Elements.Layout.Container>
   )
 }

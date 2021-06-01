@@ -13,6 +13,7 @@ function generateCar (nr) {
     car.navigateTo(fromTo[1])
     console.log('initiated car', car.id)
     car.on('dropoff', () => {
+      console.log('arrived at dropoff', car.id)
       address().then(position => car.navigateTo(position))
     })
     return car

@@ -1,0 +1,2195 @@
+[
+    {
+        "metadata": {
+            "cluster_nr": "0-0",
+            "bookings": 7,
+            "vehicles": 0,
+            "centroid_lon_lat": [
+                17.44353992857143,
+                59.69975735714286
+            ]
+        },
+        "vehicles": [],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "dwQogAp_AIAzAAAAGQAAABECAACPAQAASo4OQsj8ikHPvbdD0UGLQzMAAAAZAAAAEQIAAI8BAAByAQAAdcAIAWgvkgMYqwgBkzCSAwkAbwDEH59u",
+                    "lon": 17.350773,
+                    "lat": 59.91204
+                },
+                "pickup": {
+                    "hint": "QPkmgHL5JoAzAAAANAAAAAAAAAAAAAAAdbhnQRx7ZEEAAAAAAAAAADMAAAA0AAAAAAAAAAAAAAByAQAA8YYLAULmjAMhhwsBIuaMAwAAnw7EH59u",
+                    "lon": 17.532657,
+                    "lat": 59.565634
+                },
+                "id": "booking-2"
+            },
+            {
+                "delivery": {
+                    "hint": "rTUcgLU1HIBBAAAABQAAAJcAAAAAAAAAje8vQgIFNUDA3slCAAAAAEEAAAAFAAAAlwAAAAAAAAByAQAAueUPATLbiQOR5A8Bp9qJAwQAnwjEH59u",
+                    "lon": 17.819065,
+                    "lat": 59.366194
+                },
+                "pickup": {
+                    "hint": "cP0CgHT9AoAJAAAAAAAAAKcLAAA_CwAA7hzQQAAAAADW-QFFkTz6RAkAAAAAAAAApwsAAD8LAAByAQAA5TMGAdxtkgNe2wUB-qCSAygAXw_EH59u",
+                    "lon": 17.183717,
+                    "lat": 59.928028
+                },
+                "id": "booking-9"
+            },
+            {
+                "delivery": {
+                    "hint": "0v4mgOD-JoBkAAAAAAAAAB8GAABDCAAAjrGKQgAAAAA5TIhE89i3RGQAAAAAAAAAHwYAAEMIAAByAQAAgx0EAaRhkgO4YgQB31OSAxAA3wvEH59u",
+                    "lon": 17.046915,
+                    "lat": 59.9249
+                },
+                "pickup": {
+                    "hint": "7AQjgP___38AAAAADwAAABQAAAAaAAAAAAAAADEHJEGJPFRBd7SOQQAAAAAPAAAAFAAAABoAAAByAQAApOgQAbpDiwN7yhABNDmLAwIA7wfEH59u",
+                    "lon": 17.885348,
+                    "lat": 59.45849
+                },
+                "id": "booking-19"
+            },
+            {
+                "delivery": {
+                    "hint": "VHcngKx3J4AJAAAACwAAAFQEAAAKAQAApVTZQBkE3EDjPEFEu144QwkAAAALAAAAVAQAAAoBAAByAQAADgsJAZ-vkQPICQkBVq2RAygA3xHEH59u",
+                    "lon": 17.36987,
+                    "lat": 59.879327
+                },
+                "pickup": {
+                    "hint": "MOcmgGnnJoAiAAAAAAAAAIwQAAAAAAAAv6xiQQAAAADCJN1EAAAAACIAAAAAAAAAjBAAAAAAAAByAQAARu8JAeg7jAMuGwoBnDWMAy4ALwrEH59u",
+                    "lon": 17.428294,
+                    "lat": 59.522024
+                },
+                "id": "booking-27"
+            },
+            {
+                "delivery": {
+                    "hint": "HkkngJ1JJ4ATAAAAKwAAABEBAACLAwAAbr6qQdwWP0KYYJhDp_x8RBMAAAArAAAAEQEAAIsDAAByAQAAokoFAeM2kwO-SgUBMzWTAwIAjwXEH59u",
+                    "lon": 17.124002,
+                    "lat": 59.979491
+                },
+                "pickup": {
+                    "hint": "jN4mgLHeJoAoAAAARAAAANcGAAAOBwAA5jvfQf4kPULIR5hEOtWcRCgAAABEAAAA1wYAAA4HAAByAQAAPC8OAT8siwOGIg4BOTWLAxUAbwPEH59u",
+                    "lon": 17.706812,
+                    "lat": 59.452479
+                },
+                "id": "booking-49"
+            },
+            {
+                "delivery": {
+                    "hint": "R2IfgEhiH4AAAAAAFwAAAAAAAAAiAAAAAAAAALgkf0EAAAAAhPS-QQAAAAAXAAAAAAAAACIAAAByAQAALscPATeEkAOuwQ8BO4OQAwAAbwLEH59u",
+                    "lon": 17.811246,
+                    "lat": 59.802679
+                },
+                "pickup": {
+                    "hint": "V2kngLdpJ4AIAAAAOwAAAGEAAACwAAAAL4HIQCDrIkLGGYZC7N31QggAAAA7AAAAYQAAALAAAAByAQAAV7AEAe3vjQO1rwQBQvCNAwIA7wLEH59u",
+                    "lon": 17.084503,
+                    "lat": 59.633645
+                },
+                "id": "booking-85"
+            },
+            {
+                "delivery": {
+                    "hint": "7-gmgPDoJoAAAAAAFwAAAAAAAABfAAAAAAAAAL52fkEAAAAATiCEQgAAAAAXAAAAAAAAAF8AAAByAQAAPI8EAUcPjQOxXQQBkAKNAwAALwTEH59u",
+                    "lon": 17.076028,
+                    "lat": 59.576135
+                },
+                "pickup": {
+                    "hint": "TncCgBsQAIATAAAAZgAAAA8GAABMAAAA8c9yQX5wnkJEVpdEGJVrQgkAAAA0AAAACAMAACUAAAByAQAAeXUPAVFokANccQ8B22mQAxMAjw3EH59u",
+                    "lon": 17.790329,
+                    "lat": 59.795537
+                },
+                "id": "booking-89"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "0-1",
+            "bookings": 9,
+            "vehicles": 4,
+            "centroid_lon_lat": [
+                17.190686666666668,
+                59.59877455555556
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "3PwmgN_8JoApAAAAAAAAAFQAAAAAAAAAo2jjQQAAAACQKGxCAAAAACkAAAAAAAAAVAAAAAAAAAByAQAAYsMDARo5kQMvyQMBXzyRAwIA7wHEH59u",
+                    "lon": 17.023842,
+                    "lat": 59.848986
+                },
+                "id": "vehicle-2",
+                "end_address": {
+                    "hint": "3PwmgN_8JoApAAAAAAAAAFQAAAAAAAAAo2jjQQAAAACQKGxCAAAAACkAAAAAAAAAVAAAAAAAAAByAQAAYsMDARo5kQMvyQMBXzyRAwIA7wHEH59u",
+                    "lon": 17.023842,
+                    "lat": 59.848986
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "1zcngNo3J4BEAAAAYQAAAEUAAADcAgAAZ68-QoyShkIU1z1C9xL_Q0QAAABhAAAARQAAANwCAAByAQAAyuEDAZ_KjAMV4QMBocuMAwIAbwTEH59u",
+                    "lon": 17.031626,
+                    "lat": 59.558559
+                },
+                "id": "vehicle-4",
+                "end_address": {
+                    "hint": "1zcngNo3J4BEAAAAYQAAAEUAAADcAgAAZ68-QoyShkIU1z1C9xL_Q0QAAABhAAAARQAAANwCAAByAQAAyuEDAZ_KjAMV4QMBocuMAwIAbwTEH59u",
+                    "lon": 17.031626,
+                    "lat": 59.558559
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "POgmgEDoJoAAAAAADgAAAEcAAADsAAAAAAAAAOc6uEBN1-1BF37FQgAAAAAOAAAARwAAAOwAAAByAQAAyBsFASesjQOFHQUBDrGNAwQA_xDEH59u",
+                    "lon": 17.112008,
+                    "lat": 59.616295
+                },
+                "id": "vehicle-10",
+                "end_address": {
+                    "hint": "POgmgEDoJoAAAAAADgAAAEcAAADsAAAAAAAAAOc6uEBN1-1BF37FQgAAAAAOAAAARwAAAOwAAAByAQAAyBsFASesjQOFHQUBDrGNAwQA_xDEH59u",
+                    "lon": 17.112008,
+                    "lat": 59.616295
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "Fv8CgP_-AoAuAAAAVgAAAGADAABJBQAAYNRNQoQuwEKK5HBE3Wy8RC4AAABWAAAAYAMAAEkFAAByAQAA4XsEAfBmkAOJZQQBIXuQAwwADw_EH59u",
+                    "lon": 17.071073,
+                    "lat": 59.795184
+                },
+                "id": "vehicle-23",
+                "end_address": {
+                    "hint": "Fv8CgP_-AoAuAAAAVgAAAGADAABJBQAAYNRNQoQuwEKK5HBE3Wy8RC4AAABWAAAAYAMAAEkFAAByAQAA4XsEAfBmkAOJZQQBIXuQAwwADw_EH59u",
+                    "lon": 17.071073,
+                    "lat": 59.795184
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "9nwAgOf-AoAAAAAAGAAAAF0DAAAdAwAAAAAAAGal00E4FXBENuZdRAAAAAAYAAAAXQMAAB0DAAByAQAAmhUGAV3rkANqDwYBhviQAxMAPw_EH59u",
+                    "lon": 17.175962,
+                    "lat": 59.829085
+                },
+                "pickup": {
+                    "hint": "pvcCgEb3AoASAAAAFwAAAIsFAAAXAQAAyU_oQWVmC0L5YwpFgUzXQxIAAAAXAAAAiwUAABcBAAByAQAAUbQFAbsijQNsxQUBwR2NA0EAHw3EH59u",
+                    "lon": 17.151057,
+                    "lat": 59.581115
+                },
+                "id": "booking-12"
+            },
+            {
+                "delivery": {
+                    "hint": "29sngOHbJ4AgAAAAAAAAAJQEAAAAAAAAsBGzQQAAAAALa0tEAAAAACAAAAAAAAAAlAQAAAAAAAByAQAAtE4JAcIYkwNCUQkBsRyTAygAXwDEH59u",
+                    "lon": 17.387188,
+                    "lat": 59.971778
+                },
+                "pickup": {
+                    "hint": "_j8rgBxAK4AIAAAA9gAAACYKAADtCgAASHnBQGwAK0PeLOJEq2rzRAgAAAD2AAAAJgoAAO0KAAByAQAA12IDAYRuhgNpZwMBbWWGAx0AvwTEH59u",
+                    "lon": 16.999127,
+                    "lat": 59.141764
+                },
+                "id": "booking-25"
+            },
+            {
+                "delivery": {
+                    "hint": "fmYngAZ9AIAGAAAAOwAAAAIDAACGBgAAcPznQF1GgkLqC1ZE2jrpRAYAAAA7AAAAAgMAAIYGAAByAQAAyPIEASHLkAPy3QQBosqQAxsAXxbEH59u",
+                    "lon": 17.101512,
+                    "lat": 59.820833
+                },
+                "pickup": {
+                    "hint": "KSwrgFIsK4AAAAAAJwAAAMUEAABNBgAAAAAAAI6n2EGwKFREiF2MRAAAAAAnAAAAxQQAAE0GAAByAQAAU2UFAci5iQNagAUBgKmJAxcAfwLEH59u",
+                    "lon": 17.130835,
+                    "lat": 59.35764
+                },
+                "id": "booking-47"
+            },
+            {
+                "delivery": {
+                    "hint": "IEkngDNJJ4AmAAAAAAAAAI0WAAD5BQAAE0LUQQAAAADC8XpFIxSFRCYAAAAAAAAAjRYAAPkFAAByAQAABBIFAZPAkgNdBgUBAsKSA10A3wzEH59u",
+                    "lon": 17.109508,
+                    "lat": 59.949203
+                },
+                "pickup": {
+                    "hint": "ITQrgE80K4AGAAAADwAAABkAAADTAAAAU5mCQFtyGkEojYZBdQkNQwYAAAAPAAAAGQAAANMAAAByAQAAjDQGAVINiAP0NQYBKQ6IAwEAbxPEH59u",
+                    "lon": 17.183884,
+                    "lat": 59.247954
+                },
+                "id": "booking-74"
+            },
+            {
+                "delivery": {
+                    "hint": "5RUngOcVJ4AAAAAABQAAAOEBAAAyAAAAAAAAAGoTU0Bbo6dDBdwJQgAAAAAFAAAA4QEAADIAAAByAQAAE3YKARapjgMGagoBlqqOAxkALwHEH59u",
+                    "lon": 17.462803,
+                    "lat": 59.681046
+                },
+                "pickup": {
+                    "hint": "FF4ngBVeJ4BKAAAAAgEAAGoJAABWAQAAfwb6QUIx10Jco3tEpN0OQ0oAAAACAQAAagkAAFYBAAByAQAA1aQDAapOjgPUpwMB_VGOAx0ALwfEH59u",
+                    "lon": 17.016021,
+                    "lat": 59.657898
+                },
+                "id": "booking-79"
+            },
+            {
+                "delivery": {
+                    "hint": "5EArgBtBK4AgAAAASAAAAAkBAACEAAAAa_O3QeXYRkLiojhDdwy5QiAAAABIAAAACQEAAIQAAAByAQAA23gGAa8AhwOSgAYBzwmHAwMAHwfEH59u",
+                    "lon": 17.201371,
+                    "lat": 59.179183
+                },
+                "pickup": {
+                    "hint": "rXUngLd1J4A6AAAAAAAAABAGAABPCgAA3pUhQgAAAAAoK4dEA7jlRDoAAAAAAAAAEAYAAE8KAAByAQAArVoHAcXFkAPdTQcB392QAxwADxDEH59u",
+                    "lon": 17.259181,
+                    "lat": 59.819461
+                },
+                "id": "booking-82"
+            },
+            {
+                "delivery": {
+                    "hint": "VjcngJI3J4AqAAAADQAAAOIAAAAAAAAAHSKPQbSAp0BdZrxCAAAAACoAAAANAAAA4gAAAAAAAAByAQAASLEDATIxjAMqsQMBPjGMAwYAbwLEH59u",
+                    "lon": 17.019208,
+                    "lat": 59.519282
+                },
+                "pickup": {
+                    "hint": "j-8mgMbvJoARAAAAGQAAAMMDAAApDAAACE9DQebYiUHw7idEAXEHRREAAAAZAAAAwwMAACkMAAByAQAAeJoIAa4FjQMxoggBvwuNAxcArwfEH59u",
+                    "lon": 17.341048,
+                    "lat": 59.573678
+                },
+                "id": "booking-97"
+            },
+            {
+                "delivery": {
+                    "hint": "LUkngDFJJ4DHAAAAAAAAAHoKAAAAAAAAAL8KQwAAAABQKelEAAAAAMcAAAAAAAAAegoAAAAAAAByAQAAUkgEAeBukwMRgQQBG3CTAxYAfwHEH59u",
+                    "lon": 17.057874,
+                    "lat": 59.993824
+                },
+                "pickup": {
+                    "hint": "5YomgPiKJoAxAAAAAAAAAD8IAAAAAAAASC0EQgAAAABRkrBEAAAAADEAAAAAAAAAPwgAAAAAAAByAQAAqs4JAZN9hQOv8QkBLnyFAx0AjwXEH59u",
+                    "lon": 17.419946,
+                    "lat": 59.080083
+                },
+                "id": "booking-105"
+            },
+            {
+                "delivery": {
+                    "hint": "8zcngAg4J4AQAAAAKgAAALgHAAB8BAAAjHEzQVaj5kF5TqxEKcRHRBAAAAAqAAAAuAcAAHwEAAByAQAAhu0DARB1jAPM7gMBq3SMAxUA_wHEH59u",
+                    "lon": 17.03463,
+                    "lat": 59.536656
+                },
+                "pickup": {
+                    "hint": "y3gngNZ4J4AIAAAAKgAAAFgAAADtAQAAs1q2QDqc60FYCXZCC5qrQwgAAAAqAAAAWAAAAO0BAAByAQAAVTcJARMMkQNNOAkB0g6RAwMAjxHEH59u",
+                    "lon": 17.381205,
+                    "lat": 59.837459
+                },
+                "id": "booking-110"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "0-2",
+            "bookings": 8,
+            "vehicles": 0,
+            "centroid_lon_lat": [
+                17.4550625625,
+                59.523354624999996
+            ]
+        },
+        "vehicles": [],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "amUmgKhlJoAAAAAAHAAAAAAAAAAAAAAAAAAAAEGElkEAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAByAQAA0tcMAVp1hQNb6AwBZXCFAwAAzxDEH59u",
+                    "lon": 17.618898,
+                    "lat": 59.077978
+                },
+                "pickup": {
+                    "hint": "cP0CgHT9AoByAAAAAAAAAFsQAAAiBgAAvDKeQgAAAADyUzZFTXWIRHIAAAAAAAAAWxAAACIGAAByAQAAvSIGATVPkgNySQYBH0SSAzkAnwzEH59u",
+                    "lon": 17.179325,
+                    "lat": 59.920181
+                },
+                "id": "booking-3"
+            },
+            {
+                "delivery": {
+                    "hint": "dDAngHgwJ4A1AAAAAAAAAIQAAACaAQAAaSgUQgAAAAB037ZCAi-PQzUAAAAAAAAAhAAAAJoBAAByAQAAznsLARnniwNAfQsBbfSLAwMAzwPEH59u",
+                    "lon": 17.529806,
+                    "lat": 59.500313
+                },
+                "pickup": {
+                    "hint": "SvAmgEzwJoANAAAAAAAAAFcGAAAAAAAAHQGpQAAAAAB8qClEAAAAAA0AAAAAAAAAVwYAAAAAAAByAQAAntUIAWaMjQMM8QgBe4ONAxoArwTEH59u",
+                    "lon": 17.35619,
+                    "lat": 59.608166
+                },
+                "id": "booking-26"
+            },
+            {
+                "delivery": {
+                    "hint": "eTkfgH45H4AAAAAAWgAAACkBAAB7AAAAAAAAAB41FkIZ0vdCj1dOQgAAAABaAAAAKQEAAHsAAAByAQAA9BkOAS-cjgPpKA4Bzo-OAwQAHxHEH59u",
+                    "lon": 17.701364,
+                    "lat": 59.677743
+                },
+                "pickup": {
+                    "hint": "uuomgCrrJoAQAAAADwAAAA0CAAB-AwAAkHCPQQoggUEWTRJEYz15RBAAAAAPAAAADQIAAH4DAAByAQAAI1EIAQ_kiwOlVAgBjeWLAw0AvwjEH59u",
+                    "lon": 17.322275,
+                    "lat": 59.499535
+                },
+                "id": "booking-34"
+            },
+            {
+                "delivery": {
+                    "hint": "M60mgDqtJoAlAAAAEQAAAFQGAACOAAAAUnLSQcu3N0HZPY1Et2fFQiUAAAARAAAAVAYAAI4AAAByAQAAi7UKAf2ThwOixQoBBJGHAyUAPwHEH59u",
+                    "lon": 17.479051,
+                    "lat": 59.216893
+                },
+                "pickup": {
+                    "hint": "eXQngFJ1J4AAAAAACgAAAKwAAAAUAgAAAAAAAPHBKkGscT1Ds_kTRAAAAAAKAAAArAAAABQCAAByAQAAoioLAXoCkQORJAsBGgORAw0ADwHEH59u",
+                    "lon": 17.509026,
+                    "lat": 59.835002
+                },
+                "id": "booking-39"
+            },
+            {
+                "delivery": {
+                    "hint": "0eYmgNLmJoAAAAAALQAAAAAAAADsAQAAAAAAAMEAFUEAAAAAwsPNQgAAAAAWAAAAAAAAAPYAAAByAQAAKxQGAZvLjAN6CQYBIbeMAwAAzxXEH59u",
+                    "lon": 17.175595,
+                    "lat": 59.558811
+                },
+                "pickup": {
+                    "hint": "70ocgGxLHIAkAAAAAAAAADoCAAAAAAAAx6DKQQAAAAD4iMZDAAAAACQAAAAAAAAAOgIAAAAAAAByAQAA_TkMAWPAigOCJQwB3eOKAwYAHwLEH59u",
+                    "lon": 17.578493,
+                    "lat": 59.424867
+                },
+                "id": "booking-76"
+            },
+            {
+                "delivery": {
+                    "hint": "J_QCgDytJoApAAAACQAAAPgCAAB_AQAAWpLkQcbQvkCMCQREXy6FQykAAAAJAAAA-AIAAH8BAAByAQAANEgLAdh_hwPlRQsB432HAxgA3xLEH59u",
+                    "lon": 17.516596,
+                    "lat": 59.211736
+                },
+                "pickup": {
+                    "hint": "1lQngNdUJ4C1AAAADQAAAAAAAAD5AQAAbxcYQh2xIkAAAAAAkEHTQloAAAAHAAAAAAAAAP4AAAByAQAATrwKAeRCkANVvAoB5UKQAwAATwrEH59u",
+                    "lon": 17.480782,
+                    "lat": 59.785956
+                },
+                "id": "booking-102"
+            },
+            {
+                "delivery": {
+                    "hint": "Q3QCgIZ0AoAUAAAABQAAADsAAAD9AAAANsS2QaAcp0DDjIRCL7uMQxQAAAAFAAAAOwAAAP0AAAByAQAAvbYQAT8njQOetRAB7ieNAwIALwPEH59u",
+                    "lon": 17.872573,
+                    "lat": 59.582271
+                },
+                "pickup": {
+                    "hint": "i3sAgFZ8AIAAAAAAIAAAAJYSAAAsAAAAAAAAAG-sDUIMqaVFQuVAQgAAAAAgAAAAlhIAACwAAAByAQAAlbAEAYDEiwM4tQQBjMSLA1IAHwzEH59u",
+                    "lon": 17.084565,
+                    "lat": 59.491456
+                },
+                "id": "booking-108"
+            },
+            {
+                "delivery": {
+                    "hint": "cQcDgJbeJ4AAAAAABwAAAGcCAADDAAAAAAAAAPGNpED8K9ZDm_oHQwAAAAAHAAAAZwIAAMMAAAByAQAAgn0MAdbtkgOxdQwBVeWSAwYAnxLEH59u",
+                    "lon": 17.595778,
+                    "lat": 59.96079
+                },
+                "pickup": {
+                    "hint": "9rwqgCq9KoAAAAAADgAAAAAAAAAqAAAAAAAAADSgIEEAAAAASL_oQQAAAAAOAAAAAAAAACoAAAByAQAArK4HAZiahAPjogcBvpCEAwAAjwbEH59u",
+                    "lon": 17.280684,
+                    "lat": 59.021976
+                },
+                "id": "booking-119"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "0-3",
+            "bookings": 5,
+            "vehicles": 3,
+            "centroid_lon_lat": [
+                17.3320356,
+                59.790417399999995
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "HkkngJ1JJ4CtAAAADgAAAP4CAAAhAQAAd2FCQ4JLaUFrtFVEvAShQ60AAAAOAAAA_gIAACEBAAByAQAA_nwFATc5kwMGewUBOUSTAwcATwXEH59u",
+                    "lon": 17.136894,
+                    "lat": 59.980087
+                },
+                "id": "vehicle-16",
+                "end_address": {
+                    "hint": "HkkngJ1JJ4CtAAAADgAAAP4CAAAhAQAAd2FCQ4JLaUFrtFVEvAShQ60AAAAOAAAA_gIAACEBAAByAQAA_nwFATc5kwMGewUBOUSTAwcATwXEH59u",
+                    "lon": 17.136894,
+                    "lat": 59.980087
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "SkcngB1IJ4AAAAAADwAAAMsDAACBAQAAAAAAAFQ2J0HiESlEWSCGQwAAAAAPAAAAywMAAIEBAAByAQAAGKMEAdsukQNnrQQBtSORAyMA3w_EH59u",
+                    "lon": 17.081112,
+                    "lat": 59.846363
+                },
+                "id": "vehicle-20",
+                "end_address": {
+                    "hint": "SkcngB1IJ4AAAAAADwAAAMsDAACBAQAAAAAAAFQ2J0HiESlEWSCGQwAAAAAPAAAAywMAAIEBAAByAQAAGKMEAdsukQNnrQQBtSORAyMA3w_EH59u",
+                    "lon": 17.081112,
+                    "lat": 59.846363
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "Of0CgE_9AoAaAAAAGQAAAAgHAAAOBwAAfBWUQe3KiUFvn5xEpxGdRBoAAAAZAAAACAcAAA4HAAByAQAACSYFARxAkgNmSgUBnUWSAyAAfxXEH59u",
+                    "lon": 17.114633,
+                    "lat": 59.916316
+                },
+                "id": "vehicle-28",
+                "end_address": {
+                    "hint": "Of0CgE_9AoAaAAAAGQAAAAgHAAAOBwAAfBWUQe3KiUFvn5xEpxGdRBoAAAAZAAAACAcAAA4HAAByAQAACSYFARxAkgNmSgUBnUWSAyAAfxXEH59u",
+                    "lon": 17.114633,
+                    "lat": 59.916316
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "5REngHUSJ4AAAAAAZgAAADoAAADmAgAAAAAAAElRjkIefx9CUBgBRAAAAABmAAAAOgAAAOYCAAByAQAAX60JAck1jgP_owkBrDSOAwMAHwrEH59u",
+                    "lon": 17.411423,
+                    "lat": 59.651529
+                },
+                "pickup": {
+                    "hint": "gf4mgKz-JoB_AAAAAAAAAOIGAAAAAAAAFbWwQgAAAAApLJlEAAAAAH8AAAAAAAAA4gYAAAAAAAByAQAAAtAEAQ9XkgOlogQBIX6SAxQAfxbEH59u",
+                    "lon": 17.09261,
+                    "lat": 59.922191
+                },
+                "id": "booking-7"
+            },
+            {
+                "delivery": {
+                    "hint": "MJkngDGZJ4AAAAAAJwAAAAAAAACoAAAAAAAAAJZoWkEAAAAAd-5pQgAAAAAUAAAAAAAAAFQAAAByAQAASPoNAaCwkgN8-A0BOK6SAwAATwPEH59u",
+                    "lon": 17.693256,
+                    "lat": 59.94512
+                },
+                "pickup": {
+                    "hint": "k3sAgP___38GAAAAIAAAAAYDAADIAQAAFzaKQRoTeULUo-1E3MeLRAYAAAAgAAAABgMAAMgBAAByAQAAZAYFAZY3jgNhBwUB8jmOAxEAnxHEH59u",
+                    "lon": 17.106532,
+                    "lat": 59.65199
+                },
+                "id": "booking-30"
+            },
+            {
+                "delivery": {
+                    "hint": "PGgfgD5oH4AqAAAAAAAAAGEAAAAAAAAAiPToQQAAAACh8IZCAAAAACoAAAAAAAAAYQAAAAAAAAByAQAAOmUNAb7RjwM6eQ0B7taPAwIALxbEH59u",
+                    "lon": 17.655098,
+                    "lat": 59.75699
+                },
+                "pickup": {
+                    "hint": "YGMngL1jJ4AAAAAAHQAAAE4AAADBAAAAAAAAACeCAEJUv61CwF9WQwAAAAAdAAAATgAAAMEAAAByAQAAL3cEAYkjjwPwdgQBTBuPAwQAnwXEH59u",
+                    "lon": 17.069871,
+                    "lat": 59.712393
+                },
+                "id": "booking-72"
+            },
+            {
+                "delivery": {
+                    "hint": "D1YngBVWJ4AAAAAAUgAAAAAAAABcCAAAAAAAAIXCiUEAAAAAeaLfQwAAAAApAAAAAAAAAC4EAAByAQAApjgJAfsnkAPbNQkBgi2QAwAAXw_EH59u",
+                    "lon": 17.381542,
+                    "lat": 59.779067
+                },
+                "pickup": {
+                    "hint": "0kQngAhFJ4AAAAAAMAAAAEAFAADwJQAAAAAAAJLuBkKqs2lEvVTTRQAAAAAwAAAAQAUAAPAlAAByAQAAHR0IAa0OkgO1VggByCKSAxwAXxTEH59u",
+                    "lon": 17.308957,
+                    "lat": 59.903661
+                },
+                "id": "booking-92"
+            },
+            {
+                "delivery": {
+                    "hint": "VksngGRLJ4AlAAAAAAAAAMUDAAAAAAAAd6n2QAAAAAAf0ElDAAAAABIAAAAAAAAA4wEAAAAAAAByAQAARYYHASbEkQPvjQcBEtSRAwUAjwPEH59u",
+                    "lon": 17.270341,
+                    "lat": 59.884582
+                },
+                "pickup": {
+                    "hint": "c_oCgJAbJ4AvAAAAEgAAAAIBAAATAwAAZzAFQlk-PUEdijRDSgcJRC8AAAASAAAAAgEAABMDAAByAQAAJnIIAQvmjgN9cQgBZ-eOAwYAzwTEH59u",
+                    "lon": 17.330726,
+                    "lat": 59.696651
+                },
+                "id": "booking-104"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "0-4",
+            "bookings": 10,
+            "vehicles": 1,
+            "centroid_lon_lat": [
+                17.3417696,
+                59.58812825
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "uuomgCrrJoARAAAADwAAAMICAADIAgAApV2aQeVQgkGc-ERE7jBGRBEAAAAPAAAAwgIAAMgCAAByAQAAolcIAdPdiwMmWwgBmd6LAxMAzwnEH59u",
+                    "lon": 17.323938,
+                    "lat": 59.497939
+                },
+                "id": "vehicle-18",
+                "end_address": {
+                    "hint": "uuomgCrrJoARAAAADwAAAMICAADIAgAApV2aQeVQgkGc-ERE7jBGRBEAAAAPAAAAwgIAAMgCAAByAQAAolcIAdPdiwMmWwgBmd6LAxMAzwnEH59u",
+                    "lon": 17.323938,
+                    "lat": 59.497939
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "7dEmgCvSJoAgAAAAVAEAANQBAABlAQAAtDC1QWcebEPQ5KJDRYt4QyAAAABUAQAA1AEAAGUBAAByAQAATGkJAYzihwMyagkB3-KHAwYATxTEH59u",
+                    "lon": 17.393996,
+                    "lat": 59.237004
+                },
+                "pickup": {
+                    "hint": "4tsngOXbJ4AkAAAAPAAAAHQKAAA-BQAAfKXLQc82JkLeq-hEUrNpRCQAAAA8AAAAdAoAAD4FAAByAQAAYZsHATn6kgNQmQcBt_aSA0MA7xHEH59u",
+                    "lon": 17.275745,
+                    "lat": 59.963961
+                },
+                "id": "booking-13"
+            },
+            {
+                "delivery": {
+                    "hint": "CE4cgEROHICLAAAAXwAAACcCAAAAAAAAxZzCQm7MgkJB4r9DAAAAAIsAAABfAAAAJwIAAAAAAAByAQAA3TINAf8ciQPrMg0BNxyJAwMAfwXEH59u",
+                    "lon": 17.642205,
+                    "lat": 59.317503
+                },
+                "pickup": {
+                    "hint": "Bv8CgO9lJ4AjAAAAEgAAANoCAAAvAQAAwL4bQl-KnkFE80pE1kKpQyMAAAASAAAA2gIAAC8BAAByAQAA_zgEAbKGjwM3NwQBAoCPAyMAHwbEH59u",
+                    "lon": 17.053951,
+                    "lat": 59.737778
+                },
+                "id": "booking-35"
+            },
+            {
+                "delivery": {
+                    "hint": "3ugmgN_oJoAnAAAAAAAAAJkDAAAAAAAAJQgDQQAAAABEXEBDAAAAABQAAAAAAAAAzgEAAAAAAAByAQAAczUHAfd8iwNdgwcBiHCLAwYArwvEH59u",
+                    "lon": 17.249651,
+                    "lat": 59.473143
+                },
+                "pickup": {
+                    "hint": "hPkCgIsJJ4AAAAAAEwAAAP0AAACrAQAAAAAAAHpu6EFnTcZDo2omRAAAAAATAAAA_QAAAKsBAAByAQAAkpoLATrwjgNfowsBp_GOAw0APxXEH59u",
+                    "lon": 17.537682,
+                    "lat": 59.699258
+                },
+                "id": "booking-38"
+            },
+            {
+                "delivery": {
+                    "hint": "t00cgMVNHIAAAAAAEAAAAOYAAACnAQAAAAAAAGVJ6UE-1MxDSEQ8RAAAAAAQAAAA5gAAAKcBAAByAQAAr-0MAY-aiQNRlAwBaYCJAwgATwnEH59u",
+                    "lon": 17.624495,
+                    "lat": 59.349647
+                },
+                "pickup": {
+                    "hint": "RkcngJZHJ4BhAAAABwAAAO0CAABjAAAAGtHZQnZy10CdflBEF07ZQmEAAAAHAAAA7QIAAGMAAAByAQAAxw0FATa0kQNuDQUBQLSRAwkAzwDEH59u",
+                    "lon": 17.108423,
+                    "lat": 59.880502
+                },
+                "id": "booking-43"
+            },
+            {
+                "delivery": {
+                    "hint": "0v4mgOD-JoAAAAAARQAAAAAAAACBDgAAAAAAAFwIQUIAAAAAAWQhRQAAAABFAAAAAAAAAIEOAAByAQAAjEAEAemDkgM9MAQBBKaSAwAA_wzEH59u",
+                    "lon": 17.055884,
+                    "lat": 59.933673
+                },
+                "pickup": {
+                    "hint": "_bAmgG-xJoAuAAAAGgAAAFIBAAC9AgAARu8AQgm-jkFNqWpDlObzQy4AAAAaAAAAUgEAAL0CAAByAQAAYbcLATgCiAOitgsBaASIAwcADwXEH59u",
+                    "lon": 17.545057,
+                    "lat": 59.245112
+                },
+                "id": "booking-55"
+            },
+            {
+                "delivery": {
+                    "hint": "ALImgAOyJoAAAAAARgAAAJEAAADDAgAAAAAAAInpQkJhw8pCOk_1QwAAAABGAAAAkQAAAMMCAAByAQAApCEKAd1viAPrIQoBU3OIAwMAXw_EH59u",
+                    "lon": 17.441188,
+                    "lat": 59.273181
+                },
+                "pickup": {
+                    "hint": "hEsngIVLJ4AXAAAAAAAAAAAAAAAAAAAAA2aXQAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAAAAAAByAQAARpsGAQPEkQNQnwYBIs6RAwAA_wDEH59u",
+                    "lon": 17.210182,
+                    "lat": 59.884547
+                },
+                "id": "booking-58"
+            },
+            {
+                "delivery": {
+                    "hint": "Xq4mgMWuJoAAAAAAbQAAAAAAAAB5AAAAAAAAAJqtl0IAAAAA0YWoQgAAAABtAAAAAAAAAHkAAAByAQAAG0AJAaMLiQO8PwkB206JAwAA3wbEH59u",
+                    "lon": 17.383451,
+                    "lat": 59.313059
+                },
+                "pickup": {
+                    "hint": "KWMngDNjJ4ANAAAAAAAAAOkAAACaAAAAMUkPQQAAAABEUiJDJhDWQg0AAAAAAAAA6QAAAJoAAAByAQAAqZMHAVTtjwPTqgcB4eaPAwoADwLEH59u",
+                    "lon": 17.273769,
+                    "lat": 59.764052
+                },
+                "id": "booking-73"
+            },
+            {
+                "delivery": {
+                    "hint": "xGEngORhJ4BDAAAAAAAAAKMAAAAAAAAAdI1gQQAAAABVLwhCAAAAACIAAAAAAAAAUgAAAAAAAAByAQAAM2EGAWy5jwNbbgYB8saPAwIAHwHEH59u",
+                    "lon": 17.195315,
+                    "lat": 59.750764
+                },
+                "pickup": {
+                    "hint": "V-UmgIblJoAAAAAAcQAAAMUHAADsAQAAAAAAAD3wnUKYbq1EshWrQwAAAABxAAAAxQcAAOwBAAByAQAAgMEJAfjSiwN4HgoB5OeLAx8A3wnEH59u",
+                    "lon": 17.416576,
+                    "lat": 59.49516
+                },
+                "id": "booking-81"
+            },
+            {
+                "delivery": {
+                    "hint": "zPEmgM3xJoAbAAAAAAAAAPUAAAAAAAAAFsGTQQAAAABe3ipDAAAAABsAAAAAAAAA9QAAAAAAAAByAQAAWOELAWdNjAPv0AsBOzuMAwYAPw_EH59u",
+                    "lon": 17.5558,
+                    "lat": 59.526503
+                },
+                "pickup": {
+                    "hint": "ifoCgJ_6AoAaAAAABQAAAOoDAADwAQAAAbLsQWjmoUDRr4tEvRAKRBoAAAAFAAAA6gMAAPABAAByAQAA_VsHAdLLjgOdXwcBYr2OAyAAbxDEH59u",
+                    "lon": 17.259517,
+                    "lat": 59.689938
+                },
+                "id": "booking-88"
+            },
+            {
+                "delivery": {
+                    "hint": "u-wmgL3sJoD7AAAAJQEAAOMBAAAAAAAATT_SQn3V80J_h0lDAAAAAPsAAAAlAQAA4wEAAAAAAAByAQAAn1EHAVrrjAP0QAcBoeyMAwIAjwDEH59u",
+                    "lon": 17.256863,
+                    "lat": 59.566938
+                },
+                "pickup": {
+                    "hint": "_xUngAEWJ4CXAAAAUwAAAKoCAAApAAAAzWooQ3wwuEJFuT1EU6k2QpcAAABTAAAAqgIAACkAAAByAQAAetMIASpajgPm9ggBpWSOAwUAnxTEH59u",
+                    "lon": 17.355642,
+                    "lat": 59.660842
+                },
+                "id": "booking-99"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "1",
+            "bookings": 24,
+            "vehicles": 14,
+            "centroid_lon_lat": [
+                17.310072416666667,
+                59.280253979166666
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "wRcrgEYYK4BZAAAARAAAALwFAAAAAAAAOLZ4QjhlPUK8K39EAAAAAFkAAABEAAAAvAUAAAAAAAByAQAAGyYFAXL3iAPwJgUBl_eIAxMAXxXEH59u",
+                    "lon": 17.114651,
+                    "lat": 59.30789
+                },
+                "id": "vehicle-0",
+                "end_address": {
+                    "hint": "wRcrgEYYK4BZAAAARAAAALwFAAAAAAAAOLZ4QjhlPUK8K39EAAAAAFkAAABEAAAAvAUAAAAAAAByAQAAGyYFAXL3iAPwJgUBl_eIAxMAXxXEH59u",
+                    "lon": 17.114651,
+                    "lat": 59.30789
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "90ErgCBCK4AEAAAATQAAAAsBAADVAAAAtVSrQM1PqkLW9ZRDOl5tQwQAAABNAAAACwEAANUAAAByAQAAAq8GAb3FhQOSqQYBL8uFAwQA7wPEH59u",
+                    "lon": 17.215234,
+                    "lat": 59.098557
+                },
+                "id": "vehicle-1",
+                "end_address": {
+                    "hint": "90ErgCBCK4AEAAAATQAAAAsBAADVAAAAtVSrQM1PqkLW9ZRDOl5tQwQAAABNAAAACwEAANUAAAByAQAAAq8GAb3FhQOSqQYBL8uFAwQA7wPEH59u",
+                    "lon": 17.215234,
+                    "lat": 59.098557
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "7swmgPHMJoAAAAAAFAAAAAAAAAB8AQAAAAAAAKqPYEEAAAAAneCDQwAAAAAUAAAAAAAAAHwBAAByAQAA94wKAcQ3hwOgpgoB-jeHAwAAjwzEH59u",
+                    "lon": 17.468663,
+                    "lat": 59.193284
+                },
+                "id": "vehicle-3",
+                "end_address": {
+                    "hint": "7swmgPHMJoAAAAAAFAAAAAAAAAB8AQAAAAAAAKqPYEEAAAAAneCDQwAAAAAUAAAAAAAAAHwBAAByAQAA94wKAcQ3hwOgpgoB-jeHAwAAjwzEH59u",
+                    "lon": 17.468663,
+                    "lat": 59.193284
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "JTYngCg2J4C8AAAAAAAAAGYEAAAAAAAAsINRQwAAAADKb5xEAAAAALwAAAAAAAAAZgQAAAAAAAByAQAABSQEAQdTiwPtmAQBYCyLAwsALwvEH59u",
+                    "lon": 17.048581,
+                    "lat": 59.462407
+                },
+                "id": "vehicle-7",
+                "end_address": {
+                    "hint": "JTYngCg2J4C8AAAAAAAAAGYEAAAAAAAAsINRQwAAAADKb5xEAAAAALwAAAAAAAAAZgQAAAAAAAByAQAABSQEAQdTiwPtmAQBYCyLAwsALwvEH59u",
+                    "lon": 17.048581,
+                    "lat": 59.462407
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "DUYrgC1GK4BYAAAAVAAAAIsEAADpAQAAg1Z3Quh0aELggkpEbTCqQ1gAAABUAAAAiwQAAOkBAAByAQAAdv0EAUdChwM0_QQBCEOHAwwADwXEH59u",
+                    "lon": 17.104246,
+                    "lat": 59.195975
+                },
+                "id": "vehicle-8",
+                "end_address": {
+                    "hint": "DUYrgC1GK4BYAAAAVAAAAIsEAADpAQAAg1Z3Quh0aELggkpEbTCqQ1gAAABUAAAAiwQAAOkBAAByAQAAdv0EAUdChwM0_QQBCEOHAwwADwXEH59u",
+                    "lon": 17.104246,
+                    "lat": 59.195975
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "yuUmgNDlJoAHAAAAAAAAADcAAAAAAAAAHIQyQAAAAAAKe7lBAAAAAAcAAAAAAAAANwAAAAAAAAByAQAAU18JAaP_igPTBgkB7NCKAwMAvwjEH59u",
+                    "lon": 17.391443,
+                    "lat": 59.441059
+                },
+                "id": "vehicle-9",
+                "end_address": {
+                    "hint": "yuUmgNDlJoAHAAAAAAAAADcAAAAAAAAAHIQyQAAAAAAKe7lBAAAAAAcAAAAAAAAANwAAAAAAAAByAQAAU18JAaP_igPTBgkB7NCKAwMAvwjEH59u",
+                    "lon": 17.391443,
+                    "lat": 59.441059
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "MyArgDogK4ARAAAAEQAAABsAAAChAAAAFU08QRVNPEFawZdBwQHgQhEAAAARAAAAGwAAAKEAAAByAQAAUb4EAcbdiQPhuwQBft2JAwEAvxXEH59u",
+                    "lon": 17.088081,
+                    "lat": 59.366854
+                },
+                "id": "vehicle-12",
+                "end_address": {
+                    "hint": "MyArgDogK4ARAAAAEQAAABsAAAChAAAAFU08QRVNPEFawZdBwQHgQhEAAAARAAAAGwAAAKEAAAByAQAAUb4EAcbdiQPhuwQBft2JAwEAvxXEH59u",
+                    "lon": 17.088081,
+                    "lat": 59.366854
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "tgkrgMQJK4AAAAAAEgAAAGEAAABuAAAAAAAAAER-70B3JyFCfDw4QgAAAAASAAAAYQAAAG4AAAByAQAArx8FAZBchQNLGQUBUl2FAwUA7wDEH59u",
+                    "lon": 17.113007,
+                    "lat": 59.071632
+                },
+                "id": "vehicle-15",
+                "end_address": {
+                    "hint": "tgkrgMQJK4AAAAAAEgAAAGEAAABuAAAAAAAAAER-70B3JyFCfDw4QgAAAAASAAAAYQAAAG4AAAByAQAArx8FAZBchQNLGQUBUl2FAwUA7wDEH59u",
+                    "lon": 17.113007,
+                    "lat": 59.071632
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "iDUrgIs1K4AAAAAATwAAAAAAAAAVAAAAAAAAAB2PW0IAAAAAsnNtQQAAAABPAAAAAAAAABUAAAByAQAA71MFAZMMiAM0QQUBCQGIAwAAfwfEH59u",
+                    "lon": 17.126383,
+                    "lat": 59.247763
+                },
+                "id": "vehicle-17",
+                "end_address": {
+                    "hint": "iDUrgIs1K4AAAAAATwAAAAAAAAAVAAAAAAAAAB2PW0IAAAAAsnNtQQAAAABPAAAAAAAAABUAAAByAQAA71MFAZMMiAM0QQUBCQGIAwAAfwfEH59u",
+                    "lon": 17.126383,
+                    "lat": 59.247763
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "KUQDgH1EA4AAAAAAKAAAADkDAACzEAAAAAAAAEqc30E-Yg9ENt45RQAAAAAoAAAAOQMAALMQAAByAQAA8gYGAXqxhgMsDwYBsLqGAw4ALxLEH59u",
+                    "lon": 17.17221,
+                    "lat": 59.158906
+                },
+                "id": "vehicle-19",
+                "end_address": {
+                    "hint": "KUQDgH1EA4AAAAAAKAAAADkDAACzEAAAAAAAAEqc30E-Yg9ENt45RQAAAAAoAAAAOQMAALMQAAByAQAA8gYGAXqxhgMsDwYBsLqGAw4ALxLEH59u",
+                    "lon": 17.17221,
+                    "lat": 59.158906
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "IEYrgCZGK4AUAAAArQAAAJoEAAA8AAAAHqpiQaLx70JZz0xEnPImQhQAAACtAAAAmgQAADwAAAByAQAAWEUEAWtXhwNtTQQBM1aHAxkADwHEH59u",
+                    "lon": 17.057112,
+                    "lat": 59.201387
+                },
+                "id": "vehicle-22",
+                "end_address": {
+                    "hint": "IEYrgCZGK4AUAAAArQAAAJoEAAA8AAAAHqpiQaLx70JZz0xEnPImQhQAAACtAAAAmgQAADwAAAByAQAAWEUEAWtXhwNtTQQBM1aHAxkADwHEH59u",
+                    "lon": 17.057112,
+                    "lat": 59.201387
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "TCwrgMYsK4AaAAAAOAAAAHoIAAB_BAAAHvKTQQITG0JpEL1ENGJIRBoAAAA4AAAAeggAAH8EAAByAQAAA7EFAVlYiQOmrgUBV1iJAzsAfxbEH59u",
+                    "lon": 17.150211,
+                    "lat": 59.332697
+                },
+                "id": "vehicle-24",
+                "end_address": {
+                    "hint": "TCwrgMYsK4AaAAAAOAAAAHoIAAB_BAAAHvKTQQITG0JpEL1ENGJIRBoAAAA4AAAAeggAAH8EAAByAQAAA7EFAVlYiQOmrgUBV1iJAzsAfxbEH59u",
+                    "lon": 17.150211,
+                    "lat": 59.332697
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "eDYrgOU2K4A3AAAABQAAAOMCAAC3BAAAOdEZQhrNXUDfrABEc2BSRDcAAAAFAAAA4wIAALcEAAByAQAA76IDAZJOiAOjmQMBvUyIAwwALxXEH59u",
+                    "lon": 17.015535,
+                    "lat": 59.264658
+                },
+                "id": "vehicle-25",
+                "end_address": {
+                    "hint": "eDYrgOU2K4A3AAAABQAAAOMCAAC3BAAAOdEZQhrNXUDfrABEc2BSRDcAAAAFAAAA4wIAALcEAAByAQAA76IDAZJOiAOjmQMBvUyIAwwALxXEH59u",
+                    "lon": 17.015535,
+                    "lat": 59.264658
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "zvECgAeDJoDqAAAAAAAAAAAAAAAAAAAAKdBDQgAAAAAAAAAAAAAAAHUAAAAAAAAAAAAAAAAAAAByAQAAoZ4HAYVVhwPvrQcBmU-HAwAAvwTEH59u",
+                    "lon": 17.276577,
+                    "lat": 59.200901
+                },
+                "id": "vehicle-33",
+                "end_address": {
+                    "hint": "zvECgAeDJoDqAAAAAAAAAAAAAAAAAAAAKdBDQgAAAAAAAAAAAAAAAHUAAAAAAAAAAAAAAAAAAAByAQAAoZ4HAYVVhwPvrQcBmU-HAwAAvwTEH59u",
+                    "lon": 17.276577,
+                    "lat": 59.200901
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "AvYqgAP2KoAWAAAAAAAAAFwAAAAAAAAAX9x4QQAAAAAsKYBCAAAAABYAAAAAAAAAXAAAAAAAAAByAQAAZHsHATayiAPY1gcBAseIAwMAnwLEH59u",
+                    "lon": 17.267556,
+                    "lat": 59.290166
+                },
+                "pickup": {
+                    "hint": "58cmgA3IJoABAAAASgAAAAAAAAAAAAAA84rrPmL29UEAAAAAAAAAAAEAAABKAAAAAAAAAAAAAAByAQAACasMAfkuhwONpgwBPy6HAwAALwrEH59u",
+                    "lon": 17.607433,
+                    "lat": 59.191033
+                },
+                "id": "booking-0"
+            },
+            {
+                "delivery": {
+                    "hint": "dT8rgHg_K4BxAAAABgAAAAkCAAC4AAAA3WyeQk5uckCRQ7VDlyYAQ3EAAAAGAAAACQIAALgAAAByAQAAuOIHAYhphQMv5QcBg2mFAwYADwDEH59u",
+                    "lon": 17.294008,
+                    "lat": 59.074952
+                },
+                "pickup": {
+                    "hint": "WK4mgFmuJoA0AAAAAAAAAA8EAAAAAAAAMT8RQgAAAAB01TREAAAAADQAAAAAAAAADwQAAAAAAAByAQAA2AYJAbatiAMmqggBd7mIAxQADxPEH59u",
+                    "lon": 17.368792,
+                    "lat": 59.289014
+                },
+                "id": "booking-5"
+            },
+            {
+                "delivery": {
+                    "hint": "wE0cgMNNHIBOAAAAJQAAAHYAAAAAAAAA3QsMQ8mKgEJSm1JDAAAAAE4AAAAlAAAAdgAAAAAAAAByAQAAr5cMARD3iQMVkgwB3vSJAwEALxTEH59u",
+                    "lon": 17.602479,
+                    "lat": 59.373328
+                },
+                "pickup": {
+                    "hint": "mPMqgO_zKoBRAAAACQAAAPgCAACMAAAA9pJiQlDrwkA3JQREj_DCQlEAAAAJAAAA-AIAAIwAAAByAQAAApEGAVNEiANTkQYBj0SIAwcAzwfEH59u",
+                    "lon": 17.207554,
+                    "lat": 59.262035
+                },
+                "id": "booking-6"
+            },
+            {
+                "delivery": {
+                    "hint": "BtImgLHSJoAAAAAAEQAAAF8GAADZAQAAAAAAAITqN0G7BI5ErE-kQwAAAAARAAAAXwYAANkBAAByAQAAx9IIAeOohwP-qwgBkK2HAykAfwvEH59u",
+                    "lon": 17.355463,
+                    "lat": 59.222243
+                },
+                "pickup": {
+                    "hint": "mPMmgOnzJoA8AAAAQQAAAAAAAACKAQAAFK8pQpR2M0IAAAAAu2SJQzwAAABBAAAAAAAAAIoBAAByAQAARGEKAe6_jAOhWgoBurWMAwAAzwbEH59u",
+                    "lon": 17.457476,
+                    "lat": 59.555822
+                },
+                "id": "booking-10"
+            },
+            {
+                "delivery": {
+                    "hint": "CggrgLBAA4AAAAAAQQAAAHsAAACwAAAAAAAAAGyUkUL05ghDPcRDQwAAAABBAAAAewAAALAAAAByAQAAeNYDAXMvhQMRuwMBKi-FAwIAnwLEH59u",
+                    "lon": 17.028728,
+                    "lat": 59.060083
+                },
+                "pickup": {
+                    "hint": "lbkXgJa5F4AAAAAAIAAAAHUBAACUAgAAAAAAAHn0s0HqpoFDPD3lQwAAAAAgAAAAdQEAAJQCAAByAQAAKTcQAa3ShQOlQRABOMWFAwoATwPEH59u",
+                    "lon": 17.839913,
+                    "lat": 59.101869
+                },
+                "id": "booking-16"
+            },
+            {
+                "delivery": {
+                    "hint": "cSsrgHkrK4A8AAAAAAAAAAAAAAAAAAAAk7fHQQAAAAAAAAAAAAAAADwAAAAAAAAAAAAAAAAAAAByAQAAEScIAV0VigNcLggBl-mJAwAALw7EH59u",
+                    "lon": 17.311505,
+                    "lat": 59.381085
+                },
+                "pickup": {
+                    "hint": "lOUmgMLlJoAAAAAAFwAAAJMAAAAAAAAAAAAAALzfHEEfG3dCAAAAAAAAAAAXAAAAkwAAAAAAAAByAQAA5CkJATETiwMLxwgBdb6KAwcA_wXEH59u",
+                    "lon": 17.377764,
+                    "lat": 59.446065
+                },
+                "id": "booking-18"
+            },
+            {
+                "delivery": {
+                    "hint": "OK8mgDmvJoBFAAAAAAAAADgAAAAAAAAAurflQQAAAADK77tBAAAAAEUAAAAAAAAAOAAAAAAAAAByAQAA-hcLAZd_iAONgwsB2rqIAwEAnwLEH59u",
+                    "lon": 17.50425,
+                    "lat": 59.277207
+                },
+                "pickup": {
+                    "hint": "UQgrgFUIK4AAAAAAcgAAADYBAAA2AQAAAAAAAKciP0L3MwFDYNgBQwAAAAByAAAANgEAADYBAAByAQAAuJ8EAbwfhQNtlgQB__iEAwMAjwPEH59u",
+                    "lon": 17.080248,
+                    "lat": 59.05606
+                },
+                "id": "booking-20"
+            },
+            {
+                "delivery": {
+                    "hint": "A0IrgHlCK4AQAAAAGwAAAMAAAAAJAAAAnKc4Qfp2k0GHagVDn5rPQBAAAAAbAAAAwAAAAAkAAAByAQAAzuIGAax0hQNH3QYB-3KFAwgAXwnEH59u",
+                    "lon": 17.228494,
+                    "lat": 59.077804
+                },
+                "pickup": {
+                    "hint": "Oe8CgCzvAoA8AAAAAAAAAD0GAAC-AAAAYLElQgAAAABL4opE-MQEQzwAAAAAAAAAPQYAAL4AAAByAQAABsAMAZS_hgODvAwBob-GAwoAnwvEH59u",
+                    "lon": 17.612806,
+                    "lat": 59.162516
+                },
+                "id": "booking-37"
+            },
+            {
+                "delivery": {
+                    "hint": "KCwrgPcsK4AAAAAALwAAAPAEAADcAQAAAAAAAHyyA0J23ltEzfOkQwAAAAAvAAAA8AQAANwBAAByAQAAowwFAVqziQM9_gQB6K2JAxsAbxTEH59u",
+                    "lon": 17.108131,
+                    "lat": 59.355994
+                },
+                "pickup": {
+                    "hint": "ZjAngGgwJ4AaAAAAAAAAAAAAAABAAAAAPNaQQQAAAAAAAAAAtswyQhoAAAAAAAAAAAAAAEAAAAByAQAAHYELAXnViwNtbAsBSsSLAwAArwjEH59u",
+                    "lon": 17.531165,
+                    "lat": 59.495801
+                },
+                "id": "booking-40"
+            },
+            {
+                "delivery": {
+                    "hint": "6nwAgEZeJ4AtAAAACwAAAGUEAAA5AgAAFyNIQpB0QEGQd5xEfnoeRC0AAAALAAAAZQQAADkCAAByAQAAglwDAdfEjgOYcQMBNciOAxIALwrEH59u",
+                    "lon": 16.997506,
+                    "lat": 59.688151
+                },
+                "pickup": {
+                    "hint": "hrsqgJG7KoAjAAAAAAAAAIkKAADtAAAANonEQQAAAACU5upE3qslQyMAAAAAAAAAiQoAAO0AAAByAQAAYfcHAX1AhANC9AcB6UyEAzYAzxDEH59u",
+                    "lon": 17.299297,
+                    "lat": 58.998909
+                },
+                "id": "booking-48"
+            },
+            {
+                "delivery": {
+                    "hint": "IYsmgESLJoAAAAAASQAAAGgAAADRBwAAAAAAABlTS0IyHJFCqyOuRAAAAABJAAAAaAAAANEHAAByAQAAOGEIAetmhgObfwgBQWiGAwMAHwvEH59u",
+                    "lon": 17.326392,
+                    "lat": 59.139819
+                },
+                "pickup": {
+                    "hint": "iTErgJMxK4DOAAAAAAAAALIDAAAAAAAA1HYPQwAAAACGzyREAAAAAM4AAAAAAAAAsgMAAAAAAAByAQAAGSIFATUAiwN62wQB-xqLAw4ArxLEH59u",
+                    "lon": 17.113625,
+                    "lat": 59.441205
+                },
+                "id": "booking-53"
+            },
+            {
+                "delivery": {
+                    "hint": "70MDgP___397AAAAmAAAAKcHAAAuAgAAa0ikQ6kgmkLFkqNF9mq6RHsAAACYAAAApwcAAC4CAAByAQAADg8EAbsoiQPuDgQBpSiJAxQAPxPEH59u",
+                    "lon": 17.043214,
+                    "lat": 59.320507
+                },
+                "pickup": {
+                    "hint": "ZIEmgGaBJoAeAAAASgAAADgCAAAAAAAAlwipQScoTkIwWcVDAAAAAB4AAABKAAAAOAIAAAAAAAByAQAAb0sJAV1ZhgMUhQkB3laGAwYAjwvEH59u",
+                    "lon": 17.386351,
+                    "lat": 59.136349
+                },
+                "id": "booking-54"
+            },
+            {
+                "delivery": {
+                    "hint": "nYEmgPmBJoAkAAAAAAAAANkBAABwAAAADZPHQQAAAABxaaRDTtSaQiQAAAAAAAAA2QEAAHAAAAByAQAA6_oGAcbEhwNjDwcBG9eHAwwAjwbEH59u",
+                    "lon": 17.234667,
+                    "lat": 59.229382
+                },
+                "pickup": {
+                    "hint": "vPYCgPzaJoCGAAAAAAAAAJoCAADsAAAAf1C6QgAAAABc8ehDkjUlQ4YAAAAAAAAAmgIAAOwAAAByAQAAJukLAT70hQOK5QsBw_CFAxQAfwfEH59u",
+                    "lon": 17.557798,
+                    "lat": 59.110462
+                },
+                "id": "booking-60"
+            },
+            {
+                "delivery": {
+                    "hint": "HAgrgCUIK4BxAAAAGAAAABgCAAC2AQAAAe2dQgBdhUF-vLpDadaYQ3EAAAAYAAAAGAIAALYBAAByAQAATYAEAS08hQMOggQBPTuFAwQALw7EH59u",
+                    "lon": 17.072205,
+                    "lat": 59.063341
+                },
+                "pickup": {
+                    "hint": "bc0ngHPNJ4AXAAAAKwAAALwGAABHAgAA0RYcQXPSj0F6FTREulNzQxcAAAArAAAAvAYAAEcCAAByAQAA9okOAeOgkAMqjA4BTaGQAxkAPxXEH59u",
+                    "lon": 17.730038,
+                    "lat": 59.810019
+                },
+                "id": "booking-66"
+            },
+            {
+                "delivery": {
+                    "hint": "kA0AgD4TAIANAAAACQAAADsDAADvAQAAa-ikQbkrXEG-nqFEHeMnRA0AAAAJAAAAOwMAAO8BAAByAQAArNoOARYZhgMT1g4BTyGGAyEA3w_EH59u",
+                    "lon": 17.7507,
+                    "lat": 59.119894
+                },
+                "pickup": {
+                    "hint": "PAgrgE8IK4AAAAAAMgAAAGEAAAAKDwAAAAAAAK2GC0JnZoZCs4onRQAAAAAyAAAAYQAAAAoPAAByAQAAiU4EAVOjhAO5EgQBaomEAwEAnwjEH59u",
+                    "lon": 17.059465,
+                    "lat": 59.024211
+                },
+                "id": "booking-70"
+            },
+            {
+                "delivery": {
+                    "hint": "bx8rgKkfK4BdAAAARgAAAAAAAAAAAAAAYK2CQtVfQUIAAAAAAAAAAF0AAABGAAAAAAAAAAAAAAByAQAAVKEDAW0OigPsoQMBvA2KAwAAbw_EH59u",
+                    "lon": 17.015124,
+                    "lat": 59.379309
+                },
+                "pickup": {
+                    "hint": "iTArgP8wK4AAAAAAIAAAAAAAAABLBAAAAAAAAH66sUEAAAAASgk_RAAAAAAgAAAAAAAAAEsEAAByAQAAoeUHAfbgigN5eQgBIeeKAwAAvw3EH59u",
+                    "lon": 17.294753,
+                    "lat": 59.433206
+                },
+                "id": "booking-80"
+            },
+            {
+                "delivery": {
+                    "hint": "L0YrgG1GK4ALAAAAAAAAAHUDAADYAgAAlsT_QAAAAADHvBlEUZ78QwsAAAAAAAAAdQMAANgCAAByAQAA5gcFAZpPhwMGAAUBL1GHAxAATwHEH59u",
+                    "lon": 17.106918,
+                    "lat": 59.199386
+                },
+                "pickup": {
+                    "hint": "9F0ngPtdJ4BiAAAAkQAAANAAAABSBAAABkkkQu_jcEJ2bq1CENrmQ2IAAACRAAAA0AAAAFIEAAByAQAAzKEDAQSRjgOVkgMBVI-OAwIAfwrEH59u",
+                    "lon": 17.015244,
+                    "lat": 59.674884
+                },
+                "id": "booking-83"
+            },
+            {
+                "delivery": {
+                    "hint": "RisrgHcrK4AgAAAAAAAAAIcOAABKAgAA_bywQQAAAABJCCJF50jMQyAAAAAAAAAAhw4AAEoCAAByAQAAAfkHAZoiigMM-wcBEiCKA0YArwTEH59u",
+                    "lon": 17.299713,
+                    "lat": 59.384474
+                },
+                "pickup": {
+                    "hint": "ZuUmgGnlJoAAAAAAFQAAAAAAAACkCAAAAAAAAOTKbUEAAAAA3IXARAAAAAAVAAAAAAAAAKQIAAByAQAA9NcJAdddiwPpVQoBXSyLAwAAzxPEH59u",
+                    "lon": 17.422324,
+                    "lat": 59.465175
+                },
+                "id": "booking-93"
+            },
+            {
+                "delivery": {
+                    "hint": "YOgmgN3oJoAAAAAAKQAAAAAAAADJAAAAAAAAALED40EAAAAATeELQwAAAAApAAAAAAAAAMkAAAByAQAAHTMHATZ-iwPtBwcBI3WLAwAA3wLEH59u",
+                    "lon": 17.249053,
+                    "lat": 59.473462
+                },
+                "pickup": {
+                    "hint": "e2cmgH9nJoANAAAAAAAAANoDAAAAAAAANqgLQQAAAAAlnStEAAAAAA0AAAAAAAAA2gMAAAAAAAByAQAAaq4LAYEOhQM2sQsBwROFAzEAvxLEH59u",
+                    "lon": 17.542762,
+                    "lat": 59.051649
+                },
+                "id": "booking-94"
+            },
+            {
+                "delivery": {
+                    "hint": "qUMDgBc2K4AYAAAANgAAAD0FAADfAwAAq4KIQbHwFEIt9GhEJHwsRBgAAAA2AAAAPQUAAN8DAAByAQAA4k8FATpviAOuRwUBO2qIAygALwjEH59u",
+                    "lon": 17.125346,
+                    "lat": 59.273018
+                },
+                "pickup": {
+                    "hint": "IVcmgCNXJoAAAAAA5gAAAAAAAAAAAAAAAAAAAOT1v0IAAAAAAAAAAAAAAADmAAAAAAAAAAAAAAByAQAAuYENAcNxhgMbjA0BynSGAwAAjxPEH59u",
+                    "lon": 17.662393,
+                    "lat": 59.142595
+                },
+                "id": "booking-100"
+            },
+            {
+                "delivery": {
+                    "hint": "Wj0rgFw9K4AAAAAADQAAAGcBAADPAAAAAAAAACjVa0FWb8hDMDFlQwAAAAANAAAAZwEAAM8AAAByAQAAOu0FAadrhgOR5AUBxGWGAwQAPxPEH59u",
+                    "lon": 17.165626,
+                    "lat": 59.141031
+                },
+                "pickup": {
+                    "hint": "xvUqgMf1KoBkAAAAAAAAACsBAAAAAAAAp32KQgAAAAADCVBDAAAAAGQAAAAAAAAAKwEAAAAAAAByAQAAqJ8HAfuRiANH1wcBXKGIAwYAHxXEH59u",
+                    "lon": 17.27684,
+                    "lat": 59.281915
+                },
+                "id": "booking-103"
+            },
+            {
+                "delivery": {
+                    "hint": "gjArgAwxK4AAAAAADQAAACYAAACmAAAAAAAAANxxEUFFxtVBHbzlQgAAAAANAAAAJgAAAKYAAAByAQAAGrIHAUeQigPIsgcB-JCKAwIADwjEH59u",
+                    "lon": 17.281562,
+                    "lat": 59.412551
+                },
+                "pickup": {
+                    "hint": "QfsqgGb7KoAtAAAAAAAAADMBAACTAAAAKrz4QQAAAABF3VZDtcLMQi0AAAAAAAAAMwEAAJMAAAByAQAAPDgIAcVziQNRMAgB8HqJAwUADxDEH59u",
+                    "lon": 17.3159,
+                    "lat": 59.339717
+                },
+                "id": "booking-109"
+            },
+            {
+                "delivery": {
+                    "hint": "KUQDgH1EA4AcAAAAIAAAAB4HAAC6DAAAyj-eQdLisUHZgJ5ETJUNRRwAAAAgAAAAHgcAALoMAAByAQAAMdgFAeSzhgND1AUBBbeGAxoA3w7EH59u",
+                    "lon": 17.160241,
+                    "lat": 59.159524
+                },
+                "pickup": {
+                    "hint": "TDUrgIM1K4ACAAAANgAAALwBAAARAgAADYZFQFQDp0LAlSxENBJPRAIAAAA2AAAAvAEAABECAAByAQAAyQsGASvUhwM3EwYBANKHAw8AHw3EH59u",
+                    "lon": 17.173449,
+                    "lat": 59.233323
+                },
+                "id": "booking-113"
+            },
+            {
+                "delivery": {
+                    "hint": "HUQDgDs9K4AfAAAAQwAAABUBAABmAAAAnMOvQZe1OEJkwz9DwRCNQh8AAABDAAAAFQEAAGYAAAByAQAAsaMGATiChQOxowYBNYKFAwsA_xDEH59u",
+                    "lon": 17.212337,
+                    "lat": 59.081272
+                },
+                "pickup": {
+                    "hint": "8usmgPXrJoAVAAAAAAAAAMkAAADtAQAAJNgMQQAAAABApqdC6VdOQxUAAAAAAAAAyQAAAO0BAAByAQAAJJYGAcb4jAOQbwYB9-aMAwIAzwjEH59u",
+                    "lon": 17.208868,
+                    "lat": 59.570374
+                },
+                "id": "booking-115"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "2-0",
+            "bookings": 10,
+            "vehicles": 0,
+            "centroid_lon_lat": [
+                17.6052769,
+                59.45577675
+            ]
+        },
+        "vehicles": [],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "IzwDgGfAKoBeAAAAOgAAABAAAAAAAAAAHqaDQqD1H0LimzZBAAAAAF4AAAA6AAAAEAAAAAAAAAByAQAA22gIAXrlhAP5aAgBQeWEAwEAvwTEH59u",
+                    "lon": 17.328347,
+                    "lat": 59.041146
+                },
+                "pickup": {
+                    "hint": "GogngCWIJ4AWAAAAJAAAABYEAABpBAAAq298QVyMxUHCqjZE3MFERBYAAAAkAAAAFgQAAGkEAAByAQAARboRAf03kQOmvBEBezSRAyUAfwTEH59u",
+                    "lon": 17.939013,
+                    "lat": 59.848701
+                },
+                "id": "booking-23"
+            },
+            {
+                "delivery": {
+                    "hint": "4lkfgP___38JAAAAFgAAADsIAABMAQAAwwTAQXTv70ELZKFFCCZLRAkAAAAWAAAAOwgAAEwBAAByAQAAzKUQAWfTjgP3pxABstOOAyAAjxXEH59u",
+                    "lon": 17.868236,
+                    "lat": 59.691879
+                },
+                "pickup": {
+                    "hint": "QYAmgEKAJoAVAAAAAAAAAL4AAAAAAAAAY3BsQQAAAABK9gRDAAAAABUAAAAAAAAAvgAAAAAAAAByAQAAYBEIAWy-hgOIGAgBncSGAwgAXxPEH59u",
+                    "lon": 17.305952,
+                    "lat": 59.16222
+                },
+                "id": "booking-31"
+            },
+            {
+                "delivery": {
+                    "hint": "254XgEz1AYAdAAAAAAAAAM4AAADEAgAA-ZQAQgAAAACv72VDw1FFRB0AAAAAAAAAzgAAAMQCAAByAQAAcDoQAW6bhANyYBABdLaEAwYADwfEH59u",
+                    "lon": 17.840752,
+                    "lat": 59.02219
+                },
+                "pickup": {
+                    "hint": "nHongJ56J4AGAAAAHAAAAK4DAAAjAAAA1heRQJ4Om0Fe6iNEJ0LAQQYAAAAcAAAArgMAACMAAAByAQAAt38KAfrgkAPmgAoB6eGQAzkA7xLEH59u",
+                    "lon": 17.465271,
+                    "lat": 59.826426
+                },
+                "id": "booking-41"
+            },
+            {
+                "delivery": {
+                    "hint": "6HIAgI8xI4BbAAAAjwAAAEgDAAAwAgAAvut9Qr5sxkKYRhJEBCvDQ1sAAACPAAAASAMAADACAAByAQAAiggRAR3hiwPcChEBj-GLAxEA_wnEH59u",
+                    "lon": 17.893514,
+                    "lat": 59.498781
+                },
+                "pickup": {
+                    "hint": "YOgmgN3oJoAAAAAAKQAAAAAAAADJAAAAAAAAALED40EAAAAATeELQwAAAAApAAAAAAAAAMkAAAByAQAAHTMHATZ-iwMjKgcB_X6LAwAA3wLEH59u",
+                    "lon": 17.249053,
+                    "lat": 59.473462
+                },
+                "id": "booking-59"
+            },
+            {
+                "delivery": {
+                    "hint": "yz4ngNE-J4AzAAAAAAAAAPIAAAAAAAAAIsSpQQAAAAD80MlCAAAAADMAAAAAAAAA8gAAAAAAAAByAQAArBoLAeN0jQMgDQsBlnONAwYATxXEH59u",
+                    "lon": 17.50494,
+                    "lat": 59.602147
+                },
+                "pickup": {
+                    "hint": "_1IcgGdTHIAgAAAAHAAAABgCAABgAAAAx46zQY-JmkEJP7pD6saFQiAAAAAcAAAAGAIAAGAAAAByAQAAK_MMAXeuigOc_AwBy66KAwcADwvEH59u",
+                    "lon": 17.625899,
+                    "lat": 59.420279
+                },
+                "id": "booking-64"
+            },
+            {
+                "delivery": {
+                    "hint": "6PICgJGYJoAAAAAAEQAAAAkGAAAAAAAAAAAAAAVPOkFyWoZEAAAAAAAAAAARAAAACQYAAAAAAAByAQAAWnUOATiZhwM1eQ4Bg5WHAxoA_w_EH59u",
+                    "lon": 17.724762,
+                    "lat": 59.218232
+                },
+                "pickup": {
+                    "hint": "azYfgKk2H4AWAAAAIAAAAD4CAAByAwAAISB6Qcdvr0H4wsdDJ6EZRBYAAAAgAAAAPgIAAHIDAAByAQAAT-kMARE9jgN_6gwBw0COAwUAfxHEH59u",
+                    "lon": 17.623375,
+                    "lat": 59.653393
+                },
+                "id": "booking-68"
+            },
+            {
+                "delivery": {
+                    "hint": "HOwmgH_sJoBSAAAAAAAAAAcEAABzAQAAYOW2QgAAAAAjkY9EuATPQ1IAAAAAAAAABwQAAHMBAAByAQAAlP8FAf1ejQP4BAYBwX-NAw4A7wXEH59u",
+                    "lon": 17.170324,
+                    "lat": 59.596541
+                },
+                "pickup": {
+                    "hint": "QxgcgG0YHIAYAAAACQAAAB0BAAAtAAAA82F_QQgouUCfmj5D9KTvQRgAAAAJAAAAHQEAAC0AAAByAQAAiH4RAYRdiQNGfxEBwF2JAwYATwnEH59u",
+                    "lon": 17.92372,
+                    "lat": 59.33402
+                },
+                "id": "booking-71"
+            },
+            {
+                "delivery": {
+                    "hint": "sbkXgOG5F4AWAAAAKgAAAAAAAABFBgAAaJp8QcyC50EAAAAA7rWLRBYAAAAqAAAAAAAAAEUGAAByAQAAc98QAdwGhgM33BABPg6GAwAAHxDEH59u",
+                    "lon": 17.882995,
+                    "lat": 59.115228
+                },
+                "pickup": {
+                    "hint": "gBwngJccJ4AXAAAAAAAAAFEBAACvAAAA2t7MQQAAAABPNLxDF9pEQxcAAAAAAAAAUQEAAK8AAAByAQAAKWYJAf0OjwP4aAkBYBGPAw4ADxPEH59u",
+                    "lon": 17.393193,
+                    "lat": 59.707133
+                },
+                "id": "booking-86"
+            },
+            {
+                "delivery": {
+                    "hint": "HZgmgF-YJoAAAAAAQAAAAAAAAAC2AQAAAAAAAKgQjkIAAAAAaczzQwAAAABAAAAAAAAAALYBAAByAQAAQ4YPAVYfiAOviA8BTDWIAwAAzwzEH59u",
+                    "lon": 17.794627,
+                    "lat": 59.252566
+                },
+                "pickup": {
+                    "hint": "LhcngDIXJ4AbAAAAQQAAALwNAAAAAAAAHwe6QEaOVUHkgDdEAAAAAA0AAAAhAAAA3wYAAAAAAAByAQAAGAcHATkAjwO5BwcBv_6OAx4AHxDEH59u",
+                    "lon": 17.237784,
+                    "lat": 59.703353
+                },
+                "id": "booking-106"
+            },
+            {
+                "delivery": {
+                    "hint": "uQ0ngL8NJ4BlAAAAhgAAAAgDAAAAAAAA5kCNQrHBukKULgdEAAAAAGUAAACGAAAACAMAAAAAAAByAQAAT5EOAR5CjAO5jQ4B7D2MAwgAXxLEH59u",
+                    "lon": 17.731919,
+                    "lat": 59.523614
+                },
+                "pickup": {
+                    "hint": "U1AcgFRQHICcAAAAAAAAAMAAAAAAAAAA-hQCQgAAAAAHpyBCAAAAAE4AAAAAAAAAYAAAAAAAAAByAQAARpUMAeC9igP9ewwB7d6KAwIAvwHEH59u",
+                    "lon": 17.601862,
+                    "lat": 59.424224
+                },
+                "id": "booking-111"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "2-1",
+            "bookings": 5,
+            "vehicles": 0,
+            "centroid_lon_lat": [
+                17.7337098,
+                59.224956
+            ]
+        },
+        "vehicles": [],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "ynYmgM12JoAcAAAAAAAAABsAAAAAAAAAKKI6QQAAAAD_5zdBAAAAABwAAAAAAAAAGwAAAAAAAAByAQAASIMNAVNfhAMVmg0B4WSEAwIAnwfEH59u",
+                    "lon": 17.662792,
+                    "lat": 59.006803
+                },
+                "pickup": {
+                    "hint": "6NscgOnbHIBRAAAAAAAAAF8BAAAAAAAAAndiQgAAAABA9XNDAAAAAFEAAAAAAAAAXwEAAAAAAAByAQAAeboPAZKdiwOiyw8BnKqLAwMAbxbEH59u",
+                    "lon": 17.807993,
+                    "lat": 59.48149
+                },
+                "id": "booking-22"
+            },
+            {
+                "delivery": {
+                    "hint": "RtgcgP___38VAAAAGwAAAAMBAAAAAAAAGY0-Qo1qQUGzbRBEAAAAABUAAAAbAAAAAwEAAAAAAAByAQAAxCYQAfkpiwO1OBABUDCLAxEAXxTEH59u",
+                    "lon": 17.835716,
+                    "lat": 59.451897
+                },
+                "pickup": {
+                    "hint": "irUXgM-1F4AzAAAAAAAAAMMBAADMAQAAWQ9iQgAAAACvi_pD-Kn_QzMAAAAAAAAAwwEAAMwBAAByAQAAQecQAWnmhAP_6BABteeEAwsAXwfEH59u",
+                    "lon": 17.884993,
+                    "lat": 59.041385
+                },
+                "id": "booking-42"
+            },
+            {
+                "delivery": {
+                    "hint": "8EgcgGBJHIB-AAAAUgAAAOkGAACHAAAA4bKvQgKsYkJe_plEGU68Qn4AAABSAAAA6QYAAIcAAAByAQAA3t4MATz6iAML2QwBv_eIAwwADxTEH59u",
+                    "lon": 17.620702,
+                    "lat": 59.308604
+                },
+                "pickup": {
+                    "hint": "tbYXgNu2F4AAAAAAKQAAAKcKAAD6AAAAAAAAADInOEEctj1EolyLQgAAAAApAAAApwoAAPoAAAByAQAA6y0PASLghQNiHw8BL-CFAxAArwrEH59u",
+                    "lon": 17.772011,
+                    "lat": 59.105314
+                },
+                "id": "booking-52"
+            },
+            {
+                "delivery": {
+                    "hint": "plkmgEJaJoBxAAAAAQAAABQAAAAAAAAApfn8QnXatD71F7BBAAAAAHEAAAABAAAAFAAAAAAAAAByAQAAvFENAajzhgOqTw0BKvOGAwEA_xTEH59u",
+                    "lon": 17.650108,
+                    "lat": 59.175848
+                },
+                "pickup": {
+                    "hint": "FE8cgFBPHIAIAAAAAAAAAF0FAAAAAAAAGMy0QAAAAAC5uW5EAAAAAAgAAAAAAAAAXQUAAAAAAAByAQAAadoNAS73iQMo5g0BHviJAxEAfwjEH59u",
+                    "lon": 17.685097,
+                    "lat": 59.373358
+                },
+                "id": "booking-77"
+            },
+            {
+                "delivery": {
+                    "hint": "LcgmgDjIJoATAAAAAAAAAAAAAABxAAAAQUUBQQAAAAAAAAAA2fE8QhMAAAAAAAAAAAAAAHEAAAByAQAADq8MAUZwhwPusgwBU3GHAwAAbwDEH59u",
+                    "lon": 17.608462,
+                    "lat": 59.20775
+                },
+                "pickup": {
+                    "hint": "47MXgPSzF4DGAAAAAAAAAKEAAABlAAAAFtoJQwAAAAB5TuBCljCMQsYAAAAAAAAAoQAAAGUAAAByAQAASL8PARfAhQMHxQ8BJbuFAwEADw7EH59u",
+                    "lon": 17.809224,
+                    "lat": 59.097111
+                },
+                "id": "booking-84"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "2-2",
+            "bookings": 4,
+            "vehicles": 3,
+            "centroid_lon_lat": [
+                17.789729125,
+                59.417598
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "PuMcgD_jHIAKAAAAAAAAAAAAAAAAAAAA7eeHQAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAByAQAA1FESARoGigNOURIB1waKAwAAPxbEH59u",
+                    "lon": 17.977812,
+                    "lat": 59.377178
+                },
+                "id": "vehicle-21",
+                "end_address": {
+                    "hint": "PuMcgD_jHIAKAAAAAAAAAAAAAAAAAAAA7eeHQAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAByAQAA1FESARoGigNOURIB1waKAwAAPxbEH59u",
+                    "lon": 17.977812,
+                    "lat": 59.377178
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "gkYCgP___38-AAAARQAAAIAAAADoAAAAYJbeQmTqMEG2e2RDWu_NQz4AAABFAAAAgAAAAOgAAAByAQAAmnURAWpJigMBfhEBJlOKAwEAXxLEH59u",
+                    "lon": 17.921434,
+                    "lat": 59.39441
+                },
+                "id": "vehicle-29",
+                "end_address": {
+                    "hint": "gkYCgP___38-AAAARQAAAIAAAADoAAAAYJbeQmTqMEG2e2RDWu_NQz4AAABFAAAAgAAAAOgAAAByAQAAmnURAWpJigMBfhEBJlOKAwEAXxLEH59u",
+                    "lon": 17.921434,
+                    "lat": 59.39441
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "9zQcgPs0HIB7AAAAjAAAAAAAAADqAAAAPcMrQv4RQkIAAAAA2tyiQj0AAABGAAAAAAAAAHQAAAByAQAAHkQPAVU0igPBPA8BSzCKAwAATwjEH59u",
+                    "lon": 17.777694,
+                    "lat": 59.389013
+                },
+                "id": "vehicle-30",
+                "end_address": {
+                    "hint": "9zQcgPs0HIB7AAAAjAAAAAAAAADqAAAAPcMrQv4RQkIAAAAA2tyiQj0AAABGAAAAAAAAAHQAAAByAQAAHkQPAVU0igPBPA8BSzCKAwAATwjEH59u",
+                    "lon": 17.777694,
+                    "lat": 59.389013
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "btYcgHjWHIB5AAAAAAAAAJwCAAAAAAAAGcwGQgAAAABHPzpDAAAAAHkAAAAAAAAAnAIAAAAAAAByAQAAg2cRAVHxigPWVBEBd-uKAwYAvxDEH59u",
+                    "lon": 17.917827,
+                    "lat": 59.437393
+                },
+                "pickup": {
+                    "hint": "YxwcgPMcHIAAAAAAOgAAAEICAAA1AAAAAAAAAHSPIUIT-8hDrmkTQgAAAAA6AAAAQgIAADUAAAByAQAAp2kNAZ2NiAMFXA0BWYWIAwoA7xTEH59u",
+                    "lon": 17.656231,
+                    "lat": 59.280797
+                },
+                "id": "booking-45"
+            },
+            {
+                "delivery": {
+                    "hint": "IWYfgEVmH4AAAAAAMQAAADMBAAD5AAAAAAAAAOSOB0KP-VVDwCstQwAAAAAxAAAAMwEAAPkAAAByAQAAu-gOASrWjwP78Q4BptSPAwsA3wDEH59u",
+                    "lon": 17.754299,
+                    "lat": 59.758122
+                },
+                "pickup": {
+                    "hint": "0bMXgD20F4AAAAAAOwAAAEQHAACyAAAAAAAAAO_9I0Lu_aFErsr2QgAAAAA7AAAARAcAALIAAAByAQAArOUPAV3lhQNt5w8BPNqFAxAATwXEH59u",
+                    "lon": 17.819052,
+                    "lat": 59.106653
+                },
+                "id": "booking-50"
+            },
+            {
+                "delivery": {
+                    "hint": "o1kfgBZaH4ApAAAAJQAAAJUAAAAlAgAAcRrqQdQmykHMWM9CWX2_QykAAAAlAAAAlQAAACUCAAByAQAAqgwQAa-bjwMBDRABR5OPAwgAjwXEH59u",
+                    "lon": 17.829034,
+                    "lat": 59.743151
+                },
+                "pickup": {
+                    "hint": "6qUXgHKmF4APAAAABwAAAMgAAACcAAAAU1wyQWrZjED4eAtDGnjZQg8AAAAHAAAAyAAAAJwAAAByAQAAR94PAaU9hQNn3g8Bfj2FAwUAPwTEH59u",
+                    "lon": 17.817159,
+                    "lat": 59.063717
+                },
+                "id": "booking-96"
+            },
+            {
+                "delivery": {
+                    "hint": "SWscgJxrHIAAAAAACAAAAJ8AAABIBAAAAAAAAH9eu0COCd9C3Zo-RAAAAAAIAAAAnwAAAEgEAAByAQAAxHkPAUsAiwPIPw8B_wSLAwcAzwvEH59u",
+                    "lon": 17.791428,
+                    "lat": 59.441227
+                },
+                "pickup": {
+                    "hint": "D_cCgDj3AoByAAAAAAAAAHQAAACMAAAAyE6fQgAAAADDM6FCSQbDQnIAAAAAAAAAdAAAAIwAAAByAQAAw5QOAdwLjANglA4BtAqMAwMAHxHEH59u",
+                    "lon": 17.732803,
+                    "lat": 59.509724
+                },
+                "id": "booking-112"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "2-3",
+            "bookings": 9,
+            "vehicles": 1,
+            "centroid_lon_lat": [
+                17.5770785,
+                59.33691394444445
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "HU0cgKBNHICzAAAAAAAAAC0AAADGAQAAhV9HQgAAAADSXkhBxA39QrMAAAAAAAAALQAAAMYBAAByAQAAQNMNATB0iQMw2g0BlXiJAwEADwPEH59u",
+                    "lon": 17.683264,
+                    "lat": 59.339824
+                },
+                "id": "vehicle-6",
+                "end_address": {
+                    "hint": "HU0cgKBNHICzAAAAAAAAAC0AAADGAQAAhV9HQgAAAADSXkhBxA39QrMAAAAAAAAALQAAAMYBAAByAQAAQNMNATB0iQMw2g0BlXiJAwEADwPEH59u",
+                    "lon": 17.683264,
+                    "lat": 59.339824
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "CEscgEVLHIAgAAAAAQAAAJMBAABTAQAAvc21QXrAuD6sVYtDgj5sQyAAAAABAAAAkwEAAFMBAAByAQAAjJ4LAS-3igNHjAsBLcGKAwgA_wLEH59u",
+                    "lon": 17.5387,
+                    "lat": 59.422511
+                },
+                "pickup": {
+                    "hint": "lKUmgJalJoASAAAAMgEAAAAAAAAAAAAAxzpzQPiyf0IAAAAAAAAAAAkAAACZAAAAAAAAAAAAAAByAQAAkXIMASJDhwOecgwB8EKHAwAALwXEH59u",
+                    "lon": 17.592977,
+                    "lat": 59.196194
+                },
+                "id": "booking-8"
+            },
+            {
+                "delivery": {
+                    "hint": "xTcngM43J4DkAAAAAAAAAKIJAAAAAAAAZKAeQwAAAABVr9ZEAAAAAOQAAAAAAAAAogkAAAAAAAByAQAA31wEAd3SjAOXgQQBW6uMAxIA_wTEH59u",
+                    "lon": 17.063135,
+                    "lat": 59.560669
+                },
+                "pickup": {
+                    "hint": "qvQBgP___38pAAAAPQAAAEAAAAC7CwAA-jTLQneUQ0JrkxxD8ivmRSkAAAA9AAAAQAAAALsLAAByAQAAcvoRAbi8hANuCRIBpbiEAwEAvwHEH59u",
+                    "lon": 17.955442,
+                    "lat": 59.030712
+                },
+                "id": "booking-11"
+            },
+            {
+                "delivery": {
+                    "hint": "jNImgI3SJoCBAAAAAAAAAM4AAAAAAAAAraHXQQAAAAD-BSxCAAAAAEEAAAAAAAAAZwAAAAAAAAByAQAA4lEJAVTyhwMcPQkB5_SHAwMAfxXEH59u",
+                    "lon": 17.388002,
+                    "lat": 59.241044
+                },
+                "pickup": {
+                    "hint": "KaAcgCqgHIAfAAAAYAAAAAAAAAAAAAAAMQGvQSXXhEIAAAAAAAAAAB8AAABgAAAAAAAAAAAAAAByAQAAFTYQARTVigPTNRABgNSKAwAAbwbEH59u",
+                    "lon": 17.839637,
+                    "lat": 59.430164
+                },
+                "id": "booking-32"
+            },
+            {
+                "delivery": {
+                    "hint": "ZX8mgGh_JoAAAAAAXQAAAAAAAAAZAAAAAAAAAEMJgUIAAAAAZS2NQQAAAABdAAAAAAAAABkAAAByAQAAXkwOATkEhgMFPQ4BtgaGAwAAjwPEH59u",
+                    "lon": 17.71427,
+                    "lat": 59.114553
+                },
+                "pickup": {
+                    "hint": "BkMngBVDJ4ALAAAAAAAAAFoAAAAAAAAAbAT1QAAAAAD3VHpCAAAAAAsAAAAAAAAAWgAAAAAAAAByAQAAfmwLAccTjQMpbgsBcBONAwEAvwbEH59u",
+                    "lon": 17.525886,
+                    "lat": 59.577287
+                },
+                "id": "booking-44"
+            },
+            {
+                "delivery": {
+                    "hint": "mjEngG4yJ4BkAAAARwAAAJEEAAAXAQAAuICMQhQJQ0JpPEtEl9ZBQ2QAAABHAAAAkQQAABcBAAByAQAASgcNAavqiwMcMg0BTeCLAwoA3wzEH59u",
+                    "lon": 17.63105,
+                    "lat": 59.501227
+                },
+                "pickup": {
+                    "hint": "FM4mgCbOJoAGAAAAGAAAALQBAABQAQAAMHuMQHicg0F7zpdDMhFqQwYAAAAYAAAAtAEAAFABAAByAQAAtRUKAZmihwNvFQoBwKKHAwcAPw7EH59u",
+                    "lon": 17.438133,
+                    "lat": 59.220633
+                },
+                "id": "booking-65"
+            },
+            {
+                "delivery": {
+                    "hint": "vVIcgL9SHIBBAAAAAAAAAC8BAAAAAAAAFPQ1QgAAAABBhFNDAAAAAEEAAAAAAAAALwEAAAAAAAByAQAAiYINAdfAigPEuA0BctOKAwcAHxXEH59u",
+                    "lon": 17.662601,
+                    "lat": 59.424983
+                },
+                "pickup": {
+                    "hint": "Y64mgGWuJoAeAAAAAAAAALYBAAAAAAAAn3mpQQAAAAD6U5hDAAAAAB4AAAAAAAAAtgEAAAAAAAByAQAABF8JAUcKiQOprAkBqoqJAwcADwLEH59u",
+                    "lon": 17.391364,
+                    "lat": 59.312711
+                },
+                "id": "booking-87"
+            },
+            {
+                "delivery": {
+                    "hint": "-vwCgP___38sAAAAOQAAALoDAACzAQAATKDYQoAl_kE5ehJFReWFRCwAAAA5AAAAugMAALMBAAByAQAA8LgLAccEjQPXtAsBDAONAxQAzwjEH59u",
+                    "lon": 17.545456,
+                    "lat": 59.573447
+                },
+                "pickup": {
+                    "hint": "e_UBgEahF4BpAAAAAAAAADYCAAAAAAAA5XqSQgAAAABA_MRDAAAAAGkAAAAAAAAANgIAAAAAAAByAQAAOiUPAfy_hAPm8Q4BFMqEAwUAPw7EH59u",
+                    "lon": 17.769786,
+                    "lat": 59.031548
+                },
+                "id": "booking-90"
+            },
+            {
+                "delivery": {
+                    "hint": "Aw4ngAUOJ4CkAgAAgwAAAJEBAAC-AAAAEInrQ3JqtkJEyYtDSqsEQ6QCAACDAAAAkQEAAL4AAAByAQAA2OwLAUULjgN97AsBqw6OAwEArxDEH59u",
+                    "lon": 17.558744,
+                    "lat": 59.640645
+                },
+                "pickup": {
+                    "hint": "W_YCgOD1AoAAAAAASAAAADcFAADGAQAAAAAAAGeuSEJvXWhEJMedQwAAAABIAAAANwUAAMYBAAByAQAAypkLAcFshgPAlgsBoGWGAxAAzwXEH59u",
+                    "lon": 17.537482,
+                    "lat": 59.141313
+                },
+                "id": "booking-101"
+            },
+            {
+                "delivery": {
+                    "hint": "2-8CgOddJoAOAAAAAAAAAAYGAACiBQAAPUYbQQAAAADaEIZEbFZ7RA4AAAAAAAAABgYAAKIFAAByAQAADZQLASK7hAOjjwsBQL-EAxoAvw_EH59u",
+                    "lon": 17.536013,
+                    "lat": 59.030306
+                },
+                "pickup": {
+                    "hint": "QDQfgEQ0H4B1AAAAKgAAADsAAAAqAAAArAKkQg-u5UG_1yRCBSHsQXUAAAAqAAAAOwAAACoAAAByAQAArw8OASiljQP2Dg4BX6SNAwIAbxLEH59u",
+                    "lon": 17.698735,
+                    "lat": 59.614504
+                },
+                "id": "booking-114"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "2-4",
+            "bookings": 5,
+            "vehicles": 3,
+            "centroid_lon_lat": [
+                17.566691,
+                59.1599548
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "fO8CgEFWJoAPAAAAFgAAALkAAAAeAQAA0jCHQZ35wkGwzk5DKlmfQw8AAAAWAAAAuQAAAB4BAAByAQAAvmMNAWSEhgPkYg0BvISGAwQAbwLEH59u",
+                    "lon": 17.654718,
+                    "lat": 59.147364
+                },
+                "id": "vehicle-5",
+                "end_address": {
+                    "hint": "fO8CgEFWJoAPAAAAFgAAALkAAAAeAQAA0jCHQZ35wkGwzk5DKlmfQw8AAAAWAAAAuQAAAB4BAAByAQAAvmMNAWSEhgPkYg0BvISGAwQAbwLEH59u",
+                    "lon": 17.654718,
+                    "lat": 59.147364
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "J9wmgCzcJoAkAAAAAAAAAPkQAADdAwAApJHHQQAAAABt2DxFPxAsRCQAAAAAAAAA-RAAAN0DAAByAQAAnUcMAQc-hgNZWAwBlUiGAz8ArwfEH59u",
+                    "lon": 17.581981,
+                    "lat": 59.129351
+                },
+                "id": "vehicle-14",
+                "end_address": {
+                    "hint": "J9wmgCzcJoAkAAAAAAAAAPkQAADdAwAApJHHQQAAAABt2DxFPxAsRCQAAAAAAAAA-RAAAN0DAAByAQAAnUcMAQc-hgNZWAwBlUiGAz8ArwfEH59u",
+                    "lon": 17.581981,
+                    "lat": 59.129351
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "qGcmgLBnJoAAAAAAGAAAAAAAAAADAQAAAAAAAMqAIkEAAAAA72bYQgAAAAAYAAAAAAAAAAMBAAByAQAAib8LAUvWhANfwwsBetKEAwAAzwLEH59u",
+                    "lon": 17.547145,
+                    "lat": 59.037259
+                },
+                "id": "vehicle-31",
+                "end_address": {
+                    "hint": "qGcmgLBnJoAAAAAAGAAAAAAAAAADAQAAAAAAAMqAIkEAAAAA72bYQgAAAAAYAAAAAAAAAAMBAAByAQAAib8LAUvWhANfwwsBetKEAwAAzwLEH59u",
+                    "lon": 17.547145,
+                    "lat": 59.037259
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "OK8mgDmvJoBFAAAAAAAAADgAAAAAAAAAurflQQAAAADK77tBAAAAAEUAAAAAAAAAOAAAAAAAAAByAQAA-hcLAZd_iAMsgwsBdMOIAwEAnwLEH59u",
+                    "lon": 17.50425,
+                    "lat": 59.277207
+                },
+                "pickup": {
+                    "hint": "cHwmgJd8JoAwAAAAAAAAAHUBAAAAAAAAFNghQQAAAAAQrJtCAAAAABgAAAAAAAAAuQAAAAAAAAByAQAAAWQNAZWshAMxIA0BpKWEAwMAPxDEH59u",
+                    "lon": 17.654785,
+                    "lat": 59.026581
+                },
+                "id": "booking-4"
+            },
+            {
+                "delivery": {
+                    "hint": "KUUrgLpFK4AAAAAARgAAABwCAACFAwAAAAAAAKsN2UIpYlJEWaqvRAAAAABGAAAAHAIAAIUDAAByAQAAl1EHAR4mhgOgOQcBdh-GAxUA3xTEH59u",
+                    "lon": 17.256855,
+                    "lat": 59.12323
+                },
+                "pickup": {
+                    "hint": "4UscgOJLHIAdAAAAAAAAANYAAAAAAAAAJMKjQQAAAAD5RxVDAAAAAB0AAAAAAAAA1gAAAAAAAAByAQAAsTIPAUd8iQOKXg8Bp3GJAwgAjwjEH59u",
+                    "lon": 17.773233,
+                    "lat": 59.341895
+                },
+                "id": "booking-15"
+            },
+            {
+                "delivery": {
+                    "hint": "_kcogANIKIBkAAAAAAAAAFUAAAARAAAAWKqLQgAAAAAt4WxCg9o7QWQAAAAAAAAAVQAAABEAAAByAQAABiwQAe4BhwNMPBABhvyGAwEAbwPEH59u",
+                    "lon": 17.837062,
+                    "lat": 59.179502
+                },
+                "pickup": {
+                    "hint": "lYsmgJyLJoAAAAAAGwAAAKMHAAB2AAAAAAAAAJJhlkHC-alEPOGkQgAAAAAbAAAAowcAAHYAAAByAQAAKacJAVkNhQMThgkBewOFAzYAPwnEH59u",
+                    "lon": 17.409833,
+                    "lat": 59.051353
+                },
+                "id": "booking-29"
+            },
+            {
+                "delivery": {
+                    "hint": "6q8mgOyvJoAAAAAAJAAAAD4CAACAAQAAAAAAAJ_Yx0EG6sdD0o6FQwAAAAAkAAAAPgIAAIABAAByAQAAEpAJAfAqiAMYlgkB4jSIAwgA_wbEH59u",
+                    "lon": 17.403922,
+                    "lat": 59.255536
+                },
+                "pickup": {
+                    "hint": "JqIXgKiiF4ANAAAAOAAAAIIAAABBAAAAdS7IQWPjyEJpfGtD2WbqQg0AAAA4AAAAggAAAEEAAAByAQAAMaUPAbtThAOhoQ8BX1SEAwEAfwzEH59u",
+                    "lon": 17.802545,
+                    "lat": 59.003835
+                },
+                "id": "booking-61"
+            },
+            {
+                "delivery": {
+                    "hint": "4_kqgPL5KoBOAAAAEgAAAAAAAAAWAgAApdpZQqWxQUEAAAAAs8y5Q04AAAASAAAAAAAAABYCAAByAQAA4vAFARQxiQPs4QUBbjaJAwAAPwLEH59u",
+                    "lon": 17.166562,
+                    "lat": 59.322644
+                },
+                "pickup": {
+                    "hint": "OZ8XgDyfF4AAAAAACgAAAEYAAAAkAAAAAAAAAPkT50CLVEVCzjfFQQAAAAAKAAAARgAAACQAAAByAQAAR30QASWKhAPqeBAB1YSEAwIAPwTEH59u",
+                    "lon": 17.857863,
+                    "lat": 59.017765
+                },
+                "id": "booking-117"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "2-5",
+            "bookings": 1,
+            "vehicles": 1,
+            "centroid_lon_lat": [
+                17.921113,
+                59.0382855
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "47UXgFq2F4AVAAAAEQAAAAAAAAC2AAAAUtVoQRBmPEEAAAAAKbX8QhUAAAARAAAAAAAAALYAAAByAQAAvKQQAYkxhQOEoxABAjSFAwAAvwTEH59u",
+                    "lon": 17.867964,
+                    "lat": 59.060617
+                },
+                "id": "vehicle-32",
+                "end_address": {
+                    "hint": "47UXgFq2F4AVAAAAEQAAAAAAAAC2AAAAUtVoQRBmPEEAAAAAKbX8QhUAAAARAAAAAAAAALYAAAByAQAAvKQQAYkxhQOEoxABAjSFAwAAvwTEH59u",
+                    "lon": 17.867964,
+                    "lat": 59.060617
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "oY4XgFePF4AmAAAAvgAAALsFAAAPAgAAxkMqQoheU0PTVsxEpJ4SRCYAAAC-AAAAuwUAAA8CAAByAQAAQr4SAbWVhAPfmBIBCouEAw0AfwnEH59u",
+                    "lon": 18.00557,
+                    "lat": 59.020725
+                },
+                "pickup": {
+                    "hint": "v6MXgNajF4AwAAAAfwAAACoIAAANAgAAsgUHQjk3sEK8-bVEF7y2QzAAAAB_AAAAKggAAA0CAAByAQAAcCoQAeYehQOjKxABPx6FAxIA7wLEH59u",
+                    "lon": 17.836656,
+                    "lat": 59.055846
+                },
+                "id": "booking-69"
+            }
+        ]
+    },
+    {
+        "metadata": {
+            "cluster_nr": "3",
+            "bookings": 23,
+            "vehicles": 4,
+            "centroid_lon_lat": [
+                17.678648152173913,
+                59.720540847826086
+            ]
+        },
+        "vehicles": [
+            {
+                "start_address": {
+                    "hint": "z64ngPquJ4AVAAAAJAAAAP4CAABkAQAA7_0EQtGNV0KA_5JEnSkIRBUAAAAkAAAA_gIAAGQBAAByAQAA2J0SARu1kgOqnhIBaK-SAwYAnxDEH59u",
+                    "lon": 17.997272,
+                    "lat": 59.946267
+                },
+                "id": "vehicle-11",
+                "end_address": {
+                    "hint": "z64ngPquJ4AVAAAAJAAAAP4CAABkAQAA7_0EQtGNV0KA_5JEnSkIRBUAAAAkAAAA_gIAAGQBAAByAQAA2J0SARu1kgOqnhIBaK-SAwYAnxDEH59u",
+                    "lon": 17.997272,
+                    "lat": 59.946267
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "LgQDgMeuJ4AAAAAAEgAAALcDAAB_AgAAAAAAAI2InkFbVYREocwxRAAAAAASAAAAtwMAAH8CAAByAQAAm4USASgWkwO1kBIBoh-TAzEArwfEH59u",
+                    "lon": 17.991067,
+                    "lat": 59.971112
+                },
+                "id": "vehicle-13",
+                "end_address": {
+                    "hint": "LgQDgMeuJ4AAAAAAEgAAALcDAAB_AgAAAAAAAI2InkFbVYREocwxRAAAAAASAAAAtwMAAH8CAAByAQAAm4USASgWkwO1kBIBoh-TAzEArwfEH59u",
+                    "lon": 17.991067,
+                    "lat": 59.971112
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "Ok4fgDxOH4AoAAAAIgAAAAAAAADDAAAAy3cPQj668EEAAAAAms0tQygAAAAiAAAAAAAAAMMAAAByAQAAWqgPAb1wjwNfqg8BpnKPAwAArxLEH59u",
+                    "lon": 17.803354,
+                    "lat": 59.732157
+                },
+                "id": "vehicle-26",
+                "end_address": {
+                    "hint": "Ok4fgDxOH4AoAAAAIgAAAAAAAADDAAAAy3cPQj668EEAAAAAms0tQygAAAAiAAAAAAAAAMMAAAByAQAAWqgPAb1wjwNfqg8BpnKPAwAArxLEH59u",
+                    "lon": 17.803354,
+                    "lat": 59.732157
+                }
+            },
+            {
+                "start_address": {
+                    "hint": "utgngLzYJ4BEAAAACQAAAIAFAADCAAAAs5M_QjCLskD1EXVE_TUHQ0QAAAAJAAAAgAUAAMIAAAByAQAAez0KAehtkwM6SgoBYnaTAxUALxPEH59u",
+                    "lon": 17.448315,
+                    "lat": 59.993576
+                },
+                "id": "vehicle-27",
+                "end_address": {
+                    "hint": "utgngLzYJ4BEAAAACQAAAIAFAADCAAAAs5M_QjCLskD1EXVE_TUHQ0QAAAAJAAAAgAUAAMIAAAByAQAAez0KAehtkwM6SgoBYnaTAxUALxPEH59u",
+                    "lon": 17.448315,
+                    "lat": 59.993576
+                }
+            }
+        ],
+        "bookings": [
+            {
+                "delivery": {
+                    "hint": "Ws8ngFzPJ4AGAAAAAAAAADkCAACqBAAAiemDQAAAAACD9MVDIu5PRAYAAAAAAAAAOQIAAKoEAAByAQAA-ocQAfipkQO7rRABBKORAxYATwvEH59u",
+                    "lon": 17.860602,
+                    "lat": 59.87788
+                },
+                "pickup": {
+                    "hint": "U5cngGKXJ4AdAAAAAAAAACwCAAC9AAAAV5mhQQAAAAA-dsFDlFwEQx0AAAAAAAAALAIAAL0AAAByAQAAt9YNAaN3kgPB2w0BanCSAwgAnwTEH59u",
+                    "lon": 17.684151,
+                    "lat": 59.930531
+                },
+                "id": "booking-1"
+            },
+            {
+                "delivery": {
+                    "hint": "b-kngJPpJ4AVAAAAsgEAAAAAAAAYAAAAJJUMQbZPNUMAAAAAEuocQRUAAACyAQAAAAAAABgAAAByAQAAAHgOARjvkQODcg4Bl-qRAwAA3xLEH59u",
+                    "lon": 17.72544,
+                    "lat": 59.895576
+                },
+                "pickup": {
+                    "hint": "5fkCgI4SJ4AiAAAAAwAAAGwAAACdAAAAl2R1Qpd1nEDZY0FDq6-LQyIAAAADAAAAbAAAAJ0AAAByAQAAM2AJAag8jgNYXQkBTkKOAwIAvwTEH59u",
+                    "lon": 17.391667,
+                    "lat": 59.653288
+                },
+                "id": "booking-14"
+            },
+            {
+                "delivery": {
+                    "hint": "cWAfgOpgH4AZAAAAAAAAADgAAAA8AAAAfLGKQQAAAAB6ABxC1YooQhkAAAAAAAAAOAAAADwAAAByAQAAiqcQAZOdjwPhpRABwp2PAwIAzwDEH59u",
+                    "lon": 17.868682,
+                    "lat": 59.743635
+                },
+                "pickup": {
+                    "hint": "meUmgMzlJoAzAAAAAAAAAGIAAAAAAAAACHWrQQAAAABk3CNCAAAAADMAAAAAAAAAYgAAAAAAAAByAQAACYgIAb5kiwNDKAgBXVaLAwQAnw7EH59u",
+                    "lon": 17.336329,
+                    "lat": 59.466942
+                },
+                "id": "booking-17"
+            },
+            {
+                "delivery": {
+                    "hint": "6XUCgI1IH4B9AAAACwAAANMBAAAWAAAA_ftfQ7nvmkHNR1FE_6gdQn0AAAALAAAA0wEAABYAAAByAQAATo4PAbcVjgMFlg8B8xqOAw0ALxPEH59u",
+                    "lon": 17.796686,
+                    "lat": 59.643319
+                },
+                "pickup": {
+                    "hint": "NrgngHO4J4AfAAAAAAAAAHgAAAAAAAAAHcNPQQAAAABzeUhCAAAAAB8AAAAAAAAAeAAAAAAAAAByAQAAUzIMAXsKkQPiBgwBvN2QAwEADw3EH59u",
+                    "lon": 17.576531,
+                    "lat": 59.837051
+                },
+                "id": "booking-21"
+            },
+            {
+                "delivery": {
+                    "hint": "0DArgP0wK4AAAAAAGwAAAAAAAADYAwAAAAAAAGWXmEEAAAAAw14rRAAAAAAbAAAAAAAAANgDAAByAQAAjuUHAUfAigOwiggBbcGKAwAA7xDEH59u",
+                    "lon": 17.294734,
+                    "lat": 59.424839
+                },
+                "pickup": {
+                    "hint": "eq0ngKGtJ4AJAAAAAAAAAOEBAAB2AAAA9fpwQAAAAAD07UhDeS5FQgkAAAAAAAAA4QEAAHYAAAByAQAATS4QAfmZkgMIQRABF5-SAw4AzxTEH59u",
+                    "lon": 17.837645,
+                    "lat": 59.939321
+                },
+                "id": "booking-24"
+            },
+            {
+                "delivery": {
+                    "hint": "FSUcgCwlHIAZAAAA3AAAAGAAAAANAAAALPkdQvx6q0P7UxVDpmGkQRkAAADcAAAAYAAAAA0AAAByAQAAnUkQAecqiQM5ShABZS6JAwIA_wXEH59u",
+                    "lon": 17.844637,
+                    "lat": 59.321063
+                },
+                "pickup": {
+                    "hint": "DH8AgIp-AIAaAAAAAAAAABAZAAD4AwAAco2OQQAAAACSlotFMGIwRBoAAAAAAAAAEBkAAPgDAAByAQAAkRsIAUuskgNT-wcBZaqSA6UAjxXEH59u",
+                    "lon": 17.308561,
+                    "lat": 59.944011
+                },
+                "id": "booking-28"
+            },
+            {
+                "delivery": {
+                    "hint": "i34AgOPbJ4AAAAAAGAAAACIBAABZAwAAAAAAADOhhkF8i0lD1ggVRAAAAAAYAAAAIgEAAFkDAAByAQAAAhkIAQ7LkgNdMggB49iSAwgAXxPEH59u",
+                    "lon": 17.307906,
+                    "lat": 59.951886
+                },
+                "pickup": {
+                    "hint": "w-0ngMTtJ4AAAAAACwAAAAAAAABLAQAAAAAAADAYkkAAAAAAYHYKQwAAAAALAAAAAAAAAEsBAAByAQAAyXwNAWzskQPBjA0BD_KRAwAAbw7EH59u",
+                    "lon": 17.661129,
+                    "lat": 59.894892
+                },
+                "id": "booking-33"
+            },
+            {
+                "delivery": {
+                    "hint": "Oo4ngKOOJ4AGAAAAAAAAAEUAAAAAAAAAFh4aQAAAAADQGuFBAAAAAAYAAAAAAAAARQAAAAAAAAByAQAAGQwNAdJLkAMhDA0Bt1CQAwkAnxLEH59u",
+                    "lon": 17.632281,
+                    "lat": 59.788242
+                },
+                "pickup": {
+                    "hint": "5yUfgCwmH4A-AAAAAAAAACIFAAAAAAAADzvQQQAAAACpOglEAAAAAD4AAAAAAAAAIgUAAAAAAAByAQAAxpMQATrHjAOfkRAB766MAw0AzwvEH59u",
+                    "lon": 17.863622,
+                    "lat": 59.55769
+                },
+                "id": "booking-36"
+            },
+            {
+                "delivery": {
+                    "hint": "ZUMfgNBDH4AMAAAAAAAAALQCAABtAgAABmuYQQAAAAAuMYZEXbtyRAwAAAAAAAAAtAIAAG0CAAByAQAAED4SATG1jgMfXxIB0beOAxsAfxbEH59u",
+                    "lon": 17.972752,
+                    "lat": 59.684145
+                },
+                "pickup": {
+                    "hint": "4j0ngNc-J4AsAAAAEwAAAHoAAAAGAAAAnFuLQhHd50EXoj5DqToZQSwAAAATAAAAegAAAAYAAAByAQAA_igLAVBrjQOGIAsB52mNAwQAHwrEH59u",
+                    "lon": 17.508606,
+                    "lat": 59.599696
+                },
+                "id": "booking-46"
+            },
+            {
+                "delivery": {
+                    "hint": "ZkMfgJFDH4AmAAAAKAAAALQIAADEBAAAZZbVQVfF3kFjIcJEDlxURCYAAAAoAAAAtAgAAMQEAAByAQAAg6gSAaq1jgM3mRIBp7qOAyMADwLEH59u",
+                    "lon": 18.000003,
+                    "lat": 59.684266
+                },
+                "pickup": {
+                    "hint": "DH8AgIp-AIAwAAAADgAAAD8FAAClFwAA7z0GQkmRGEH1lmlEvqWDRTAAAAAOAAAAPwUAAKUXAAByAQAAEKMIAdRRkgPXnwgB2FCSAzUAjxTEH59u",
+                    "lon": 17.343248,
+                    "lat": 59.920852
+                },
+                "id": "booking-51"
+            },
+            {
+                "delivery": {
+                    "hint": "a0kcgG9JHIAPAAAAAAAAADEAAACUAAAAH9LLQAAAAACohqRB-GN4Qg8AAAAAAAAAMQAAAJQAAAByAQAA9IkNAS8miQPPhw0B2ziJAwIA7xLEH59u",
+                    "lon": 17.6645,
+                    "lat": 59.319855
+                },
+                "pickup": {
+                    "hint": "8FofgIZbH4BpAAAAAAAAAHQAAAAAAAAAayYwQgAAAABz4EBCAAAAAGkAAAAAAAAAdAAAAAAAAAByAQAAEPkPAXkakAPm8w8B4SOQAwEAXxTEH59u",
+                    "lon": 17.824016,
+                    "lat": 59.775609
+                },
+                "id": "booking-56"
+            },
+            {
+                "delivery": {
+                    "hint": "BwEDgOQAA4BKAAAAEQAAAEIBAADTAAAAHz6mQtefjkEqQ7NDce9qQ0oAAAARAAAAQgEAANMAAAByAQAAQAwSAfI0kQP8EhIB5jSRAw4ADwDEH59u",
+                    "lon": 17.96,
+                    "lat": 59.847922
+                },
+                "pickup": {
+                    "hint": "mTArgLswK4AyAAAAAAAAAEEFAAAAAAAAfWoKQgAAAAAVA2pEAAAAADIAAAAAAAAAQQUAAAAAAAByAQAAjzgHAeYSiwP7cgcB6y-LAyMAnxXEH59u",
+                    "lon": 17.250447,
+                    "lat": 59.44599
+                },
+                "id": "booking-57"
+            },
+            {
+                "delivery": {
+                    "hint": "QLEngFCxJ4BDAAAAAAAAAN0AAAAAAAAArMU7QgAAAABn_BlDAAAAAEMAAAAAAAAA3QAAAAAAAAByAQAAmscQAevlkgPQrBABaOSSAwIAbxTEH59u",
+                    "lon": 17.87689,
+                    "lat": 59.958763
+                },
+                "pickup": {
+                    "hint": "-rAngPuwJ4AAAAAADQAAAAAAAAC4BQAAAAAAAMSbFUEAAAAAXoZ-RAAAAAANAAAAAAAAALgFAAByAQAA4S4RAe9XkwMFSxEBsDKTAwAAzxPEH59u",
+                    "lon": 17.903329,
+                    "lat": 59.987951
+                },
+                "id": "booking-62"
+            },
+            {
+                "delivery": {
+                    "hint": "8x0cgPodHIALAAAAQwAAAFsAAAAAAAAAaT_5QF1EOkIWL39CAAAAAAsAAABDAAAAWwAAAAAAAAByAQAABvYOAUW1iAO9-A4BiLqIAwQAjwbEH59u",
+                    "lon": 17.757702,
+                    "lat": 59.290949
+                },
+                "pickup": {
+                    "hint": "d1IngNZSJ4AeAAAASAAAAJYAAABFAAAAPJl4Qs9fDkMCg5ZDFHkJQx4AAABIAAAAlgAAAEUAAAByAQAAdaoJAWgukAMJnwkByjaQAwEAvw7EH59u",
+                    "lon": 17.410677,
+                    "lat": 59.780712
+                },
+                "id": "booking-63"
+            },
+            {
+                "delivery": {
+                    "hint": "BgYogDQKA4BAAAAAFwAAALoBAAAoAAAA8doAQ6J8NEJdYl1ERRWfQkAAAAAXAAAAugEAACgAAAByAQAAI1sKAQORkgOgUQoB34WSAwsAHwfEH59u",
+                    "lon": 17.455907,
+                    "lat": 59.937027
+                },
+                "pickup": {
+                    "hint": "KYkngIWJJ4AKAAAADQAAAO8AAADuAAAAgTk-QRoDYUFcHoVD9FKEQwoAAAANAAAA7wAAAO4AAAByAQAAlnERAfxRkQM7gxEBLk6RAwcAfwHEH59u",
+                    "lon": 17.920406,
+                    "lat": 59.855356
+                },
+                "id": "booking-67"
+            },
+            {
+                "delivery": {
+                    "hint": "6JkngE2aJ4AAAAAAFgAAAJ8AAABZAAAAAAAAALw2dkGzQt1CDdd4QgAAAAAWAAAAnwAAAFkAAAByAQAA-3UOAUr-kgPlcA4BiP6SAwYAfwDEH59u",
+                    "lon": 17.724923,
+                    "lat": 59.965002
+                },
+                "pickup": {
+                    "hint": "SF8fgKpfH4AjAAAAGAAAAGEBAABxAAAAD_YeQvCFzEE2VcVDU9b9QiMAAAAYAAAAYQEAAHEAAAByAQAApIoRARPnjwPtiBEBHuSPAwkA7xHEH59u",
+                    "lon": 17.92682,
+                    "lat": 59.762451
+                },
+                "id": "booking-75"
+            },
+            {
+                "delivery": {
+                    "hint": "UDocgFI6HIBfAAAAtgAAAAAAAAAAAAAAU-UfQtCWl0IAAAAAAAAAAF8AAAC2AAAAAAAAAAAAAAByAQAAP-ERAWWQiQNQ4REBZ5CJAwAAjxXEH59u",
+                    "lon": 17.948991,
+                    "lat": 59.347045
+                },
+                "pickup": {
+                    "hint": "hn4ngJJ-J4AWAAAAAAAAAFEAAAAyBAAACwMHQgAAAAAJMP5CuyLRRBYAAAAAAAAAUQAAADIEAAByAQAAdmUNAdAJkAOccg0BswSQAwMAfwLEH59u",
+                    "lon": 17.655158,
+                    "lat": 59.771344
+                },
+                "id": "booking-78"
+            },
+            {
+                "delivery": {
+                    "hint": "b7EngHOxJ4BZAQAAHQAAAC8CAAC2BAAAFKZwQy9toUEwycJDJkJSRFkBAAAdAAAALwIAALYEAAByAQAAoisQAQtlkwODKBABs16TAwEAfwbEH59u",
+                    "lon": 17.836962,
+                    "lat": 59.991307
+                },
+                "pickup": {
+                    "hint": "pFMngO1TJ4AhAAAAAAAAAJUAAAAAAAAAcVHaQAAAAABw7vlBAAAAABAAAAAAAAAATAAAAAAAAAByAQAAafQJAb2_jwPG8gkB172PAwUAzw7EH59u",
+                    "lon": 17.429609,
+                    "lat": 59.752381
+                },
+                "id": "booking-91"
+            },
+            {
+                "delivery": {
+                    "hint": "36UXgOGlF4ADAAAADgAAALAAAADcAAAA1Q1-QCPhdkEncUVDmVN1QwMAAAAOAAAAsAAAANwAAAByAQAAudgPAYZzhQOO6g8Bw3GFAwgArwDEH59u",
+                    "lon": 17.815737,
+                    "lat": 59.07751
+                },
+                "pickup": {
+                    "hint": "lJ0ngP___38qAAAAKgAAAAAAAAAuAAAAwr3dQQAAAAAAAAAAbjL4QSoAAAAqAAAAAAAAAC4AAAByAQAASSMNAcRXkwN7QA0BflaTAwAAjwDEH59u",
+                    "lon": 17.638217,
+                    "lat": 59.987908
+                },
+                "id": "booking-95"
+            },
+            {
+                "delivery": {
+                    "hint": "Fy0fgBktH4AAAAAAWQAAAGcCAAAAAAAAAAAAAAp9d0K3ftZDAAAAAAAAAABZAAAAZwIAAAAAAAByAQAA0x8RAaqhjgMuIBEBuaqOAxIAjwbEH59u",
+                    "lon": 17.899475,
+                    "lat": 59.679146
+                },
+                "pickup": {
+                    "hint": "EhsngH4bJ4AAAAAAVwAAAD4EAABSAAAAAAAAAOk4kUGWwGJDj4aIQQAAAAArAAAAIAIAACkAAAByAQAAaXIIAUrSjgO5dwgBf8eOAwQAzxDEH59u",
+                    "lon": 17.330793,
+                    "lat": 59.691594
+                },
+                "id": "booking-98"
+            },
+            {
+                "delivery": {
+                    "hint": "00ongNVKJ4APAAAAAAAAAJsFAAAXCAAACxSKQQAAAABqvcdEWQUQRQ8AAAAAAAAAmwUAABcIAAByAQAAWAkHAaYckgNYLAcBay2SA0UALwjEH59u",
+                    "lon": 17.23836,
+                    "lat": 59.907238
+                },
+                "pickup": {
+                    "hint": "emcAgCktH4AUAAAADwAAAJYBAABEAQAAQZe1QWbkhEGup-FDH_C0QxQAAAAPAAAAlgEAAEQBAAByAQAAC9UQAc8zjgMf1hABBDWOAwcALwfEH59u",
+                    "lon": 17.880331,
+                    "lat": 59.651023
+                },
+                "id": "booking-107"
+            },
+            {
+                "delivery": {
+                    "hint": "KQ4ngGQOJ4AAAAAAFwAAALIEAABUAQAAdHwbPyJvdUFq3FBENYVsQwAAAAAXAAAAsgQAAFQBAAByAQAAFHULAdthjgPUgAsBz2qOAyIA_xLEH59u",
+                    "lon": 17.528084,
+                    "lat": 59.662811
+                },
+                "pickup": {
+                    "hint": "9YcngPeHJ4BdAAAAAAAAAJ8BAABKCAAAAciBQgAAAACNapBDkXi4RF0AAAAAAAAAnwEAAEoIAAByAQAAv48RAf_CkANFeREBy6qQAwYA7xHEH59u",
+                    "lon": 17.928127,
+                    "lat": 59.818751
+                },
+                "id": "booking-116"
+            },
+            {
+                "delivery": {
+                    "hint": "kXgjgJp4I4AjAAAAGAAAAAsAAAAAAAAA6ZUgQu74zUGeM0xBAAAAACMAAAAYAAAACwAAAAAAAAByAQAAHIgRATFZjAMWhxEBgVqMAwEATwTEH59u",
+                    "lon": 17.926172,
+                    "lat": 59.529521
+                },
+                "pickup": {
+                    "hint": "2wcngOQHJ4ASAAAALQAAACoBAAA1AAAAvaFSQdpZ90E5pU9DGHIUQhIAAAAtAAAAKgEAADUAAAByAQAAOqMNAbxHjQPmoQ0BjUiNAwUALwPEH59u",
+                    "lon": 17.67097,
+                    "lat": 59.590588
+                },
+                "id": "booking-118"
+            }
+        ]
+    }
+]

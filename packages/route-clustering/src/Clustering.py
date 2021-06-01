@@ -102,7 +102,10 @@ class Clustering:
             metadata['cluster_nr'] = cluster_nr
             metadata['bookings'] = len(self.booking_clusters[cluster_nr])
             metadata['vehicles'] = len(self.vehicle_clusters[cluster_nr])
-            metadata['centroid_lon_lat'] = f"{self.model.cluster_centers_[cluster_number, :]}"
+
+            centroid_lon_lat = self.model.cluster_centers_[cluster_number, :]
+            metadata['centroid_lon_lat'] = centroid_lon_lat.tolist()
+            # print(metadata['centroid_lon_lat'])
 
             cluster_req = {}
             cluster_req['metadata'] = metadata

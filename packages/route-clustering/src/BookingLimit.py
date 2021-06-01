@@ -23,6 +23,7 @@ class BookingLimit:
 
     def _recluster_x_times(self):
         for iteration in range(self.max_iterations):
+            # TODO log instead of print
             print(f"re-cluster iteration {iteration} of {self.max_iterations}")
 
             was_reclustered = self.recluster()

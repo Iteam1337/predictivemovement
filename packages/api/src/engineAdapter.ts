@@ -1,22 +1,18 @@
 import {
-  publishDeleteBooking,
   waitForBookingNotification,
   bookingNotifications,
   publishCreateBooking,
 } from './rabbitmqConnector'
 import { components } from './__generated__/schema'
-
-const deleteBooking = async (bookingId: string) => {
-  await publishDeleteBooking(bookingId)
-  await waitForBookingNotification(bookingNotifications, bookingId, 'deleted')
-}
+import { nanoid } from 'nanoid'
 
 const createBooking = async (booking: components['schemas']['Booking']) => {
+  booking.id = nanoid()
   await publishCreateBooking(booking)
-  await waitForBookingNotification(bookingNotifications, booking.id, 'new')
+  return waitForBookingNotification(bookingNotifications, booking.id, 'new')
 }
 
-export { createBooking, deleteBooking }
+export { createBooking }
 
 
 

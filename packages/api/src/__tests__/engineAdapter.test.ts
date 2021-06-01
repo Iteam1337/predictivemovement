@@ -10,36 +10,36 @@
 //   message: 'new',
 // }
 
+import { createBooking } from '../engineAdapter'
+
 describe('engine adapter', () => {
-  it('waits for correct message on the message queue', async () => {
-    expect(true).toBe(true)
-    // expect.assertions(1)
-    // bookingNotification.status = 'deleted'
-    // // create a highland stream
-    // const stream: Highland.Stream<BookingNotification> = _((push, next) => {
-    //   push(null, bookingNotification)
-    //   next()
-    // })
+  describe('#createBooking()', () => {
+    it('generates an id and sends the booking payload to rabbit', async () => {
+      const bookingPayload = {
+        delivery: {},
+        pickup: {}
+      }
 
-    // await expect(
-    //   connectors.waitForBookingNotification(stream, '123', 'deleted')
-    // ).resolves.not.toThrow()
-  })
 
-  it('gives an error when delete failed', async () => {
-    expect(true).toBe(true)
-    // const message = 'it b0rked'
-    // bookingNotification.status = 'error'
-    // bookingNotification.message = message
+      await createBooking(bookingPayload)
+      
+    })
 
-    // const stream: Highland.Stream<BookingNotification> = _((push, next) => {
-    //   push(null, bookingNotification)
-    //   push(null, { bookingId: '123', status: 'deleted', message: 'hello' }) // will be ignored
-    //   next()
-    // })
+    it('gives an error when delete failed', async () => {
+      expect(true).toBe(true)
+      // const message = 'it b0rked'
+      // bookingNotification.status = 'error'
+      // bookingNotification.message = message
 
-    // await expect(
-    //   connectors.waitForBookingNotification(stream, '123', 'deleted')
-    // ).rejects.toThrow(message)
+      // const stream: Highland.Stream<BookingNotification> = _((push, next) => {
+      //   push(null, bookingNotification)
+      //   push(null, { bookingId: '123', status: 'deleted', message: 'hello' }) // will be ignored
+      //   next()
+      // })
+
+      // await expect(
+      //   connectors.waitForBookingNotification(stream, '123', 'deleted')
+      // ).rejects.toThrow(message)
+    })
   })
 })

@@ -2,13 +2,15 @@ import {
   publishCreateBooking,
   waitForBookingCreated
 } from './rabbitmqConnector'
-import { components } from './__generated__/schema'
+import { operations, components } from './__generated__/schema'
 import { nanoid } from 'nanoid'
 
-const createBooking = async (booking: components['schemas']['Booking']) => {
-  booking.id = nanoid()
-  await publishCreateBooking(booking)
-  return waitForBookingCreated(booking.id)
+export type CreateBookingInput = operations['create_booking']['requestBody']['content']['application/json'];
+
+const createBooking = async (booking: CreateBookingInput) => {
+  const id = `pmb-${nanoid(8)}`;
+  await publishCreateBooking({id, ...booking})
+  return waitForBookingCreated(id)
 }
 
 export { createBooking }

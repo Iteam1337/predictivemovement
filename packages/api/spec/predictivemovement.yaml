@@ -253,6 +253,10 @@ components:
             - delivered
         size:
           $ref: "#/components/schemas/Size"
+      required:
+        - id
+        - delivery
+        - pickup
     Position:
       type: object
       required:

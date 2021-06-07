@@ -1,4 +1,4 @@
-// import * as connectors from '../rabbitmqConnector'
+import * as connector from '../rabbitmqConnector'
 // import _ from 'highland'
 // import * as Highland from 'highland'
 // import { components } from '../__generated__/schema'
@@ -10,9 +10,14 @@
 //   message: 'new',
 // }
 
+
 describe('rabbitmq connector', () => {
   describe('booking notifications', () => {
     it('waits for correct message on the message queue', async () => {
+
+      
+        
+
       // expect.assertions(1)
       // bookingNotification.status = 'deleted'
       // // create a highland stream

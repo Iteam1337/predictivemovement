@@ -9,20 +9,24 @@
 //   status: 'new',
 //   message: 'new',
 // }
-
-import { createBooking } from '../engineAdapter'
+import { createBooking, CreateBookingInput } from '../engineAdapter'
 
 describe('engine adapter', () => {
   describe('#createBooking()', () => {
     it('generates an id and sends the booking payload to rabbit', async () => {
       const bookingPayload = {
-        delivery: {},
-        pickup: {}
+        pickup: { lat: 31.337, lon: 69.69 },
+        delivery: { lat: 1.337, lon: 6.9 },
+        metadata: {},
+        size: {
+          measurements: [105, 55, 16],
+          weight: 10
+        }
       }
 
-
-      await createBooking(bookingPayload)
-      
+      const result = await createBooking(bookingPayload as any as CreateBookingInput)
+      console.log(result);
+      expect(result.id).toBeDefined();
     })
 
     it('gives an error when delete failed', async () => {
@@ -33,7 +37,7 @@ describe('engine adapter', () => {
 
       // const stream: Highland.Stream<BookingNotification> = _((push, next) => {
       //   push(null, bookingNotification)
-      //   push(null, { bookingId: '123', status: 'deleted', message: 'hello' }) // will be ignored
+      //   push(null, { bookingId: '123', status: 'deleted', message: 'hello' }) // will be ignored // why?
       //   next()
       // })
 

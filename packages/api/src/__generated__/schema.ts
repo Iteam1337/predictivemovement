@@ -61,12 +61,12 @@ export interface components {
       dimensions?: components["schemas"]["Dimensions"];
     };
     Booking: {
-      id?: string;
-      delivery?: {
+      id: string;
+      delivery: {
         address?: components["schemas"]["Address"];
         contact?: components["schemas"]["Contact"];
       };
-      pickup?: {
+      pickup: {
         address?: components["schemas"]["Address"];
         contact?: components["schemas"]["Contact"];
       };

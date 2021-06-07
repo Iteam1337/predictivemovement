@@ -11,7 +11,6 @@ defmodule Booking do
     :pickup,
     :delivery,
     :assigned_to,
-    :external_id,
     :events,
     :metadata,
     :size,
@@ -47,8 +46,6 @@ defmodule Booking do
 
   def valid_measurements(_), do: false
 
-  def generate_id, do: "pmb-" <> Engine.Utils.generate_id()
-
   def publish(data, routing_key),
     do:
       @rmq.publish(
@@ -58,18 +55,17 @@ defmodule Booking do
       )
 
   def make(%{
+        assigned_to: assigned_to,
         pickup: pickup,
         delivery: delivery,
-        external_id: external_id,
         metadata: metadata,
-        size: size
+        size: size,
+        id: id
       }) do
-    id = generate_id()
 
     booking = %Booking{
       id: id,
       pickup: pickup,
-      external_id: external_id,
       delivery: delivery,
       metadata: metadata |> Jason.encode!(),
       events: [],

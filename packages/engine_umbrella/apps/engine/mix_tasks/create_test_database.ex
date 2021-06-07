@@ -12,11 +12,12 @@ defmodule Mix.Tasks.SetupTestDatabase do
       password: System.get_env("POSTGRES_PASSWORD") || "postgres",
       database: System.get_env("POSTGRES_DB") || "eventstore",
       hostname: System.get_env("POSTGRES_HOST") || "localhost",
-      schema: "test"
+      schema: "test",
+      column_data_type: "jsonb"
     ]
 
     :ok = EventStore.Tasks.Create.exec(config, [])
-    :ok = EventStore.Tasks.Init.exec(Engine.ES, config, [])
+    :ok = EventStore.Tasks.Init.exec(config)
     IO.puts("test database created & initiated")
   end
 end

@@ -2,7 +2,7 @@ import Config
 
 config :engine, :amqp_host, System.get_env("AMQP_HOST") || "localhost"
 config :engine, :osrm_url, System.get_env("OSRM_URL") || "https://osrm.iteamdev.io"
-config :engine, :init_from_eventstore, true
+config :engine, :init_from_eventstore, System.get_env("INIT_FROM_EVENTSTORE") == "true"
 
 config :engine,
        :booking_processor_batch_size,

@@ -1,5 +1,5 @@
 const amqp = require('fluent-amqp')(process.env.AMQP_URL || 'amqp://localhost')
-import Highland from 'highland'
+import EventEmitter from 'events'
 
 export interface EngineBookingRequest {
   id: string,
@@ -35,48 +35,35 @@ const publishCreateBooking = (booking: EngineBookingRequest) => {
     )
 }
 
-    amqp
+
+const emitter = new EventEmitter()
+
+amqp
     .exchange('outgoing_booking_updates', 'topic', {
       durable: true,
     })
     .queue('booking_notifications.api', {
       durable: true,
     })
-    .subscribe({ noAck: true }, ['new'])
-    .map((res: any) => res.json())
-    .tap(({ id }: any) => {console.log('\n\n ===> NEW VALUE', id)})
-    .each(({ id }: any) => {console.log('\n\n ===> NEW Booking', id)})
-
-
-function makeBookingNotificationStream() {
-  const bookingNotificationStream = amqp
-    .exchange('outgoing_booking_updates', 'topic', {
-      durable: true,
+    .subscribe({ noAck: true })
+    .map((res: any) => {
+      const json = res.json()
+      return [res.fields.routingKey, json]
     })
-    .queue('booking_notifications.api', {
-      durable: true,
+    .each(([routingKey, msg]: [string, Object]) => {
+      emitter.emit(routingKey, msg)
     })
-
-  return bookingNotificationStream
-    .subscribe({ noAck: true }, ['new'])
-    .map((res: any) => res.json())
-    .tap(({ id }: any) => {console.log('\n\n ===> NEW VALUE', id)})
-}
-
-function waitFirst<T>(
-  stream: Highland.Stream<T>,
-  predicate: (t: T) => boolean
-) {
-  return stream.filter(predicate).head()
-}
 
 function waitForBookingCreated(bookingId: string): Promise<EngineBooking> {
-  return Promise.resolve({ id: bookingId } as EngineBooking)
-  // return waitFirst<EngineBooking>(
-  //   makeBookingNotificationStream(),
-  //   ({ id }) => id === bookingId
-  // )
-  //   .toPromise(Promise)
+  return new Promise((resolve, _reject) => {
+    function listener(booking: EngineBooking) {
+        if (booking.id === bookingId) {
+          resolve(booking)
+          emitter.removeListener('new', listener)
+        }
+      }
+    emitter.addListener('new', listener)
+  })
 }
 
 export { publishCreateBooking, waitForBookingCreated }

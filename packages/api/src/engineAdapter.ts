@@ -9,49 +9,33 @@ import { nanoid } from 'nanoid'
 export type CreateBookingInput = operations['create_booking']['requestBody']['content']['application/json']
 export type Booking = components['schemas']['Booking']
 
-
-/*
-delivery:
-  type: object
-  properties:
-    address:
-      $ref: "#/components/schemas/Address"
-    contact:
-      $ref: "#/components/schemas/Contact"
-pickup:
-  type: object
-  properties:
-    address:
-      $ref: "#/components/schemas/Address"
-    contact:
-      $ref: "#/components/schemas/Contact"
-ship_date:
-  type: string
-  format: date
-status:
-  type: string
-  description: Order Status
-  enum:
-    - placed
-    - approved
-    - delivered
-size:
-  $ref: "#/components/schemas/Size"
-*/
-
 function engineBookingToAPI(input: EngineBooking): Booking {
   return {
     id: input.id,
     delivery: {
       address: {
-        position: input.delivery
+        position: input.delivery,
+        city: '',
+        street: '',
+        name: '',
       }
     },
     pickup: {
       address: {
-        position: input.pickup
+        position: input.pickup,
+        city: '',
+        street: '',
+        name: '',
       }
-    }
+    },
+    size: input.size && {
+      weight: input.size.weight || 0,
+      dimensions: {
+        length: 0,
+        width: 0,
+        height: 0,
+      },
+    },
   }
 }
 
@@ -60,10 +44,10 @@ const createBooking = async (input: CreateBookingInput): Promise<Booking> => {
   await publishCreateBooking({
     id,
     delivery: {
-      ...input.delivery.address.position
+      ...input.delivery.address.position,
     },
     pickup: {
-      ...input.pickup.address.position
+      ...input.pickup.address.position,
     },
     metadata: {},
     size: {}

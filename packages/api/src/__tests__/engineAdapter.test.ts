@@ -25,8 +25,7 @@ describe('engine adapter', () => {
       }
 
       const result = await createBooking(bookingPayload as any as CreateBookingInput)
-      console.log(result);
-      expect(result.id).toBeDefined();
+      expect(result.id).toBeDefined()
     })
 
     it('gives an error when delete failed', async () => {

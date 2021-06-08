@@ -55,7 +55,6 @@ defmodule Booking do
       )
 
   def make(%{
-        assigned_to: assigned_to,
         pickup: pickup,
         delivery: delivery,
         metadata: metadata,

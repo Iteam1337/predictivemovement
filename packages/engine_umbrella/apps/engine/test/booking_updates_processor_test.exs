@@ -1,5 +1,6 @@
 defmodule BookingUpdatesProcessorTest do
   use ExUnit.Case
+  alias MessageGenerator.BookingGenerator
   import TestHelper
   import Mox
 
@@ -15,13 +16,14 @@ defmodule BookingUpdatesProcessorTest do
     vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =
-      Booking.make(%{
+      BookingGenerator.generate_booking_props(%{
         external_id: 1,
         size: %{weight: 1, measurements: [1, 1, 1]},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
         delivery: %{lat: 61.80762475411504, lon: 17.05761905846783},
         metadata: %{senderId: "telegramIdString"}
       })
+      |> Booking.make()
 
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
 
@@ -47,13 +49,14 @@ defmodule BookingUpdatesProcessorTest do
     vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
 
     booking_id =
-      Booking.make(%{
+      BookingGenerator.generate_booking_props(%{
         external_id: 1,
         size: %{weight: 1, measurements: [1, 1, 1]},
         pickup: %{lat: 61.80762475411504, lon: 16.05761905846783},
         delivery: %{lat: 61.80762475411504, lon: 17.05761905846783},
         metadata: %{senderId: "telegramIdString"}
       })
+      |> Booking.make()
 
     Booking.assign(booking_id, Vehicle.get(vehicle_id))
 

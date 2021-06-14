@@ -31,7 +31,7 @@ defmodule MessageGenerator.MixProject do
       {:poison, "~> 3.1"},
       {:httpoison, "~> 1.8"},
       {:amqp, "~> 1.4"},
-      # {:hackney, git: "https://github.com/benoitc/hackney.git", branch: "master", override: true}
+      {:elixir_uuid, "~> 1.2"},
     ]
   end
 end

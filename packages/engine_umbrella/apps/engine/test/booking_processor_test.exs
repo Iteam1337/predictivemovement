@@ -252,7 +252,6 @@ defmodule BookingProcessorTest do
   test "constraints failures leads to excluded bookings" do
     expected_id =
       BookingGenerator.generate_booking_props(%{
-        id: "Gammelstad->LTU",
         metadata: %{
           start: "Gammelstad (65.641574, 22.015858) -> LTU (65.61582, 22.13488)"
         }
@@ -277,7 +276,6 @@ defmodule BookingProcessorTest do
       |> Booking.make()
 
     BookingGenerator.generate_booking_props(%{
-      id: "Gäddvik->LTU",
       metadata: %{
         start: "Gäddvik (65.581598, 22.051736) -> LTU (65.61582, 22.13488)"
       }

@@ -27,9 +27,9 @@ export interface components {
       position: components["schemas"]["Position"];
     };
     Address: {
-      city?: string;
-      street?: string;
-      name?: string;
+      city: string;
+      street: string;
+      name: string;
       position: components["schemas"]["Position"];
     };
     Dimensions: {
@@ -61,18 +61,13 @@ export interface components {
       dimensions?: components["schemas"]["Dimensions"];
     };
     Booking: {
-      id?: string;
-      delivery?: {
+      id: string;
+      delivery: {
         address?: components["schemas"]["Address"];
-        contact?: components["schemas"]["Contact"];
       };
-      pickup?: {
+      pickup: {
         address?: components["schemas"]["Address"];
-        contact?: components["schemas"]["Contact"];
       };
-      ship_date?: string;
-      /** Order Status */
-      status?: "placed" | "approved" | "delivered";
       size?: components["schemas"]["Size"];
     };
     Position: {
@@ -122,8 +117,8 @@ export interface operations {
   };
   create_booking: {
     responses: {
-      /** OK */
-      200: {
+      /** Created */
+      201: {
         content: {
           "application/json; charset=utf-8": components["schemas"]["Booking"];
         };
@@ -134,11 +129,11 @@ export interface operations {
         "application/json": {
           pickup: {
             address: components["schemas"]["Address"];
-            contact: components["schemas"]["Contact"];
+            contact?: components["schemas"]["Contact"];
           };
           delivery: {
             address: components["schemas"]["Address"];
-            contact: components["schemas"]["Contact"];
+            contact?: components["schemas"]["Contact"];
           };
           size: components["schemas"]["Size"];
           metadata?: components["schemas"]["AnyValue"];

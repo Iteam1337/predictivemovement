@@ -10,8 +10,19 @@ defmodule MessageGenerator.BookingGenerator do
     recipient: %{contact: "0707654321", name: "Mats Avsändaresson"}
   }
 
+  def generate_id do
+    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
+
+    UUID.uuid4()
+    |> Base.encode64(padding: false)
+    |> String.replace(["+", "/"], Enum.random(alphabet))
+    |> String.slice(0, 8)
+    |> String.downcase()
+  end
+
   def generate_booking_props(properties \\ %{}) do
     properties
+    |> Map.put_new(:id, "pmb-" <> Engine.Utils.generate_id())
     |> Map.put_new(:external_id, Enum.random(0..100_000))
     |> put_new_booking_addresses_from_city(:ljusdal)
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})

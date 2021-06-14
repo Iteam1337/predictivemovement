@@ -64,7 +64,7 @@ paths:
                       $ref: "#/components/schemas/Contact"
                   required:
                     - address
-                    - contact
+                    # - contact
                 delivery:
                   type: object
                   properties:
@@ -74,7 +74,7 @@ paths:
                       $ref: "#/components/schemas/Contact"
                   required:
                     - address
-                    - contact
+                    # - contact
                 size:
                   $ref: "#/components/schemas/Size"
                 metadata: 
@@ -97,10 +97,10 @@ paths:
                       position:
                         lon: 17.958416
                         lat: 59.215666
-                    contact:
-                      name: Mr. Plow
-                      phone_number: "0173637204"
-                      info: ""
+                    # contact:
+                    #   name: Mr. Plow
+                    #   phone_number: "0173637204"
+                    #   info: ""
                   delivery:
                     address:
                       city: "Trelleborg"
@@ -109,10 +109,10 @@ paths:
                       position:
                         lon: 13.166109
                         lat: 55.383959
-                    contact:
-                      name: That name again
-                      info: Is Mr. Plow
-                      phone_number: "0173637204"
+                    # contact:
+                    #   name: That name again
+                    #   info: Is Mr. Plow
+                    #   phone_number: "0173637204"
                   size:
                     weight: 1000
                     dimensions:
@@ -120,8 +120,8 @@ paths:
                       height: 10
                       length: 10
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           content:
             application/json; charset=utf-8:
               schema:
@@ -169,6 +169,9 @@ components:
           $ref: "#/components/schemas/Position"
       required:
         - position
+        - city
+        - street
+        - name
     Dimensions:
       type: object
       properties:
@@ -194,10 +197,10 @@ components:
               type: number
         earliest_start:
           type: string
-          format: date-time
+          # format: date-time
         latest_end:
           type: string
-          format: date-time
+          # format: date-time
         metadata:
           type: object
         start_address:
@@ -232,27 +235,21 @@ components:
           properties:
             address:
               $ref: "#/components/schemas/Address"
-            contact:
-              $ref: "#/components/schemas/Contact"
+            # contact:
+            #   $ref: "#/components/schemas/Contact"
         pickup:
           type: object
           properties:
             address:
               $ref: "#/components/schemas/Address"
-            contact:
-              $ref: "#/components/schemas/Contact"
-        ship_date:
-          type: string
-          format: date
-        status:
-          type: string
-          description: Order Status
-          enum:
-            - placed
-            - approved
-            - delivered
+            # contact:
+            #   $ref: "#/components/schemas/Contact"
         size:
           $ref: "#/components/schemas/Size"
+      required:
+        - id
+        - delivery
+        - pickup
     Position:
       type: object
       required:

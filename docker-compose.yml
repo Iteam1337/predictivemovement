@@ -118,13 +118,6 @@ services:
       - ./data:/data
     networks:
       - predictivemovement
-  api:
-    build: ./packages/api
-    ports:
-      - 127.0.0.1:8000:8000
-    networks:
-      - predictivemovement
-
 networks:
   predictivemovement:
     driver: bridge

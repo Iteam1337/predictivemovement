@@ -36,8 +36,8 @@ function connectRabbit() {
 export const exchanges = {
   INCOMING_BOOKING_UPDATES: 'incoming_booking_updates',
   OUTGOING_BOOKING_UPDATES: 'outgoing_booking_updates',
-  INCOMING_VEHICLE_UPDATES: 'incoming_vehicle_updates',
-  OUTGOING_VEHICLE_UPDATES: 'outgoing_vehicle_updates',
+  INCOMING_VEHICLE_UPDATES: 'incoming_transport_updates',
+  OUTGOING_VEHICLE_UPDATES: 'outgoing_transport_updates',
   DELIVERY_RECEIPTS: 'delivery_receipts',
   FREIGHTSLIPS: 'freightslips',
 }

@@ -3,7 +3,7 @@ defmodule Generator do
   alias MessageGenerator.TransportGenerator
   alias MessageGenerator.BookingGenerator
 
-  @transports_exchange "incoming_vehicle_updates"
+  @transports_exchange "incoming_transport_updates"
   @bookings_exchange "incoming_booking_updates"
 
   def add_transport(properties \\ %{})

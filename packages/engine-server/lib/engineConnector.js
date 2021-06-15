@@ -67,7 +67,7 @@ module.exports = (io) => {
     })
 
   const transports = amqp
-    .exchange('outgoing_vehicle_updates', 'topic', {
+    .exchange('outgoing_transport_updates', 'topic', {
       durable: true,
     })
     .queue('update_vehicle_in_admin_ui', {
@@ -142,7 +142,7 @@ module.exports = (io) => {
   }
 
   const transportLocationUpdates = amqp
-    .exchange('incoming_vehicle_updates', 'topic', {
+    .exchange('incoming_transport_updates', 'topic', {
       durable: true,
     })
     .queue('update_location.admin_ui', {
@@ -152,7 +152,7 @@ module.exports = (io) => {
     .map((res) => res.json())
 
   amqp
-    .exchange('outgoing_vehicle_updates', 'topic', {
+    .exchange('outgoing_transport_updates', 'topic', {
       durable: true,
     })
     .queue('delete_vehicle_in_admin_ui', {
@@ -213,7 +213,7 @@ module.exports = (io) => {
 
   const createTransport = (transport) => {
     return amqp
-      .exchange('incoming_vehicle_updates', 'topic', { durable: true })
+      .exchange('incoming_transport_updates', 'topic', { durable: true })
       .publish(
         {
           id: id62(),
@@ -254,7 +254,7 @@ module.exports = (io) => {
 
   const publishDeleteTransport = (id) => {
     return amqp
-      .exchange('incoming_vehicle_updates', 'topic', {
+      .exchange('incoming_transport_updates', 'topic', {
         durable: true,
       })
       .publish(id, routingKeys.DELETED, {
@@ -264,7 +264,7 @@ module.exports = (io) => {
   }
 
   const transportEvents = amqp
-    .exchange('incoming_vehicle_updates', 'topic', { durable: true })
+    .exchange('incoming_transport_updates', 'topic', { durable: true })
     .queue('transport_notifications.admin_ui', { durable: true })
     .subscribe({ noAck: true }, [
       routingKeys.TRANSPORT.LOGIN,
@@ -279,7 +279,7 @@ module.exports = (io) => {
     })
 
   const transportNotifications = amqp
-    .exchange('outgoing_vehicle_updates', 'topic', {
+    .exchange('outgoing_transport_updates', 'topic', {
       durable: true,
     })
     .queue('transport_notifications.admin_ui', {
@@ -333,7 +333,7 @@ module.exports = (io) => {
   }
 
   const transportUpdates = amqp
-    .exchange('outgoing_vehicle_updates', 'topic', {
+    .exchange('outgoing_transport_updates', 'topic', {
       durable: true,
     })
     .queue('transport_updated', {
@@ -345,7 +345,7 @@ module.exports = (io) => {
 
   const publishUpdateTransport = (transport) => {
     return amqp
-      .exchange('incoming_vehicle_updates', 'topic', {
+      .exchange('incoming_transport_updates', 'topic', {
         durable: true,
       })
       .publish(transport, routingKeys.UPDATED, {

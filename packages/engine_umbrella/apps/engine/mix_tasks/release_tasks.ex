@@ -7,6 +7,6 @@ defmodule Engine.ReleaseTasks do
     config = Engine.ES.config()
 
     :ok = EventStore.Tasks.Create.exec(config, [])
-    :ok = EventStore.Tasks.Init.exec(Engine.ES, config, [])
+    :ok = EventStore.Tasks.Init.exec(config)
   end
 end

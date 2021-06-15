@@ -294,7 +294,6 @@ defmodule BookingProcessorTest do
     |> Booking.make()
 
     TransportGenerator.generate_transport_props(%{
-      id: "vehicle-1",
       start_address: %{
         lon: 21.92567,
         lat: 65.6335

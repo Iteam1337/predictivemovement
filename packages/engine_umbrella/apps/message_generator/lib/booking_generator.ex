@@ -1,28 +1,19 @@
 defmodule MessageGenerator.BookingGenerator do
   alias MessageGenerator.Address
+  alias MessageGenerator.Id
 
   @stockholm %{lat: 59.3414072, lon: 18.0470482}
   @gothenburg %{lat: 57.7009147, lon: 11.7537571}
   @ljusdal %{lat: 61.829182, lon: 16.0896213}
 
-    @default_metadata %{
+  @default_metadata %{
     sender: %{contact: "0701234567", name: "Anna Mottagaresson"},
     recipient: %{contact: "0707654321", name: "Mats Avsändaresson"}
   }
 
-  def generate_id do
-    alphabet = "abcdefghijklmnopqrstuvwxyz0123456789" |> String.split("", trim: true)
-
-    UUID.uuid4()
-    |> Base.encode64(padding: false)
-    |> String.replace(["+", "/"], Enum.random(alphabet))
-    |> String.slice(0, 8)
-    |> String.downcase()
-  end
-
   def generate_booking_props(properties \\ %{}) do
     properties
-    |> Map.put_new(:id, "pmb-" <> Engine.Utils.generate_id())
+    |> Map.put_new(:id, Id.generate_booking_id())
     |> Map.put_new(:external_id, Enum.random(0..100_000))
     |> put_new_booking_addresses_from_city(:ljusdal)
     |> Map.put_new(:size, %{measurements: [105, 55, 26], weight: Enum.random(1..200)})

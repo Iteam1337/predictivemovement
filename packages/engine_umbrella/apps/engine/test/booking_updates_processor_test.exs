@@ -1,6 +1,7 @@
 defmodule BookingUpdatesProcessorTest do
   use ExUnit.Case
   alias MessageGenerator.BookingGenerator
+  alias MessageGenerator.Id
   import TestHelper
   import Mox
 
@@ -13,7 +14,11 @@ defmodule BookingUpdatesProcessorTest do
   end
 
   test "pickup update is registered" do
-    vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
+    vehicle_id =
+      Vehicle.make(%{
+        id: Id.generate_transport_id(),
+        start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}
+      })
 
     booking_id =
       BookingGenerator.generate_booking_props(%{
@@ -46,7 +51,11 @@ defmodule BookingUpdatesProcessorTest do
   end
 
   test "delivered update is registered and published" do
-    vehicle_id = Vehicle.make(%{start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}})
+    vehicle_id =
+      Vehicle.make(%{
+        id: Id.generate_transport_id(),
+        start_address: %{lat: 61.80762475411504, lon: 16.05761905846783}
+      })
 
     booking_id =
       BookingGenerator.generate_booking_props(%{

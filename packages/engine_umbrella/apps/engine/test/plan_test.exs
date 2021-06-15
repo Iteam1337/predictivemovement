@@ -134,7 +134,7 @@ defmodule PlanTest do
           current_route: nil,
           earliest_start: nil,
           end_address: %{lat: 61.840584, lon: 16.033552},
-          id: "pmv-5MNjCOZb",
+          id: "pmt-5MNjCOZb",
           latest_end: nil,
           metadata: %{},
           profile: nil,

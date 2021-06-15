@@ -32,7 +32,7 @@ function engineTransportToAPI(input: EngineTransportRequest): Transport {
 }
 
 const createTransport = async (input: CreateTransportInput): Promise<Transport> => {
-  const id = `pmv-${nanoid(8)}`
+  const id = `pmt-${nanoid(8)}`
   await publishCreateTransport({
     id,
     start_address: {
@@ -42,7 +42,9 @@ const createTransport = async (input: CreateTransportInput): Promise<Transport> 
       ...input.end_address.position,
     },
     metadata: {},
-    capacity: {}
+    capacity: {
+      ...input.capacity
+    }
   })
 
   const answer = await waitForTransportCreated(id)

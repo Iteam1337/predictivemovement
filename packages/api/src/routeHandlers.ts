@@ -6,7 +6,7 @@ import { operations } from './__generated__/schema'
 export const get_transports: Handler = (_c, _req, res) => {
   res.status(200).json([
     {
-      transport_id: '',
+      id: '',
       busy: false,
       capacity: {
         volume: 0,

@@ -76,7 +76,6 @@ defmodule Engine.BookingProcessor do
   defp string_to_vehicle_transform(vehicle_string) do
     vehicle_string
     |> Jason.decode!(keys: :atoms)
-    |> Map.delete(:id)
   end
 
   defp string_to_booking_transform(booking_string) do

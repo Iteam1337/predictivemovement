@@ -112,9 +112,9 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": {
-          capacity?: {
-            volume?: number;
-            weight?: number;
+          capacity: {
+            volume: number;
+            weight: number;
           };
           earliest_start?: string;
           latest_end?: string;

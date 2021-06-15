@@ -83,7 +83,6 @@ export type InAppColor = string
 export type Transport = {
   activities: Activity[] | null
   bookingIds: string[] | null
-  busy: any
   capacity?: Capacity
   color: InAppColor
   currentRoute: any
@@ -91,7 +90,6 @@ export type Transport = {
   endAddress: Address
   id: string
   latestEnd: Date
-  metadata: TransportMetadata
   startAddress: Address
 }
 
@@ -112,14 +110,12 @@ export interface Plan {
 export interface Route {
   activities: Activity[] | null
   bookingIds: string[] | null
-  busy: any
   capacity?: { weight?: number; volume?: number }
   currentRoute: any
   earliestStart: Date
   endAddress: Address
   id: string
   latestEnd: Date
-  metadata?: { profile?: string }
   startAddress: Address
 }
 

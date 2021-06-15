@@ -40,14 +40,12 @@ export interface components {
     };
     Transport: {
       id?: string;
-      busy?: boolean;
       capacity?: {
         volume?: number;
         weight?: number;
       };
       earliest_start?: string;
       latest_end?: string;
-      metadata?: { [key: string]: any };
       start_address?: components["schemas"]["Address"];
       end_address?: components["schemas"]["Address"];
     };
@@ -118,7 +116,6 @@ export interface operations {
           };
           earliest_start?: string;
           latest_end?: string;
-          metadata?: components["schemas"]["AnyValue"];
           start_address: components["schemas"]["Address"];
           end_address: components["schemas"]["Address"];
         };

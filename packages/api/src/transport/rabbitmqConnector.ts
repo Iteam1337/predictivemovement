@@ -2,7 +2,9 @@ import {amqp} from '../amqp/connector'
 import EventEmitter from 'events'
 
 export interface EngineTransportRequest {
-  id: string,
+  id:string
+  earliest_start?: string,
+  latest_end?: string,
   start_address: {
     lat: number,
     lon: number
@@ -11,7 +13,6 @@ export interface EngineTransportRequest {
     lat: number,
     lon: number
   },
-  metadata: {},
   capacity: {
     weight?: number,
     volume?: number

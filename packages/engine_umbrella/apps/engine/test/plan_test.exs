@@ -129,14 +129,12 @@ defmodule PlanTest do
         %{
           activities: nil,
           booking_ids: nil,
-          busy: nil,
           capacity: %{volume: 18, weight: 50},
           current_route: nil,
           earliest_start: nil,
           end_address: %{lat: 61.840584, lon: 16.033552},
           id: "pmt-5MNjCOZb",
           latest_end: nil,
-          metadata: %{},
           profile: nil,
           start_address: %{lat: 61.840584, lon: 16.033552}
         }

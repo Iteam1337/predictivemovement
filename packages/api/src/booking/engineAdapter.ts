@@ -3,7 +3,7 @@ import {
   waitForBookingCreated,
   EngineBooking
 } from './rabbitmqConnector'
-import { operations, components } from './__generated__/schema'
+import { operations, components } from '../__generated__/schema'
 import { nanoid } from 'nanoid'
 
 export type CreateBookingInput = operations['create_booking']['requestBody']['content']['application/json']
@@ -56,5 +56,7 @@ const createBooking = async (input: CreateBookingInput): Promise<Booking> => {
   const answer = await waitForBookingCreated(id)
   return engineBookingToAPI(answer)
 }
+
+
 
 export { createBooking } 

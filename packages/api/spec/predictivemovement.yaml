@@ -25,6 +25,65 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Transport"
+    post:
+      operationId: "create_transport"
+      summary: Create a new transport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capacity:
+                  type: object
+                  properties:
+                    volume:
+                      type: number
+                    weight:
+                      type: number
+                earliest_start:
+                  type: string
+                  # format: date-time
+                latest_end:
+                  type: string
+                  # format: date-time
+                metadata:
+                  $ref: "#/components/schemas/AnyValue"
+                start_address:
+                  $ref: "#/components/schemas/Address"
+                end_address:
+                  $ref: "#/components/schemas/Address"
+              required: 
+                - start_address
+                - end_address
+            examples:
+              standard_transport:
+                value:
+                  start_address:
+                    address:
+                      city: "Stockholm"
+                      street: "Visättra Backe 6"
+                      name: "Visättra backe 6, Stockholm"
+                      position:
+                        lon: 17.958416
+                        lat: 59.215666
+                  end_address:
+                    address:
+                      city: "Stockholm"
+                      street: "Visättra Backe 6"
+                      name: "Visättra backe 6, Stockholm"
+                      position:
+                        lon: 17.958416
+                        lat: 59.215666
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/Transport"
+
   /itinerary/{transport_id}:
     get:
       operationId: get_itinerary
@@ -43,7 +102,7 @@ paths:
           content:
             application/json; charset=utf-8:
               schema:
-                $ref: "#/components/schemas/Itinerary"
+                $ref: "#/components/schemas/Itinerary" 
   /bookings:
     post:
       operationId: "create_booking"
@@ -184,7 +243,7 @@ components:
     Transport:
       type: object
       properties:
-        transport_id:
+        id:
           type: string
         busy:
           type: boolean

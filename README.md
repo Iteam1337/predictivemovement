@@ -63,6 +63,11 @@ kubectl port-forward elasticsearch-0 9200:9200 --namespace pelias
 
 ### Running Predictive Movement locally
 
+You will need:
+- [docker installed](https://docs.docker.com/engine/install/)
+- [elixir installed](https://elixir-lang.org)
+- [nvm installed](https://github.com/nvm-sh/nvm)
+
 You will need the following API keys
 POSTNORD_KEY - for engine-server
 REACT_APP_MAPBOX_ACCESS_TOKEN - for engine-ui
